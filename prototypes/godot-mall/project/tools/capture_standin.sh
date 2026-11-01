@@ -7,16 +7,23 @@
 # imported (godot --headless --path . --import). Takes a few minutes per mode in software GL.
 set -e
 W=$1; Y=${2:-1995}
+# scripts/lighting.json "day_only" (Steven, Oct 16 2026): the game never shows the night lighting, so
+# the night pictures are never seen. Nov 1 2026 (integration, Demo 47): with day_only the night
+# picture is a 256 px thumbnail of the day one (the packs were at GitHub's 100 MB limit; each full
+# night picture cost 5.6 MB per wing). Set day_only false and re-run to get real night pictures.
+DAY_ONLY=$(python3 -c "import json;print(1 if json.load(open('scripts/lighting.json')).get('day_only') else 0)")
+tiny_night() { python3 -c "from PIL import Image;im=Image.open('$1');im.thumbnail((256,256));im.save('$2')"; }
 if [ "$W" = "3" ]; then
   # Workstream F (Nov 1 2026): wing 3 is the outside; its pictures are the lot seen out of the inside
   # wings' exit doors (tools/exterior/door_view.gd, capture_doors.gd): tex/standin/door_w<1|2>_<mode>.png,
   # 2026 y26_door_w<1|2>_day.png (the night a copy). Run after the outside's bake, like the stand-in.
-  MODES="night day"; [ "$Y" = "2026" ] && MODES="day"
+  MODES="night day"; { [ "$Y" = "2026" ] || [ "$DAY_ONLY" = "1" ]; } && MODES="day"
   for IW in 1 2; do for M in $MODES; do
     timeout 900 xvfb-run -a -s "-screen 0 1280x720x24" godot --path . --rendering-driver opengl3 --resolution 640x360 \
       --script res://tools/exterior/capture_doors.gd -- --wing=$IW --mode=$M --year=$Y 2>&1 | grep -E "capturing|wrote|ERROR|error|unbaked" | grep -v "RID alloc\|resources still\|Pages in use" | head -20
   done; done
   P=door_w; [ "$Y" = "2026" ] && P=y26_door_w
+  if [ "$DAY_ONLY" = "1" ] && [ "$Y" != "2026" ]; then for IW in 1 2; do tiny_night tex/standin/door_w${IW}_day.png tex/standin/door_w${IW}_night.png; done; fi
   for IW in 1 2; do [ -s tex/standin/${P}${IW}_day.png ] || { echo "capture failed: doors of wing $IW"; exit 1; }; done
   tools/wing_hash.sh 3 $Y > tex/standin/${P}3.stamp
   echo "stamped the door pictures from the outside ($Y): $(cat tex/standin/${P}3.stamp)"
@@ -27,15 +34,17 @@ if [ "$Y" = "2026" ]; then
   timeout 1500 xvfb-run -a -s "-screen 0 1280x720x24" godot --path . --rendering-driver opengl3 --resolution 640x360 \
     --script res://tools/capture_standin.gd -- --wing=$W --mode=day --year=2026 2>&1 | grep -E "capturing|wrote|ERROR|error" | grep -v "RID alloc\|resources still\|Pages in use" | head -20
   [ -s tex/standin/y26_from_w${W}_day.png ] || { echo "capture failed: wing $W 2026"; exit 1; }
-  cp tex/standin/y26_from_w${W}_day.png tex/standin/y26_from_w${W}_night.png
+  if [ "$DAY_ONLY" = "1" ]; then tiny_night tex/standin/y26_from_w${W}_day.png tex/standin/y26_from_w${W}_night.png; else cp tex/standin/y26_from_w${W}_day.png tex/standin/y26_from_w${W}_night.png; fi
   tools/wing_hash.sh $W 2026 > tex/standin/y26_from_w$W.stamp
   echo "stamped wing $W 2026 stand-in: $(cat tex/standin/y26_from_w$W.stamp)"
   exit 0
 fi
-for M in night day; do
+MODES="night day"; [ "$DAY_ONLY" = "1" ] && MODES="day"
+for M in $MODES; do
   timeout 1500 xvfb-run -a -s "-screen 0 1280x720x24" godot --path . --rendering-driver opengl3 --resolution 640x360 \
     --script res://tools/capture_standin.gd -- --wing=$W --mode=$M 2>&1 | grep -E "capturing|wrote|ERROR|error" | grep -v "RID alloc\|resources still\|Pages in use" | head -20
   [ -s tex/standin/from_w${W}_$M.png ] || { echo "capture failed: wing $W $M"; exit 1; }
 done
+[ "$DAY_ONLY" = "1" ] && tiny_night tex/standin/from_w${W}_day.png tex/standin/from_w${W}_night.png
 tools/wing_hash.sh $W > tex/standin/from_w$W.stamp
 echo "stamped wing $W stand-in: $(cat tex/standin/from_w$W.stamp)"
