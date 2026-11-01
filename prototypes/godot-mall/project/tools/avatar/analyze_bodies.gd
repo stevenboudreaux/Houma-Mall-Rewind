@@ -9,7 +9,8 @@
 ##     legs, feet);
 ##   - its mean colour (texels sampled over its triangles, weighted by area).
 ##   The face = the biggest head island (its colour is the skin colour). An island is SKIN when its
-##   colour is close to the face's (hands a little looser); otherwise HAIR on the head (eyes, brows
+##   colour is close to the face's (hands a little looser), or, in the Body mesh, warm like skin;
+##   otherwise HAIR on the head (eyes, brows
 ##   and teeth are tiny and stay as they are), TOP on the torso and arms, BOTTOM on the hips and
 ##   legs, and OTHER (shoes, kept) on the feet.
 ## Written per body: the classes and means of its islands, and per surface a base64 list of each
@@ -178,7 +179,7 @@ func _analyze(e: Dictionary) -> Dictionary:
 			"other": cls = OTHER
 			"body":     # skin, but not the eyes, teeth or brows painted into the body
 				# the body under the clothes is painted as cloth where it's covered: follow the clothes
-				if i == face or near: cls = SKIN
+				if i == face or near or (isl.area >= TINY_M2 and _skinlike(c)): cls = SKIN
 				elif part == 1 and isl.area >= TINY_M2: cls = TOP
 				elif part == 3 and isl.area >= TINY_M2: cls = BOTTOM
 				else: cls = OTHER
@@ -272,6 +273,11 @@ func _bone_name(sk: Skeleton3D, skn: Skin, idx: int) -> String:
 		var b := skn.get_bind_bone(idx)
 		if b >= 0: return sk.get_bone_name(b)
 	return sk.get_bone_name(idx) if idx < sk.get_bone_count() else ""
+
+## Warm, mid-saturated: bare skin in a Body texture (Remy's limbs are lighter than his face). The
+## Body texture's parts under the clothes are painted white or grey, which this rejects.
+static func _skinlike(c: Color) -> bool:
+	return c.r > c.g and c.g > c.b and c.r - c.b > 0.1 and c.r - c.b < 0.5 and c.r > 0.25
 
 static func _dist(a: Color, b: Color) -> float:
 	return Vector3(a.r - b.r, a.g - b.g, a.b - b.b).length()

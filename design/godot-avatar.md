@@ -81,8 +81,9 @@ each piece's mesh (`Ch21_Shirt`, `Ch21_Pants`, `Ch21_Hair`, `Ch21_Body`, …). `
 sorts every island once, offline:
 - by its mesh's name: hair / beard → **hair**; shirt, hoodie, suit, coat, top → **top**; pants,
   shorts, bottoms → **bottom**; shoes, sneakers, heels, socks, belt, zipper, eyelashes → kept;
-- in the Body mesh: the face (its biggest island) and every island near the face's colour → **skin**
-  (eyes, teeth, brows stay); body islands under the clothes follow the clothes by body part;
+- in the Body mesh: the face (its biggest island), every island near the face's colour, and any
+  warm, skin-like island (Remy's limbs are lighter than his face) → **skin** (eyes, teeth, brows
+  stay); body islands under the clothes (painted white or grey) follow the clothes by body part;
 - a mesh that holds everything (Ch12) or both garments (Ch02's "Cloth"): by the bone that moves the
   island most (head / torso and arms / hands / hips and legs / feet) and its colour against the face.
 It writes each island's class and mean colour, and per vertex its island (base64 uint16), so the
@@ -148,8 +149,21 @@ fist (`wsV-tp-hand-unbaked.jpg`).
 - The creator fits an iPhone held either way; touch works by hand-tapping (as the rest of the HUD).
 - Third person keeps the two thumbs (left drag walks, right drag looks); the View and Avatar buttons
   are under Bag in the top-right column.
-- **The cost of one more skinned character:** RESULTS_FPS
-- **Pack sizes:** RESULTS_PACKS
+- **The cost of one more skinned character** (`tools/qa/avatar_test.gd`, the same view with the
+  body shown and hidden, native and unbaked): the avatar adds **7.6k–15.6k triangles and 5–20 draw
+  calls** (its body's surfaces, by body) to frames of 0.29–1.43 M triangles and 1.5–4.7k draw calls,
+  about **1 %**. Frame time on the cloud's software renderer (llvmpipe): +0.2 % to +4 %, within its
+  noise (one run measured it faster with the body shown). It is one skinned mesh (skinned on the GPU
+  in the Compatibility renderer) plus one `NpcRig` retarget per frame on the CPU; in 1995 it joins up
+  to 17 shoppers (1 in 18 of the skinned load), in 2026 it is the only person. **Not measured on an
+  iPhone** (no device in the cloud): check with the owner's fps readout, standing in a busy 1995 hall,
+  V on and off. If it costs, the levers: hide it beyond the first metre of boom, or a lighter body
+  list for phones.
+- **Pack sizes:** the 2026 packs now carry the bodies and clips: `w1y26` 20.7 → 37.9 MB, `w2y26`
+  51.6 → 68.8 MB (+17.2 MB each, desktop and mobile alike); 1995 packs +0.5 MB (`avatar_bodies.json`
+  and the scripts); the outside (wing 3) gets the same +17 MB when exported. **A decision for
+  Steven:** keep that, or later move the bodies and clips into one shared pack loaded once and
+  cached across wings and years.
 
 ## VR (design/godot-vr.md)
 Always first person in VR: the avatar is hidden and its camera never made current while `vr_on`;
