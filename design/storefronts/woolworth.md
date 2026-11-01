@@ -12,7 +12,7 @@
 **Guessed (not from a Southland source):**
 - the depth (36 m of the 64 m stall: a square sales floor; the stall's back half is left as stockroom);
 - the restaurant's mall door: a glass storefront with an aluminium-framed door held open, and a "Restaurant" plate on the fascia over it;
-- the red floor stripe and the red band of department names (from the video; still to confirm for Southland);
+- the red floor stripe and the red band of department names (from the video; Steven asked for both on Nov 1, so they stay; still from another store's video);
 - the department layout behind the front end, and the department words.
 
 All packaging, food photos and menu lines are invented. The only real name shown is the store's own. The video's 1991 "Outlet Center / storewide values 50% off" sale cards are left out. The toy aisles reuse Kay-Bee's invented toy packaging.
@@ -33,10 +33,10 @@ All packaging, food photos and menu lines are invented. The only real name shown
 
 ## Inside (walkable)
 - **Store.**
-  - Glossy off-white vinyl. A red stripe edges the main aisle (u 21–24, straight in from the entrance) and the cross aisle (d 17–20).
+  - Glossy off-white vinyl. A red stripe edges the main aisle (u 21–24, straight in from the entrance) and the cross aisle (d 17–20). Nov 1: widened from 0.15 m to 0.3 m so it reads from the hall.
   - A white lay-in ceiling at 3.6 m with long rows of troffers 3 m apart.
   - Plain white square columns flank the main aisle.
-- **Red band.** White department names on red, high on the left, back and right walls, over white wall shelving: APPAREL, DOMESTICS, HOUSEWARES, TOYS, PARTY GOODS, GREETING CARDS, SCHOOL SUPPLIES.
+- **Red band.** White department names on red, high on the left, back and right walls (2.65–3.4 m), over white wall shelving: APPAREL, DOMESTICS, HOUSEWARES, TOYS, PARTY GOODS, GREETING CARDS, SCHOOL SUPPLIES. Nov 1 (Steven: make sure it reads): the texture is now 2048 px per 6 m (was 1024), the names heavier and bigger (caps about 0.36 m), a white pinstripe along both edges, and the band carries a little light of its own (emission 0.25) so the names read across the floor. Checked Nov 1: both the stripe and the band were built and visible; this pass only makes them read better (`production/qa/evidence/wsD-woolworth-preview-unbaked.jpg`).
 - **Front end (right of the entrance).**
   - Four checkout lanes running into the store. Each has grey laminate with a red kick stripe, a register, an impulse rack at its head, and a lit lane-number box on a pole (1, 3, 5, 7: video 2:16).
   - Three red carts by the lanes.
@@ -47,14 +47,14 @@ All packaging, food photos and menu lines are invented. The only real name shown
   - Left front: round racks of clothes.
   - Left back: housewares, small appliances and linens.
   - Behind the restaurant: greeting cards and party goods.
-- **The restaurant (u 0–9, d 0–14).**
+- **The restaurant (u 0–9, d 0–14).** Refs for the Nov 1 pass: `refs/era_1995/stores/Woolworth.jpg` (a period lunch counter with stools, matches the built counter), `refs/new/woolworth_corner/` (the same space in 2026, The Billiard Room). Period check: nothing added that postdates 1995.
   - **Walls and light.** A warm, dimmer room. Beige walls over a wood-slat wainscot, brass sconces with globe shades, and framed food photos.
   - **Layout (Steven, Oct 20, from his marked-up screenshot and three reference photos).**
     - **The lunch counter.** It runs down the right side from d 12.8 to d 3.6. Its front is wood-grain panels between black pilasters, under a black top with a steel edge and above a chrome foot rail. At the front it curves round a quarter circle toward the window and ends at the right wall (his curved-end photo).
     - **The stools.** Eighteen chrome stools line the run and follow the curve. Each has an octagonal black foot, a coral or teal vinyl seat and a three-bar chrome back.
     - **The back bar.** It stands against the right wall: stainless cabinets on cream tile with two brown stripes, under a strip of menu cards with 1995 prices (invented) and a stainless canopy. On it are a pie case, a five-tap soda fountain, a soft-serve machine, three green malt mixers, two coffee urns and stacked glasses.
     - **Window booths.** Three booths run along the front glass, right of the door (u 1.75–6.9). Their benches are square to the glass with high channel-tufted backs, around a table on a pedestal (his window-booth photo).
-    - **Left wall.** Three booths sit between the door and the opening into the store (d 2.2–8.3). Steven said "right behind where the opening to the woolworth store is", but only 2.7 m of wall lies behind the opening; **to confirm**.
+    - **Left wall (Steven, Nov 1).** "Only a few feet of wall after the restaurant's mall door, then a large opening": the wall into the store now runs d 0–1.0, then a 3.6 m wood-framed opening (d 1.0–4.6, 2.4 m high), the red "Restaurant" letters over it on the store side. The three booths sit behind the opening along the left wall (d 4.75–10.85). Before Nov 1: a 1.8 m opening at d 9.4–11.2, the booths at d 2.2–8.3.
     - **Middle.** Two pedestal tables with chairs.
   - **Superseded Oct 20:** the five booths on the right wall, the lattice panels, the counter across the back with its menu board and monitors, and four of the six tables.
   - **Ways in.** From the store through a wood-framed opening with red "Restaurant" letters over it (video 7:37–7:49). From the mall through its own door.

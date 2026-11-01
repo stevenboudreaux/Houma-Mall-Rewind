@@ -101,7 +101,9 @@ static func front():
 	awning()
 
 ## The script name as white lit letter faces with dark returns (cfa_letters.json, an open
-## script face standing in for the chain's lettering; the logo's comb and beak are left out).
+## script face standing in for the chain's lettering). Nov 1, 2026 (Steven: "as close as possible
+## to the real 1995 mark ... with discretion"): the C carries the mark's comb (red, lit) and beak
+## (white), drawn onto the script C by tools/stores/cfa/make_comb.py -> cfa_comb.json.
 static func letters():
 	var J = JSON.parse_string(FileAccess.get_file_as_string("res://tools/stores/small/cfa_letters.json"))
 	var s = 1.02
@@ -117,13 +119,22 @@ static func letters():
 	var back_d = -0.14
 	var to_w = func(q, d):
 		return P(uc + wv * 0.5 - float(q[0]) * s, ybase + (float(q[1]) - ymin) * s, d)
-	var sf = bb.st(DY, "cf_letter", true)
 	var nf = nn
+	var K = JSON.parse_string(FileAccess.get_file_as_string("res://tools/stores/cfa/cfa_comb.json"))
+	var parts = []
 	for Lt in J.letters:
+		parts.append([Lt, "cf_letter"])
+	parts.append([K.beak, "cf_letter"])
+	parts.append([K.comb, "cf_comb"])
+	for pr in parts:
+		var Lt = pr[0]
+		var sf = bb.st(DY, pr[1], true)
 		var tr = Lt.tris
 		var i = 0
+		# the comb and beak stand 4 mm proud of the C they overlap, so the faces never fight
+		var fd = face_d - (0.004 if Lt == K.comb or Lt == K.beak else 0.0)
 		while i + 2 < tr.size():
-			bb.tri(sf, to_w.call(tr[i], face_d), to_w.call(tr[i + 1], face_d), to_w.call(tr[i + 2], face_d), Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, nf)
+			bb.tri(sf, to_w.call(tr[i], fd), to_w.call(tr[i + 1], fd), to_w.call(tr[i + 2], fd), Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, nf)
 			i += 3
 		if Lt.has("loops"):
 			var sr = bb.st(DY, "cf_letter_ret", true)
@@ -620,6 +631,11 @@ static func fill_mat(m, key, b):
 			m.albedo_color = Color("#fffaf2")
 			m.emission_enabled = true; m.emission = Color("#fff4e6"); m.emission_energy_multiplier = 1.4
 			m.set_meta("e_day", 1.0); m.set_meta("e_night", 1.4)
+		"comb":
+			# the C's comb (Nov 1): the chain's red, lit like the letters
+			m.albedo_color = Color("#e8202e")
+			m.emission_enabled = true; m.emission = Color("#e01828"); m.emission_energy_multiplier = 1.3
+			m.set_meta("e_day", 1.0); m.set_meta("e_night", 1.3)
 		"letter_ret":
 			m.albedo_color = Color("#2a2a2e"); m.roughness = 0.4; m.metallic = 0.3
 		"awning":

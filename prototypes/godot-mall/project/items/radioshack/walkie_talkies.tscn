@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://items/radioshack/walkie_talkies.res" id="1_1ymi2"]
+
+[node name="rs_walkie_talkies" type="Node3D" unique_id=1671750792]
+metadata/item_id = "rs_walkie_talkies"
+metadata/item_name = "Chatter 2 walkie-talkies (pair)"
+metadata/item_class = "hand"
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=336270372]
+mesh = ExtResource("1_1ymi2")

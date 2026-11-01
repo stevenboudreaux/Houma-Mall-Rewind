@@ -58,37 +58,38 @@ static func coach_lamp(b, G, c, f, energy = 0.35):
 	b.tag(l, "", energy * 0.5, energy)
 
 # ------------------------------------------------------------------ Solarium
-## A pale stone fascia carrying only the name, in soft aqua-green lower-case neon bent as one
-## tight line; a glass front onto a calm tanning-salon lobby: sea-glass walls, a white front
-## desk with an aqua stripe, a palm, a shelf of lotions, a lit beach print (record, from
-## Steven's memory). The tanning rooms are behind two doors at the back.
+## Rebuilt Nov 1, 2026 (Steven: "NOT a tanning salon ... the teal clothing store from the 2D
+## game"; design/storefronts/solarium.md): the 2D game's record (index.html, n8: a teal
+## #1f6f78 sign band, cream #f6e7c0 letters, cream/teal/white merchandise) as a 1990s
+## clothing shop (Steven, Nov 1: "solarium is just a clothing shop"); the front, fixtures and layout are
+## guessed. Was (Oct 7) a tanning lobby from the facade record.
 static func solarium(b, a, t, n, W, D, rng):
 	var F = "w9sf_props"
 	var G = "w9s_fix"
 	var head = 2.8
-	S1.upper(b, F, a, t, n, W, head, "w9_stone", 0.16)
-	AK.neon(b, F, LET + "sol_letters.json", P(a, t, n, W * 0.5, head + 0.62, -0.16), n, "w9_neon_aqua", 0.02, 0.016, 0.03)
-	W8.pier(b, F, "w9_stone", a, t, n, 0.0, 0.2, head, 0.16)
-	W8.pier(b, F, "w9_stone", a, t, n, W - 0.2, W, head, 0.16)
-	W8.glass_front(b, F, a, t, n, 0.2, W - 0.2, head, W * 0.5, 1.2, "w8_white", 0.25)
-	M2.shell2(b, "w9s_shell", a, t, n, W, D, 2.9, 0.0, "w9_floor_sand", 0.61, "w9_seaglass", "kb_ceiling", [W * 0.5 - 0.3], W * 0.5, 1.1)
-	M2.soffit(b, F, a, t, n, W, head, "w9_stone")
-	# the front desk with its aqua stripe, across from the door
-	var co = P(a, t, n, W - 0.8, 0, 3.6)
-	K.lbox(b, G, "w8_white", co, -t, n, 0.0, 0.0, 0.0, 2.4, 1.0, 0.6, ["-y"])
-	K.lbox(b, G, "w9_aqua", co, -t, n, -0.01, 0.55, 0.58, 2.42, 0.1, 0.04)
-	K.lbox(b, G, "w8_white", co, -t, n, -0.03, 1.0, -0.03, 2.46, 0.04, 0.66)
-	K.register(b, "w9s_small", K.L(co, -t, n, 0.6, 1.04, 0.1), -t, n)
-	K.ob_local(b, co, -t, n, 0.0, 0.0, 2.4, 0.6)
-	# a potted palm by the window, a white bench, the lotions on the near wall, the beach print
-	palm(b, G, P(a, t, n, 0.8, 0, 1.4))
-	K.lbox(b, G, "w8_white", P(a, t, n, SIDE + 0.05, 0, 2.4), -n, t, 0.0, 0.0, 0.0, 1.6, 0.45, 0.45)
-	K.ob(b, P(a, t, n, SIDE, 0, 2.4), P(a, t, n, SIDE + 0.5, 0, 4.0), 0.05)
-	K.bay(b, G, G, P(a, t, n, SIDE, 0, 5.6), n, t, 1.22, [0.9, 1.25, 1.6], ["hba"], rng, 0.25)
-	K.ob(b, P(a, t, n, SIDE, 0, 4.4), P(a, t, n, SIDE + 0.3, 0, 5.6), 0.05)
-	K.fq(b, G, "w9_beach", P(a, t, n, W - SIDE, 0, 1.2), -n, -t, 0.0, 1.2, 1.3, 2.2, 0.02)
-	# two tanning rooms across the back
-	AK.fitting_rooms(b, a, t, n, SIDE, W - SIDE, D - SIDE, 2.2, 2, "w8_white")
+	S1.upper(b, F, a, t, n, W, head, "w9_sol_teal", 0.16)
+	# a fine cream rule over and under the name, the name in lit cream letters
+	for y in [head + 0.22, head + 1.28]:
+		b.box(F, "w9_sol_letter", P(a, t, n, W * 0.5, y, -0.17), b.abs_size(t, W - 0.8, 0.025, 0.02, n))
+	AK.letters(b, F, LET + "sol_letters.json", P(a, t, n, W * 0.5, head + 0.5, -0.16), n, "w9_sol_letter", "w9_sol_letter_side", 0.02, 0.05)
+	W8.pier(b, F, "w9_sol_teal", a, t, n, 0.0, 0.2, head, 0.16)
+	W8.pier(b, F, "w9_sol_teal", a, t, n, W - 0.2, W, head, 0.16)
+	W8.glass_front(b, F, a, t, n, 0.2, W - 0.2, head, W * 0.5, 1.4, "w9_brushed", 0.3)
+	M2.shell2(b, "w9s_shell", a, t, n, W, D, 3.0, 0.0, "a2_carpet_teal", 1.0, "w9_sol_wall", "kb_ceiling", [W * 0.5 - 0.3], W * 0.5 + 1.6, 1.3)
+	M2.soffit(b, F, a, t, n, W, head, "w9_sol_teal")
+	# two forms in the windows: teal and cream
+	AK.mannequin(b, P(a, t, n, 1.1, 0.0, 0.8), -n, "#1f6f78", "#f2ead6")
+	AK.mannequin(b, P(a, t, n, W - 1.1, 0.0, 0.8), -n, "#f6e7c0", "#1f6f78")
+	# face-out walls down both sides, white slat
+	AK.faceout_wall(b, a, t, n, SIDE, t, 1.6, D - 1.9, 0, rng, "gb_slat_white")
+	AK.faceout_wall(b, a, t, n, W - SIDE, -t, 1.6, D - 3.2, 1, rng, "gb_slat_white")
+	# a round rack and a four-way down the middle, a table of folded knits by the door
+	AK.table(b, P(a, t, n, W * 0.5, 0, 2.2), 0.0, 1.2, 0.8, 1, "w8_white")
+	AK.round_rack(b, P(a, t, n, W * 0.5, 0, 4.0), 0.55, 0)
+	AK.fourway(b, P(a, t, n, W * 0.5, 0, 5.9), 0.4, 1)
+	# the cash wrap at the back right, teal front; two fitting rooms at the back left
+	AK.cash_wrap(b, P(a, t, n, W - SIDE - 0.1, 0, D - 2.0), -t, n, 1.8, 0.6, "w9_sol_teal")
+	AK.fitting_rooms(b, a, t, n, SIDE, W * 0.5 - 0.6, D - SIDE, 1.4, 2, "w8_white")
 
 ## A potted palm at c: a pot, a trunk, a crown of fronds.
 static func palm(b, G, c):
@@ -130,22 +131,29 @@ static func rave(b, a, t, n, W, D, rng):
 	W8.glass_front(b, F, a, t, n, 0.2, W - 0.2, head, W * 0.5, 2.2, "md_black", 0.3)
 	M2.shell2(b, "w9r_shell", a, t, n, W, D, 3.0, 0.0, "a2_carpet_grey", 1.0, "w9_dark_grey", "kb_ceiling", [2.0, 5.4], 6.6, 0.5)
 	M2.soffit(b, F, a, t, n, W, head, "md_black")
-	# forms in black and white in the windows
-	AK.mannequin(b, P(a, t, n, 1.2, 0.0, 0.8), -n, "#18181a", "#18181a")
-	AK.mannequin(b, P(a, t, n, W - 1.2, 0.0, 0.8), -n, "#ecebe6", "#18181a")
-	# posters high on both walls, black clothes below, round racks down the middle
-	for s in [[SIDE, t], [W - SIDE, -t]]:
-		K.fq(b, G, "w9_posters", P(a, t, n, s[0], 0, 1.6), -n, s[1], 0.0, D - 3.6, 2.0, 2.9, 0.01, 0.0, 0.0, (D - 3.6) / 4.0, 1.0)
-	for s in [[SIDE, t, 1.8, D - 2.4], [W - SIDE, -t, 1.8, D - 4.6]]:
-		var wo = P(a, t, n, s[0], 0, s[2])
-		var ln = s[3] - s[2]
-		K.fq(b, G, "w9_black_clothes", wo, -n, s[1], 0.0, ln, 0.6, 1.95, 0.3, 0.0, 0.0, ln / 2.4, 1.0)
-		K.ob(b, wo, wo - n * ln + s[1] * 0.5, 0.05)
+	# Nov 1, 2026 (Steven: "rave is a clothing store, just 'party' type clothes for women going
+	# out"; design/storefronts/rave.md): slip dresses, sequin minis and satin tops in jewel
+	# colours, silver and some black, face-out on wall rails and on round racks; dressed forms in
+	# the windows; the posters stay high on both walls.
+	AK.mannequin(b, P(a, t, n, 1.2, 0.0, 0.8), -n, "#c4143c", "#c4143c")
+	AK.mannequin(b, P(a, t, n, W - 1.2, 0.0, 0.8), -n, "#d2d2dc", "#18181a")
+	for s2 in [[SIDE, t], [W - SIDE, -t]]:
+		K.fq(b, G, "w9_posters", P(a, t, n, s2[0], 0, 1.6), -n, s2[1], 0.0, D - 3.6, 2.15, 2.9, 0.01, 0.0, 0.0, (D - 3.6) / 4.0, 1.0)
+	# the wall rails of going-out clothes: two tiers a side (dresses below, tops above), a shelf
+	# of evening bags and heels on top
+	for s2 in [[SIDE, t, 1.8, D - 2.4], [W - SIDE, -t, 1.8, D - 4.6]]:
+		var wo = P(a, t, n, s2[0], 0, s2[2])
+		var ln = s2[3] - s2[2]
+		K.fq(b, G, "w9_rave_dresses", wo, -n, s2[1], 0.0, ln, 0.2, 1.32, 0.3, 0.0, 0.0, ln / 2.4, 1.0)
+		K.fq(b, G, "w9_rave_dresses", wo, -n, s2[1], 0.0, ln, 1.38, 2.08, 0.3, 0.37, 0.0, ln / 2.4 + 0.37, 0.55)
+		K.lbox(b, G, "md_chrome", wo, -n, s2[1], 0.0, 1.33, 0.0, ln, 0.02, 0.34, [])
+		K.ob(b, wo, wo - n * ln + s2[1] * 0.5, 0.05)
+	# round racks of dresses down the middle
 	for k in 3:
 		var rc = P(a, t, n, W * 0.5, 0, 3.4 + k * 2.6)
 		b.cyl(G, "md_chrome", rc, 0.03, 0.03, 1.35, 8, false, false)
 		b.cyl(G, "md_chrome", rc + UP * 1.32, 0.6, 0.6, 0.03, 20, false, false)
-		b.cyl(G, "w9_black_rack", rc + UP * 0.45, 0.62, 0.62, 0.86, 20, false, false)
+		b.cyl(G, "w9_rave_rack", rc + UP * 0.35, 0.62, 0.62, 0.97, 20, false, false)
 		b.cyl(G, "md_chrome", rc, 0.25, 0.25, 0.02, 12, true, false)
 		K.ob(b, rc - Vector3(0.7, 0, 0.7), rc + Vector3(0.7, 0, 0.7), 0.05)
 	AK.cash_wrap(b, P(a, t, n, W - 0.9, 0, D - 2.6), -t, n, 2.4, 0.6, "md_black")
@@ -160,20 +168,20 @@ static func concepts(b, a, t, n, W, D, rng):
 	var F = "w9cf_props"
 	var G = "w9c_fix"
 	var head = 2.8
-	S1.upper(b, F, a, t, n, W, head, "w8_cream_front", 0.14)
+	S1.upper(b, F, a, t, n, W, head, "w9_c_siding", 0.14)
 	K.lbox(b, F, "w9_plum", P(a, t, n, 0, 0, 0), t, n, W * 0.5 - 1.85, head + 0.45, 0.14, 3.7, 0.78, 0.12)
-	W8.sign_q(b, F, "w9_concepts_sign", a, t, n, W * 0.5, 3.6, head + 0.5, head + 1.18, -0.265)
+	W8.sign_q(b, F, "w9_concepts_sign_serif", a, t, n, W * 0.5, 3.6, head + 0.5, head + 1.18, -0.265)
 	var dw = 2.6
 	var boxes = [[0.25, W * 0.5 - dw * 0.5 - 0.2], [W * 0.5 + dw * 0.5 + 0.2, W - 0.25]]
-	W8.pier(b, F, "w8_cream_front", a, t, n, 0.0, 0.25, head, 0.14)
-	W8.pier(b, F, "w8_cream_front", a, t, n, W - 0.25, W, head, 0.14)
+	W8.pier(b, F, "w9_c_siding", a, t, n, 0.0, 0.25, head, 0.14)
+	W8.pier(b, F, "w9_c_siding", a, t, n, W - 0.25, W, head, 0.14)
 	for k in 2:
 		var u0 = boxes[k][0]
 		var u1 = boxes[k][1]
 		W8.pier(b, F, "w9_plum", a, t, n, u1 if k == 0 else u0 - 0.2, (u1 + 0.2) if k == 0 else u0, head, 0.14)
 		shadow_box(b, G, a, t, n, u0, u1, head, k)
 	b.box(F, "w9_plum", P(a, t, n, W * 0.5, head - 0.05, -0.07), b.abs_size(t, dw + 0.4, 0.1, 0.14, n))
-	M2.shell2(b, "w9c_shell", a, t, n, W, D, 3.0, 0.0, "md_vinyl", 0.61, "w8_cream", "kb_ceiling", [2.6, 7.0], 2.0, 1.3)
+	M2.shell2(b, "w9c_shell", a, t, n, W, D, 3.0, 0.0, "w9_c_floor", 1.22, "w8_cream", "kb_ceiling", [2.6, 7.0], 2.0, 1.3)
 	b.quad(F, "w8_cream", [P(a, t, n, W * 0.5 - dw * 0.5, head, 0), P(a, t, n, W * 0.5 + dw * 0.5, head, 0), P(a, t, n, W * 0.5 + dw * 0.5, head, 1.4), P(a, t, n, W * 0.5 - dw * 0.5, head, 1.4)], Vector3.DOWN)
 	# uniforms down both side walls, backpacks across the back
 	for s in [[SIDE, t, 2.0, D - 3.0], [W - SIDE, -t, 2.0, D - 1.0]]:
@@ -182,13 +190,39 @@ static func concepts(b, a, t, n, W, D, rng):
 		K.lbox(b, G, "gb_slat_white", wo, -n, s[1], 0.0, 0.0, 0.0, ln, 2.5, 0.03)
 		K.fq(b, G, "w9_uniforms", wo, -n, s[1], 0.0, ln, 0.25, 2.45, 0.35, 0.0, 0.0, ln / 2.4, 1.0)
 		K.ob(b, wo, wo - n * ln + s[1] * 0.5, 0.05)
-	K.fq(b, G, "w9_backpacks", P(a, t, n, W - SIDE - 1.0, 0, D - SIDE), -t, n, 0.0, W - 2.4, 1.0, 2.2, 0.02, 0.0, 0.0, (W - 2.4) / 4.0, 1.0)
+	K.fq(b, G, "w9_c_bags", P(a, t, n, W - SIDE - 1.0, 0, D - SIDE), -t, n, 0.0, W - 2.4, 1.0, 2.2, 0.02, 0.0, 0.0, (W - 2.4) / 4.0, 1.0)
 	# tables of folded polos and a four-way of uniforms down the middle; the cash wrap on the left
 	AK.table(b, P(a, t, n, W * 0.5, 0, 3.4), 0.0, 1.5, 0.9, 0, "w8_walnut")
 	AK.fourway(b, P(a, t, n, W * 0.5 - 1.2, 0, 6.4), 0.0, 1)
 	AK.fourway(b, P(a, t, n, W * 0.5 + 1.2, 0, 6.4), 0.0, 0)
 	AK.table(b, P(a, t, n, W * 0.5, 0, 9.2), 0.0, 1.5, 0.9, 1, "w8_walnut")
 	AK.cash_wrap(b, P(a, t, n, 0.9, 0, D - 2.4), t, n, 2.4, 0.6, "w9_plum")
+	# Nov 1, 2026 (workstream D): the store's 1990s Courier ad (refs/era_1995/ads/ad_6.jpg) says
+	# "See our display in front of Chick-fil-A": a rolling display of school mesh bags out in the
+	# concourse in front of Chick-fil-A (x -102..-94 on the same z = 60 front), with a card.
+	display(b, Vector3(-98.0, 0.0, 56.8), t, n)
+
+## The Concepts display in the concourse (the ad: "See our display in front of Chick-fil-A"):
+## a white rolling table with two tiers of mesh and clear bags, a sign card on a stem.
+## Position guessed (in front of the Chick-fil-A front, out of its way).
+static func display(b, c, t, n):
+	var G = "w9c_display"
+	var o = c - t * 0.8 - n * 0.35
+	K.lbox(b, G, "w8_white", o, t, n, 0.0, 0.12, 0.0, 1.6, 0.06, 0.7)
+	K.lbox(b, G, "w8_white", o, t, n, 0.05, 0.75, 0.05, 1.5, 0.05, 0.6)
+	for q in [[0.05, 0.05], [1.5, 0.05], [0.05, 0.6], [1.5, 0.6]]:
+		K.lbox(b, G, "md_chrome", o, t, n, q[0], 0.0, q[1], 0.05, 0.8, 0.05)
+	# bags standing on both tiers, a strip of the bag wall on each long face
+	for y in [[0.18, 0.7], [0.8, 1.32]]:
+		for sg in [1.0, -1.0]:
+			K.fq(b, G, "w9_c_bags", c - t * 0.8 + n * (0.3 * sg), t, n * sg, 0.0, 1.6, y[0], y[1], 0.0, 0.0, 0.0, 0.4, 0.5)
+		b.box(G, "w9_c_bagtop", c + UP * (y[1] - 0.04), b.abs_size(t, 1.6, 0.08, 0.6, n))
+	# the card on its stem: CONCEPTS (the sign face)
+	b.cyl(G, "md_chrome", c + UP * 1.32, 0.012, 0.012, 0.45, 8, false, false)
+	var cc = c + UP * 1.86
+	for sg in [1.0, -1.0]:
+		K.fq(b, G, "w9_concepts_sign_serif", cc - t * 0.45 + n * (0.006 * sg), t, n * sg, 0.0, 0.9, -0.085, 0.085, 0.0)
+	K.ob(b, o, o + t * 1.6 + n * 0.7, 0.1)
 
 ## A deep white shadow box from u0 to u1 behind glass: the solids standing in it, lit from
 ## above. k picks the pair (0: sphere and cone; 1: cube and cylinder).
@@ -305,6 +339,13 @@ static func lions_share(b, a, t, n, W, D, rng):
 		b.box(F, "w8_dark_wood", P(a, t, n, du + s * (dw * 0.5 + 0.06), 1.2, -0.1), b.abs_size(t, 0.12, 2.4, 0.24, n), Transform3D.IDENTITY, ["-y"])
 		coach_lamp(b, F, P(a, t, n, du + s * (dw * 0.5 + 0.55), 2.0, -0.38), n)
 	W8.sign_q(b, F, "w9_plaque", a, t, n, W - 2.7, 1.3, 2.25, 3.88, -0.24)
+	# Nov 1, 2026 (Steven: "add the gold lion statues out front, as in the 2D game"): a gold
+	# lion sitting on a dark plinth either side of the door, looking straight out across the
+	# hall (index.html: the photo of a seated gold lion, "stands either side of the door (the
+	# right one mirrored)"). Sculpted from rounded solids; the size is a guess.
+	for sg in [-1.0, 1.0]:
+		var lu = du + sg * (dw * 0.5 + 1.25)
+		lion(b, "w9l_lions", P(a, t, n, lu, 0, -0.55), t * sg, n, 1.45)
 	# the passage: brick walls, a low dark ceiling, red carpet
 	var cg = "w9l_shell"
 	for s in [-1.0, 1.0]:
@@ -346,6 +387,79 @@ static func lions_share(b, a, t, n, W, D, rng):
 	for c in [[3.0, 6.9], [9.0, 6.9]]:
 		var l = b.add_omni(P(a, t, n, c[0] * ks, 2.3, c[1]), 0.45, 6.0, Color(1.0, 0.78, 0.5))
 		b.tag(l, "", 0.35, 0.5)
+
+## An ellipsoid at c with semi-axes along the columns of `bs` (each scaled to its radius),
+## smooth normals. For the Lion's Share lions.
+static func ellipsoid(b, G, m, c, bs, rings = 10, segs = 16):
+	var s = b.st(G, m)
+	var inv_t = bs.inverse().transposed()
+	var pt = func(i, j):
+		var th = -PI * 0.5 + PI * float(i) / rings
+		var ph = TAU * float(j) / segs
+		var u = Vector3(cos(th) * cos(ph), sin(th), cos(th) * sin(ph))
+		return [c + bs * u, (inv_t * u).normalized()]
+	for i in rings:
+		for j in segs:
+			var q00 = pt.call(i, j); var q01 = pt.call(i, j + 1)
+			var q10 = pt.call(i + 1, j); var q11 = pt.call(i + 1, j + 1)
+			var fn = (q00[1] + q01[1] + q10[1] + q11[1]).normalized()
+			b._tri_n(s, [q00[0], q01[0], q11[0]], [q00[1], q01[1], q11[1]], [Vector2(0, 0), Vector2(1, 0), Vector2(1, 1)], fn)
+			b._tri_n(s, [q00[0], q11[0], q10[0]], [q00[1], q11[1], q10[1]], [Vector2(0, 0), Vector2(1, 1), Vector2(0, 1)], fn)
+
+## A seated gold lion on a dark plinth, at c (floor), r its right-hand side (the tail's side),
+## f the way it looks; `hgt` the lion's height (plinth not counted). After the 2D game's photo:
+## a full curly mane, the chest upright, the front legs straight down to big paws, the
+## haunches round either side, the tail curled round on the plinth.
+static func lion(b, G, c, r, f, hgt):
+	var ph = 0.55
+	var r2 = r.normalized()
+	b.box(G, "w9_lion_plinth", c + UP * (ph * 0.5), b.abs_size(r2, 0.62, ph, 0.72, f), Transform3D.IDENTITY, ["-y"])
+	b.box(G, "w9_lion_plinth", c + UP * (ph + 0.02), b.abs_size(r2, 0.68, 0.04, 0.78, f))
+	K.ob(b, c - r2 * 0.34 - f * 0.4, c + r2 * 0.34 + f * 0.4, 0.06)
+	var k = hgt / 1.0
+	var o = c + UP * (ph + 0.04)
+	var M = "w9_lion_gold"
+	# [centre (r, y, f), radii (r, y, f), tilt about r]
+	var parts = [
+		[Vector3(0.0, 0.34, -0.04), Vector3(0.15, 0.27, 0.17), -0.25],     # chest and body
+		[Vector3(-0.14, 0.15, -0.1), Vector3(0.11, 0.15, 0.2), 0.0],       # haunches
+		[Vector3(0.14, 0.15, -0.1), Vector3(0.11, 0.15, 0.2), 0.0],
+		[Vector3(-0.075, 0.21, 0.12), Vector3(0.05, 0.21, 0.055), 0.08],    # front legs
+		[Vector3(0.075, 0.21, 0.12), Vector3(0.05, 0.21, 0.055), 0.08],
+		[Vector3(-0.08, 0.03, 0.17), Vector3(0.058, 0.035, 0.085), 0.0],   # paws
+		[Vector3(0.08, 0.03, 0.17), Vector3(0.058, 0.035, 0.085), 0.0],
+		[Vector3(-0.17, 0.035, 0.06), Vector3(0.05, 0.035, 0.09), 0.0],    # hind paws
+		[Vector3(0.17, 0.035, 0.06), Vector3(0.05, 0.035, 0.09), 0.0],
+		[Vector3(0.0, 0.6, 0.0), Vector3(0.18, 0.2, 0.13), 0.1],           # mane
+		[Vector3(0.0, 0.47, 0.05), Vector3(0.15, 0.13, 0.12), 0.3],        # mane over the chest
+		[Vector3(0.0, 0.62, 0.09), Vector3(0.1, 0.11, 0.1), 0.0],          # head
+		[Vector3(0.0, 0.575, 0.17), Vector3(0.062, 0.05, 0.06), 0.0],      # muzzle
+		[Vector3(0.0, 0.6, 0.215), Vector3(0.025, 0.018, 0.015), 0.0],     # nose
+		[Vector3(-0.072, 0.715, 0.06), Vector3(0.032, 0.035, 0.02), 0.0],  # ears
+		[Vector3(0.072, 0.715, 0.06), Vector3(0.032, 0.035, 0.02), 0.0],
+		[Vector3(0.23, 0.03, -0.02), Vector3(0.03, 0.026, 0.17), 0.0],     # tail round the plinth
+		[Vector3(0.19, 0.04, 0.16), Vector3(0.04, 0.035, 0.04), 0.0],      # its tuft
+	]
+	for q in parts:
+		var cc = o + (r2 * q[0].x + UP * q[0].y + f * q[0].z) * k
+		var tilt = Basis(r2, q[2])
+		var bs = Basis(tilt * r2 * q[1].x * k, tilt * UP * q[1].y * k, tilt * f * q[1].z * k)
+		ellipsoid(b, G, M, cc, bs)
+	# the mane's locks: two rings of flat, overlapping tufts round the face, each tipped down and
+	# out like the photo's flowing mane (not round curls)
+	for ring in [[0.165, 16, 0.03, 0.05, 0.015], [0.125, 13, 0.07, 0.04, 0.03]]:
+		for i in ring[1]:
+			var ang = TAU * (i + 0.5 * float(ring[0] < 0.15)) / ring[1]
+			if sin(ang) < -0.75:
+				continue    # the chin: no locks under it
+			var radial = (UP * sin(ang) + r2 * cos(ang)).normalized()
+			var cc = o + (UP * 0.6 + radial * ring[0] + f * ring[2]) * k
+			var down = (radial * 0.5 - UP).normalized()
+			var side = down.cross(f).normalized()
+			ellipsoid(b, G, M, cc, Basis(side * ring[3] * k, down * ring[3] * 1.8 * k, f * ring[4] * k), 6, 8)
+	# the eyes, dark
+	for sx in [-0.035, 0.035]:
+		ellipsoid(b, G, "md_black", o + (r2 * sx + UP * 0.645 + f * 0.185) * k, Basis(r2 * 0.012 * k, UP * 0.008 * k, f * 0.006 * k), 4, 6)
 
 # ------------------------------------------------------------------ American Bank
 ## A white stucco front, the name in heavy rounded white letters on the shaded wall above, one
@@ -473,12 +587,20 @@ static func fill_mat(m, key, b):
 			K.emit_tex(m, 0.9)
 		"solid_red":
 			m.albedo_color = Color("#d0302a"); m.roughness = 0.35
+			# Nov 1: spatter-paint flecks (paint9_d.py), a satin sheen
+			m.albedo_texture = b.tex("w9/concepts_spatter.png"); m.uv1_triplanar = true; m.uv1_scale = Vector3(1.2, 1.2, 1.2); m.metallic_specular = 0.6
 		"solid_yellow":
 			m.albedo_color = Color("#f0c830"); m.roughness = 0.35
+			# Nov 1: spatter-paint flecks (paint9_d.py), a satin sheen
+			m.albedo_texture = b.tex("w9/concepts_spatter.png"); m.uv1_triplanar = true; m.uv1_scale = Vector3(1.2, 1.2, 1.2); m.metallic_specular = 0.6
 		"solid_blue":
 			m.albedo_color = Color("#2f62c8"); m.roughness = 0.35
+			# Nov 1: spatter-paint flecks (paint9_d.py), a satin sheen
+			m.albedo_texture = b.tex("w9/concepts_spatter.png"); m.uv1_triplanar = true; m.uv1_scale = Vector3(1.2, 1.2, 1.2); m.metallic_specular = 0.6
 		"solid_green":
 			m.albedo_color = Color("#30a868"); m.roughness = 0.35
+			# Nov 1: spatter-paint flecks (paint9_d.py), a satin sheen
+			m.albedo_texture = b.tex("w9/concepts_spatter.png"); m.uv1_triplanar = true; m.uv1_scale = Vector3(1.2, 1.2, 1.2); m.metallic_specular = 0.6
 		"uniforms":
 			m.albedo_texture = b.tex("w9/uniforms.png"); m.roughness = 0.7
 			K.emit_tex(m, 0.15)
@@ -540,6 +662,42 @@ static func fill_mat(m, key, b):
 			m.albedo_color = Color(0.95, 0.9, 0.82)
 		"brass":
 			m.albedo_color = Color("#c8a048"); m.metallic = 0.8; m.roughness = 0.3
+		# --- Nov 1, 2026 (workstream D)
+		"sol_teal":
+			# Solarium's teal (index.html n8 signBg #1f6f78)
+			m.albedo_color = Color("#1f6f78"); m.roughness = 0.45; m.metallic_specular = 0.5
+		"sol_letter":
+			m.albedo_color = Color("#f6e7c0"); m.roughness = 0.4
+			K.emit(m, Color("#f4e2b4"), 0.9)
+		"sol_letter_side":
+			m.albedo_color = Color("#c8b890"); m.roughness = 0.5
+		"sol_wall":
+			m.albedo_color = Color("#f2ede2"); m.roughness = 0.85
+		"rave_dresses":
+			m.albedo_texture = b.tex("w9/rave_dresses.png"); m.roughness = 0.45; m.metallic_specular = 0.6
+			K.emit_tex(m, 0.22)
+		"rave_rack":
+			m.albedo_texture = b.tex("w9/rave_dresses.png"); m.roughness = 0.45; m.metallic_specular = 0.6
+			m.uv1_scale = Vector3(1.6, 0.85, 1.0)
+			K.emit_tex(m, 0.18)
+		"c_siding":
+			m.albedo_texture = b.tex("w9/concepts_siding.png"); m.roughness = 0.75
+		"concepts_sign_serif":
+			m.albedo_texture = b.tex("w9/concepts_sign_serif.png"); m.roughness = 0.4
+			K.emit_tex(m, 0.9)
+		"c_bags":
+			m.albedo_texture = b.tex("w9/concepts_bags.png"); m.roughness = 0.7
+			K.emit_tex(m, 0.15)
+		"c_bagtop":
+			m.albedo_color = Color("#1e2446"); m.roughness = 0.8
+		"c_floor":
+			m.albedo_texture = b.tex("w9/concepts_floor.png"); m.roughness = 0.3; m.metallic_specular = 0.5
+		"lion_gold":
+			# the 2D game's photo: a satin gold-painted cast lion
+			m.albedo_color = Color("#c9a04a"); m.metallic = 0.85; m.roughness = 0.35
+			K.emit(m, Color("#5a4418"), 0.25)
+		"lion_plinth":
+			m.albedo_color = Color("#2e2a28"); m.roughness = 0.45; m.metallic_specular = 0.5
 		_:
 			return false
 	return true

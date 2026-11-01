@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://items/radioshack/microcassette.res" id="1_nkkfl"]
+
+[node name="rs_microcassette" type="Node3D" unique_id=816442839]
+metadata/item_id = "rs_microcassette"
+metadata/item_name = "Micro-cassette recorder"
+metadata/item_class = "pocket"
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1922336360]
+mesh = ExtResource("1_nkkfl")

@@ -80,6 +80,15 @@ static func inside(b, a, t, n, W, D, rng):
 		stack(b, G, P(a, t, n, s[0], 0, s[1]), -n, t, s[2], rng)
 	# promo cards on the wall over the counter end
 	K.fq(b, G, "s6_rs_cards", P(a, t, n, W - SIDE, 0, 1.4), -n, -t, 0.0, 1.0, 2.02, 2.32, 0.01, 0.0, 0.0, 1.0, 1.0)
+	# --- Nov 1, 2026 (workstream D): more from the back of the store in the 1999 video
+	# (refs/new/radioshack_1999, 4:20-4:50): the wall of wire and cable spools on grey panels,
+	# Christmas shipping cartons and the black podium at the counter's end where the R/C box
+	# was opened
+	spools(b, G2, P(a, t, n, 2.75, 0, 12.2), -n, t, 1.6, rng)
+	cartons(b, G, P(a, t, n, 4.2, 0, 9.5), -n, t, rng)
+	# --- the standalone items (data/items/radioshack.json): separate scenes on the counter,
+	# for workstream B+C to pick up
+	items(b)
 
 ## One wall unit, `w` wide along r from o, facing f: a white back, grey shelves at three
 ## levels with red lips (boxed goods low, electronics above), white pegboard of parts from
@@ -248,3 +257,96 @@ static func dish(b, S, c, f):
 	b.cur_color = Color.WHITE
 	K.fq(b, S, "s6_rs_cards", c + f * 0.03 - u * 0.15, u, f, 0.0, 0.3, 0.75, 1.05, 0.0, 0.5, 0.0, 1.0, 1.0, true)
 	K.ob(b, c - Vector3(0.3, 0, 0.3), c + Vector3(0.3, 0, 0.3), 0.05)
+
+## A double-sided grey panel of wire and cable spools (video 4:24: a wall of black reels on grey
+## board with white price tags), `ln` long along r from o, both faces (f and -f): five rows of
+## black spools on pegs, a grey base, a header strip.
+static func spools(b, G, o, r, f, ln, rng):
+	var hgt = 1.9
+	K.lbox(b, G, "s6_rs_shelf", o, r, f, 0.0, 0.0, -0.2, ln, 0.15, 0.4, ["-y"])
+	b.cur_color = Color("#8e9094")
+	K.lbox(b, G, "vcolor", o, r, f, 0.0, 0.15, -0.03, ln, hgt - 0.15, 0.06)
+	for e in [0.0, ln - 0.04]:
+		K.lbox(b, G, "s6_rs_shelf", o, r, f, e, 0.0, -0.2, 0.04, hgt + 0.05, 0.4, [])
+	b.cur_color = Color.WHITE
+	K.lbox(b, G, "s6_rs_black", o, r, f, 0.0, hgt, -0.05, ln, 0.12, 0.1, [])
+	for sg in [1.0, -1.0]:
+		var ff = f * sg
+		var oo = o if sg > 0 else o + r * ln
+		var rr = r * sg
+		for row in 5:
+			var y = 0.42 + row * 0.32
+			var x = 0.16
+			while x < ln - 0.1:
+				var rad = rng.randf_range(0.07, 0.11)
+				var c = K.L(oo, rr, ff, x, y, 0.03)
+				disc(b, G, c, ff, rad, rng.randf_range(0.04, 0.07), Color("#141416") if rng.randf() < 0.75 else Color(["#b8202a", "#2a5ab8", "#d8a020"][rng.randi() % 3]))
+				# the reel's hub and its white tag under it
+				b.cur_color = Color("#3a3a3e")
+				b.box(G, "vcolor", K.L(oo, rr, ff, x, y, 0.085), Vector3(0.03, 0.03, 0.03))
+				b.cur_color = Color("#f2f2ee")
+				K.lbox(b, G, "vcolor", oo, rr, ff, x - 0.03, y - rad - 0.05, 0.03, 0.06, 0.035, 0.004, [])
+				x += 0.27
+		b.cur_color = Color.WHITE
+	K.ob_local(b, o, r, f, -0.05, -0.25, ln + 0.05, 0.25)
+	b.cur_color = Color.WHITE
+
+## A flat cylinder (a reel) at c, its axis along `ax`, radius `rad`, thickness `th`, colour `col`.
+static func disc(b, G, c, ax, rad, th, col):
+	b.cur_color = col
+	var s = b.st(G, "vcolor")
+	var u = ax.cross(Vector3.UP).normalized()
+	var v = u.cross(ax).normalized()
+	var seg = 14
+	for i in seg:
+		var a0 = TAU * i / seg
+		var a1 = TAU * (i + 1) / seg
+		var d0 = u * cos(a0) + v * sin(a0)
+		var d1 = u * cos(a1) + v * sin(a1)
+		var f0 = c + ax * th
+		b.tri(s, f0, f0 + d0 * rad, f0 + d1 * rad, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, ax)
+		b.tri(s, c + d0 * rad, c + d1 * rad, f0 + d1 * rad, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, (d0 + d1).normalized())
+		b.tri(s, c + d0 * rad, f0 + d1 * rad, f0 + d0 * rad, Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, (d0 + d1).normalized())
+	b.cur_color = Color.WHITE
+
+## Christmas stock at the counter's end (video 4:30-4:50): brown shipping cartons with red and white
+## tape stacked on the floor, and the black podium the clerk opened the R/C box on.
+static func cartons(b, G, o, r, f, rng):
+	var boxes = [[0.0, 0.0, 0.0, 0.55, 0.45, 0.5], [0.6, 0.0, 0.05, 0.5, 0.4, 0.45], [0.05, 0.45, 0.02, 0.45, 0.35, 0.42], [0.65, 0.4, 0.08, 0.4, 0.3, 0.35]]
+	for bx in boxes:
+		var j = rng.randf_range(-0.03, 0.03)
+		b.cur_color = Color("#a87c4c").lerp(Color("#8a6238"), rng.randf())
+		K.lbox(b, G, "vcolor", o + f * j, r, f, bx[0], bx[1], bx[2], bx[3], bx[4], bx[5], ["-y"] if bx[1] == 0.0 else [])
+		# the tape across the top and down the front: red and white
+		b.cur_color = Color("#c8262c")
+		K.lbox(b, G, "vcolor", o + f * j, r, f, bx[0] + bx[3] * 0.4, bx[1] + bx[4], bx[2], bx[3] * 0.2, 0.004, bx[5], [])
+		b.cur_color = Color("#f2f0ea")
+		K.lbox(b, G, "vcolor", o + f * j, r, f, bx[0] + bx[3] * 0.45, bx[1] + bx[4] * 0.3, bx[2] + bx[5], bx[3] * 0.1, bx[4] * 0.7, 0.004, [])
+	# the black podium beside them
+	b.cur_color = Color("#18181a")
+	K.lbox(b, G, "vcolor", o, r, f, -0.2, 0.0, 0.75, 0.6, 0.95, 0.55, ["-y"])
+	b.cur_color = Color.WHITE
+	K.ob_local(b, o, r, f, -0.25, -0.05, 1.1, 1.35)
+
+## Radio Shack's standalone items (workstream D; tools/stores/radioshack_items/, design/storefronts/
+## radio-shack.md): each entry of data/items/radioshack.json is instanced from its scene at its
+## place, as its own node under "Items" (named by its id), so workstream B+C can pick it up.
+static func items(b):
+	var J = JSON.parse_string(FileAccess.get_file_as_string("res://data/items/radioshack.json"))
+	if J == null or b.mall == null:
+		return
+	var holder = b.mall.get_node_or_null("Items")
+	if holder == null:
+		holder = Node3D.new()
+		holder.name = "Items"
+		b.mall.add_child(holder)
+		holder.owner = b.mall
+	for it in J:
+		if int(it.place.year) != 1995 or not ResourceLoader.exists(it.scene):
+			continue
+		var inst = load(it.scene).instantiate()
+		inst.name = it.id
+		inst.position = Vector3(it.place.pos[0], it.place.pos[1], it.place.pos[2])
+		inst.rotation.y = deg_to_rad(float(it.place.yaw))
+		holder.add_child(inst)
+		inst.owner = b.mall

@@ -1,0 +1,146 @@
+[
+ {
+  "id": "rs_scanner",
+  "name": "Scan-50 police scanner",
+  "class": "hand",
+  "scene": "res://items/radioshack/scanner.tscn",
+  "icon": "res://items/radioshack/icons/scanner.png",
+  "year": 1995,
+  "place": {
+   "wing": 1,
+   "year": 1995,
+   "pos": [
+    6.35,
+    0.982,
+    31.86
+   ],
+   "yaw": 180
+  }
+ },
+ {
+  "id": "rs_walkie_talkies",
+  "name": "Chatter 2 walkie-talkies (pair)",
+  "class": "hand",
+  "scene": "res://items/radioshack/walkie_talkies.tscn",
+  "icon": "res://items/radioshack/icons/walkie_talkies.png",
+  "year": 1995,
+  "place": {
+   "wing": 1,
+   "year": 1995,
+   "pos": [
+    7.15,
+    0.982,
+    31.86
+   ],
+   "yaw": 180
+  }
+ },
+ {
+  "id": "rs_rc_car_box",
+  "name": "Thunderclaw R/C 4x4 (boxed)",
+  "class": "hand",
+  "scene": "res://items/radioshack/rc_car_box.tscn",
+  "icon": "res://items/radioshack/icons/rc_car_box.png",
+  "year": 1995,
+  "place": {
+   "wing": 1,
+   "year": 1995,
+   "pos": [
+    4.4,
+    0.9,
+    30.55
+   ],
+   "yaw": -90
+  }
+ },
+ {
+  "id": "rs_cordless_phone",
+  "name": "900 MHz cordless phone",
+  "class": "hand",
+  "scene": "res://items/radioshack/cordless_phone.tscn",
+  "icon": "res://items/radioshack/icons/cordless_phone.png",
+  "year": 1995,
+  "place": {
+   "wing": 1,
+   "year": 1995,
+   "pos": [
+    8.0,
+    0.982,
+    31.86
+   ],
+   "yaw": 180
+  }
+ },
+ {
+  "id": "rs_battery_card",
+  "name": "AA batteries, 4-pack",
+  "class": "pocket",
+  "scene": "res://items/radioshack/battery_card.tscn",
+  "icon": "res://items/radioshack/icons/battery_card.png",
+  "year": 1995,
+  "place": {
+   "wing": 1,
+   "year": 1995,
+   "pos": [
+    5.5,
+    0.982,
+    31.86
+   ],
+   "yaw": 180
+  }
+ },
+ {
+  "id": "rs_pager",
+  "name": "Beeper 2000 pager",
+  "class": "pocket",
+  "scene": "res://items/radioshack/pager.tscn",
+  "icon": "res://items/radioshack/icons/pager.png",
+  "year": 1995,
+  "place": {
+   "wing": 1,
+   "year": 1995,
+   "pos": [
+    5.0,
+    0.982,
+    31.86
+   ],
+   "yaw": 180
+  }
+ },
+ {
+  "id": "rs_cb_radio",
+  "name": "CB-440 CB radio",
+  "class": "hand",
+  "scene": "res://items/radioshack/cb_radio.tscn",
+  "icon": "res://items/radioshack/icons/cb_radio.png",
+  "year": 1995,
+  "place": {
+   "wing": 1,
+   "year": 1995,
+   "pos": [
+    9.05,
+    0.982,
+    31.86
+   ],
+   "yaw": 180
+  }
+ },
+ {
+  "id": "rs_microcassette",
+  "name": "Micro-cassette recorder",
+  "class": "pocket",
+  "scene": "res://items/radioshack/microcassette.tscn",
+  "icon": "res://items/radioshack/icons/microcassette.png",
+  "year": 1995,
+  "place": {
+   "wing": 1,
+   "year": 1995,
+   "pos": [
+    9.85,
+    0.982,
+    31.86
+   ],
+   "yaw": 180
+  }
+ }
+]

@@ -18,3 +18,11 @@
 
 ## Files
 `tools/stores/small/wave9.gd`, `paint9.py` → `tex/w9/`. Hooks in `tools/build_mall.gd` and `tools/open_interiors.py`.
+
+## Nov 1, 2026 (workstream D): the gold lions
+Steven (Nov 1): "the crest is fine; add the gold lion statues out front, as in the 2D game."
+- **Source:** the 2D game (index.html): "a bronze lion sitting on its plinth either side of the door, painted on the brick as if standing in front of it, both looking straight out across the hall", drawn from a photo of a seated gold lion (the game's media `lion`: front view, full flowing mane, upright chest, straight front legs, big paws).
+- **Built:** a seated gold lion on a dark plinth either side of the doorway, 1.25 m out from the door jambs and 0.55 m out in the hall: plinth 0.55 m, lion 1.45 m tall. Sculpted from rounded solids (`lion()`, `ellipsoid()` in `wave9.gd`): body, haunches, straight front legs, paws, the tail curled round the plinth, a head with muzzle, ears and dark eyes, and a mane of two rings of flat, downturned locks. Satin gold (`w9_lion_gold`), plinth `w9_lion_plinth`. Both face out; the tail is on the outer side of each.
+- **Guessed:** size, plinth, exact spot, the gold finish (the 2D note says bronze, its photo is gold; Steven says gold). The crest, coach lamps and brick are unchanged.
+- **Period check:** cast lions at a restaurant door are timeless; fine for 1995.
+- Evidence: `production/qa/evidence/wsD-lions-share-preview-unbaked.jpg`, `wsD-lions-share-concepts-closeups-unbaked.jpg`.

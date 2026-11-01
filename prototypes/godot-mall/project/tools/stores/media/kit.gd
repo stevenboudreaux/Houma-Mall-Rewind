@@ -345,6 +345,28 @@ static func fill_mat(m, key, b):
 			# Sound Shop: rose-red italic letters on the dark fascia (Hammond 1993)
 			m.albedo_color = Color("#ff5a74"); m.roughness = 0.35
 			emit(m, Color("#ff4a66"), 1.6)
+		# Sound Shop's rebuilt front (Nov 1, 2026): the photo refs/era_1995/stores/Sound_Shop.jpg
+		# (yellow-orange lit letters with a red rim) on Southland's surviving black curved
+		# stucco fascia, black round pillars and black tile threshold (IMG_4484 f050-f055)
+		"ss_letter":
+			m.albedo_color = Color("#ffa82a"); m.roughness = 0.35
+			emit(m, Color("#ff9418"), 2.0)
+		"ss_letter_side":
+			m.albedo_color = Color("#e0401c"); m.roughness = 0.4
+			emit(m, Color("#e83a14"), 1.1)
+		"ss_stucco":
+			m.albedo_texture = b.tex("md/ss_stucco.png"); m.roughness = 0.95
+		"ss_soffit":
+			m.albedo_color = Color("#f2f0ea"); m.roughness = 0.85
+		"ss_gloss_black":
+			m.albedo_color = Color("#0c0c0e"); m.roughness = 0.08; m.metallic_specular = 0.9
+		"ss_tile_black":
+			m.albedo_texture = b.tex("md/ss_tile_black.png"); m.roughness = 0.25; m.metallic_specular = 0.6
+		"ss_alu":
+			m.albedo_color = Color("#b9bcc0"); m.metallic = 0.7; m.roughness = 0.35
+			emit(m, Color("#8a8c90"), 0.15)
+		"ss_wall_dark":
+			m.albedo_color = Color("#3a3a3c"); m.roughness = 0.8
 		"neon_red_side":
 			m.albedo_color = Color("#8a1a1a"); m.roughness = 0.4
 			emit(m, Color("#a02020"), 0.4)

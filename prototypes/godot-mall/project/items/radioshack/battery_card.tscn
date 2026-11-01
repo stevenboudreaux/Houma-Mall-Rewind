@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://items/radioshack/battery_card.res" id="1_7tr2t"]
+
+[node name="rs_battery_card" type="Node3D" unique_id=220110380]
+metadata/item_id = "rs_battery_card"
+metadata/item_name = "AA batteries, 4-pack"
+metadata/item_class = "pocket"
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=273696641]
+mesh = ExtResource("1_7tr2t")

@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://items/radioshack/rc_car_box.res" id="1_kd250"]
+
+[node name="rs_rc_car_box" type="Node3D" unique_id=1067223477]
+metadata/item_id = "rs_rc_car_box"
+metadata/item_name = "Thunderclaw R/C 4x4 (boxed)"
+metadata/item_class = "hand"
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=2106166627]
+mesh = ExtResource("1_kd250")

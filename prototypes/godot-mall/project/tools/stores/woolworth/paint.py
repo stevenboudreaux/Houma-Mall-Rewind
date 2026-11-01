@@ -93,17 +93,27 @@ DEPTS = ["TOYS", "HOUSEWARES", "DOMESTICS", "APPAREL", "HEALTH & BEAUTY", "GREET
 
 def dept_band():
     """The red band high on the perimeter walls with white department names (video 3:10,
-    5:28): 12 rows of 1024 x 128 px, each a 6 m x 0.75 m stretch."""
-    W, H = 1024, 1536
+    5:28): 12 rows of 2048 x 256 px, each a 6 m x 0.75 m stretch. Nov 1, 2026 (workstream D):
+    twice the resolution, bigger, heavier letters (caps about 0.36 m) and a white pinstripe
+    under the top and over the bottom edge, so the names read from the front of the store."""
+    W, H, R = 2048, 3072, 256
     im = Image.new("RGB", (W * SS, H * SS), RED)
     d = ImageDraw.Draw(im)
     for k, word in enumerate(DEPTS):
-        y0 = k * 128 * SS
-        d.rectangle([0, y0, W * SS, y0 + 10 * SS], fill=(150, 14, 22))
-        d.rectangle([0, y0 + 118 * SS, W * SS, y0 + 128 * SS], fill=(150, 14, 22))
-        f = ImageFont.truetype(BOLD, 70 * SS)
+        y0 = k * R * SS
+        d.rectangle([0, y0, W * SS, y0 + 16 * SS], fill=(150, 14, 22))
+        d.rectangle([0, y0 + (R - 16) * SS, W * SS, y0 + R * SS], fill=(150, 14, 22))
+        d.rectangle([0, y0 + 26 * SS, W * SS, y0 + 31 * SS], fill=(255, 255, 255))
+        d.rectangle([0, y0 + (R - 31) * SS, W * SS, y0 + (R - 26) * SS], fill=(255, 255, 255))
+        f = ImageFont.truetype(BOLD, 150 * SS)
         l, t, r, b = d.textbbox((0, 0), word, font=f)
-        d.text(((W * SS - (r - l)) / 2 - l, y0 + (128 * SS - (b - t)) / 2 - t), word, font=f, fill=(255, 255, 255))
+        sx = 1.0
+        if r - l > (W - 160) * SS:
+            sx = (W - 160) * SS / (r - l)
+            f = ImageFont.truetype(BOLD, int(150 * SS * sx))
+            l, t, r, b = d.textbbox((0, 0), word, font=f)
+        d.text(((W * SS - (r - l)) / 2 - l, y0 + (R * SS - (b - t)) / 2 - t), word, font=f, fill=(255, 255, 255),
+               stroke_width=2 * SS, stroke_fill=(255, 255, 255))
     im = im.resize((W, H), Image.LANCZOS)
     save(kb.grain(im, 1.2, 4), "dept_band", 32)
 

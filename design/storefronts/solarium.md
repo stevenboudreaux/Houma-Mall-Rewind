@@ -1,23 +1,27 @@
-# Solarium: front and tanning lobby (1995 map, store n8)
+# Solarium: front and store (1995 map, store n8)
 
-**Source (Oct 7, 2026).** The Southland facade record (level 1, from Steven's memory): "a pale stone fascia carrying only the name, in soft aqua-green lowercase neon bent as one tight line; under it a glass front onto a calm tanning-salon lobby: sea-glass walls, a white front desk with an aqua stripe, a palm, a shelf of lotions and a lit beach print."
+**Nov 1, 2026: rebuilt as a clothing store (workstream D).** Steven (Nov 1): "NOT a tanning salon. It is the teal clothing store from the 2D game", and, asked whether "a Cleo" meant the chain: "solarium is just a clothing shop."
 
-**Conflict (open question):** the game's flat front shows a dark teal fascia and clothing racks. The 3D follows the record.
+**Sources.**
+- **The 2D game (index.html, year maps, store n8 "SOLARIUM").** Sign band `#1f6f78` (teal), letters `#f6e7c0` (cream), merchandise colours cream, teal and white. The data names no chain and has no sign text beyond the store name (the same record is used for n62).
+- **Steven (Nov 1): "just a clothing shop".** Not a Cleo store: a generic teal 1990s clothing shop under its own name, Solarium, with no chain branding.
+- **Superseded:** the Oct 7 build from the facade record (level 1, memory): a pale stone fascia, aqua neon, a tanning-salon lobby with two tanning rooms. Steven says that record is wrong for this store.
 
-**Accuracy level:** 1. The neon is traced from a stand-in face (Poppins Medium) as separate letters, not one joined line.
+**Accuracy level:** 1 (colours from the 2D game; everything else guessed).
 
-**Guessed:** the depth (8 m of the 26 m stall), the layout, the two tanning rooms at the back.
-
-**Frame.** A 6 m front facing east at x = -10 (z -86 to -80), beside Rave, built 8 m deep. Map tiles x 140–142, y 57–59.
+**Frame.** A 6 m front facing east at x = -10 (z -86 to -80), beside Rave, built 8 m deep (of the 26 m stall). Map tiles x 140–142, y 57–59.
 
 ## Front
-- Pale stone fascia with "solarium" in soft aqua-green neon.
-- White-framed glass with the doorway in the middle.
+- Teal fascia (`w9_sol_teal`, #1f6f78) with "solarium" in lit cream channel letters (the Oct 7 outlines, Poppins Medium, `sol_letters.json`; lower case kept) between two fine cream rules.
+- Teal piers; glass in brushed-metal frames on a low kick, the door in the middle.
+- Two forms in the windows: one in a teal top over a cream skirt, one in cream over teal.
 
 ## Inside (walkable)
-- Sandy floor, sea-glass walls.
-- The white front desk with an aqua stripe and a register; a white bench; a potted palm by the window.
-- A shelf of lotions; a lit beach print; two tanning-room doors across the back.
+- Teal carpet, warm white walls, lay-in ceiling.
+- White slatwall face-out walls down both sides (apparel kit), a table of folded knits by the door, a round rack and a four-way down the middle.
+- The cash wrap at the back right with a teal front; two fitting rooms at the back left; the stockroom door behind.
+
+**Guessed:** all of the layout and fixtures, the lower-case name on the fascia (the 2D game only gives the name), the letter style, the depth. **Period check (1995):** slatwall, round racks, four-ways, teal-and-cream palette are all period; nothing later than 1995.
 
 ## Files
-`tools/stores/small/wave9.gd` (the six Wave 9 shops, materials `w9_*`), `paint9.py` → `tex/w9/`, `make_signs.py` (letters). Hooks in `tools/build_mall.gd` and `tools/open_interiors.py`.
+`tools/stores/small/wave9.gd` (`solarium()`, materials `w9_sol_*`). Hooks unchanged in `tools/build_mall.gd` and `tools/open_interiors.py`. Evidence: `production/qa/evidence/wsD-solarium-preview-unbaked.jpg`, `wsD-solarium-ingame-unbaked.jpg`.

@@ -41,3 +41,30 @@
 
 ## Files
 `tools/stores/small/store2.gd` (the four Wave 6 shops, materials `s6_*`), `paint.py` → `tex/sm/`; the sign: `tools/stores/signs/` (materials `sg_rs_*`). `rs_letters.json` is no longer used.
+
+## Nov 1, 2026 (workstream D): back-of-store detail and standalone items
+**Source:** the same 1999 video, now as 1 fps frames (`refs/new/radioshack_1999/`, 404 frames). New from the back of the store (frames ~185–240, 4:20–4:50): a grey board of wire and cable reels with white tags (f189–f197), brown Christmas shipping cartons with red and white tape stacked by the counter's end, and the black podium the clerk opened the R/C box on (f209–f237). Frames show real logos and products; only fixtures, colours and layout are taken.
+
+**Built (radio_shack.gd):**
+- `spools()`: a double-sided grey panel, 1.6 m long and 1.9 m high, on the floor behind the gondola (u 2.75, d 12.2–13.8): five rows of reels a side (mostly black, a few red, blue and gold), each with a hub and a white tag, a black header strip.
+- `cartons()`: four brown cartons with red tape and a white label strip, and the black podium, at the counter's end (d 9.3–10.6, u 4.15–5.55). An aisle of about 1 m stays open to the back.
+- `items()`: instances the standalone items below from `data/items/radioshack.json`, as separate nodes under `Items` in the wing scene (named by item id).
+
+**Standalone items (for inventory; pick-up is workstream B+C's).** Eight generic 1995 electronics, all under the invented brand VOLTARO with invented model names (IP rule: no real product names, logos or box art; "Realistic", "Enercell", "TRC", "Talkabout" and the like are deliberately avoided):
+
+| id | what | class | where |
+|---|---|---|---|
+| rs_scanner | Scan-50 handheld 50-channel scanner, rubber antenna, keypad, LCD | hand | counter glass top |
+| rs_walkie_talkies | Chatter 2, a pair of 49 MHz walkie-talkies with telescoping antennas | hand | counter |
+| rs_rc_car_box | Thunderclaw 1:10 R/C 4x4 in its box (invented truck art) | hand | on the R/C box stack inside the door |
+| rs_cordless_phone | 900 MHz cordless phone, handset on its base | hand | counter |
+| rs_battery_card | AA alkaline 4-pack on a blister card | pocket | counter |
+| rs_pager | Beeper 2000 numeric pager | pocket | counter |
+| rs_cb_radio | CB-440 40-channel mobile CB with its mic | hand | counter |
+| rs_microcassette | micro-cassette recorder | pocket | counter |
+
+- **Period check (1995):** 900 MHz cordless phones (1990s), numeric pagers, 40-channel CB, handheld programmable scanners, 49 MHz walkie-talkies, micro-cassette recorders, 27 MHz R/C trucks: all sold in 1995. FRS radios (1996) are deliberately not used.
+- **Pipeline:** `tools/stores/radioshack_items/paint_items.py` paints one atlas per item (`items/radioshack/tex/*.png`, 1024 px; the R/C box and phone 2048 px) and writes `spec.json` (parts in metres, origin at the bottom centre, front +z). `make_items.gd` (run under xvfb, not headless) builds `items/radioshack/<item>.res` meshes, `<item>.tscn` scenes (root Node3D named by id, metadata `item_id`, `item_name`, `item_class`) and 256 px transparent icons `items/radioshack/icons/<item>.png`.
+- **Data:** `data/items/radioshack.json`, a list of `{"id", "name", "class", "scene", "icon", "year": 1995, "place": {"wing": 1, "year": 1995, "pos": [x, y, z], "yaw": deg}}`. Positions are world metres in the wing scene; yaw turns the item's front (+z) about y (180 = facing the shoppers in front of the counter).
+- **Guessed:** which items, their placement on the counter top (the video's counter shows phones inside the showcase; the glass top is used so the items can be reached), the brand.
+- Evidence: `production/qa/evidence/wsD-radioshack-preview-unbaked.jpg`, `wsD-radioshack-items-unbaked.jpg` (close-ups and the eight icons).

@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://items/radioshack/pager.res" id="1_58p74"]
+
+[node name="rs_pager" type="Node3D" unique_id=1300803872]
+metadata/item_id = "rs_pager"
+metadata/item_name = "Beeper 2000 pager"
+metadata/item_class = "pocket"
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1788668720]
+mesh = ExtResource("1_58p74")
