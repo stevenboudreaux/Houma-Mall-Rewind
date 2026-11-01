@@ -60,7 +60,10 @@ func build_prop(module, opts):
 	m.build(self, "prop", Vector3.ZERO, Vector3.FORWARD, opts)
 
 func build_store(store_name):
-	L = JSON.parse_string(FileAccess.get_file_as_string("res://layout_mall.json"))
+	# ws/g: MALL_YEAR=2026 previews a store of the 2026 map (layout_2026.json)
+	if OS.get_environment("MALL_YEAR") == "2026":
+		YEAR = 2026
+	L = JSON.parse_string(FileAccess.get_file_as_string("res://layout_2026.json" if YEAR == 2026 else "res://layout_mall.json"))
 	for z in L.zones:
 		zones[z.id] = z
 	var ids = L.stores.keys()

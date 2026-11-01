@@ -338,6 +338,14 @@ func mat(name):
 				# the traced channel-letter signs: tools/stores/signs/channel.gd's fill_mat
 				if not load("res://tools/stores/signs/channel.gd").fill_mat(m, name.substr(3), self):
 					push_error("unknown material " + name)
+			elif name.begins_with("ww_"):
+				# ws/g: Wicked Wingz (2026, the old Chick-fil-A unit): tools/stores/wingz/store.gd's fill_mat
+				if not load("res://tools/stores/wingz/store.gd").fill_mat(m, name.substr(3), self):
+					push_error("unknown material " + name)
+			elif name.begins_with("cm_"):
+				# ws/g: Cinnamonster (2026, KarmelKorn's corner): tools/stores/cinnamonster/store.gd's fill_mat
+				if not load("res://tools/stores/cinnamonster/store.gd").fill_mat(m, name.substr(3), self):
+					push_error("unknown material " + name)
 			elif name.begins_with("cf_"):
 				# Chick-fil-A, rebuilt from Steven's video: tools/stores/cfa/store.gd's fill_mat
 				if not load("res://tools/stores/cfa/store.gd").fill_mat(m, name.substr(3), self):
@@ -1647,6 +1655,17 @@ func storefront(g, e, a, b, n, t, Ln, inner_call = false):
 			# Demo 46 (Oct 28): the arcade in the old Blockbuster Music box, built from the Oct 23
 			# footage with Pocket Change's machine modules (tools/stores/games_inc/store.gd)
 			load("res://tools/stores/games_inc/store.gd").build(self, g, e, a, b, n, t, Ln, sd)
+			return
+		if sd.name == "WICKED WINGZ":
+			# ws/g (Oct 28 sprint): the old Chick-fil-A unit, built from IMG_4441/IMG_4461
+			# (tools/stores/wingz/store.gd, design/storefronts/wicked-wingz-2026.md)
+			load("res://tools/stores/wingz/store.gd").build(self, g, e, a, b, n, t, Ln, sd)
+			return
+		if sd.name == "CINNAMONSTER":
+			# ws/g (Oct 28 sprint): KarmelKorn's corner stall from IMG_4464-4468, both faces built from
+			# the north edge's call (tools/stores/cinnamonster/store.gd, design/storefronts/cinnamonster-2026.md)
+			if n.z < -0.5:
+				load("res://tools/stores/cinnamonster/store.gd").build(self, g, e, a, b, n, t, Ln, sd)
 			return
 		if sd.name != "CORN DOG 7":
 			storefront(g, e, a, b, n, t, Ln, true)
