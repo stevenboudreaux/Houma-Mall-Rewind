@@ -49,3 +49,6 @@ prototypes/godot-mall/project/npc_src/chars/
 prototypes/godot-mall/project/npc_src/mixamo/
 prototypes/godot-mall/project/npc_src/mixamo_clips/
 prototypes/godot-mall/project/npc_src/ref/
+
+# Reference pack from the refs branch (CLAUDE-CLOUD.md)
+/refs/
