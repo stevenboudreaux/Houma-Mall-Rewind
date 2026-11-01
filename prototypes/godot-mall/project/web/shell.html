@@ -1100,9 +1100,25 @@ const engine = new Engine(GODOT_CONFIG);
 				}
 			},
 		}).then(() => {
-			setStatusMode('hidden');
-			// fetch the other wing once this one is running and has settled
-			setTimeout(window.mallPrefetchOther, 6000);
+			// ---- workstream H (Nov 1 2026, design/godot-performance.md): the card stays up while
+			// scripts/npc_warmup.gd loads and draws every shopper once. It sets window.__mallWarm to 0
+			// when it starts and 1 when done; a pack without shoppers never sets it (lift after 10
+			// frames). Never more than 30 s. window.__mallControlAt marks time-to-control for tools/qa.
+			window.__mallEngineAt = performance.now();
+			let frames = 0;
+			const lift = () => {
+				setStatusMode('hidden');
+				window.__mallControlAt = performance.now();
+				// fetch the other wing once this one is running and has settled
+				setTimeout(window.mallPrefetchOther, 6000);
+			};
+			(function waitWarm() {
+				frames++;
+				const w = window.__mallWarm;
+				if (w === 1 || (w === undefined && frames > 10) || performance.now() - window.__mallEngineAt > 30000) { lift(); return; }
+				requestAnimationFrame(waitWarm);
+			}());
+			// ---- end workstream H
 		}, displayFailureNotice);
 	}
 }());

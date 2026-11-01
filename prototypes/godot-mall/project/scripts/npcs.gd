@@ -108,13 +108,16 @@ class Shopper:
 	var gest_t := 5.0       # seconds to the next gesture while dwelling
 
 func _ready() -> void:
+	var t_ready := Time.get_ticks_msec()   # workstream H: load-time breakdown (design/godot-performance.md)
 	rng.randomize()
 	if FileAccess.file_exists(CFG):
 		var j = JSON.parse_string(FileAccess.get_file_as_string(CFG))
 		if j is Dictionary:
 			for k in j: cfg[k] = j[k]
 	if force == "0":
-		disabled = true; return
+		disabled = true
+		load("res://scripts/npc_warmup.gd").ready_now()   # workstream H: no warm-up, lift the card
+		return
 	if force.is_valid_int():
 		cfg.count = int(force)
 	var dt: Array = cfg.get("day_tint", [1, 1, 1])
@@ -122,9 +125,36 @@ func _ready() -> void:
 	rows = player.walk_rows
 	map_scale = player.map_scale
 	map_origin = player.map_origin
+	# ---- workstream H (Nov 1 2026): packs without shopper skins (the outside, the 2026 wings)
+	# skip the path grid; it cost seconds of load for nobody (design/godot-performance.md). The
+	# runner only asks this node for the grid when it has a body, which needs the same skins.
+	if load("res://scripts/npc_warmup.gd").skin_paths().is_empty():
+		disabled = true
+		print("npcs: grid 0x0, no shopper skins in this pack")
+		load("res://scripts/npc_warmup.gd").ready_now()
+		return
+	# ---- end workstream H
 	_build_grid()
 	_load_places()
 	_load_benches()
+	print("load: npcs grid+places %d ms" % (Time.get_ticks_msec() - t_ready))   # workstream H
+	# ---- workstream H (Nov 1 2026): warm every skin up behind the loading card before the first
+	# spawn, so no shopper's first appearance stalls a frame (scripts/npc_warmup.gd,
+	# design/godot-performance.md). Web only; ?warm=0 skips it.
+	var warm := OS.has_feature("web") and str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('warm') || ''")) != "0"
+	if warm:
+		set_process(false)
+		var wu = load("res://scripts/npc_warmup.gd").new()
+		var lj = JSON.parse_string(FileAccess.get_file_as_string("res://scripts/lighting.json"))
+		var day_only: bool = lj is Dictionary and bool(lj.get("day_only", false))
+		wu.self_light_on = float(cfg.self_light_day if day_only else cfg.self_light_night)
+		wu.self_light_now = float(cfg.self_light_day)
+		add_child(wu)
+		await wu.finished
+		wu.queue_free()
+	else:
+		load("res://scripts/npc_warmup.gd").ready_now()
+	# ---- end workstream H
 	rt = get_tree().current_scene.get_node_or_null("Runtime")
 	var machines := _arcade_machines()
 	_load_skins(not machines.is_empty())
@@ -132,6 +162,12 @@ func _ready() -> void:
 	_place_players(machines)
 	_spawn_drunk()
 	_spawn_pairs()
+	print("load: npcs roles spawned %d ms after _ready" % (Time.get_ticks_msec() - t_ready))   # workstream H
+	# ---- workstream H: the first crowd too, while the card is still up, then lift it
+	if warm:
+		_balance()
+		load("res://scripts/npc_warmup.gd").ready_now()
+	# ---- end workstream H
 	print("npcs: grid %dx%d, %d open cells, %d stores, %d windows, %d benches, %d crowd skins, %d pairs" % [W, H, _count_open(), stores.size(), windows.size(), benches.size(), skins.size(), pairs.size()])
 	set_process(true)
 
@@ -145,23 +181,49 @@ func _build_grid() -> void:
 	oc = map_origin * 2.0
 	open.resize(W * H); open.fill(0)
 	var obs: Array = player.obstacles + player.fx_obstacles
+	# ---- workstream H (Nov 1 2026): the same cells as before, 6-12x faster (design/godot-performance.md).
+	# Was: every walkable cell tested against every obstacle (~2.5M tests in Wing 1, 0.5 s native,
+	# seconds on a phone). Now each obstacle tests only the cells inside its bounding box (+1 cell),
+	# with the identical test, so the result cannot differ.
 	for cy in range(H):
 		var r: String = rows[cy / 2]
 		for cx in range(W):
-			if r[cx / 2] != "1": continue
-			var c := _centre(Vector2i(cx, cy))
-			var blocked := false
-			for o in obs:
-				if o.size() == 3 and not (o[0] is String):
-					if Vector2(c.x - o[0], c.z - o[1]).length() < float(o[2]) + 0.45: blocked = true; break
-				elif o[0] == "rect":
-					if c.x > o[1] - 0.4 and c.x < o[3] + 0.4 and c.z > o[2] - 0.4 and c.z < o[4] + 0.4: blocked = true; break
-			if not blocked: open[cy * W + cx] = 1
-	# distance to the nearest closed cell (4-neighbour BFS from every closed cell)
+			if r[cx / 2] == "1": open[cy * W + cx] = 1
+	var inv := 1.0 / cell
+	for o in obs:
+		var x0: float; var x1: float; var z0: float; var z1: float
+		var circle := false
+		if o.size() == 3 and not (o[0] is String):
+			var rr := float(o[2]) + 0.45
+			x0 = o[0] - rr; x1 = o[0] + rr; z0 = o[1] - rr; z1 = o[1] + rr; circle = true
+		elif o[0] == "rect":
+			x0 = o[1] - 0.4; x1 = o[3] + 0.4; z0 = o[2] - 0.4; z1 = o[4] + 0.4
+		else:
+			continue
+		# centre x = (cx + 0.5 - oc.x) * cell  =>  cx = x / cell + oc.x - 0.5
+		var ca := maxi(0, int(floor(x0 * inv + oc.x - 0.5)) - 1); var cb := mini(W - 1, int(ceil(x1 * inv + oc.x - 0.5)) + 1)
+		var ra := maxi(0, int(floor(z0 * inv + oc.y - 0.5)) - 1); var rb := mini(H - 1, int(ceil(z1 * inv + oc.y - 0.5)) + 1)
+		for cy in range(ra, rb + 1):
+			for cx in range(ca, cb + 1):
+				var i := cy * W + cx
+				if open[i] == 0: continue
+				var c := _centre(Vector2i(cx, cy))
+				if circle:
+					if Vector2(c.x - o[0], c.z - o[1]).length() < float(o[2]) + 0.45: open[i] = 0
+				elif c.x > o[1] - 0.4 and c.x < o[3] + 0.4 and c.z > o[2] - 0.4 and c.z < o[4] + 0.4:
+					open[i] = 0
+	# distance to the nearest closed cell (4-neighbour BFS). Seeded from the closed cells that touch
+	# an open one (was: from every closed cell): every path from a closed cell into the open passes
+	# such a cell, so the distances are the same, and the queue is ~30x shorter.
 	wdist.resize(W * H); wdist.fill(-1)
 	var q := PackedInt32Array(); var qi := 0
 	for i in range(W * H):
-		if open[i] == 0: wdist[i] = 0; q.append(i)
+		if open[i] == 0:
+			wdist[i] = 0
+			var x := i % W; var y := i / W
+			if (x > 0 and open[i - 1] == 1) or (x < W - 1 and open[i + 1] == 1) or (y > 0 and open[i - W] == 1) or (y < H - 1 and open[i + W] == 1):
+				q.append(i)
+	# ---- end workstream H
 	while qi < q.size():
 		var i := q[qi]; qi += 1
 		var x := i % W; var y := i / W
