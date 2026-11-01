@@ -26,3 +26,10 @@ Steven (Nov 1): "the crest is fine; add the gold lion statues out front, as in t
 - **Guessed:** size, plinth, exact spot, the gold finish (the 2D note says bronze, its photo is gold; Steven says gold). The crest, coach lamps and brick are unchanged.
 - **Period check:** cast lions at a restaurant door are timeless; fine for 1995.
 - Evidence: `production/qa/evidence/wsD-lions-share-preview-unbaked.jpg`, `wsD-lions-share-concepts-closeups-unbaked.jpg`.
+
+## Nov 1, 2026 (workstream T2): the Blender lion, second pass
+`models/bl_ls_lion` (Blender, `design/godot-blender-pipeline.md` "Second batch") was rebuilt after Steven's
+"they don't look good" and "fill out the side and back": carved face, tiered mane locks front and back,
+seated anatomy on the side and back. It is not in the scene yet: it replaces `wave9.gd lion()` when the
+integration session swaps it in, at D's two spots (`P(lu, 0, -0.55)`, the right one mirrored). Size guess
+to settle: the model is ~0.95 m on a 0.32 m plinth, D's are 1.45 m on 0.55 m.
