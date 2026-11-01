@@ -4,6 +4,7 @@
 # with tools/qa/preview.gd and writes <out-prefix>-<i>.png, one per camera, plus
 # <out-prefix>-sheet.png with all of them side by side. Needs godot 4.7 at
 # /home/claude/godot (or on PATH) and xvfb-run. Takes ~10-60 s.
+# PREVIEW_SCRIPT=res://... swaps in a subclass of preview.gd (tools/blender/godot_check.sh uses it).
 set -e
 T=$1; OUT=$2; CAMS=${3:-"0,1.6,3.5,0,-10"}; OPTS=${4:-"{}"}; LIGHT=${5:-lit}
 P=$(cd "$(dirname "$0")/../.." && pwd)
@@ -12,7 +13,7 @@ TMP=$(mktemp -d)
 mkdir -p "$(dirname "$OUT")"
 cd "$P"
 timeout 300 xvfb-run -a -s "-screen 0 1280x720x24" "$G" --path . --rendering-driver opengl3 --resolution 1280x720 \
-  --write-movie "$TMP/f.png" --fixed-fps 1 --script res://tools/qa/preview.gd -- "$T" "$CAMS" "$OPTS" "$LIGHT" > "$TMP/log.txt" 2>&1 || true
+  --write-movie "$TMP/f.png" --fixed-fps 1 --script "${PREVIEW_SCRIPT:-res://tools/qa/preview.gd}" -- "$T" "$CAMS" "$OPTS" "$LIGHT" > "$TMP/log.txt" 2>&1 || true
 grep -E "ERROR|SCRIPT ERROR|Parse Error|error\(" "$TMP/log.txt" | grep -v "Condition \"!windows.has" | head -20 || true
 python3 - "$TMP" "$OUT" <<'EOF'
 import sys, os, glob
