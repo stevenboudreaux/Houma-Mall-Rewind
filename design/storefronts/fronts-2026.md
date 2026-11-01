@@ -38,3 +38,21 @@ Cakelicious inside; which way Lids' window and entry sit (from f005's angle).
 
 **Evidence.** `production/qa/evidence/wsG-front-<store>-unbaked.jpg` (frame | unbaked preview), and
 `wsG-front-gac-1995-unbaked.jpg`. Wings 1 and 2 (2026) need a rebake; wing 2 (1995) for the GAC case.
+
+## Step 5: end caps and corners (Nov 1)
+- **Zales corner** (s33, the 1995 Frank's unit, Frank's/Orange Julius side of the Shoe Dept court):
+  `zales()` in `fronts26/store.gd`. Two open jewellery bays either side of a tall cream corner pier
+  with a dark brown base; the left bay as seen from the court is recessed 1.6 m behind the pier with
+  its fascia set back with it, the right bay at the front line; a ZALES (Demo 43 spec) over each bay,
+  sconces on the pier, cherry cases. Frames refs/new/woolworth_corner t026_001–009. **Guessed:** the
+  recess depth (1.6 m) and which bay is recessed (read from t026_003–005, the camera moving; say if it
+  is the other way). 1995 (Frank's, Orange Julius) unchanged: the frames are 2026 only, and the
+  recess is not in the 1995 facade record.
+- **The Billiard Room / Woolworth corner** ("still doesn't look quite right"): in 2026 the left glass
+  run (toward Aéropostale) stands 1.1 m proud of the black fascia, frameless, with a glass return back
+  to the entry's black column and a black roof; inside cream walls, white round columns wrapped in
+  caution tape, a grey floor, a lay-in ceiling (t026_021–029). The 1995 Woolworth corner is workstream
+  D's file; not touched.
+- **Claire's double end cap** and **Cakelicious' corner**: built with step 4 (Claire's glass wraps
+  both fronts of the L; Cakelicious' clipped corner is its own glass face with Tuscan columns).
+- Evidence `wsG-corner-zales-unbaked.jpg`, `wsG-corner-billiard-unbaked.jpg`.

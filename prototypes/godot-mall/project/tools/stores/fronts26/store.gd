@@ -21,7 +21,7 @@ const RECIPES = {
 	"SPENCER'S": "spencers", "GREAT AMERICAN COOKIES": "gac", "LIDS": "lids", "JOURNEYS": "journeys",
 	"CLAIRE'S": "claires", "THE BILLIARD ROOM": "billiard", "DJS JEWELERS": "djs", "FOOT LOCKER": "footlocker",
 	"AÉROPOSTALE": "aero", "RAINBOW": "rainbow", "BATH & BODY WORKS": "bbw", "CAKELICIOUS": "cake",
-	"AUNTIE ANNE'S": "auntie", "AT&T": "att",
+	"AUNTIE ANNE'S": "auntie", "AT&T": "att", "ZALES": "zales",
 }
 ## Stores whose room is built once (with the first edge's call) from their 2026 outline in world
 ## x, z (eras_2026.json's rect, minus the corner the hall takes): "poly" the floor and ceiling,
@@ -407,20 +407,39 @@ static func claires(sd, e):
 ## IMG_4492 f020, refs/new/woolworth_corner). The 1995 Woolworth interior is workstream D's; this is
 ## only the 2026 front and the first 10 m behind it.
 static func billiard(sd, e):
-	room(10.0, "#1c1c1e", "#7a7874", "black", 3.4, 0.8)
+	# Nov 1 (step 5, refs/new/woolworth_corner t026_021-029): inside it is cream walls, white round
+	# columns wrapped in caution tape, a grey floor and a lay-in ceiling, not a black box; the left
+	# glass run (toward Aéropostale) stands 1.1 m proud of the black fascia line, frameless, with a
+	# glass return back to the entry's black column
+	room(10.0, "#e8dcc0", "#6c6e70", "white", 3.4, 0.9)
 	band(sd, "#0e0e10", 3.2, 0.18, "f26_gloss")
 	var c = LN * 0.5
-	glazing(0.0, c - 2.2, 3.2, "#111111", 0.0, "", 0.0, 0.03)
+	var pj = 1.1
+	glazing(0.0, c - 2.2, 3.2, "#111111", 0.0, "", 0.0, 0.03, -pj)
+	# the projecting bay's glass return and its little black roof
+	bb.quad("glass", "glass", [P(c - 2.2, 0, -pj), P(c - 2.2, 0, 0), P(c - 2.2, 3.2, 0), P(c - 2.2, 3.2, -pj)], (P(1, 0, 0) - P(0, 0, 0)), [], true)
+	cbx("#111111", 0.0, 3.2, -pj - 0.02, c - 2.2, 0.1, pj + 0.02)
+	cbx("#111111", c - 2.25, 0.0, -pj, 0.05, 3.2, 0.05)
+	col("#6c6e70")
+	bb.quad(G, "vcolor", [P(0, 0.004, -pj), P(c - 2.2, 0.004, -pj), P(c - 2.2, 0.004, 0), P(0, 0.004, 0)], UP)
+	bb.cur_color = Color.WHITE
+	K.ob(bb, P(0, 0, -pj - 0.05), P(c - 2.2, 0, 0), 0.05)
 	glazing(c + 2.2, LN, 3.2, "#111111", 0.0, "", 0.0, 0.03)
-	cbx("#111111", c - 2.3, 0.0, -0.1, 0.1, 3.2, 0.1)
 	cbx("#111111", c + 2.2, 0.0, -0.1, 0.1, 3.2, 0.1)
 	bx(G, "f26_marble", c - 0.25, 0.0, -0.05, 0.5, 3.2, 0.5)
-	# APL banners behind the glass on the left, dart lanes with toe lines
+	# APL banners and the dart lanes on the left; white columns with caution tape
 	for k in 3:
 		front_q(G, "f26_banners", 1.0 + k * 1.6, 2.3 + k * 1.6, 1.0, 2.4, 0.6, (k % 2) * 0.5, 0.0, (k % 2) * 0.5 + 0.5, 1.0)
 	for k in 3:
 		cbx("#e8e8e8", 1.2 + k * 1.6, 0.003, 2.6, 0.9, 0.006, 0.05, GS)
-	# pool tables
+	for cx in [c - 4.0, c + 3.0, c + 8.0]:
+		if cx > 0.5 and cx < LN - 0.5:
+			col("#f2f0ea")
+			bb.cyl(G, "vcolor", P(cx, 0, 3.5), 0.22, 0.22, 3.4, 14, false, false)
+			col("#f2c81e")
+			for y in [1.0, 1.3]:
+				bb.cyl(GS, "vcolor", P(cx, y, 3.5), 0.23, 0.23, 0.08, 14, false, false)
+			bb.cur_color = Color.WHITE
 	var x = 3.0
 	var k2 = 0
 	while x < LN - 2.0:
@@ -651,6 +670,50 @@ static func phones_row(x, d, w, y, n):
 		col("#101012")
 		bx(GS, "vcolor", x - 0.06, y, d + k * (w / n), 0.02, 0.18, 0.09)
 	bb.cur_color = Color.WHITE
+
+## Zales (s33, the 1995 Frank's unit on the Shoe Dept court's south side, 8 m): two open
+## jewellery bays either side of a tall cream corner pier with a dark brown base; the left bay (as
+## seen from the court) is set 1.6 m back behind the pier, the right bay at the front line; each
+## bay has its own ZALES (the Demo 43 halo-lit spec) on the cream fascia, sconces on the pier,
+## lit cases on cherry bases, portrait posters (refs/new/woolworth_corner t026_001-009, IMG_4437,
+## IMG_4492 f014-f015). The 1995 Frank's/Orange Julius front is left as it was.
+static func zales(sd, e):
+	var rec = 1.6
+	var px0 = 3.6
+	var px1 = 4.4
+	room(8.0, "#ece6da", "#b8aa98", "white", 3.0)
+	col("#ece6da")
+	# the right bay's fascia at the front line; the left bay's set back with it, the recess's ceiling
+	# at the lane height and its left side wall
+	bx(G, "vcolor_matte", px0, 3.0, -0.16, LN - px0, bb.LANE_H - 3.0, 0.16)
+	bx(G, "vcolor_matte", 0.0, 3.0, rec - 0.16, px0, bb.LANE_H - 3.0, 0.16)
+	bb.quad(G, "lane_ceiling", [P(0, bb.LANE_H - 0.01, -0.16), P(px0, bb.LANE_H - 0.01, -0.16), P(px0, bb.LANE_H - 0.01, rec - 0.16), P(0, bb.LANE_H - 0.01, rec - 0.16)], Vector3.DOWN)
+	bx(G, "vcolor_matte", 0.0, 0.0, -0.16, 0.25, bb.LANE_H, rec)
+	bx(G, "vcolor_matte", px0, 3.0, -0.36, px1 - px0, bb.LANE_H - 3.0, rec + 0.2)
+	# the corner pier, proud of both bays
+	bx(G, "vcolor_matte", px0, 1.0, -0.36, px1 - px0, 2.0, rec + 0.2)
+	col("#3a2a22")
+	bx(G, "vcolor", px0 - 0.01, 0.0, -0.37, px1 - px0 + 0.02, 1.0, rec + 0.22)
+	col("#ece6da")
+	bx(G, "vcolor_matte", LN - 0.25, 0.0, -0.16, 0.25, 3.0, 0.16)
+	bb.cur_color = Color.WHITE
+	for sc in [[px0 - 0.02, rec * 0.5 - 0.3, -1.0], [px1 + 0.02, -0.2, 1.0]]:
+		col("#2a2420")
+		bx(GS, "vcolor", sc[0] - 0.04, 2.3, sc[1], 0.08, 0.22, 0.12)
+		col("#fff2d8")
+		bx(GD, "f26_glow", sc[0] - 0.05 + sc[2] * 0.04, 2.45, sc[1] + 0.02, 0.1, 0.08, 0.08, [], true)
+	bb.cur_color = Color.WHITE
+	var S = S26.for_store("ZALES")
+	S26.build(bb, G + "_sg26", "ZALES", P(px0 * 0.5, 3.6, rec - 0.17), nn, px0 - 0.6, 0.6, S)
+	S26.build(bb, G + "_sg26b", "ZALES", P((px1 + LN) * 0.5, 3.6, -0.17), nn, LN - px1 - 0.6, 0.6, S)
+	# the cases: along each bay's front and down the side wall, cherry bases, lit tops
+	showcase(px0 * 0.5, rec + 1.0, px0 - 0.8, 0.6, "#6a2a1e", "f26_jewelry")
+	showcase((px1 + LN) * 0.5, 1.2, LN - px1 - 0.8, 0.6, "#6a2a1e", "f26_jewelry")
+	showcase(LN - 0.6, 4.0, 0.6, 2.4, "#6a2a1e", "f26_jewelry")
+	showcase(0.6, 4.6, 0.6, 2.4, "#6a2a1e", "f26_jewelry")
+	front_q(G, "f26_posters", 2.0, 3.0, 1.3, 2.6, 7.95, 0.25, 0.0, 0.5, 1.0)
+	front_q(G, "f26_posters", 5.0, 6.0, 1.3, 2.6, 7.95, 0.75, 0.0, 1.0, 1.0)
+	ob_room(8.0)
 
 # ------------------------------------------------------------------ shared pieces
 ## A black riveted steel grid frame over the whole front (Aéropostale): verticals every 1.25 m,
