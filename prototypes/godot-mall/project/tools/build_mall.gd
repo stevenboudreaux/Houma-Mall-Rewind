@@ -342,6 +342,14 @@ func mat(name):
 				# ws/g: Wicked Wingz (2026, the old Chick-fil-A unit): tools/stores/wingz/store.gd's fill_mat
 				if not load("res://tools/stores/wingz/store.gd").fill_mat(m, name.substr(3), self):
 					push_error("unknown material " + name)
+			elif name.begins_with("f26_"):
+				# ws/g: the 2026 "through the glass" fronts: tools/stores/fronts26/store.gd's fill_mat
+				if not load("res://tools/stores/fronts26/store.gd").fill_mat(m, name.substr(4), self):
+					push_error("unknown material " + name)
+			elif name.begins_with("gac_"):
+				# ws/g: Great American Cookies' case (both years): tools/stores/gac/case.gd's fill_mat
+				if not load("res://tools/stores/gac/case.gd").fill_mat(m, name.substr(4), self):
+					push_error("unknown material " + name)
 			elif name.begins_with("cm_"):
 				# ws/g: Cinnamonster (2026, KarmelKorn's corner): tools/stores/cinnamonster/store.gd's fill_mat
 				if not load("res://tools/stores/cinnamonster/store.gd").fill_mat(m, name.substr(3), self):
@@ -1663,6 +1671,11 @@ func storefront(g, e, a, b, n, t, Ln, inner_call = false):
 			# ws/g (Oct 28 sprint): the old Chick-fil-A unit, built from IMG_4441/IMG_4461
 			# (tools/stores/wingz/store.gd, design/storefronts/wicked-wingz-2026.md)
 			load("res://tools/stores/wingz/store.gd").build(self, g, e, a, b, n, t, Ln, sd)
+			return
+		if load("res://tools/stores/fronts26/store.gd").has(sd.name):
+			# ws/g (Oct 28 sprint, step 4): the front and the first metres inside as filmed
+			# (tools/stores/fronts26/store.gd, design/storefronts/fronts-2026.md)
+			load("res://tools/stores/fronts26/store.gd").build(self, g, e, a, b, n, t, Ln, sd)
 			return
 		if sd.name == "CINNAMONSTER":
 			# ws/g (Oct 28 sprint): KarmelKorn's corner stall from IMG_4464-4468, both faces built from
