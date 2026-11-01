@@ -170,6 +170,39 @@ Always first person in VR: the avatar is hidden and its camera never made curren
 V / the View button do nothing; the buttons hide. Leaving VR restores the saved view. The flat
 `player.cam` that VR hands back to is untouched.
 
+## Checks (Nov 1, on `ws/v-avatar`)
+- Native, unbaked (`xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 --script
+  res://tools/qa/avatar_test.gd -- --wing=… [--year=2026] --out=… --spots="name:x,z,yaw,pitch;…"`):
+  wing 1 (Kay-Bee aisle `-13,-56.2,90,-8`, hall `30,0,90,-8`) **27 checks OK**; wing 2 (hall
+  `-20,54,90,-8`, Pocket Change aisle `-105,69,180,-10`, the dice in hand, VR) **31 OK**; wing 2 2026
+  (games, inc. `-114,64,180,-10`, hall `-60,54,90,-8`, VR) **29 OK**. Each: walking plays the walk
+  clip at ground speed (2.00 m/s / 1.616 = ×1.24 for `walk_m`, / 1.623 = ×1.23 for `walk_f`), idle
+  standing, camera current and clear of walls and glass and under 1.95 m, first person = the eye
+  camera at 1.62 m with speed ×1 and no body, the creator's controls on screen at 1280×720, 390×844 and
+  844×390, a new body animated (not its T-pose).
+- Web (`tools/export_web.sh`, both years, wings 1–2; `CHROMIUM=/opt/pw-browsers/chromium python3
+  tools/qa/avatar_webtest.py "<build>/index.html?wing=2" <out>`): **AVATAR WEB OK (12 checks), 0
+  console errors**: the creator on a first visit (desktop, phone portrait, phone landscape), Enter =
+  Done → third person, V → first person saved, a reload keeps both, Escape = Skip → the default in
+  first person, a tap on View, a touch-drag walk in third person, a `?cam=` link without the creator.
+- `tools/qa/movetest.py` on `?wing=2&view=third`: hall and arcade load with **0 errors**, the touch walk
+  moves (MOVED).
+- `tools/qa/vrtest.py` (IWER Quest 2 emulator) with `view=third` added to every load: **ALL OK** (25):
+  VR enters, walks, turns, jumps, plays a machine and crosses wings as before, in first person.
+- `tools/qa/avatar_sheet.gd`: every body in its own colours and recoloured (`wsV-bodies-sheet.jpg`).
+
+**Evidence** (`production/qa/evidence/`): `wsV-*-unbaked.jpg` native without a lightmap;
+`wsV-web-*` / `wsV-movetest-*` the web build with the current published lightmaps (nothing baked
+changed, so **no rebake is needed** for this workstream).
+- Creator: `wsV-web-creator-desktop`, `wsV-web-creator-phone-portrait`, `wsV-web-creator-phone-landscape`
+  (and the `-native` ones after Random).
+- Third person: `wsV-tp-hall-walk-unbaked`, `wsV-tp-hall-idle-unbaked`, `wsV-tp-store-kaybee-unbaked`,
+  `wsV-tp-arcade-pocketchange-unbaked`, `wsV-tp-arcade-gamesinc-2026-unbaked`, `wsV-tp-hall-2026-unbaked`,
+  `wsV-tp-hand-dice-unbaked`, `wsV-web-tp-hall-desktop`, `wsV-web-tp-phone-walk`, `wsV-web-tp-phone-portrait`,
+  `wsV-movetest-tp-hall`, `wsV-movetest-tp-arcade`.
+- First person unchanged: `wsV-fp-hall-unchanged-unbaked`, `wsV-fp-arcade-unchanged-unbaked`,
+  `wsV-web-fp-hall-desktop`, `wsV-web-fp-camlink-unchanged`.
+
 ## Not done / open
 - Hair **style** is the body's (16 hairstyles across the bodies, Ch01 bald); only its colour changes.
 - The words are flat on the chest; on a body leaning forward they can float a few millimetres.
@@ -177,3 +210,6 @@ V / the View button do nothing; the buttons hide. Leaving VR restores the saved 
 - In a crowd the avatar can pass through a shopper (no physics, as before in first person).
 - The palettes and the 2.0 m/s pace are guesses for Steven to tune (`avatar_look.gd`, `avatar.gd` `TP_WALK`).
 - First-visit creator for a shared `?cam=` link is skipped on purpose; the button is there.
+- The Top row's 11 swatches are ~28 px on a 390 px-wide phone, under Apple's 44 pt guideline; they
+  tap fine in the test, but a two-row palette may be kinder.
+- Entering VR with the creator open closes it (Skip on a first visit); the headset can't show it.

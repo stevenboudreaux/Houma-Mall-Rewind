@@ -18,3 +18,6 @@ Run the .gd tools with `godot --headless --path . --script res://tools/qa/<tool>
   files are in each package's `build/`). Serve a folder holding the export together with `play/`'s
   pages on :8765. Prints ALL OK. Its in-VR screenshots are black; it checks behaviour.
 - `vrboard.gd`: the VR prompt board rendered natively (hint, menu, seam prompt).
+- `avatar_test.gd` (native, unbaked), `avatar_webtest.py` (web build), `avatar_sheet.gd` (every
+  avatar body, own colours vs recoloured): the avatar and the first / third person view
+  (workstream V, `design/godot-avatar.md` "Checks").
