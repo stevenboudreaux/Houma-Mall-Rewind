@@ -20,3 +20,6 @@ Run the .gd tools with `godot --headless --path . --script res://tools/qa/<tool>
 - `vrboard.gd`: the VR prompt board rendered natively (hint, menu, seam prompt).
 - `packformats.py <a.pck> [b.pck …] [--files] [--json out]`: lists the textures inside web packs by how they are stored (S3TC/BPTC, ETC2/ASTC, WebP lossless/lossy, raw). A desktop pack must show no etc2/astc, a mobile pack no s3tc/bptc (design/godot-build-hosting.md, Nov 1 2026).
 - `frametimes.py <url-path> <out.json> [--secs 30] [--runs N] [--size 480x270] [--noflip]`: load phases (wasm, pack, setup, card, control) and every frame interval for N s after control, in headless Chromium on SwiftShader; compare runs, not devices (design/godot-performance.md). `?warm=0` in the URL turns the NPC warm-up off for A/B.
+- `avatar_test.gd` (native, unbaked), `avatar_webtest.py` (web build), `avatar_sheet.gd` (every
+  avatar body, own colours vs recoloured): the avatar and the first / third person view
+  (workstream V, `design/godot-avatar.md` "Checks").
