@@ -23,10 +23,10 @@
 See photos/ (Steven's photos for this store) and tools/stores/signs/ (make_logos.py batch3, channel.gd sg_* materials).
 A black box sign hung out over the entrance (3.4 x 1.3 m, 1.2 m deep, on a stem to the ceiling), dark glass face, RAVE in pink lit letters (Poppins Black, OFL, slanted 14 degrees). Replaces the brushed-steel panels and red letters.
 
-## Nov 1, 2026 (workstream D): party goods
-Steven (Nov 1): "mostly party stuff, a few black items."
-- **Read as:** party goods and novelties, with a few black clothes. Built: wall bays of packaged party goods (Woolworth's invented party and candy stock sheets, `md/stock_party`, `stock_candy`) down the left wall and the front of the right wall, under the poster band; a low two-bay gondola of party goods down the middle; bunches of helium balloons (bright latex rounds on white strings) over the gondola and in the right window; a short wall of black tees on the right wall by the cash wrap; one black-dressed form in the left window. The posters stay high on both walls; the round racks of black clothes are gone.
-- **Guessed / open:** whether "party stuff" means party supplies (built) or party and club wear. If it is clothes, the bays swap back to racks. Rave the chain sold juniors' clothing in the 1990s; Steven's memory is followed.
-- **Period check (1995):** latex balloons, packaged party goods, posters with invented words: no anachronism.
+## Nov 1, 2026 (workstream D): going-out clothes
+Steven (Nov 1): "mostly party stuff, a few black items", then: "rave is a clothing store, just 'party' type clothes for women going out." (A first pass the same day read "party stuff" as party supplies and balloons; superseded.)
+- **Built:** going-out clothes for women: slip dresses, sequin minis, satin tops over short skirts or slim pants, in jewel colours (red, purple, teal, navy, gold), silver and white, and some black (`w9/rave_dresses.png`, painted by `paint9_d.py`, invented, no labels). Hung face-out on chrome wall rails in two tiers down both walls (dresses below, tops above), and on three round racks down the middle. Forms in the windows: a red dress, and a silver top over black. The posters stay high on both walls; the cash wrap stays at the back.
+- **Guessed:** the mix of colours and garments, the fixtures.
+- **Period check (1995):** slip dresses, sequins and satin going-out tops are mid-1990s juniors' and women's fashion; no anachronism.
 - **Unchanged:** the front (the black box sign with RAVE in pink, Oct 7 sign pass).
-- Code: `wave9.gd` `rave()` and `balloons()`, material `w9_balloon`. Evidence: `production/qa/evidence/wsD-rave-preview-unbaked.jpg`.
+- Code: `wave9.gd` `rave()`, materials `w9_rave_dresses`, `w9_rave_rack`. Evidence: `production/qa/evidence/wsD-rave-preview-unbaked.jpg`, `wsD-rave-ingame-unbaked.jpg`.

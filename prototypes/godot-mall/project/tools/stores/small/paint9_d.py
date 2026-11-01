@@ -11,6 +11,8 @@ written to tex/w9/*.png:
 - concepts_spatter.png: spatter-paint flecks for the window solids (Steven: "the shapes are
   right; texture them more"; the finish is a guess, a period kids'-store look).
 
+- rave_dresses.png: Rave's going-out clothes hung face-out (Steven, Nov 1).
+
 Everything is invented apart from the store's own name.
   python3 tools/stores/small/paint9_d.py   (from the project folder)
 """
@@ -137,6 +139,49 @@ def spatter():
     save(im, "concepts_spatter", 16)
 
 
+def rave_dresses():
+    """Rave's walls (Steven, Nov 1: "a clothing store, just party type clothes for women going
+    out"): going-out clothes hung face-out on a rail: slip dresses, sequin minis, satin tops,
+    a few black. 1024 x 512 = 2.4 m x 1.35 m (repeats along the wall). Invented, no labels."""
+    W, H = 1024 * SS, 512 * SS
+    rnd = random.Random(941)
+    im = Image.new("RGB", (W, H), (44, 44, 48))
+    d = ImageDraw.Draw(im)
+    d.rectangle([0, 18 * SS, W, 24 * SS], fill=(190, 192, 198))          # the chrome rail
+    cols = [(196, 20, 60), (20, 20, 22), (120, 40, 160), (210, 210, 220), (230, 70, 140), (30, 120, 150),
+            (20, 20, 22), (200, 160, 60), (160, 20, 40), (30, 40, 110)]
+    x = 8 * SS
+    while x < W - 40 * SS:
+        c = rnd.choice(cols)
+        w = rnd.randint(78, 104) * SS
+        kind = rnd.random()
+        top = 40 * SS
+        d.line([(x + w // 2, 20 * SS), (x + w // 2, top)], fill=(170, 170, 176), width=3 * SS)   # the hanger hook
+        d.line([(x + 10 * SS, top + 6 * SS), (x + w // 2, top - 4 * SS), (x + w - 10 * SS, top + 6 * SS)], fill=(170, 170, 176), width=3 * SS)
+        if kind < 0.55:
+            # a dress: thin straps, a fitted bodice, a skirt flaring to mini or knee length
+            ln = rnd.choice([300, 340, 400]) * SS
+            d.line([(x + w * 0.3, top), (x + w * 0.33, top + 40 * SS)], fill=c, width=2 * SS)
+            d.line([(x + w * 0.7, top), (x + w * 0.67, top + 40 * SS)], fill=c, width=2 * SS)
+            d.polygon([(x + w * 0.28, top + 40 * SS), (x + w * 0.72, top + 40 * SS), (x + w * 0.66, top + 150 * SS),
+                       (x + w * 0.9, top + ln), (x + w * 0.1, top + ln), (x + w * 0.34, top + 150 * SS)], fill=c)
+        else:
+            # a top over a short skirt or slim pants on the same hanger
+            d.polygon([(x + w * 0.15, top + 10 * SS), (x + w * 0.85, top + 10 * SS), (x + w * 0.8, top + 170 * SS), (x + w * 0.2, top + 170 * SS)], fill=c)
+            c2 = rnd.choice([(20, 20, 22), (210, 210, 220), (30, 40, 110)])
+            d.rectangle([x + w * 0.25, top + 175 * SS, x + w * 0.75, top + rnd.choice([300, 380]) * SS], fill=c2)
+        # sequins and satin sheen: flecks on some, a soft highlight on all
+        if rnd.random() < 0.5:
+            for _ in range(160):
+                fx = x + rnd.uniform(0.2, 0.8) * w
+                fy = top + rnd.uniform(40, 300) * SS
+                v = tuple(min(255, k + 90) for k in c)
+                d.ellipse([fx - 2 * SS, fy - 2 * SS, fx + 2 * SS, fy + 2 * SS], fill=v)
+        d.line([(x + w * 0.42, top + 50 * SS), (x + w * 0.38, top + 280 * SS)], fill=tuple(min(255, k + 45) for k in c), width=5 * SS)
+        x += w - 16 * SS
+    save(kb.grain(im.resize((1024, 512), Image.LANCZOS), 1.2, 943), "rave_dresses", 96)
+
+
 def floor():
     N = 512   # 4 x 4 tiles of 0.305 m
     a = np.zeros((N, N, 3), np.float32)
@@ -154,5 +199,5 @@ def floor():
 
 
 if __name__ == "__main__":
-    siding(); sign_serif(); bags(); spatter(); floor()
+    siding(); sign_serif(); bags(); spatter(); floor(); rave_dresses()
     print("wrote tex/w9/concepts_*.png")

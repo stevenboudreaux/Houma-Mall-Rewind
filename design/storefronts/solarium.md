@@ -1,10 +1,10 @@
 # Solarium: front and store (1995 map, store n8)
 
-**Nov 1, 2026: rebuilt as a clothing store (workstream D).** Steven (Nov 1): "NOT a tanning salon. It is the teal clothing store from the 2D game … a Cleo."
+**Nov 1, 2026: rebuilt as a clothing store (workstream D).** Steven (Nov 1): "NOT a tanning salon. It is the teal clothing store from the 2D game", and, asked whether "a Cleo" meant the chain: "solarium is just a clothing shop."
 
 **Sources.**
 - **The 2D game (index.html, year maps, store n8 "SOLARIUM").** Sign band `#1f6f78` (teal), letters `#f6e7c0` (cream), merchandise colours cream, teal and white. The data names no chain and has no sign text beyond the store name (the same record is used for n62).
-- **Steven's word "a Cleo".** Not in the 2D data. Cleo is a women's clothing chain; whether Steven means that Solarium was a Cleo store, or a store like a Cleo, is **an open question** (asked in the Nov 1 report). Until he answers, the store is built as a generic teal 1990s women's clothing shop under the name Solarium, with no Cleo branding.
+- **Steven (Nov 1): "just a clothing shop".** Not a Cleo store: a generic teal 1990s clothing shop under its own name, Solarium, with no chain branding.
 - **Superseded:** the Oct 7 build from the facade record (level 1, memory): a pale stone fascia, aqua neon, a tanning-salon lobby with two tanning rooms. Steven says that record is wrong for this store.
 
 **Accuracy level:** 1 (colours from the 2D game; everything else guessed).
@@ -24,4 +24,4 @@
 **Guessed:** all of the layout and fixtures, the lower-case name on the fascia (the 2D game only gives the name), the letter style, the depth. **Period check (1995):** slatwall, round racks, four-ways, teal-and-cream palette are all period; nothing later than 1995.
 
 ## Files
-`tools/stores/small/wave9.gd` (`solarium()`, materials `w9_sol_*`). Hooks unchanged in `tools/build_mall.gd` and `tools/open_interiors.py`. Evidence: `production/qa/evidence/wsD-solarium-preview-unbaked.jpg`.
+`tools/stores/small/wave9.gd` (`solarium()`, materials `w9_sol_*`). Hooks unchanged in `tools/build_mall.gd` and `tools/open_interiors.py`. Evidence: `production/qa/evidence/wsD-solarium-preview-unbaked.jpg`, `wsD-solarium-ingame-unbaked.jpg`.

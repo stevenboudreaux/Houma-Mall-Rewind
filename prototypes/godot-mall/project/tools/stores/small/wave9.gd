@@ -60,8 +60,8 @@ static func coach_lamp(b, G, c, f, energy = 0.35):
 # ------------------------------------------------------------------ Solarium
 ## Rebuilt Nov 1, 2026 (Steven: "NOT a tanning salon ... the teal clothing store from the 2D
 ## game"; design/storefronts/solarium.md): the 2D game's record (index.html, n8: a teal
-## #1f6f78 sign band, cream #f6e7c0 letters, cream/teal/white merchandise) as a 1990s women's
-## clothing shop. The chain is not named in the 2D data; the front, fixtures and layout are
+## #1f6f78 sign band, cream #f6e7c0 letters, cream/teal/white merchandise) as a 1990s
+## clothing shop (Steven, Nov 1: "solarium is just a clothing shop"); the front, fixtures and layout are
 ## guessed. Was (Oct 7) a tanning lobby from the facade record.
 static func solarium(b, a, t, n, W, D, rng):
 	var F = "w9sf_props"
@@ -131,53 +131,32 @@ static func rave(b, a, t, n, W, D, rng):
 	W8.glass_front(b, F, a, t, n, 0.2, W - 0.2, head, W * 0.5, 2.2, "md_black", 0.3)
 	M2.shell2(b, "w9r_shell", a, t, n, W, D, 3.0, 0.0, "a2_carpet_grey", 1.0, "w9_dark_grey", "kb_ceiling", [2.0, 5.4], 6.6, 0.5)
 	M2.soffit(b, F, a, t, n, W, head, "md_black")
-	# Nov 1, 2026 (Steven: "mostly party stuff, a few black items"; design/storefronts/rave.md):
-	# party goods on the walls and gondolas, balloons over the floor, one short wall of black
-	# tees by the cash wrap. Was (Oct 7) posters and black clothes.
-	AK.mannequin(b, P(a, t, n, 1.2, 0.0, 0.8), -n, "#18181a", "#18181a")
-	balloons(b, G, P(a, t, n, W - 1.3, 0.0, 0.9), rng, 7)
-	# posters stay high on both walls (invented words)
+	# Nov 1, 2026 (Steven: "rave is a clothing store, just 'party' type clothes for women going
+	# out"; design/storefronts/rave.md): slip dresses, sequin minis and satin tops in jewel
+	# colours, silver and some black, face-out on wall rails and on round racks; dressed forms in
+	# the windows; the posters stay high on both walls.
+	AK.mannequin(b, P(a, t, n, 1.2, 0.0, 0.8), -n, "#c4143c", "#c4143c")
+	AK.mannequin(b, P(a, t, n, W - 1.2, 0.0, 0.8), -n, "#d2d2dc", "#18181a")
 	for s2 in [[SIDE, t], [W - SIDE, -t]]:
 		K.fq(b, G, "w9_posters", P(a, t, n, s2[0], 0, 1.6), -n, s2[1], 0.0, D - 3.6, 2.15, 2.9, 0.01, 0.0, 0.0, (D - 3.6) / 4.0, 1.0)
-	# party-goods wall bays down the left wall and the front of the right, under the posters
-	var bays_l = int((D - 3.2) / 1.22)
-	K.bay_run(b, G, "w9r_merch", P(a, t, n, SIDE, 0, 1.6 + bays_l * 1.22), n, t, 1.22, bays_l, [0.35, 0.75, 1.15, 1.55, 1.95], [["party"], ["party", "candy"]], [-1], "", 0.0, rng, 0.35)
-	K.bay_run(b, G, "w9r_merch", P(a, t, n, W - SIDE, 0, 1.6), -n, -t, 1.22, 3, [0.35, 0.75, 1.15, 1.55, 1.95], [["party"]], [-1], "", 0.0, rng, 0.35)
-	K.ob(b, P(a, t, n, SIDE, 0, 1.6), P(a, t, n, SIDE + 0.4, 0, 1.6 + bays_l * 1.22), 0.05)
-	K.ob(b, P(a, t, n, W - SIDE - 0.4, 0, 1.6), P(a, t, n, W - SIDE, 0, 1.6 + 1.22 * 3), 0.05)
-	# the few black items: a short run of black tees on the right wall behind, by the cash wrap
-	var wo = P(a, t, n, W - SIDE, 0, 1.6 + 1.22 * 3 + 0.2)
-	var ln = D - 2.8 - (1.6 + 1.22 * 3 + 0.2)
-	if ln > 0.6:
-		K.fq(b, G, "w9_black_clothes", wo, -n, -t, 0.0, ln, 0.6, 1.95, 0.3, 0.0, 0.0, ln / 2.4, 1.0)
-		K.ob(b, wo, wo - n * ln - t * 0.5, 0.05)
-	# a low gondola of party goods down the middle, balloons tied over it
-	K.gondola(b, G, "w9r_merch", P(a, t, n, W * 0.5 + 0.61 * 2, 0, 4.2), -t, n, 1.22, 2, [0.35, 0.75, 1.15], ["party"], rng, 0.3)
-	K.ob(b, P(a, t, n, W * 0.5 - 1.3, 0, 3.8), P(a, t, n, W * 0.5 + 1.3, 0, 4.6), 0.05)
-	balloons(b, G, P(a, t, n, W * 0.5, 1.5, 4.2), rng, 9)
+	# the wall rails of going-out clothes: two tiers a side (dresses below, tops above), a shelf
+	# of evening bags and heels on top
+	for s2 in [[SIDE, t, 1.8, D - 2.4], [W - SIDE, -t, 1.8, D - 4.6]]:
+		var wo = P(a, t, n, s2[0], 0, s2[2])
+		var ln = s2[3] - s2[2]
+		K.fq(b, G, "w9_rave_dresses", wo, -n, s2[1], 0.0, ln, 0.2, 1.32, 0.3, 0.0, 0.0, ln / 2.4, 1.0)
+		K.fq(b, G, "w9_rave_dresses", wo, -n, s2[1], 0.0, ln, 1.38, 2.08, 0.3, 0.37, 0.0, ln / 2.4 + 0.37, 0.55)
+		K.lbox(b, G, "md_chrome", wo, -n, s2[1], 0.0, 1.33, 0.0, ln, 0.02, 0.34, [])
+		K.ob(b, wo, wo - n * ln + s2[1] * 0.5, 0.05)
+	# round racks of dresses down the middle
+	for k in 3:
+		var rc = P(a, t, n, W * 0.5, 0, 3.4 + k * 2.6)
+		b.cyl(G, "md_chrome", rc, 0.03, 0.03, 1.35, 8, false, false)
+		b.cyl(G, "md_chrome", rc + UP * 1.32, 0.6, 0.6, 0.03, 20, false, false)
+		b.cyl(G, "w9_rave_rack", rc + UP * 0.35, 0.62, 0.62, 0.97, 20, false, false)
+		b.cyl(G, "md_chrome", rc, 0.25, 0.25, 0.02, 12, true, false)
+		K.ob(b, rc - Vector3(0.7, 0, 0.7), rc + Vector3(0.7, 0, 0.7), 0.05)
 	AK.cash_wrap(b, P(a, t, n, W - 0.9, 0, D - 2.6), -t, n, 2.4, 0.6, "md_black")
-
-## A bunch of helium balloons at c (their strings' anchor), floating to the ceiling: bright
-## latex rounds on white strings, a weight at the bottom. Invented, no print.
-static func balloons(b, G, c, rng, count):
-	var cols = ["#e83060", "#f2c030", "#30a8e0", "#7a40c8", "#38c070", "#ff7a20", "#f4f2ee"]
-	var weight = c + UP * 0.0
-	if c.y < 0.1:
-		b.cur_color = Color("#e83060")
-		b.box(G, "vcolor", c + UP * 0.06, Vector3(0.1, 0.12, 0.1))
-		weight = c + UP * 0.12
-		K.ob(b, c - Vector3(0.15, 0, 0.15), c + Vector3(0.15, 0, 0.15), 0.05)
-	for k in count:
-		var ang = TAU * k / count + rng.randf() * 0.4
-		var r = 0.12 + rng.randf() * 0.22
-		var top = Vector3(weight.x + cos(ang) * r, 2.3 + rng.randf() * 0.45, weight.z + sin(ang) * r)
-		b.cur_color = Color(cols[(k + rng.randi_range(0, 6)) % cols.size()])
-		sphere(b, G, "w9_balloon", top, 0.15 + rng.randf() * 0.03)
-		b.cur_color = Color("#f4f4f0")
-		var mid = (weight + top) * 0.5
-		var ln = weight.distance_to(top - UP * 0.16)
-		b.box(G, "vcolor", Vector3.ZERO, Vector3(0.006, ln, 0.006), Transform3D(Basis(Quaternion(UP, ((top - UP * 0.16) - weight).normalized())), (weight + top - UP * 0.16) * 0.5))
-	b.cur_color = Color.WHITE
 
 # ------------------------------------------------------------------ Concepts
 ## School uniforms and backpacks for kids. Instead of windows, two deep white shadow boxes
@@ -694,9 +673,13 @@ static func fill_mat(m, key, b):
 			m.albedo_color = Color("#c8b890"); m.roughness = 0.5
 		"sol_wall":
 			m.albedo_color = Color("#f2ede2"); m.roughness = 0.85
-		"balloon":
-			m.vertex_color_use_as_albedo = true; m.roughness = 0.2; m.metallic_specular = 0.7
-			K.emit(m, Color("#302830"), 0.3)
+		"rave_dresses":
+			m.albedo_texture = b.tex("w9/rave_dresses.png"); m.roughness = 0.45; m.metallic_specular = 0.6
+			K.emit_tex(m, 0.22)
+		"rave_rack":
+			m.albedo_texture = b.tex("w9/rave_dresses.png"); m.roughness = 0.45; m.metallic_specular = 0.6
+			m.uv1_scale = Vector3(1.6, 0.85, 1.0)
+			K.emit_tex(m, 0.18)
 		"c_siding":
 			m.albedo_texture = b.tex("w9/concepts_siding.png"); m.roughness = 0.75
 		"concepts_sign_serif":
