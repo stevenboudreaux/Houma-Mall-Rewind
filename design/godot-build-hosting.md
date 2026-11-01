@@ -28,6 +28,51 @@
 - **Test:** `tools/qa/packtest.py <build>/index.html <out>` hides one set of extensions to imitate a phone GPU and a computer GPU, plus a wrong remembered guess. All three passed on Oct 6, as did movetest with 0 errors for both files.
 - **Wide screens and VR:** texture formats don't depend on screen size or shape. A Quest port would use the mobile file's formats either way.
 
+## Nov 1, 2026: are the desktop and mobile packs really different? (workstream H)
+**The question:** since mid-October every wing's desktop and mobile packs have come out the same size to the byte
+(Demo 46 live build: `w1.*.pck` 83,655,532 both, `w2` 80,427,500, `w3` 12,638,232, `w1y26` 20,714,840,
+`w2y26` 51,558,108). Do both packs carry both format sets, or neither?
+
+**Answer: neither. The split works; the equal sizes are arithmetic.** `tools/qa/packformats.py` reads every
+`.ctex` header inside a pack (evidence `production/qa/evidence/wsH-packs.md`):
+- The desktop packs carry only S3TC (DXT1/DXT5) and BPTC; the mobile packs only ETC2 (RGB8/RGBA8) and ASTC 4x4.
+  No pack has a single texture of the other set. Per wing, the desktop-only and mobile-only files are the same textures
+  (`<name>.s3tc.ctex` vs `<name>.etc2.ctex`, and the lightmap `.bptc.ctexarray` vs `.astc.ctexarray`), with
+  different bytes.
+- Each pair is the same size by design of the formats: DXT1 and ETC2_RGB8 are both 4 bits per pixel, DXT5 and
+  ETC2_RGBA8 both 8, BPTC and ASTC 4x4 both 8. Same dimensions and mip chains give the same byte counts, so whole
+  packs match to the byte. (Why the October 6 note saw different sizes is not known from the record; a guess:
+  that export still had textures in a kind whose two sets differ in size, such as uncompressed fallbacks.)
+- What is identical in both packs is everything that is not a VRAM texture: meshes, scenes, scripts, JSON, and
+  the textures stored as WebP. Those are shared on purpose.
+- Nothing was changed in `export_presets.cfg` or the `.import` files for this: there was nothing to fix.
+
+| Pack (Demo 46 live) | Total MB | S3TC/BPTC (desktop) or ETC2/ASTC (mobile) MB | WebP lossless MB | WebP lossy MB | Rest (meshes, scenes, scripts) MB |
+|---|---|---|---|---|---|
+| w1 | 83.7 | 34.2 (51 + lightmap 6.3) | 20.9 (152 files) | 0 | 28.6 |
+| w2 | 80.4 | 33.2 (51 + lightmap 5.2) | 11.0 (143) | 3.0 (130) | 33.0 |
+| w3 (outside) | 12.6 | 4.7 (5 + lightmap 3.1) | 3.5 (17) | 0 | 4.4 |
+| w1y26 | 20.7 | 6.1 (8 + lightmap 2.1) | 6.5 (16) | 0 | 8.1 |
+| w2y26 | 51.6 | 8.8 (16 + lightmap 3.1) | 12.0 (84) | 2.3 (80) | 28.4 |
+
+**Where the real texture waste is (proposal, not done: it changes the look slightly).** 736 of the project's 927
+texture `.import` files are set to *Lossless* (`compress/mode=0`, plus 130 *Lossy*), so the export stores them as
+WebP. Godot's editor would normally switch textures it sees used in 3D to VRAM compression (`detect_3d`), and the
+Mac bakes do flip ~206 of them, but those flips are reverted after every bake (they are editor side effects,
+`tools/bake_inplace.sh`), so they never ship. WebP costs little to download but:
+- it is decoded on the CPU while the wing loads (one of the load-time costs in `design/godot-performance.md`);
+- it sits in GPU memory uncompressed: about 136 MB in Wing 1, 217 MB in Wing 2 and 246 MB in Wing 2 2026, against
+  23, 38 and 42 MB as ETC2/S3TC. On an iPhone, where Safari kills a tab around 1-1.5 GB, that is the largest single
+  memory item after the meshes.
+- As VRAM textures the packs would grow by only ~2-15 MB each (WebP is already small), and then they really would
+  differ between desktop and mobile.
+- The cost: block compression shows on hard-edged painted text and signs (slight colour bleeding at sharp edges).
+  Mipmaps would stay as they are now (off for these textures), so distance shimmer and sharpness don't change.
+- To do it: set `compress/mode=2` (and leave `mipmaps/generate` alone) in the chosen `.import` files, re-import,
+  export. Needs before/after shots of signs and painted fronts and Steven's yes (CLAUDE-CLOUD.md: no picture
+  quality change without it). Candidate first batch: the 1024² building materials (bricks, block, concrete,
+  stucco), which have no lettering.
+
 ## One copy of the build, replaced each time
 - **main no longer holds the build or the lightmaps** (`.gitignore`: `prototypes/godot-mall/play/index.*` and `project/main_*.exr|.exr.import|.lmbake`).
 - **They live on the `godot-build` branch:** `play/` (the export) and `lightmaps/`, as a single commit that each publish replaces with `git push --force`.
