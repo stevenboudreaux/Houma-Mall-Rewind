@@ -1,0 +1,9 @@
+{
+ "_": "Pick-up items in the Stockrooms (design/godot-interaction.md, design/godot-stockrooms.md). The stick lies where scripts/stockrooms_map.json puts the 'stick' prop: grid (304.55, 44.45) + the level's ORIGIN (2000, 0, 2000).",
+ "items": [
+  {"id": "folse_stick", "name": "Martin Folse's stick", "class": "hand",
+   "scene": "res://scripts/items/folse_stick.tscn", "icon": "res://tex/items/folse_stick.png",
+   "year": 1995,
+   "place": {"wing": 1, "year": 1995, "pos": [2304.55, 0.0, 2044.45], "yaw": 0}}
+ ]
+}

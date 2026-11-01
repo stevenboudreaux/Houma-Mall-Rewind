@@ -69,7 +69,9 @@ camcorder on a tripod with its red light on, stacked boxes, stacked chairs.
 - `tools/qa/rougarou_story_test.gd`: the whole route through the walk into the wall and the unlock.
 
 ## Open
-- No pickup for the stick yet; no sound beyond the hum; VR untested inside (the walk grid swap
+- (Nov 1, workstream B+C) The stick is a pick-up item now: held in first person, swings on the
+  action button (design/godot-interaction.md); the prompt "Pick up Martin Folse's stick" replaces
+  the caption. No sound beyond the hum; VR untested inside (the walk grid swap
   should carry over, the env swap too).
 - The stick is a stand-in (white, ~1.22 m, slight taper and worn tip): no close photo found.
 - The seam is a pure translation; turning round right after one shows the real entry behind you.

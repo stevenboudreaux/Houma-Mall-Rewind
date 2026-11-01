@@ -24,6 +24,7 @@ const CEIL = 2.75
 const WOOL_DOOR = Rect2(-45.75, 21.0, 0.75, 0.9)   # the patch of Woolworth wall (x, z), walked into
 const WOOL_BACK_OUT = Vector3(-43.9, 0, 20.9)       # where you come back out, facing into the store
 const STICK_SAY_M = 2.0
+var stick_is_item := false   # B+C: the interact prompt names it instead of the caption
 
 var player: Node3D
 var built := false
@@ -112,7 +113,7 @@ func _process(dt: float) -> void:
 	g = player.position - ORIGIN
 	if g.z > float(door[1]) + 0.12 and g.x >= float(door[0]) and g.x <= float(door[2]) + 1.0:
 		leave(); return
-	caption.visible = Vector2(p.x - stick_pos.x, p.z - stick_pos.z).length() < STICK_SAY_M
+	caption.visible = not stick_is_item and Vector2(p.x - stick_pos.x, p.z - stick_pos.z).length() < STICK_SAY_M
 	for f in flicker:
 		var m: StandardMaterial3D = f[0]
 		var on = sin(t * 13.0 + f[1]) + sin(t * 31.0 + f[1] * 2.0) > -0.9 or fmod(t + f[1], 7.0) > 0.3
@@ -196,6 +197,8 @@ func _restore() -> void:
 func _hud(on: bool) -> void:
 	for b in player.buttons:
 		b.visible = on
+	if on and player.has_method("owner_hud_sync"):
+		player.owner_hud_sync()   # B+C: the toggles stay the owner's (design/godot-interaction.md)
 	var own = false
 	var sg = get_parent().get_node_or_null("Signs")
 	if sg: own = sg.is_owner
@@ -469,7 +472,13 @@ func _prop(root: Node3D, p: Dictionary) -> void:
 			piv.rotation.x = atan2(0.55, CEIL)          # the top leans 0.55 m toward the wall
 			_box(node, Vector3(0, CEIL - 0.006, 0.14), Vector3(0.72, 0.01, 0.62), Color("#050403"))
 		"stick":
-			_stick(node)
+			# B+C (design/godot-interaction.md): the stick is a pick-up item now (data/items/stockrooms.json,
+			# placed by scripts/interact.gd at this spot, glow and all); the old prop and its caption only
+			# when that item file is missing
+			if FileAccess.file_exists("res://data/items/stockrooms.json"):
+				stick_is_item = true
+			else:
+				_stick(node)
 			stick_pos = wpos
 
 ## Martin Folse's stick: the plain white pointer he lays on the radar map to call landfall (HTV,

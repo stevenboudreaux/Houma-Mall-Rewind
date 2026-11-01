@@ -1,0 +1,25 @@
+{
+ "_": "Pocket Change prizes you can pick up (design/godot-interaction.md). Names and ticket prices as scripts/prizes.json; 'tickets' is the price a redemption counter will ask later. Placed loose in the arcade (left on a machine, dropped on the carpet).",
+ "items": [
+  {"id": "spring", "name": "Rainbow coil spring", "class": "hand",
+   "scene": "res://scripts/items/spring.tscn", "icon": "res://tex/items/spring.png",
+   "year": 1995, "tickets": 150,
+   "place": {"wing": 2, "year": 1995, "pos": [-107.6, 0.0, 63.9], "yaw": 20}},
+  {"id": "dice", "name": "Fuzzy dice", "class": "hand",
+   "scene": "res://scripts/items/dice.tscn", "icon": "res://tex/items/dice.png",
+   "year": 1995, "tickets": 300,
+   "place": {"wing": 2, "year": 1995, "pos": [-108.8, 0.0, 67.0], "yaw": -35}},
+  {"id": "pogs", "name": "Pog pack", "class": "pocket",
+   "scene": "res://scripts/items/pogs.tscn", "icon": "res://tex/items/pogs.png",
+   "year": 1995, "tickets": 100,
+   "place": {"wing": 2, "year": 1995, "pos": [-105.9, 0.0, 70.4], "yaw": 70}},
+  {"id": "slap", "name": "Slap bracelet", "class": "pocket",
+   "scene": "res://scripts/items/slap.tscn", "icon": "res://tex/items/slap.png",
+   "year": 1995, "tickets": 75,
+   "place": {"wing": 2, "year": 1995, "pos": [-105.3, 0.0, 72.6], "yaw": 10}},
+  {"id": "candy_neck", "name": "Candy necklace", "class": "pocket",
+   "scene": "res://scripts/items/candy_neck.tscn", "icon": "res://tex/items/candy_neck.png",
+   "year": 1995, "tickets": 20,
+   "place": {"wing": 2, "year": 1995, "pos": [-109.2, 0.0, 62.4], "yaw": 0}}
+ ]
+}

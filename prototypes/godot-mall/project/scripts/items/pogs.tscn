@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://tex/items/it_pog_card.png" id="1_card"]
+
+[sub_resource type="StandardMaterial3D" id="it_pogs"]
+cull_mode = 2
+albedo_texture = ExtResource("1_card")
+roughness = 0.5
+
+[sub_resource type="QuadMesh" id="card"]
+material = SubResource("it_pogs")
+size = Vector2(0.09, 0.135)
+
+[sub_resource type="StandardMaterial3D" id="it_pogs_bubble"]
+transparency = 1
+albedo_color = Color(0.92, 0.97, 1, 0.28)
+roughness = 0.05
+
+[sub_resource type="BoxMesh" id="bubble"]
+material = SubResource("it_pogs_bubble")
+size = Vector3(0.072, 0.086, 0.012)
+
+[node name="pogs" type="Node3D"]
+
+[node name="Card" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0.003, 0)
+mesh = SubResource("card")
+
+[node name="Bubble" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0.009, 0.01)
+mesh = SubResource("bubble")

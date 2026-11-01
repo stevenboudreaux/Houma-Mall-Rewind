@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://tex/items/it_candy.png" id="1_candy"]
+
+[sub_resource type="StandardMaterial3D" id="it_candy"]
+albedo_texture = ExtResource("1_candy")
+roughness = 0.35
+
+[sub_resource type="TorusMesh" id="ring"]
+material = SubResource("it_candy")
+inner_radius = 0.075
+outer_radius = 0.087
+rings = 48
+ring_segments = 6
+
+[node name="candy_neck" type="Node3D"]
+
+[node name="Beads" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006, 0)
+mesh = SubResource("ring")
