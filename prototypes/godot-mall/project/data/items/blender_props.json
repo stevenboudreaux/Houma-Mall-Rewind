@@ -8,7 +8,17 @@
    "scene": "res://models/bl_cd7_corndog/bl_cd7_corndog.glb",
    "icon": "res://models/bl_cd7_corndog/bl_cd7_corndog_icon.png",
    "year": "both",
-   "store": "CORN DOG 7"
+   "store": "CORN DOG 7",
+   "place": {
+    "wing": 2,
+    "year": "both",
+    "pos": [
+     -134.6,
+     1.03,
+     74.5
+    ],
+    "yaw": 90
+   }
   },
   {
    "id": "bl_gb_lavalamp",
@@ -27,6 +37,16 @@
      "#ff9a1a",
      "#ff5ab4"
     ]
+   },
+   "place": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     -12.65,
+     1.06,
+     45.0
+    ],
+    "yaw": 90
    }
   },
   {
@@ -38,7 +58,17 @@
    "year": 1995,
    "store": "POCKET CHANGE",
    "tickets": 15,
-   "prize": "finger_trap"
+   "prize": "finger_trap",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -108.4,
+     0.0,
+     63.2
+    ],
+    "yaw": 30
+   }
   },
   {
    "id": "bl_pc_plush_bear",
@@ -59,7 +89,17 @@
     "#9e82d4",
     "#7ccfa6",
     "#f2cc34"
-   ]
+   ],
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -107.0,
+     0.0,
+     65.6
+    ],
+    "yaw": -15
+   }
   },
   {
    "id": "bl_pc_plush_bunny",
@@ -80,7 +120,17 @@
     "#9e82d4",
     "#7ccfa6",
     "#f2cc34"
-   ]
+   ],
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -108.3,
+     0.0,
+     69.0
+    ],
+    "yaw": 40
+   }
   },
   {
    "id": "bl_pc_plush_dog",
@@ -101,7 +151,17 @@
     "#9e82d4",
     "#7ccfa6",
     "#f2cc34"
-   ]
+   ],
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -106.7,
+     0.0,
+     71.5
+    ],
+    "yaw": -60
+   }
   }
  ]
 }
