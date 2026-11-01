@@ -29,6 +29,11 @@ const R_CEIL = 3.0
 const WALL_T = 0.6        # the wall between the restaurant and the store (u 9.0..9.6)
 const R_DOOR0 = 7.0       # the restaurant's mall door (u 7.0..8.75), at its left end
 const R_DOOR1 = 8.75
+## The opening between the restaurant and the store (Steven, Nov 1: "only a few feet of wall
+## after the restaurant's mall door, then a large opening"; the three left-wall booths sit
+## behind it). Was d 9.4..11.2 until Nov 1.
+const OP0 = 1.0
+const OP1 = 4.6
 const BAY = 1.22
 const UP = Vector3.UP
 const BOARDS = [0.35, 0.72, 1.09, 1.46, 1.83]
@@ -121,7 +126,8 @@ static func room(b, a, t, n, rng):
 	K.floor_rect(b, G, "wl_floor", a, t, n, u9, u1, 0.0, dB, 1.22)
 	K.floor_rect(b, G, "wl_floor", a, t, n, SIDE, u9, R_D, dB, 1.22)
 	# the red stripe inset along the main aisle into the store and the cross aisle (video 2:28, 3:04)
-	var stripes = [[20.8, 20.95, 0.9, 33.0], [24.05, 24.2, 0.9, 33.0], [u9, 35.4, 16.8, 16.95], [u9, 35.4, 20.05, 20.2]]
+	# Nov 1 (workstream D): widened from 0.15 m to 0.3 m so it reads as the video's stripe
+	var stripes = [[20.65, 20.95, 0.9, 33.0], [24.05, 24.35, 0.9, 33.0], [u9, 35.4, 16.65, 16.95], [u9, 35.4, 20.05, 20.35]]
 	for s in stripes:
 		var q = [P(a, t, n, s[0], 0.003, s[2]), P(a, t, n, s[1], 0.003, s[2]), P(a, t, n, s[1], 0.003, s[3]), P(a, t, n, s[0], 0.003, s[3])]
 		b.quad(G, "wl_red", q, UP)
@@ -139,22 +145,23 @@ static func room(b, a, t, n, rng):
 	K.wall(b, G, "md_wall", a, t, n, u1, dB, SIDE, dB, 0.0, CEIL, n)
 	K.wall(b, G, "md_wall", a, t, n, SIDE, R_D, SIDE, dB, 0.0, CEIL, t)
 	# the restaurant's walls seen from the store: its back (d 14) and its side (u 9.6), with
-	# the wood-framed opening at d 9.4..11.2 (video 7:37-7:49)
+	# the wood-framed opening at d OP0..OP1 (video 7:37-7:49)
 	K.wall(b, G, "md_wall", a, t, n, u9, R_D, SIDE, R_D, 0.0, CEIL, -n)
-	K.wall(b, G, "md_wall", a, t, n, u9, 0.0, u9, 9.4, 0.0, CEIL, t)
-	K.wall(b, G, "md_wall", a, t, n, u9, 11.2, u9, R_D, 0.0, CEIL, t)
-	K.wall(b, G, "md_wall", a, t, n, u9, 9.4, u9, 11.2, 2.4, CEIL, t)
-	b.quad(G, "md_wall", [P(a, t, n, R_U - 0.12, 2.4, 9.4), P(a, t, n, u9, 2.4, 9.4), P(a, t, n, u9, 2.4, 11.2), P(a, t, n, R_U - 0.12, 2.4, 11.2)], Vector3.DOWN)
-	for s in [[9.4, 1.0], [11.2, -1.0]]:
+	K.wall(b, G, "md_wall", a, t, n, u9, 0.0, u9, OP0, 0.0, CEIL, t)
+	K.wall(b, G, "md_wall", a, t, n, u9, OP1, u9, R_D, 0.0, CEIL, t)
+	K.wall(b, G, "md_wall", a, t, n, u9, OP0, u9, OP1, 2.4, CEIL, t)
+	b.quad(G, "md_wall", [P(a, t, n, R_U - 0.12, 2.4, OP0), P(a, t, n, u9, 2.4, OP0), P(a, t, n, u9, 2.4, OP1), P(a, t, n, R_U - 0.12, 2.4, OP1)], Vector3.DOWN)
+	for s in [[OP0, 1.0], [OP1, -1.0]]:
 		b.quad(G, "wl_wood", [P(a, t, n, R_U - 0.12, 0, s[0]), P(a, t, n, u9, 0, s[0]), P(a, t, n, u9, 2.4, s[0]), P(a, t, n, R_U - 0.12, 2.4, s[0])], -n * s[1])
-	var fr = P(a, t, n, u9, 0, 9.3)
-	for s in [[0.0, 0.1, 0.0, 2.5], [1.9, 2.0, 0.0, 2.5], [0.0, 2.0, 2.4, 2.5]]:
+	var fr = P(a, t, n, u9, 0, OP0 - 0.1)
+	var ow = OP1 - OP0 + 0.2
+	for s in [[0.0, 0.1, 0.0, 2.5], [ow - 0.1, ow, 0.0, 2.5], [0.0, ow, 2.4, 2.5]]:
 		K.lbox(b, G, "wl_wood", fr, -n, t, s[0], s[2], 0.0, s[1] - s[0], s[3] - s[2], 0.04)
-	K.ob_local(b, P(a, t, n, R_U - 0.12, 0, 0), -n, t, 0.0, 0.0, 9.4, WALL_T + 0.12, 0.1)
-	K.ob_local(b, P(a, t, n, R_U - 0.12, 0, 0), -n, t, 11.2, 0.0, R_D, WALL_T + 0.12, 0.1)
+	K.ob_local(b, P(a, t, n, R_U - 0.12, 0, 0), -n, t, 0.0, 0.0, OP0, WALL_T + 0.12, 0.1)
+	K.ob_local(b, P(a, t, n, R_U - 0.12, 0, 0), -n, t, OP1, 0.0, R_D, WALL_T + 0.12, 0.1)
 	K.ob_local(b, P(a, t, n, SIDE, 0, R_D - 0.1), t, -n, 0.0, 0.0, R_U, 0.2, 0.1)
 	# "Restaurant" in red letters on the white wall over the opening (video 7:37-7:49)
-	K.fq(b, G, "wl_signs", P(a, t, n, u9, 0, 8.6), -n, t, 0.0, 3.6, 2.55, 3.35, 0.02, 0.0, 0.5, 0.5, 1.0)
+	K.fq(b, G, "wl_signs", P(a, t, n, u9, 0, (OP0 + OP1) * 0.5 - 1.8), -n, t, 0.0, 3.6, 2.55, 3.35, 0.02, 0.0, 0.5, 0.5, 1.0)
 	# the red band of department names high on the walls: back wall, left wall, right wall
 	# left wall (u = 35.88), names over what stands below, front to back
 	for s in [[6.0, 3], [12.0, 3], [18.0, 1], [24.0, 2], [30.0, 2]]:
@@ -224,12 +231,12 @@ static func restaurant(b, a, t, n, rng):
 	# walls: beige, a wood-slat wainscot, lattice panels in wood frames on the right wall,
 	# brass sconces with globe shades, framed food photos (video 5:46-6:25)
 	K.wall(b, G, "wl_beige", a, t, n, u0, 0.0, u0, dB, 0.9, R_CEIL, t)
-	# the left wall, with the opening into the store at d 9.4..11.2
-	K.wall(b, G, "wl_beige", a, t, n, u1, 9.4, u1, 0.0, 0.9, R_CEIL, -t)
-	K.wall(b, G, "wl_beige", a, t, n, u1, dB, u1, 11.2, 0.9, R_CEIL, -t)
-	K.wall(b, G, "wl_beige", a, t, n, u1, 11.2, u1, 9.4, 2.4, R_CEIL, -t)
+	# the left wall, with the opening into the store at d OP0..OP1
+	K.wall(b, G, "wl_beige", a, t, n, u1, OP0, u1, 0.0, 0.9, R_CEIL, -t)
+	K.wall(b, G, "wl_beige", a, t, n, u1, dB, u1, OP1, 0.9, R_CEIL, -t)
+	K.wall(b, G, "wl_beige", a, t, n, u1, OP1, u1, OP0, 2.4, R_CEIL, -t)
 	K.wall(b, G, "wl_beige", a, t, n, u1, dB, u0, dB, 0.9, R_CEIL, n)
-	for w in [[u0, 0.0, u0, dB, t], [u1, 9.4, u1, 0.0, -t], [u1, dB, u1, 11.2, -t], [u1, dB, u0, dB, n]]:
+	for w in [[u0, 0.0, u0, dB, t], [u1, OP0, u1, 0.0, -t], [u1, dB, u1, OP1, -t], [u1, dB, u0, dB, n]]:
 		var pa = P2.call(w[0], 0, w[1])
 		var pb = P2.call(w[2], 0, w[3])
 		var Lw = pa.distance_to(pb)
@@ -244,7 +251,8 @@ static func restaurant(b, a, t, n, rng):
 		window_booth(b, G, P2.call(R_DOOR0 - 0.1 - i * 1.75, 0, 0.14), -t, -n)
 	# "There were also 3 booths lining the left wall right behind where the opening to the woolworth
 	# store is": along the left wall, between the door and the opening into the store
-	for d in [3.15, 5.25, 7.35]:
+	# Nov 1 (Steven): they sit behind the opening, which moved to the front (d 1.0..4.6)
+	for d in [OP1 + 1.1, OP1 + 3.2, OP1 + 5.3]:
 		booth(b, G, P2.call(u1, 0, d), -n, -t, rng)
 	# two free-standing tables with chairs in the middle
 	for c in [[5.1, 4.4], [5.1, 7.6]]:
@@ -637,6 +645,8 @@ static func fill_mat(m, key, b):
 			K.emit_tex(m, 0.25)
 		"dept_band":
 			m.albedo_texture = b.tex("wl/dept_band.png"); m.roughness = 0.5
+			# Nov 1 (workstream D): a little light of its own so the names read across the floor
+			K.emit_tex(m, 0.25)
 			K.emit_tex(m, 0.2)
 		"floor":
 			m.albedo_texture = b.tex("wl/floor.png"); m.roughness = 0.12; m.metallic_specular = 0.7
