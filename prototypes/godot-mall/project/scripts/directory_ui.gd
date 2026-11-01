@@ -22,7 +22,6 @@ const HILITE := Color("#ff2d6f")
 
 var data := {}                 # gen/<wing>/directory.json: {"years": {"1995": {stalls...}, ...}}
 var spots := {}                # tex/dir/hotspots.json: {"size": [w, h], "1995": [...], "2026": [...]}
-var tex := {}                  # year -> Texture2D
 var stall_by_id := {}          # year -> {unit id: stall}
 var player: Node = null
 var kiosk: Node = null
@@ -42,6 +41,7 @@ var f_sans: Font
 var touches := {}
 var drag_from := Vector2.ZERO
 var drag_moved := false
+var pressed_in := false        # the press began while the sign was open (the tap that opened it does not count)
 var pinch_d := 0.0
 var last_touch_ms := -100000
 
@@ -90,6 +90,8 @@ func open(p: Node, k: Node) -> void:
 		map_year = "1995"
 	if p:
 		p.set("frozen", true)
+	pressed_in = false
+	touches.clear()
 	_fit()
 	view.queue_redraw()
 
@@ -100,9 +102,13 @@ func close() -> void:
 		player.set("frozen", false)
 	view.queue_redraw()
 
+## Both years' panels. Every wing's export carries both (export_presets.cfg includes tex/dir/*):
+## a wing's own kiosks only reference their year's panel, and the toggle shows the other.
+var tex := {}
 func _panel() -> Texture2D:
 	if not tex.has(map_year):
-		tex[map_year] = load("res://tex/dir/panel_%s.png" % map_year)
+		var p := "res://tex/dir/panel_%s.png" % map_year
+		tex[map_year] = load(p) if ResourceLoader.exists(p) else null
 	return tex[map_year]
 
 func _psize() -> Vector2:
@@ -199,7 +205,9 @@ func _draw_view() -> void:
 	c.draw_rect(outer, FRAME_D, false, 1.5)
 	c.draw_rect(pr.grow(3), Color("#d5dadb"))
 	c.draw_rect(pr.grow(1.5), Color("#1c1d20"))
-	c.draw_texture_rect(_panel(), pr, false)
+	var ptex := _panel()
+	if ptex:
+		c.draw_texture_rect(ptex, pr, false)
 	# the selected / hovered store: every place it appears on the sign
 	for pass_id in [hover, sel]:
 		if pass_id == "":
@@ -311,9 +319,9 @@ func _process(_dt: float) -> void:
 				if k.in_reach(player.position):
 					nk = k
 					break
-	if nk != near_kiosk:
+	if nk != near_kiosk or nk != null:
 		near_kiosk = nk
-		view.queue_redraw()
+		view.queue_redraw()   # every frame while near: the key cap follows the input (E, X, Tap)
 
 # ------------------------------------------------------------------ input
 func _input(e: InputEvent) -> void:
@@ -564,6 +572,7 @@ func _choose(yes: bool) -> void:
 func _press(p: Vector2) -> void:
 	drag_from = p
 	drag_moved = false
+	pressed_in = true
 
 func _move(p: Vector2, rel: Vector2) -> void:
 	if (p - drag_from).length() > 8.0:
@@ -574,6 +583,9 @@ func _move(p: Vector2, rel: Vector2) -> void:
 		view.queue_redraw()
 
 func _release(p: Vector2) -> void:
+	if not pressed_in:
+		return
+	pressed_in = false
 	if drag_moved:
 		drag_moved = false
 		return
