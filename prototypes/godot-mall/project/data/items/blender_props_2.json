@@ -59,6 +59,25 @@
    }
   },
   {
+   "id": "bl_tt_lomein",
+   "name": "Lo mein",
+   "class": "hand",
+   "scene": "res://models/bl_tt_lomein/bl_tt_lomein.glb",
+   "icon": "res://models/bl_tt_lomein/bl_tt_lomein_icon.png",
+   "year": 1995,
+   "store": "TEE TAI'S",
+   "place": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     21.6,
+     0.95,
+     8.12
+    ],
+    "yaw": 160
+   }
+  },
+  {
    "id": "bl_wl_rootbeer_float",
    "name": "Root beer float",
    "class": "hand",
