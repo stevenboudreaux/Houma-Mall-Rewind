@@ -14,6 +14,10 @@ var fx_obstacles: Array = []     # benches, planters, trash cans (only when show
 var fixtures_on := false
 var frozen := false        # the prize counter's closer look has the camera (scripts/prizes.gd)
 var jump_locked := false   # inside the Stockrooms on a visitor's browser: no Jump menu (scripts/stockrooms.gd)
+## B+C (design/godot-interaction.md): what the player carries (scripts/inventory.gd: mall.inventory,
+## mall.tickets), set by scripts/interact.gd, the action button / pick-ups / inventory system.
+var mall = null
+var interact: Node = null
 ## Walkable map tiles (rows of "0"/"1"), and how map tiles map to metres.
 @export var walk_rows: PackedStringArray = []
 @export var map_origin := Vector2(148, 100)
@@ -163,6 +167,13 @@ func _ready() -> void:
 	_build_wing_ui()
 	_build_jump_ui()
 	_build_year_ui()
+	# B+C: the shared action button, pick-up items and the bag (scripts/interact.gd), every wing and
+	# year; then the owner-only HUD (design/godot-interaction.md)
+	interact = load("res://scripts/interact.gd").new()
+	interact.name = "Interact"; interact.player = self
+	add_child(interact)
+	_light_btn_ok = buttons[2].visible
+	owner_hud_sync()
 	_spawn_1995_life()
 	vr = Node3D.new()
 	vr.name = "VR"
@@ -374,7 +385,7 @@ func _input(e: InputEvent) -> void:
 		# touches don't reach buttons (mouse emulation is off), so tap it here
 		if e.pressed:
 			for b in buttons:
-				if b.get_global_rect().has_point(e.position):
+				if b.is_visible_in_tree() and b.get_global_rect().has_point(e.position):   # B+C: hidden ones aren't tapped
 					b.button_pressed = not b.button_pressed
 					get_viewport().set_input_as_handled()
 					return
@@ -418,6 +429,10 @@ func _input(e: InputEvent) -> void:
 ## tool comes up: Edit signs / Publish signs, Shirt words, the prize words, the lighting panel.
 ## Any browser, any device with a keyboard or controller; the browser remembers from then on.
 const SECRET := "UUDDLRLRBA"
+## B+C: the same code on a touch screen, at the same spot, no hint shown: swipe up, up, down, down,
+## left, right, left, right (anywhere on the screen), then tap twice.
+const SECRET_TOUCH := "UUDDLRLRTT"
+var _secret_touches := {}   # touch index -> where it started
 const SECRET_CORNER := Rect2(-50.6, 85.0, 3.2, 11.6)   # x, z: H7's last 11 m (layout_mall.json)
 var _secret_buf := ""
 
@@ -431,9 +446,11 @@ func _secret_tok(e: InputEvent) -> String:
 
 func _secret_input(e: InputEvent) -> void:
 	var tk := _secret_tok(e)
+	if tk == "": tk = _secret_touch_tok(e)   # B+C: swipes and taps
 	if tk == "": return
+	if debug: print("DBG code token ", tk)
 	_secret_buf = (_secret_buf + tk).right(SECRET.length())
-	if _secret_buf != SECRET: return
+	if _secret_buf != SECRET and _secret_buf != SECRET_TOUCH: return
 	_secret_buf = ""
 	if not SECRET_CORNER.has_point(Vector2(position.x, position.z)):
 		return
@@ -449,6 +466,52 @@ func _secret_input(e: InputEvent) -> void:
 	js += "p.set('cam','%s');%s" % [cam_s, ("p.set('wing','%d');" % wing) if wing != 0 else ""]
 	js += "setTimeout(function(){if(window.mallGoWing){window.mallGoWing(u.toString())}else{location.replace(u.toString())}},900)})()"
 	JavaScriptBridge.eval(js, true)
+
+## B+C: a finished touch as a code token: a tap (moved < 20 px) "T", a swipe (> 45 px) "U"/"D"/"L"/"R".
+func _secret_touch_tok(e: InputEvent) -> String:
+	if not (e is InputEventScreenTouch):
+		return ""
+	if e.pressed:
+		_secret_touches[e.index] = e.position
+		return ""
+	var st = _secret_touches.get(e.index)
+	_secret_touches.erase(e.index)
+	if st == null:
+		return ""
+	# no time limits: a slow phone (or a test browser) handles touches late, and the whole sequence
+	# still has to match at the hidden spot, so looking around there can't trip it by chance
+	var d: Vector2 = e.position - st
+	if debug: print("DBG code touch ", e.index, " moved ", d)
+	if d.length() < 20.0:
+		return "T"
+	if d.length() > 45.0:
+		if absf(d.x) > absf(d.y):
+			return "R" if d.x > 0 else "L"
+		return "D" if d.y > 0 else "U"
+	return ""
+
+# ---- B+C: the owner-only HUD (design/godot-interaction.md has the full button list)
+var _light_btn_ok := true   # the Lighting switch is wanted at all (a day lightmap, not day-only)
+
+## Owner mode: localStorage "southland-editor" = "1" (?owner=1 or the secret code); off the web,
+## Engine meta "mall_owner" (tests).
+func is_owner() -> bool:
+	return _light_owner or bool(Engine.get_meta("mall_owner", false))
+
+## Visitors see only Jump to, the year switch, the Bag and the action prompt: the fps readout and the
+## Reflections / Benches & plants / Lighting toggles are the owner's. Jump to and the year switch move
+## up into the freed corner. Called at start and whenever something re-shows the buttons.
+func owner_hud_sync() -> void:
+	var own := is_owner()
+	hud.visible = own
+	for b in buttons:
+		b.visible = own
+	if own and buttons.size() > 2 and not _light_btn_ok:
+		buttons[2].visible = false
+	# the owner's 1995 column also holds Shirt words at 128 (scripts/npc_shirt.gd): go under it
+	var top := (168 if year == 1995 else 128) if own else 8
+	jump_open_btn.offset_top = top; jump_open_btn.offset_bottom = top + 32
+	year_btn.offset_top = top + 40; year_btn.offset_bottom = top + 72
 
 ## A short line at the bottom of the screen for a couple of seconds.
 func _say(t: String) -> void:
@@ -499,7 +562,8 @@ func _process(dt: float) -> void:
 	fps_t += dt
 	if fps_t > 0.5:
 		fps_t = 0.0
-		hud.text = "Houma Mall Rewind · Godot mall (%d)   %d fps" % [year, Engine.get_frames_per_second()]
+		if hud.visible:   # B+C: the fps readout is the owner's (owner_hud_sync)
+			hud.text = "Houma Mall Rewind · Godot mall (%d)   %d fps" % [year, Engine.get_frames_per_second()]
 		if debug:
 			print("DBG pos=", position, " touch=", move_touch, " vec=", move_vec, " iv=", iv, " free_here=", _free(position.x, position.z), " rows=", walk_rows.size())
 

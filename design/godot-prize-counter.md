@@ -89,5 +89,6 @@ by me."
   Evidence `production/qa/evidence/d34-prizes-*.png`.
 
 ## Open
-- Redemption, a ticket balance and an inventory: deferred by Steven.
+- Redemption: still deferred. A ticket balance (`mall.tickets`) and an inventory (the Bag) exist
+  since Nov 1 (design/godot-interaction.md); five prizes lie loose on the floor as pick-ups.
 - No sound; no selection highlight beyond the tooltip; VR has no prompt.

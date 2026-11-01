@@ -1,0 +1,60 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://tex/items/it_rainbow.png" id="1_rb"]
+
+[sub_resource type="StandardMaterial3D" id="it_spring"]
+cull_mode = 2
+albedo_texture = ExtResource("1_rb")
+roughness = 0.35
+metallic = 0.3
+
+[sub_resource type="CylinderMesh" id="coil"]
+material = SubResource("it_spring")
+top_radius = 0.034
+bottom_radius = 0.034
+height = 0.06
+radial_segments = 20
+rings = 1
+cap_top = false
+cap_bottom = false
+
+[sub_resource type="StandardMaterial3D" id="it_spring_top"]
+albedo_color = Color(0.9, 0.16, 0.16, 1)
+roughness = 0.35
+metallic = 0.3
+
+[sub_resource type="StandardMaterial3D" id="it_spring_bot"]
+albedo_color = Color(0.51, 0.2, 0.75, 1)
+roughness = 0.35
+metallic = 0.3
+
+[sub_resource type="TorusMesh" id="ring_t"]
+material = SubResource("it_spring_top")
+inner_radius = 0.03
+outer_radius = 0.036
+rings = 18
+ring_segments = 4
+
+[sub_resource type="TorusMesh" id="ring_b"]
+material = SubResource("it_spring_bot")
+inner_radius = 0.03
+outer_radius = 0.036
+rings = 18
+ring_segments = 4
+
+[node name="spring" type="Node3D"]
+
+[node name="Coil" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+mesh = SubResource("coil")
+
+[node name="Top" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.059, 0)
+mesh = SubResource("ring_t")
+
+[node name="Bottom" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.001, 0)
+mesh = SubResource("ring_b")
+
+[node name="Grip" type="Marker3D" parent="."]
+transform = Transform3D(0.9397, 0, -0.342, 0.1962, 0.8192, 0.539, 0.2802, -0.5736, 0.7698, 0, 0.03, 0)

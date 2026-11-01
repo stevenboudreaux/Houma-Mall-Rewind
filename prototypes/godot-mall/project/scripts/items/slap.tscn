@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://tex/items/it_slap.png" id="1_slap"]
+
+[sub_resource type="StandardMaterial3D" id="it_slap"]
+cull_mode = 2
+albedo_texture = ExtResource("1_slap")
+roughness = 0.3
+metallic = 0.2
+
+[sub_resource type="QuadMesh" id="band"]
+material = SubResource("it_slap")
+size = Vector2(0.22, 0.026)
+
+[node name="slap" type="Node3D"]
+
+[node name="Band" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0.003, 0)
+mesh = SubResource("band")
