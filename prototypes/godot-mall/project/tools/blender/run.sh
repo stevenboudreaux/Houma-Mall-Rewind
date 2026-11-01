@@ -4,7 +4,7 @@
 #   res://models/<id>/<id>.glb + <id>_albedo/_orm/_normal.png (+ <id>_icon.png for items)
 #   .scratch/blender/<id>-sheet.png (turntable beside the reference), <id>-report.json
 # Fails with "OVER BUDGET: ..." when the mesh is over its class budget (tools/blender/budgets.json).
-# --evidence also writes production/qa/evidence/wsT-<asset>-sheet.jpg (<= 1600 px).
+# --evidence also writes production/qa/evidence/wsT-<asset>-sheet.jpg (<= 1600 px; EV_PREFIX=wsT2 changes the prefix).
 # Needs: python3 -m venv /home/claude/bvenv && /home/claude/bvenv/bin/pip install bpy pillow numpy
 set -e
 A=$1; shift || true
@@ -23,7 +23,7 @@ set -e
 grep -q "^BUILD OK" "$LOG" || { echo "BUILD FAILED ($A), see $P/$LOG"; tail -5 "$LOG"; exit 1; }
 if [[ " $* " == *" --evidence "* ]]; then
   ID=$A   # asset source files are named by their id
-  python3 - "$P/.scratch/blender/$ID-sheet.png" "$P/../../../production/qa/evidence/wsT-$A-sheet.jpg" <<'EOF'
+  python3 - "$P/.scratch/blender/$ID-sheet.png" "$P/../../../production/qa/evidence/${EV_PREFIX:-wsT}-$A-sheet.jpg" <<'EOF'
 import sys
 from PIL import Image
 im = Image.open(sys.argv[1]).convert("RGB"); im.thumbnail((1600, 1600)); im.save(sys.argv[2], quality=88)

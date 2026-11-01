@@ -93,7 +93,7 @@ Triangles = the exported mesh; textures = per map (3 maps: albedo, ORM, normal).
 | `bl_pc_fingertrap` | pocket | 912 | 1024 | `scripts/prizes.json` / `prizes.gd` (bin colours); no photo | weave: 2-over-2 twill, natural + red; procedural weave baked to albedo + normal (real weave geometry would be 20–40k tris for a 2k item; the trap's outline is a smooth tube, and the baked normal map shows the strips, over/under and gaps up close) |
 | `bl_gb_lavalamp` (Steven, Nov 1) | hand | 1,504 | 512 | `tools/stores/gumballs/store.gd lava()` proportions and colours; `gumballs.md` | the rocket shape and blobs (no photo; Steven remembers them) |
 | `bl_pc_plush_bear` / `_dog` / `_bunny` (Steven, Nov 1) | hand | 1,956 / 1,612 / 1,744 | 512 | `tools/stores/pocket_change/crane.gd plush()` body plan and FUR palette | faces, bow; generic, unbranded |
-| `bl_ls_lion` (Steven, Nov 1) | large_fixture | 21,560 (sculpt ~400k) | 2048 | Steven's lion picture from the 2D game (`design/storefronts/refs/lions-share-lion.png`, extracted from `index.html` media "lion") | size (~0.95 m lion on a 0.32 m plinth), plinth, the back and the tail. **First pass, not yet at the reference's standard** (see below) |
+| `bl_ls_lion` (Steven, Nov 1; **rebuilt by T2, see below**) | large_fixture | 21,560 (sculpt ~400k) | 2048 | Steven's lion picture from the 2D game (`design/storefronts/refs/lions-share-lion.png`, extracted from `index.html` media "lion") | size (~0.95 m lion on a 0.32 m plinth), plinth, the back and the tail. **First pass, not yet at the reference's standard** (see below) |
 
 Fixture (e) of the brief (register or booth) was not built: the session time went to Steven's
 mid-session requests (lava lamps, claw toys, lion statues).
@@ -111,3 +111,55 @@ mid-session requests (lava lamps, claw toys, lion statues).
 - **Reflection probe in `godot_check`** streaks the walls under xvfb (compatibility renderer), so it is
   off by default (`"probe": true` to try it).
 - Evidence shots are unbaked (preview lighting).
+
+## Second batch (workstream T2, Nov 1 2026)
+
+Steven's rule for this batch: every item can be picked up: an entry in `data/items/blender_props_2.json`
+(written by `build.py` from `META["item"]` with `META["item_file"]`), a scene, a 256 px icon and a `place`
+in the 1995 mall. Positions come from each store's build constants (the frame `P(u, y, d) = a + t u - n d`
+of its `layout_mall.json` edge) and were checked in unbaked Godot shots of the store
+(`tools/blender/godot_check.sh "store:<NAME>"`): every item sits on its surface. Evidence:
+`production/qa/evidence/wsT2-<id>-sheet.jpg` (turntable) and `wsT2-<id>-ingame.jpg` (in the store, unbaked).
+
+| Asset | Class | Tris | Tex | Where (wing, pos) | Based on | Guessed |
+|---|---|---|---|---|---|---|
+| `bl_bd_paperback` "Shiverwood #7 paperback" (+ copies `_b`, `_c`) | pocket | 256 | 1024 | B. Dalton's table of new titles, face-up on its front half: w2 (-105.42 / -105.62 / -105.82, 0.76, ~45.97) | Steven asked for **"a Goosebumps book"**. The IP rule (no real titles, cover art or logos) rules out the real series, so this is an **invented series in that spirit**: SHIVERWOOD #7 "The Bayou Babysitter" by an invented author, purple cover, drippy lime title (Titan One, OFL), a moonlit swamp with glowing eyes and a clawed hand, $3.99 sticker, cracked spine, blurb and bar code on the back | everything printed; size (US kids' paperback 108 x 175 x 12 mm). Three pick-up copies (the brief allowed static copies; all three can be picked up because placing static ones would mean editing B. Dalton's build code) |
+| `bl_wl_rootbeer_float` | hand | 4,616 | 1024 | Woolworth lunch counter top, in front of a stool: w1 (-18.01, 1.0, -11.88) | Steven: root beer, not cola. `refs/era_1995/stores/Woolworth.jpg` (setting), `woolworth/store.gd` LC_U/LC_DP/LC_H | the fluted soda glass (one transparent shell, not baked: a second inner shell made it read opaque), foam, straw, saucer; no brand |
+| `bl_tt_lomein` | hand | 4,740 | 1024 | Tee Tai's counter, right end clear of the steam table and sneeze guard: w1 (21.6, 0.95, 8.12) | `refs/era_1995/other/other_1.jpg` (Steven's 1990s photo; the counter is not readable, so the paper pail was chosen over a styrofoam plate), `tee-tais.md` menu | the pail's generic red pagoda / THANK YOU print, the vegetables |
+| `bl_oj_cup` | hand | 1,216 | 1024 | Orange Julius counter, past the register: w1 (12.95, 1.0, 8.66) | `refs/era_1995/stores/Orange_Julius.jpg` (colours only) | the cup's orange swirl print (no logo), the clear lid (so the drink reads), the straw stripes |
+| `bl_gac_sugarcookie` (Steven's pick) | hand | 4,075 | 1024 | Great American Cookie Co., on the case top beside the register: w2 (-26.92, 0.862, 45.02) | `great-american-cookie.md` | the cookie's crackle and sugar, the plain sleeve. **Workstream G is rebuilding that case: if its top height changes, `pos[1]` must follow** |
+| `bl_kk_caramelcorn` | hand | 2,368 | 1024 | Karmelkorn's L counter, on the steel top past the register: w2 (-24.9, 1.28, 61.95) | `karmelkorn.md` | the striped bag and its generic CARAMEL CORN label (no tenant mark on the product) |
+| `bl_sr_folse_stick` (item `folse_stick`) | hand | 480 | 1024 | unchanged: the Stockrooms' far room (`stockrooms.json`) | `stockrooms.gd _stick()` | the collar, the wear. Replaces the two cylinders in `scripts/items/folse_stick.tscn` (halo, light, grip and metadata kept); the paint's faint self-glow is glTF emission from the baked albedo (`META["emissive"]`) |
+| `bl_ls_lion` second pass | large_fixture | 23,528 (sculpt ~1.6M) | 2048 | not placed (fixed decoration; same id, origin and facing) | Steven's lion picture; mid-session Steven: **"fill out the side and back of the lion, it's smooth and unrealistic"** with five statue references (seated lions in side view) | depth, back, plinth, tail |
+
+### The lion, second pass: what changed
+
+The first pass read soft and blobby. Looked at against the reference after each build (five iterations):
+1. **Bake fixes (the biggest visual gain).** The voxel-remeshed sculpt was flat-shaded, so the normal map
+   baked facets; it is smooth-shaded now. Smart UV on a decimated sculpt shattered it into thousands of
+   confetti islands while the plain plinth took half the atlas: the low-poly is now a smooth 8 mm remesh
+   of the sculpt before decimation (`META["lowpoly_voxel"]`), the plinth is kept out of the decimation
+   (`META["hipoly_keep"]`) and gets 0.3 of its atlas share (`META["uv_shrink"]`).
+2. **Face.** Solids (skull, wedge brows, a muzzle block under a broad flat bridge, a wide nose, cheeks,
+   pads, chin) fused by a remesh with a morphological closing (grow, remesh, shrink: clay-like fillets
+   where forms meet), then carved alone with boolean cutters (eye sockets, nostrils, muzzle groove, mouth
+   line, frown crease). A boolean on the whole sculpt ran out of memory, so the head is its own shell.
+3. **Mane.** ~240 flat tapered ribbon locks (not round tubes) in four front tiers, the ruff over the
+   middle over the outer, tips lifting; five rows over the top, sides and back of the neck down to the
+   withers, over a smaller core mass so the locks stand proud (the back was smooth at first because the
+   core mass buried them).
+4. **Side and back anatomy (Steven's mid-session ask).** The back slopes from the withers to a round
+   rump; ribcage, scapula, triceps, deltoid and flank forms; the hind leg folded (thigh forward to the
+   knee, shin back to the hock, foot lying forward on the plinth); longer forelegs.
+
+Still open: the baked gold reads smoother than the sculpt (the shiny metal hides normal-map relief under
+studio light); size: workstream D's procedural lions (`wave9.gd lion()`) are 1.45 m on a 0.55 m plinth,
+this model is ~0.95 m on 0.32 m, so the integration session should scale the node (~1.5) or say which
+size Steven wants. Unbaked comparison beside D's lion: `wsT2-bl_ls_lion-ingame.jpg`.
+
+### Pipeline additions (T2)
+- `build.py`: `META["item_file"]` (which `data/items/` file), `item.copies` (more pick-ups of one model),
+  `META["emissive"]`, `META["icon"]` (icon without an item entry), `lowpoly_voxel` / `hipoly_keep` /
+  `uv_shrink` for sculpts, a triangulate after the hipoly decimation. `run.sh`: `EV_PREFIX=wsT2`.
+- Run one Blender build at a time: the session's memory limit killed a sculpt build running beside a
+  small one.

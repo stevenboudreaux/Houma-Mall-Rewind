@@ -45,6 +45,28 @@ def export_glb(path, objs):
                                   export_keep_originals=KEEP_ORIG, export_cameras=False, export_lights=False, export_animations=False)
 
 
+def set_emissive(path, strength):
+    """META["emissive"]: the baked material glows faintly with its own albedo (emissive texture = the
+    albedo, factor = strength), e.g. Folse's stick, whose stand-in had emission 0.9 on white."""
+    import struct
+    with open(path, "rb") as f:
+        d = f.read()
+    n = struct.unpack("<I", d[12:16])[0]
+    j = json.loads(d[20:20 + n])
+    for m in j.get("materials", []):
+        bc = m.get("pbrMetallicRoughness", {}).get("baseColorTexture")
+        if bc is not None:
+            m["emissiveTexture"] = {"index": bc["index"]}
+            m["emissiveFactor"] = [strength] * 3
+    js = json.dumps(j, separators=(",", ":")).encode()
+    js += b" " * ((4 - len(js) % 4) % 4)
+    rest = d[20 + n:]
+    out = d[:12] + struct.pack("<I", len(js)) + d[16:20] + js + rest
+    out = out[:8] + struct.pack("<I", len(out)) + out[12:]
+    with open(path, "wb") as f:
+        f.write(out)
+
+
 def fix_glb_uris(path):
     """Blender's GLB + keep-originals export gives each image both a URI and a 250-byte placeholder
     bufferView. Keep only the URI, so Godot loads the PNGs that sit beside the .glb (one copy of each
@@ -65,6 +87,26 @@ def fix_glb_uris(path):
     out = out[:8] + struct.pack("<I", len(out)) + out[12:]
     with open(path, "wb") as f:
         f.write(out)
+
+
+def split_kept(ob, keys):
+    """META["hipoly_keep"]: faces whose material name contains one of these strings (e.g. a plinth already
+    built low-poly) are split off before the low-poly remesh/decimation and joined back after. Returns the
+    split-off object or None."""
+    import bmesh
+    if not keys:
+        return None
+    idx = {i for i, m in enumerate(ob.data.materials) if m and any(k in m.name for k in keys)}
+    if not idx:
+        return None
+    kept = core.duplicate(ob, ob.name + "_kept")
+    for o, drop_kept in ((ob, True), (kept, False)):
+        bm = bmesh.new()
+        bm.from_mesh(o.data)
+        bmesh.ops.delete(bm, geom=[f for f in bm.faces if (f.material_index in idx) == drop_kept], context="FACES")
+        bm.to_mesh(o.data)
+        bm.free()
+    return kept
 
 
 def compose_sheet(meta, tiles, out, info, tile=400):
@@ -136,7 +178,25 @@ def main():
         # the copy inherits the sculpt's custom normals, which no longer fit after decimation
         with bpy.context.temp_override(object=main_ob, active_object=main_ob):
             bpy.ops.mesh.customdata_custom_splitnormals_clear()
-        clean.decimate(main_ob, meta["hipoly"])
+        kept = split_kept(main_ob, meta.get("hipoly_keep", []))
+        if meta.get("lowpoly_voxel"):
+            # a smooth coarse remesh first: even topology, so the decimated copy unwraps into big UV islands
+            # instead of confetti, and its normals are soft (the detail comes back in the normal map)
+            rm = main_ob.modifiers.new("Remesh", "REMESH")
+            rm.mode = "VOXEL"
+            rm.voxel_size = meta["lowpoly_voxel"]
+            sm = main_ob.modifiers.new("Smooth", "LAPLACIANSMOOTH")
+            sm.iterations = 4
+            sm.use_volume_preserve = True
+            core.apply_all(main_ob)
+            print("LOWPOLY remeshed at %.4f m: %d triangles" % (meta["lowpoly_voxel"], clean.tri_count(main_ob)))
+        clean.decimate(main_ob, meta["hipoly"] - (clean.tri_count(kept) if kept else 0))
+        tr = main_ob.modifiers.new("Tri", "TRIANGULATE")     # the remesh's quads and the decimation's n-gons
+        core.apply_all(main_ob)
+        if kept:
+            core.select_only([main_ob, kept], main_ob)
+            with bpy.context.temp_override(active_object=main_ob, selected_editable_objects=[main_ob, kept], selected_objects=[main_ob, kept]):
+                bpy.ops.object.join()
         for p in main_ob.data.polygons:
             p.use_smooth = True
         main_ob.data.set_sharp_from_angle(angle=3.1)   # smooth shading on the sculpt
@@ -151,20 +211,23 @@ def main():
         raise SystemExit("tex must be a power of two, 512-2048 (got %d)" % size)
     written = bake.bake_object(main_ob, aid, out_dir, size=size, ao=meta.get("ao", 0.0),
                                normal=meta.get("normal", True), uv=meta.get("uv", "smart"),
-                               samples=8 if fast else 16, source=high, cage=meta.get("cage", 0.02))
+                               samples=8 if fast else 16, source=high, cage=meta.get("cage", 0.02),
+                               uv_shrink=meta.get("uv_shrink"))
     if high is not None:
         bpy.data.objects.remove(high)
         bpy.context.view_layer.update()
     glb = os.path.join(out_dir, aid + ".glb")
     export_glb(glb, [main_ob] + cols)
     fix_glb_uris(glb)
+    if meta.get("emissive"):
+        set_emissive(glb, float(meta["emissive"]))
     t_build = time.time() - t0
     # the review renders, from the exported file
     tiles = []
     if "--no-sheet" not in argv:
         tiles = render.turntable(glb, scratch, aid, res=320 if fast else 480, samples=16 if fast else 48)
     icon = None
-    if meta.get("item"):
+    if meta.get("item") or meta.get("icon"):    # "icon": an icon without an item entry (the item lives elsewhere)
         icon = render.icon(glb, os.path.join(out_dir, aid + "_icon.png"), samples=24 if fast else 64)
     kb = sum(os.path.getsize(p) for p in written) // 1024
     info = "%s  |  %s  |  %d tris (budget %s)  |  textures %d px x %d maps (%d KB)  |  glb %d KB" % (
@@ -182,7 +245,8 @@ def main():
 
 
 def write_item(meta, aid, cls):
-    p = os.path.join(PROJ, "data", "items", "blender_props.json")
+    # META["item_file"]: which data/items/ file holds the entry (workstream T2 writes blender_props_2.json)
+    p = os.path.join(PROJ, "data", "items", meta.get("item_file", "blender_props.json"))
     data = {"_": "Items modelled in Blender (tools/blender/, design/godot-blender-pipeline.md). Same shape as the "
                  "Godot-built item list: id, name, class (hand|pocket), scene, icon, year, place (optional). "
                  "Written by tools/blender/build.py from each asset's META['item'].", "items": []}
@@ -193,9 +257,12 @@ def write_item(meta, aid, cls):
           "scene": "res://models/%s/%s.glb" % (aid, aid), "icon": "res://models/%s/%s_icon.png" % (aid, aid),
           "year": meta["item"].get("year", 1995)}
     for k, v in meta["item"].items():
-        if k not in ("name", "year"):
+        if k not in ("name", "year", "copies"):
             it[k] = v
-    data["items"] = [x for x in data["items"] if x["id"] != aid] + [it]
+    # "copies": more pick-ups of the same model, [{"id": ..., "place": {...}}, ...] (e.g. a table of paperbacks)
+    new = [it] + [dict(it, **c) for c in meta["item"].get("copies", [])]
+    ids = set(x["id"] for x in new)
+    data["items"] = [x for x in data["items"] if x["id"] not in ids] + new
     data["items"].sort(key=lambda x: x["id"])
     os.makedirs(os.path.dirname(p), exist_ok=True)
     with open(p, "w") as f:

@@ -27,7 +27,9 @@ def _baked_mats(ob):
     return [m for m in ob.data.materials if m is not None and m.get("bake", True)]
 
 
-def uv_unwrap(ob, margin=0.004):
+def uv_unwrap(ob, margin=0.004, shrink=None):
+    """Smart UV atlas. shrink: {material-name substring: factor} gives those faces less of the atlas
+    (e.g. a plain plinth under a detailed statue)."""
     core.select_only([ob], ob)
     while ob.data.uv_layers:
         ob.data.uv_layers.remove(ob.data.uv_layers[0])
@@ -36,6 +38,17 @@ def uv_unwrap(ob, margin=0.004):
         bpy.ops.object.mode_set(mode="EDIT")
         bpy.ops.mesh.select_all(action="SELECT")
         bpy.ops.uv.smart_project(angle_limit=1.15, island_margin=margin, area_weight=0.0, correct_aspect=True, scale_to_bounds=False)
+        if shrink:
+            bpy.ops.object.mode_set(mode="OBJECT")
+            uv = ob.data.uv_layers.active.data
+            for p in ob.data.polygons:
+                m = ob.data.materials[p.material_index] if p.material_index < len(ob.data.materials) else None
+                f = next((v for k, v in shrink.items() if m and k in m.name), None)
+                if f:
+                    for li in p.loop_indices:
+                        uv[li].uv = uv[li].uv * f
+            bpy.ops.object.mode_set(mode="EDIT")
+            bpy.ops.mesh.select_all(action="SELECT")
         bpy.ops.uv.pack_islands(rotate=True, margin=margin)
         bpy.ops.object.mode_set(mode="OBJECT")
 
@@ -105,13 +118,13 @@ def _px(im):
     return a.reshape(im.size[1], im.size[0], 4)
 
 
-def bake_object(ob, asset, out_dir, size=1024, ao=0.0, normal=True, uv="smart", samples=16, source=None, cage=0.02):
+def bake_object(ob, asset, out_dir, size=1024, ao=0.0, normal=True, uv="smart", samples=16, source=None, cage=0.02, uv_shrink=None):
     """Bake and swap in the final material bl_<asset>_baked. Returns the list of written PNG paths.
     source: a high-poly object whose materials and surface detail are baked onto `ob` (selected-to-active;
     every source material is baked, none kept flat)."""
     os.makedirs(out_dir, exist_ok=True)
     if uv == "smart":
-        uv_unwrap(ob)
+        uv_unwrap(ob, shrink=uv_shrink)
     if source:
         tmp = bpy.data.materials.new("__bake_low")
         tmp.use_nodes = True

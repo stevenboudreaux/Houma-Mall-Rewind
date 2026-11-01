@@ -1,0 +1,157 @@
+{
+ "_": "Items modelled in Blender (tools/blender/, design/godot-blender-pipeline.md). Same shape as the Godot-built item list: id, name, class (hand|pocket), scene, icon, year, place (optional). Written by tools/blender/build.py from each asset's META['item'].",
+ "items": [
+  {
+   "id": "bl_bd_paperback",
+   "name": "Shiverwood #7 paperback",
+   "class": "pocket",
+   "scene": "res://models/bl_bd_paperback/bl_bd_paperback.glb",
+   "icon": "res://models/bl_bd_paperback/bl_bd_paperback_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -105.42,
+     0.76,
+     45.98
+    ],
+    "yaw": 6
+   }
+  },
+  {
+   "id": "bl_bd_paperback_b",
+   "name": "Shiverwood #7 paperback",
+   "class": "pocket",
+   "scene": "res://models/bl_bd_paperback/bl_bd_paperback.glb",
+   "icon": "res://models/bl_bd_paperback/bl_bd_paperback_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -105.62,
+     0.76,
+     45.95
+    ],
+    "yaw": -4
+   }
+  },
+  {
+   "id": "bl_bd_paperback_c",
+   "name": "Shiverwood #7 paperback",
+   "class": "pocket",
+   "scene": "res://models/bl_bd_paperback/bl_bd_paperback.glb",
+   "icon": "res://models/bl_bd_paperback/bl_bd_paperback_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -105.82,
+     0.76,
+     45.99
+    ],
+    "yaw": 3
+   }
+  },
+  {
+   "id": "bl_gac_sugarcookie",
+   "name": "Sugar cookie",
+   "class": "hand",
+   "scene": "res://models/bl_gac_sugarcookie/bl_gac_sugarcookie.glb",
+   "icon": "res://models/bl_gac_sugarcookie/bl_gac_sugarcookie_icon.png",
+   "year": 1995,
+   "store": "GREAT AMERICAN COOKIE CO",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -26.92,
+     0.862,
+     45.02
+    ],
+    "yaw": 12
+   }
+  },
+  {
+   "id": "bl_kk_caramelcorn",
+   "name": "Caramel corn",
+   "class": "hand",
+   "scene": "res://models/bl_kk_caramelcorn/bl_kk_caramelcorn.glb",
+   "icon": "res://models/bl_kk_caramelcorn/bl_kk_caramelcorn_icon.png",
+   "year": 1995,
+   "store": "KARMELKORN",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -24.9,
+     1.28,
+     61.95
+    ],
+    "yaw": 195
+   }
+  },
+  {
+   "id": "bl_oj_cup",
+   "name": "Orange Julius",
+   "class": "hand",
+   "scene": "res://models/bl_oj_cup/bl_oj_cup.glb",
+   "icon": "res://models/bl_oj_cup/bl_oj_cup_icon.png",
+   "year": 1995,
+   "store": "ORANGE JULIUS",
+   "place": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     12.95,
+     1.0,
+     8.66
+    ],
+    "yaw": 200
+   }
+  },
+  {
+   "id": "bl_tt_lomein",
+   "name": "Lo mein",
+   "class": "hand",
+   "scene": "res://models/bl_tt_lomein/bl_tt_lomein.glb",
+   "icon": "res://models/bl_tt_lomein/bl_tt_lomein_icon.png",
+   "year": 1995,
+   "store": "TEE TAI'S",
+   "place": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     21.6,
+     0.95,
+     8.12
+    ],
+    "yaw": 160
+   }
+  },
+  {
+   "id": "bl_wl_rootbeer_float",
+   "name": "Root beer float",
+   "class": "hand",
+   "scene": "res://models/bl_wl_rootbeer_float/bl_wl_rootbeer_float.glb",
+   "icon": "res://models/bl_wl_rootbeer_float/bl_wl_rootbeer_float_icon.png",
+   "year": 1995,
+   "store": "WOOLWORTH",
+   "place": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     -18.01,
+     1.0,
+     -11.88
+    ],
+    "yaw": 0
+   }
+  }
+ ]
+}
