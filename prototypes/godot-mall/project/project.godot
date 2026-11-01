@@ -20,6 +20,7 @@ run/main_scene.wing2="res://wing2.tscn"
 run/main_scene.wing3="res://wing3.tscn"
 run/main_scene.w1y26="res://wing1_2026.tscn"
 run/main_scene.w2y26="res://wing2_2026.tscn"
+run/main_scene.w3y26="res://wing3_2026.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [display]

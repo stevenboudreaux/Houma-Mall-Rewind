@@ -13,8 +13,13 @@
     come from the scene's collide.json)
 Run: python3 tools/make_exterior.py ../../../index.html
 """
-import json, re, sys
+import json, os, re, sys
 from collections import deque
+
+# Workstream F (Nov 1 2026): the footprint's corrections (filled notches, Unitech's position,
+# the Sears door spots for Workstream E), design/godot-exterior.md "Fake walls"
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "exterior"))
+import wall_fixes as WF
 
 S = 2.0
 OX, OY = 148.0, 100.0
@@ -56,6 +61,19 @@ def main(src, out_path):
                 if 0 <= y < H and 0 <= x < W:
                     solid[y][x] = 1
                     owner.setdefault((x, y), i)
+    # Workstream F: the filled notches (tools/exterior/wall_fixes.py FILLS)
+    for fx in WF.FILLS:
+        r = fx["rect"]
+        si = None
+        if fx["owner"]:
+            si = [k for k, st in enumerate(stores) if st["id"] == fx["owner"]][0]
+        else:
+            stores.append(dict(id="fix_" + (fx["name"] or "wall").replace(" ", "_").lower(), name=fx["name"], x=0, y=0, w=0, h=0))
+            si = len(stores) - 1
+        for ty in range(int(r[1] / S + OY), int(r[3] / S + OY)):
+            for tx in range(int(r[0] / S + OX), int(r[2] / S + OX)):
+                solid[ty][tx] = 1
+                owner.setdefault((tx, ty), si)
     # fill holes: anything not reachable from the map border is inside
     outside = [[0] * W for _ in range(H)]
     q = deque()
@@ -205,11 +223,26 @@ def main(src, out_path):
     walk = []
     for y in range(H):
         walk.append("".join("0" if mask[y][x] else "1" for x in range(W)))
+    # Workstream F: the map's standalone block n2 is not where the map puts it (west of JCPenney's
+    # back lot: parking); Unitech stands north of Sears by Armour Dr (wall_fixes.STANDALONE)
+    walk = [list(r) for r in walk]
+    for k, tiles in enumerate(comps):
+        if k != main_k:
+            for (tx, ty) in tiles:
+                walk[ty][tx] = "1"
+    for sa in WF.STANDALONE:
+        r = sa["rect"]
+        for ty in range(int(r[1] / S + OY), int(r[3] / S + OY)):
+            for tx in range(int(r[0] / S + OX), int(r[2] / S + OX)):
+                walk[ty][tx] = "0"
+    walk = ["".join(r) for r in walk]
+    standalone = [dict(name=sa["name"], rect=sa["rect"]) for sa in WF.STANDALONE]
 
     xs = [t[0] for t in comps[main_k]]; ys = [t[1] for t in comps[main_k]]
     bounds = [wx(min(xs)), wz(min(ys)), wx(max(xs) + 1), wz(max(ys) + 1)]
     json.dump(dict(scale=S, origin=[OX, OY], bounds=bounds, map=[wx(0), wz(0), wx(W), wz(H)], segments=segments, roofs=roofs,
-                   doors=doors, standalone=standalone, walk=walk), open(out_path, "w"), indent=1)
+                   doors=doors, standalone=standalone, walk=walk,
+                   bay=WF.BAY, door_spots=WF.DOOR_SPOTS), open(out_path, "w"), indent=1)
     print("segments", len(segments), "roofs", len(roofs), "doors", len(doors), "standalone", standalone, "bounds", bounds)
     for dr in doors:
         print(" door", dr["store"], dr["kind"], "wing", dr["wing"], dr["zone"], "out", dr["out"], "in", dr["inside"], "yaw_in", round(dr["yaw_in"]))

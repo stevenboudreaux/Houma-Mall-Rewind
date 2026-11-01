@@ -14,6 +14,8 @@
 ## medium one (build_mall.gd). Trees, palms and the signs are dynamic (no lightmap).
 const UP = Vector3.UP
 const CU = preload("res://tools/stores/signs/cucos_sign.gd")
+const MON = preload("res://tools/exterior/monuments.gd")
+const Y26 = preload("res://tools/exterior/exterior_2026.gd")
 
 # ---- heights (parapets, metres): the report's table
 const H_DEFAULT = 6.5     # store backs, the east facade
@@ -34,6 +36,10 @@ const H_UNITECH = 7.0
 static var E = {}          # exterior.json
 static var rng = RandomNumberGenerator.new()
 static var trees = 0
+static var YEAR = 1995     # --year=2026 builds the outside as filmed on Oct 23 2026 (exterior_2026.gd)
+## The Bayou Gardens drive (Workstream F): the gap in the palm island in front of the south
+## entrance, x0..x1, where the monument sign stands (tools/exterior/monuments.gd)
+const BAYOU_DRIVE = [-150.0, -134.0]
 
 # ------------------------------------------------------------------ materials
 static func fill_mat(m, key, b):
@@ -107,7 +113,6 @@ static func fill_mat(m, key, b):
 		"purple": m.albedo_color = Color("#5a2d7a"); m.roughness = 0.5
 		"kb_tan": m.albedo_color = Color("#c9b48e"); m.roughness = 0.8
 		"pebble": m.albedo_color = Color("#b9b2a4"); m.roughness = 0.95
-		"lace": m.albedo_color = Color("#2b241f"); m.roughness = 0.5; m.metallic = 0.5
 		"trunk": m.albedo_color = Color("#6d5a3e"); m.roughness = 0.95
 		"oak": m.albedo_color = Color("#3f6b2c"); m.roughness = 0.95
 		"pine": m.albedo_color = Color("#2f5a2a"); m.roughness = 0.95
@@ -124,6 +129,49 @@ static func fill_mat(m, key, b):
 		"cream_green_roof": m.albedo_color = Color("#2f6b45"); m.roughness = 0.6
 		"water_blue": m.albedo_color = Color("#2b5ea8"); m.roughness = 0.6
 		"vcolor": m.vertex_color_use_as_albedo = true; m.roughness = 0.7
+		# ---- Workstream F (Nov 1 2026): sign faces, lace, lot paint, the 2026 skins
+		# (tools/exterior/paint_signs.py paints the textures)
+		"mon_1995", "mon_2026", "ua_head", "ua_lines", "banner_2026":
+			m.albedo_texture = b.tex("ex/" + key + ".png"); m.roughness = 0.7
+			m.emission_enabled = true; m.emission_texture = m.albedo_texture
+			m.emission_energy_multiplier = 0.0; m.set_meta("e_day", 0.0); m.set_meta("e_night", 0.35 if key.begins_with("ua") else 0.0)
+		"lace", "lace_bracket", "firelane_pink", "firelane_yellow", "ada", "tactile_mat":
+			var f = {"lace": "lace_frieze", "lace_bracket": "lace_bracket", "firelane_pink": "firelane_pink",
+				"firelane_yellow": "firelane_yellow", "ada": "ada_symbol", "tactile_mat": "tactile"}[key]
+			m.albedo_texture = b.tex("ex/" + f + ".png"); m.roughness = 0.6 if key.begins_with("lace") else 0.9
+			if key.begins_with("lace"):
+				m.metallic = 0.4
+			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR; m.alpha_scissor_threshold = 0.5
+			m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		"acm_white": tx.call("acm_white", 0.35); m.metallic = 0.2
+		"eifs_peach": tx.call("eifs_panel", 0.85); m.albedo_color = Color("#f2d3c4")
+		"eifs_salmon": tx.call("eifs_panel", 0.85); m.albedo_color = Color("#e8b7a6")
+		"eifs_tan": tx.call("eifs_panel", 0.85); m.albedo_color = Color("#d6bf98")
+		"eifs_pav": tx.call("eifs_panel", 0.85); m.albedo_color = Color("#e5c8b6")
+		"paint_cream": tx.call("brick_painted", 0.85); m.albedo_color = Color("#efe4cc")
+		"paint_pink": tx.call("brick_painted", 0.85); m.albedo_color = Color("#ecc8bc")
+		"paint_salmon": tx.call("brick_painted", 0.85); m.albedo_color = Color("#d99c84")
+		"paint_white": tx.call("brick_painted", 0.85)
+		"paint_black": tx.call("brick_painted", 0.8); m.albedo_color = Color("#2a2826")
+		"curb_red": m.albedo_color = Color("#b8303a"); m.roughness = 0.8
+		"curb_pink": m.albedo_color = Color("#d84a7c"); m.roughness = 0.8
+		"ada_blue": m.albedo_color = Color("#2f6fc0"); m.roughness = 0.85
+		"tile_dark": m.albedo_color = Color("#5e5650"); m.roughness = 0.4
+		"tile_light": m.albedo_color = Color("#d9d2c4"); m.roughness = 0.4
+		"stainless": m.albedo_color = Color("#c9cbcc"); m.roughness = 0.3; m.metallic = 0.8
+		"black_steel": m.albedo_color = Color("#1c1c1e"); m.roughness = 0.5; m.metallic = 0.5
+		"navy": m.albedo_color = Color("#1d2a4a"); m.roughness = 0.7
+		"magenta": m.albedo_color = Color("#e20074"); m.roughness = 0.5
+		"red_seal": m.albedo_color = Color("#b3202a"); m.roughness = 0.6
+		"jcp_red": m.albedo_color = Color("#b0164a"); m.roughness = 0.5
+		"soffit_terra": m.albedo_color = Color("#b98a62"); m.roughness = 0.9
+		"gold": m.albedo_color = Color("#c9a24a"); m.roughness = 0.35; m.metallic = 0.8
+		"led":
+			m.albedo_color = Color("#ffffff"); m.emission_enabled = true; m.emission = Color("#f4f8ff")
+			m.emission_energy_multiplier = 3.0; m.set_meta("e_day", 0.0); m.set_meta("e_night", 3.0)
+		"neon_open":
+			m.albedo_color = Color("#ff4060"); m.emission_enabled = true; m.emission = Color("#ff3050")
+			m.emission_energy_multiplier = 2.0
 		_:
 			return false
 	return true
@@ -182,7 +230,10 @@ static func island(b, x0, z0, x1, z1, top = "ex_mulch", curb = "ex_curb_yellow")
 	b.obst(["rect", x0, z0, x1, z1])
 
 ## A white stall stripe (the 1995 striping under today's yellow) painted just above the lot.
-static func stripe(b, a, bb, w = 0.1, mname = "ex_stripe_white"):
+static func stripe(b, a, bb, w = 0.1, mname = ""):
+	if mname == "":
+		# 1995: the white grid (the ghost lines under today's paint); 2026: fresh yellow (4487 f034)
+		mname = "ex_stripe_yellow" if YEAR == 2026 else "ex_stripe_white"
 	var t = (bb - a).normalized()
 	var s = Vector3(-t.z, 0, t.x) * (w * 0.5)
 	b.quad("ex_paint", mname, [a - s + UP * 0.012, bb - s + UP * 0.012, bb + s + UP * 0.012, a + s + UP * 0.012], UP, [], true)
@@ -199,8 +250,11 @@ static func stall_row(b, p, t, len):
 
 ## A lot light: a white tapered pole ~11 m on a square yellow pedestal, twin shoebox heads
 ## (the 2026 LED poles stand on the same pedestals; period heads here).
-static func lot_pole(b, at, yaw):
+static func lot_pole(b, at, yaw, quad_heads = false):
 	var g = "ex_props"
+	if YEAR == 2026:
+		led_pole(b, at, yaw, quad_heads)
+		return
 	b.box(g, "ex_pedestal", at + UP * 0.5, Vector3(0.8, 1.0, 0.8))
 	b.cyl(g, "ex_pole_white", at + UP * 1.0, 0.16, 0.09, 10.5, 10, true)
 	var d = Vector3(cos(yaw), 0, sin(yaw))
@@ -211,6 +265,35 @@ static func lot_pole(b, at, yaw):
 		rbox(b, g, "ex_shoebox", head, Vector3(0.9, 0.22, 0.5), yaw)
 		b.quad(g, "ex_lamp", [head + Vector3(-0.4, -0.112, -0.2), head + Vector3(0.4, -0.112, -0.2), head + Vector3(0.4, -0.112, 0.2), head + Vector3(-0.4, -0.112, 0.2)], -UP)
 		b.tag(b.add_omni(head - UP * 0.5, 5.0, 30.0, Color("#FF9F45")), "night")
+	b.obst(["rect", at.x - 0.5, at.z - 0.5, at.x + 0.5, at.z + 0.5])
+
+## The 2026 lot light (4487 f030, 4488 f004): the same white tapered pole on its yellow pedestal,
+## two up-curved "Y" arms with flat rectangular LED heads at ~10.5 m; nearer the building a second
+## tier (4 heads). White light at night.
+static func led_pole(b, at, yaw, quad_heads):
+	var g = "ex_props"
+	b.box(g, "ex_pedestal", at + UP * 0.5, Vector3(0.8, 1.0, 0.8))
+	b.cyl(g, "ex_pole_white", at + UP * 1.0, 0.16, 0.09, 10.2, 10, true)
+	var tiers = [[yaw, 10.6]]
+	if quad_heads:
+		tiers.append([yaw + PI * 0.5, 9.4])
+	for tr in tiers:
+		var d = Vector3(cos(tr[0]), 0, sin(tr[0]))
+		for sd in [-1.0, 1.0]:
+			# the arm: two segments rising outward, like a shallow curve
+			var p0 = at + UP * (tr[1] - 0.6)
+			var p1 = p0 + d * (sd * 0.7) + UP * 0.45
+			var p2 = p1 + d * (sd * 0.8) + UP * 0.15
+			for seg in [[p0, p1], [p1, p2]]:
+				var m = (seg[0] + seg[1]) * 0.5
+				var L = seg[0].distance_to(seg[1])
+				var dir = (seg[1] - seg[0]).normalized()
+				var bs = Basis(dir, dir.cross(Vector3(-d.z, 0, d.x)).normalized(), Vector3(-d.z, 0, d.x)).orthonormalized()
+				b.box(g, "ex_pole_white", Vector3.ZERO, Vector3(L, 0.09, 0.09), Transform3D(bs, m))
+			var head = p2 + d * (sd * 0.35)
+			rbox(b, g, "ex_pole_white", head, Vector3(0.75, 0.08, 0.38), tr[0])
+			b.quad(g, "ex_led", [head + Vector3(-0.3, -0.042, -0.15), head + Vector3(0.3, -0.042, -0.15), head + Vector3(0.3, -0.042, 0.15), head + Vector3(-0.3, -0.042, 0.15)], -UP)
+			b.tag(b.add_omni(head - UP * 0.5, 4.0, 30.0, Color("#F2F4FF")), "night")
 	b.obst(["rect", at.x - 0.5, at.z - 0.5, at.x + 0.5, at.z + 0.5])
 
 ## A beige steel service door with a wall pack over it, flat on the wall at u along the run.
@@ -240,9 +323,16 @@ static func skin(seg):
 	if nm == "WOOLWORTH":
 		return {"mat": "ex_brick_red", "h": H_WOOL}
 	if nm == "CUCOS BORDER CAFE":
-		return {"mat": "ex_stucco_tan", "h": H_CUCOS}
+		# 2026: The Red Seal's white heavy skip-trowel stucco over the brick (4493 f033-044)
+		return {"mat": "ex_stucco_white" if YEAR == 2026 else "ex_stucco_tan", "h": H_CUCOS}
 	if nm == "K&B":
 		return {"mat": "ex_kb_tan", "h": H_KB}
+	# Workstream F: the north returns beside the two Sears-hall exits are the Sears box's white
+	# painted walls (4406 f031-035: the east entrance "recessed between the Red Seal's black brick
+	# pier and the white Sears box", a charcoal eyebrow band; 4416 f002: the cinema-side exit's left
+	# return is white-painted brick)
+	if side == "N" and abs(seg.a[1] + 96.0) < 0.01 and (seg.a[0] >= 30 or seg.a[0] <= -76):
+		return {"mat": "ex_block_white", "h": H_DEFAULT, "eyebrow": seg.a[0] >= 30}
 	if nm == "EXIT" and seg.a[0] > 30 and seg.a[1] < -80:
 		return {"mat": "ex_stucco_peach", "h": H_EAST_ENTRY}
 	if nm == "EXIT" and seg.a[0] < -70:
@@ -251,6 +341,12 @@ static func skin(seg):
 		return {"mat": "ex_stucco_cream", "h": H_SOUTH_PAV}   # the south pavilion
 	if nm == "MAIN ENTRANCE":
 		return {"mat": "ex_stucco_cream", "h": H_MAIN_ENTRY}
+	# Workstream F's filled notches (tools/exterior/wall_fixes.py): the trash / transformer bay is
+	# tan brick (4406 f011-015); the link beside the south pavilion cream stucco (4489 f035)
+	if nm == "SERVICE BAY" or (st == "fix_east_facade" and in_bay(seg)):
+		return {"mat": "ex_brick_brown", "h": H_DEFAULT}
+	if nm == "LINK":
+		return {"mat": "ex_stucco_cream" if YEAR != 2026 else "ex_eifs_pav", "h": 8.0}
 	# the Concourse's south row backs: a blank 5 m wall; the Dillard's wing's rear lane too
 	if side == "S" and seg.a[1] >= 96 or nm in ["WESLEY AUSTIN", "TERREBONNE GENERAL OUTREACH", "MEN", "WOMEN", "ZALES"] or st == "H7":
 		return {"mat": "ex_brick_tan", "h": H_SOUTH_BACKS}
@@ -259,6 +355,22 @@ static func skin(seg):
 		return {"mat": "ex_stucco_tan", "h": H_DEFAULT, "panels": true}
 	return {"mat": "ex_brick_tan", "h": H_DEFAULT}
 
+## The rear service lane behind the Dillard's wing: the walls round the pocket and alley between
+## the Concourse's back row, the restrooms and Dillard's (x -44..-18, z 68..98), not Dillard's own.
+static func rear_lane(seg):
+	if seg.name == "DILLARD'S":
+		return false
+	var m = (V(seg.a) + V(seg.b)) * 0.5
+	return m.x > -44.0 and m.x < -18.0 and m.z > 68.0 and m.z < 98.0
+
+## A wall run inside the east facade's trash bay (exterior.json "bay").
+static func in_bay(seg):
+	var r = E.get("bay", [])
+	if r.size() < 4:
+		return false
+	var m = (V(seg.a) + V(seg.b)) * 0.5
+	return m.x >= r[0] - 0.01 and m.x <= r[2] + 0.01 and m.z >= r[1] - 0.01 and m.z <= r[3] + 0.01
+
 static func shell(b):
 	var g = "ex_shell"
 	for seg in E.segments:
@@ -266,7 +378,33 @@ static func shell(b):
 		var t = (bb - a).normalized(); var Ln = a.distance_to(bb)
 		var sk = skin(seg)
 		var h = sk.h
-		wall(b, g, sk.mat, a, bb, n, 0.0, h)
+		if YEAR == 2026 and seg.side == "S" and V(seg.a).z >= 96.0 and seg.name != "DILLARD'S" and h <= 5.5:
+			# 2026: the low wing wall in two-tone EIFS, pale peach over deeper salmon split at 2.2 m,
+			# thick cream coping, diamond wall-packs every ~10 m (4489 f059-f069)
+			wall(b, g, "ex_eifs_salmon", a, bb, n, 0.0, 2.2)
+			wall(b, g, "ex_eifs_peach", a, bb, n, 2.2, h)
+			run_box(b, g, "ex_coping", a, t, n, 0.0, Ln, 2.18, 2.22, 0.02, 0.02)
+			var kw = 5.0
+			while kw < Ln - 1.0:
+				run_box(b, g, "ex_white_wainscot", a, t, n, kw - 0.2, kw + 0.2, h - 1.0, h - 0.6, 0.18, 0.18)
+				kw += 10.0
+		elif rear_lane(seg):
+			# the rear service lane behind the Dillard's wing (4490 f006-012): painted brick in three
+			# bands, a darker salmon base, a light-pink middle, a cream top under the coping, thin
+			# reveals between (the paint is today's; 1995 the same, a GUESS)
+			wall(b, g, "ex_paint_salmon", a, bb, n, 0.0, 1.6)
+			wall(b, g, "ex_paint_pink", a, bb, n, 1.6, 3.6)
+			wall(b, g, "ex_paint_cream", a, bb, n, 3.6, h)
+			run_box(b, g, "ex_coping", a, t, n, 0.0, Ln, 1.58, 1.62, 0.02, 0.02)
+			run_box(b, g, "ex_coping", a, t, n, 0.0, Ln, 3.58, 3.62, 0.02, 0.02)
+			var k2 = 6.0
+			while k2 < Ln - 1.0:
+				run_box(b, g, "ex_white_wainscot", a, t, n, k2 - 0.12, k2 + 0.12, 0.0, h - 0.3, 0.14, 0.12)
+				k2 += 9.0
+		else:
+			wall(b, g, sk.mat, a, bb, n, 0.0, h)
+		if sk.get("eyebrow", false):
+			run_box(b, g, "ex_coping_dark", a, t, n, 0.0, Ln, 3.3, 3.6, 0.5, 0.5)
 		# coping
 		run_box(b, g, "ex_coping" if sk.mat != "ex_brick_red" else "ex_coping_dark", a, t, n, 0.0, Ln, h - 0.08, h + 0.1, 0.12, 0.6)
 		if sk.has("panels"):
@@ -304,7 +442,10 @@ static func roofs(b):
 	for s in E.standalone:
 		var r = s.rect
 		var y = H_UNITECH
-		b.box("ex_shell", "ex_brick_tan", Vector3((r[0] + r[2]) * 0.5, y * 0.5, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0], y, r[3] - r[1]), Transform3D.IDENTITY, ["-y"])
+		# Unitech: "a separate long low white warehouse box" (4486 f010, f072)
+		b.box("ex_shell", "ex_block_white", Vector3((r[0] + r[2]) * 0.5, y * 0.5, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0], y, r[3] - r[1]), Transform3D.IDENTITY, ["-y"])
+		if YEAR == 2026:
+			b.label("UNITECH", "sans", "#1d2a4a", Vector3((r[0] + r[2]) * 0.5, y - 1.4, r[3] + 0.08), Vector3(0, 0, 1), 10.0, 1.1)
 		b.box("ex_shell", "ex_coping", Vector3((r[0] + r[2]) * 0.5, y + 0.05, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0] + 0.2, 0.12, r[3] - r[1] + 0.2))
 		b.obst(["rect", r[0], r[1], r[2], r[3]])
 
@@ -316,7 +457,7 @@ static func masses(b):
 		["ex_block_white", -40.0, -134.0, 30.0, -96.0, H_SEARS],
 		["ex_block_white", -76.0, -96.0, -40.0, -86.0, H_SEARS],     # the Sears hall's north wall is part of the box
 		["ex_stucco_peach", -38.0, 80.0, 30.0, 118.0, H_DILLARDS],
-		["ex_brick_cream", -202.0, 32.0, -154.0, 74.0, H_JCP_REAR],
+		["ex_brick_cream", -202.0, 32.0, -154.0, 92.0, H_JCP_REAR],   # to z 92: wall_fixes F3
 		["ex_brick_salmon", -70.0, -86.0, -46.0, -64.0, H_CINEMA],
 		["ex_brick_red", -74.0, -14.0, -10.0, 22.0, H_WOOL],
 		["ex_stucco_cream", -146.0, 88.0, -138.0, 92.0, H_SOUTH_PAV]]
@@ -335,7 +476,10 @@ static func masses(b):
 # ------------------------------------------------------------------ the special fronts
 static func fronts(b):
 	east_entrance(b)
-	main_entrance(b)
+	if YEAR == 2026:
+		Y26.main_entrance(b)        # today's porte-cochere, T-Mobile, Shoe Dept. (exterior_2026.gd)
+	else:
+		main_entrance(b)
 	south_entrance(b)
 	cinema_exit(b)
 	cinema_box(b)
@@ -386,7 +530,11 @@ static func east_entrance(b):
 	# the fascia's cream band and the neon, centred over the doors
 	run_box(b, g, "ex_cream_pier", a, t, n, 0.0, Ln, H_EAST_ENTRY - 0.5, H_EAST_ENTRY, 0.12, 0.12)
 	var c = a + t * 5.0 + UP * 3.95 + n * 0.02
-	CU.build(b, "ex_cucos_neon", "res://tools/stores/signs/cu_sign.json", c, n, 2.2)
+	if YEAR == 2026:
+		# today: the gold art-deco fan and two small diamonds on the peach fascia (4406 f038-040)
+		Y26.fan_ornament(b, c + UP * 1.4, n, t)
+	else:
+		CU.build(b, "ex_cucos_neon", "res://tools/stores/signs/cu_sign.json", c, n, 2.2)
 	# daylight cans in the soffit, a warm spot on the doors at night
 	for i in 3:
 		b.tag(b.add_spot(a + t * (2.5 + i * 2.5) + n * 1.0 + UP * 3.6, -UP, 1.5, 6.0, 60.0, Color("#FFE6C2")), "night")
@@ -418,26 +566,66 @@ static func main_entrance(b):
 ## overhanging 1.2–1.5 m, cream pilasters, a deep porch with the doors turned 90 degrees inside it,
 ## a drop-off bulb (4489 f034, f039). EIFS today; the mass and position are original.
 static func south_entrance(b):
+	# Workstream F: the pavilion projects past the low wing wall with its porch (4489 f031-f040:
+	# "~6 m wide x ~4 m clear x ~5-6 m deep loggia"); until Nov 1 it stood flush with the doors
+	# and the drop-off bulb sat against it. Both years have the porch (the mass and position are
+	# original); 2026 wears today's peach EIFS and dark tile bands, 1995 cream (a GUESS).
 	var g = "ex_entry"
+	var y26 = YEAR == 2026
+	var wallm = "ex_eifs_pav" if y26 else "ex_stucco_cream"
+	var pier = "ex_cream_pier"
 	var a = Vector3(-146, 0, 92); var n = Vector3(0, 0, 1); var t = Vector3(1, 0, 0); var Ln = 8.0
-	# the cornice slab
-	b.box(g, "ex_white_wainscot", Vector3(-142, H_SOUTH_PAV + 0.15, 92.0), Vector3(Ln + 3.0, 0.3, 3.0))
-	# the porch: two pilasters and the doors between them
-	for u in [0.6, 7.4]:
-		run_box(b, g, "ex_cream_pier", a, t, n, u - 0.45, u + 0.45, 0.0, H_SOUTH_PAV - 0.4, 0.5, 0.5)
-		run_box(b, g, "ex_coping_dark", a, t, n, u - 0.45, u + 0.45, 0.0, 1.0, 0.52, 0.52)
+	var z1 = 99.0                                   # the porch front
+	var x0 = -147.2; var x1 = -136.8                # the pavilion's sides
+	var top = H_SOUTH_PAV
+	# the side walls of the porch, full height, and the block over it
+	for xs in [[x0, x0 + 1.2], [x1 - 1.2, x1]]:
+		b.box(g, wallm, Vector3((xs[0] + xs[1]) * 0.5, top * 0.5, (92.0 + z1) * 0.5), Vector3(xs[1] - xs[0], top, z1 - 92.0), Transform3D.IDENTITY, ["-y"])
+		b.obst(["rect", xs[0], 92.0, xs[1], z1])
+	b.box(g, wallm, Vector3((x0 + x1) * 0.5, (4.6 + top) * 0.5, (92.0 + z1) * 0.5), Vector3(x1 - x0 - 2.4, top - 4.6, z1 - 92.0), Transform3D.IDENTITY, ["-y"])
+	b.quad(g, wallm, [Vector3(x0 + 1.2, 4.6, 92.0), Vector3(x1 - 1.2, 4.6, 92.0), Vector3(x1 - 1.2, 4.6, z1), Vector3(x0 + 1.2, 4.6, z1)], -UP)
+	# the two big square pilasters on the front corners, banded dark at the base (3 dark tile bands
+	# in 2026, 4489 f039; one dark base band in 1995)
+	for px in [x0 + 0.6, x1 - 0.6]:
+		var pc = Vector3(px, 0, z1 + 0.15)
+		b.box(g, pier, pc + UP * ((top - 0.4) * 0.5), Vector3(1.3, top - 0.4, 0.9))
+		if y26:
+			for k in 3:
+				b.box(g, "ex_tile_dark", pc + UP * (0.25 + k * 0.85), Vector3(1.34, 0.45, 0.94))
+		else:
+			b.box(g, "ex_coping_dark", pc + UP * 0.5, Vector3(1.34, 1.0, 0.94))
+		# the narrow slot near the top and the white crown cap
+		b.box(g, "ex_coping_dark", pc + UP * (top - 1.6) + Vector3(0, 0, 0.46), Vector3(0.18, 1.6, 0.02))
+		b.box(g, "ex_white_wainscot", pc + UP * (top - 0.3), Vector3(1.45, 0.2, 1.05))
+	# the thin flat white cornice slab over the whole pavilion, overhanging ~1.3 m with flared corners
+	b.box(g, "ex_white_wainscot", Vector3((x0 + x1) * 0.5, top + 0.15, (88.0 + z1) * 0.5 + 0.6), Vector3(x1 - x0 + 2.6, 0.3, z1 - 88.0 + 2.6))
+	b.box(g, "ex_white_wainscot", Vector3((x0 + x1) * 0.5, top - 0.45, z1 + 0.62), Vector3(x1 - x0, 0.6, 0.08))
+	# the back wall: cream wainscot and a white chair rail, the doors between
+	run_box(b, g, pier, a, t, n, 0.0, Ln, 0.0, 1.2, 0.05, 0.05)
+	run_box(b, g, "ex_white_wainscot", a, t, n, 0.0, Ln, 1.2, 1.3, 0.07, 0.07)
 	for i in 3:
 		run_box(b, g, "ex_bronze", a, t, n, 1.3 + i * 2.7 - 0.05, 1.3 + i * 2.7 + 0.05, 0.0, 3.4, 0.0, 0.14)
 	run_box(b, g, "ex_bronze", a, t, n, 1.3, 6.7, 2.35, 2.5, 0.0, 0.14)
-	b.quad("ex_glass", "ex_glass", [a + t * 1.3 + n * 0.02, a + t * 6.7 + n * 0.02, a + t * 6.7 + n * 0.02 + UP * 3.4, a + t * 1.3 + n * 0.02 + UP * 3.4], n, [], true)
-	# the black tie-rod canopy on the east bay
-	b.box(g, "ex_coping_dark", Vector3(-141.0, 3.8, 93.5), Vector3(4.0, 0.1, 3.0))
-	for p in [Vector3(-142.8, 0, 94.9), Vector3(-139.2, 0, 94.9)]:
-		b.cyl(g, "ex_steel", p + UP * 3.85, 0.02, 0.02, 1.6, 6, false)
-	b.tag(b.add_spot(a + t * 4.0 + n * 1.5 + UP * 3.7, -UP, 1.5, 7.0, 60.0, Color("#FFE6C2")), "night")
-	# the drop-off bulb: a curbed island out front
-	island(b, -152.0, 100.0, -132.0, 103.0, "ex_grass", "ex_curb")
-	tree_oak(b, Vector3(-142.0, 0.16, 101.5), 4.0)
+	b.quad("ex_glass", "ex_glass", [a + t * 1.3 + n * 0.08, a + t * 6.7 + n * 0.08, a + t * 6.7 + n * 0.08 + UP * 3.4, a + t * 1.3 + n * 0.08 + UP * 3.4], n, [], true)
+	# porch lights and the two trash cans
+	for k in 2:
+		b.cyl(g, "ex_can", Vector3(-142.0, 4.58, 94.0 + k * 3.0), 0.12, 0.12, 0.02, 10, false, true)
+		b.tag(b.add_spot(Vector3(-142.0, 4.5, 94.0 + k * 3.0), -UP, 1.5, 7.0, 60.0, Color("#FFE6C2")), "night")
+	for xx in [-144.6, -139.4]:
+		b.cyl(g, "ex_stainless" if y26 else "ex_ivory", Vector3(xx, 0, 93.0), 0.3, 0.3, 0.9, 12, true)
+		b.obst(["rect", xx - 0.35, 92.6, xx + 0.35, 93.4])
+	if y26:
+		# the east bay's black flat steel canopy hung on tie-rods, over a dark glass door (4489 f034)
+		var ea = Vector3(-134.0, 0, 100.0)
+		b.box(g, "ex_black_steel", ea + Vector3(0, 3.4, 1.2), Vector3(3.6, 0.12, 2.4))
+		for sx in [-1.5, 1.5]:
+			var p0 = ea + Vector3(sx, 3.45, 2.3); var p1 = ea + Vector3(sx, 4.6, 0.05)
+			var m = (p0 + p1) * 0.5; var dir = (p1 - p0).normalized()
+			b.box(g, "ex_steel", Vector3.ZERO, Vector3(0.03, p0.distance_to(p1), 0.03), Transform3D(Basis(Vector3(1, 0, 0), dir, Vector3(1, 0, 0).cross(dir)), m))
+		b.box(g, "ex_glass_dark", ea + Vector3(0, 1.2, 0.03), Vector3(1.9, 2.4, 0.04))
+	# the drop-off bulb: a curbed island out front, past the porch
+	island(b, -150.0, 106.0, -134.0, 109.0, "ex_grass", "ex_curb")
+	tree_oak(b, Vector3(-142.0, 0.16, 107.5), 4.0)
 
 ## The cinema-wing exit (s41, the Sears hall's west end): brown exposed-aggregate precast fascia
 ## ~1 m deep, white soffit with cans, a 2-tier clear-anodized curtain wall with 2 door pairs; buff
@@ -529,6 +717,9 @@ static func kb_bay(b):
 		run_box(b, g, "ex_mullion", a, t, n, u1 - 0.06, u1 + 0.06, 0.9, ym, 0.0, 0.1)
 		b.quad("ex_glass", "ex_glass_dark", [a + t * u0 + n * 0.02 + UP * 0.9, a + t * u1 + n * 0.02 + UP * 0.9, a + t * u1 + n * 0.02 + UP * ym, a + t * u0 + n * 0.02 + UP * ym], n)
 	# the bulkheads below the windows: K&B's tan (the 2026 racing check is Hypervelocity's)
+	if YEAR == 2026:
+		Y26.hypervelocity(b, a, t, n, Ln)
+		return
 	run_box(b, g, "ex_kb_tan", a, t, n, 0.0, Ln, 0.0, 0.9, 0.05, 0.05)
 	# the sign band: cream with the purple oval and K&B
 	run_box(b, g, "ex_ivory", a, t, n, 2.0, 18.0, 4.6, 6.2, 0.1, 0.1)
@@ -546,10 +737,14 @@ static func kb_bay(b):
 static func cucos(b):
 	var g = "ex_entry"
 	var a = Vector3(44, 0, -86); var n = Vector3(1, 0, 0); var t = Vector3(0, 0, 1); var Ln = 32.0
-	run_box(b, g, "ex_teal", a, t, n, 0.0, Ln, 5.6, 5.9, 0.03, 0.03)      # the soldier band in teal
+	# 2026: The Red Seal's black (soldier band, pilasters, coping) and red (awnings) on the same massing
+	var y26 = YEAR == 2026
+	var trim = "ex_paint_black" if y26 else "ex_teal"
+	var awn = "ex_red_seal" if y26 else "ex_awning_teal"
+	run_box(b, g, trim, a, t, n, 0.0, Ln, 5.6, 5.9, 0.03, 0.03)      # the soldier band (teal in 1995)
 	var k = 0.0
 	while k <= Ln:
-		run_box(b, g, "ex_planks", a, t, n, k - 0.3, k + 0.3, 0.0, H_CUCOS - 0.2, 0.2, 0.2)
+		run_box(b, g, "ex_paint_black" if y26 else "ex_planks", a, t, n, k - 0.3, k + 0.3, 0.0, H_CUCOS - 0.2 + (0.6 if y26 else 0.0), 0.2, 0.2)
 		k += 8.0
 	# the tall windows in white surrounds, a teal box awning over each
 	for i in 6:
@@ -558,7 +753,7 @@ static func cucos(b):
 			continue
 		run_box(b, g, "ex_white_wainscot", a, t, n, u - 0.9, u + 0.9, 0.8, 4.4, 0.08, 0.08)
 		b.quad("ex_glass", "ex_glass_dark", [a + t * (u - 0.75) + n * 0.02 + UP * 0.95, a + t * (u + 0.75) + n * 0.02 + UP * 0.95, a + t * (u + 0.75) + n * 0.02 + UP * 4.25, a + t * (u - 0.75) + n * 0.02 + UP * 4.25], n)
-		run_box(b, g, "ex_awning_teal", a, t, n, u - 1.2, u + 1.2, 4.4, 5.0, 0.8, 0.8, ["-y"])
+		run_box(b, g, awn, a, t, n, u - 1.2, u + 1.2, 4.4, 5.0, 0.8, 0.8, ["-y"])
 	# the glazed garage-style doors (the ones that lift open), either side of the sign bay
 	for u in [10.5, 15.0]:
 		run_box(b, g, "ex_white_wainscot", a, t, n, u - 1.6, u + 1.6, 0.0, 3.2, 0.06, 0.06)
@@ -567,11 +762,23 @@ static func cucos(b):
 	# the stepped ziggurat parapet at the sign bay and the sign
 	run_box(b, g, "ex_stucco_tan", a, t, n, 8.0, 17.5, H_CUCOS, H_CUCOS + 0.8, 0.0, 0.5)
 	run_box(b, g, "ex_stucco_tan", a, t, n, 10.0, 15.5, H_CUCOS + 0.8, H_CUCOS + 1.5, 0.0, 0.5)
-	run_box(b, g, "ex_teal", a, t, n, 8.0, 17.5, H_CUCOS + 0.75, H_CUCOS + 0.85, 0.05, 0.55)
-	run_box(b, g, "ex_teal", a, t, n, 10.0, 15.5, H_CUCOS + 1.45, H_CUCOS + 1.55, 0.05, 0.55)
-	run_box(b, g, "ex_ivory", a, t, n, 9.0, 16.5, 5.95, 6.9, 0.1, 0.1)
-	b.label("Cucos", "script", "#c8202c", a + t * 12.75 + UP * 6.55 + n * 0.16, n, 5.0, 0.6)
-	b.label("MEXICAN CAFE", "sans", "#1f7a74", a + t * 12.75 + UP * 6.1 + n * 0.16, n, 3.0, 0.22)
+	run_box(b, g, trim, a, t, n, 8.0, 17.5, H_CUCOS + 0.75, H_CUCOS + 0.85, 0.05, 0.55)
+	run_box(b, g, trim, a, t, n, 10.0, 15.5, H_CUCOS + 1.45, H_CUCOS + 1.55, 0.05, 0.55)
+	if y26:
+		# THE RED (R seal) SEAL / PIZZERIA & BAR (4406 f022-026, 4493 f037-040), the big R mural
+		b.label("THE RED SEAL", "sans", "#b3202a", a + t * 12.75 + UP * 6.6 + n * 0.12, n, 7.0, 0.7)
+		b.label("PIZZERIA & BAR", "sans", "#1c1c1e", a + t * 12.75 + UP * 6.0 + n * 0.12, n, 3.4, 0.28)
+		var mc = a + t * 28.6 + UP * 2.6 + n * 0.03
+		var sr = b.st(g, "ex_red_seal")
+		for i in 28:
+			var a0 = TAU * i / 28; var a1 = TAU * (i + 1) / 28
+			var r0 = 1.5 + (0.12 if i % 2 == 0 else 0.0); var r1 = 1.5 + (0.12 if (i + 1) % 2 == 0 else 0.0)
+			b.tri(sr, mc, mc + t * (cos(a0) * r0) + UP * (sin(a0) * r0), mc + t * (cos(a1) * r1) + UP * (sin(a1) * r1), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), n)
+		b.label("R", "serif", "#f4efe3", mc + n * 0.02, n, 2.0, 1.6)
+	else:
+		run_box(b, g, "ex_ivory", a, t, n, 9.0, 16.5, 5.95, 6.9, 0.1, 0.1)
+		b.label("Cucos", "script", "#c8202c", a + t * 12.75 + UP * 6.55 + n * 0.16, n, 5.0, 0.6)
+		b.label("MEXICAN CAFE", "sans", "#1f7a74", a + t * 12.75 + UP * 6.1 + n * 0.16, n, 3.0, 0.22)
 	# gooseneck barn lights over the awnings
 	for i in 6:
 		var u = 1.5 + i * 5.2
@@ -595,7 +802,7 @@ static func jcpenney(b):
 	b.quad("ex_glass", "ex_glass", [a + t * 17.0 + n * 0.02, a + t * 25.0 + n * 0.02, a + t * 25.0 + n * 0.02 + UP * 3.4, a + t * 17.0 + n * 0.02 + UP * 3.4], n, [], true)
 	for i in 3:
 		b.tag(b.add_spot(a + t * (18.0 + i * 3.0) + n * 1.5 + UP * 3.5, -UP, 1.2, 6.0, 60.0, Color("#FFE6C2")), "night")
-	b.label("JCPenney", "sans", "#f4efe3", a + t * 21.0 + UP * 6.3 + n * 0.08, n, 10.0, 1.1)
+	b.label("JCPenney", "sans", "#b0164a" if YEAR == 2026 else "#f4efe3", a + t * 21.0 + UP * 6.3 + n * 0.08, n, 10.0, 1.1)
 	# roll-up receiving door at the north end
 	run_box(b, g, "ex_steel", a, t, n, 36.0, 40.0, 0.0, 3.6, 0.03, 0.03)
 	# podocarpus columns along the wall
@@ -603,7 +810,7 @@ static func jcpenney(b):
 		var p = a + t * (3.0 + i * 5.0) + n * 1.2
 		b.cyl("ex_props", "ex_podocarpus", p, 0.6, 0.3, 3.5, 7, true, false, true)
 	# south face z = 74, x -202..-154: the red arcade on square columns
-	var sa = Vector3(-202, 0, 74); var sn = Vector3(0, 0, 1); var stt = Vector3(1, 0, 0)
+	var sa = Vector3(-202, 0, 92); var sn = Vector3(0, 0, 1); var stt = Vector3(1, 0, 0)   # wall_fixes F3
 	for i in 5:
 		var p = sa + stt * (16.0 + i * 4.0) + sn * 3.0
 		b.box(g, "ex_red_arcade", p + UP * 2.0, Vector3(0.7, 4.0, 0.7))
@@ -612,7 +819,7 @@ static func jcpenney(b):
 	for i in 4:
 		run_box(b, g, "ex_bronze", sa, stt, sn, 19.0 + i * 2.0 - 0.05, 19.0 + i * 2.0 + 0.05, 0.0, 3.4, 0.0, 0.14)
 	b.quad("ex_glass", "ex_glass", [sa + stt * 19.0 + sn * 0.02, sa + stt * 25.0 + sn * 0.02, sa + stt * 25.0 + sn * 0.02 + UP * 3.4, sa + stt * 19.0 + sn * 0.02 + UP * 3.4], sn, [], true)
-	b.label("JCPenney", "sans", "#f4efe3", sa + stt * 24.0 + UP * 7.2 + sn * 0.08, sn, 10.0, 1.1)
+	b.label("JCPenney", "sans", "#b0164a" if YEAR == 2026 else "#f4efe3", sa + stt * 24.0 + UP * 7.2 + sn * 0.08, sn, 10.0, 1.1)
 	# north face z = 32: Package Pick-up under a coral fascia, docks under a red canopy, bollards
 	var na = Vector3(-154, 0, 32); var nn = Vector3(0, 0, -1); var nt = Vector3(-1, 0, 0)
 	run_box(b, g, "ex_coral", na, nt, nn, 4.0, 12.0, 3.2, 4.2, 1.5, 1.5)
@@ -664,22 +871,41 @@ static func dillards(b):
 			b.tri(s, c, c + t * (cos(a0) * 1.05) + UP * (sin(a0) * 1.05), c + t * (cos(a1) * 1.05) + UP * (sin(a1) * 1.05), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), n)
 			if k % 2 == 0:
 				b.tri(b.st(g, "ex_bronze"), c + n * 0.01, c + n * 0.01 + t * (cos(a0) * 1.0) + UP * (sin(a0) * 1.0), c + n * 0.01 + t * (cos(a1) * 1.0) + UP * (sin(a1) * 1.0), Vector2(0, 0), Vector2(0, 0), Vector2(0, 0), n)
-	# the gallery: a flat roof 3.6 m out at 4.6 m on 11 slender bronze columns with the lace frieze
-	run_box(b, g, "ex_coping_dark", a, t, n, 0.5, Ln - 0.5, 4.6, 4.9, 3.6, 3.7, [])
-	b.quad(g, "ex_soffit_white", [a + t * 0.5 + UP * 4.59, a + t * (Ln - 0.5) + UP * 4.59, a + t * (Ln - 0.5) + n * 3.6 + UP * 4.59, a + t * 0.5 + n * 3.6 + UP * 4.59], -UP)
-	run_box(b, g, "ex_lace", a, t, n, 0.5, Ln - 0.5, 4.1, 4.6, 3.62, 0.06)
+	# the gallery: a flat roof 3.6 m out at 4.6 m on 11 slender bronze columns. Workstream F (Nov 1):
+	# the cast-iron lace as filmed (refs/new/dillards_exterior t056_021-031): a frieze of scrolled
+	# roundels under the brown fascia on the front and both ends, a quarter-round scroll bracket each
+	# side of every column, Corinthian-like caps and octagonal panelled bases, a terracotta soffit.
+	# Until Nov 1 the lace was a dark band with white slots.
+	run_box(b, g, "ex_canopy_brown", a, t, n, 0.5, Ln - 0.5, 4.6, 5.0, 3.7, 3.8, [])
+	b.quad(g, "ex_soffit_terra", [a + t * 0.5 + UP * 4.59, a + t * (Ln - 0.5) + UP * 4.59, a + t * (Ln - 0.5) + n * 3.6 + UP * 4.59, a + t * 0.5 + n * 3.6 + UP * 4.59], -UP)
+	var fy0 = 4.08; var fy1 = 4.58
+	var L0 = 0.5; var L1 = Ln - 0.5
+	var fr = a + n * 3.66
+	b.quad(g, "ex_lace", [fr + t * L0 + UP * fy0, fr + t * L1 + UP * fy0, fr + t * L1 + UP * fy1, fr + t * L0 + UP * fy1], n,
+		[Vector2(0, 1), Vector2(L1 - L0, 1), Vector2(L1 - L0, 0), Vector2(0, 0)])
+	for ue in [L0, L1]:
+		var e0 = a + t * ue
+		b.quad(g, "ex_lace", [e0 + n * 0.05 + UP * fy0, e0 + n * 3.66 + UP * fy0, e0 + n * 3.66 + UP * fy1, e0 + n * 0.05 + UP * fy1], t,
+			[Vector2(0, 1), Vector2(3.6, 1), Vector2(3.6, 0), Vector2(0, 0)])
 	for i in 11:
 		var u = 1.0 + i * 3.6
 		var p = a + t * u + n * 3.4
-		b.cyl(g, "ex_bronze", p, 0.09, 0.09, 4.1, 8, false)
-		b.box(g, "ex_bronze", p + UP * 4.25, Vector3(0.36, 0.3, 0.36))
-		b.box(g, "ex_bronze", p + UP * 0.25, Vector3(0.3, 0.5, 0.3))
-		# the lace brackets
-		b.box(g, "ex_lace", p + UP * 3.85 - n * 0.3, Vector3(0.5, 0.5, 0.06))
+		b.cyl(g, "ex_bronze", p + UP * 0.7, 0.085, 0.075, 3.05, 10, false)
+		b.cyl(g, "ex_bronze", p + UP * 3.72, 0.08, 0.2, 0.36, 10, true)        # the flared cap
+		b.box(g, "ex_bronze", p + UP * 4.12, Vector3(0.42, 0.08, 0.42))
+		b.cyl(g, "ex_bronze", p, 0.2, 0.2, 0.7, 8, true)                       # the octagonal base
+		b.cyl(g, "ex_bronze", p + UP * 0.7, 0.14, 0.085, 0.12, 8, false)
+		# the brackets, each side of the column, in the front plane (the column on the texture's
+		# right edge, the beam along its top)
+		var bp = a + n * 3.4
+		for sd in [-1.0, 1.0]:
+			if (sd < 0 and u - 0.9 < L0) or (sd > 0 and u + 0.9 > L1):
+				continue
+			var q0 = bp + t * u; var q1 = bp + t * (u + sd * 0.9)
+			var uv0 = 1.0; var uv1 = 0.0
+			b.quad(g, "ex_lace_bracket", [q1 + UP * 3.68, q0 + UP * 3.68, q0 + UP * 4.58, q1 + UP * 4.58], n,
+				[Vector2(uv1, 1), Vector2(uv0, 1), Vector2(uv0, 0), Vector2(uv1, 0)])
 		b.obst(["rect", p.x - 0.25, p.z - 0.25, p.x + 0.25, p.z + 0.25])
-		if i < 10:
-			# a slot in the lace between columns so it reads as open ironwork from the lot
-			run_box(b, g, "ex_white_wainscot", a, t, n, u + 0.4, u + 3.2, 4.2, 4.5, 3.6, 0.02)
 	# pebble paving under the gallery, black bollard lights
 	b.quad(g, "ex_pebble", [a + UP * 0.01, a + t * Ln + UP * 0.01, a + t * Ln + n * 4.5 + UP * 0.01, a + n * 4.5 + UP * 0.01], UP)
 	for i in 4:
@@ -708,9 +934,47 @@ static func sears_dock(b):
 	for u in [14.0, 22.0, 30.0]:
 		run_box(b, g, "ex_steel", a, t, n, u - 1.5, u + 1.5, 1.2, 4.2, 0.03, 0.03)
 	b.obst(["rect", -4.0, -137.0, 20.0, -134.0])
-	b.label("Sears", "sans", "#f4efe3", Vector3(-5.0, 7.0, -134.08), n, 12.0, 1.6)
-	b.label("Sears", "sans", "#f4efe3", Vector3(30.08, 7.0, -115.0), Vector3(1, 0, 0), 12.0, 1.6)
-	b.label("Sears", "sans", "#f4efe3", Vector3(-40.08, 7.0, -115.0), Vector3(-1, 0, 0), 12.0, 1.6)
+	if YEAR == 2026:
+		Y26.lynns(b)
+	else:
+		b.label("Sears", "sans", "#f4efe3", Vector3(-5.0, 7.0, -134.08), n, 12.0, 1.6)
+		b.label("Sears", "sans", "#f4efe3", Vector3(30.08, 7.0, -115.0), Vector3(1, 0, 0), 12.0, 1.6)
+		b.label("Sears", "sans", "#f4efe3", Vector3(-40.08, 7.0, -115.0), Vector3(-1, 0, 0), 12.0, 1.6)
+	# Workstream E's door spots on Sears's east face (exterior.json "door_spots"): a glass
+	# entrance is drawn there (Sears 1995 / Lynn's 2026), not yet a door the player can use
+	for ds in E.get("door_spots", []):
+		var da = V(ds.a); var db = V(ds.b); var dn = -V(ds.n); var dt = (db - da).normalized(); var dl = da.distance_to(db)
+		run_box(b, g, "ex_mullion", da, dt, dn, 0.0, dl, 0.0, 3.0, 0.08, 0.16)
+		b.quad("ex_glass", "ex_glass_dark", [da + dn * 0.1, db + dn * 0.1, db + dn * 0.1 + UP * 2.85, da + dn * 0.1 + UP * 2.85], dn)
+		if YEAR == 2026:
+			run_box(b, g, "ex_black_steel", da, dt, dn, -0.5, dl + 0.5, 3.1, 3.3, 1.4, 1.4)
+
+## The east facade's trash / transformer bay (Workstream F; 4406 f011-015, 4493 f030-032): an
+## open-sided roofed drive-in bay ~8 m wide, 6 m deep, tan brick, big brown louvers and louvered
+## double doors ("Transformer Room 2", "Riser 3,4"), fluorescent strips in the soffit.
+static func service_bay(b):
+	var r = E.get("bay", [])
+	if r.size() < 4:
+		return
+	var g = "ex_entry"
+	var x0 = float(r[0]); var z0 = float(r[1]); var x1 = float(r[2]); var z1 = float(r[3])
+	# the roof slab over the bay and its fascia (the facade's cream band runs across)
+	b.box(g, "ex_cream_pier", Vector3((x0 + x1) * 0.5, 5.3, (z0 + z1) * 0.5), Vector3(x1 - x0, 2.4, z1 - z0), Transform3D.IDENTITY, ["-y"])
+	b.quad(g, "ex_soffit_white", [Vector3(x0, 4.1, z0), Vector3(x1, 4.1, z0), Vector3(x1, 4.1, z1), Vector3(x0, 4.1, z1)], -UP)
+	for k in 2:
+		b.box(g, "ex_lamp", Vector3(x0 + 2.0 + k * 2.4, 4.06, (z0 + z1) * 0.5), Vector3(0.2, 0.06, 2.4))
+	# louvers and the louvered doors on the back wall
+	var a = Vector3(x0, 0, z1); var n = Vector3(1, 0, 0); var t = Vector3(0, 0, -1)
+	run_box(b, g, "ex_canopy_brown", a, t, n, 0.6, 2.8, 1.2, 3.6, 0.05, 0.05)
+	run_box(b, g, "ex_canopy_brown", a, t, n, 5.2, 7.4, 1.2, 3.6, 0.05, 0.05)
+	run_box(b, g, "ex_canopy_brown", a, t, n, 3.2, 4.8, 0.0, 2.3, 0.05, 0.05)
+	for k in 8:
+		run_box(b, g, "ex_wall_pack", a, t, n, 0.6, 2.8, 1.4 + k * 0.28, 1.46 + k * 0.28, 0.09, 0.04)
+		run_box(b, g, "ex_wall_pack", a, t, n, 5.2, 7.4, 1.4 + k * 0.28, 1.46 + k * 0.28, 0.09, 0.04)
+	# the dumpster
+	b.box(g, "ex_awning_teal" if YEAR != 2026 else "ex_holly", Vector3(x0 + 1.6, 0.7, (z0 + z1) * 0.5 + 1.2), Vector3(2.0, 1.4, 3.2))
+	b.box(g, "ex_water_blue", Vector3(x0 + 1.6, 1.45, (z0 + z1) * 0.5 + 1.2), Vector3(2.1, 0.1, 3.3))
+	b.obst(["rect", x0, (z0 + z1) * 0.5 - 0.5, x0 + 2.7, (z0 + z1) * 0.5 + 2.9])
 
 ## The store backs north of the Concourse row: beige service doors with wall packs, yellow
 ## bollards, a trash / compactor enclosure at the taller red-brick block (4486 f031-052); the rear
@@ -755,7 +1019,7 @@ static func lot(b):
 	road(b, Vector3(x0, 0, 186), Vector3(x1, 0, 186), 11.0)
 	road(b, Vector3(x0, 0, -184), Vector3(x1, 0, -184), 9.0)
 	# the lawns beyond the roads
-	b.quad(g, "ex_grass", [Vector3(105, 0.02, z0), Vector3(x1, 0.02, z0), Vector3(x1, 0.02, z1), Vector3(105, 0.02, z1)], UP, [], false, 0.1)
+	b.quad(g, "ex_grass", [Vector3(105, 0.02, z0), Vector3(x1 + 50.0, 0.02, z0), Vector3(x1 + 50.0, 0.02, z1), Vector3(105, 0.02, z1)], UP, [], false, 0.1)
 	b.quad(g, "ex_grass", [Vector3(x0, 0.02, 192), Vector3(x1, 0.02, 192), Vector3(x1, 0.02, z1), Vector3(x0, 0.02, z1)], UP, [], false, 0.1)
 	b.quad(g, "ex_grass", [Vector3(x0, 0.02, z0), Vector3(x1, 0.02, z0), Vector3(x1, 0.02, -189), Vector3(x0, 0.02, -189)], UP, [], false, 0.1)
 	# the front lot (West Park): double rows running east-west, perpendicular to the east facade
@@ -777,6 +1041,10 @@ static func lot(b):
 	# the back lot (Armour Dr): rows running north-south behind Sears
 	var x = -70.0
 	while x < 70.0:
+		if x > -74.0 and x < -28.0:
+			# Unitech stands here (wall_fixes.STANDALONE), its own small lot round it
+			x += 18.0
+			continue
 		stall_row(b, Vector3(x, 0, -150), Vector3(0, 0, -1), 24.0)
 		island(b, x - 1.8, -176.0, x + 1.8, -173.0)
 		if int(x / 18.0) % 2 == 0:
@@ -786,7 +1054,8 @@ static func lot(b):
 	x = -190.0
 	while x < 20.0:
 		if x < -150.0 or x > -134.0:
-			stall_row(b, Vector3(x, 0, 108.0 if x > -150.0 and x < -60.0 else (124.0 if x > -60.0 else 82.0)), Vector3(0, 0, 1), 44.0 if x < -60.0 else 40.0)
+			# rows start past the building's south faces (JCPenney's now at z 92: wall_fixes F3)
+			stall_row(b, Vector3(x, 0, 108.0 if x > -150.0 and x < -60.0 else (124.0 if x > -60.0 else 100.0)), Vector3(0, 0, 1), 44.0 if x < -60.0 else 40.0)
 			island(b, x - 1.8, 170.0, x + 1.8, 173.0)
 			if int(x / 18.0) % 2 == 0:
 				lot_pole(b, Vector3(x, 0.16, 171.5), PI * 0.5)
@@ -809,6 +1078,7 @@ static func lot(b):
 	# the entry drive from West Park Ave: 2 lanes, double yellow centreline, 12+ sabal palms per side
 	# in narrow mulch medians with yellow curbs ("that's key"; 4492 f053-066), a signal at the road
 	entry_drive(b)
+	ada_stalls(b)
 	# the pine island and hydrant by JCPenney's north-west, the live-oak islands
 	island(b, -214.0, 24.0, -206.0, 40.0, "ex_grass")
 	for zz in [27.0, 32.0, 37.0]:
@@ -820,9 +1090,15 @@ static func lot(b):
 	tree_pine(b, Vector3(-176.0, 0.16, 153.0), 16.0)
 	tree_pine(b, Vector3(-194.0, 0.16, 157.0), 15.0)
 	# Bayou Gardens frontage: a long mulched island with sabal palms in a row plus live oaks
-	island(b, -200.0, 177.0, 40.0, 181.0)
+	# cut by the Bayou Gardens drive in front of the south entrance (monuments.gd)
+	island(b, -200.0, 177.0, BAYOU_DRIVE[0], 181.0)
+	island(b, BAYOU_DRIVE[1], 177.0, 40.0, 181.0)
 	for i in 19:
-		palm(b, Vector3(-195.0 + i * 12.5, 0.16, 179.0), 7.0 + (i % 3))
+		var px = -195.0 + i * 12.5
+		if px > BAYOU_DRIVE[0] - 1.0 and px < BAYOU_DRIVE[1] + 1.0:
+			continue
+		palm(b, Vector3(px, 0.16, 179.0), 7.0 + (i % 3))
+	MON.drive(b, BAYOU_DRIVE[0], BAYOU_DRIVE[1], 170.0, 181.0)
 	for i in 4:
 		tree_oak(b, Vector3(-182.0 + i * 60.0, 0.16, 179.0), 5.5)
 	# curbs along the building: a 1.5 m sidewalk round the mall
@@ -830,14 +1106,68 @@ static func lot(b):
 	for seg in E.segments:
 		var a = V(seg.a); var bb = V(seg.b); var n = V(seg.n)
 		var t = (bb - a).normalized()
-		run_box(b, "ex_lot", "ex_curb", a, t, n, 0.0, a.distance_to(bb), 0.0, 0.14, 1.65, 0.15)
+		var fl = fire_lane_face(seg)
+		var cm = "ex_curb"
+		if fl:
+			# the fire-lane curb: painted (2026 pink-red, 4416 / 4489; 1995 yellow, a GUESS from the
+			# yellow curbs still on JCPenney's north side, 4487)
+			cm = "ex_curb_red" if YEAR == 2026 else "ex_curb_yellow"
+		run_box(b, "ex_lot", cm, a, t, n, 0.0, a.distance_to(bb), 0.0, 0.14, 1.65, 0.15)
+		if fl:
+			fire_lane(b, a, t, n, a.distance_to(bb))
+
+## Which faces carry the fire lane: the customer faces round the lots (the east facade, Dillard's,
+## JCPenney, the south faces, the cinema's west wall: 4416, 4486 f014-037, 4487-4489, 4492-4493),
+## not the store backs on the staff lot or the service alley.
+static func fire_lane_face(seg):
+	var a = V(seg.a); var bb = V(seg.b)
+	if seg.side == "E" and a.x >= 30.0:
+		return not in_bay(seg)
+	if seg.name in ["DILLARD'S", "JCPENNEY", "SOUTHLAND CINEMA", "LINK"]:
+		return not (seg.name == "DILLARD'S" and seg.side == "N")
+	if seg.side == "S" and a.z >= 92.0:
+		return true
+	return false
+
+## The fire-lane ladder on the drive just past the curb: two rails and leaning rungs, 1.2 m wide
+## (2026 pink, 1995 yellow: see above). Kept clear of the door fronts.
+static func fire_lane(b, a, t, n, Ln):
+	var mname = "ex_firelane_pink" if YEAR == 2026 else "ex_firelane_yellow"
+	var u = 0.0
+	while u < Ln - 0.5:
+		var u1 = min(u + 2.0, Ln)
+		var p = a + t * u + n * 1.75; var q = a + t * u1 + n * 1.75
+		var y = UP * 0.018
+		var near_door = false
+		for d in E.doors:
+			var m = Vector3(d.mid[0], 0, d.mid[1])
+			if ((p + q) * 0.5).distance_to(m) < 7.0:
+				near_door = true
+		if not near_door:
+			b.quad("ex_paint", mname, [p + y, q + y, q + n * 1.2 + y, p + n * 1.2 + y], UP,
+				[Vector2(0, 0), Vector2((u1 - u) / 2.0, 0), Vector2((u1 - u) / 2.0, 1), Vector2(0, 1)], true)
+		u += 2.0
+
+## Accessible stalls by the entrances (both years: the blue wheelchair stalls are in the 2026
+## footage everywhere near the doors, 4486 / 4488 / 4492; 1995 had them by the doors too, the exact
+## stalls a GUESS): the symbol painted in the two stalls of each row end nearest a door.
+static func ada_stalls(b):
+	var spots = [
+		Vector3(51.35, 0, -15.2), Vector3(54.05, 0, -15.2), Vector3(51.35, 0, 15.2), Vector3(54.05, 0, 15.2),   # main entrance
+		Vector3(51.35, 0, -75.2), Vector3(54.05, 0, -75.2),                                                     # east entrance
+		Vector3(-151.25, 0, 101.35), Vector3(-151.25, 0, 104.05),                                                # south entrance
+		Vector3(-221.95, 0, 51.25), Vector3(-224.65, 0, 51.25)]                                                   # JCPenney west
+	for p in spots:
+		var c = p + UP * 0.015
+		b.quad("ex_paint", "ex_ada", [c + Vector3(-0.75, 0, -0.75), c + Vector3(0.75, 0, -0.75), c + Vector3(0.75, 0, 0.75), c + Vector3(-0.75, 0, 0.75)], UP,
+			[Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)], true)
 
 static func road(b, a, bb, w):
 	var t = (bb - a).normalized(); var s = Vector3(-t.z, 0, t.x) * (w * 0.5)
 	b.quad("ex_ground", "ex_asphalt", [a - s + UP * 0.01, bb - s + UP * 0.01, bb + s + UP * 0.01, a + s + UP * 0.01], UP, [], false, 0.1)
 	stripe(b, a + UP * 0.005, bb + UP * 0.005, 0.12, "ex_stripe_yellow")
-	stripe(b, a - s * 0.5 + UP * 0.005, bb - s * 0.5 + UP * 0.005, 0.1)
-	stripe(b, a + s * 0.5 + UP * 0.005, bb + s * 0.5 + UP * 0.005, 0.1)
+	stripe(b, a - s * 0.5 + UP * 0.005, bb - s * 0.5 + UP * 0.005, 0.1, "ex_stripe_white")
+	stripe(b, a + s * 0.5 + UP * 0.005, bb + s * 0.5 + UP * 0.005, 0.1, "ex_stripe_white")
 	# a grass verge past the road edge is drawn by the caller
 
 static func entry_drive(b):
@@ -856,6 +1186,13 @@ static func entry_drive(b):
 		b.force_dyn = true
 		b.bush(Vector3(48.0, 0.16, sd * 8.0), "poinsettia", 1.6, 3)
 		b.force_dyn = false
+	# Workstream F: the stop bars at the mall end of the drive and the white ladder crosswalk from
+	# the entrance walk across it (4492 f053-066)
+	for sd in [-1.0, 1.0]:
+		stripe(b, Vector3(53.0, 0.012, sd * 0.3), Vector3(53.0, 0.012, sd * 3.5), 0.45, "ex_stripe_white")
+	for k in 9:
+		var zz = -3.4 + k * 0.85
+		stripe(b, Vector3(50.6, 0.012, zz), Vector3(52.4, 0.012, zz), 0.45, "ex_stripe_white")
 	traffic_signal(b, Vector3(93.0, 0, -6.0))
 	traffic_signal(b, Vector3(93.0, 0, 6.0))
 
@@ -928,7 +1265,7 @@ static func water_tower(b):
 
 ## The outparcels and the neighbours (4413, 4487, 4489): the drive-thru bank at the SW edge of the
 ## back lot with the lattice cell tower behind; the 1-storey strip centre along the south edge
-## (brown brick piers, a mansard); Big Lots across the drive from the Sears side exit; Ground Pat'i
+## (brown brick piers, a mansard); Big Lots (Kirchmann's furniture in 1995) across West Park Ave; Ground Pat'i
 ## at the SW corner (a 4-sided cube pole sign, brown brick, rust standing-seam mansards: "I really
 ## want to capture a little bit of that"); the charcoal apartments behind a wood fence (W), the
 ## soccer fields behind a black picket fence (W), St. Bernadette's cream building with the green
@@ -936,7 +1273,9 @@ static func water_tower(b):
 static func outparcels(b):
 	var g = "ex_far"
 	# the drive-thru bank: a dark hip roof over 4-5 lanes
-	var bk = Vector3(-222.0, 0, -22.0)
+	# Workstream F: at the SW corner by Bayou Gardens (site plan "BUILDING 870 SF DRIVE-THRU";
+	# 4487 f046-053 looks south / south-west to it from the back lot), not mid-west where it stood
+	var bk = Vector3(-244.0, 0, 146.0)
 	b.box(g, "ex_brick_brown", bk + UP * 2.0, Vector3(12.0, 4.0, 10.0), Transform3D.IDENTITY, ["-y"])
 	b.cyl(g, "ex_roof_dark", bk + UP * 4.0 + Vector3(0, 0, 0), 11.0, 1.0, 3.0, 4, true)
 	b.box(g, "ex_roof_dark", bk + UP * 4.3 + Vector3(12.0, 0, 0), Vector3(12.0, 0.3, 14.0))
@@ -945,7 +1284,7 @@ static func outparcels(b):
 		b.cyl(g, "ex_pipe_grey", bk + Vector3(6.5 + i * 2.8, 0, -6.5), 0.15, 0.15, 4.2, 8, false)
 	b.obst(["rect", bk.x - 6.0, bk.z - 5.0, bk.x + 18.0, bk.z + 7.0])
 	# the lattice cell tower behind it
-	var ct = Vector3(-236.0, 0, -40.0)
+	var ct = Vector3(-262.0, 0, 164.0)
 	for i in 4:
 		var a = TAU * i / 4 + PI * 0.25
 		b.cyl(g, "ex_steel", ct + Vector3(cos(a) * 1.8, 0, sin(a) * 1.8), 0.1, 0.06, 40.0, 6, true)
@@ -955,14 +1294,25 @@ static func outparcels(b):
 	b.obst(["rect", ct.x - 2.0, ct.z - 2.0, ct.x + 2.0, ct.z + 2.0])
 	# the strip centre along the south edge
 	strip(b, Vector3(-60.0, 0, 200.0), 70.0, 14.0, 4.2)
-	# Big Lots: a plain box across the drive from the Sears side exit
-	var bl = Vector3(-130.0, 0, -100.0)
-	b.box(g, "ex_stucco_cream", bl + UP * 3.5, Vector3(40.0, 7.0, 24.0), Transform3D.IDENTITY, ["-y"])
-	b.box(g, "ex_coping_dark", bl + UP * 7.05, Vector3(40.2, 0.1, 24.2))
-	b.label("BIG LOTS", "sans", "#c8202c", bl + Vector3(20.08, 5.5, 0), Vector3(1, 0, 0), 10.0, 1.3)
-	b.obst(["rect", bl.x - 20.0, bl.z - 12.0, bl.x + 20.0, bl.z + 12.0])
+	# Big Lots: the strip across West Park Ave from Lynn's (4406 f031-035 "across the drive is the
+	# BIG LOTS strip", 4413 f005-008). Workstream F moved it there from the north-west lot, where
+	# the site plan and the directory map show parking. Tan block, white standing-seam hoods.
+	# In 1995 the building was Kirchmann's, a furniture store (Steven, Nov 1 2026); its sign is
+	# not in any picture, so the letters and colours are a GUESS. The building is today's shape.
+	var bl = Vector3(152.0, 0, -112.0)
+	b.box(g, "ex_stucco_tan", bl + UP * 3.5, Vector3(24.0, 7.0, 44.0), Transform3D.IDENTITY, ["-y"])
+	b.box(g, "ex_coping_dark", bl + UP * 7.05, Vector3(24.2, 0.1, 44.2))
+	for k in 3:
+		b.box(g, "ex_tank_white", bl + Vector3(-12.6, 5.6, -14.0 + k * 14.0), Vector3(1.4, 2.0, 8.0))
+	if YEAR == 2026:
+		b.label("BIG LOTS!", "sans", "#c8202c", bl + Vector3(-13.4, 5.6, 0), Vector3(-1, 0, 0), 7.0, 1.0)
+	else:
+		b.label("Kirchmann's", "serif", "#4a2e1e", bl + Vector3(-13.4, 5.75, 0), Vector3(-1, 0, 0), 9.0, 1.0)
+		b.label("FURNITURE", "sans", "#4a2e1e", bl + Vector3(-13.4, 4.95, 0), Vector3(-1, 0, 0), 4.0, 0.36)
+	b.obst(["rect", bl.x - 12.0, bl.z - 22.0, bl.x + 12.0, bl.z + 22.0])
 	# Ground Pat'i at the SW corner
-	var gp = Vector3(-260.0, 0, 150.0)
+	# across Bayou Gardens (4489 f071-083: "at that corner, across the road"), moved off the lot
+	var gp = Vector3(-232.0, 0, 214.0)
 	b.box(g, "ex_brick_brown", gp + UP * 2.2, Vector3(16.0, 4.4, 12.0), Transform3D.IDENTITY, ["-y"])
 	b.box(g, "ex_roof_rust", gp + UP * 5.0, Vector3(18.0, 1.4, 14.0))
 	b.box(g, "ex_roof_rust", gp + UP * 6.2, Vector3(15.0, 1.0, 11.0))
@@ -1000,15 +1350,20 @@ static func strip(b, c, w, d, h):
 ## Called by build_mall.gd for --wing=3. Returns the wing.json fields (spawn, walk, doors).
 static func build(b):
 	E = JSON.parse_string(FileAccess.get_file_as_string("res://exterior.json"))
+	YEAR = int(b.YEAR)
 	rng.seed = 1995
 	trees = 0
 	b.cur_color = Color.WHITE
 	shell(b)
 	fronts(b)
+	service_bay(b)
 	lot(b)
 	tank(b)
 	water_tower(b)
 	outparcels(b)
+	MON.build(b, YEAR)
+	if YEAR == 2026:
+		Y26.build(b, E.doors)
 	# the building blocks the player: its footprint, in rectangles
 	for r in E.roofs:
 		b.obst(["rect", r[0], r[1], r[2], r[3]])

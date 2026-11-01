@@ -723,11 +723,13 @@ func _build_year_ui() -> void:
 	year_btn.offset_left = -200; year_btn.offset_right = -10
 	year_btn.offset_top = 168; year_btn.offset_bottom = 200
 	year_btn.pressed.connect(_switch_year)
-	year_btn.visible = wing != 3   # the outside has no 2026 build yet
+	# Workstream F (Nov 1 2026): the outside has a 2026 build too (wing3_2026.tscn), so the button
+	# shows there as everywhere else (design/godot-exterior.md "The 2026 outside")
+	year_btn.visible = true
 	_cl.add_child(year_btn)
 
 func _switch_year() -> void:
-	if leaving or wing == 3:
+	if leaving:
 		return
 	var other := 2026 if year == 1995 else 1995
 	var w := wing if wing != 0 else 1

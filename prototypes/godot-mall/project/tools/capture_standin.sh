@@ -1,11 +1,27 @@
 #!/bin/bash
-# usage: tools/capture_standin.sh <wing>   (from the project folder; godot 4.7.2 on PATH, xvfb-run)
+# usage: tools/capture_standin.sh <wing> [2026]   (from the project folder; godot 4.7.2 on PATH, xvfb-run)
+# <wing> 3 = the outside: the pictures past the inside wings' exit doors (design/godot-exterior.md).
 # Captures wing <wing>'s storefronts, night and day, from its baked build into
 # tex/standin/from_w<wing>_{night,day}.png for the other wing's stand-in, and stamps them with
 # tools/wing_hash.sh (design/godot-wings.md). The wing's lightmaps must be in the project and
 # imported (godot --headless --path . --import). Takes a few minutes per mode in software GL.
 set -e
 W=$1; Y=${2:-1995}
+if [ "$W" = "3" ]; then
+  # Workstream F (Nov 1 2026): wing 3 is the outside; its pictures are the lot seen out of the inside
+  # wings' exit doors (tools/exterior/door_view.gd, capture_doors.gd): tex/standin/door_w<1|2>_<mode>.png,
+  # 2026 y26_door_w<1|2>_day.png (the night a copy). Run after the outside's bake, like the stand-in.
+  MODES="night day"; [ "$Y" = "2026" ] && MODES="day"
+  for IW in 1 2; do for M in $MODES; do
+    timeout 900 xvfb-run -a -s "-screen 0 1280x720x24" godot --path . --rendering-driver opengl3 --resolution 640x360 \
+      --script res://tools/exterior/capture_doors.gd -- --wing=$IW --mode=$M --year=$Y 2>&1 | grep -E "capturing|wrote|ERROR|error|unbaked" | grep -v "RID alloc\|resources still\|Pages in use" | head -20
+  done; done
+  P=door_w; [ "$Y" = "2026" ] && P=y26_door_w
+  for IW in 1 2; do [ -s tex/standin/${P}${IW}_day.png ] || { echo "capture failed: doors of wing $IW"; exit 1; }; done
+  tools/wing_hash.sh 3 $Y > tex/standin/${P}3.stamp
+  echo "stamped the door pictures from the outside ($Y): $(cat tex/standin/${P}3.stamp)"
+  exit 0
+fi
 if [ "$Y" = "2026" ]; then
   # 2026 (tools/make_layout_2026.py): day only (the game is day-only); the night picture is a copy
   timeout 1500 xvfb-run -a -s "-screen 0 1280x720x24" godot --path . --rendering-driver opengl3 --resolution 640x360 \

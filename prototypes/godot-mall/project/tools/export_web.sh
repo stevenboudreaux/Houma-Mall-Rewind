@@ -18,7 +18,8 @@ rm -rf "$T"; mkdir -p "$OUT" "$T"
 YEARS=${YEARS:-$( [ -f wing1_2026.tscn ] && echo "1995 2026" || echo "1995")}
 for y in $YEARS; do
 for w in $WINGS; do
-  if [ "$y" = "2026" ] && [ "$w" = "3" ]; then continue; fi
+  # the 2026 outside (Workstream F, Nov 1 2026) exports once wing3_2026.tscn is built
+  if [ "$y" = "2026" ] && [ "$w" = "3" ] && [ ! -f wing3_2026.tscn ]; then continue; fi
   for k in desktop mobile; do
     K=$(echo $k | sed 's/./\U&/')
     PRE="Wing $w $K"; NAME="w$w"
@@ -41,7 +42,8 @@ S2D=$(stat -c %s "$OUT/w2.desktop.pck"); S2M=$(stat -c %s "$OUT/w2.mobile.pck")
 sz() { [ -s "$OUT/$1.$2.pck" ] && stat -c %s "$OUT/$1.$2.pck" || echo 0; }
 S3D=$(sz w3 desktop); S3M=$(sz w3 mobile)
 Y1D=$(sz w1y26 desktop); Y1M=$(sz w1y26 mobile); Y2D=$(sz w2y26 desktop); Y2M=$(sz w2y26 mobile)
-sed -i "s|const PACK_SIZES = {\"w1\": {\"desktop\": 0, \"mobile\": 0}, \"w2\": {\"desktop\": 0, \"mobile\": 0}, \"w3\": {\"desktop\": 0, \"mobile\": 0}, \"w1y26\": {\"desktop\": 0, \"mobile\": 0}, \"w2y26\": {\"desktop\": 0, \"mobile\": 0}};|const PACK_SIZES = {\"w1\": {\"desktop\": $S1D, \"mobile\": $S1M}, \"w2\": {\"desktop\": $S2D, \"mobile\": $S2M}, \"w3\": {\"desktop\": $S3D, \"mobile\": $S3M}, \"w1y26\": {\"desktop\": $Y1D, \"mobile\": $Y1M}, \"w2y26\": {\"desktop\": $Y2D, \"mobile\": $Y2M}};|" "$OUT/index.html"
+Y3D=$(sz w3y26 desktop); Y3M=$(sz w3y26 mobile)
+sed -i "s|const PACK_SIZES = {\"w1\": {\"desktop\": 0, \"mobile\": 0}, \"w2\": {\"desktop\": 0, \"mobile\": 0}, \"w3\": {\"desktop\": 0, \"mobile\": 0}, \"w1y26\": {\"desktop\": 0, \"mobile\": 0}, \"w2y26\": {\"desktop\": 0, \"mobile\": 0}, \"w3y26\": {\"desktop\": 0, \"mobile\": 0}};|const PACK_SIZES = {\"w1\": {\"desktop\": $S1D, \"mobile\": $S1M}, \"w2\": {\"desktop\": $S2D, \"mobile\": $S2M}, \"w3\": {\"desktop\": $S3D, \"mobile\": $S3M}, \"w1y26\": {\"desktop\": $Y1D, \"mobile\": $Y1M}, \"w2y26\": {\"desktop\": $Y2D, \"mobile\": $Y2M}, \"w3y26\": {\"desktop\": $Y3D, \"mobile\": $Y3M}};|" "$OUT/index.html"
 grep -q "\"desktop\": $S1D" "$OUT/index.html" || { echo "could not write pack sizes into index.html"; exit 1; }
 rm -rf "$T"
-echo "wing1 desktop $S1D mobile $S1M  wing2 desktop $S2D mobile $S2M  outside $S3D/$S3M  2026: wing1 $Y1D/$Y1M wing2 $Y2D/$Y2M"
+echo "wing1 desktop $S1D mobile $S1M  wing2 desktop $S2D mobile $S2M  outside $S3D/$S3M  2026: wing1 $Y1D/$Y1M wing2 $Y2D/$Y2M outside $Y3D/$Y3M"
