@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://items/radioshack/cb_radio.res" id="1_h0osl"]
+
+[node name="rs_cb_radio" type="Node3D" unique_id=300923364]
+metadata/item_id = "rs_cb_radio"
+metadata/item_name = "CB-440 CB radio"
+metadata/item_class = "hand"
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=537761227]
+mesh = ExtResource("1_h0osl")

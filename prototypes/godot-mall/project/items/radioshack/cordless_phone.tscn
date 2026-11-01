@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://items/radioshack/cordless_phone.res" id="1_l5nbd"]
+
+[node name="rs_cordless_phone" type="Node3D" unique_id=1071562319]
+metadata/item_id = "rs_cordless_phone"
+metadata/item_name = "900 MHz cordless phone"
+metadata/item_class = "hand"
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1304119605]
+mesh = ExtResource("1_l5nbd")

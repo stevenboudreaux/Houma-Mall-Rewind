@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="ArrayMesh" path="res://items/radioshack/scanner.res" id="1_exp31"]
+
+[node name="rs_scanner" type="Node3D" unique_id=1609353731]
+metadata/item_id = "rs_scanner"
+metadata/item_name = "Scan-50 police scanner"
+metadata/item_class = "hand"
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=1178242404]
+mesh = ExtResource("1_exp31")
