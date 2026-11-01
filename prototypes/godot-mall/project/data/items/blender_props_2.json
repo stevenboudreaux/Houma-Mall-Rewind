@@ -59,6 +59,25 @@
    }
   },
   {
+   "id": "bl_gac_sugarcookie",
+   "name": "Sugar cookie",
+   "class": "hand",
+   "scene": "res://models/bl_gac_sugarcookie/bl_gac_sugarcookie.glb",
+   "icon": "res://models/bl_gac_sugarcookie/bl_gac_sugarcookie_icon.png",
+   "year": 1995,
+   "store": "GREAT AMERICAN COOKIE CO",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -26.92,
+     0.862,
+     45.02
+    ],
+    "yaw": 12
+   }
+  },
+  {
    "id": "bl_tt_lomein",
    "name": "Lo mein",
    "class": "hand",
