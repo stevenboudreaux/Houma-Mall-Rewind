@@ -25,11 +25,16 @@ func _process(_dt):
 		if ui.map_year != args[1]:
 			ui._toggle_year()
 		if args.size() > 3:
-			ui.typed = args[3]
-			ui._find()
+			for h in ui._hot():
+				var st = ui._stall(h.id)
+				if st and String(st.name).to_lower().begins_with(args[3].to_lower()):
+					ui.sel = h.id
+					break
 			if args.size() > 4 and args[4] == "ask":
 				ui._ask()
-		ui._redraw()
+			elif args.size() > 4 and args[4] == "zoom":
+				ui._zoom_on_sel(3.0)
+		ui.view.queue_redraw()
 	if t == 20:
 		root.get_texture().get_image().save_png(args[2])
 		print("saved ", args[2])

@@ -32,7 +32,11 @@ A single-sided totem: the backs are plain cream (IMG_4484 f068).
 - **Plinth:** a 0.10 m toe under a block with a chamfered top, 1.26 × 0.52 × 0.46 m, grey.
 - **Cabinet:** 1.20 × 0.30 × 1.38 m, top at 1.84 m.
   - The sides are grey and the back is cream.
-  - A thin pink stripe runs round its top and bottom edges.
+  - **The red pinstripes** (Steven, Nov 1: "the sign is missing the red pinstripes"):
+    - A 2 cm red cap band runs round the cabinet's top edge, above the aluminium frame, so it shows
+      from the front and sides, as in t050_021 and t050_011. The first version had the stripe
+      tucked behind the frame, where it could not be seen from the front.
+    - At the back, a second band runs along the bottom edge (IMG_4484 f068).
   - A satin aluminium frame (0.09 m at the sides, 0.12 m top and bottom) surrounds the recessed
     lit art (1.02 × 1.14 m), with a dark gasket line and two lock barrels on the right.
 - **Crown:** an arched slab 0.98 m wide, with 0.06 m shoulders and a 0.13 m segmental rise (top
@@ -43,31 +47,75 @@ A single-sided totem: the backs are plain cream (IMG_4484 f068).
 - **Measured** against the 12" floor tiles in t050_011 and the panel's proportions in t050_021,
   so ±10%. No person stands near a kiosk in any frame, so there was no human scale. All sizes are
   constants at the top of `kiosk.gd`.
+- **Colours** (Steven: "the color is slightly off"): sampled from the footage. The raw pixels
+  are dark, because the camera exposed for the bright panel, so each sample was corrected against
+  the white floor and ceiling tiles in the same frame (t050_011, t050_021, IMG_4461 t008_010,
+  IMG_4484 f068). The samples disagree with each other by about ±10%; the hexes below are their
+  consensus:
+
+  | Part | Hex |
+  |---|---|
+  | Cabinet and crown | `#a7b1b3` (a light, slightly cool grey) |
+  | Plinth | `#858c8f` |
+  | Aluminium frame | `#b3babc` |
+  | Inner lip | `#c6cccd` |
+  | Pinstripes | `#b5676d` (dusty red) |
 - **Built dynamic** (probe-lit, group `directory`, like the info desk), so placing or changing a
   kiosk needs no rebake. The panel is unshaded (it shows its art as lit from behind) and throws no
   light.
 - **Materials:** `dir_*` (`kiosk.gd` `fill_mat`). **Textures:** `tex/dir/panel_1995.png`,
-  `panel_2026.png` (1024 × 1145) and `back.png`.
+  `panel_2026.png` (2048 × 2290) and `back.png`.
+  - The panels import lossless with mipmaps (`.import`: `compress/mode=0`, `detect_3d` off), so
+    the small type stays sharp in the read-up-close view.
 
 ## The panels (tools/stores/directory/paint_dir.py)
-- **2026**, after IMG_4455:
-  - Cyan bands, "Welcome!", the mall's web and social names.
-  - STORES BY CATEGORY with coloured dots, the LEGEND column, SECURITY.
-  - The site map coloured by category with black anchors, ARMOUR DRIVE and BAYOU GARDENS
-    BOULEVARD, and MALL DIRECTORY across the bottom.
-  - The real panel's stock portrait of a woman is **not** copied; a soft cyan bokeh stands in its
-    place. The legend icons are grey squares.
+- **2026: the real directory, redrawn.**
+  - **Source:** IMG_4455, the C4 kiosk's panel shot straight on. It was straightened with a
+    four-corner perspective warp to 1024 × 1145 (corners in the photo rotated 90° clockwise:
+    (208,292) (1170,278) (1045,1337) (287,1283)) and redrawn at 2× in vector.
+  - **The lists:** every line of STORES BY CATEGORY is transcribed at its measured position,
+    including the tiny "inside" in "Disney inside JCPenney".
+  - **The dots:** each list line's dot colour is read off the photo. **The dots are the colour of
+    the map block the store sits in** (yellow, orange, magenta, blue, green, purple; black for the
+    anchors and logo blocks).
+  - **The map:** traced block by block, with the black logo blocks (Lynn's Interiors, JCPenney,
+    Dillard's, The Red Seal, Hypervelocity, Shoe Dept. Encore, UNITECH). Also the hall greys, the
+    pictograms, the entrance triangles, the transit stops and the four road names.
+  - **The rest:** the LEGEND; SECURITY 985.228.4563; "Welcome!" with the mall's web and social
+    names; MALL DIRECTORY; the faint light facets in the cyan bands.
+  - **Colours** were read off the photo and corrected for its white balance (the white body reads
+    `#deeaf0` in the photo).
+  - **Type:** Liberation Sans (Arial / Helvetica metrics, OFL; in `tools/stores/directory/fonts/`)
+    squeezed horizontally to match the sign's condensed type.
+  - **Not copied:** the stock portrait of a woman at top left is not ours to reproduce; a soft
+    blue bokeh stands in its place. Steven can supply a replacement picture if he wants something
+    there.
+  - **Check:** `production/qa/evidence/wsA-panel-2026-vs-photo.jpg`, the straightened photo left,
+    the redraw right.
 - **1995:** Steven, "pretty similar to the current one, just less modern".
   - The same layout, with teal bands and a mauve stripe.
   - The SOUTHLAND MALL fan logo from the 1994 page.
   - "Merchant List & Map", the 1994 category boxes (grey-bar headers) with "NN - Name" lines.
-  - The floor plan with the 1994 store numbers, the A–G special locations and a "Special Mall
-    Locations" key.
+  - The floor plan drawn from the game's 1995 map, with the 1994 store numbers, the A–G special
+    locations and a "Special Mall Locations" key.
   - **Guessed:** the colours. The 1994 page is black and white; the teal, mauve and the category
     colours are an early-90s palette.
-- **Both panels and the in-game map come from the same data.** `make_data.gd` writes
-  `tools/stores/directory/map.json` from the layout files, and the painter reads it. After a layout
-  change, run `make_data.gd`, then `paint_dir.py`, then rebuild the wings.
+  - **Check:** `wsA-panel-1995-vs-1994.jpg`.
+- **The click areas** (`tex/dir/hotspots.json`, written with the panels) cover every list line
+  and every store's place on the map, in panel pixels, keyed by the store's unit id.
+  - **1995:** the map places are the stalls themselves (the plan is drawn from the game's map).
+  - **2026:** the real sign's map is a diagram of coloured blocks, not stalls. Each store gets the
+    stretch of its block along the hall its front faces, in the order of the frontages
+    (`map_spot_2026`). Example: the H2 west-side stores share the orange and yellow blocks top to
+    bottom; Hypervelocity is its own black block.
+  - **Lines that point at a parent store:** "Disney inside JCPenney", "JCPenney Beauty" and
+    "JCPenney Salon" go to JCPenney; "White Barn inside Bath & Body Works" to Bath & Body Works;
+    "PINK inside Victoria's Secret" to the game's PINK unit.
+  - **Lines with no unit in the game's map, so not clickable:** EcoATM, Ann Scrubs & Accessories,
+    MG Boutique, T-Mobile (no mall frontage in the layout), Unitech Training Academy, Bayou Soccer
+    Club, Southland Soccer Fields.
+- **Updating:** both panels, the click areas and the in-game data come from the same layout
+  files. After a layout change, run `make_data.gd`, then `paint_dir.py`, then rebuild the wings.
 
 ## Where the kiosks are (`directory_data.json`, "kiosks")
 | # | Spot | Faces | 2026 | 1995 | Evidence |
@@ -85,37 +133,35 @@ A single-sided totem: the backs are plain cream (IMG_4484 f068).
   toward the charcoal unit). The z is from IMG_4484 f068, close to the court's threshold band.
 - Benches and planters keep 7.5 m away from each kiosk (the build's `avoid` list).
 
-## The map (scripts/directory_ui.gd)
+## Reading the directory (scripts/directory_ui.gd)
+Steven, Nov 1: "I don't want a separate UI outside the one that's posted on the sign. I want it to
+look literally identical to how the sign looks at the mall but I can just click inside the stall
+or the name of the store as it's shown on that directory signage."
 - **Opening it:** the kiosk is a node in group `interactable` (`scripts/directory_kiosk.gd`:
-  `interact_prompt()` → "Mall Directory", `interact(player)` opens the map). This is the shared
+  `interact_prompt()` → "Mall Directory", `interact(player)` opens it). This is the shared
   contract with workstream B+C.
   - **Fallback (remove when interact.gd lands):** within 2.4 m of a kiosk's lit side, a prompt
-    "Read the Mall Directory" shows. E, a controller's X or a tap on the prompt opens the map. The
-    fallback turns itself off when `res://scripts/interact.gd` exists.
-- **Data:** each wing build writes `gen/<wing>/directory.json` (`map_data.gd`) for both years:
-  every store frontage in `layout_mall.json` / `layout_2026.json` (which were made from
-  `data/eras_2026.json`).
-  - **Stall shapes:** the non-hall tiles behind the frontages, shared out by growing every frontage
-    inward at the same pace, never past its ends or its depth.
-  - **Names, categories and 1995 numbers:** from `tools/stores/directory/directory_data.json`.
-  - **Jump spots:** 2.2 m out from the middle of each store's longest frontage, on hall floor,
-    facing the store. The wing is the one whose floor the spot stands on.
-  - So the map is always the map the wing was built from.
-- **Look:** a 1995 / 2026 toggle at the top. Each year has its panel's colours, title, list style
-  and logo.
-  - **Wide screens:** the category list on the left (numbers in 1995, coloured dots in 2026) and
-    the map on the right.
-  - **Phones:** the map alone.
-  - **"You are here":** a pulsing red dot at the kiosk, on the map of the year you are in.
+    "Read the Mall Directory" shows. E, a controller's X or a tap on the prompt opens the
+    directory. The fallback turns itself off when `res://scripts/interact.gd` exists.
+- **What you see:** the kiosk's own panel picture, the same texture as on the 3D sign. It is shown
+  as large as the screen allows, inside the kiosk's aluminium frame with the red pinstripe on top.
+  - **Nothing else is added** except a small 1995 / 2026 toggle and a close button on the frame,
+    and the "Jump to this store?" question.
+  - **Choosing a store:** hover or select a store and every place it appears on the sign lights up
+    (its list line or lines and its place on the map), with its name on a small tag over the map.
+  - **The 1995 / 2026 toggle** switches to the other year's sign.
 - **Controls:**
-  - **Keyboard:** arrows move stall to stall; Enter asks "Jump to this store?" and Enter again
-    jumps; Esc closes or cancels; Tab switches year; +/− zoom; typing a store's first letters
-    (or a 1995 number) finds it.
-  - **Controller:** d-pad or stick moves; A asks and confirms; B backs out; Y, LB or RB switch
-    year; X zooms in.
-  - **Mouse:** click a stall, drag to pan, scroll to zoom.
-  - **Touch:** tap a stall, tap Jump, then Yes; drag to pan; pinch or +/− to zoom; tap the toggle
-    to switch years; tap outside the card or X to close.
+  - **Mouse:** click a store's name or its place on the map, then answer "Jump to this store?".
+    The wheel zooms in on the sign; drag pans once zoomed in. Clicking off the sign closes it.
+  - **Touch:** the same with taps; pinch to zoom, drag to pan.
+  - **Keyboard:** arrows move from store to store across the sign; Enter asks, and Enter again
+    jumps. Esc backs out. Tab or Y switches the year; +/− zoom on the selected store.
+  - **Controller:** d-pad or stick moves; A asks and confirms; B backs out; Y, LB or RB switch the
+    year; X zooms.
+- **Jump spots:** each wing build writes `gen/<wing>/directory.json` (`map_data.gd`) for both
+  years from `layout_mall.json` / `layout_2026.json`. Each store's spot is 2.2 m out from the
+  middle of its longest frontage, on hall floor, facing the store, in the wing whose floor that
+  is. So a jump always lands where the wing was built.
 - **The jump:** `player.jump_to(wing, year, x, z, yaw_deg)` (new in `scripts/player.gd`).
   - Same wing and year: you are moved at once.
   - Otherwise the other wing's or year's file loads at that spot, through `_go_to_wing`, which now
@@ -180,11 +226,13 @@ goes with the store, not the spot. Differences:
   - `map_data.gd`: the stall shapes and jumps.
   - `directory_data.json`: names, categories, numbers, kiosks.
   - `make_data.gd`: writes `map.json` for the painter.
-  - `paint_dir.py`: the panels.
+  - `paint_dir.py`: the panels and their click areas, and `fonts/` (Liberation Sans, OFL).
 - **Tests:**
   - `ui_test.gd`: a native headless jump test, e.g. `-- wing1.tscn dil` → Dillard's in Wing 2.
-  - `dirtest.py`: the web shots and the jump.
-- **Runtime:** `scripts/directory_kiosk.gd`, `scripts/directory_ui.gd`, and `tex/dir/`.
+  - `ui_shot.gd`: native screenshots of the directory view.
+  - `dirtest.js`: the web shots and the jumps (Node Playwright).
+- **Runtime:** `scripts/directory_kiosk.gd`, `scripts/directory_ui.gd`, and `tex/dir/` (the
+  panels, `hotspots.json`).
 - **Shared files, small hunks:**
   - `tools/build_mall.gd`: the `dir_` material branch, and the `place()` call before
     `place_fixtures`.
@@ -193,6 +241,7 @@ goes with the store, not the spot. Differences:
 
 ## Evidence (production/qa/evidence/)
 - `wsA-kiosk-vs-ref.jpg`: the preview against the footage.
+- `wsA-panel-2026-vs-photo.jpg`, `wsA-panel-1995-vs-1994.jpg`: the panels against their sources.
 - `wsA-kiosk-<year>-<spot>-unbaked.jpg`: in game.
-- `wsA-map-<year>-<desktop|phone>.jpg`
-- `wsA-jump-before/after.jpg`
+- `wsA-map-<year>-<desktop|phone>*.jpg`: the directory open, on desktop and at phone width.
+- `wsA-jump-before/after.jpg`, `wsA-phone-jump-after.jpg`: the jumps.

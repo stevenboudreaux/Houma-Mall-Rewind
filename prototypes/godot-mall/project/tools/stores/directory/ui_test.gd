@@ -1,5 +1,5 @@
 ## Headless check of the mall directory (design/godot-directory.md): loads a wing, opens its first
-## kiosk's map, types a store's first letters, confirms twice (Jump, then "Yes"), and prints where
+## kiosk's sign, selects the store named by the letters given, asks and confirms, and prints where
 ## the player stands before and after (a jump into the other wing changes the scene).
 ##   godot --headless --path . --script res://tools/stores/directory/ui_test.gd -- wing1.tscn dil [1995|2026]
 extends SceneTree
@@ -44,23 +44,29 @@ func _process(_dt):
 			if t < 3:
 				return false
 			var ui = scn.get_meta("directory_ui")
-			print("open: ", ui.is_open, " frozen: ", pl.frozen, " year ", ui.map_year, " stalls ", ui._stalls().size(), " sel ", ui._stalls()[ui.sel].name)
+			print("open: ", ui.is_open, " frozen: ", pl.frozen, " year ", ui.map_year, " click areas ", ui._hot().size())
 			if args.size() > 2 and args[2] != ui.map_year:
 				_key(KEY_TAB)
-			for ch in (args[1] if args.size() > 1 else "dil"):
-				_key(OS.find_keycode_from_string(ch.to_upper()), ch.unicode_at(0))
 			phase = 2; t = 0
 		2:
 			if t < 3:
 				return false
 			var ui = scn.get_meta("directory_ui")
-			print("found: ", ui._stalls()[ui.sel].name, " jump ", ui._stalls()[ui.sel].jump, " map ", ui.map_year)
+			# select the store whose name starts with the letters given, as a click on its name would
+			var want: String = (args[1] if args.size() > 1 else "dil").to_lower()
+			for h in ui._hot():
+				var st = ui._stall(h.id)
+				if st and String(st.name).to_lower().begins_with(want):
+					ui.sel = h.id
+					break
+			print("found: ", ui._stall(ui.sel).name, " jump ", ui._stall(ui.sel).jump, " map ", ui.map_year)
 			_key(KEY_RIGHT); _key(KEY_LEFT)   # a step away and back
-			print("after step: ", ui._stalls()[ui.sel].name)
-			ui.typed = ""
-			ui.sel = -1
-			for ch in (args[1] if args.size() > 1 else "dil"):
-				_key(OS.find_keycode_from_string(ch.to_upper()), ch.unicode_at(0))
+			print("after step: ", ui._stall(ui.sel).name)
+			for h in ui._hot():
+				var st = ui._stall(h.id)
+				if st and String(st.name).to_lower().begins_with(want):
+					ui.sel = h.id
+					break
 			_key(KEY_ENTER)
 			phase = 3; t = 0
 		3:

@@ -133,8 +133,11 @@ static func _year(L: Dictionary, D: Dictionary) -> Dictionary:
 		if num == 0 and not vacant and D.has("title") and String(D.title).begins_with("Merchant"):
 			num = next_num
 			next_num += 1
+		var fm := (Vector2(best.a[0], best.a[1]) + Vector2(best.b[0], best.b[1])) * 0.5 + Vector2(best.n[0], best.n[1]) * 1.0
 		stalls.append({"id": sid, "name": disp, "num": num, "cats": cl, "rects": rects, "vacant": vacant,
-			"label": _label_at(rects), "jump": _jump(L, best, hall, W, H, S, ox, oy), "known": info.size() > 0})
+			"label": _label_at(rects), "jump": _jump(L, best, hall, W, H, S, ox, oy), "known": info.size() > 0,
+			"layout_name": nm, "front": [best.a[0], best.a[1], best.b[0], best.b[1], best.n[0], best.n[1]],
+			"zone": _zone_at(L, fm.x, fm.y)})
 	for x in D.get("extras", []):
 		var hw := float(x.w) * 0.5
 		var hd := float(x.d) * 0.5

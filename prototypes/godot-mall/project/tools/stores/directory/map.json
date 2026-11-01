@@ -252,6 +252,14 @@
      "cats": [
       "women"
      ],
+     "front": [
+      -10.0,
+      -72.0,
+      -10.0,
+      -64.0,
+      1.0,
+      0.0
+     ],
      "id": "n10",
      "jump": [
       1,
@@ -264,6 +272,7 @@
       -23.0,
       -68.0
      ],
+     "layout_name": "LANE BRYANT",
      "name": "Lane Bryant",
      "num": 26,
      "rects": [
@@ -274,11 +283,20 @@
        -64.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "men"
+     ],
+     "front": [
+      -80.0,
+      48.0,
+      -74.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "n33",
      "jump": [
@@ -292,6 +310,7 @@
       -77.0,
       34.0
      ],
+     "layout_name": "JW",
      "name": "JW",
      "num": 9,
      "rects": [
@@ -302,11 +321,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      -74.0,
+      48.0,
+      -68.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "n33b",
      "jump": [
@@ -320,6 +348,7 @@
       -71.0,
       34.0
      ],
+     "layout_name": "5-7-9",
      "name": "5-7-9",
      "num": 10,
      "rects": [
@@ -330,11 +359,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "sport"
+     ],
+     "front": [
+      -68.0,
+      48.0,
+      -62.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "n34",
      "jump": [
@@ -348,6 +386,7 @@
       -65.0,
       34.0
      ],
+     "layout_name": "FOOT LOCKER",
      "name": "Foot Locker",
      "num": 11,
      "rects": [
@@ -358,11 +397,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "unisex"
+     ],
+     "front": [
+      -62.0,
+      48.0,
+      -50.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "n35",
      "jump": [
@@ -376,6 +424,7 @@
       -56.0,
       34.0
      ],
+     "layout_name": "GADZOOKS",
      "name": "Gadzooks",
      "num": 12,
      "rects": [
@@ -386,11 +435,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -50.0,
+      48.0,
+      -40.7,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "n36",
      "jump": [
@@ -404,6 +462,7 @@
       -45.0,
       42.0
      ],
+     "layout_name": "LION'S SHARE RESTAURANT",
      "name": "Lion's Share Rest.",
      "num": 13,
      "rects": [
@@ -414,11 +473,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "fashion"
+     ],
+     "front": [
+      -136.0,
+      66.0,
+      -130.0,
+      60.0,
+      -0.707107,
+      -0.707107
      ],
      "id": "n39",
      "jump": [
@@ -432,6 +500,7 @@
       -131.0,
       66.0
      ],
+     "layout_name": "GOLD 'N' GIFTS UNLIMITED",
      "name": "Gold 'N' Gifts Unlimited",
      "num": 85,
      "rects": [
@@ -454,11 +523,20 @@
        70.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": ""
     },
     {
      "cats": [
       "music"
+     ],
+     "front": [
+      -130.0,
+      60.0,
+      -124.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "n39b",
      "jump": [
@@ -472,6 +550,7 @@
       -126.0,
       65.0
      ],
+     "layout_name": "BABBAGE'S",
      "name": "Babbage's",
      "num": 97,
      "rects": [
@@ -488,11 +567,20 @@
        68.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "unisex"
+     ],
+     "front": [
+      -124.0,
+      60.0,
+      -118.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "n42",
      "jump": [
@@ -506,6 +594,7 @@
       -121.0,
       76.0
      ],
+     "layout_name": "COUNTRY FAIR",
      "name": "Country Fair",
      "num": 82,
      "rects": [
@@ -516,11 +605,20 @@
        92.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "unisex"
+     ],
+     "front": [
+      -94.0,
+      60.0,
+      -86.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "n46",
      "jump": [
@@ -534,6 +632,7 @@
       -90.0,
       80.0
      ],
+     "layout_name": "COUNTY SEAT",
      "name": "County Seat",
      "num": 78,
      "rects": [
@@ -544,11 +643,20 @@
        100.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "fashion"
+     ],
+     "front": [
+      -40.0,
+      60.0,
+      -36.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "n56",
      "jump": [
@@ -562,6 +670,7 @@
       -38.0,
       66.0
      ],
+     "layout_name": "AFTERTHOUGHTS",
      "name": "Afterthoughts",
      "num": 70,
      "rects": [
@@ -572,11 +681,20 @@
        72.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "shoes"
+     ],
+     "front": [
+      2.0,
+      -66.0,
+      2.0,
+      -62.0,
+      -1.0,
+      0.0
      ],
      "id": "n62",
      "jump": [
@@ -590,6 +708,7 @@
       12.0,
       -64.0
      ],
+     "layout_name": "FELGER'S FOOTWEAR",
      "name": "Felger's Footwear",
      "num": 41,
      "rects": [
@@ -600,11 +719,20 @@
        -62.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      2.0,
+      -62.0,
+      2.0,
+      -54.0,
+      -1.0,
+      0.0
      ],
      "id": "n63",
      "jump": [
@@ -618,6 +746,7 @@
       12.0,
       -58.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -628,11 +757,20 @@
        -54.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H2"
     },
     {
      "cats": [
       "shoes"
+     ],
+     "front": [
+      2.0,
+      -44.0,
+      2.0,
+      -38.0,
+      -1.0,
+      0.0
      ],
      "id": "n65",
      "jump": [
@@ -646,6 +784,7 @@
       16.0,
       -41.0
      ],
+     "layout_name": "FATHER & SON",
      "name": "Father & Son",
      "num": 45,
      "rects": [
@@ -656,11 +795,20 @@
        -38.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      -10.0,
+      -86.0,
+      -10.0,
+      -80.0,
+      1.0,
+      0.0
      ],
      "id": "n8",
      "jump": [
@@ -674,6 +822,7 @@
       -23.0,
       -83.0
      ],
+     "layout_name": "SOLARIUM",
      "name": "Solarium",
      "num": 28,
      "rects": [
@@ -684,11 +833,20 @@
        -80.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      -10.0,
+      -80.0,
+      -10.0,
+      -72.0,
+      1.0,
+      0.0
      ],
      "id": "n9",
      "jump": [
@@ -702,6 +860,7 @@
       -23.0,
       -76.0
      ],
+     "layout_name": "RAVE",
      "name": "Rave",
      "num": 27,
      "rects": [
@@ -712,11 +871,20 @@
        -72.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "dept"
+     ],
+     "front": [
+      -40.0,
+      -96.0,
+      30.0,
+      -96.0,
+      0.0,
+      1.0
      ],
      "id": "s1",
      "jump": [
@@ -730,6 +898,7 @@
       -5.0,
       -115.0
      ],
+     "layout_name": "SEARS",
      "name": "Sears",
      "num": 34,
      "rects": [
@@ -740,11 +909,20 @@
        -96.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C1"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      -10.0,
+      22.0,
+      -10.0,
+      36.0,
+      1.0,
+      0.0
      ],
      "id": "s10",
      "jump": [
@@ -758,6 +936,7 @@
       -30.0,
       29.0
      ],
+     "layout_name": "LERNER SHOP",
      "name": "Lerner Shop",
      "num": 18,
      "rects": [
@@ -768,11 +947,20 @@
        36.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H4"
     },
     {
      "cats": [
       "dept"
+     ],
+     "front": [
+      -10.0,
+      -14.0,
+      -10.0,
+      22.0,
+      1.0,
+      0.0
      ],
      "id": "s13",
      "jump": [
@@ -786,6 +974,7 @@
       -42.0,
       3.0
      ],
+     "layout_name": "WOOLWORTH",
      "name": "F.W. Woolworth",
      "num": 19,
      "rects": [
@@ -802,11 +991,20 @@
        22.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C2"
     },
     {
      "cats": [
       "sport"
+     ],
+     "front": [
+      -10.0,
+      -22.0,
+      -10.0,
+      -14.0,
+      1.0,
+      0.0
      ],
      "id": "s14",
      "jump": [
@@ -820,6 +1018,7 @@
       -31.0,
       -18.0
      ],
+     "layout_name": "FOOTACTION USA",
      "name": "Footaction USA",
      "num": 20,
      "rects": [
@@ -830,11 +1029,20 @@
        -14.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "unisex"
+     ],
+     "front": [
+      -10.0,
+      -30.0,
+      -10.0,
+      -22.0,
+      1.0,
+      0.0
      ],
      "id": "s15",
      "jump": [
@@ -848,6 +1056,7 @@
       -31.0,
       -26.0
      ],
+     "layout_name": "KIDS MART",
      "name": "Kids Mart",
      "num": 21,
      "rects": [
@@ -858,11 +1067,20 @@
        -22.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      -10.0,
+      -40.0,
+      -10.0,
+      -30.0,
+      1.0,
+      0.0
      ],
      "id": "s16",
      "jump": [
@@ -876,6 +1094,7 @@
       -31.0,
       -35.0
      ],
+     "layout_name": "JEAN NICOLE",
      "name": "Jean Nicole",
      "num": 22,
      "rects": [
@@ -886,11 +1105,20 @@
        -30.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "unisex"
+     ],
+     "front": [
+      -10.0,
+      -52.0,
+      -10.0,
+      -40.0,
+      1.0,
+      0.0
      ],
      "id": "s17",
      "jump": [
@@ -904,6 +1132,7 @@
       -31.0,
       -46.0
      ],
+     "layout_name": "MILLER'S OUTPOST",
      "name": "Miller's Outpost",
      "num": 23,
      "rects": [
@@ -914,11 +1143,20 @@
        -40.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "other"
+     ],
+     "front": [
+      -10.0,
+      -58.0,
+      -10.0,
+      -52.0,
+      1.0,
+      0.0
      ],
      "id": "s18",
      "jump": [
@@ -932,6 +1170,7 @@
       -36.0,
       -55.0
      ],
+     "layout_name": "KAY-BEE TOYS",
      "name": "Kay-Bee Toys",
      "num": 24,
      "rects": [
@@ -942,11 +1181,20 @@
        -52.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "music"
+     ],
+     "front": [
+      -10.0,
+      -64.0,
+      -10.0,
+      -58.0,
+      1.0,
+      0.0
      ],
      "id": "s19",
      "jump": [
@@ -960,6 +1208,7 @@
       -36.0,
       -61.0
      ],
+     "layout_name": "SOUND SHOP",
      "name": "Sound Shop",
      "num": 25,
      "rects": [
@@ -970,11 +1219,20 @@
        -58.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "dept"
+     ],
+     "front": [
+      -10.0,
+      80.0,
+      2.0,
+      80.0,
+      0.0,
+      -1.0
      ],
      "id": "s2",
      "jump": [
@@ -988,6 +1246,7 @@
       -4.0,
       99.0
      ],
+     "layout_name": "DILLARD'S",
      "name": "Dillard's",
      "num": 67,
      "rects": [
@@ -998,11 +1257,20 @@
        118.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H8"
     },
     {
      "cats": [
       "men"
+     ],
+     "front": [
+      2.0,
+      66.0,
+      2.0,
+      74.0,
+      -1.0,
+      0.0
      ],
      "id": "s20",
      "jump": [
@@ -1016,6 +1284,7 @@
       16.0,
       70.0
      ],
+     "layout_name": "SAADI'S",
      "name": "Saadi's",
      "num": 65,
      "rects": [
@@ -1026,11 +1295,20 @@
        74.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C3"
     },
     {
      "cats": [
       "books"
+     ],
+     "front": [
+      2.0,
+      16.0,
+      2.0,
+      26.0,
+      -1.0,
+      0.0
      ],
      "id": "s21",
      "jump": [
@@ -1044,6 +1322,7 @@
       23.0,
       21.0
      ],
+     "layout_name": "COACH HOUSE GIFTS",
      "name": "Coach House Gifts",
      "num": 58,
      "rects": [
@@ -1054,11 +1333,20 @@
        26.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H4"
     },
     {
      "cats": [
       "music"
+     ],
+     "front": [
+      2.0,
+      26.0,
+      2.0,
+      32.4,
+      -1.0,
+      0.0
      ],
      "id": "s21b",
      "jump": [
@@ -1072,6 +1360,7 @@
       17.0,
       29.0
      ],
+     "layout_name": "RADIO SHACK",
      "name": "Radio Shack",
      "num": 59,
      "rects": [
@@ -1082,11 +1371,20 @@
        32.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H4"
     },
     {
      "cats": [
       "other"
+     ],
+     "front": [
+      2.0,
+      34.0,
+      2.0,
+      38.0,
+      -1.0,
+      0.0
      ],
      "id": "s21c",
      "jump": [
@@ -1100,6 +1398,7 @@
       17.0,
       36.0
      ],
+     "layout_name": "GENERAL NUTRITION CENTER",
      "name": "General Nutrition Center",
      "num": 61,
      "rects": [
@@ -1110,11 +1409,20 @@
        38.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H4"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      2.0,
+      38.0,
+      2.0,
+      50.0,
+      -1.0,
+      0.0
      ],
      "id": "s21d",
      "jump": [
@@ -1128,6 +1436,7 @@
       23.0,
       44.0
      ],
+     "layout_name": "THE AVENUE",
      "name": "The Avenue",
      "num": 62,
      "rects": [
@@ -1138,11 +1447,20 @@
        50.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H4"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      2.0,
+      -54.0,
+      2.0,
+      -48.0,
+      -1.0,
+      0.0
      ],
      "id": "s24",
      "jump": [
@@ -1156,6 +1474,7 @@
       16.0,
       -51.0
      ],
+     "layout_name": "PHILLY'S PIZZA",
      "name": "Philly's Pizza",
      "num": 43,
      "rects": [
@@ -1166,11 +1485,20 @@
        -48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "services"
+     ],
+     "front": [
+      2.0,
+      -48.0,
+      2.0,
+      -44.0,
+      -1.0,
+      0.0
      ],
      "id": "s24mc",
      "jump": [
@@ -1184,6 +1512,7 @@
       16.0,
       -46.0
      ],
+     "layout_name": "MASTERCUTS",
      "name": "MasterCuts",
      "num": 44,
      "rects": [
@@ -1194,11 +1523,20 @@
        -44.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "other"
+     ],
+     "front": [
+      2.0,
+      -38.0,
+      2.0,
+      -18.0,
+      -1.0,
+      0.0
      ],
      "id": "s25",
      "jump": [
@@ -1212,6 +1550,7 @@
       23.0,
       -28.0
      ],
+     "layout_name": "K&B",
      "name": "K & B Drugs",
      "num": 46,
      "rects": [
@@ -1222,11 +1561,20 @@
        -18.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "sport"
+     ],
+     "front": [
+      2.0,
+      -72.0,
+      2.0,
+      -66.0,
+      -1.0,
+      0.0
      ],
      "id": "s26",
      "jump": [
@@ -1240,6 +1588,7 @@
       12.0,
       -69.0
      ],
+     "layout_name": "LADY FOOT LOCKER",
      "name": "Lady Foot Locker",
      "num": 40,
      "rects": [
@@ -1250,11 +1599,20 @@
        -66.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "shoes"
+     ],
+     "front": [
+      2.0,
+      -80.0,
+      2.0,
+      -72.0,
+      -1.0,
+      0.0
      ],
      "id": "s27",
      "jump": [
@@ -1268,6 +1626,7 @@
       12.0,
       -76.0
      ],
+     "layout_name": "FOOTQUARTERS",
      "name": "FootQuarters",
      "num": 39,
      "rects": [
@@ -1278,11 +1637,20 @@
        -72.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "sport"
+     ],
+     "front": [
+      2.0,
+      -86.0,
+      2.0,
+      -80.0,
+      -1.0,
+      0.0
      ],
      "id": "s28",
      "jump": [
@@ -1296,6 +1664,7 @@
       12.0,
       -83.0
      ],
+     "layout_name": "DUNCAN SPORTS",
      "name": "Duncan Sports",
      "num": 38,
      "rects": [
@@ -1306,11 +1675,20 @@
        -80.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "jewelry"
+     ],
+     "front": [
+      2.0,
+      -10.0,
+      12.0,
+      -10.0,
+      0.0,
+      1.0
      ],
      "id": "s29",
      "jump": [
@@ -1324,6 +1702,7 @@
       7.0,
       -14.0
      ],
+     "layout_name": "GORDON'S JEWELERS",
      "name": "Gordon's",
      "num": 47,
      "rects": [
@@ -1334,11 +1713,20 @@
        -10.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C2"
     },
     {
      "cats": [
       "services"
+     ],
+     "front": [
+      -46.0,
+      -86.0,
+      -36.0,
+      -86.0,
+      0.0,
+      -1.0
      ],
      "id": "s29ab",
      "jump": [
@@ -1352,6 +1740,7 @@
       -41.0,
       -79.0
      ],
+     "layout_name": "AMERICAN BANK",
      "name": "American Bank",
      "num": 29,
      "rects": [
@@ -1362,11 +1751,20 @@
        -72.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H1a"
     },
     {
      "cats": [
       "sport"
+     ],
+     "front": [
+      2.0,
+      74.0,
+      2.0,
+      80.0,
+      -1.0,
+      0.0
      ],
      "id": "s3",
      "jump": [
@@ -1380,6 +1778,7 @@
       16.0,
       77.0
      ],
+     "layout_name": "ATHLETE'S FOOT",
      "name": "Athlete's Foot",
      "num": 66,
      "rects": [
@@ -1390,11 +1789,20 @@
        80.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H8"
     },
     {
      "cats": [
       "fashion"
+     ],
+     "front": [
+      12.0,
+      -6.0,
+      20.0,
+      -6.0,
+      0.0,
+      1.0
      ],
      "id": "s30",
      "jump": [
@@ -1408,6 +1816,7 @@
       16.0,
       -12.0
      ],
+     "layout_name": "CLAIRE'S BOUTIQUES",
      "name": "Claire's Boutiques",
      "num": 48,
      "rects": [
@@ -1418,11 +1827,20 @@
        -6.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H3"
     },
     {
      "cats": [
       "services"
+     ],
+     "front": [
+      20.0,
+      -6.0,
+      24.0,
+      -6.0,
+      0.0,
+      1.0
      ],
      "id": "s31",
      "jump": [
@@ -1436,6 +1854,7 @@
       22.0,
       -12.0
      ],
+     "layout_name": "MITCHELL'S FORMAL WEAR",
      "name": "Mitchell's Formal Wear",
      "num": 49,
      "rects": [
@@ -1446,11 +1865,20 @@
        -6.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H3"
     },
     {
      "cats": [
       "other"
+     ],
+     "front": [
+      24.0,
+      -6.0,
+      30.0,
+      -6.0,
+      0.0,
+      1.0
      ],
      "id": "s32",
      "jump": [
@@ -1464,6 +1892,7 @@
       27.0,
       -12.0
      ],
+     "layout_name": "LASER COPIES",
      "name": "Laser Copies",
      "num": 50,
      "rects": [
@@ -1474,11 +1903,20 @@
        -6.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H3"
     },
     {
      "cats": [
       "services"
+     ],
+     "front": [
+      30.0,
+      -6.0,
+      36.0,
+      -6.0,
+      0.0,
+      1.0
      ],
      "id": "s32b",
      "jump": [
@@ -1492,6 +1930,7 @@
       33.0,
       -12.0
      ],
+     "layout_name": "VISION PLAZA",
      "name": "Vision Plaza",
      "num": 51,
      "rects": [
@@ -1502,11 +1941,20 @@
        -6.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H3"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      2.0,
+      6.0,
+      12.0,
+      6.0,
+      0.0,
+      -1.0
      ],
      "id": "s33",
      "jump": [
@@ -1520,6 +1968,7 @@
       7.0,
       11.0
      ],
+     "layout_name": "FRANKS",
      "name": "Franks",
      "num": 57,
      "rects": [
@@ -1530,11 +1979,20 @@
        16.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C2"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      12.0,
+      6.0,
+      16.0,
+      6.0,
+      0.0,
+      -1.0
      ],
      "id": "s34",
      "jump": [
@@ -1548,6 +2006,7 @@
       14.0,
       11.0
      ],
+     "layout_name": "ORANGE JULIUS",
      "name": "Orange Julius",
      "num": 56,
      "rects": [
@@ -1558,11 +2017,20 @@
        16.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H3"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      16.0,
+      6.0,
+      22.0,
+      6.0,
+      0.0,
+      -1.0
      ],
      "id": "s35",
      "jump": [
@@ -1576,6 +2044,7 @@
       19.0,
       11.0
      ],
+     "layout_name": "TEE TAI'S",
      "name": "Tee Tai's",
      "num": 55,
      "rects": [
@@ -1586,11 +2055,20 @@
        16.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H3"
     },
     {
      "cats": [
       "services"
+     ],
+     "front": [
+      22.0,
+      6.0,
+      30.0,
+      6.0,
+      0.0,
+      -1.0
      ],
      "id": "s36",
      "jump": [
@@ -1604,6 +2082,7 @@
       26.0,
       11.0
      ],
+     "layout_name": "OPTICAL OUTLET",
      "name": "Optical Outlet",
      "num": 54,
      "rects": [
@@ -1614,11 +2093,20 @@
        16.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H3"
     },
     {
      "cats": [
       "other"
+     ],
+     "front": [
+      30.0,
+      6.0,
+      36.0,
+      6.0,
+      0.0,
+      -1.0
      ],
      "id": "s38",
      "jump": [
@@ -1632,6 +2120,7 @@
       33.0,
       11.0
      ],
+     "layout_name": "T.J.'S ONE HOUR PHOTO",
      "name": "T.J.'s One Hour Photo",
      "num": 53,
      "rects": [
@@ -1642,11 +2131,20 @@
        16.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H3"
     },
     {
      "cats": [
       "shoes"
+     ],
+     "front": [
+      2.0,
+      50.0,
+      2.0,
+      66.0,
+      -1.0,
+      0.0
      ],
      "id": "s4",
      "jump": [
@@ -1660,6 +2158,7 @@
       16.0,
       58.0
      ],
+     "layout_name": "PAYLESS SHOES",
      "name": "Payless Shoes",
      "num": 63,
      "rects": [
@@ -1670,11 +2169,20 @@
        66.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C3"
     },
     {
      "cats": [
       "ent"
+     ],
+     "front": [
+      -70.0,
+      -86.0,
+      -46.0,
+      -86.0,
+      0.0,
+      -1.0
      ],
      "id": "s40",
      "jump": [
@@ -1688,6 +2196,7 @@
       -58.0,
       -75.0
      ],
+     "layout_name": "SOUTHLAND CINEMA",
      "name": "Southland Cinema",
      "num": 30,
      "rects": [
@@ -1698,11 +2207,20 @@
        -64.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H1a"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      22.0,
+      -86.0,
+      36.0,
+      -86.0,
+      0.0,
+      -1.0
      ],
      "id": "s42",
      "jump": [
@@ -1716,6 +2234,7 @@
       29.0,
       -70.0
      ],
+     "layout_name": "CUCOS BORDER CAFE",
      "name": "Cucos Border Cafe",
      "num": 36,
      "rects": [
@@ -1726,11 +2245,20 @@
        -54.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H1b"
     },
     {
      "cats": [
       "other"
+     ],
+     "front": [
+      -37.0,
+      48.0,
+      -32.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s44",
      "jump": [
@@ -1744,6 +2272,7 @@
       -34.0,
       42.0
      ],
+     "layout_name": "WICKS 'N' STICKS",
      "name": "Wicks 'N' Sticks",
      "num": 14,
      "rects": [
@@ -1754,11 +2283,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "shoes"
+     ],
+     "front": [
+      -86.0,
+      48.0,
+      -80.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s45",
      "jump": [
@@ -1772,6 +2310,7 @@
       -83.0,
       34.0
      ],
+     "layout_name": "BAKERS",
      "name": "Bakers",
      "num": 8,
      "rects": [
@@ -1782,11 +2321,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -94.0,
+      48.0,
+      -86.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s46",
      "jump": [
@@ -1800,6 +2348,7 @@
       -90.0,
       34.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -1810,11 +2359,20 @@
        48.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H5"
     },
     {
      "cats": [
       "unisex"
+     ],
+     "front": [
+      -102.0,
+      48.0,
+      -94.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s47",
      "jump": [
@@ -1828,6 +2386,7 @@
       -98.0,
       34.0
      ],
+     "layout_name": "MERRY-GO-ROUND",
      "name": "Merry Go Round",
      "num": 6,
      "rects": [
@@ -1838,11 +2397,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "books"
+     ],
+     "front": [
+      -110.0,
+      48.0,
+      -102.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s48",
      "jump": [
@@ -1856,6 +2424,7 @@
       -106.0,
       34.0
      ],
+     "layout_name": "B. DALTON BOOKSELLER",
      "name": "B. Dalton Bookseller",
      "num": 5,
      "rects": [
@@ -1866,11 +2435,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "sport"
+     ],
+     "front": [
+      -122.0,
+      48.0,
+      -110.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s49",
      "jump": [
@@ -1884,6 +2462,7 @@
       -116.0,
       34.0
      ],
+     "layout_name": "CHAMPS SPORTS",
      "name": "Champs Sports",
      "num": 4,
      "rects": [
@@ -1894,11 +2473,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      -132.0,
+      48.0,
+      -122.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s50",
      "jump": [
@@ -1912,6 +2500,7 @@
       -127.0,
       34.0
      ],
+     "layout_name": "THE LIMITED",
      "name": "The Limited",
      "num": 3,
      "rects": [
@@ -1922,11 +2511,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "shoes"
+     ],
+     "front": [
+      -154.0,
+      44.0,
+      -138.0,
+      44.0,
+      0.0,
+      1.0
      ],
      "id": "s51",
      "jump": [
@@ -1940,6 +2538,7 @@
       -146.0,
       32.0
      ],
+     "layout_name": "THE SHOE DEPT",
      "name": "Shoe Dept.",
      "num": 2,
      "rects": [
@@ -1950,11 +2549,20 @@
        44.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C4"
     },
     {
      "cats": [
       "music"
+     ],
+     "front": [
+      -118.0,
+      60.0,
+      -110.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s52",
      "jump": [
@@ -1968,6 +2576,7 @@
       -114.0,
       80.0
      ],
+     "layout_name": "BLOCKBUSTER MUSIC",
      "name": "Blockbuster Music",
      "num": 81,
      "rects": [
@@ -1978,11 +2587,20 @@
        100.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "ent"
+     ],
+     "front": [
+      -110.0,
+      60.0,
+      -102.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s52b",
      "jump": [
@@ -1996,6 +2614,7 @@
       -106.0,
       80.0
      ],
+     "layout_name": "POCKET CHANGE",
      "name": "Pocket Change",
      "num": 80,
      "rects": [
@@ -2006,11 +2625,20 @@
        100.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -138.0,
+      68.0,
+      -138.0,
+      80.0,
+      -1.0,
+      0.0
      ],
      "id": "s54",
      "jump": [
@@ -2024,6 +2652,7 @@
       -132.0,
       75.0
      ],
+     "layout_name": "CORN DOG 7",
      "name": "Corn Dog 7",
      "num": 86,
      "rects": [
@@ -2046,11 +2675,20 @@
        80.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H6"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      -138.0,
+      80.0,
+      -138.0,
+      88.0,
+      -1.0,
+      0.0
      ],
      "id": "s56",
      "jump": [
@@ -2064,6 +2702,7 @@
       -132.0,
       84.0
      ],
+     "layout_name": "WESLEY AUSTIN",
      "name": "Wesley Austin",
      "num": 87,
      "rects": [
@@ -2074,11 +2713,20 @@
        88.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H6"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -36.0,
+      60.0,
+      -20.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s57",
      "jump": [
@@ -2092,6 +2740,7 @@
       -28.0,
       65.0
      ],
+     "layout_name": "KARMELKORN",
      "name": "Karmelkorn",
      "num": 69,
      "rects": [
@@ -2102,11 +2751,20 @@
        70.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "shoes"
+     ],
+     "front": [
+      -20.0,
+      74.0,
+      -10.0,
+      74.0,
+      0.0,
+      -1.0
      ],
      "id": "s57b",
      "jump": [
@@ -2120,6 +2778,7 @@
       -15.0,
       79.0
      ],
+     "layout_name": "GRYDER'S",
      "name": "Gryder's",
      "num": 68,
      "rects": [
@@ -2130,11 +2789,20 @@
        84.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C3"
     },
     {
      "cats": [
       "shoes"
+     ],
+     "front": [
+      -44.0,
+      60.0,
+      -40.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s58",
      "jump": [
@@ -2148,6 +2816,7 @@
       -42.0,
       66.0
      ],
+     "layout_name": "NATURALIZER",
      "name": "Naturalizer",
      "num": 72,
      "rects": [
@@ -2158,11 +2827,20 @@
        72.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "unisex"
+     ],
+     "front": [
+      -48.0,
+      60.0,
+      -44.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s59",
      "jump": [
@@ -2176,6 +2854,7 @@
       -46.0,
       66.0
      ],
+     "layout_name": "SPECIAL TEES",
      "name": "Special Tees",
      "num": 73,
      "rects": [
@@ -2186,11 +2865,20 @@
        72.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "dept"
+     ],
+     "front": [
+      -154.0,
+      44.0,
+      -154.0,
+      68.0,
+      1.0,
+      0.0
      ],
      "id": "s6",
      "jump": [
@@ -2204,6 +2892,7 @@
       -178.0,
       56.0
      ],
+     "layout_name": "JCPENNEY",
      "name": "JCPenney",
      "num": 1,
      "rects": [
@@ -2214,11 +2903,20 @@
        68.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C4"
     },
     {
      "cats": [
       "services"
+     ],
+     "front": [
+      -58.0,
+      60.0,
+      -50.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s60",
      "jump": [
@@ -2232,6 +2930,7 @@
       -54.0,
       72.0
      ],
+     "layout_name": "REGIS HAIRSTYLISTS",
      "name": "Regis Hairstylists",
      "num": 74,
      "rects": [
@@ -2242,11 +2941,20 @@
        84.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "unisex"
+     ],
+     "front": [
+      -68.0,
+      60.0,
+      -58.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s61",
      "jump": [
@@ -2260,6 +2968,7 @@
       -63.0,
       80.0
      ],
+     "layout_name": "CONCEPTS",
      "name": "Concepts",
      "num": 75,
      "rects": [
@@ -2270,11 +2979,20 @@
        100.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "fashion"
+     ],
+     "front": [
+      -74.0,
+      60.0,
+      -68.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s62",
      "jump": [
@@ -2288,6 +3006,7 @@
       -71.0,
       80.0
      ],
+     "layout_name": "GOLDEN CHAIN GANG",
      "name": "Golden Chain Gang",
      "num": 95,
      "rects": [
@@ -2298,11 +3017,20 @@
        100.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -86.0,
+      60.0,
+      -74.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s63",
      "jump": [
@@ -2316,6 +3044,7 @@
       -80.0,
       80.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -2326,11 +3055,20 @@
        100.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H5"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -102.0,
+      60.0,
+      -94.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s64",
      "jump": [
@@ -2344,6 +3082,7 @@
       -98.0,
       80.0
      ],
+     "layout_name": "CHICK-FIL-A",
      "name": "Chick-fil-A",
      "num": 79,
      "rects": [
@@ -2354,11 +3093,20 @@
        100.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "jewelry"
+     ],
+     "front": [
+      -146.0,
+      68.0,
+      -146.0,
+      78.0,
+      1.0,
+      0.0
      ],
      "id": "s7",
      "jump": [
@@ -2372,6 +3120,7 @@
       -150.0,
       73.0
      ],
+     "layout_name": "ZALES",
      "name": "Zales",
      "num": 89,
      "rects": [
@@ -2382,11 +3131,20 @@
        78.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H6"
     },
     {
      "cats": [
       "services"
+     ],
+     "front": [
+      -146.0,
+      78.0,
+      -146.0,
+      88.0,
+      1.0,
+      0.0
      ],
      "id": "s7b",
      "jump": [
@@ -2400,6 +3158,7 @@
       -150.0,
       83.0
      ],
+     "layout_name": "TERREBONNE GENERAL OUTREACH",
      "name": "Terrebonne General OutReach",
      "num": 88,
      "rects": [
@@ -2410,11 +3169,20 @@
        88.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H6"
     },
     {
      "cats": [
       "other"
+     ],
+     "front": [
+      -10.0,
+      36.0,
+      -10.0,
+      48.0,
+      1.0,
+      0.0
      ],
      "id": "s8",
      "jump": [
@@ -2428,6 +3196,7 @@
       -15.0,
       42.0
      ],
+     "layout_name": "GUMBALLS",
      "name": "Gumballs",
      "num": 17,
      "rects": [
@@ -2438,11 +3207,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H4"
     },
     {
      "cats": [
       "sport"
+     ],
+     "front": [
+      -26.0,
+      48.0,
+      -20.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s8b",
      "jump": [
@@ -2456,6 +3234,7 @@
       -23.0,
       42.0
      ],
+     "layout_name": "SPORTS AVENUE",
      "name": "Sports Avenue",
      "num": 16,
      "rects": [
@@ -2466,11 +3245,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -32.0,
+      48.0,
+      -26.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "smuopv1vy0",
      "jump": [
@@ -2484,6 +3272,7 @@
       -29.0,
       42.0
      ],
+     "layout_name": "GREAT AMERICAN COOKIE CO",
      "name": "Great American Cookie Co.",
      "num": 15,
      "rects": [
@@ -2494,7 +3283,8 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
@@ -2739,6 +3529,14 @@
      "cats": [
       "vacant"
      ],
+     "front": [
+      -80.0,
+      48.0,
+      -74.0,
+      48.0,
+      0.0,
+      1.0
+     ],
      "id": "n33",
      "jump": [
       2,
@@ -2751,6 +3549,7 @@
       -77.0,
       34.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -2761,11 +3560,20 @@
        48.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H5"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -74.0,
+      48.0,
+      -68.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "n33b",
      "jump": [
@@ -2779,6 +3587,7 @@
       -71.0,
       34.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -2789,12 +3598,21 @@
        48.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H5"
     },
     {
      "cats": [
       "shoes",
       "sport"
+     ],
+     "front": [
+      -68.0,
+      48.0,
+      -62.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "n34",
      "jump": [
@@ -2808,6 +3626,7 @@
       -65.0,
       34.0
      ],
+     "layout_name": "FOOT LOCKER",
      "name": "Foot Locker",
      "num": 0,
      "rects": [
@@ -2818,13 +3637,22 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "other",
       "men",
       "women"
+     ],
+     "front": [
+      -62.0,
+      48.0,
+      -50.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "n35",
      "jump": [
@@ -2838,6 +3666,7 @@
       -56.0,
       34.0
      ],
+     "layout_name": "SPENCER'S",
      "name": "Spencer's",
      "num": 0,
      "rects": [
@@ -2848,11 +3677,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      -50.0,
+      48.0,
+      -40.7,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "n36",
      "jump": [
@@ -2866,6 +3704,7 @@
       -45.0,
       42.0
      ],
+     "layout_name": "MAURICES",
      "name": "maurices",
      "num": 0,
      "rects": [
@@ -2876,11 +3715,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -136.0,
+      66.0,
+      -130.0,
+      60.0,
+      -0.707107,
+      -0.707107
      ],
      "id": "n39",
      "jump": [
@@ -2894,6 +3742,7 @@
       -129.0,
       66.0
      ],
+     "layout_name": "CAKELICIOUS",
      "name": "Cakelicious",
      "num": 0,
      "rects": [
@@ -2928,11 +3777,20 @@
        74.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": ""
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -124.0,
+      60.0,
+      -118.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "n42",
      "jump": [
@@ -2946,6 +3804,7 @@
       -121.0,
       76.0
      ],
+     "layout_name": "FOOD COURT",
      "name": "Food Court",
      "num": 0,
      "rects": [
@@ -2956,11 +3815,20 @@
        92.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -94.0,
+      60.0,
+      -86.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "n46",
      "jump": [
@@ -2974,6 +3842,7 @@
       -90.0,
       80.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -2984,11 +3853,20 @@
        100.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H5"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -40.0,
+      60.0,
+      -36.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "n56",
      "jump": [
@@ -3002,6 +3880,7 @@
       -38.0,
       66.0
      ],
+     "layout_name": "AUNTIE ANNE'S",
      "name": "Auntie Anne's",
      "num": 0,
      "rects": [
@@ -3012,11 +3891,20 @@
        72.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      2.0,
+      -66.0,
+      2.0,
+      -62.0,
+      -1.0,
+      0.0
      ],
      "id": "n62",
      "jump": [
@@ -3030,6 +3918,7 @@
       12.0,
       -64.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3040,11 +3929,20 @@
        -62.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H2"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      2.0,
+      -62.0,
+      2.0,
+      -54.0,
+      -1.0,
+      0.0
      ],
      "id": "n63",
      "jump": [
@@ -3058,6 +3956,7 @@
       12.0,
       -58.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3068,11 +3967,20 @@
        -54.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H2"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -10.0,
+      -86.0,
+      -10.0,
+      -80.0,
+      1.0,
+      0.0
      ],
      "id": "n8",
      "jump": [
@@ -3086,6 +3994,7 @@
       -23.0,
       -83.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3096,11 +4005,20 @@
        -80.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H2"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -10.0,
+      -80.0,
+      -10.0,
+      -64.0,
+      1.0,
+      0.0
      ],
      "id": "n9",
      "jump": [
@@ -3114,6 +4032,7 @@
       -23.0,
       -72.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3124,12 +4043,21 @@
        -64.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H2"
     },
     {
      "cats": [
       "dept",
       "home"
+     ],
+     "front": [
+      -40.0,
+      -96.0,
+      30.0,
+      -96.0,
+      0.0,
+      1.0
      ],
      "id": "s1",
      "jump": [
@@ -3143,6 +4071,7 @@
       -5.0,
       -115.0
      ],
+     "layout_name": "LYNN'S INTERIORS",
      "name": "Lynn's Interiors",
      "num": 0,
      "rects": [
@@ -3153,11 +4082,20 @@
        -96.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C1"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      -10.0,
+      20.0,
+      -10.0,
+      30.0,
+      1.0,
+      0.0
      ],
      "id": "s10",
      "jump": [
@@ -3171,6 +4109,7 @@
       -30.0,
       25.0
      ],
+     "layout_name": "RAINBOW",
      "name": "Rainbow",
      "num": 0,
      "rects": [
@@ -3181,12 +4120,21 @@
        30.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H4"
     },
     {
      "cats": [
       "men",
       "women"
+     ],
+     "front": [
+      -10.0,
+      10.0,
+      -10.0,
+      20.0,
+      1.0,
+      0.0
      ],
      "id": "s10a",
      "jump": [
@@ -3200,6 +4148,7 @@
       -30.0,
       15.0
      ],
+     "layout_name": "AÉROPOSTALE",
      "name": "Aéropostale",
      "num": 0,
      "rects": [
@@ -3210,11 +4159,20 @@
        20.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H4"
     },
     {
      "cats": [
       "other"
+     ],
+     "front": [
+      -10.0,
+      30.0,
+      -10.0,
+      36.0,
+      1.0,
+      0.0
      ],
      "id": "s10b",
      "jump": [
@@ -3228,6 +4186,7 @@
       -30.0,
       33.0
      ],
+     "layout_name": "GNC",
      "name": "GNC",
      "num": 0,
      "rects": [
@@ -3238,11 +4197,20 @@
        36.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H4"
     },
     {
      "cats": [
       "ent"
+     ],
+     "front": [
+      -10.0,
+      -22.0,
+      -10.0,
+      10.0,
+      1.0,
+      0.0
      ],
      "id": "s13",
      "jump": [
@@ -3256,6 +4224,7 @@
       -42.0,
       -6.0
      ],
+     "layout_name": "THE BILLIARD ROOM",
      "name": "The Billiard Room",
      "num": 0,
      "rects": [
@@ -3266,11 +4235,20 @@
        10.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C2"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -10.0,
+      -40.0,
+      -10.0,
+      -22.0,
+      1.0,
+      0.0
      ],
      "id": "s16",
      "jump": [
@@ -3284,6 +4262,7 @@
       -31.0,
       -31.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3294,11 +4273,20 @@
        -22.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H2"
     },
     {
      "cats": [
       "services"
+     ],
+     "front": [
+      -10.0,
+      -52.0,
+      -10.0,
+      -40.0,
+      1.0,
+      0.0
      ],
      "id": "s17",
      "jump": [
@@ -3312,6 +4300,7 @@
       -31.0,
       -46.0
      ],
+     "layout_name": "INSPIRED 2 DANCE",
      "name": "Inspired 2 Dance",
      "num": 0,
      "rects": [
@@ -3322,11 +4311,20 @@
        -40.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "services"
+     ],
+     "front": [
+      -10.0,
+      -58.0,
+      -10.0,
+      -52.0,
+      1.0,
+      0.0
      ],
      "id": "s18",
      "jump": [
@@ -3340,6 +4338,7 @@
       -36.0,
       -55.0
      ],
+     "layout_name": "PRIME TIME FITNESS",
      "name": "Prime Time Fitness",
      "num": 0,
      "rects": [
@@ -3350,11 +4349,20 @@
        -52.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "other"
+     ],
+     "front": [
+      -10.0,
+      -64.0,
+      -10.0,
+      -58.0,
+      1.0,
+      0.0
      ],
      "id": "s19",
      "jump": [
@@ -3368,6 +4376,7 @@
       -36.0,
       -61.0
      ],
+     "layout_name": "SOLA CENTER FOR THE ARTS",
      "name": "SOLA Center for the Arts",
      "num": 0,
      "rects": [
@@ -3378,11 +4387,20 @@
        -58.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "dept"
+     ],
+     "front": [
+      -10.0,
+      80.0,
+      2.0,
+      80.0,
+      0.0,
+      -1.0
      ],
      "id": "s2",
      "jump": [
@@ -3396,6 +4414,7 @@
       -4.0,
       99.0
      ],
+     "layout_name": "DILLARD'S",
      "name": "Dillard's",
      "num": 0,
      "rects": [
@@ -3406,12 +4425,21 @@
        118.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H8"
     },
     {
      "cats": [
       "beauty",
       "women"
+     ],
+     "front": [
+      2.0,
+      66.0,
+      2.0,
+      74.0,
+      -1.0,
+      0.0
      ],
      "id": "s20",
      "jump": [
@@ -3425,6 +4453,7 @@
       16.0,
       70.0
      ],
+     "layout_name": "PINK",
      "name": "PINK",
      "num": 0,
      "rects": [
@@ -3435,11 +4464,20 @@
        74.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C3"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      2.0,
+      16.0,
+      2.0,
+      26.0,
+      -1.0,
+      0.0
      ],
      "id": "s21",
      "jump": [
@@ -3453,6 +4491,7 @@
       23.0,
       21.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3463,11 +4502,20 @@
        26.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H4"
     },
     {
      "cats": [
       "shoes"
+     ],
+     "front": [
+      2.0,
+      34.0,
+      2.0,
+      50.0,
+      -1.0,
+      0.0
      ],
      "id": "s21d",
      "jump": [
@@ -3481,6 +4529,7 @@
       23.0,
       42.0
      ],
+     "layout_name": "SHOE DEPT. ENCORE",
      "name": "Shoe Dept. Encore",
      "num": 0,
      "rects": [
@@ -3497,11 +4546,20 @@
        50.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H4"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      2.0,
+      -54.0,
+      2.0,
+      -48.0,
+      -1.0,
+      0.0
      ],
      "id": "s24",
      "jump": [
@@ -3515,6 +4573,7 @@
       16.0,
       -51.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3525,11 +4584,20 @@
        -48.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H2"
     },
     {
      "cats": [
       "ent"
+     ],
+     "front": [
+      2.0,
+      -48.0,
+      2.0,
+      -28.0,
+      -1.0,
+      0.0
      ],
      "id": "s25",
      "jump": [
@@ -3543,6 +4611,7 @@
       23.0,
       -38.0
      ],
+     "layout_name": "HYPERVELOCITY RACE TRACK",
      "name": "Hypervelocity",
      "num": 0,
      "rects": [
@@ -3553,11 +4622,20 @@
        -28.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      2.0,
+      -28.0,
+      2.0,
+      -18.0,
+      -1.0,
+      0.0
      ],
      "id": "s25b",
      "jump": [
@@ -3571,6 +4649,7 @@
       10.0,
       -23.0
      ],
+     "layout_name": "NEEK & CO.",
      "name": "Neek & Co.",
      "num": 0,
      "rects": [
@@ -3581,11 +4660,20 @@
        -18.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H2"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      2.0,
+      -72.0,
+      2.0,
+      -66.0,
+      -1.0,
+      0.0
      ],
      "id": "s26",
      "jump": [
@@ -3599,6 +4687,7 @@
       12.0,
       -69.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3609,11 +4698,20 @@
        -66.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H2"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      2.0,
+      -80.0,
+      2.0,
+      -72.0,
+      -1.0,
+      0.0
      ],
      "id": "s27",
      "jump": [
@@ -3627,6 +4725,7 @@
       12.0,
       -76.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3637,11 +4736,20 @@
        -72.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H2"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      2.0,
+      -86.0,
+      2.0,
+      -80.0,
+      -1.0,
+      0.0
      ],
      "id": "s28",
      "jump": [
@@ -3655,6 +4763,7 @@
       12.0,
       -83.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3665,11 +4774,20 @@
        -80.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H2"
     },
     {
      "cats": [
       "fashion"
+     ],
+     "front": [
+      2.0,
+      -10.0,
+      12.0,
+      -10.0,
+      0.0,
+      1.0
      ],
      "id": "s29",
      "jump": [
@@ -3683,6 +4801,7 @@
       11.0,
       -14.0
      ],
+     "layout_name": "CLAIRE'S",
      "name": "Claire's",
      "num": 0,
      "rects": [
@@ -3699,11 +4818,20 @@
        -6.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C2"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -46.0,
+      -86.0,
+      -36.0,
+      -86.0,
+      0.0,
+      -1.0
      ],
      "id": "s29ab",
      "jump": [
@@ -3717,6 +4845,7 @@
       -41.0,
       -79.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3727,11 +4856,20 @@
        -72.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H1a"
     },
     {
      "cats": [
       "sport"
+     ],
+     "front": [
+      2.0,
+      74.0,
+      2.0,
+      80.0,
+      -1.0,
+      0.0
      ],
      "id": "s3",
      "jump": [
@@ -3745,6 +4883,7 @@
       16.0,
       77.0
      ],
+     "layout_name": "PROIMAGE SPORTS",
      "name": "ProImage Sports",
      "num": 0,
      "rects": [
@@ -3755,11 +4894,20 @@
        80.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H8"
     },
     {
      "cats": [
       "services"
+     ],
+     "front": [
+      20.0,
+      -6.0,
+      30.0,
+      -6.0,
+      0.0,
+      1.0
      ],
      "id": "s31",
      "jump": [
@@ -3773,6 +4921,7 @@
       25.0,
       -12.0
      ],
+     "layout_name": "WAX UTOPIA",
      "name": "Wax Utopia",
      "num": 0,
      "rects": [
@@ -3783,11 +4932,20 @@
        -6.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H3"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      30.0,
+      -6.0,
+      36.0,
+      -6.0,
+      0.0,
+      1.0
      ],
      "id": "s32b",
      "jump": [
@@ -3801,6 +4959,7 @@
       33.0,
       -12.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3811,11 +4970,20 @@
        -6.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H3"
     },
     {
      "cats": [
       "jewelry"
+     ],
+     "front": [
+      2.0,
+      6.0,
+      10.0,
+      6.0,
+      0.0,
+      -1.0
      ],
      "id": "s33",
      "jump": [
@@ -3829,6 +4997,7 @@
       6.0,
       11.0
      ],
+     "layout_name": "ZALES",
      "name": "Zales",
      "num": 0,
      "rects": [
@@ -3839,11 +5008,20 @@
        16.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C2"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      10.0,
+      6.0,
+      16.0,
+      6.0,
+      0.0,
+      -1.0
      ],
      "id": "s34",
      "jump": [
@@ -3857,6 +5035,7 @@
       13.0,
       11.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3867,11 +5046,20 @@
        16.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H3"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      16.0,
+      6.0,
+      22.0,
+      6.0,
+      0.0,
+      -1.0
      ],
      "id": "s35",
      "jump": [
@@ -3885,6 +5073,7 @@
       19.0,
       11.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3895,11 +5084,20 @@
        16.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H3"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      22.0,
+      6.0,
+      30.0,
+      6.0,
+      0.0,
+      -1.0
      ],
      "id": "s36",
      "jump": [
@@ -3913,6 +5111,7 @@
       26.0,
       11.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3923,11 +5122,20 @@
        16.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H3"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      30.0,
+      6.0,
+      36.0,
+      6.0,
+      0.0,
+      -1.0
      ],
      "id": "s38",
      "jump": [
@@ -3941,6 +5149,7 @@
       33.0,
       11.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -3951,12 +5160,21 @@
        16.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H3"
     },
     {
      "cats": [
       "beauty",
       "women"
+     ],
+     "front": [
+      2.0,
+      50.0,
+      2.0,
+      66.0,
+      -1.0,
+      0.0
      ],
      "id": "s4",
      "jump": [
@@ -3970,6 +5188,7 @@
       16.0,
       58.0
      ],
+     "layout_name": "VICTORIA'S SECRET",
      "name": "Victoria's Secret",
      "num": 0,
      "rects": [
@@ -3980,11 +5199,20 @@
        66.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C3"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -70.0,
+      -86.0,
+      -46.0,
+      -86.0,
+      0.0,
+      -1.0
      ],
      "id": "s40",
      "jump": [
@@ -3998,6 +5226,7 @@
       -58.0,
       -75.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -4008,11 +5237,20 @@
        -64.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H1a"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      22.0,
+      -86.0,
+      36.0,
+      -86.0,
+      0.0,
+      -1.0
      ],
      "id": "s42",
      "jump": [
@@ -4026,6 +5264,7 @@
       29.0,
       -70.0
      ],
+     "layout_name": "THE RED SEAL PIZZERIA & BAR",
      "name": "Red Seal Pizzeria & Bar",
      "num": 0,
      "rects": [
@@ -4036,11 +5275,20 @@
        -54.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H1b"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -37.0,
+      48.0,
+      -32.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s44",
      "jump": [
@@ -4054,6 +5302,7 @@
       -34.0,
       42.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -4064,11 +5313,20 @@
        48.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H5"
     },
     {
      "cats": [
       "shoes"
+     ],
+     "front": [
+      -86.0,
+      48.0,
+      -80.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s45",
      "jump": [
@@ -4082,6 +5340,7 @@
       -83.0,
       34.0
      ],
+     "layout_name": "JOURNEYS",
      "name": "Journeys",
      "num": 0,
      "rects": [
@@ -4092,11 +5351,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "other"
+     ],
+     "front": [
+      -94.0,
+      48.0,
+      -86.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s46",
      "jump": [
@@ -4110,6 +5378,7 @@
       -90.0,
       34.0
      ],
+     "layout_name": "HI-5",
      "name": "Hi-5",
      "num": 0,
      "rects": [
@@ -4120,12 +5389,21 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "men",
       "women"
+     ],
+     "front": [
+      -102.0,
+      48.0,
+      -94.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s47",
      "jump": [
@@ -4139,6 +5417,7 @@
       -98.0,
       34.0
      ],
+     "layout_name": "AVANT-GARDE",
      "name": "Avant-Garde",
      "num": 0,
      "rects": [
@@ -4149,11 +5428,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "wireless"
+     ],
+     "front": [
+      -110.0,
+      48.0,
+      -102.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s48",
      "jump": [
@@ -4167,6 +5455,7 @@
       -106.0,
       34.0
      ],
+     "layout_name": "AT&T",
      "name": "AT&T",
      "num": 0,
      "rects": [
@@ -4177,11 +5466,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "services"
+     ],
+     "front": [
+      -122.0,
+      48.0,
+      -110.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s49",
      "jump": [
@@ -4195,6 +5493,7 @@
       -116.0,
       34.0
      ],
+     "layout_name": "HOUSE OF FADEZ BARBERSHOP",
      "name": "House of Fadez Barbershop",
      "num": 0,
      "rects": [
@@ -4205,11 +5504,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "women"
+     ],
+     "front": [
+      -132.0,
+      48.0,
+      -122.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s50",
      "jump": [
@@ -4223,6 +5531,7 @@
       -127.0,
       34.0
      ],
+     "layout_name": "LOLA LABELLE BRIDAL",
      "name": "Lola LaBelle Bridal",
      "num": 0,
      "rects": [
@@ -4233,13 +5542,22 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "services",
       "men",
       "women"
+     ],
+     "front": [
+      -154.0,
+      44.0,
+      -138.0,
+      44.0,
+      0.0,
+      1.0
      ],
      "id": "s51",
      "jump": [
@@ -4253,6 +5571,7 @@
       -146.0,
       32.0
      ],
+     "layout_name": "IMPRESSIVE PRINTS",
      "name": "Impressive Prints",
      "num": 0,
      "rects": [
@@ -4263,11 +5582,20 @@
        44.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C4"
     },
     {
      "cats": [
       "ent"
+     ],
+     "front": [
+      -118.0,
+      60.0,
+      -110.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s52",
      "jump": [
@@ -4281,6 +5609,7 @@
       -114.0,
       80.0
      ],
+     "layout_name": "GAMES, INC. (POCKET CHANGE)",
      "name": "Pocket Change (games, inc.)",
      "num": 0,
      "rects": [
@@ -4291,11 +5620,20 @@
        100.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -110.0,
+      60.0,
+      -102.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s52b",
      "jump": [
@@ -4309,6 +5647,7 @@
       -106.0,
       80.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -4319,11 +5658,20 @@
        100.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H5"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -138.0,
+      68.0,
+      -138.0,
+      80.0,
+      -1.0,
+      0.0
      ],
      "id": "s54",
      "jump": [
@@ -4337,6 +5685,7 @@
       -132.0,
       75.0
      ],
+     "layout_name": "CORN DOG 7",
      "name": "Corn Dog 7",
      "num": 0,
      "rects": [
@@ -4353,11 +5702,20 @@
        80.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H6"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -138.0,
+      80.0,
+      -138.0,
+      88.0,
+      -1.0,
+      0.0
      ],
      "id": "s56",
      "jump": [
@@ -4371,6 +5729,7 @@
       -132.0,
       84.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -4381,11 +5740,20 @@
        88.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H6"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -20.0,
+      60.0,
+      -20.0,
+      70.0,
+      1.0,
+      0.0
      ],
      "id": "s57",
      "jump": [
@@ -4399,6 +5767,7 @@
       -24.0,
       65.0
      ],
+     "layout_name": "CINNAMONSTER",
      "name": "Cinnamonster",
      "num": 0,
      "rects": [
@@ -4409,11 +5778,20 @@
        70.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C3"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -20.0,
+      74.0,
+      -10.0,
+      74.0,
+      0.0,
+      -1.0
      ],
      "id": "s57b",
      "jump": [
@@ -4427,6 +5805,7 @@
       -15.0,
       79.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -4437,11 +5816,20 @@
        84.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "C3"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -36.0,
+      60.0,
+      -28.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s57v",
      "jump": [
@@ -4455,6 +5843,7 @@
       -32.0,
       65.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -4465,11 +5854,20 @@
        70.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H5"
     },
     {
      "cats": [
       "wireless"
+     ],
+     "front": [
+      -44.0,
+      60.0,
+      -40.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s58",
      "jump": [
@@ -4483,6 +5881,7 @@
       -42.0,
       66.0
      ],
+     "layout_name": "CELL XPERT",
      "name": "Cell Xpert",
      "num": 0,
      "rects": [
@@ -4493,11 +5892,20 @@
        72.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "wireless"
+     ],
+     "front": [
+      -48.0,
+      60.0,
+      -44.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s59",
      "jump": [
@@ -4511,6 +5919,7 @@
       -46.0,
       66.0
      ],
+     "layout_name": "BOOST MOBILE",
      "name": "Boost Mobile",
      "num": 0,
      "rects": [
@@ -4521,11 +5930,20 @@
        72.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "dept"
+     ],
+     "front": [
+      -154.0,
+      44.0,
+      -154.0,
+      68.0,
+      1.0,
+      0.0
      ],
      "id": "s6",
      "jump": [
@@ -4539,6 +5957,7 @@
       -178.0,
       56.0
      ],
+     "layout_name": "JCPENNEY",
      "name": "JCPenney",
      "num": 0,
      "rects": [
@@ -4549,11 +5968,20 @@
        68.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "C4"
     },
     {
      "cats": [
       "other"
+     ],
+     "front": [
+      -58.0,
+      60.0,
+      -50.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s60",
      "jump": [
@@ -4567,6 +5995,7 @@
       -54.0,
       72.0
      ],
+     "layout_name": "FIRE HAUS 3.0",
      "name": "Fire Haus 3.0",
      "num": 0,
      "rects": [
@@ -4577,12 +6006,21 @@
        84.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "children",
       "other"
+     ],
+     "front": [
+      -68.0,
+      60.0,
+      -58.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s61",
      "jump": [
@@ -4596,6 +6034,7 @@
       -63.0,
       80.0
      ],
+     "layout_name": "RHEA LANA'S",
      "name": "Rhea Lana's",
      "num": 0,
      "rects": [
@@ -4606,12 +6045,21 @@
        100.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "beauty",
       "other"
+     ],
+     "front": [
+      -76.0,
+      60.0,
+      -68.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s62",
      "jump": [
@@ -4625,6 +6073,7 @@
       -72.0,
       80.0
      ],
+     "layout_name": "BATH & BODY WORKS",
      "name": "Bath & Body Works",
      "num": 0,
      "rects": [
@@ -4635,11 +6084,20 @@
        100.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -86.0,
+      60.0,
+      -82.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s63",
      "jump": [
@@ -4653,6 +6111,7 @@
       -84.0,
       80.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -4663,11 +6122,20 @@
        100.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H5"
     },
     {
      "cats": [
       "ent"
+     ],
+     "front": [
+      -82.0,
+      60.0,
+      -76.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s63b",
      "jump": [
@@ -4681,6 +6149,7 @@
       -79.0,
       80.0
      ],
+     "layout_name": "TREASURE ISLAND PUTT PUTT GOLF",
      "name": "Treasure Island Putt Putt Golf",
      "num": 0,
      "rects": [
@@ -4691,11 +6160,20 @@
        100.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -102.0,
+      60.0,
+      -94.0,
+      60.0,
+      0.0,
+      -1.0
      ],
      "id": "s64",
      "jump": [
@@ -4709,6 +6187,7 @@
       -98.0,
       80.0
      ],
+     "layout_name": "WICKED WINGZ",
      "name": "Wicked Wingz",
      "num": 0,
      "rects": [
@@ -4719,11 +6198,20 @@
        100.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -146.0,
+      68.0,
+      -146.0,
+      78.0,
+      1.0,
+      0.0
      ],
      "id": "s7",
      "jump": [
@@ -4737,6 +6225,7 @@
       -150.0,
       73.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -4747,11 +6236,20 @@
        78.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H6"
     },
     {
      "cats": [
       "vacant"
+     ],
+     "front": [
+      -146.0,
+      78.0,
+      -146.0,
+      88.0,
+      1.0,
+      0.0
      ],
      "id": "s7b",
      "jump": [
@@ -4765,6 +6263,7 @@
       -150.0,
       83.0
      ],
+     "layout_name": "",
      "name": "Vacant",
      "num": 0,
      "rects": [
@@ -4775,11 +6274,20 @@
        88.0
       ]
      ],
-     "vacant": true
+     "vacant": true,
+     "zone": "H6"
     },
     {
      "cats": [
       "jewelry"
+     ],
+     "front": [
+      -10.0,
+      36.0,
+      -10.0,
+      48.0,
+      1.0,
+      0.0
      ],
      "id": "s8",
      "jump": [
@@ -4793,6 +6301,7 @@
       -15.0,
       42.0
      ],
+     "layout_name": "DJS JEWELERS",
      "name": "DJS Jewelers",
      "num": 0,
      "rects": [
@@ -4803,11 +6312,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H4"
     },
     {
      "cats": [
       "sport"
+     ],
+     "front": [
+      -26.0,
+      48.0,
+      -20.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "s8b",
      "jump": [
@@ -4821,6 +6339,7 @@
       -23.0,
       42.0
      ],
+     "layout_name": "LIDS",
      "name": "Lids",
      "num": 0,
      "rects": [
@@ -4831,11 +6350,20 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     },
     {
      "cats": [
       "food"
+     ],
+     "front": [
+      -32.0,
+      48.0,
+      -26.0,
+      48.0,
+      0.0,
+      1.0
      ],
      "id": "smuopv1vy0",
      "jump": [
@@ -4849,6 +6377,7 @@
       -29.0,
       42.0
      ],
+     "layout_name": "GREAT AMERICAN COOKIES",
      "name": "Great American Cookie Co.",
      "num": 0,
      "rects": [
@@ -4859,7 +6388,8 @@
        48.0
       ]
      ],
-     "vacant": false
+     "vacant": false,
+     "zone": "H5"
     }
    ],
    "title": "Mall Directory"

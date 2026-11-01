@@ -1,0 +1,2925 @@
+{
+"size": [
+2048,
+2290
+],
+"2026": [
+{
+"id": "s2",
+"kind": "list",
+"label": "Dillard's",
+"rect": [
+90,
+533,
+198,
+558
+]
+},
+{
+"id": "s6",
+"kind": "list",
+"label": "JCPenney",
+"rect": [
+90,
+558,
+214,
+582
+]
+},
+{
+"id": "s1",
+"kind": "list",
+"label": "Lynn's Interiors",
+"rect": [
+90,
+583,
+259,
+608
+]
+},
+{
+"id": "s6",
+"kind": "list",
+"label": "Disney inside JCPenney",
+"rect": [
+90,
+646,
+307,
+670
+]
+},
+{
+"id": "s61",
+"kind": "list",
+"label": "Rhea Lana's",
+"rect": [
+90,
+669,
+232,
+694
+]
+},
+{
+"id": "s62",
+"kind": "list",
+"label": "Bath & Body Works",
+"rect": [
+90,
+730,
+293,
+754
+]
+},
+{
+"id": "s2",
+"kind": "list",
+"label": "Dillard's",
+"rect": [
+90,
+755,
+198,
+780
+]
+},
+{
+"id": "s6",
+"kind": "list",
+"label": "JCPenney Beauty",
+"rect": [
+90,
+780,
+277,
+804
+]
+},
+{
+"id": "s20",
+"kind": "list",
+"label": "PINK inside Victoria's Secret",
+"rect": [
+90,
+806,
+342,
+830
+]
+},
+{
+"id": "s4",
+"kind": "list",
+"label": "Victoria's Secret",
+"rect": [
+90,
+831,
+265,
+856
+]
+},
+{
+"id": "s25",
+"kind": "list",
+"label": "Hypervelocity",
+"rect": [
+90,
+950,
+244,
+974
+]
+},
+{
+"id": "s63b",
+"kind": "list",
+"label": "Treasure Island Putt Putt Golf",
+"rect": [
+90,
+975,
+376,
+1000
+]
+},
+{
+"id": "s52",
+"kind": "list",
+"label": "Pocket Change",
+"rect": [
+90,
+1000,
+256,
+1024
+]
+},
+{
+"id": "s29",
+"kind": "list",
+"label": "Claire's",
+"rect": [
+90,
+1059,
+192,
+1084
+]
+},
+{
+"id": "n56",
+"kind": "list",
+"label": "Auntie Anne's",
+"rect": [
+90,
+1118,
+245,
+1143
+]
+},
+{
+"id": "n39",
+"kind": "list",
+"label": "Cakelicious",
+"rect": [
+90,
+1144,
+227,
+1168
+]
+},
+{
+"id": "s57",
+"kind": "list",
+"label": "Cinnamonster",
+"rect": [
+90,
+1168,
+247,
+1193
+]
+},
+{
+"id": "s54",
+"kind": "list",
+"label": "Corn Dog 7",
+"rect": [
+90,
+1193,
+223,
+1218
+]
+},
+{
+"id": "smuopv1vy0",
+"kind": "list",
+"label": "Great American Cookie Co.",
+"rect": [
+90,
+1218,
+356,
+1243
+]
+},
+{
+"id": "s42",
+"kind": "list",
+"label": "Red Seal Pizzeria & Bar",
+"rect": [
+90,
+1244,
+325,
+1268
+]
+},
+{
+"id": "s64",
+"kind": "list",
+"label": "Wicked Wingz",
+"rect": [
+90,
+1268,
+247,
+1292
+]
+},
+{
+"id": "s1",
+"kind": "list",
+"label": "Lynn's Interiors",
+"rect": [
+90,
+1328,
+259,
+1353
+]
+},
+{
+"id": "s8",
+"kind": "list",
+"label": "DJS Jewelers",
+"rect": [
+90,
+1388,
+243,
+1412
+]
+},
+{
+"id": "s33",
+"kind": "list",
+"label": "Zales",
+"rect": [
+90,
+1413,
+174,
+1438
+]
+},
+{
+"id": "s10a",
+"kind": "list",
+"label": "A\u00e9ropostale",
+"rect": [
+90,
+1473,
+230,
+1498
+]
+},
+{
+"id": "s47",
+"kind": "list",
+"label": "Avant-Garde",
+"rect": [
+90,
+1523,
+234,
+1548
+]
+},
+{
+"id": "s51",
+"kind": "list",
+"label": "Impressive Prints",
+"rect": [
+90,
+1548,
+275,
+1572
+]
+},
+{
+"id": "n35",
+"kind": "list",
+"label": "Spencer's",
+"rect": [
+90,
+1574,
+212,
+1598
+]
+},
+{
+"id": "s62",
+"kind": "list",
+"label": "Bath & Body Works",
+"rect": [
+462,
+562,
+663,
+586
+]
+},
+{
+"id": "s10b",
+"kind": "list",
+"label": "GNC",
+"rect": [
+462,
+586,
+538,
+611
+]
+},
+{
+"id": "s46",
+"kind": "list",
+"label": "Hi-5",
+"rect": [
+462,
+611,
+532,
+636
+]
+},
+{
+"id": "s61",
+"kind": "list",
+"label": "Rhea Lana's",
+"rect": [
+462,
+637,
+602,
+662
+]
+},
+{
+"id": "s19",
+"kind": "list",
+"label": "SOLA Center for the Arts",
+"rect": [
+462,
+662,
+707,
+687
+]
+},
+{
+"id": "n35",
+"kind": "list",
+"label": "Spencer's",
+"rect": [
+462,
+688,
+582,
+712
+]
+},
+{
+"id": "s62",
+"kind": "list",
+"label": "White Barn inside Bath & Body Works",
+"rect": [
+462,
+713,
+791,
+738
+]
+},
+{
+"id": "s49",
+"kind": "list",
+"label": "House of Fadez Barbershop",
+"rect": [
+462,
+832,
+732,
+856
+]
+},
+{
+"id": "s51",
+"kind": "list",
+"label": "Impressive Prints",
+"rect": [
+462,
+857,
+645,
+882
+]
+},
+{
+"id": "s17",
+"kind": "list",
+"label": "Inspired 2 Dance",
+"rect": [
+462,
+882,
+640,
+906
+]
+},
+{
+"id": "s6",
+"kind": "list",
+"label": "JCPenney Salon",
+"rect": [
+462,
+906,
+636,
+931
+]
+},
+{
+"id": "s18",
+"kind": "list",
+"label": "Prime Time Fitness",
+"rect": [
+462,
+931,
+660,
+956
+]
+},
+{
+"id": "s31",
+"kind": "list",
+"label": "Wax Utopia",
+"rect": [
+462,
+956,
+594,
+981
+]
+},
+{
+"id": "n34",
+"kind": "list",
+"label": "Foot Locker",
+"rect": [
+462,
+1016,
+599,
+1040
+]
+},
+{
+"id": "s45",
+"kind": "list",
+"label": "Journeys",
+"rect": [
+462,
+1040,
+576,
+1065
+]
+},
+{
+"id": "s21d",
+"kind": "list",
+"label": "Shoe Dept. Encore",
+"rect": [
+462,
+1065,
+655,
+1090
+]
+},
+{
+"id": "n34",
+"kind": "list",
+"label": "Foot Locker",
+"rect": [
+462,
+1125,
+599,
+1150
+]
+},
+{
+"id": "s8b",
+"kind": "list",
+"label": "Lids",
+"rect": [
+462,
+1150,
+535,
+1174
+]
+},
+{
+"id": "s3",
+"kind": "list",
+"label": "ProImage Sports",
+"rect": [
+462,
+1174,
+640,
+1199
+]
+},
+{
+"id": "s48",
+"kind": "list",
+"label": "AT&T",
+"rect": [
+462,
+1233,
+544,
+1258
+]
+},
+{
+"id": "s59",
+"kind": "list",
+"label": "Boost Mobile",
+"rect": [
+462,
+1258,
+609,
+1283
+]
+},
+{
+"id": "s58",
+"kind": "list",
+"label": "Cell Xpert",
+"rect": [
+462,
+1283,
+581,
+1308
+]
+},
+{
+"id": "s10a",
+"kind": "list",
+"label": "A\u00e9ropostale",
+"rect": [
+462,
+1366,
+600,
+1391
+]
+},
+{
+"id": "s51",
+"kind": "list",
+"label": "Impressive Prints",
+"rect": [
+462,
+1416,
+645,
+1440
+]
+},
+{
+"id": "s50",
+"kind": "list",
+"label": "Lola LaBelle Bridal",
+"rect": [
+462,
+1440,
+657,
+1465
+]
+},
+{
+"id": "n36",
+"kind": "list",
+"label": "maurices",
+"rect": [
+462,
+1466,
+576,
+1490
+]
+},
+{
+"id": "s25b",
+"kind": "list",
+"label": "Neek & Co.",
+"rect": [
+462,
+1516,
+591,
+1540
+]
+},
+{
+"id": "s20",
+"kind": "list",
+"label": "PINK inside Victoria's Secret",
+"rect": [
+462,
+1540,
+712,
+1564
+]
+},
+{
+"id": "s10",
+"kind": "list",
+"label": "Rainbow",
+"rect": [
+462,
+1565,
+572,
+1590
+]
+},
+{
+"id": "n35",
+"kind": "list",
+"label": "Spencer's",
+"rect": [
+462,
+1590,
+582,
+1615
+]
+},
+{
+"id": "s4",
+"kind": "list",
+"label": "Victoria's Secret",
+"rect": [
+462,
+1615,
+635,
+1640
+]
+},
+{
+"id": "n34",
+"kind": "map",
+"label": "Foot Locker",
+"rect": [
+1294,
+1275,
+1311,
+1375
+]
+},
+{
+"id": "n35",
+"kind": "map",
+"label": "Spencer's",
+"rect": [
+1311,
+1275,
+1346,
+1375
+]
+},
+{
+"id": "n36",
+"kind": "map",
+"label": "maurices",
+"rect": [
+1346,
+1275,
+1373,
+1375
+]
+},
+{
+"id": "n39",
+"kind": "map",
+"label": "Cakelicious",
+"rect": [
+1110,
+1405,
+1128,
+1550
+]
+},
+{
+"id": "n42",
+"kind": "map",
+"label": "Food Court",
+"rect": [
+1146,
+1405,
+1164,
+1550
+]
+},
+{
+"id": "n56",
+"kind": "map",
+"label": "Auntie Anne's",
+"rect": [
+1399,
+1405,
+1411,
+1550
+]
+},
+{
+"id": "s1",
+"kind": "map",
+"label": "Lynn's Interiors",
+"rect": [
+1380,
+750,
+1803,
+898
+]
+},
+{
+"id": "s10",
+"kind": "map",
+"label": "Rainbow",
+"rect": [
+1433,
+1281,
+1595,
+1315
+]
+},
+{
+"id": "s10a",
+"kind": "map",
+"label": "A\u00e9ropostale",
+"rect": [
+1433,
+1247,
+1595,
+1281
+]
+},
+{
+"id": "s10b",
+"kind": "map",
+"label": "GNC",
+"rect": [
+1433,
+1315,
+1595,
+1335
+]
+},
+{
+"id": "s13",
+"kind": "map",
+"label": "The Billiard Room",
+"rect": [
+1433,
+1140,
+1595,
+1247
+]
+},
+{
+"id": "s17",
+"kind": "map",
+"label": "Inspired 2 Dance",
+"rect": [
+1433,
+1039,
+1595,
+1079
+]
+},
+{
+"id": "s18",
+"kind": "map",
+"label": "Prime Time Fitness",
+"rect": [
+1433,
+1019,
+1595,
+1039
+]
+},
+{
+"id": "s19",
+"kind": "map",
+"label": "SOLA Center for the Arts",
+"rect": [
+1433,
+999,
+1595,
+1019
+]
+},
+{
+"id": "s2",
+"kind": "map",
+"label": "Dillard's",
+"rect": [
+1495,
+1458,
+1810,
+1615
+]
+},
+{
+"id": "s20",
+"kind": "map",
+"label": "PINK",
+"rect": [
+1643,
+1421,
+1797,
+1442
+]
+},
+{
+"id": "s21d",
+"kind": "map",
+"label": "Shoe Dept. Encore",
+"rect": [
+1643,
+1309,
+1797,
+1378
+]
+},
+{
+"id": "s25",
+"kind": "map",
+"label": "Hypervelocity",
+"rect": [
+1643,
+1040,
+1797,
+1125
+]
+},
+{
+"id": "s25b",
+"kind": "map",
+"label": "Neek & Co.",
+"rect": [
+1643,
+1125,
+1797,
+1155
+]
+},
+{
+"id": "s29",
+"kind": "map",
+"label": "Claire's",
+"rect": [
+1675,
+1160,
+1797,
+1192
+]
+},
+{
+"id": "s3",
+"kind": "map",
+"label": "ProImage Sports",
+"rect": [
+1643,
+1442,
+1797,
+1458
+]
+},
+{
+"id": "s31",
+"kind": "map",
+"label": "Wax Utopia",
+"rect": [
+1760,
+1194,
+1796,
+1234
+]
+},
+{
+"id": "s33",
+"kind": "map",
+"label": "Zales",
+"rect": [
+1675,
+1232,
+1797,
+1275
+]
+},
+{
+"id": "s4",
+"kind": "map",
+"label": "Victoria's Secret",
+"rect": [
+1643,
+1378,
+1797,
+1421
+]
+},
+{
+"id": "s42",
+"kind": "map",
+"label": "Red Seal Pizzeria & Bar",
+"rect": [
+1707,
+925,
+1800,
+1023
+]
+},
+{
+"id": "s45",
+"kind": "map",
+"label": "Journeys",
+"rect": [
+1242,
+1275,
+1259,
+1375
+]
+},
+{
+"id": "s46",
+"kind": "map",
+"label": "Hi-5",
+"rect": [
+1219,
+1275,
+1242,
+1375
+]
+},
+{
+"id": "s47",
+"kind": "map",
+"label": "Avant-Garde",
+"rect": [
+1196,
+1275,
+1219,
+1375
+]
+},
+{
+"id": "s48",
+"kind": "map",
+"label": "AT&T",
+"rect": [
+1172,
+1275,
+1196,
+1375
+]
+},
+{
+"id": "s49",
+"kind": "map",
+"label": "House of Fadez Barbershop",
+"rect": [
+1138,
+1275,
+1172,
+1375
+]
+},
+{
+"id": "s50",
+"kind": "map",
+"label": "Lola LaBelle Bridal",
+"rect": [
+1109,
+1275,
+1138,
+1375
+]
+},
+{
+"id": "s51",
+"kind": "map",
+"label": "Impressive Prints",
+"rect": [
+1045,
+1275,
+1091,
+1375
+]
+},
+{
+"id": "s52",
+"kind": "map",
+"label": "Pocket Change (games, inc.)",
+"rect": [
+1164,
+1405,
+1189,
+1550
+]
+},
+{
+"id": "s54",
+"kind": "map",
+"label": "Corn Dog 7",
+"rect": [
+1045,
+1427,
+1075,
+1505
+]
+},
+{
+"id": "s57",
+"kind": "map",
+"label": "Cinnamonster",
+"rect": [
+1452,
+1410,
+1595,
+1458
+]
+},
+{
+"id": "s58",
+"kind": "map",
+"label": "Cell Xpert",
+"rect": [
+1388,
+1405,
+1400,
+1550
+]
+},
+{
+"id": "s59",
+"kind": "map",
+"label": "Boost Mobile",
+"rect": [
+1376,
+1405,
+1388,
+1550
+]
+},
+{
+"id": "s6",
+"kind": "map",
+"label": "JCPenney",
+"rect": [
+755,
+1140,
+1043,
+1507
+]
+},
+{
+"id": "s60",
+"kind": "map",
+"label": "Fire Haus 3.0",
+"rect": [
+1346,
+1405,
+1370,
+1550
+]
+},
+{
+"id": "s61",
+"kind": "map",
+"label": "Rhea Lana's",
+"rect": [
+1315,
+1405,
+1346,
+1550
+]
+},
+{
+"id": "s62",
+"kind": "map",
+"label": "Bath & Body Works",
+"rect": [
+1291,
+1405,
+1315,
+1550
+]
+},
+{
+"id": "s63b",
+"kind": "map",
+"label": "Treasure Island Putt Putt Golf",
+"rect": [
+1273,
+1405,
+1291,
+1550
+]
+},
+{
+"id": "s64",
+"kind": "map",
+"label": "Wicked Wingz",
+"rect": [
+1213,
+1405,
+1237,
+1550
+]
+},
+{
+"id": "s8",
+"kind": "map",
+"label": "DJS Jewelers",
+"rect": [
+1433,
+1335,
+1595,
+1375
+]
+},
+{
+"id": "s8b",
+"kind": "map",
+"label": "Lids",
+"rect": [
+1416,
+1275,
+1433,
+1375
+]
+},
+{
+"id": "smuopv1vy0",
+"kind": "map",
+"label": "Great American Cookie Co.",
+"rect": [
+1398,
+1275,
+1416,
+1375
+]
+}
+],
+"1995": [
+{
+"id": "s6",
+"kind": "list",
+"label": "JCPenney",
+"rect": [
+56,
+430,
+210,
+454
+]
+},
+{
+"id": "s13",
+"kind": "list",
+"label": "F.W. Woolworth",
+"rect": [
+56,
+455,
+256,
+479
+]
+},
+{
+"id": "s1",
+"kind": "list",
+"label": "Sears",
+"rect": [
+56,
+480,
+172,
+504
+]
+},
+{
+"id": "s2",
+"kind": "list",
+"label": "Dillard's",
+"rect": [
+56,
+505,
+192,
+529
+]
+},
+{
+"id": "s48",
+"kind": "list",
+"label": "B. Dalton Bookseller",
+"rect": [
+56,
+576,
+295,
+600
+]
+},
+{
+"id": "s21",
+"kind": "list",
+"label": "Coach House Gifts",
+"rect": [
+56,
+600,
+282,
+624
+]
+},
+{
+"id": "n36",
+"kind": "list",
+"label": "Lion's Share Rest.",
+"rect": [
+56,
+671,
+276,
+695
+]
+},
+{
+"id": "smuopv1vy0",
+"kind": "list",
+"label": "Great American Cookie Co.",
+"rect": [
+56,
+696,
+355,
+720
+]
+},
+{
+"id": "s42",
+"kind": "list",
+"label": "Cucos Border Cafe",
+"rect": [
+56,
+721,
+285,
+745
+]
+},
+{
+"id": "s24",
+"kind": "list",
+"label": "Philly's Pizza",
+"rect": [
+56,
+745,
+235,
+769
+]
+},
+{
+"id": "s35",
+"kind": "list",
+"label": "Tee Tai's",
+"rect": [
+56,
+770,
+199,
+794
+]
+},
+{
+"id": "s34",
+"kind": "list",
+"label": "Orange Julius",
+"rect": [
+56,
+795,
+241,
+819
+]
+},
+{
+"id": "s33",
+"kind": "list",
+"label": "Franks",
+"rect": [
+56,
+820,
+180,
+844
+]
+},
+{
+"id": "s57",
+"kind": "list",
+"label": "Karmelkorn",
+"rect": [
+56,
+845,
+221,
+869
+]
+},
+{
+"id": "s64",
+"kind": "list",
+"label": "Chick-fil-A",
+"rect": [
+56,
+869,
+215,
+893
+]
+},
+{
+"id": "s54",
+"kind": "list",
+"label": "Corn Dog 7",
+"rect": [
+56,
+894,
+220,
+918
+]
+},
+{
+"id": "s29",
+"kind": "list",
+"label": "Gordon's",
+"rect": [
+56,
+965,
+201,
+989
+]
+},
+{
+"id": "s7",
+"kind": "list",
+"label": "Zales",
+"rect": [
+56,
+990,
+169,
+1014
+]
+},
+{
+"id": "x_mr_silverman",
+"kind": "list",
+"label": "Mr. Silverman",
+"rect": [
+56,
+1015,
+240,
+1039
+]
+},
+{
+"id": "s44",
+"kind": "list",
+"label": "Wicks 'N' Sticks",
+"rect": [
+56,
+1085,
+261,
+1109
+]
+},
+{
+"id": "s8",
+"kind": "list",
+"label": "Gumballs",
+"rect": [
+56,
+1110,
+203,
+1134
+]
+},
+{
+"id": "s18",
+"kind": "list",
+"label": "Kay-Bee Toys",
+"rect": [
+56,
+1135,
+241,
+1159
+]
+},
+{
+"id": "s25",
+"kind": "list",
+"label": "K & B Drugs",
+"rect": [
+56,
+1160,
+225,
+1184
+]
+},
+{
+"id": "s32",
+"kind": "list",
+"label": "Laser Copies",
+"rect": [
+56,
+1184,
+235,
+1208
+]
+},
+{
+"id": "s38",
+"kind": "list",
+"label": "T.J.'s One Hour Photo",
+"rect": [
+56,
+1209,
+309,
+1233
+]
+},
+{
+"id": "s21c",
+"kind": "list",
+"label": "General Nutrition Center",
+"rect": [
+56,
+1234,
+330,
+1258
+]
+},
+{
+"id": "s29ab",
+"kind": "list",
+"label": "American Bank",
+"rect": [
+56,
+1305,
+252,
+1329
+]
+},
+{
+"id": "s24mc",
+"kind": "list",
+"label": "MasterCuts",
+"rect": [
+56,
+1329,
+221,
+1353
+]
+},
+{
+"id": "s31",
+"kind": "list",
+"label": "Mitchell's Formal Wear",
+"rect": [
+56,
+1354,
+317,
+1378
+]
+},
+{
+"id": "s32b",
+"kind": "list",
+"label": "Vision Plaza",
+"rect": [
+56,
+1379,
+226,
+1403
+]
+},
+{
+"id": "s36",
+"kind": "list",
+"label": "Optical Outlet",
+"rect": [
+56,
+1404,
+239,
+1428
+]
+},
+{
+"id": "s60",
+"kind": "list",
+"label": "Regis Hairstylists",
+"rect": [
+56,
+1429,
+269,
+1453
+]
+},
+{
+"id": "s7b",
+"kind": "list",
+"label": "Terrebonne General OutReach",
+"rect": [
+56,
+1453,
+381,
+1477
+]
+},
+{
+"id": "s51",
+"kind": "list",
+"label": "Shoe Dept.",
+"rect": [
+56,
+1524,
+217,
+1548
+]
+},
+{
+"id": "s45",
+"kind": "list",
+"label": "Bakers",
+"rect": [
+56,
+1549,
+181,
+1573
+]
+},
+{
+"id": "s27",
+"kind": "list",
+"label": "FootQuarters",
+"rect": [
+56,
+1574,
+235,
+1598
+]
+},
+{
+"id": "n62",
+"kind": "list",
+"label": "Felger's Footwear",
+"rect": [
+56,
+1599,
+276,
+1623
+]
+},
+{
+"id": "n65",
+"kind": "list",
+"label": "Father & Son",
+"rect": [
+56,
+1623,
+232,
+1647
+]
+},
+{
+"id": "s4",
+"kind": "list",
+"label": "Payless Shoes",
+"rect": [
+56,
+1648,
+247,
+1672
+]
+},
+{
+"id": "s57b",
+"kind": "list",
+"label": "Gryder's",
+"rect": [
+56,
+1673,
+197,
+1697
+]
+},
+{
+"id": "s58",
+"kind": "list",
+"label": "Naturalizer",
+"rect": [
+56,
+1698,
+216,
+1722
+]
+},
+{
+"id": "s30",
+"kind": "list",
+"label": "Claire's Boutiques",
+"rect": [
+392,
+430,
+613,
+454
+]
+},
+{
+"id": "n56",
+"kind": "list",
+"label": "Afterthoughts",
+"rect": [
+392,
+455,
+576,
+479
+]
+},
+{
+"id": "n39",
+"kind": "list",
+"label": "Gold 'N' Gifts Unlimited",
+"rect": [
+392,
+480,
+658,
+504
+]
+},
+{
+"id": "s62",
+"kind": "list",
+"label": "Golden Chain Gang",
+"rect": [
+392,
+505,
+624,
+529
+]
+},
+{
+"id": "s50",
+"kind": "list",
+"label": "The Limited",
+"rect": [
+392,
+576,
+559,
+600
+]
+},
+{
+"id": "n33b",
+"kind": "list",
+"label": "5-7-9",
+"rect": [
+392,
+600,
+508,
+624
+]
+},
+{
+"id": "s10",
+"kind": "list",
+"label": "Lerner Shop",
+"rect": [
+392,
+625,
+564,
+649
+]
+},
+{
+"id": "s16",
+"kind": "list",
+"label": "Jean Nicole",
+"rect": [
+392,
+650,
+560,
+674
+]
+},
+{
+"id": "n10",
+"kind": "list",
+"label": "Lane Bryant",
+"rect": [
+392,
+675,
+561,
+699
+]
+},
+{
+"id": "n9",
+"kind": "list",
+"label": "Rave",
+"rect": [
+392,
+700,
+501,
+724
+]
+},
+{
+"id": "n8",
+"kind": "list",
+"label": "Solarium",
+"rect": [
+392,
+724,
+534,
+748
+]
+},
+{
+"id": "s21d",
+"kind": "list",
+"label": "The Avenue",
+"rect": [
+392,
+749,
+560,
+773
+]
+},
+{
+"id": "s56",
+"kind": "list",
+"label": "Wesley Austin",
+"rect": [
+392,
+774,
+579,
+798
+]
+},
+{
+"id": "n33",
+"kind": "list",
+"label": "JW",
+"rect": [
+392,
+845,
+487,
+869
+]
+},
+{
+"id": "s20",
+"kind": "list",
+"label": "Saadi's",
+"rect": [
+392,
+869,
+521,
+893
+]
+},
+{
+"id": "s49",
+"kind": "list",
+"label": "Champs Sports",
+"rect": [
+392,
+940,
+590,
+964
+]
+},
+{
+"id": "n34",
+"kind": "list",
+"label": "Foot Locker",
+"rect": [
+392,
+965,
+560,
+989
+]
+},
+{
+"id": "s8b",
+"kind": "list",
+"label": "Sports Avenue",
+"rect": [
+392,
+990,
+583,
+1014
+]
+},
+{
+"id": "s14",
+"kind": "list",
+"label": "Footaction USA",
+"rect": [
+392,
+1015,
+591,
+1039
+]
+},
+{
+"id": "s28",
+"kind": "list",
+"label": "Duncan Sports",
+"rect": [
+392,
+1039,
+586,
+1063
+]
+},
+{
+"id": "s26",
+"kind": "list",
+"label": "Lady Foot Locker",
+"rect": [
+392,
+1064,
+606,
+1088
+]
+},
+{
+"id": "s3",
+"kind": "list",
+"label": "Athlete's Foot",
+"rect": [
+392,
+1089,
+576,
+1113
+]
+},
+{
+"id": "s40",
+"kind": "list",
+"label": "Southland Cinema",
+"rect": [
+392,
+1160,
+615,
+1184
+]
+},
+{
+"id": "s52b",
+"kind": "list",
+"label": "Pocket Change",
+"rect": [
+392,
+1184,
+589,
+1208
+]
+},
+{
+"id": "s19",
+"kind": "list",
+"label": "Sound Shop",
+"rect": [
+392,
+1255,
+563,
+1279
+]
+},
+{
+"id": "s21b",
+"kind": "list",
+"label": "Radio Shack",
+"rect": [
+392,
+1280,
+565,
+1304
+]
+},
+{
+"id": "s52",
+"kind": "list",
+"label": "Blockbuster Music",
+"rect": [
+392,
+1305,
+617,
+1329
+]
+},
+{
+"id": "n39b",
+"kind": "list",
+"label": "Babbage's",
+"rect": [
+392,
+1329,
+550,
+1353
+]
+},
+{
+"id": "s47",
+"kind": "list",
+"label": "Merry Go Round",
+"rect": [
+392,
+1400,
+599,
+1424
+]
+},
+{
+"id": "n35",
+"kind": "list",
+"label": "Gadzooks",
+"rect": [
+392,
+1425,
+545,
+1449
+]
+},
+{
+"id": "s15",
+"kind": "list",
+"label": "Kids Mart",
+"rect": [
+392,
+1450,
+541,
+1474
+]
+},
+{
+"id": "s17",
+"kind": "list",
+"label": "Miller's Outpost",
+"rect": [
+392,
+1475,
+593,
+1499
+]
+},
+{
+"id": "s59",
+"kind": "list",
+"label": "Special Tees",
+"rect": [
+392,
+1499,
+567,
+1523
+]
+},
+{
+"id": "s61",
+"kind": "list",
+"label": "Concepts",
+"rect": [
+392,
+1524,
+541,
+1548
+]
+},
+{
+"id": "n46",
+"kind": "list",
+"label": "County Seat",
+"rect": [
+392,
+1549,
+564,
+1573
+]
+},
+{
+"id": "n42",
+"kind": "list",
+"label": "Country Fair",
+"rect": [
+392,
+1574,
+564,
+1598
+]
+},
+{
+"id": "n10",
+"kind": "map",
+"label": "Lane Bryant",
+"rect": [
+1565,
+708,
+1682,
+745
+]
+},
+{
+"id": "n33",
+"kind": "map",
+"label": "JW",
+"rect": [
+1365,
+1125,
+1393,
+1251
+]
+},
+{
+"id": "n33b",
+"kind": "map",
+"label": "5-7-9",
+"rect": [
+1393,
+1125,
+1420,
+1251
+]
+},
+{
+"id": "n34",
+"kind": "map",
+"label": "Foot Locker",
+"rect": [
+1420,
+1125,
+1447,
+1251
+]
+},
+{
+"id": "n35",
+"kind": "map",
+"label": "Gadzooks",
+"rect": [
+1447,
+1125,
+1501,
+1251
+]
+},
+{
+"id": "n36",
+"kind": "map",
+"label": "Lion's Share Rest.",
+"rect": [
+1501,
+1197,
+1546,
+1251
+]
+},
+{
+"id": "n39",
+"kind": "map",
+"label": "Gold 'N' Gifts Unlimited",
+"rect": [
+1130,
+1315,
+1148,
+1324
+]
+},
+{
+"id": "n39",
+"kind": "map",
+"label": "Gold 'N' Gifts Unlimited",
+"rect": [
+1121,
+1324,
+1148,
+1342
+]
+},
+{
+"id": "n39",
+"kind": "map",
+"label": "Gold 'N' Gifts Unlimited",
+"rect": [
+1130,
+1342,
+1139,
+1351
+]
+},
+{
+"id": "n39b",
+"kind": "map",
+"label": "Babbage's",
+"rect": [
+1139,
+1306,
+1166,
+1315
+]
+},
+{
+"id": "n39b",
+"kind": "map",
+"label": "Babbage's",
+"rect": [
+1148,
+1315,
+1166,
+1342
+]
+},
+{
+"id": "n42",
+"kind": "map",
+"label": "Country Fair",
+"rect": [
+1166,
+1306,
+1194,
+1450
+]
+},
+{
+"id": "n46",
+"kind": "map",
+"label": "County Seat",
+"rect": [
+1302,
+1306,
+1338,
+1487
+]
+},
+{
+"id": "n56",
+"kind": "map",
+"label": "Afterthoughts",
+"rect": [
+1546,
+1306,
+1565,
+1360
+]
+},
+{
+"id": "n62",
+"kind": "map",
+"label": "Felger's Footwear",
+"rect": [
+1736,
+736,
+1827,
+754
+]
+},
+{
+"id": "n65",
+"kind": "map",
+"label": "Father & Son",
+"rect": [
+1736,
+835,
+1863,
+862
+]
+},
+{
+"id": "n8",
+"kind": "map",
+"label": "Solarium",
+"rect": [
+1565,
+645,
+1682,
+672
+]
+},
+{
+"id": "n9",
+"kind": "map",
+"label": "Rave",
+"rect": [
+1565,
+672,
+1682,
+708
+]
+},
+{
+"id": "s1",
+"kind": "map",
+"label": "Sears",
+"rect": [
+1546,
+428,
+1863,
+600
+]
+},
+{
+"id": "s10",
+"kind": "map",
+"label": "Lerner Shop",
+"rect": [
+1501,
+1134,
+1682,
+1197
+]
+},
+{
+"id": "s13",
+"kind": "map",
+"label": "F.W. Woolworth",
+"rect": [
+1393,
+971,
+1682,
+1125
+]
+},
+{
+"id": "s13",
+"kind": "map",
+"label": "F.W. Woolworth",
+"rect": [
+1501,
+1125,
+1682,
+1134
+]
+},
+{
+"id": "s14",
+"kind": "map",
+"label": "Footaction USA",
+"rect": [
+1492,
+935,
+1682,
+971
+]
+},
+{
+"id": "s15",
+"kind": "map",
+"label": "Kids Mart",
+"rect": [
+1492,
+898,
+1682,
+935
+]
+},
+{
+"id": "s16",
+"kind": "map",
+"label": "Jean Nicole",
+"rect": [
+1492,
+853,
+1682,
+898
+]
+},
+{
+"id": "s17",
+"kind": "map",
+"label": "Miller's Outpost",
+"rect": [
+1492,
+799,
+1682,
+853
+]
+},
+{
+"id": "s18",
+"kind": "map",
+"label": "Kay-Bee Toys",
+"rect": [
+1447,
+772,
+1682,
+799
+]
+},
+{
+"id": "s19",
+"kind": "map",
+"label": "Sound Shop",
+"rect": [
+1447,
+745,
+1682,
+772
+]
+},
+{
+"id": "s2",
+"kind": "map",
+"label": "Dillard's",
+"rect": [
+1682,
+1396,
+1736,
+1568
+]
+},
+{
+"id": "s20",
+"kind": "map",
+"label": "Saadi's",
+"rect": [
+1736,
+1333,
+1863,
+1369
+]
+},
+{
+"id": "s21",
+"kind": "map",
+"label": "Coach House Gifts",
+"rect": [
+1736,
+1107,
+1926,
+1152
+]
+},
+{
+"id": "s21b",
+"kind": "map",
+"label": "Radio Shack",
+"rect": [
+1736,
+1152,
+1872,
+1179
+]
+},
+{
+"id": "s21c",
+"kind": "map",
+"label": "General Nutrition Center",
+"rect": [
+1736,
+1188,
+1872,
+1206
+]
+},
+{
+"id": "s21d",
+"kind": "map",
+"label": "The Avenue",
+"rect": [
+1736,
+1206,
+1926,
+1260
+]
+},
+{
+"id": "s24",
+"kind": "map",
+"label": "Philly's Pizza",
+"rect": [
+1736,
+790,
+1863,
+817
+]
+},
+{
+"id": "s24mc",
+"kind": "map",
+"label": "MasterCuts",
+"rect": [
+1736,
+817,
+1863,
+835
+]
+},
+{
+"id": "s25",
+"kind": "map",
+"label": "K & B Drugs",
+"rect": [
+1736,
+862,
+1926,
+953
+]
+},
+{
+"id": "s26",
+"kind": "map",
+"label": "Lady Foot Locker",
+"rect": [
+1736,
+708,
+1827,
+736
+]
+},
+{
+"id": "s27",
+"kind": "map",
+"label": "FootQuarters",
+"rect": [
+1736,
+672,
+1827,
+708
+]
+},
+{
+"id": "s28",
+"kind": "map",
+"label": "Duncan Sports",
+"rect": [
+1736,
+645,
+1827,
+672
+]
+},
+{
+"id": "s29",
+"kind": "map",
+"label": "Gordon's",
+"rect": [
+1736,
+953,
+1782,
+989
+]
+},
+{
+"id": "s29ab",
+"kind": "map",
+"label": "American Bank",
+"rect": [
+1519,
+645,
+1565,
+708
+]
+},
+{
+"id": "s3",
+"kind": "map",
+"label": "Athlete's Foot",
+"rect": [
+1736,
+1369,
+1863,
+1396
+]
+},
+{
+"id": "s30",
+"kind": "map",
+"label": "Claire's Boutiques",
+"rect": [
+1782,
+953,
+1818,
+1007
+]
+},
+{
+"id": "s31",
+"kind": "map",
+"label": "Mitchell's Formal Wear",
+"rect": [
+1818,
+953,
+1836,
+1007
+]
+},
+{
+"id": "s32",
+"kind": "map",
+"label": "Laser Copies",
+"rect": [
+1836,
+953,
+1863,
+1007
+]
+},
+{
+"id": "s32b",
+"kind": "map",
+"label": "Vision Plaza",
+"rect": [
+1863,
+953,
+1890,
+1007
+]
+},
+{
+"id": "s33",
+"kind": "map",
+"label": "Franks",
+"rect": [
+1736,
+1061,
+1782,
+1107
+]
+},
+{
+"id": "s34",
+"kind": "map",
+"label": "Orange Julius",
+"rect": [
+1782,
+1061,
+1800,
+1107
+]
+},
+{
+"id": "s35",
+"kind": "map",
+"label": "Tee Tai's",
+"rect": [
+1800,
+1061,
+1827,
+1107
+]
+},
+{
+"id": "s36",
+"kind": "map",
+"label": "Optical Outlet",
+"rect": [
+1827,
+1061,
+1863,
+1107
+]
+},
+{
+"id": "s38",
+"kind": "map",
+"label": "T.J.'s One Hour Photo",
+"rect": [
+1863,
+1061,
+1890,
+1107
+]
+},
+{
+"id": "s4",
+"kind": "map",
+"label": "Payless Shoes",
+"rect": [
+1736,
+1260,
+1863,
+1333
+]
+},
+{
+"id": "s40",
+"kind": "map",
+"label": "Southland Cinema",
+"rect": [
+1411,
+645,
+1519,
+745
+]
+},
+{
+"id": "s42",
+"kind": "map",
+"label": "Cucos Border Cafe",
+"rect": [
+1827,
+645,
+1890,
+790
+]
+},
+{
+"id": "s44",
+"kind": "map",
+"label": "Wicks 'N' Sticks",
+"rect": [
+1565,
+1197,
+1583,
+1251
+]
+},
+{
+"id": "s45",
+"kind": "map",
+"label": "Bakers",
+"rect": [
+1338,
+1125,
+1365,
+1251
+]
+},
+{
+"id": "s47",
+"kind": "map",
+"label": "Merry Go Round",
+"rect": [
+1266,
+1125,
+1302,
+1251
+]
+},
+{
+"id": "s48",
+"kind": "map",
+"label": "B. Dalton Bookseller",
+"rect": [
+1230,
+1125,
+1266,
+1251
+]
+},
+{
+"id": "s49",
+"kind": "map",
+"label": "Champs Sports",
+"rect": [
+1175,
+1125,
+1230,
+1251
+]
+},
+{
+"id": "s50",
+"kind": "map",
+"label": "The Limited",
+"rect": [
+1130,
+1125,
+1175,
+1251
+]
+},
+{
+"id": "s51",
+"kind": "map",
+"label": "Shoe Dept.",
+"rect": [
+1031,
+1125,
+1103,
+1233
+]
+},
+{
+"id": "s52",
+"kind": "map",
+"label": "Blockbuster Music",
+"rect": [
+1194,
+1306,
+1230,
+1487
+]
+},
+{
+"id": "s52b",
+"kind": "map",
+"label": "Pocket Change",
+"rect": [
+1230,
+1306,
+1266,
+1487
+]
+},
+{
+"id": "s54",
+"kind": "map",
+"label": "Corn Dog 7",
+"rect": [
+1103,
+1342,
+1130,
+1351
+]
+},
+{
+"id": "s54",
+"kind": "map",
+"label": "Corn Dog 7",
+"rect": [
+1139,
+1342,
+1157,
+1351
+]
+},
+{
+"id": "s54",
+"kind": "map",
+"label": "Corn Dog 7",
+"rect": [
+1103,
+1351,
+1157,
+1396
+]
+},
+{
+"id": "s56",
+"kind": "map",
+"label": "Wesley Austin",
+"rect": [
+1103,
+1396,
+1157,
+1432
+]
+},
+{
+"id": "s57",
+"kind": "map",
+"label": "Karmelkorn",
+"rect": [
+1565,
+1306,
+1637,
+1351
+]
+},
+{
+"id": "s57b",
+"kind": "map",
+"label": "Gryder's",
+"rect": [
+1637,
+1369,
+1682,
+1414
+]
+},
+{
+"id": "s58",
+"kind": "map",
+"label": "Naturalizer",
+"rect": [
+1528,
+1306,
+1546,
+1360
+]
+},
+{
+"id": "s59",
+"kind": "map",
+"label": "Special Tees",
+"rect": [
+1510,
+1306,
+1528,
+1360
+]
+},
+{
+"id": "s6",
+"kind": "map",
+"label": "JCPenney",
+"rect": [
+814,
+1233,
+1031,
+1342
+]
+},
+{
+"id": "s60",
+"kind": "map",
+"label": "Regis Hairstylists",
+"rect": [
+1465,
+1306,
+1501,
+1414
+]
+},
+{
+"id": "s61",
+"kind": "map",
+"label": "Concepts",
+"rect": [
+1420,
+1306,
+1465,
+1487
+]
+},
+{
+"id": "s62",
+"kind": "map",
+"label": "Golden Chain Gang",
+"rect": [
+1393,
+1306,
+1420,
+1487
+]
+},
+{
+"id": "s64",
+"kind": "map",
+"label": "Chick-fil-A",
+"rect": [
+1266,
+1306,
+1302,
+1487
+]
+},
+{
+"id": "s7",
+"kind": "map",
+"label": "Zales",
+"rect": [
+1031,
+1342,
+1067,
+1387
+]
+},
+{
+"id": "s7b",
+"kind": "map",
+"label": "Terrebonne General OutReach",
+"rect": [
+1031,
+1387,
+1067,
+1432
+]
+},
+{
+"id": "s8",
+"kind": "map",
+"label": "Gumballs",
+"rect": [
+1637,
+1197,
+1682,
+1251
+]
+},
+{
+"id": "s8b",
+"kind": "map",
+"label": "Sports Avenue",
+"rect": [
+1610,
+1197,
+1637,
+1251
+]
+},
+{
+"id": "smuopv1vy0",
+"kind": "map",
+"label": "Great American Cookie Co.",
+"rect": [
+1583,
+1197,
+1610,
+1251
+]
+},
+{
+"id": "x_mr_silverman",
+"kind": "map",
+"label": "Mr. Silverman",
+"rect": [
+1534,
+1274,
+1550,
+1283
+]
+}
+]
+}

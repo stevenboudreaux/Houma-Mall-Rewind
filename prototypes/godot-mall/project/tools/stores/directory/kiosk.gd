@@ -7,6 +7,10 @@
 ## The 1995 kiosks are the same cabinet with the 1994 Merchant List & Map art (Steven, Nov 1:
 ## "pretty similar to the current one, just less modern").
 ##
+## Colours: sampled from the footage and corrected for the camera's exposure against the white
+## floor and ceiling tiles in the same frames (Nov 1): cabinet and crown #a7b1b3, plinth #858c8f,
+## aluminium frame #b3babc, pinstripes #b5676d.
+##
 ## Built dynamic (probe-lit, like the info desk) so placing or changing a kiosk needs no rebake.
 ## Materials "dir_<key>" (fill_mat). Each kiosk is also a node in group "interactable"
 ## (scripts/directory_kiosk.gd) that opens the map (scripts/directory_ui.gd).
@@ -111,9 +115,13 @@ static func build(b, c: Vector3, f: Vector3, year: String) -> void:
 	var cy := y0 + CAB_H * 0.5
 	b.box(G, "dir_cabinet", Vector3(0, cy, 0), Vector3(CAB_W, CAB_H, CAB_D), xf, ["+z", "-z", "-y"])
 	_face(b, "dir_back", xf, Vector3(0, cy, -CAB_D * 0.5), Vector3(CAB_W, CAB_H, 0), -1.0, true)
-	# the thin pink stripe at the cabinet's top and bottom edges, all round
-	for yy in [y0 + 0.012, y0 + CAB_H - 0.009]:
-		b.box(G, "dir_pink", Vector3(0, yy, 0), Vector3(CAB_W + 0.006, 0.016, CAB_D + 0.006), xf, ["-y", "+y"])
+	# the red pinstripes: a cap band round the cabinet's top edge, above the aluminium frame, seen
+	# from the front and sides (t050_021, t050_011); at the back also a band along the bottom edge
+	# (IMG_4484 f068). Colour sampled from the footage: #b5676d.
+	b.box(G, "dir_pink", Vector3(0, y0 + CAB_H + 0.011, 0), Vector3(CAB_W + 0.02, 0.022, CAB_D + 0.02), xf, ["-y"])
+	b.box(G, "dir_pink", Vector3(0, y0 + 0.014, -CAB_D * 0.5 - 0.002), Vector3(CAB_W + 0.004, 0.018, 0.006), xf, ["+z"])
+	for sd in [-1.0, 1.0]:
+		b.box(G, "dir_pink", Vector3(sd * (CAB_W * 0.5 + 0.002), y0 + 0.014, 0), Vector3(0.006, 0.018, CAB_D), xf, ["-x" if sd > 0 else "+x"])
 	# the front: an aluminium frame round the recessed lit art, a dark gasket, two lock barrels
 	var fz := CAB_D * 0.5
 	var fw := (CAB_W - ART_W) * 0.5
@@ -132,7 +140,7 @@ static func build(b, c: Vector3, f: Vector3, year: String) -> void:
 	for ly in [ay + ART_H * 0.36, ay - ART_H * 0.40]:
 		b.box(G, "dir_lock", Vector3(CAB_W * 0.5 - fw * 0.5, ly, fz + 0.019), Vector3(0.022, 0.022, 0.006), xf, ["-z"])
 	# the crown: an arched slab over the cabinet, grey in front, cream behind
-	var ct := y0 + CAB_H
+	var ct := y0 + CAB_H + 0.022   # the crown sits on the pinstripe cap
 	var outline := PackedVector2Array()
 	var hw := CROWN_W * 0.5
 	outline.append(Vector2(-hw, 0)); outline.append(Vector2(hw, 0)); outline.append(Vector2(hw, CROWN_SH))
@@ -223,22 +231,22 @@ static func _ball(b, mname: String, c: Vector3, rad: float) -> void:
 static func fill_mat(m: StandardMaterial3D, key: String, b) -> bool:
 	match key:
 		"cabinet":
-			m.albedo_color = Color("#a9adb3"); m.roughness = 0.55; m.metallic = 0.15
+			m.albedo_color = Color("#a7b1b3"); m.roughness = 0.55; m.metallic = 0.1
 		"base":
-			m.albedo_color = Color("#a2a6ad"); m.roughness = 0.62; m.metallic = 0.1
+			m.albedo_color = Color("#858c8f"); m.roughness = 0.62; m.metallic = 0.05
 		"shadow":
 			m.albedo_color = Color("#6d7076"); m.roughness = 0.8
 		"frame":
 			# satin aluminium (t050_021: a light silver frame with soft highlights)
-			m.albedo_color = Color("#cfd2d6"); m.metallic = 0.55; m.roughness = 0.32
+			m.albedo_color = Color("#b3babc"); m.metallic = 0.5; m.roughness = 0.32
 		"lip":
-			m.albedo_color = Color("#e3e5e8"); m.metallic = 0.5; m.roughness = 0.25
+			m.albedo_color = Color("#c6cccd"); m.metallic = 0.5; m.roughness = 0.25
 		"gasket":
 			m.albedo_color = Color("#1c1d20"); m.roughness = 0.6
 		"lock":
 			m.albedo_color = Color("#8d9096"); m.metallic = 0.8; m.roughness = 0.3
 		"pink":
-			m.albedo_color = Color("#c45a6c"); m.roughness = 0.5
+			m.albedo_color = Color("#b5676d"); m.roughness = 0.5
 		"back":
 			# the plain cream back (IMG_4484 f068), a faint powder-coat grain
 			m.albedo_texture = b.tex("dir/back.png"); m.roughness = 0.7
