@@ -1,0 +1,81 @@
+{
+ "_": "Items modelled in Blender (tools/blender/, design/godot-blender-pipeline.md). Same shape as the Godot-built item list: id, name, class (hand|pocket), scene, icon, year, place (optional). Written by tools/blender/build.py from each asset's META['item'].",
+ "items": [
+  {
+   "id": "bl_bd_paperback",
+   "name": "Shiverwood #7 paperback",
+   "class": "pocket",
+   "scene": "res://models/bl_bd_paperback/bl_bd_paperback.glb",
+   "icon": "res://models/bl_bd_paperback/bl_bd_paperback_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -105.42,
+     0.76,
+     45.98
+    ],
+    "yaw": 6
+   }
+  },
+  {
+   "id": "bl_bd_paperback_b",
+   "name": "Shiverwood #7 paperback",
+   "class": "pocket",
+   "scene": "res://models/bl_bd_paperback/bl_bd_paperback.glb",
+   "icon": "res://models/bl_bd_paperback/bl_bd_paperback_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -105.62,
+     0.76,
+     45.95
+    ],
+    "yaw": -4
+   }
+  },
+  {
+   "id": "bl_bd_paperback_c",
+   "name": "Shiverwood #7 paperback",
+   "class": "pocket",
+   "scene": "res://models/bl_bd_paperback/bl_bd_paperback.glb",
+   "icon": "res://models/bl_bd_paperback/bl_bd_paperback_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -105.82,
+     0.76,
+     45.99
+    ],
+    "yaw": 3
+   }
+  },
+  {
+   "id": "bl_wl_rootbeer_float",
+   "name": "Root beer float",
+   "class": "hand",
+   "scene": "res://models/bl_wl_rootbeer_float/bl_wl_rootbeer_float.glb",
+   "icon": "res://models/bl_wl_rootbeer_float/bl_wl_rootbeer_float_icon.png",
+   "year": 1995,
+   "store": "WOOLWORTH",
+   "place": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     -18.01,
+     1.0,
+     -11.88
+    ],
+    "yaw": 0
+   }
+  }
+ ]
+}

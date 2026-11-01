@@ -182,7 +182,8 @@ def main():
 
 
 def write_item(meta, aid, cls):
-    p = os.path.join(PROJ, "data", "items", "blender_props.json")
+    # META["item_file"]: which data/items/ file holds the entry (workstream T2 writes blender_props_2.json)
+    p = os.path.join(PROJ, "data", "items", meta.get("item_file", "blender_props.json"))
     data = {"_": "Items modelled in Blender (tools/blender/, design/godot-blender-pipeline.md). Same shape as the "
                  "Godot-built item list: id, name, class (hand|pocket), scene, icon, year, place (optional). "
                  "Written by tools/blender/build.py from each asset's META['item'].", "items": []}
@@ -193,9 +194,12 @@ def write_item(meta, aid, cls):
           "scene": "res://models/%s/%s.glb" % (aid, aid), "icon": "res://models/%s/%s_icon.png" % (aid, aid),
           "year": meta["item"].get("year", 1995)}
     for k, v in meta["item"].items():
-        if k not in ("name", "year"):
+        if k not in ("name", "year", "copies"):
             it[k] = v
-    data["items"] = [x for x in data["items"] if x["id"] != aid] + [it]
+    # "copies": more pick-ups of the same model, [{"id": ..., "place": {...}}, ...] (e.g. a table of paperbacks)
+    new = [it] + [dict(it, **c) for c in meta["item"].get("copies", [])]
+    ids = set(x["id"] for x in new)
+    data["items"] = [x for x in data["items"] if x["id"] not in ids] + new
     data["items"].sort(key=lambda x: x["id"])
     os.makedirs(os.path.dirname(p), exist_ok=True)
     with open(p, "w") as f:
