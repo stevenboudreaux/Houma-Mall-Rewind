@@ -70,6 +70,7 @@ func _at(v: Array) -> void:
 	player.yaw = deg_to_rad(float(v[2])); player.pitch = deg_to_rad(float(v[3])); player._apply_rot()
 	av._last = Vector3.INF
 	av._boom = 0.0
+	av._pivot = Vector3.INF
 
 func _do(c: Callable, w := 0.0) -> void:
 	q.append([c, w])
@@ -124,7 +125,8 @@ func _plan() -> void:
 				"%s: clip at ground speed: %.2f m/s / %.3f = x%.2f (playing x%.2f)" % [nm, av._speed, own, want, b.ap.speed_scale])
 			_check(av.tp_cam.current, "%s: the third-person camera is current" % nm)
 			var cp: Vector3 = av.tp_cam.global_position
-			_check(av._free(cp.x, cp.z, av._high > 0.5) or av._boom < 0.05, "%s: camera clear of walls and glass (boom %.2f m)" % [nm, av._boom])
+			_check(av._free(cp.x, cp.z) or av._boom < 0.05, "%s: camera clear of walls and glass (boom %.2f m, side %d)" % [nm, av._boom, av._side])
+			_check(cp.y <= av.CAM_TOP + 0.01 and cp.y >= av.CAM_LOW - 0.01, "%s: camera under the hanging signs (%.2f m)" % [nm, cp.y])
 			_shot("tp-walk-" + nm), 0.0)
 		_do(func(): Input.action_release("ui_up"), 1.2)
 		_do(func():
@@ -149,6 +151,17 @@ func _plan() -> void:
 		_do(func(): av.third = false, 0.4)
 		_do(func():
 			_check(player.interact.hand_item.get_parent() == player.interact.hand_root, "first person: the item is back in the first-person hand"), 0.0)
+	# VR: always first person, whatever is saved (vr.gd sets player.vr_on; its own XR camera then)
+	if not spots.is_empty():
+		_do(func(): av.third = true; _at(spots[0][1]); player.vr_on = true, 0.5)
+		_do(func():
+			var was: bool = av.third
+			av.toggle_view()
+			_check(not av.body.visible and not av.tp_cam.current and not av.view_btn.visible and av.third == was
+				and is_equal_approx(player.move_scale, 1.0), "VR: no avatar, no third-person camera, V ignored, buttons hidden, speed x1")
+			player.vr_on = false, 0.5)
+		_do(func():
+			_check(av.tp_cam.current and av.body.visible, "leaving VR: back to the saved third person"), 0.0)
 	# fps cost: one view, the avatar shown vs hidden (a debug hide; the view and camera stay)
 	if not spots.is_empty():
 		_do(func(): av.third = true; _at(spots[0][1]), 1.0)

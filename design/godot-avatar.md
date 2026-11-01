@@ -118,17 +118,20 @@ Saved with the look (`view`). `?view=third|first` sets it for one load (tests).
   stick plays the walk slower. The test checks the playback against the measured speed.
 - **Idle** (`idle`) when the ground speed drops under 0.15 m/s.
 - **The camera** rides a boom from a pivot 1.5 m up and 0.35 m to the right, 2.4 m back along the
-  view (pitch limited to −60°…+29° in third person). Before every frame the boom is marched in 6 cm
+  view (the view pitches −60°…+29° in third person). Before every frame the boom is marched in 6 cm
   steps against **the same walk grid and obstacle list the player walks on** (walls, store fronts,
-  the glass rects, columns, the arcade's machines, the benches when shown), with 14 cm clearance;
-  it is pulled in at once and let out slowly (no pumping). It is also kept under 2.7 m (store
-  ceilings are ~3.2 m) and over 0.35 m.
-- **Tight spots:** when the normal boom is under 1.5 m, a **high boom** is tried: the camera looks
-  down at least 46° from up to 2.7 m, and box-shaped obstacles (machines, counters, gondolas: rects at
-  least 0.55 m deep both ways) don't stop it, since it passes over them; walls, columns and the thin
-  glass rects still do. It blends in and out over 0.4 s.
-- **Very close in** (boom under 0.75 m: against a wall) the avatar is hidden, so the view is never
-  from inside its head.
+  the glass rects, columns, the arcade's machines, gondolas and counters, the benches when shown),
+  with 14 cm clearance; it is pulled in at once and let out slowly (no pumping).
+- **Hanging signs** are not in that list, and the lowest hang at 2.0 m (Kay-Bee's sale cards,
+  2.0–2.6 m; department boards from 2.56 m). So the camera stays between 0.35 and **1.95 m**: the
+  boom tilts only as far as that allows, and the view pitches on its own (looking down, the avatar
+  moves up the frame rather than the camera rising). Found by looking: an earlier "rise over the
+  machines" camera went through Kay-Bee's 20 % OFF card.
+- **Tight spots** (an arcade aisle, a store's gondolas): the other shoulder and straight behind are
+  tried too, and the side with the longest clear boom wins (a new side must be 0.4 m better, so it
+  doesn't flip). The pivot glides to the new side.
+- **Very close in** (boom under 0.75 m: backed against a wall) the avatar is hidden, so the view is
+  never from inside its head.
 - **The rest of the game** still asks the eye: interaction reach and facing (`interact.gd`), the
   prize counter's zones and closer look (`prizes.gd`, from `player.cam`), an arcade cabinet's Play
   (`signs.gd`, patched), the seam and door prompts. The floor reflection and the Runner's "seen"

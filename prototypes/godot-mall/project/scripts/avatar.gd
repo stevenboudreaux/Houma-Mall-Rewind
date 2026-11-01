@@ -32,7 +32,7 @@ const PIVOT_H := 1.5          # the boom's pivot, m above the floor (shoulder he
 const SHOULDER := 0.35        # the pivot's offset to the right, m
 const BOOM := 2.4             # the boom's length when nothing is in the way, m
 const CAM_R := 0.14           # the camera's clearance from walls and glass, m
-const CAM_TOP := 2.7          # highest camera, m (store ceilings are ~3.2 m: build_mall OPEN_H)
+const CAM_TOP := 1.95         # highest camera, m: under the lowest hanging signs (2.0 m)
 const CAM_LOW := 0.35         # lowest camera, m
 const HIDE_UNDER := 0.75      # boom shorter than this: the avatar is hidden
 const PITCH_MIN := -1.05      # third person looks at most this far down / up (rad)
@@ -101,6 +101,10 @@ func toggle_view() -> void:
 func _process(dt: float) -> void:
 	if body == null or not body.is_inside_tree() or tp_cam == null or not tp_cam.is_inside_tree():
 		return
+	# entering VR with the creator open (a first visit on a headset): the 2D creator isn't drawn in
+	# the headset, so it closes as Skip / Back rather than leave the player frozen
+	if creator != null and player.vr_on:
+		creator._skip()
 	var tp: bool = third and not player.vr_on and creator == null
 	var hide: bool = player.frozen or player.leaving
 	# walking speed: third person walks at a walking pace (the first person's 4 m/s is untouched)
@@ -169,75 +173,78 @@ func _pick_gait(s: float) -> String:
 	_gait = str(GAITS[best][0])
 	return _gait
 
-## The camera on its boom, behind and over the right shoulder, kept out of walls and glass. Where
-## the boom is cut short (an arcade aisle, a small store), the camera rises and looks down over the
-## machines and counters instead (the "high" boom: box-shaped obstacles are lower than CAM_TOP;
-## walls, columns and glass still stop it), blended in and out.
+## The camera on its boom, behind and over a shoulder, kept out of walls and glass. Nothing in the
+## mall hangs lower than 2.0 m (Kay-Bee's sale cards hang 2.0-2.6 m, department boards from 2.56 m;
+## tools/stores/kay_bee/store.gd), and those aren't in the walk grid, so the camera stays under
+## CAM_TOP: the boom tilts at most a little, while the view itself pitches as the player looks.
+## In a tight spot (an arcade aisle, a store's gondolas) the other shoulder or straight behind is
+## tried, and the side with the longest clear boom wins (a new side must be clearly better).
 func _place_cam(dt: float) -> void:
 	var yaw: float = player.yaw
 	var by := Basis(Vector3.UP, yaw)
 	var base: Vector3 = player.position + Vector3(0, PIVOT_H, 0)
-	var side := by * Vector3(SHOULDER, 0, 0)
-	var pivot := base + side * _clear(base, base + side, false)
 	var pitch := clampf(player.pitch, PITCH_MIN, PITCH_MAX)
-	var low := _boom_len(pivot, by * Basis(Vector3.RIGHT, pitch), false)
-	var hp := minf(pitch, HIGH_PITCH)
-	var high := _boom_len(pivot, by * Basis(Vector3.RIGHT, hp), true)
-	var want_high := 1.0 if (low < HIGH_UNDER and high > low + 0.3) else 0.0
-	_high = move_toward(_high, want_high, dt * 2.5)
-	var p := lerpf(pitch, hp, _high)
-	var b := by * Basis(Vector3.RIGHT, p)
-	var want := _boom_len(pivot, b, _high > 0.5)
+	# the boom's own tilt: the view's, limited so the camera stays between CAM_LOW and CAM_TOP
+	var up := asin(clampf((CAM_TOP - PIVOT_H) / BOOM, 0.0, 1.0))
+	var down := asin(clampf((PIVOT_H - CAM_LOW) / BOOM, 0.0, 1.0))
+	var bp := clampf(pitch, -up, down)
+	var bb := by * Basis(Vector3.RIGHT, bp)
+	var best_side := _side
+	var best_len := -1.0
+	var lens := {}
+	for sd in [1.0, -1.0, 0.0]:
+		var off := by * Vector3(SHOULDER * sd, 0, 0)
+		var pv := base + off * _clear(base, base + off)
+		lens[sd] = [_boom_len(pv, bb), pv]
+	best_len = lens[_side][0]
+	for sd in lens:
+		if lens[sd][0] > best_len + 0.4:
+			best_side = sd; best_len = lens[sd][0]
+	_side = best_side
+	var pivot: Vector3 = lens[_side][1]
+	var want: float = lens[_side][0]
 	_boom = want if want < _boom else lerpf(_boom, want, clampf(dt * 3.0, 0.0, 1.0))
-	tp_cam.global_transform = Transform3D(b, pivot + b * Vector3(0, 0, 1) * _boom)
+	_pivot = pivot if _pivot == Vector3.INF else _pivot.lerp(pivot, clampf(dt * 6.0, 0.0, 1.0))
+	var at: Vector3 = _pivot + bb * Vector3(0, 0, 1) * _boom
+	tp_cam.global_transform = Transform3D(by * Basis(Vector3.RIGHT, pitch), at)
 
-const HIGH_UNDER := 1.5       # a normal boom shorter than this: try the high one
-const HIGH_PITCH := -0.8      # the high boom looks down at least this much (rad)
-var _high := 0.0
+var _side := 1.0              # 1 right shoulder, -1 left, 0 straight behind
+var _pivot := Vector3.INF
 
-## How long the boom can be along basis b's +Z from the pivot: walls, glass, ceiling and floor.
-func _boom_len(pivot: Vector3, b: Basis, high: bool) -> float:
+## How long the boom can be along basis b's +Z from the pivot before a wall, glass or a machine.
+func _boom_len(pivot: Vector3, b: Basis) -> float:
 	var back := b * Vector3(0, 0, 1)
-	var want := BOOM * _clear(pivot, pivot + back * BOOM, high)
-	if back.y > 0.01: want = minf(want, (CAM_TOP - pivot.y) / back.y)
-	if back.y < -0.01: want = minf(want, (CAM_LOW - pivot.y) / back.y)
-	return maxf(want, 0.0)
+	return BOOM * _clear(pivot, pivot + back * BOOM)
 
-## How far (0..1) along from -> to the camera can go before it meets a wall, glass or a machine
-## (high: machines and counters, the box-shaped obstacles, don't count).
-func _clear(from: Vector3, to: Vector3, high: bool) -> float:
+## How far (0..1) along from -> to the camera can go before it meets a wall, glass or a machine.
+func _clear(from: Vector3, to: Vector3) -> float:
 	var n := int(ceil(from.distance_to(to) / 0.06))
 	if n <= 0:
 		return 1.0
-	if not _free(from.x, from.z, high):
+	if not _free(from.x, from.z):
 		return 0.0
 	for i in range(1, n + 1):
-		var t := float(i) / n
-		var q := from.lerp(to, t)
-		if not _free(q.x, q.z, high):
+		var q := from.lerp(to, float(i) / n)
+		if not _free(q.x, q.z):
 			return maxf(0.0, float(i - 1) / n - 0.02)
 	return 1.0
 
-func _free(x: float, z: float, high := false) -> bool:
+func _free(x: float, z: float) -> bool:
 	var r := CAM_R
 	if not (player._walk(x - r, z - r) and player._walk(x + r, z - r) and player._walk(x - r, z + r) and player._walk(x + r, z + r)):
 		return false
-	if _hits(player.obstacles, x, z, high):
+	if _hits(player.obstacles, x, z):
 		return false
-	if player.fixtures_on and _hits(player.fx_obstacles, x, z, high):
+	if player.fixtures_on and _hits(player.fx_obstacles, x, z):
 		return false
 	return true
 
-const BOX_MIN := 0.55         # a rect at least this deep both ways is a box (a machine, a counter)
-
-func _hits(list: Array, x: float, z: float, high := false) -> bool:
+func _hits(list: Array, x: float, z: float) -> bool:
 	for o in list:
 		if o.size() == 3 and not (o[0] is String):
 			if Vector2(x - o[0], z - o[1]).length() < float(o[2]) + CAM_R:
 				return true
 		elif o.size() >= 5 and o[0] == "rect":
-			if high and minf(o[3] - o[1], o[4] - o[2]) >= BOX_MIN:
-				continue
 			if x > o[1] - CAM_R and x < o[3] + CAM_R and z > o[2] - CAM_R and z < o[4] + CAM_R:
 				return true
 	return false
