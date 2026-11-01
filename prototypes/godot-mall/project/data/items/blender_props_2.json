@@ -78,6 +78,25 @@
    }
   },
   {
+   "id": "bl_kk_caramelcorn",
+   "name": "Caramel corn",
+   "class": "hand",
+   "scene": "res://models/bl_kk_caramelcorn/bl_kk_caramelcorn.glb",
+   "icon": "res://models/bl_kk_caramelcorn/bl_kk_caramelcorn_icon.png",
+   "year": 1995,
+   "store": "KARMELKORN",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -24.9,
+     1.28,
+     61.95
+    ],
+    "yaw": 195
+   }
+  },
+  {
    "id": "bl_oj_cup",
    "name": "Orange Julius",
    "class": "hand",
