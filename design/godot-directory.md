@@ -87,9 +87,9 @@ A single-sided totem: the backs are plain cream (IMG_4484 f068).
     `#deeaf0` in the photo).
   - **Type:** Liberation Sans (Arial / Helvetica metrics, OFL; in `tools/stores/directory/fonts/`)
     squeezed horizontally to match the sign's condensed type.
-  - **Not copied:** the stock portrait of a woman at top left is not ours to reproduce; a soft
-    blue bokeh stands in its place. Steven can supply a replacement picture if he wants something
-    there.
+  - **Not copied:** the stock portrait of a woman at top left is not ours to reproduce. There is
+    no stand-in either (Steven, Nov 1: "remove the soft blue blur altogether"); the plain cyan band
+    runs through there.
   - **Check:** `production/qa/evidence/wsA-panel-2026-vs-photo.jpg`, the straightened photo left,
     the redraw right.
 - **1995:** Steven, "pretty similar to the current one, just less modern".

@@ -8,8 +8,8 @@ Writes (2048 x 2290 px; the lit art is 1.02 x 1.14 m, kiosk.gd ART_W / ART_H):
   tex/dir/panel_2026.png  the real 2026 directory, redrawn from IMG_4455 (Oct 23 2026, straightened):
                           every line of STORES BY CATEGORY with its dot colour, the LEGEND, the map
                           blocks, logos and roads at the photo's positions. The one thing not copied
-                          is the stock portrait of a woman at top left (not ours to reproduce): a
-                          soft blue bokeh stands in its place.
+                          is the stock portrait of a woman at top left (not ours to reproduce): the
+                          plain cyan band runs through there instead (Steven, Nov 1: no stand-in).
   tex/dir/panel_1995.png  the same layout "less modern" (Steven, Nov 1), after the mall's own March
                           1994 Merchant List & Map: the fan logo, numbered stores in category boxes,
                           the floor plan from the game's 1995 map, special locations A-G.
@@ -279,26 +279,6 @@ def tri(d, x, y, pointing, col=INK, s=5.0):
     d.polygon(pts, fill=col)
 
 
-def bokeh(img, box):
-    """A soft blue photo stand-in (circles of light) where the real panel has a stock portrait."""
-    x0, y0, x1, y1 = [int(v * K) for v in box]
-    layer = Image.new("RGBA", (x1 - x0, y1 - y0), (44, 132, 182, 255))
-    dl = ImageDraw.Draw(layer)
-    rnd = random.Random(2026)
-    for i in range(22):
-        cx, cy = rnd.uniform(0, x1 - x0), rnd.uniform(0, y1 - y0)
-        r = rnd.uniform(14, 34) * K
-        c = rnd.choice([(255, 255, 255), (210, 240, 255), (255, 232, 214)])
-        dl.ellipse([cx - r, cy - r, cx + r, cy + r], fill=c + (rnd.randint(25, 60),))
-    layer = layer.filter(ImageFilter.GaussianBlur(14 * K))
-    # fade into the band on the right
-    mask = Image.new("L", layer.size, 255)
-    fw = int(layer.width * 0.35)
-    for i in range(fw):
-        ImageDraw.Draw(mask).line([(layer.width - fw + i, 0), (layer.width - fw + i, layer.height)], fill=int(255 * (1 - i / fw)))
-    img.paste(layer, (x0, y0), mask)
-
-
 def list_lines(img, d, col, xdot, xtxt, hot, stores_by_name):
     fh = font("bold", 10.2)
     fi = font("bold", 10.0)
@@ -340,7 +320,6 @@ def panel_2026(data):
                    ([(700, 1145), (1024, 980), (1024, 1145)], 16), ([(380, 940), (640, 940), (520, 1040)], 10)]:
         fd.polygon([P(*p) for p in pts], fill=(255, 255, 255, a))
     img.alpha_composite(face)
-    bokeh(img, (0, 0, 292, 178))
     d = ImageDraw.Draw(img)
     d.line([P(355, 10), P(755, 10)], fill=(255, 255, 255, 150), width=int(1.3 * K))
     text(img, 292, 118, "Welcome!", font("reg", 98), hexc("#eef3f5"), sx=0.97)
