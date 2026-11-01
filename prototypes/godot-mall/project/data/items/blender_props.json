@@ -1,0 +1,161 @@
+{
+ "_": "Items modelled in Blender (tools/blender/, design/godot-blender-pipeline.md). Same shape as the Godot-built item list: id, name, class (hand|pocket), scene, icon, year, place (optional). Written by tools/blender/build.py from each asset's META['item'].",
+ "items": [
+  {
+   "id": "bl_cd7_corndog",
+   "name": "Corn dog",
+   "class": "hand",
+   "scene": "res://models/bl_cd7_corndog/bl_cd7_corndog.glb",
+   "icon": "res://models/bl_cd7_corndog/bl_cd7_corndog_icon.png",
+   "year": "both",
+   "store": "CORN DOG 7"
+  },
+  {
+   "id": "bl_gb_lavalamp",
+   "name": "Lava lamp",
+   "class": "hand",
+   "scene": "res://models/bl_gb_lavalamp/bl_gb_lavalamp.glb",
+   "icon": "res://models/bl_gb_lavalamp/bl_gb_lavalamp_icon.png",
+   "year": 1995,
+   "store": "GUMBALLS",
+   "recolor": {
+    "bl_gb_lavalamp_wax": [
+     "#ff3a20",
+     "#3a8cff",
+     "#4cff5a",
+     "#c04cff",
+     "#ff9a1a",
+     "#ff5ab4"
+    ]
+   }
+  },
+  {
+   "id": "bl_pc_fingertrap",
+   "name": "Chinese finger trap",
+   "class": "pocket",
+   "scene": "res://models/bl_pc_fingertrap/bl_pc_fingertrap.glb",
+   "icon": "res://models/bl_pc_fingertrap/bl_pc_fingertrap_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "tickets": 15,
+   "prize": "finger_trap"
+  },
+  {
+   "id": "bl_pc_plush_bear",
+   "name": "Plush bear",
+   "class": "hand",
+   "scene": "res://models/bl_pc_plush_bear/bl_pc_plush_bear.glb",
+   "icon": "res://models/bl_pc_plush_bear/bl_pc_plush_bear_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "prize": "claw",
+   "tint": [
+    "#b5824a",
+    "#5a3820",
+    "#e8e0cc",
+    "#c21f2a",
+    "#ea88ae",
+    "#72a6e0",
+    "#9e82d4",
+    "#7ccfa6",
+    "#f2cc34"
+   ]
+  },
+  {
+   "id": "bl_pc_plush_bunny",
+   "name": "Plush bunny",
+   "class": "hand",
+   "scene": "res://models/bl_pc_plush_bunny/bl_pc_plush_bunny.glb",
+   "icon": "res://models/bl_pc_plush_bunny/bl_pc_plush_bunny_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "prize": "claw",
+   "tint": [
+    "#b5824a",
+    "#5a3820",
+    "#e8e0cc",
+    "#c21f2a",
+    "#ea88ae",
+    "#72a6e0",
+    "#9e82d4",
+    "#7ccfa6",
+    "#f2cc34"
+   ]
+  },
+  {
+   "id": "bl_pc_plush_dog",
+   "name": "Plush dog",
+   "class": "hand",
+   "scene": "res://models/bl_pc_plush_dog/bl_pc_plush_dog.glb",
+   "icon": "res://models/bl_pc_plush_dog/bl_pc_plush_dog_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "prize": "claw",
+   "tint": [
+    "#b5824a",
+    "#5a3820",
+    "#e8e0cc",
+    "#c21f2a",
+    "#ea88ae",
+    "#72a6e0",
+    "#9e82d4",
+    "#7ccfa6",
+    "#f2cc34"
+   ]
+  },
+  {
+   "id": "bl_rs_battcard",
+   "name": "AA batteries, 4-pack",
+   "class": "pocket",
+   "scene": "res://models/bl_rs_battcard/bl_rs_battcard.glb",
+   "icon": "res://models/bl_rs_battcard/bl_rs_battcard_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK"
+  },
+  {
+   "id": "bl_rs_cordless",
+   "name": "Cordless phone",
+   "class": "hand",
+   "scene": "res://models/bl_rs_cordless/bl_rs_cordless.glb",
+   "icon": "res://models/bl_rs_cordless/bl_rs_cordless_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK"
+  },
+  {
+   "id": "bl_rs_pager",
+   "name": "Pager",
+   "class": "pocket",
+   "scene": "res://models/bl_rs_pager/bl_rs_pager.glb",
+   "icon": "res://models/bl_rs_pager/bl_rs_pager_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK"
+  },
+  {
+   "id": "bl_rs_rcbox",
+   "name": "R/C monster truck (boxed)",
+   "class": "hand",
+   "scene": "res://models/bl_rs_rcbox/bl_rs_rcbox.glb",
+   "icon": "res://models/bl_rs_rcbox/bl_rs_rcbox_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK"
+  },
+  {
+   "id": "bl_rs_scanner",
+   "name": "Scanner radio",
+   "class": "hand",
+   "scene": "res://models/bl_rs_scanner/bl_rs_scanner.glb",
+   "icon": "res://models/bl_rs_scanner/bl_rs_scanner_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK"
+  },
+  {
+   "id": "bl_rs_walkie",
+   "name": "Walkie-talkie",
+   "class": "hand",
+   "scene": "res://models/bl_rs_walkie/bl_rs_walkie.glb",
+   "icon": "res://models/bl_rs_walkie/bl_rs_walkie_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK"
+  }
+ ]
+}

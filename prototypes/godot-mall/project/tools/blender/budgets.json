@@ -1,0 +1,11 @@
+{
+ "_": "Triangle budgets per asset class, read by tools/blender/lib/clean.py (check_budget). Counts are triangles after triangulation, for the visible mesh (collision meshes not counted). Build to budget; META['decimate'] is the last resort and the build log says when it ran. Texture: 512-2048 px per item, power of two.",
+ "classes": {
+  "pocket": {"tris": 2000, "tex": [512, 1024], "what": "fits in a pocket: pager, battery card, finger trap"},
+  "hand": {"tris": 5000, "tex": [512, 2048], "what": "held in the hand: scanner, phone, corn dog"},
+  "small_fixture": {"tris": 10000, "tex": [1024, 2048], "what": "finials, registers, signs, displays"},
+  "large_fixture": {"tris": 25000, "tex": [1024, 2048], "what": "booths, cabinets, kiosks, mannequins"},
+  "npc": {"tris": null, "tex": null, "what": "later: set when the NPC rig moves to Blender"},
+  "clothing": {"tris": null, "tex": null, "what": "later: avatar clothing"}
+ }
+}
