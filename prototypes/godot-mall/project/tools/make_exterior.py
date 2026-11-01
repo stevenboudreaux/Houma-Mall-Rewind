@@ -219,6 +219,25 @@ def main(src, out_path):
         doors.append(dict(store=e["store"], kind=e["kind"], a=a, b=b, n=n, mid=mid, width=abs(b[0] - a[0]) + abs(b[1] - a[1]),
                           depth=depth, wing=w, zone=zid, out=out, inside=inside, yaw_in=yaw_in, yaw_out=yaw_out))
 
+    # ---- workstream E (Nov 1; design/godot-sears.md, design/godot-dillards.md): the anchors' own
+    # outside doors, built inside the walkable Sears box and Dillard's level 1. Not layout edges, so
+    # listed here: the Sears side exit at the end of the main aisle (north wall, x -4) and the
+    # customer storefront on the east wall; Dillard's east (gallery) entrance and south entrance.
+    # NB for the outside (workstream F): the Sears box is now 50 m deep (to z -146; the shell here
+    # still ends at z -134), and wing 3 has no door geometry at these four spots yet.
+    import math
+    for sid, a, b, n, depth in [("s1x", [-5.05, -146.0], [-2.95, -146.0], [0, 1], 1.5),
+                                ("s1e", [30.0, -121.0], [30.0, -115.0], [-1, 0], 1.0),
+                                ("s2e", [30.0, 95.0], [30.0, 101.4], [-1, 0], 1.0),
+                                ("s2s", [-17.4, 118.0], [-12.6, 118.0], [0, -1], 1.0)]:
+        mid = [(a[0] + b[0]) * 0.5, (a[1] + b[1]) * 0.5]
+        out = [mid[0] - n[0] * (depth + 1.5), mid[1] - n[1] * (depth + 1.5)]
+        inside = [mid[0] + n[0] * 1.6, mid[1] + n[1] * 1.6]
+        w = 1 if sid.startswith("s1") else 2
+        doors.append(dict(store=sid, kind="exit", a=a, b=b, n=n, mid=mid, width=abs(b[0] - a[0]) + abs(b[1] - a[1]),
+                          depth=depth, wing=w, zone="", out=out, inside=inside,
+                          yaw_in=math.degrees(math.atan2(-n[0], -n[1])), yaw_out=math.degrees(math.atan2(n[0], n[1]))))
+
     # ---- the walk grid: every map tile outside any building
     walk = []
     for y in range(H):

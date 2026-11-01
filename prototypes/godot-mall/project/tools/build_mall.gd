@@ -326,6 +326,12 @@ func mat(name):
 				# the clothing stores (JW, 5-7-9, County Seat): tools/stores/apparel/kit.gd's fill_mat
 				if not load("res://tools/stores/apparel/kit.gd").fill_mat(m, name.substr(3), self):
 					push_error("unknown material " + name)
+			elif name.begins_with("sr_") or name.begins_with("dl_"):
+				# workstream E: the old Sears box (tools/stores/sears/store.gd) and Dillard's level 1
+				# (tools/stores/dillards/store.gd), each with its own fill_mat(m, key, b)
+				var mod_e = "sears" if name.begins_with("sr_") else "dillards"
+				if not load("res://tools/stores/%s/store.gd" % mod_e).fill_mat(m, name.substr(3), self):
+					push_error("unknown material " + name)
 			elif name.begins_with("gi_"):
 				# games, inc. (2026 arcade): tools/stores/games_inc/store.gd's fill_mat(m, key, b)
 				if not load("res://tools/stores/games_inc/store.gd").fill_mat(m, name.substr(3), self):
@@ -2313,6 +2319,12 @@ func anchor_front(g, e, a, b, n, t, Ln, sd, lk):
 	if lab != null and lk.get("lit", false):
 		var lc = Color(lk.fg)
 		lab.modulate = Color(lc.r * 1.3, lc.g * 1.3, lc.b * 1.3)
+	# workstream E (Nov 1): the old Sears box (Lynn's in 2026) and Dillard's level 1 are built and
+	# walkable (tools/stores/sears/, tools/stores/dillards/; design/godot-sears.md, godot-dillards.md)
+	var E_MOD = {"SEARS": "sears", "LYNN'S INTERIORS": "sears", "DILLARD'S": "dillards"}
+	if E_MOD.has(sd.name):
+		load("res://tools/stores/%s/store.gd" % E_MOD[sd.name]).build(self, g, e, a, b, n, t, Ln, sd)
+		return
 	# the sales floor behind the open mouth
 	var p0 = a + t * 0.6
 	var p1 = b - t * 0.6
@@ -2739,6 +2751,10 @@ func finish():
 			# arcade machines: mostly lit by their own glow; a coarse texel keeps the
 			# lightmap atlas to one layer (a fine one doubled the download)
 			texel = TEXEL * 1.5
+		elif gname.begins_with("sr_") or gname.begins_with("dl_"):
+			# workstream E's big rooms (Sears 70 x 50 m, Dillard's 68 x 38 m): ceilings are plain lay-in,
+			# so a coarse texel there; floors and walls a little coarser than the halls
+			texel = TEXEL * (2.0 if gname.contains("ceil") else 1.25)
 		elif gname.ends_with("props") or gname == "lanterns":
 			texel = TEXEL * 0.6
 		elif gname == "outside":
