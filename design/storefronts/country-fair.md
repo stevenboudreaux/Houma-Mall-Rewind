@@ -2,7 +2,7 @@
 
 **Source (Oct 7, 2026).** The Southland facade record (level 1, from descriptions only, not yet a photo): "a green fascia with the name in cream serif, a white picket fence running across the front under the windows, and a shop full of country gifts: a quilt, baskets, candles, wooden hearts and dried flowers, with a gingham valance over the door."
 
-**Accuracy level:** 1. Stand-in type (DejaVu Serif Bold Italic, italic as on the flat front; open question: italic or upright?).
+**Accuracy level:** 1. Stand-in type: DejaVu Serif Bold, **upright** (Steven, Nov 1: "upright letters"; Bold Italic until Nov 1).
 
 **Guessed:** all the details, the depth (10 m of 32 m), the layout.
 
@@ -20,3 +20,6 @@
 
 ## Files
 `tools/stores/small/wave9.gd`, `paint9.py` → `tex/w9/`, `make_signs.py`. Hooks in `tools/build_mall.gd` and `tools/open_interiors.py`.
+
+## Nov 1, 2026 (workstream D)
+- Steven: "upright letters." `cf_letters.json` regenerated from DejaVu Serif Bold (was Bold Italic), same size (0.30 m caps, 2.89 m long); `make_signs.py` updated. Nothing else changed. Evidence: `production/qa/evidence/wsD-country-fair-preview-unbaked.jpg`.

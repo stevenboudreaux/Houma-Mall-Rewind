@@ -114,7 +114,8 @@ GF = "/usr/share/fonts/truetype/google-fonts/"
 W9 = [
     ("sol_letters.json", GF + "Poppins-Medium.ttf", "solarium", 0.34, 0.01, 0.5),
     ("rave_letters.json", os.path.join(HERE, "..", "media", "Nunito-BlackItalic.ttf"), "RAVE", 0.5, 0.03, 0.5),
-    ("cf_letters.json", DJ + "DejaVuSerif-BoldItalic.ttf", "Country Fair", 0.3, 0.0, 0.8),
+    # Nov 1, 2026 (Steven: "upright letters"): DejaVu Serif Bold, was Bold Italic
+    ("cf_letters.json", DJ + "DejaVuSerif-Bold.ttf", "Country Fair", 0.3, 0.0, 0.8),
     ("ab_american.json", os.path.join(HERE, "..", "media", "Nunito-Black.ttf"), "American", 0.42, 0.0, 0.5),
     ("ab_bank.json", os.path.join(HERE, "..", "media", "Nunito-Black.ttf"), "Bank", 0.42, 0.0, 0.5),
 ]

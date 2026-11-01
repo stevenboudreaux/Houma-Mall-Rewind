@@ -20,3 +20,12 @@
 
 ## Files
 `tools/stores/small/wave9.gd`, `paint9.py` → `tex/w9/`. Hooks in `tools/build_mall.gd` and `tools/open_interiors.py`.
+
+## Nov 1, 2026 (workstream D): more texture
+Steven (Nov 1): "the shapes are right; texture them more." New source: the store's own Courier ad (`refs/era_1995/ads/ad_6.jpg`, 1990s): CONCEPTS in heavy serif capitals, Eastpak mesh backpacks, "Mesh bags — as mandated by Lafourche Parish Schools. Clear book bags also available for elementary schools", "See our display in front of Chick-fil-A".
+- **Front:** the cream front is now lap siding (`w9/concepts_siding.png`, the flat front's cream siding); the sign box carries CONCEPTS in heavy serif capitals like the ad (Liberation Serif Bold stands in for the ad's face), cream on plum with a cream rule.
+- **The solids:** same shapes, sizes and colours; now finished in 1990s spatter paint (black and grey flecks, `w9/concepts_spatter.png`) with a satin sheen. The finish is a guess.
+- **Inside:** a cream and grey vinyl tile floor with plum feature rows (`concepts_floor.png`); the back wall is now school bags on pegs: mesh backpacks in navy, black, red, green, blue and purple, and clear book bags with binders showing (`concepts_bags.png`). No brand names or logos (IP rule: the ad's Eastpak is not shown).
+- **The display in front of Chick-fil-A (the ad):** a white rolling two-tier table of mesh and clear bags with a CONCEPTS card on a stem, in the concourse about 3 m out from the Chick-fil-A front (x -98, z 56.8). Its exact spot and look are guessed. It is built by `concepts()` (group `w9c_display`), so it sits in Concepts' wing.
+- **Period check (1995):** mesh and clear book bags were the Lafourche/Terrebonne school rule in the 1990s (the ad); spatter paint, vinyl tile: period. No anachronism.
+- Code: `wave9.gd` `concepts()`, `display()`; materials `w9_c_*`, `w9_concepts_sign_serif`; textures `tools/stores/small/paint9_d.py`. Evidence: `production/qa/evidence/wsD-concepts-preview-unbaked.jpg`, `wsD-lions-share-concepts-closeups-unbaked.jpg`.
