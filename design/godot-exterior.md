@@ -76,7 +76,7 @@ there").
 - The water tower (white pedestal, blue "NORTH TERREBONNE" seal) at (−300, −140), the skyline
   landmark; the camera's far plane is 600 m outside.
 - Outparcels: the drive-thru bank west of the back lot with the lattice cell tower, the 1-storey
-  strip centre along the south edge, Big Lots across the drive from the Sears side exit, Ground
+  strip centre along the south edge, Big Lots (Kirchmann's furniture in 1995; since Nov 1 across West Park Ave), Ground
   Pat'i at the SW corner with its 4-sided cube pole sign; the charcoal apartments behind a wood
   fence and the soccer fields behind a black picket fence to the west, St. Bernadette's cream
   building with the green roof beyond.
@@ -154,7 +154,7 @@ the unbaked build and compared with the footage, the site plan and the directory
 | F3 | a 14 m west-facing wall and an 8 m step between JCPenney's south face and the south entrance (x −154, z 74..88) | JCPenney's brick runs to the pavilion past a short set-back link (4489 f001-035); site plan: JCPenney about level with the wing | JCPenney's box carried south to z 92, a cream (2026 EIFS) link beside the pavilion |
 | F4 | a 4 m jog in the wing wall at the restrooms (x −58..−42) | the low wing wall runs straight to the service alley (4489 f059-069) | filled |
 | F5 | the map's standalone block n2 west of JCPenney's back lot | parking there; Unitech stands north of Lynn's by Armour Dr (site plan, directory map, 4486 f010) | moved: Unitech, a long low white block at x −68..−32, z −176..−150 |
-| F6 | Big Lots, a 40 × 24 m box in the north-west lot | parking there; Big Lots is the strip across West Park Ave from Lynn's (4406 f031-035, 4413 f005-008) | moved across West Park Ave (x ≈ 152) |
+| F6 | Big Lots, a 40 × 24 m box in the north-west lot | parking there; Big Lots is the strip across West Park Ave from Lynn's (4406 f031-035, 4413 f005-008) | moved across West Park Ave (x ≈ 152); in 1995 it is **Kirchmann's**, a furniture store (Steven, Nov 1), sign letters and colours a GUESS |
 | F7 | Ground Pat'i inside the south-west lot | across the road at the corner (4489 f071-083) | moved across Bayou Gardens |
 | F8 | the drive-thru bank mid-west | the site plan's 870 SF drive-thru at the south-west corner by Bayou Gardens (4487 f046-053) | moved there with its cell tower |
 Not changed, for Steven: the old Sears box's east face is 14 m behind Cucos's front (x 30 vs 44),

@@ -1265,7 +1265,7 @@ static func water_tower(b):
 
 ## The outparcels and the neighbours (4413, 4487, 4489): the drive-thru bank at the SW edge of the
 ## back lot with the lattice cell tower behind; the 1-storey strip centre along the south edge
-## (brown brick piers, a mansard); Big Lots across the drive from the Sears side exit; Ground Pat'i
+## (brown brick piers, a mansard); Big Lots (Kirchmann's furniture in 1995) across West Park Ave; Ground Pat'i
 ## at the SW corner (a 4-sided cube pole sign, brown brick, rust standing-seam mansards: "I really
 ## want to capture a little bit of that"); the charcoal apartments behind a wood fence (W), the
 ## soccer fields behind a black picket fence (W), St. Bernadette's cream building with the green
@@ -1297,13 +1297,18 @@ static func outparcels(b):
 	# Big Lots: the strip across West Park Ave from Lynn's (4406 f031-035 "across the drive is the
 	# BIG LOTS strip", 4413 f005-008). Workstream F moved it there from the north-west lot, where
 	# the site plan and the directory map show parking. Tan block, white standing-seam hoods.
-	# Big Lots in 1995 is a GUESS (open question in design/godot-exterior.md).
+	# In 1995 the building was Kirchmann's, a furniture store (Steven, Nov 1 2026); its sign is
+	# not in any picture, so the letters and colours are a GUESS. The building is today's shape.
 	var bl = Vector3(152.0, 0, -112.0)
 	b.box(g, "ex_stucco_tan", bl + UP * 3.5, Vector3(24.0, 7.0, 44.0), Transform3D.IDENTITY, ["-y"])
 	b.box(g, "ex_coping_dark", bl + UP * 7.05, Vector3(24.2, 0.1, 44.2))
 	for k in 3:
 		b.box(g, "ex_tank_white", bl + Vector3(-12.6, 5.6, -14.0 + k * 14.0), Vector3(1.4, 2.0, 8.0))
-	b.label("BIG LOTS!", "sans", "#c8202c", bl + Vector3(-13.4, 5.6, 0), Vector3(-1, 0, 0), 7.0, 1.0)
+	if YEAR == 2026:
+		b.label("BIG LOTS!", "sans", "#c8202c", bl + Vector3(-13.4, 5.6, 0), Vector3(-1, 0, 0), 7.0, 1.0)
+	else:
+		b.label("Kirchmann's", "serif", "#4a2e1e", bl + Vector3(-13.4, 5.75, 0), Vector3(-1, 0, 0), 9.0, 1.0)
+		b.label("FURNITURE", "sans", "#4a2e1e", bl + Vector3(-13.4, 4.95, 0), Vector3(-1, 0, 0), 4.0, 0.36)
 	b.obst(["rect", bl.x - 12.0, bl.z - 22.0, bl.x + 12.0, bl.z + 22.0])
 	# Ground Pat'i at the SW corner
 	# across Bayou Gardens (4489 f071-083: "at that corner, across the road"), moved off the lot
