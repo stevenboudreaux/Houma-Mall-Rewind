@@ -49,7 +49,12 @@ async function ready(pg, logs, t = 300) {
   await touch('touchEnd', 0, 0); await sleep(1000);
   const pos = s => s.length ? (s[0].match(/pos=\(([^)]*)\)/) || [])[1] : null;
   console.log('walk before:', before, '\nwalk during:', during);
-  console.log(pos(before) && pos(during) && pos(before) !== pos(during) ? 'MOVED' : 'DID NOT MOVE');
+  // the DBG line only prints once the player moves: with no "before" line, compare with the start camera
+  const wc = (process.env.WALK_CAM || '0,14,0,0').split(',').map(Number);
+  const p1 = pos(during) ? pos(during).split(',').map(Number) : null;
+  const p0 = pos(before) ? pos(before).split(',').map(Number) : [wc[0], 0, wc[1]];
+  const moved = p1 && Math.hypot(p1[0] - p0[0], p1[2] - p0[2]) > 0.5;
+  console.log(moved ? 'MOVED' : 'DID NOT MOVE');
   const errs = logs.filter(l => l.toUpperCase().includes('ERROR'));
   console.log('walk errors', errs.length, errs.slice(0, 3), 'TOTAL cam errors', total);
   await b.close();
