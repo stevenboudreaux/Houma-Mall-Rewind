@@ -238,6 +238,8 @@ goes with the store, not the spot. Differences:
     `place_fixtures`.
   - `scripts/player.gd`: `jump_to()`, and the optional `year_to` in `_go_to_wing`.
   - `tools/qa/preview.gd`: previews any module by full path that has `preview()`.
+  - `export_presets.cfg`: the eight wing presets include `tex/dir/*`, so every pack carries both
+    years' panels (the 1995 / 2026 toggle shows the other year's).
 
 ## Evidence (production/qa/evidence/)
 - `wsA-kiosk-vs-ref.jpg`: the preview against the footage.
