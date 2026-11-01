@@ -16,16 +16,19 @@
 #   1. build:    tools/build_mall.gd for the wing, so the bake sees the scene in build form (--no-build skips)
 #   2. bake:     the editor under xvfb (OpenGL, the project is GL Compatibility) with addons/autobake
 #                (AUTOBAKE="<scene>:<mode>"); the lightmapper makes its own Vulkan device: lavapipe
-#   3. revert:   the editor's side effects, with `git checkout`: the ~206 .import files it flips
-#                (detect_3d turns textures to VRAM compression), project.godot, gen/env_day.tres and
-#                the scene it re-saved with its own resource ids (design/godot-wings.md: a scene saved
-#                by the editor makes the web export leave out meshes). Untracked files it created are
-#                listed and removed.
+#   3. revert:   the editor's side effects, with `git checkout`: the .import files it flips
+#                (detect_3d turns textures to VRAM compression: ~206 on the Mac for Demo 45/46, 449 on
+#                a fresh Linux box on Nov 1), project.godot, gen/env_day.tres and env_night.tres, the
+#                gen/ meshes and the scene it re-saved with its own resource ids (design/godot-wings.md:
+#                a scene saved by the editor makes the web export leave out meshes). Untracked files it
+#                created are listed and removed.
 #   4. import:   drop the stale .godot/imported copy of the new .exr, then `godot --headless --import`
 #   5. rebuild:  the wing again, so the scene is in build form and points at the new .lmbake
 #   6. keep:     only <scene>_<m>.exr, .exr.import, .lmbake are new; every other lightmap file is
 #                put back from the copy taken before the bake
 # --dry-run runs every step except the bake itself (and step 6 then has nothing new to keep).
+# Tested Nov 1 2026 on the 4-CPU, 15 GB cloud box: wing 3 fastday (Medium), 12 GB swap, editor 434 s,
+# everything reverted, only wing3_day.exr/.lmbake new (production/qa/evidence/wsH-bake-inplace-*).
 # Never commit the lightmaps: they go to godot-build with tools/publish_build.sh (integration session).
 set -e
 W=""; MODE=day; YEAR=""; DRY=0; MKSWAP=0; BUILD=1
@@ -167,4 +170,9 @@ diff "$LOG/lightmaps.before" "$LOG/lightmaps.after" | grep '^>' | sed 's/^> /   
 rm -rf "$SNAP"
 LEFT=$(changed | comm -23 - "$LOG/built.files" | wc -l)
 say "done. tracked changes beyond the build: $LEFT (expect 0). Next: capture_standin.sh for wings that see this one, export, check."
+# every build gives the scene's nodes new random unique_ids: if the wing itself did not change, the
+# rebuilt scene is noise; keep the committed one
+if git diff --quiet -- "$SCENE.tscn"; then :; elif [ -z "$(git diff -U0 -- "$SCENE.tscn" | grep '^[-+][^-+]' | grep -v 'unique_id=')" ]; then
+  say "   $SCENE.tscn differs only in node unique_ids (every build makes new ones): git checkout -- $SCENE.tscn unless you are committing this wing"
+fi
 [ -z "$BAKE_FAILED" ] || exit 1
