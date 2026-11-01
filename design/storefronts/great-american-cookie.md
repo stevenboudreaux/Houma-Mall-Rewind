@@ -19,3 +19,18 @@
 
 ## Files
 `tools/stores/small/wave7.gd` (the nine Wave 7 shops, materials `w7_*`), `paint7.py` → `tex/w7/`, `make_signs.py` (letters). Hooks in `tools/build_mall.gd` and `tools/open_interiors.py`.
+
+## The case, both years (Nov 1, 2026, workstream G)
+Steven (Oct 28): "really focus on this, get it perfect", the same case in both years, only the sign
+style changes. `tools/stores/gac/case.gd` (`case_run`) builds it from the 1990s photo
+(`refs/great-american-cookie-case.jpg`) and the 2026 frame (IMG_4439 f013, sharp crop
+`refs/derived/signs/gac_IMG_4439_f013.jpg`): a white base on a recessed kick; a sloped lower window,
+leaning back, with the decorated cookie cakes on a maroon back (lit); a deck and three stepped tiers of
+cookie trays under a quarter-round curved front glass up to a flat glass top; white end and section
+frames cut to the profile every ~1.4 m; a lit strip under the top; price cards; sliding doors on the
+staff side. Textures `gac/paint.py` → `tex/gac/` (invented cookie kinds and cake lettering).
+- 1995 (`small/wave7.gd`, `cookie()`): the old box case is replaced by `case_run` at the same place
+  (2.6 m in); the 1995 front, sign, tile and check course are unchanged.
+- 2026 (`case.gd` `build_2026`, called from `fronts26/store.gd`): the 2026 store round the same case.
+- Guessed: the case's length (the store's width less the register pedestal in 2026; the old counter's
+  4.8 m in 1995), the cookie kinds.

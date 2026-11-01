@@ -300,16 +300,11 @@ static func cookie(b, a, t, n, W, D, rng):
 		var p0 = P(a, t, n, w[0], 1.0, 0.8)
 		var p1 = P(a, t, n, w[0], 1.0, D - 0.2)
 		b.quad(G, "w7_check", [p0, p1, p1 + UP * 0.15, p0 + UP * 0.15], w[1], [Vector2(0, 0), Vector2((D - 1.0) / 0.3, 0), Vector2((D - 1.0) / 0.3, 1), Vector2(0, 1)])
-	# the glass case of cookies across the shop, the ovens and the menu pictures behind it
-	var co = P(a, t, n, W - 0.6, 0, 2.6)
-	K.lbox(b, G, "w7_cream", co, -t, n, 0.0, 0.0, -0.7, W - 1.2, 0.85, 0.7, ["-y"])
-	b.quad(G, "w7_cookies", [K.L(co, -t, n, 0.05, 0.86, -0.65), K.L(co, -t, n, W - 1.25, 0.86, -0.65), K.L(co, -t, n, W - 1.25, 0.86, -0.05), K.L(co, -t, n, 0.05, 0.86, -0.05)], UP,
-		[Vector2(0, 1), Vector2((W - 1.3) / 1.2, 1), Vector2((W - 1.3) / 1.2, 0), Vector2(0, 0)])
-	K.fq(b, G, "w7_cookies", co, -t, n, 0.0, W - 1.2, 0.2, 0.8, 0.002, 0.0, 0.0, (W - 1.2) / 1.2, 1.0)
-	b.quad("glass", "glass", [K.L(co, -t, n, 0.0, 0.85, -0.02), K.L(co, -t, n, W - 1.2, 0.85, -0.02), K.L(co, -t, n, W - 1.2, 1.3, -0.02), K.L(co, -t, n, 0.0, 1.3, -0.02)], n,
-		[Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)], true)
-	K.register(b, "w7k_small", K.L(co, -t, n, 0.6, 0.85, -0.6), -t, n)
-	K.ob_local(b, co, -t, n, 0.0, -0.7, W - 1.2, 0.0)
+	# ws/g: the glass case is Great American Cookies' own, the same in 1995 and 2026 (Steven, Oct 28;
+	# tools/stores/gac/case.gd), across the shop from 2.6 m in; the register on its back ledge
+	var co = P(a, t, n, 0.6, 0, 2.6)
+	load("res://tools/stores/gac/case.gd").case_run(b, G, "w7k_small", co, t, -n, W - 1.2)
+	K.register(b, "w7k_small", K.L(co, t, -n, W - 1.9, 1.33, 0.82), t, n)
 	K.ob(b, P(a, t, n, SIDE, 0, 2.6), P(a, t, n, 0.6, 0, 3.4), 0.0)
 	K.ob(b, P(a, t, n, W - 0.6, 0, 2.6), P(a, t, n, W - SIDE, 0, 3.4), 0.0)
 	K.lbox(b, G, "wl_steel", P(a, t, n, W - 0.4, 0, D - SIDE), -t, n, 0.0, 0.0, 0.0, W - 0.8, 1.4, 0.7)
