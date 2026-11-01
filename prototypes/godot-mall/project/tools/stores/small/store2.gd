@@ -174,6 +174,8 @@ static func karmelkorn(b, a, t, n, W, D, rng):
 	# tins on shelves along the west wall
 	K.bay(b, G, G, P(a, t, n, SIDE, 0, D - 1.0), n, t, 1.22, [0.6, 1.0, 1.4], ["candy"], rng, 0.32)
 	K.bay(b, G, G, P(a, t, n, SIDE, 0, D - 2.22), n, t, 1.22, [0.6, 1.0, 1.4], ["candy"], rng, 0.32)
+	# ws/g (Steven, Oct 28: popcorn in the back "as rich as Pocket Change's prize counter")
+	load("res://tools/stores/y95/extras.gd").popcorn_back(b, a, t, n, W, D)
 
 # ------------------------------------------------------------------ Zales
 ## Stone-tile piers and header, a wood fascia carrying a mauve sign box with brushed-silver

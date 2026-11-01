@@ -54,6 +54,9 @@ static func build(b, g, e, a, bb, n, t, Ln, sd):
 	shell2(b, "a2_shell", a, t, n, W, D, 3.2, 0.0, c.floor, c.tile, c.wall, c.ceil, c.rows, c.door)
 	if sd.name == "GADZOOKS":
 		gadzooks_extras(b, a, t, n, W, D)
+		# ws/g (Steven, Oct 28): the white half VW Beetle in the left window, the ads on the walls
+		load("res://tools/stores/y95/extras.gd").beetle(b, "a2_small_beetle", P(a, t, n, 0.15, 0, 2.4), t)
+		load("res://tools/stores/y95/extras.gd").gz_ads(b, a, t, n, W, D)
 	inside(b, a, t, n, W, D, c, rng)
 	var rp = ReflectionProbe.new()
 	rp.position = P(a, t, n, W * 0.5, 1.6, D * 0.5)

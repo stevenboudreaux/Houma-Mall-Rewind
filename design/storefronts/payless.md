@@ -7,3 +7,9 @@
 **Guessed:** the sizes. The photos are post-1995; the ShoeSource name dates from the 1990s.
 
 **Files:** `tools/stores/signs/fronts.gd` (payless), materials `sg_pay_*`.
+
+## Inside (Nov 1, 2026, workstream G)
+The generic interior picture is replaced (`fronts26/store.gd` `payless_inside()`): the self-serve
+store, white walls of shoe-box ends under a yellow stripe, two rows of low islands of boxes with a
+sample shoe on top, red try-on benches, grey floor. **Guessed:** the chain's period look; no photo of
+the Southland inside. Evidence `wsG-1995-payless-unbaked.jpg`.

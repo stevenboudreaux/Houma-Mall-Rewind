@@ -28,9 +28,6 @@
   {
    "name": "name",
    "text": "Avant-Garde",
-   "trace": "avant_name_mask.png",
-   "width": 1.989,
-   "smooth": 1.2,
    "dx": -0.045,
    "dy": -0.319,
    "type": "flat",
@@ -44,8 +41,12 @@
     100,
     1071,
     390
-   ]
+   ],
+   "font": "kaushan",
+   "cap_h": 0.34,
+   "stretch": 0.81,
+   "shear": 0.0
   }
  ],
- "notes": "Black dry-brush script 'Avant-Garde' (with a few paint flecks, too small to build) on a brushed / diamond-plate aluminium panel hung in the storefront over the entry, below the plain cream mall bulkhead; the front itself is dark rusty steel framing with expanded-metal mesh panels. Unlit. Traced from a soft oblique view (letters ~50 px tall), so the stroke detail is approximate: 'vant' and 'arde' merge into blobs where the blur joins them. Letters read as thin flat-cut black (a slight shadow shows depth). Size from the ~2.2 m door below: panel about 2.7 x 0.9 m (guess)."
+ "notes": "Black dry-brush script 'Avant-Garde' (with a few paint flecks, too small to build) on a brushed / diamond-plate aluminium panel hung in the storefront over the entry, below the plain cream mall bulkhead; the front itself is dark rusty steel framing with expanded-metal mesh panels. Unlit. Traced from a soft oblique view (letters ~50 px tall), so the stroke detail is approximate: 'vant' and 'arde' merge into blobs where the blur joins them. Letters read as thin flat-cut black (a slight shadow shows depth). Size from the ~2.2 m door below: panel about 2.7 x 0.9 m (guess). Nov 1 (ws/g): the trace merged 'vant' and 'arde' into blobs and read as noise from the hall; re-set in Kaushan Script (OFL, a dry-brush script, src/), cap 0.34 m at 0.81 width to the traced 1.99 m span, so every letter separates. Flecks still left off."
 }

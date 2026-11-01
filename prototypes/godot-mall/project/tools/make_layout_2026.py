@@ -25,6 +25,7 @@ OX, OY = L["origin"]
 ST26 = json.load(open(os.path.join(PROJ, "data", "eras_2026.json")))
 KEEP_OPEN = {"s54", "s52"}   # Corn Dog 7 (the same shop in 2026) and games, inc. (s52, built Oct 28): their interiors stay walkable
 KEEP_OPEN |= {"s1", "s2"}    # workstream E (Nov 1): the old Sears box (Lynn's) and Dillard's level 1 are walkable in both years
+KEEP_OPEN |= {"s64"}         # workstream G (Nov 1): Wicked Wingz (the 1995 Chick-fil-A unit), tools/stores/wingz/store.gd
 
 
 def tile(x, z):

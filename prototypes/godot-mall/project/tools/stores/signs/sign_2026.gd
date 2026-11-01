@@ -87,7 +87,8 @@ static func build(b, g, name, c, nn, max_w, max_h, sign = null):
 	var fr = frame(s)
 	var fw = fr[2] - fr[0]
 	var fh = fr[3] - fr[1]
-	var k = min(1.0, max_w / max(fw, 0.01), max_h / max(fh, 0.01))
+	# ws/g: an optional "scale" (> 1 enlarges the spec; still capped by max_w/max_h)
+	var k = min(float(s.get("scale", 1.0)), max_w / max(fw, 0.01), max_h / max(fh, 0.01))
 	var rv = (-nn).cross(UP)
 	# centre the frame on c (the spec's dx/dy are already about the sign's middle)
 	var cx = (fr[0] + fr[2]) * 0.5

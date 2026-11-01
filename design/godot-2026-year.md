@@ -65,9 +65,30 @@ with returns and trim caps, lit faces, halo glow, backer panels, cabinets, racew
   smoothing so every stroke stays separate. Method for the rest of the weak signs: re-cut the frame
   at full resolution with ffmpeg on the Mac (`-vf fps=2 -q:v 2`), pick the square-on one, then
   `photo_trace.py quad` → masks → spec. Evidence `d45-signs-att-journeys.jpg`.
+- **Nov 1 (ws/g): Journeys again.** The Demo 45 sign still bloomed into one pale shape in the baked
+  build. Now hung as filmed: 25 % larger and lower, dropping in front of the opening's head, deeper
+  cyan tubes lit under the glow threshold, a wider dark edge. Two optional spec keys for this
+  (`y26/README.md` format): `scale` (enlarges the spec, still capped by the band) and `drop` (lets
+  the sign hang below the band). AT&T reads cleanly in the Demo 45 baked shot and was left as is.
+  Evidence `wsG-sign-journeys-*.jpg`.
 - Bake lesson: `addons/autobake` now bakes only the job's own scene (after the import scan the
   editor could be left on wing1.tscn, and a wing1_2026 job baked wing1). After copying a bake
   back, delete `.godot/imported/<scene>_day.exr-*` before `--import`, or the old texture stays.
+
+## Elevator and restroom hall order (Nov 1, ws/g, step 6 of the Oct 28 sprint)
+Steven thought the elevator and the restroom hall were out of order on the map ("those didn't move").
+**The footage confirms the map as it is; nothing was changed, in either year.** IMG_4439, walking
+west along the Concourse's south side from the Dillard's court, narration at 28-56 s: "...that was
+KarmelKorn. And then those are always an ATM. And then you have this structure. And then this one.
+And then this one. And then that is the elevator. Then another stall. And then the restroom
+hallway... and then after that is where Regis was." Frames f021-f032 show, in order: Cinnamonster
+(KarmelKorn), the ATM pier, the black stepped vacant, Auntie Anne's, Cell Xpert, the elevator's
+recessed beige doors, Boost Mobile, the restroom hall opening under an exit sign, Fire Haus 3.0 (Regis).
+The game has, west of KarmelKorn at z = 60: Afterthoughts/Auntie Anne's (x -40..-36), Naturalizer/
+Cell Xpert (-44..-40), the elevator alcove at x -44 (`ELEV_X`, `build_mall.gd`), Special Tees/Boost
+(-48..-44), the restroom hall H7 (-50..-48), Regis/Fire Haus (-58..-50): the same order. Evidence
+`production/qa/evidence/wsG-elevator-restroom-order.jpg` (frames | game 2026 and 1995). The ATM pier
+between Cinnamonster and the black vacant is not built (a free-standing ATM in the footage).
 
 ## Next
 - Build the 2026 storefronts from the footage, one by one (frame references are in the report's

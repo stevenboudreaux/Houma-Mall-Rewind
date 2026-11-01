@@ -344,6 +344,29 @@ func mat(name):
 				# the traced channel-letter signs: tools/stores/signs/channel.gd's fill_mat
 				if not load("res://tools/stores/signs/channel.gd").fill_mat(m, name.substr(3), self):
 					push_error("unknown material " + name)
+			elif name.begins_with("ww_"):
+				# ws/g: Wicked Wingz (2026, the old Chick-fil-A unit): tools/stores/wingz/store.gd's fill_mat
+				if not load("res://tools/stores/wingz/store.gd").fill_mat(m, name.substr(3), self):
+					push_error("unknown material " + name)
+			elif name.begins_with("y95_"):
+				# ws/g: the 1995 additions (KarmelKorn's popcorn, Gadzooks' Beetle): tools/stores/y95/extras.gd
+				if not load("res://tools/stores/y95/extras.gd").fill_mat(m, name.substr(4), self):
+					push_error("unknown material " + name)
+			elif name.begins_with("f26_"):
+				# ws/g: the 2026 "through the glass" fronts: tools/stores/fronts26/store.gd's fill_mat
+				if not load("res://tools/stores/fronts26/store.gd").fill_mat(m, name.substr(4), self):
+					push_error("unknown material " + name)
+			elif name.begins_with("gac_"):
+				# ws/g: Great American Cookies' case (both years): tools/stores/gac/case.gd's fill_mat
+				if not load("res://tools/stores/gac/case.gd").fill_mat(m, name.substr(4), self):
+					push_error("unknown material " + name)
+			elif name.begins_with("cm_"):
+				# ws/g: Cinnamonster (2026, KarmelKorn's corner): tools/stores/cinnamonster/store.gd's fill_mat
+				if not load("res://tools/stores/cinnamonster/store.gd").fill_mat(m, name.substr(3), self):
+					push_error("unknown material " + name)
+			elif name.begins_with("cf_") and YEAR == 2026 and load("res://tools/stores/wingz/store.gd").fill_cf(m, name.substr(3), self):
+				# ws/g: in 2026 the Chick-fil-A stall is Wicked Wingz, re-skinned (tools/stores/wingz/store.gd)
+				pass
 			elif name.begins_with("cf_"):
 				# Chick-fil-A, rebuilt from Steven's video: tools/stores/cfa/store.gd's fill_mat
 				if not load("res://tools/stores/cfa/store.gd").fill_mat(m, name.substr(3), self):
@@ -1661,6 +1684,22 @@ func storefront(g, e, a, b, n, t, Ln, inner_call = false):
 			# footage with Pocket Change's machine modules (tools/stores/games_inc/store.gd)
 			load("res://tools/stores/games_inc/store.gd").build(self, g, e, a, b, n, t, Ln, sd)
 			return
+		if sd.name == "WICKED WINGZ":
+			# ws/g (Oct 28 sprint): the old Chick-fil-A unit, built from IMG_4441/IMG_4461
+			# (tools/stores/wingz/store.gd, design/storefronts/wicked-wingz-2026.md)
+			load("res://tools/stores/wingz/store.gd").build(self, g, e, a, b, n, t, Ln, sd)
+			return
+		if load("res://tools/stores/fronts26/store.gd").has(sd.name):
+			# ws/g (Oct 28 sprint, step 4): the front and the first metres inside as filmed
+			# (tools/stores/fronts26/store.gd, design/storefronts/fronts-2026.md)
+			load("res://tools/stores/fronts26/store.gd").build(self, g, e, a, b, n, t, Ln, sd)
+			return
+		if sd.name == "CINNAMONSTER":
+			# ws/g (Oct 28 sprint): KarmelKorn's corner stall from IMG_4464-4468, both faces built from
+			# the north edge's call (tools/stores/cinnamonster/store.gd, design/storefronts/cinnamonster-2026.md)
+			if n.z < -0.5:
+				load("res://tools/stores/cinnamonster/store.gd").build(self, g, e, a, b, n, t, Ln, sd)
+			return
 		if sd.name != "CORN DOG 7":
 			storefront(g, e, a, b, n, t, Ln, true)
 			return
@@ -1906,7 +1945,8 @@ func sign_2026(g, name, mid, n, t, Ln):
 		var cg = mid + Vector3(0, 1.9 + float(s.get("glass_y", 0.0)), 0) + n * 0.012
 		return S.build(self, g + "_sg26", name, cg, n, max(1.0, Ln - 1.4), OPEN_H - 1.0, s)
 	var c = mid + Vector3(0, OPEN_H + band * 0.5 + float(s.get("mount_y", 0.0)), 0) + n * 0.17
-	return S.build(self, g + "_sg26", name, c, n, max(1.0, Ln - 0.9), band - 0.12, s)
+	# ws/g: "drop" lets a sign hang below the band (Journeys' oval over the opening head)
+	return S.build(self, g + "_sg26", name, c, n, max(1.0, Ln - 0.9), band - 0.12 + float(s.get("drop", 0.0)), s)
 
 ## Demo 43: the leasing card in a 2026 vacant unit's window (IMG_4440 f013: white, the green
 ## FOR LEASE, the agent's blue lines; the agent's name and number are left off), behind the grille.
@@ -1948,6 +1988,10 @@ func edge_key(pa, pb):
 ## The store behind a frontage: back wall and side walls from the interior
 ## atlas, floor, ceiling with lit panels, merchandise blocks, and its lights.
 func interior(g, e, a, n, t, Ln, sd, p0, p1, width, deep):
+	if YEAR != 2026 and load("res://tools/stores/fronts26/store.gd").has_inside_1995(sd.name):
+		# ws/g (Oct 28 sprint, step 7): Foot Locker (= its 2026 inside), Payless, Blockbuster Music
+		load("res://tools/stores/fronts26/store.gd").inside_1995(self, g, a, n, t, Ln, sd)
+		return
 	var back = -n * deep
 	var cell = atlas_index.get(e.store, 0)
 	var cu = float(cell % ATLAS_COLS) / ATLAS_COLS
