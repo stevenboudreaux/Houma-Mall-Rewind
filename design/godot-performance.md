@@ -122,4 +122,43 @@ calls in wings without shoppers), with a 30 s cap and a 10-frame fallback for a 
 
 ## 3. Baking on Linux: `tools/bake_inplace.sh`
 
-BAKE_SECTION
+For the next bake on a Linux box (a cloud session, or a Linux machine instead of Steven's Mac). It wraps what
+Demo 45/46 did by hand and leaves the work tree as it was, except for the new lightmap files.
+
+```bash
+cd prototypes/godot-mall/project
+tools/bake_inplace.sh 3 fastday --make-swap        # wing 3 (outside), Medium; 1/2 = the inside wings
+tools/bake_inplace.sh 2 fastday --year=2026         # Wing 2's 2026 scene
+tools/bake_inplace.sh 1 day --dry-run               # every step except the bake
+```
+
+**Before it runs** (it checks each and stops with the fix):
+- Godot 4.7.2 on PATH, `xvfb-run`, and a software Vulkan driver for the lightmapper: `apt-get install -y
+  mesa-vulkan-drivers` (lavapipe). The editor itself runs on OpenGL (the project is GL Compatibility).
+- **Swap: about 12 GB.** Wing bakes at High/Ultra are killed by the OOM killer without it (a 15 GB box).
+  `--make-swap` makes `/swapfile` (root; containers may refuse `swapon`; this one allowed it). Medium (fast) bakes
+  of the outside fit in RAM, so the script only warns for them.
+- The stand-in pictures and the other lightmaps from `godot-build` (CLAUDE-CLOUD.md setup step 3), a finished
+  import (step 4), and no uncommitted changes to tracked files under the project (the editor's side effects
+  could not be told apart from your work).
+
+**What it does:** build the wing (`tools/build_mall.gd`) → bake in place (`AUTOBAKE="<scene>:<mode>"`, the
+editor under xvfb with `addons/autobake`) → `git checkout` everything the editor changed after the build (the
+`.import` flips from `detect_3d`, `project.godot`, `gen/env_day.tres`, `gen/env_night.tres`, re-saved `gen/`
+meshes, the re-saved scene) and delete untracked files it created → drop the stale `.godot/imported` copy of the
+new `.exr` and `godot --headless --import` → rebuild the wing so the scene is in build form → put back every
+lightmap file except `<scene>_<mode>.{exr,exr.import,lmbake}`. Logs in `/tmp/bake_inplace_<scene>/`
+(`BAKE_LOG=` to move them).
+
+**Tested Nov 1, 2026** on the cloud box (4 CPUs, 15 GB RAM, lavapipe), wing 3 at Medium (`fastday`):
+- editor run 434 s (import scan, bake, save), no OOM with 12 GB swap on;
+- the editor changed 455 tracked files: **449 `.import` flips** (not ~206: a fresh box's first editor launch
+  flips every texture it sees in 3D), `project.godot`, `gen/env_day.tres`, `gen/env_night.tres` and three
+  `gen/w3` meshes; all reverted; 0 tracked changes left beyond the build;
+- only `wing3_day.exr` and `.lmbake` changed (the `.exr.import` keeps its settings); exported and shot against
+  the live bake: same layout and shadows, the cloud bake a little warmer on the pavement
+  (`production/qa/evidence/wsH-bake-inplace-wing3-fastday.jpg`). Look at that before shipping any Linux bake;
+  the shipped bakes stay Ultra on the Mac. The test lightmap was not kept or committed.
+- The rebuilt scene differs from the committed one only in node `unique_id`s (every build makes new ones); the
+  script says so, and you `git checkout` it unless you are committing the wing.
+- Afterwards, as always: `tools/capture_standin.sh` for the wing(s) that see the rebaked one, export, check.
