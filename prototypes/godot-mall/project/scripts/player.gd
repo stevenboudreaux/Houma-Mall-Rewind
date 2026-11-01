@@ -713,7 +713,8 @@ func _cross() -> void:
 ## Fade to black, then load wing w at (x, z) facing yaw: on the web by reloading the page into
 ## that wing's file (web/shell.html) with the lighting and the toggles kept; in the editor or a
 ## test by changing the scene.
-func _go_to_wing(w: int, x: float, z: float, yaw_to: float, pitch_to: float) -> void:
+## year_to (the mall directory's jump, jump_to below): load that year's file instead of this one's.
+func _go_to_wing(w: int, x: float, z: float, yaw_to: float, pitch_to: float, year_to := 0) -> void:
 	leaving = true
 	print("crossing to wing ", w)
 	if prompt:
@@ -725,6 +726,8 @@ func _go_to_wing(w: int, x: float, z: float, yaw_to: float, pitch_to: float) -> 
 		if OS.has_feature("web"):
 			var cam_s := "%.2f,%.2f,%.1f,%.1f" % [x, z, rad_to_deg(yaw_to), rad_to_deg(pitch_to)]
 			var js := "(function(){try{sessionStorage.setItem('mall-xfer','%d')}catch(e){}var u=new URL(location.href);var p=u.searchParams;p.set('wing','%d');p.set('cam','%s');" % [w, w, cam_s]
+			if year_to != 0:
+				js += ("p.set('year','2026');" if year_to == 2026 else "p.delete('year');")
 			js += "p.set('time','%s');" % ("day" if day else "night")
 			js += "if(%s)p.set('refl','0');else p.delete('refl');" % ("true" if not _refl_wanted() else "false")
 			js += "if(%s)p.set('fx','1');else p.delete('fx');" % ("true" if buttons[1].button_pressed else "false")
@@ -734,6 +737,8 @@ func _go_to_wing(w: int, x: float, z: float, yaw_to: float, pitch_to: float) -> 
 			Engine.set_meta("mall_xfer", {"x": x, "z": z, "yaw": yaw_to, "pitch": pitch_to})
 			Engine.set_meta("mall_arrived", true)
 			var path := _wing_scene(w)
+			if year_to != 0:
+				path = ("res://wing%d_2026.tscn" if year_to == 2026 else "res://wing%d.tscn") % w
 			if ResourceLoader.exists(path):
 				get_tree().change_scene_to_file(path)
 			else:
@@ -899,3 +904,22 @@ func _jump_go(i: int) -> void:
 			vr.recentre()
 		return
 	_go_to_wing(tw_wing, float(j[2]), float(j[3]), deg_to_rad(float(j[4])), deg_to_rad(3.0))
+
+# ------------------------------------------------------------------ mall directory jump
+## The mall directory's "Jump to this store?" (scripts/directory_ui.gd, design/godot-directory.md):
+## stand at (x, z) in wing w of year yr, facing yaw_deg (0 looks along -z, 90 along -x). In this
+## wing and year it happens at once; otherwise that wing's / year's file loads there, the way the
+## seam crossing and the year switch do (the same fade, lighting and toggles).
+func jump_to(w: int, yr: int, x: float, z: float, yaw_deg: float) -> void:
+	if leaving:
+		return
+	hint.visible = false
+	if yr == year and (wing == 0 or w == wing):
+		position = Vector3(x, 0, z)
+		yaw = deg_to_rad(yaw_deg)
+		pitch = deg_to_rad(3.0)
+		_apply_rot()
+		if vr_on:
+			vr.recentre()
+		return
+	_go_to_wing(w if wing != 0 else 1, x, z, deg_to_rad(yaw_deg), deg_to_rad(3.0), yr if yr != year else 0)

@@ -50,14 +50,18 @@ func _initialize():
 	place_cam(0)
 
 func build_prop(module, opts):
-	var m = load("res://tools/stores/pocket_change/%s.gd" % module)
+	# a full path ("res://tools/stores/directory/kiosk.gd") previews any module with a preview() func
+	var m = load(module if module.begins_with("res://") else "res://tools/stores/pocket_change/%s.gd" % module)
 	# a floor and a back wall, so shadows and glow have something to land on
 	cur_color = Color("#2a2a30")
 	quad("room", "vcolor_matte", [Vector3(-6, 0, -6), Vector3(6, 0, -6), Vector3(6, 0, 6), Vector3(-6, 0, 6)], Vector3.UP)
 	cur_color = Color("#3a3a44")
 	quad("room", "vcolor_matte", [Vector3(-6, 0, -6), Vector3(6, 0, -6), Vector3(6, 3.6, -6), Vector3(-6, 3.6, -6)], Vector3.BACK)
 	cur_color = Color.WHITE
-	m.build(self, "prop", Vector3.ZERO, Vector3.FORWARD, opts)
+	if m.has_method("preview"):
+		m.preview(self, "prop", Vector3.ZERO, Vector3.FORWARD, opts)
+	else:
+		m.build(self, "prop", Vector3.ZERO, Vector3.FORWARD, opts)
 
 func build_store(store_name):
 	L = JSON.parse_string(FileAccess.get_file_as_string("res://layout_mall.json"))
