@@ -342,6 +342,10 @@ func mat(name):
 				# ws/g: Wicked Wingz (2026, the old Chick-fil-A unit): tools/stores/wingz/store.gd's fill_mat
 				if not load("res://tools/stores/wingz/store.gd").fill_mat(m, name.substr(3), self):
 					push_error("unknown material " + name)
+			elif name.begins_with("y95_"):
+				# ws/g: the 1995 additions (KarmelKorn's popcorn, Gadzooks' Beetle): tools/stores/y95/extras.gd
+				if not load("res://tools/stores/y95/extras.gd").fill_mat(m, name.substr(4), self):
+					push_error("unknown material " + name)
 			elif name.begins_with("f26_"):
 				# ws/g: the 2026 "through the glass" fronts: tools/stores/fronts26/store.gd's fill_mat
 				if not load("res://tools/stores/fronts26/store.gd").fill_mat(m, name.substr(4), self):
@@ -1971,6 +1975,10 @@ func edge_key(pa, pb):
 ## The store behind a frontage: back wall and side walls from the interior
 ## atlas, floor, ceiling with lit panels, merchandise blocks, and its lights.
 func interior(g, e, a, n, t, Ln, sd, p0, p1, width, deep):
+	if YEAR != 2026 and load("res://tools/stores/fronts26/store.gd").has_inside_1995(sd.name):
+		# ws/g (Oct 28 sprint, step 7): Foot Locker (= its 2026 inside), Payless, Blockbuster Music
+		load("res://tools/stores/fronts26/store.gd").inside_1995(self, g, a, n, t, Ln, sd)
+		return
 	var back = -n * deep
 	var cell = atlas_index.get(e.store, 0)
 	var cu = float(cell % ATLAS_COLS) / ATLAS_COLS

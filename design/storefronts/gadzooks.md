@@ -25,3 +25,14 @@
 
 ## Files
 `tools/stores/apparel/more.gd`, `paint_more.py`, `make_signs_more.py` → `gz_letters.json`.
+
+## The Beetle and the ads (Nov 1, 2026, workstream G)
+Steven (Oct 28): the interior with the clothing and ads, and the white half VW Beetle at the front.
+`tools/stores/y95/extras.gd` (called from `apparel/more.gd`): `beetle()` the rear half of a white
+Beetle covered in coloured handprints, lofted from body sections with rear fenders, wheels, the rear
+window, engine-lid vents, taillights and a chrome bumper, cut square against the left wall of the left
+window, its tail toward the doorway (refs `gadzooks-front-night-with-beetle.jpg`,
+`gadzooks-beetle-handprints.png`); `gz_ads()` six poster panels on the side walls in the period ads'
+manner (checker, floral, skate, surf: invented art, no brand names, IP rule). **Guessed:** where the car
+stands (the night photo shows it behind the left window), its length (1.95 m, half a Beetle).
+Evidence `wsG-1995-gadzooks-*.jpg`.

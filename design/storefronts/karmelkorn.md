@@ -42,3 +42,13 @@ Steven: "a corner shop like the first image so neon goes on both sides", built w
 
 ## Customers (Oct 20, 2026)
 Steven: "don't have any NPCs congregate inside KaramelKorn either." Karmelkorn is no longer a store or window goal for the crowd (`npcs.json` "no_browse").
+
+## The back of the shop (Nov 1, 2026, workstream G)
+Steven (Oct 28): popcorn in the back "as rich as Pocket Change's prize counter".
+`tools/stores/y95/extras.gd` `popcorn_back()` (called at the end of `store2.gd` `karmelkorn()`):
+a cream wall of four red-edged shelves over the kettles packed with tins and ribboned cellophane bags,
+four tall glass drums of popcorn (caramel, cheese, plain, cherry) between the kettles, a pyramid of
+tins on the floor, a rail of hanging bags down the west wall, a red popper cart with corn spilling at
+the counter's end. Textures `y95/paint.py` -> `tex/y95/`. **Guessed:** all of it (no photo of the
+1995 back of the shop); tins are plain colour bands, no brand art. Evidence
+`production/qa/evidence/wsG-1995-karmelkorn-*.jpg`.
