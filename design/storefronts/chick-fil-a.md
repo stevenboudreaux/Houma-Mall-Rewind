@@ -62,7 +62,10 @@ This replaces the Oct 7 build. That build followed the facade record (tan diagon
   - Waffle fries .89 / 1.09. Slaw, carrot-raisin .89. Tossed salad $1.29.
   - Lemonade .89 / 1.09 / 1.29. Tea and soft drinks .89 / 1.09. Lemon pie $1.19. Icedream .79.
 - **Food pictures and framed prints:** painted, not copied.
-- **The logo:** left out. The chicken-head C, with its comb and beak, is a trademark design. The sign uses the earlier traced open script face (`tools/stores/small/cfa_letters.json`, Mr Dafoe) as white lit channel letters with dark returns, sized and placed as in the video.
+- **The logo (Nov 1, 2026).** Steven: "as close as possible to the real 1995 mark ... quality over strict trademark caution, with discretion". The script stays the traced open face (`tools/stores/small/cfa_letters.json`, Mr Dafoe, OFL) as white lit channel letters with dark returns, and the C now carries the mark's chicken head: a three-lobed comb riding the top of the C's upper arc, red and lit (the video: "a red comb on the C"), and a short pointed white beak off the C's upper terminal. Drawn by hand onto the stand-in C (`tools/stores/cfa/make_comb.py` → `cfa_comb.json`), not traced from the trademark artwork.
+  - **Guessed / discretion:** the lobe sizes and spacing (from memory of the period mark, not a drawing); the beak is short and partly hidden by the h's ascender at the stand-in script's letter spacing. The real 1990s script differs from Mr Dafoe in its letterforms; it is not copied. No "Chick-fil-A" artwork or slogan is used anywhere else in the store.
+  - **Before Nov 1:** the comb and beak were left out for trademark caution.
+  - Evidence: `production/qa/evidence/wsD-chick-fil-a-preview-unbaked.jpg`.
 - **Cup print:** the cup print seen in the video is left out (plain cups).
 - **Takeout bay:** shown as the counter's front leg with a register facing the hall.
 
@@ -71,5 +74,5 @@ This replaces the Oct 7 build. That build followed the facade record (tan diagon
 - **Routing:** `build_mall.gd` sends CHICK-FIL-A there. Its `BUILT_RECTS` entry is now z 60–86.
 - **Walk grid:** `open_interiors.py` opens tiles y 130–142.
 - **Baked groups:** `cfa_shell`, `cfa_fix`, `cfa_kitchen`, `cfa_small`. The old `smk_*` and `smkf_*` groups are gone.
-- **Unbaked (dynamic):** `cfaf_sign`. It holds the letters and the awning's shingles and cove light.
+- **Unbaked (dynamic):** `cfaf_sign`. It holds the letters (with the C's comb and beak, material `cf_comb`, Nov 1) and the awning's shingles and cove light.
 - **Lights:** troffer spots, one warm omni per sconce, kitchen and menu fills, the awning's cove and the letters' wash. All baked.
