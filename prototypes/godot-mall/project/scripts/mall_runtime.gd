@@ -184,10 +184,11 @@ func _ready() -> void:
 	_check_pack()
 	# ---- workstream H (Nov 1 2026, design/godot-performance.md): web/shell.html keeps the loading
 	# card up until window.__mallWarm == 1. scripts/npc_warmup.gd sets 0 while it warms the shoppers
-	# (added this same frame, deferred); a wing without shoppers says ready two frames in.
+	# (added by player.gd with call_deferred); a wing without shoppers says ready right after: a
+	# call deferred from a deferred call runs after every call deferred before it, in the same flush.
 	if OS.has_feature("web"):
 		var say_ready := func(): JavaScriptBridge.eval("if (window.__mallWarm === undefined) window.__mallWarm = 1;", true)
-		get_tree().process_frame.connect(func(): get_tree().process_frame.connect(say_ready, CONNECT_ONE_SHOT), CONNECT_ONE_SHOT)
+		(func(): say_ready.call_deferred()).call_deferred()
 	# ---- end workstream H
 	vp = SubViewport.new()
 	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS

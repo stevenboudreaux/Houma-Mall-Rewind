@@ -8,7 +8,8 @@ Workstream H (Nov 1 2026, design/godot-performance.md). Records, relative to nav
   wasm_ms / pck_ms    resource timing responseEnd of index.wasm and of the .pck
   engine_ms           engine.startGame() resolved (web/shell.html window.__mallEngineAt; 0 on older builds)
   card_ms             the loading card was removed
-  setup_ms            npcs.gd printed "npcs: grid ..." (the wing's scene, grid and shoppers are set up)
+  setup_ms            npcs.gd printed "npcs: grid ..." (the wing's scene, grid and shoppers are set up);
+                      wings without that node (2026) use the card's removal for setup and control
   control_ms          the first frame after both = time-to-control
   log                 every console line with its time (Godot's own prints: npcs, npc_warmup …)
 then every requestAnimationFrame interval for --secs seconds after control (Godot's web main
@@ -49,6 +50,8 @@ INIT = """
     const t = performance.now();
     // the card lifting (builds before workstream H lift it when the engine starts, before the scene loads)
     if (!window.__ftCardAt && document.readyState !== 'loading' && !document.getElementById('status')) window.__ftCardAt = t;
+    // wings without the shopper node (the 2026 year) never print it: the card lifting is the mark
+    if (!window.__ftSetupAt && window.__ftCardAt && t - window.__ftCardAt > 5000) { window.__ftSetupAt = window.__ftCardAt; window.__ftPlayAt = window.__ftCardAt; window.__ftNoNpcs = true; }
     // playable: the first frame after the wing's setup finished, with the card gone
     if (!window.__ftPlayAt && window.__ftSetupAt && window.__ftCardAt) window.__ftPlayAt = t;
     if (window.__ftPlayAt) {

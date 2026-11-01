@@ -14,7 +14,8 @@
 #                changes to tracked files under the project (they could not be told apart from the
 #                editor's side effects)
 #   1. build:    tools/build_mall.gd for the wing, so the bake sees the scene in build form (--no-build skips)
-#   2. bake:     the editor under xvfb on lavapipe with addons/autobake (AUTOBAKE="<scene>:<mode>")
+#   2. bake:     the editor under xvfb (OpenGL, the project is GL Compatibility) with addons/autobake
+#                (AUTOBAKE="<scene>:<mode>"); the lightmapper makes its own Vulkan device: lavapipe
 #   3. revert:   the editor's side effects, with `git checkout`: the ~206 .import files it flips
 #                (detect_3d turns textures to VRAM compression), project.godot, gen/env_day.tres and
 #                the scene it re-saved with its own resource ids (design/godot-wings.md: a scene saved
@@ -107,13 +108,13 @@ md5sum wing*_day.* wing*_night.* 2>/dev/null | sort -k2 > "$LOG/lightmaps.before
 
 # ---- 2. bake
 if [ $DRY = 1 ]; then
-  say "2. DRY RUN: would bake $SCENE:$MODE  (AUTOBAKE=\"$SCENE:$MODE\" xvfb-run -a godot --editor --path . --rendering-driver vulkan)"
+  say "2. DRY RUN: would bake $SCENE:$MODE  (AUTOBAKE=\"$SCENE:$MODE\" xvfb-run -a godot --editor --path . --rendering-driver opengl3)"
 else
   say "2. bake $SCENE:$MODE (software Vulkan: ~10 min for a wing at Medium, much longer at Ultra)"
   rm -f .autobake_done
   T0=$(date +%s)
   AUTOBAKE="$SCENE:$MODE" timeout ${BAKE_TIMEOUT:-14400} xvfb-run -a -s "-screen 0 1280x720x24" \
-    godot --editor --path . --rendering-driver vulkan > "$LOG/bake.log" 2>&1 || true
+    godot --editor --path . --rendering-driver opengl3 > "$LOG/bake.log" 2>&1 || true
   say "   editor exited after $(( $(date +%s) - T0 )) s: $(cat .autobake_done 2>/dev/null || echo 'no .autobake_done')"
   grep -q "^$SCENE:$MODE ok" .autobake_done 2>/dev/null || { echo "bake failed: $LOG/bake.log (OOM? dmesg | grep -i kill)"; BAKE_FAILED=1; }
   rm -f .autobake_done

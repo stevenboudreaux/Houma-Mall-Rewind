@@ -128,3 +128,61 @@ w3.mobile.pck  (Godot 4.7.2 pack, 145 files, 12.6 MB; textures 8.2 MB)
     lossless  RGB8         webp-lossless   512x128   mips=0      30414  .godot/imported/dept_blank.png-cffe360a67f80ae2626fa8307c55c77c.ctex
     lossless  RGBA8        webp-lossless   256x256   mips=0       2204  .godot/imported/chainlink.png-65cf2bcdc777acb2d31056160b74046c.ctex
 ```
+
+## tools/qa/packtest.py on this branch's export (Nov 1, 2026)
+
+```
+phone_gpu picked mobile want mobile remembered None errors 0 OK
+desktop_gpu picked desktop want desktop remembered None errors 0 OK
+wrong_guess picked mobile want mobile remembered mobile errors 0 OK
+ALL OK
+```
+
+## This branch's export: same split
+
+```
+w1.desktop.pck  (Godot 4.7.2 pack, 691 files, 83.6 MB; textures 55.0 MB)
+  s3tc         51 files     27.9 MB
+  lossless    152 files     20.9 MB
+  bptc          1 files      6.3 MB
+w1.mobile.pck  (Godot 4.7.2 pack, 691 files, 83.6 MB; textures 55.0 MB)
+  etc2         51 files     27.9 MB
+  lossless    152 files     20.9 MB
+  astc          1 files      6.3 MB
+w1y26.desktop.pck  (Godot 4.7.2 pack, 179 files, 20.7 MB; textures 12.6 MB)
+  lossless     16 files      6.5 MB
+  s3tc          8 files      4.0 MB
+  bptc          1 files      2.1 MB
+w1y26.mobile.pck  (Godot 4.7.2 pack, 179 files, 20.7 MB; textures 12.6 MB)
+  lossless     16 files      6.5 MB
+  etc2          8 files      4.0 MB
+  astc          1 files      2.1 MB
+w2.desktop.pck  (Godot 4.7.2 pack, 917 files, 80.4 MB; textures 47.3 MB)
+  s3tc         51 files     28.0 MB
+  lossless    143 files     11.0 MB
+  bptc          1 files      5.2 MB
+  lossy       130 files      3.0 MB
+w2.mobile.pck  (Godot 4.7.2 pack, 917 files, 80.4 MB; textures 47.3 MB)
+  etc2         51 files     28.0 MB
+  lossless    143 files     11.0 MB
+  astc          1 files      5.2 MB
+  lossy       130 files      3.0 MB
+w2y26.desktop.pck  (Godot 4.7.2 pack, 509 files, 51.5 MB; textures 23.1 MB)
+  lossless     84 files     12.0 MB
+  s3tc         16 files      5.7 MB
+  bptc          1 files      3.1 MB
+  lossy        80 files      2.3 MB
+w2y26.mobile.pck  (Godot 4.7.2 pack, 509 files, 51.5 MB; textures 23.1 MB)
+  lossless     84 files     12.0 MB
+  etc2         16 files      5.7 MB
+  astc          1 files      3.1 MB
+  lossy        80 files      2.3 MB
+w3.desktop.pck  (Godot 4.7.2 pack, 148 files, 12.6 MB; textures 8.2 MB)
+  lossless     17 files      3.5 MB
+  bptc          1 files      3.1 MB
+  s3tc          5 files      1.6 MB
+w3.mobile.pck  (Godot 4.7.2 pack, 148 files, 12.6 MB; textures 8.2 MB)
+  lossless     17 files      3.5 MB
+  astc          1 files      3.1 MB
+  etc2          5 files      1.6 MB
+```
