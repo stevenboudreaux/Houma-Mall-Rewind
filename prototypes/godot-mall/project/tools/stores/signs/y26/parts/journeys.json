@@ -5,7 +5,7 @@
  "ref_img": "journeys_ref.png",
  "w": 2.4,
  "h": 1.3,
- "mount_y": -0.2,
+ "mount_y": -0.6,
  "type": "flat",
  "depth": 0.15,
  "standoff": 0.0,
@@ -27,7 +27,7 @@
    "smooth": 0.0,
    "type": "flat",
    "depth": 0.15,
-   "face": "#dcd9d3",
+   "face": "#cfccc5",
    "ret": "#1e1e22",
    "lit": 0.0,
    "rough": 0.6,
@@ -38,14 +38,14 @@
    "name": "edge",
    "text": "Journeys",
    "trace": "journeys_name_mask.png",
-   "width": 1.521,
+   "width": 1.56,
    "smooth": 1.2,
    "dx": -0.107,
    "dy": -0.428,
    "type": "flat",
    "depth": 0.19,
-   "face": "#2f3f46",
-   "ret": "#2f3f46",
+   "face": "#1d2a30",
+   "ret": "#1d2a30",
    "lit": 0.0,
    "glow_pad": 0.01,
    "ref_box": [
@@ -71,14 +71,14 @@
    "smooth": 0.5,
    "type": "channel",
    "depth": 0.2,
-   "face": "#d8f6fa",
-   "ret": "#4f6b73",
+   "face": "#a6e8f2",
+   "ret": "#3c565e",
    "trim": "#9fd8e2",
-   "lit": 1.6,
-   "emit": "#c8f4ff",
+   "lit": 0.85,
+   "emit": "#9fe6f2",
    "glow": "#9fe8f4",
    "glow_pad": 0.08,
-   "glow_e": 0.35
+   "glow_e": 0.18
   },
   {
    "name": "orange",
@@ -144,5 +144,7 @@
    "glow_pad": 0.01
   }
  ],
- "notes": "Re-traced Oct 28 from a sharp 1080p near-frontal frame (Demo 43's trace came from a 960 px contact-sheet tile and the script's strokes merged into one blob, unreadable in the game). The oval is an ellipse fitted to the panel's edge in that frame (axes 2.04:1, long axis rising 14 deg to the right), drawn as a clean ellipse; the panel is a light warm-grey printed face (faint dashed route lines, deckled edge, not modelled) on a black 15 cm return, hung below the purple fascia with the lime paint-splash mural. 'Journeys' is the hand-lettered faux-neon script: pale cyan tubes with white cores, traced at 2x with light smoothing so every stroke stays separate (the J's descender, the o with the green globe inside it, the u-r-n ligature, the e, the y's tail crossing under the s). Compass marks as their own flat parts: orange chevrons left of the J and between the N and E, yellow arrows above and below the J, the green globe in the o. Scale: long axis taken as 2.4 m (from the 3 m door opening; not measured), so the panel's box is 2.33 x 1.21 m and the lettering 1.48 m across. Interior behind (for the walk-in, IMG_4440 f012-f019): olive-green slatwall bays of sneakers and boots both sides with poster panels, a red-brick accent wall at the back left, a corrugated-steel soffit with lit coves over the aisle, black open ceiling, grey slate-look tile floor, two honey-oak Timberland display tables on casters at the entry, galvanised Tolix-style chairs, a Birkenstock mat and a hi-5 candy neighbour to the west. Oct 28, after the first baked shot: the pale tubes on the pale panel read faint from the hall, so the letters got a dark slate outline behind them (the 'edge' part: the same mask 3 % larger, 1 cm behind the faces, the dark edge the real tubes show), darker returns and a brighter face."
+ "notes": "Re-traced Oct 28 from a sharp 1080p near-frontal frame (Demo 43's trace came from a 960 px contact-sheet tile and the script's strokes merged into one blob, unreadable in the game). The oval is an ellipse fitted to the panel's edge in that frame (axes 2.04:1, long axis rising 14 deg to the right), drawn as a clean ellipse; the panel is a light warm-grey printed face (faint dashed route lines, deckled edge, not modelled) on a black 15 cm return, hung below the purple fascia with the lime paint-splash mural. 'Journeys' is the hand-lettered faux-neon script: pale cyan tubes with white cores, traced at 2x with light smoothing so every stroke stays separate (the J's descender, the o with the green globe inside it, the u-r-n ligature, the e, the y's tail crossing under the s). Compass marks as their own flat parts: orange chevrons left of the J and between the N and E, yellow arrows above and below the J, the green globe in the o. Scale: long axis taken as 2.4 m (from the 3 m door opening; not measured), so the panel's box is 2.33 x 1.21 m and the lettering 1.48 m across. Interior behind (for the walk-in, IMG_4440 f012-f019): olive-green slatwall bays of sneakers and boots both sides with poster panels, a red-brick accent wall at the back left, a corrugated-steel soffit with lit coves over the aisle, black open ceiling, grey slate-look tile floor, two honey-oak Timberland display tables on casters at the entry, galvanised Tolix-style chairs, a Birkenstock mat and a hi-5 candy neighbour to the west. Oct 28, after the first baked shot: the pale tubes on the pale panel read faint from the hall, so the letters got a dark slate outline behind them (the 'edge' part: the same mask 3 % larger, 1 cm behind the faces, the dark edge the real tubes show), darker returns and a brighter face. Nov 1 (ws/g): Steven still found it unreadable in the baked build (the pale tubes bloomed into one shape on the pale panel, d45-baked-2026-journeys-hall.jpg). Now hung as filmed: 25 % larger (oval 2.9 m, scale 1.25: the panel spans most of the 6 m front in IMG_4440 f013-f017) and lower (centre 0.6 m under the band's, so it drops in front of the opening's head; 'drop' 0.45), the tubes a deeper cyan lit at 0.85 (under the glow threshold), the dark edge wider (5.6 %) and the panel a shade darker.",
+ "scale": 1.25,
+ "drop": 0.45
 }

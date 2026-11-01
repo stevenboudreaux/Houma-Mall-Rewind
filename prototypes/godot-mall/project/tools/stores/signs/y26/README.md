@@ -30,6 +30,8 @@ python3 tools/stores/signs/photo_trace.py quad --photo P --pts "x,y;x,y;x,y;x,y"
   "ref_img": "lynns_ref.png",          // the squared-up reference in src/
   "w": 4.2, "h": 1.3,                  // the whole sign's real size, metres (estimated from the frame)
   "mount_y": 0.0,                      // optional: the sign's centre above the fascia band's centre, metres
+  "scale": 1.0,                        // optional (ws/g): enlarge the whole spec; still capped by the band
+  "drop": 0.0,                         // optional (ws/g): metres the sign may hang below the band
   "mount": "fascia",                   // or "glass": lettering on the storefront glass, centred 1.9 m + "glass_y" up
   "unseen": false,                     // true: no sign in the footage (only "fascia_color"/"backer" are built)
   "type": "flat",                      // default letter type for the parts (see below)

@@ -65,6 +65,12 @@ with returns and trim caps, lit faces, halo glow, backer panels, cabinets, racew
   smoothing so every stroke stays separate. Method for the rest of the weak signs: re-cut the frame
   at full resolution with ffmpeg on the Mac (`-vf fps=2 -q:v 2`), pick the square-on one, then
   `photo_trace.py quad` → masks → spec. Evidence `d45-signs-att-journeys.jpg`.
+- **Nov 1 (ws/g): Journeys again.** The Demo 45 sign still bloomed into one pale shape in the baked
+  build. Now hung as filmed: 25 % larger and lower, dropping in front of the opening's head, deeper
+  cyan tubes lit under the glow threshold, a wider dark edge. Two optional spec keys for this
+  (`y26/README.md` format): `scale` (enlarges the spec, still capped by the band) and `drop` (lets
+  the sign hang below the band). AT&T reads cleanly in the Demo 45 baked shot and was left as is.
+  Evidence `wsG-sign-journeys-*.jpg`.
 - Bake lesson: `addons/autobake` now bakes only the job's own scene (after the import scan the
   editor could be left on wing1.tscn, and a wing1_2026 job baked wing1). After copying a bake
   back, delete `.godot/imported/<scene>_day.exr-*` before `--import`, or the old texture stays.

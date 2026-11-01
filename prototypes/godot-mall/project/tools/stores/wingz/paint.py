@@ -1,5 +1,5 @@
 """Textures for Wicked Wingz (2026, store s64: the 1995 Chick-fil-A unit), written to tex/ww/*.png.
-Read from Steven's Oct 23 2026 footage: IMG_4441 f003-f006 (the counter square on), IMG_4461
+The 2026 re-skin of the Chick-fil-A stall (wingz/store.gd). Read from Steven's Oct 23 2026 footage: IMG_4441 f003-f006 (the counter square on), IMG_4461
 f028-f034 (the dining side from the hall). design/storefronts/wicked-wingz-2026.md.
 
   python3 tools/stores/wingz/paint.py   (from the project folder)
@@ -198,29 +198,10 @@ def wall():
     save(grime(im, 2.0, 10), "wall")
 
 
-def tv():
-    """The wall TV's picture: a blurred promo still, generic food on red (not a real ad)."""
-    W, H = 320, 180
-    im = Image.new("RGB", (W, H), (150, 30, 24))
-    d = ImageDraw.Draw(im)
-    for j in range(9):
-        x = R.randint(40, 280); y = R.randint(50, 150)
-        d.ellipse([x - 30, y - 18, x + 30, y + 18], fill=(210, 110, 40))
-    d.rectangle([0, 0, W, 34], fill=(20, 20, 20))
-    wordmark(d, 70, 18, 22, wings=False)
-    save(im.filter(ImageFilter.GaussianBlur(2)), "tv")
 
 
-def louver():
-    """The eggcrate grille strip under the front soffit: a lit white grid (f006)."""
-    W, H = 256, 64
-    im = Image.new("RGB", (W, H), (60, 60, 60))
-    d = ImageDraw.Draw(im)
-    for x in range(0, W, 16):
-        d.rectangle([x + 2, 2, x + 14, H - 3], fill=(236, 236, 230))
-    save(im, "louver")
 
 
 if __name__ == "__main__":
-    counter_tile(); floor_tile(); menu(); guard(); aframe(); wall(); tv(); louver()
+    counter_tile(); floor_tile(); menu(); guard(); aframe(); wall()
     print("wrote", sorted(os.listdir(OUT)))

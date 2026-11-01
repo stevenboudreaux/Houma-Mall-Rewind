@@ -346,6 +346,9 @@ func mat(name):
 				# ws/g: Cinnamonster (2026, KarmelKorn's corner): tools/stores/cinnamonster/store.gd's fill_mat
 				if not load("res://tools/stores/cinnamonster/store.gd").fill_mat(m, name.substr(3), self):
 					push_error("unknown material " + name)
+			elif name.begins_with("cf_") and YEAR == 2026 and load("res://tools/stores/wingz/store.gd").fill_cf(m, name.substr(3), self):
+				# ws/g: in 2026 the Chick-fil-A stall is Wicked Wingz, re-skinned (tools/stores/wingz/store.gd)
+				pass
 			elif name.begins_with("cf_"):
 				# Chick-fil-A, rebuilt from Steven's video: tools/stores/cfa/store.gd's fill_mat
 				if not load("res://tools/stores/cfa/store.gd").fill_mat(m, name.substr(3), self):
@@ -1912,7 +1915,8 @@ func sign_2026(g, name, mid, n, t, Ln):
 		var cg = mid + Vector3(0, 1.9 + float(s.get("glass_y", 0.0)), 0) + n * 0.012
 		return S.build(self, g + "_sg26", name, cg, n, max(1.0, Ln - 1.4), OPEN_H - 1.0, s)
 	var c = mid + Vector3(0, OPEN_H + band * 0.5 + float(s.get("mount_y", 0.0)), 0) + n * 0.17
-	return S.build(self, g + "_sg26", name, c, n, max(1.0, Ln - 0.9), band - 0.12, s)
+	# ws/g: "drop" lets a sign hang below the band (Journeys' oval over the opening head)
+	return S.build(self, g + "_sg26", name, c, n, max(1.0, Ln - 0.9), band - 0.12 + float(s.get("drop", 0.0)), s)
 
 ## Demo 43: the leasing card in a 2026 vacant unit's window (IMG_4440 f013: white, the green
 ## FOR LEASE, the agent's blue lines; the agent's name and number are left off), behind the grille.
