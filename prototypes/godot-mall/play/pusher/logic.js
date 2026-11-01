@@ -30,7 +30,7 @@
     slotMm: 24.5,             // a bigger coin won't go in; a smaller one goes in and is lost
     slotHalfW: 23.0,          // cm the coin mechanism slides to either side of the centre
     slotSpeed: 30,            // cm/s with the keys or a stick
-    quality: { low: 300, medium: 450, high: 650 },   // coins in a fresh machine
+    quality: { low: 450, medium: 600, high: 750 },   // coins in a fresh machine (sim.js fresh(): the shelf packed first)
     positions: 6,             // three per side
     saveVersion: 1,
   };

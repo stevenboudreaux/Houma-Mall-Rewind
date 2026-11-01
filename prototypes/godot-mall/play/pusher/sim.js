@@ -33,12 +33,13 @@ export const GEOM = {
   period: 4.5,        // s per crank turn (measured: 4.46-4.62 s)
   rod: 11,            // connecting rod (guess; it only shapes the motion a little)
   wallZ: 66,          // the fixed back wall's front face (deckFront + the translite's 0.30 m)
-  wallGap: 0.12,      // the wall's bottom edge above the deck: thinner than a coin
+  wallGap: 0.05,      // the wall's bottom edge above the deck: well under a coin's half thickness
   holeZ0: 3.0,        // the side holes: from 3 cm behind the drop edge ...
   holeZ1: 17.0,       // ... to 17 cm
   holeW: 2.8,         // gap between the shelf and the side wall (a quarter falls in flat)
   chuteY: 11.0,       // the coin chute's foot above the deck
-  chuteZ: 63.5,       // ... just in front of the back wall
+  chuteZ: 64.4,       // ... right at the back wall: a coin lands in the gap that opens behind the heap
+                      //     when the deck is forward, and ratchets the heap forward (the real mechanism)
   coinR: 1.213,
   coinHH: 0.0875,     // half thickness
   coinDensity: 7.01,  // g/cm^3 -> 5.67 g
@@ -103,13 +104,16 @@ export function createSim(R, opts = {}) {
   // ---- the pusher deck: one kinematic block; its front face is the riser
   const deck = world.createRigidBody(R.RigidBodyDesc.kinematicPositionBased()
     .setTranslation(0, 0, deckZ(0, G) + G.deckLen / 2));
-  world.createCollider(R.ColliderDesc.cuboid(W - 0.02, (G.deckY - 0.08) / 2, G.deckLen / 2)
-    .setTranslation(0, (G.deckY + 0.08) / 2, 0).setFriction(G.steelFriction).setRestitution(0.05), deck);
+  // the block reaches down into the shelf (a fixed and a kinematic body ignore each other), so
+  // no coin can get under the riser
+  world.createCollider(R.ColliderDesc.cuboid(W - 0.02, (G.deckY + 1.0) / 2, G.deckLen / 2)
+    .setTranslation(0, (G.deckY - 1.0) / 2, 0).setFriction(G.steelFriction).setRestitution(0.05), deck);
 
   // ---- coins
   const coins = new Map();       // handle -> {body, id, born, ccdUntil}
   let nextId = 1;
-  const cdesc = () => R.ColliderDesc.cylinder(G.coinHH, G.coinR)
+  // a rounded cylinder: the same size, and a quarter cheaper in the narrow phase than a sharp one
+  const cdesc = () => R.ColliderDesc.roundCylinder(G.coinHH - 0.02, G.coinR - 0.02, 0.02)
     .setDensity(G.coinDensity).setFriction(G.coinFriction).setRestitution(G.coinRest);
   function addCoin(p, q, v, sleep, ccd) {
     const bd = R.RigidBodyDesc.dynamic().setTranslation(p.x, p.y, p.z)
@@ -182,21 +186,22 @@ export function createSim(R, opts = {}) {
     setGate(g) { gate = g; },
     deckZ: () => deckZ(t, G),
     count: () => coins.size,
+    get steps() { return stepCount; },
     awake() { let n = 0; world.forEachActiveRigidBody(() => n++); return n; },
 
     /** A fresh machine: n coins laid in packed layers on both tiers (the shelf's heap first,
      *  full to the lip; then the deck's; then a second layer on the shelf's front half and the
      *  deck's back half, as in the video), then settled. */
-    fresh(seed = 1, n = 600, settle = 2.5) {
+    fresh(seed = 1, n = 600, settle = 2.5) {      // n: logic.js CONFIG.quality; ~785 fills every spot
       for (const c of [...coins.values()]) removeCoin(c);
       rngState = (seed >>> 0) || 1;
       t = 0; moveDeck();
       const pitch = 2.0 * G.coinR + 0.12, rowP = pitch * 0.866;
       const spots = [];
-      const layer = (z0, z1, y, xw) => {
+      const layer = (z0, z1, y, xw) => {      // rows from z1 back to z0, so the last row is at z1
         const out = [];
         let row = 0;
-        for (let z = z0; z <= z1; z += rowP, row++) {
+        for (let z = z1; z >= z0; z -= rowP, row++) {
           const off = (row % 2) * pitch / 2;
           for (let x = -xw + off; x <= xw; x += pitch) out.push([x, y, z]);
         }
@@ -205,9 +210,11 @@ export function createSim(R, opts = {}) {
       const zMin = G.deckFront + G.stroke / 2 - 1.35;   // the shelf heap reaches the riser (the deck starts at the back of its stroke)
       const shelfW = W - hw - 0.3;                      // keep off the side holes at first (the heap spreads)
       const s1 = layer(1.6, zMin, 0.4, shelfW);
-      const d1 = layer(G.deckFront + 1.6, G.wallZ - 1.3, G.deckY + 0.4, W - 1.5);
+      const d1 = layer(G.deckFront + 1.6, G.wallZ - 1.28, G.deckY + 0.4, W - 1.5);
       const s2 = layer(1.6 + rowP / 2, zMin * 0.55, 0.75, shelfW - pitch / 2);
-      const d2 = layer(G.deckFront + 1.6 + (G.wallZ - G.deckFront) * 0.4, G.wallZ - 1.3, G.deckY + 0.75, W - 1.5 - pitch / 2);
+      const d2 = layer(G.deckFront + 1.6 + (G.wallZ - G.deckFront) * 0.4, G.wallZ - 1.28 - rowP / 2, G.deckY + 0.75, W - 1.5 - pitch / 2);
+      // the shelf's layer first (a pusher that pays needs it packed to the lip), then the deck
+      // from the wall forward, then the second layers: a low coin count shortens the deck's heap
       spots.push(...s1, ...d1, ...s2, ...d2);
       const take = Math.min(n, spots.length);
       for (let i = 0; i < take; i++) {
@@ -237,12 +244,13 @@ export function createSim(R, opts = {}) {
       if (stepCount % 4 === 0) sweep();
     },
 
-    /** Advance by dt seconds of real time in fixed steps (max 8 steps a call). Returns events. */
+    /** Advance by dt seconds of real time in fixed steps. A slow frame gets at most 3 steps
+     *  (the machine runs a little slow rather than the frame spiralling). Returns events. */
     step(dt) {
-      api._acc = (api._acc || 0) + Math.min(dt, 0.1);
+      api._acc = (api._acc || 0) + Math.min(dt, 0.05);
       let k = 0;
-      while (api._acc >= DT && k < 8) { api.tick(); api._acc -= DT; k++; }
-      if (k === 8) api._acc = 0;
+      while (api._acc >= DT && k < 3) { api.tick(); api._acc -= DT; k++; }
+      if (k === 3) api._acc = 0;
       return events.splice(0);
     },
 
@@ -250,7 +258,7 @@ export function createSim(R, opts = {}) {
     drop(x) {
       x = Math.max(-W + 1.5, Math.min(W - 1.5, x));
       const q = flatQ(rnd() * 6.283, 1.2 + rnd() * 0.3, Math.PI / 2);   // on edge-ish, rolling out of the chute
-      const c = addCoin({ x, y: G.deckY + G.chuteY, z: G.chuteZ }, q, { x: (rnd() - 0.5) * 6, y: -30, z: -25 }, false, true);
+      const c = addCoin({ x, y: G.deckY + G.chuteY, z: G.chuteZ }, q, { x: (rnd() - 0.5) * 6, y: -40, z: -3 - rnd() * 4 }, false, true);
       return c.id;
     },
 

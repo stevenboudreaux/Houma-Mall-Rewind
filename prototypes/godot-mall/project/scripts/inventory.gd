@@ -25,6 +25,9 @@ var inventory: Array = []      # [{"id": String, "count": int}]
 var tickets := 0
 var hand := ""
 var moved := {}
+# P (COIN COMET, Nov 2026): fields other systems keep in this record, carried through a round
+# trip unchanged ("quarters": the player's stake, written by play/pusher.html)
+var extra := {}
 ## Where save()/load_saved() keep the JSON. null: localStorage on the web, else Engine metadata
 ## (survives a scene change in the editor or a test). A Dictionary: kept in it (unit tests).
 var backend = null
@@ -123,8 +126,10 @@ func where(id: String, place) -> Variant:
 
 # ------------------------------------------------------------------ JSON
 func to_dict() -> Dictionary:
-	return {"v": VERSION, "year": year, "inventory": inventory.duplicate(true), "tickets": tickets,
-		"hand": hand, "moved": moved.duplicate(true)}
+	var d := extra.duplicate(true)      # P: other systems' fields first, so ours win on a clash
+	d.merge({"v": VERSION, "year": year, "inventory": inventory.duplicate(true), "tickets": tickets,
+		"hand": hand, "moved": moved.duplicate(true)}, true)
+	return d
 
 func to_json() -> String:
 	return JSON.stringify(to_dict())
@@ -155,6 +160,10 @@ func from_dict(d) -> bool:
 				"pos": [float(m.pos[0]), float(m.pos[1]), float(m.pos[2])], "yaw": float(m.get("yaw", 0.0))}
 	if d.has("year"):
 		year = int(d.year)
+	extra = {}      # P: keep what we don't know (quarters)
+	for k in d:
+		if not (str(k) in ["v", "year", "inventory", "tickets", "hand", "moved"]):
+			extra[str(k)] = d[k]
 	changed.emit()
 	return true
 
