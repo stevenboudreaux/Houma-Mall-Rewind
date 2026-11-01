@@ -75,6 +75,21 @@ with returns and trim caps, lit faces, halo glow, backer panels, cabinets, racew
   editor could be left on wing1.tscn, and a wing1_2026 job baked wing1). After copying a bake
   back, delete `.godot/imported/<scene>_day.exr-*` before `--import`, or the old texture stays.
 
+## Elevator and restroom hall order (Nov 1, ws/g, step 6 of the Oct 28 sprint)
+Steven thought the elevator and the restroom hall were out of order on the map ("those didn't move").
+**The footage confirms the map as it is; nothing was changed, in either year.** IMG_4439, walking
+west along the Concourse's south side from the Dillard's court, narration at 28-56 s: "...that was
+KarmelKorn. And then those are always an ATM. And then you have this structure. And then this one.
+And then this one. And then that is the elevator. Then another stall. And then the restroom
+hallway... and then after that is where Regis was." Frames f021-f032 show, in order: Cinnamonster
+(KarmelKorn), the ATM pier, the black stepped vacant, Auntie Anne's, Cell Xpert, the elevator's
+recessed beige doors, Boost Mobile, the restroom hall opening under an exit sign, Fire Haus 3.0 (Regis).
+The game has, west of KarmelKorn at z = 60: Afterthoughts/Auntie Anne's (x -40..-36), Naturalizer/
+Cell Xpert (-44..-40), the elevator alcove at x -44 (`ELEV_X`, `build_mall.gd`), Special Tees/Boost
+(-48..-44), the restroom hall H7 (-50..-48), Regis/Fire Haus (-58..-50): the same order. Evidence
+`production/qa/evidence/wsG-elevator-restroom-order.jpg` (frames | game 2026 and 1995). The ATM pier
+between Cinnamonster and the black vacant is not built (a free-standing ATM in the footage).
+
 ## Next
 - Build the 2026 storefronts from the footage, one by one (frame references are in the report's
   "Reference frames" table and the per-clip notes). The signs are done (Demo 43).
