@@ -102,60 +102,6 @@
     "#7ccfa6",
     "#f2cc34"
    ]
-  },
-  {
-   "id": "bl_rs_battcard",
-   "name": "AA batteries, 4-pack",
-   "class": "pocket",
-   "scene": "res://models/bl_rs_battcard/bl_rs_battcard.glb",
-   "icon": "res://models/bl_rs_battcard/bl_rs_battcard_icon.png",
-   "year": 1995,
-   "store": "RADIO SHACK"
-  },
-  {
-   "id": "bl_rs_cordless",
-   "name": "Cordless phone",
-   "class": "hand",
-   "scene": "res://models/bl_rs_cordless/bl_rs_cordless.glb",
-   "icon": "res://models/bl_rs_cordless/bl_rs_cordless_icon.png",
-   "year": 1995,
-   "store": "RADIO SHACK"
-  },
-  {
-   "id": "bl_rs_pager",
-   "name": "Pager",
-   "class": "pocket",
-   "scene": "res://models/bl_rs_pager/bl_rs_pager.glb",
-   "icon": "res://models/bl_rs_pager/bl_rs_pager_icon.png",
-   "year": 1995,
-   "store": "RADIO SHACK"
-  },
-  {
-   "id": "bl_rs_rcbox",
-   "name": "R/C monster truck (boxed)",
-   "class": "hand",
-   "scene": "res://models/bl_rs_rcbox/bl_rs_rcbox.glb",
-   "icon": "res://models/bl_rs_rcbox/bl_rs_rcbox_icon.png",
-   "year": 1995,
-   "store": "RADIO SHACK"
-  },
-  {
-   "id": "bl_rs_scanner",
-   "name": "Scanner radio",
-   "class": "hand",
-   "scene": "res://models/bl_rs_scanner/bl_rs_scanner.glb",
-   "icon": "res://models/bl_rs_scanner/bl_rs_scanner_icon.png",
-   "year": 1995,
-   "store": "RADIO SHACK"
-  },
-  {
-   "id": "bl_rs_walkie",
-   "name": "Walkie-talkie",
-   "class": "hand",
-   "scene": "res://models/bl_rs_walkie/bl_rs_walkie.glb",
-   "icon": "res://models/bl_rs_walkie/bl_rs_walkie_icon.png",
-   "year": 1995,
-   "store": "RADIO SHACK"
   }
  ]
 }

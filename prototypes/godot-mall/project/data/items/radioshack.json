@@ -1,10 +1,10 @@
 [
  {
   "id": "rs_scanner",
-  "name": "Scan-50 police scanner",
+  "name": "Scanner radio",
   "class": "hand",
-  "scene": "res://items/radioshack/scanner.tscn",
-  "icon": "res://items/radioshack/icons/scanner.png",
+  "scene": "res://models/bl_rs_scanner/bl_rs_scanner.glb",
+  "icon": "res://models/bl_rs_scanner/bl_rs_scanner_icon.png",
   "year": 1995,
   "place": {
    "wing": 1,
@@ -15,14 +15,15 @@
     31.86
    ],
    "yaw": 180
-  }
+  },
+  "model_from": "workstream T (Blender), merged Nov 1"
  },
  {
   "id": "rs_walkie_talkies",
-  "name": "Chatter 2 walkie-talkies (pair)",
+  "name": "Walkie-talkie",
   "class": "hand",
-  "scene": "res://items/radioshack/walkie_talkies.tscn",
-  "icon": "res://items/radioshack/icons/walkie_talkies.png",
+  "scene": "res://models/bl_rs_walkie/bl_rs_walkie.glb",
+  "icon": "res://models/bl_rs_walkie/bl_rs_walkie_icon.png",
   "year": 1995,
   "place": {
    "wing": 1,
@@ -33,14 +34,15 @@
     31.86
    ],
    "yaw": 180
-  }
+  },
+  "model_from": "workstream T (Blender), merged Nov 1"
  },
  {
   "id": "rs_rc_car_box",
-  "name": "Thunderclaw R/C 4x4 (boxed)",
+  "name": "R/C monster truck (boxed)",
   "class": "hand",
-  "scene": "res://items/radioshack/rc_car_box.tscn",
-  "icon": "res://items/radioshack/icons/rc_car_box.png",
+  "scene": "res://models/bl_rs_rcbox/bl_rs_rcbox.glb",
+  "icon": "res://models/bl_rs_rcbox/bl_rs_rcbox_icon.png",
   "year": 1995,
   "place": {
    "wing": 1,
@@ -51,14 +53,15 @@
     30.55
    ],
    "yaw": -90
-  }
+  },
+  "model_from": "workstream T (Blender), merged Nov 1"
  },
  {
   "id": "rs_cordless_phone",
-  "name": "900 MHz cordless phone",
+  "name": "Cordless phone",
   "class": "hand",
-  "scene": "res://items/radioshack/cordless_phone.tscn",
-  "icon": "res://items/radioshack/icons/cordless_phone.png",
+  "scene": "res://models/bl_rs_cordless/bl_rs_cordless.glb",
+  "icon": "res://models/bl_rs_cordless/bl_rs_cordless_icon.png",
   "year": 1995,
   "place": {
    "wing": 1,
@@ -69,14 +72,15 @@
     31.86
    ],
    "yaw": 180
-  }
+  },
+  "model_from": "workstream T (Blender), merged Nov 1"
  },
  {
   "id": "rs_battery_card",
   "name": "AA batteries, 4-pack",
   "class": "pocket",
-  "scene": "res://items/radioshack/battery_card.tscn",
-  "icon": "res://items/radioshack/icons/battery_card.png",
+  "scene": "res://models/bl_rs_battcard/bl_rs_battcard.glb",
+  "icon": "res://models/bl_rs_battcard/bl_rs_battcard_icon.png",
   "year": 1995,
   "place": {
    "wing": 1,
@@ -87,14 +91,15 @@
     31.86
    ],
    "yaw": 180
-  }
+  },
+  "model_from": "workstream T (Blender), merged Nov 1"
  },
  {
   "id": "rs_pager",
-  "name": "Beeper 2000 pager",
+  "name": "Pager",
   "class": "pocket",
-  "scene": "res://items/radioshack/pager.tscn",
-  "icon": "res://items/radioshack/icons/pager.png",
+  "scene": "res://models/bl_rs_pager/bl_rs_pager.glb",
+  "icon": "res://models/bl_rs_pager/bl_rs_pager_icon.png",
   "year": 1995,
   "place": {
    "wing": 1,
@@ -105,7 +110,8 @@
     31.86
    ],
    "yaw": 180
-  }
+  },
+  "model_from": "workstream T (Blender), merged Nov 1"
  },
  {
   "id": "rs_cb_radio",
