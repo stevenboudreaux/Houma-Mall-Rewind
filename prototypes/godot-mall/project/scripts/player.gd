@@ -77,6 +77,15 @@ var doors: Array = []
 var door_near = null        # the door whose prompt shows, or null
 const DOOR_NEAR := 2.8
 const DOOR_NAMES := {"s39": "the main entrance", "s43": "the Sears hall entrance", "s41": "the cinema-side exit", "s55": "the south entrance"}
+## Workstream E (Nov 1): the anchors' own outside doors (tools/make_exterior.py); "Sears" reads
+## "Lynn's" in 2026 (_door_name).
+const DOOR_NAMES_E := {"s1x": "the Sears side exit", "s1e": "the Sears customer entrance", "s2e": "Dillard's east entrance", "s2s": "Dillard's south entrance"}
+
+func _door_name(d) -> String:
+	var k := str(d.get("store", ""))
+	if DOOR_NAMES_E.has(k):
+		return DOOR_NAMES_E[k].replace("Sears", "Lynn's") if year == 2026 else DOOR_NAMES_E[k]
+	return DOOR_NAMES.get(k, "the doors")
 
 func _ready() -> void:
 	position = Vector3(33.0, 0, 0.0)
@@ -635,9 +644,9 @@ func _update_prompt() -> void:
 		prompt_key.custom_minimum_size.x = 50 if input_kind == "touch" else 38
 		if door_near != null:
 			if wing == 3:
-				prompt_text.text = "Enter the mall · " + DOOR_NAMES.get(str(door_near.get("store", "")), "the doors")
+				prompt_text.text = "Enter the mall · " + _door_name(door_near)
 			else:
-				prompt_text.text = "Go outside · " + DOOR_NAMES.get(str(door_near.get("store", "")), "the doors")
+				prompt_text.text = "Go outside · " + _door_name(door_near)
 		else:
 			prompt_text.text = "Enter " + WING_NAMES[3 - wing]
 

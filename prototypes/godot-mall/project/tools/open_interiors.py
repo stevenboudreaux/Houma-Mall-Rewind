@@ -81,6 +81,11 @@ OPEN = {
     "s61": [(114, 118, 130, 136)],
     "n42": [(86, 88, 130, 134)],
     "n36": [(123, 126, 118, 123)],   # narrowed Oct 7 (narrow_stores.py)
+    # Workstream E (Nov 1, tools/stores/sears/, tools/stores/dillards/): the old Sears box, the map
+    # rect s1 (x 128-162, y 33-51) plus 6 rows deeper to y 27 (50 m, design/godot-sears.md), and
+    # Dillard's level 1 (s2, x 129-162, y 140-158, design/godot-dillards.md)
+    "s1": [(128, 162, 27, 51)],
+    "s2": [(129, 162, 140, 158)],
 }
 
 
