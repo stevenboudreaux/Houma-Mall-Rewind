@@ -708,7 +708,7 @@ const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
 // cache (Cache Storage), so crossing over does not download it again.
 // ?year=2026: the mall as it is today (same building, today's stores), its own pair of files per
 // wing: w1y26.* / w2y26.* (scripts/player.gd's 1995 / 2026 switch sets it).
-const PACK_SIZES = {"w1": {"desktop": 0, "mobile": 0}, "w2": {"desktop": 0, "mobile": 0}, "w3": {"desktop": 0, "mobile": 0}, "w1y26": {"desktop": 0, "mobile": 0}, "w2y26": {"desktop": 0, "mobile": 0}}; // PACK_SIZES
+const PACK_SIZES = {"w1": {"desktop": 0, "mobile": 0}, "w2": {"desktop": 0, "mobile": 0}, "w3": {"desktop": 0, "mobile": 0}, "w1y26": {"desktop": 0, "mobile": 0}, "w2y26": {"desktop": 0, "mobile": 0}, "w3y26": {"desktop": 0, "mobile": 0}}; // PACK_SIZES
 function mallPackKind() {
 	try { const q = new URLSearchParams(location.search).get('pack'); if (q === 'desktop' || q === 'mobile') { return q; } } catch (e) { /* ignore */ }
 	try { const s = localStorage.getItem('southland-pack'); if (s === 'desktop' || s === 'mobile') { return s; } } catch (e) { /* ignore */ }
@@ -728,12 +728,12 @@ function mallPackKind() {
 }
 window.__mallPack = mallPackKind();
 window.__mallWing = (function () {
-	// wing 3 is the outside (design/godot-exterior.md): the lot round the building, 1995 only
+	// wing 3 is the outside (design/godot-exterior.md): the lot round the building, both years since Nov 1
 	try { const w = new URLSearchParams(location.search).get('wing'); if (w === '2') { return 2; } if (w === '3') { return 3; } } catch (e) { /* ignore */ }
 	return 1;
 }());
 window.__mallYear = (function () {
-	try { const q = new URLSearchParams(location.search); if (q.get('year') === '2026' && q.get('wing') !== '3') { return 'y26'; } } catch (e) { /* ignore */ }
+	try { const q = new URLSearchParams(location.search); if (q.get('year') === '2026') { return 'y26'; } } catch (e) { /* ignore */ }
 	return '';
 }());
 const MALL_PACK = (w) => 'w' + w + window.__mallYear + '.' + window.__mallPack + '.pck';
@@ -745,7 +745,7 @@ if (mallSize(window.__mallWing)) { GODOT_CONFIG['fileSizes'][GODOT_CONFIG['mainP
 // years share it: until Oct 28 the cache was per year and switching years threw the other year's
 // files away, so every 1995 <-> 2026 switch downloaded its wing again (a minute on a slow line).
 const mallSizeOf = (name) => (PACK_SIZES[name] || {})[window.__mallPack] || 0;
-const MALL_CACHE = 'mall-wings-' + ['w1', 'w2', 'w3', 'w1y26', 'w2y26'].map(mallSizeOf).join('-');
+const MALL_CACHE = 'mall-wings-' + ['w1', 'w2', 'w3', 'w1y26', 'w2y26', 'w3y26'].map(mallSizeOf).join('-');
 const mallPackUrl = (w, year) => new URL('w' + w + (year === undefined ? window.__mallYear : year) + '.' + window.__mallPack + '.pck', location.href).toString();
 if ('caches' in window) {
 	const netFetch = window.fetch.bind(window);
@@ -763,14 +763,18 @@ window.mallPrefetchOther = function () {
 	// While you walk, the files you are likely to need next are fetched into the cache, one after
 	// another, most likely first: the other inside wing (outside, wing 1, where most doors lead);
 	// then this wing in the other year (the Y key / "Visit 2026" button reloads the page with the
-	// other year's file); then the other wing in the other year. Wing 3 (outside) is 1995 only.
+	// other year's file); then the other wing in the other year. Outside (wing 3), the other year
+	// is the outside's own other year (w3 / w3y26) when that file exists.
 	// A line the browser marks as metered or "save data" only gets the other wing.
 	const other = window.__mallWing === 3 ? 1 : 3 - window.__mallWing;
 	const here = window.__mallWing === 3 ? 1 : window.__mallWing;
 	const otherYear = window.__mallYear ? '' : 'y26';
 	let wanted = [mallPackUrl(other)];
 	const conn = navigator.connection || {};
-	if (!conn.saveData && mallSizeOf('w1y26')) { wanted = wanted.concat([mallPackUrl(here, otherYear), mallPackUrl(3 - here, otherYear)]); }
+	if (!conn.saveData && mallSizeOf('w1y26')) {
+		if (window.__mallWing === 3) { wanted = wanted.concat(mallSizeOf('w3y26') ? [mallPackUrl(3, otherYear)] : [], [mallPackUrl(1, otherYear)]); }
+		else { wanted = wanted.concat([mallPackUrl(here, otherYear), mallPackUrl(3 - here, otherYear)]); }
+	}
 	caches.keys().then((ks) => Promise.all(ks.filter((k) => k.indexOf('mall-wings-') === 0 && k !== MALL_CACHE).map((k) => caches.delete(k))))
 		.then(() => caches.open(MALL_CACHE))
 		.then((c) => wanted.reduce((p, u) => p.then(() => c.match(u)).then((r) => (r ? null : c.add(u))), Promise.resolve()))

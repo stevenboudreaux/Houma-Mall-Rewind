@@ -5,6 +5,12 @@
 # tex/standin. tools/capture_standin.sh stamps the stand-in pictures with it; tools/publish_build.sh
 # compares (design/godot-wings.md).
 W=$1
+if [ "$W" = "3" ]; then
+  # the outside (Workstream F): its meshes, its lightmap and its own textures (tex/ex)
+  G=gen/w3; L="wing3_day.exr"; [ "$2" = "2026" ] && { G=gen/w3y26; L="wing3_2026_day.exr"; }
+  { ls $G/* $L 2>/dev/null; find tex/ex -type f -name "*.png"; } | sort | xargs md5sum 2>/dev/null | md5sum | cut -c1-32
+  exit 0
+fi
 if [ "$2" = "2026" ]; then
   { ls gen/w${W}y26/* wing${W}_2026_day.exr 2>/dev/null; find tex -type f -name "*.png" -not -path "tex/standin/*" -not -path "tex/ex/*"; } | sort | xargs md5sum 2>/dev/null | md5sum | cut -c1-32
   exit 0

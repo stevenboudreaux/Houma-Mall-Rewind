@@ -388,6 +388,9 @@ func mat(name):
 					push_error("unknown material " + name)
 			elif name.begins_with("standin_w"):
 				m = standin_mat(name)
+			elif name.begins_with("doorpic_w"):
+				# Workstream F: the lot seen out through the exits (tools/exterior/door_view.gd)
+				m = load("res://tools/exterior/door_view.gd").mat(self, name)
 			elif name.begins_with("ad_"):
 				# a framed newspaper ad on a wall (tools/stores/posters/posters.gd): matte newsprint.
 				# Dynamic meshes get no lightmap, so the print carries a little of its own light,
@@ -2379,6 +2382,10 @@ func doors_out(g, e, a, b, n, t, Ln):
 		label("EXIT", "sans", "#ffffff", mid + Vector3(0, dh + 0.55, 0) + n * 0.1, n, 1.0, 0.24)
 	else:
 		label("Main Entrance", "serif", "#5b4030", mid + Vector3(0, dh + 0.75, 0) + n * 0.05, n, dw * 0.6, 0.42)
+	# Workstream F (Nov 1 2026): past the vestibule floor, pictures of the real lot from this door,
+	# captured from the outside (wing 3); they replace the empty sky past the 12 m stand-in
+	# (tools/exterior/door_view.gd, design/godot-exterior.md "Looking out")
+	load("res://tools/exterior/door_view.gd").build(self, e, a, b, n)
 
 # ------------------------------------------------------------------ props
 func bench(group, at, yaw):
