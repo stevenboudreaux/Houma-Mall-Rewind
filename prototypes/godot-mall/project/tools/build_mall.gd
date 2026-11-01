@@ -386,6 +386,10 @@ func mat(name):
 				# the sports stores' stock: tools/stores/small/sports.gd's fill_mat
 				if not load("res://tools/stores/small/sports.gd").fill_mat(m, name.substr(3), self):
 					push_error("unknown material " + name)
+			elif name.begins_with("dir_"):
+				# the mall directory kiosks: tools/stores/directory/kiosk.gd's fill_mat (design/godot-directory.md)
+				if not load("res://tools/stores/directory/kiosk.gd").fill_mat(m, name.substr(4), self):
+					push_error("unknown material " + name)
 			elif name.begins_with("standin_w"):
 				m = standin_mat(name)
 			elif name.begins_with("doorpic_w"):
@@ -2686,6 +2690,9 @@ func build():
 		print("stand-in: ", standin_slots.size(), " storefront slots at ", pack_standin(), " px/m")
 		standin_quads()
 	var avoid = kiosks() if YEAR != 2026 else []
+	# the mall directory kiosks (both years) and, in 1995, Mr. Silverman's jewelry island; also
+	# writes GEN/directory.json for the map (tools/stores/directory/kiosk.gd, design/godot-directory.md)
+	avoid += load("res://tools/stores/directory/kiosk.gd").place(self)
 	place_fixtures(avoid)
 	# framed Courier ads on the bare walls (Steven, Oct 14: tools/stores/posters/posters.gd); 1990s ads,
 	# so not in 2026
