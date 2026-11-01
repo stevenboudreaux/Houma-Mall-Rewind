@@ -13,3 +13,9 @@
 **Guessed:** the plank size and colour, the band split, the letters' depth (7 cm), the oval's size.
 
 **Files:** `tools/stores/signs/fronts.gd` (foot_locker), `make_logos.py` (fl_*), materials `sg_fl_*` in `channel.gd`.
+
+## Inside (Nov 1, 2026, workstream G)
+Steven (Oct 28): "Foot Locker 1995 = its 2026 inside". The generic interior picture is replaced by the
+2026 store's inside (`tools/stores/fronts26/store.gd` `footlocker_inside()`, via `build_mall.gd`
+`interior()`): black walls of trainers on lit shelves, a referee-stripe header, a pale wood floor, a
+bench. Not walk-in. Evidence `wsG-1995-footlocker-unbaked.jpg`.

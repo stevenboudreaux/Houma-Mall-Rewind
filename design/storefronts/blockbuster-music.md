@@ -9,3 +9,11 @@
 **Guessed:** all sizes; the doors.
 
 **Files:** `tools/stores/signs/fronts.gd` (blockbuster), `make_logos.py` (more()), materials `sg_bb_*`.
+
+## Inside (Nov 1, 2026, workstream G)
+Steven (Oct 28): the interior "with the FYE-type front". Read as: a CD store inside of the FYE kind
+behind the existing front (the front's sign pass is kept). `fronts26/store.gd` `bbmusic_inside()`:
+navy walls of CD and tape racks to 2.4 m with yellow headers (media kit bays), two long rows of CD
+browser bins, three listening stations with headphones on posts, the counter at the back left.
+**Guessed:** all of it; and if Steven meant the front should change to an FYE-style front, that is not
+done (open question). Evidence `wsG-1995-blockbuster-unbaked.jpg`.

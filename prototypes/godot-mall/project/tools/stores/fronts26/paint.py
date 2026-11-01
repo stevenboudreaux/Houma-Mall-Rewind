@@ -442,8 +442,23 @@ def ref_stripe():
     save(im, "ref")
 
 
+def boxes():
+    """Payless' self-serve walls: shoe-box ends stacked in rows, orange, white, blue, brown with a
+    small white label each. One tile = 1.2 x 0.4 m (4 rows of 10 cm boxes, 6 across)."""
+    W, H = 768, 256
+    im = Image.new("RGB", (W, H), (60, 56, 52))
+    d = ImageDraw.Draw(im)
+    for r in range(4):
+        for c in range(6):
+            col = R.choice([(236, 120, 40), (244, 244, 240), (40, 70, 140), (138, 90, 48), (200, 30, 40), (30, 30, 34)])
+            x0, y0 = c * 128 + 2, r * 64 + 2
+            d.rectangle([x0, y0, x0 + 124, y0 + 60], fill=jit(col, 8))
+            d.rectangle([x0 + 40, y0 + 20, x0 + 84, y0 + 40], fill=(250, 250, 250))
+    save(noise(im, 2), "boxes")
+
+
 if __name__ == "__main__":
     for f in (brick, concrete, planks, gingham, beadboard, wave, crumple, travertine, tees, caps, bottles, accessories,
-              cookies, cookie_cakes, menus, posters, graffiti_shutter, jewelry, cakes, pretzels, billiard, ref_stripe):
+              cookies, cookie_cakes, menus, posters, graffiti_shutter, jewelry, cakes, pretzels, billiard, ref_stripe, boxes):
         f()
     print("wrote", len(os.listdir(OUT)), "files")

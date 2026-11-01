@@ -504,6 +504,10 @@ static func footlocker(sd, e):
 	band(sd, "#a8acb0", 3.2, 0.16, "f26_brushed")
 	glazing(0.2, 2.0, 3.2, "#2a2a2c", 0.3, "#2a2a2c", 0.0)
 	glazing(LN - 2.0, LN - 0.2, 3.2, "#2a2a2c", 0.3, "#2a2a2c", 0.0)
+	footlocker_inside()
+
+## Foot Locker's inside (also the 1995 store's: Steven, Oct 28 "Foot Locker 1995 = its 2026 inside").
+static func footlocker_inside():
 	var lk = {"kinds": ["trainer", "trainer", "trainer", "casual"], "cols": ["#f4f4f2", "#1c1c20", "#c8202c", "#1f3f8f", "#f2c81e", "#8a8a90"],
 		"trim": ["#1c1c20", "#f4f4f2"], "seed": 34}
 	var rng = RandomNumberGenerator.new()
@@ -715,6 +719,95 @@ static func zales(sd, e):
 	front_q(G, "f26_posters", 5.0, 6.0, 1.3, 2.6, 7.95, 0.75, 0.0, 1.0, 1.0)
 	ob_room(8.0)
 
+# ------------------------------------------------------------------ 1995 insides
+## Behind the 1995 sign-pass fronts of three stores (Steven's Oct 28 sprint, step 7), in place of
+## the generic interior picture: build_mall.gd interior() calls inside_1995 for these.
+const INSIDE_1995 = {"FOOT LOCKER": "footlocker_inside_95", "PAYLESS SHOES": "payless_inside", "BLOCKBUSTER MUSIC": "bbmusic_inside"}
+
+static func has_inside_1995(name):
+	return INSIDE_1995.has(name)
+
+static func inside_1995(b, g, a, n, t, Ln, sd):
+	bb = b
+	a0 = a
+	tt = t
+	nn = n
+	LN = Ln
+	FLIP = t.dot((-n).cross(UP)) < 0.0
+	G = g
+	GS = g + "_f26s"
+	GD = g + "_f26d"
+	load("res://tools/stores/fronts26/store.gd").call(INSIDE_1995[sd.name])
+
+static func footlocker_inside_95():
+	room(8.0, "#1a1a1c", "#c8b090", "white", 3.2)
+	footlocker_inside()
+
+## Payless ShoeSource, 1995: the self-serve store: low islands of shoe boxes with a sample pair on
+## top, box walls with sample shoes on the shelf above, try-on benches, floor mirrors; white walls,
+## a yellow header stripe, a grey vinyl floor (the chain's look of the period: guessed, no photo of
+## the Southland inside).
+static func payless_inside():
+	var D = 9.0
+	room(D, "#f4f2ec", "#b8b4ac", "white", 3.2, 1.1)
+	var lk = {"kinds": ["casual", "pump", "trainer", "loafer", "boot"], "cols": ["#1c1c20", "#5a3218", "#f4f4f2", "#8a1e2a", "#1f3f8f", "#c8a070"],
+		"trim": ["#f2c81e"], "seed": 4}
+	var rng = RandomNumberGenerator.new()
+	rng.seed = 4
+	for side in [["L", 0.04, 1.0], ["R", LN - 0.04, -1.0]]:
+		side_merch("f26_boxes", side[1], side[2], 1.0, D - 0.3, 0.05, 1.6, 1.2, 0.4)
+	back_merch("f26_boxes", 0.3, LN - 0.3, D, 0.05, 1.6, 1.2, 0.4)
+	# the sample shelf and the yellow stripe over the box walls
+	for side in [[0.04, 1.0], [LN - 0.04, -1.0]]:
+		side_q(G, "f26_ref_y", side[0] + 0.035 * side[1], 1.0, D, 2.2, 2.45, side[1], 0.0, 0.0, 1.0, 1.0)
+	var x = 1.6
+	while x < LN - 1.4:
+		for d in [2.4, 5.2]:
+			cbx("#e8e6e0", x - 1.0, 0.0, d - 0.45, 2.0, 0.9, 0.9)
+			goods(x, d, 1.9, 0.85, 0.9, ["#f08a2a", "#f4f4f2", "#2a4a8a", "#8a5a30", "#c8202c"], rng, 0.3, 0.12)
+			for k in 3:
+				SH.shoe(bb, P(x - 0.6 + k * 0.6, 1.02, d), (P(1, 0, 0) - P(0, 0, 0)), nn, lk, rng, 0.0)
+		x += 3.2
+	for k in 2:
+		SH.bench(bb, G, P(LN * 0.3 + k * LN * 0.4, 0, 7.4), (P(1, 0, 0) - P(0, 0, 0)), -nn, 1.6, Color("#c8202c"))
+	ob_room(D)
+
+## Blockbuster Music, 1995: a CD store in the chain's blue and purple (and FYE's later look, which
+## Steven asked for): long rows of CD browser bins down the floor, wall racks of CDs and tapes to
+## 2.4 m with category headers, listening stations with headphones on posts, the counter at the
+## back left (guessed from the chain's period photos, design/storefronts/blockbuster-music.md).
+static func bbmusic_inside():
+	var D = 9.0
+	room(D, "#2a2a6a", "#5a5a6a", "white", 3.2, 1.1)
+	var rng = RandomNumberGenerator.new()
+	rng.seed = 52
+	# wall racks
+	var rx = (P(1, 0, 0) - P(0, 0, 0))
+	var d = 1.0
+	while d + 1.2 < D:
+		K.bay(bb, G, GS, P(0.05, 0, d), -nn, rx, 1.2, [0.35, 0.75, 1.15, 1.55, 1.95], ["cd", "cd", "cd", "tape", "cd"], rng, 0.3)
+		K.bay(bb, G, GS, P(LN - 0.05, 0, d + 1.2), nn, -rx, 1.2, [0.35, 0.75, 1.15, 1.55, 1.95], ["cd", "cd", "tape", "cd", "cd"], rng, 0.3)
+		d += 1.25
+	cbx("#f2c81e", 0.06, 2.4, 1.0, 0.04, 0.3, D - 1.3)
+	cbx("#f2c81e", LN - 0.1, 2.4, 1.0, 0.04, 0.3, D - 1.3)
+	# browser rows down the middle
+	for row in [LN * 0.5 - 1.5, LN * 0.5 + 1.5]:
+		K.browser(bb, G, P(row - 0.0, 0, 1.8), -nn, rx, 5.0, rng, true)
+	# listening stations: black posts with headphones and a small screen
+	for k in 3:
+		var c = P(LN * 0.5, 0, 2.2 + k * 1.8)
+		col("#141414")
+		bb.cyl(GS, "vcolor", c, 0.15, 0.15, 0.05, 10, true, false)
+		bb.cyl(GS, "vcolor", c, 0.04, 0.04, 1.35, 8, false, false)
+		bx(GS, "vcolor", LN * 0.5 - 0.15, 1.35, 2.2 + k * 1.8 - 0.06, 0.3, 0.22, 0.12)
+		col("#2a2a2a")
+		bb.cyl(GS, "vcolor", c + UP * 1.2 + nn * 0.12, 0.07, 0.07, 0.04, 10, true, true)
+		bb.cur_color = Color.WHITE
+	# the counter at the back left
+	cbx("#3a2a6a", 0.6, 0.0, D - 1.6, 3.0, 1.0, 0.7)
+	cbx("#f2c81e", 0.58, 1.0, D - 1.62, 3.04, 0.04, 0.74)
+	ob_room(D)
+
 # ------------------------------------------------------------------ shared pieces
 ## A black riveted steel grid frame over the whole front (Aéropostale): verticals every 1.25 m,
 ## rails at 0.4 m and the head, rivet dots.
@@ -806,7 +899,7 @@ static func fill_mat(m, key, b):
 				m.uv1_triplanar = true
 				var s = {"brick": Vector3(1.0 / 0.9, 1.0 / 0.6, 1.0 / 0.9), "concrete": Vector3(0.5, 0.5, 0.5), "planks": Vector3(1.0 / 1.2, 1.0 / 0.6, 1.0 / 1.2), "travertine": Vector3(0.8, 0.8, 0.8)}[key]
 				m.uv1_scale = s
-		"tees", "tees_dark", "caps", "bottles", "accessories", "jewelry", "cakes", "menus", "posters", "felt", "banners", "shutter", "cookies", "cookie_cakes":
+		"tees", "tees_dark", "caps", "bottles", "boxes", "accessories", "jewelry", "cakes", "menus", "posters", "felt", "banners", "shutter", "cookies", "cookie_cakes":
 			m.albedo_texture = b.tex("f26/%s.png" % key); m.roughness = 0.6
 		"posters_lit":
 			m.albedo_texture = b.tex("f26/posters.png"); m.roughness = 0.4
@@ -822,6 +915,8 @@ static func fill_mat(m, key, b):
 			m.albedo_color = Color("#8cc63a"); m.roughness = 0.8
 		"ref":
 			m.albedo_texture = b.tex("f26/ref.png"); m.roughness = 0.5
+		"ref_y":
+			m.albedo_color = Color("#f2c81e"); m.roughness = 0.5
 		"glass":
 			m.albedo_color = Color(0.86, 0.92, 0.94, 0.18); m.roughness = 0.05; m.metallic_specular = 0.9
 			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
