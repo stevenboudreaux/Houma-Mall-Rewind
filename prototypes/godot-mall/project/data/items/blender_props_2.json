@@ -78,6 +78,25 @@
    }
   },
   {
+   "id": "bl_oj_cup",
+   "name": "Orange Julius",
+   "class": "hand",
+   "scene": "res://models/bl_oj_cup/bl_oj_cup.glb",
+   "icon": "res://models/bl_oj_cup/bl_oj_cup_icon.png",
+   "year": 1995,
+   "store": "ORANGE JULIUS",
+   "place": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     12.95,
+     1.0,
+     8.66
+    ],
+    "yaw": 200
+   }
+  },
+  {
    "id": "bl_tt_lomein",
    "name": "Lo mein",
    "class": "hand",
