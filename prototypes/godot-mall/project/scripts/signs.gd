@@ -180,6 +180,11 @@ func _build_play_ui() -> void:
 ## front and facing it. Sets play_id and shows the Play button.
 func _near_check() -> void:
 	var cam := get_viewport().get_camera_3d()
+	# V (design/godot-avatar.md): in third person the view camera is behind the avatar; standing at a
+	# cabinet is judged from the player's eye (player.gd cam), as in first person
+	var _pl = get_tree().get_first_node_in_group("mall_player")
+	if _pl and "cam" in _pl and _pl.cam:
+		cam = _pl.cam
 	var found = ""
 	var fwd = null
 	if cam != null:

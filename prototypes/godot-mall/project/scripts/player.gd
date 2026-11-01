@@ -18,6 +18,10 @@ var jump_locked := false   # inside the Stockrooms on a visitor's browser: no Ju
 ## mall.tickets), set by scripts/interact.gd, the action button / pick-ups / inventory system.
 var mall = null
 var interact: Node = null
+## V (design/godot-avatar.md): the avatar and the first / third person switch (scripts/avatar.gd);
+## move_scale slows walking in third person to a walking pace (1.0 in first person, as before).
+var avatar: Node = null
+var move_scale := 1.0
 ## Walkable map tiles (rows of "0"/"1"), and how map tiles map to metres.
 @export var walk_rows: PackedStringArray = []
 @export var map_origin := Vector2(148, 100)
@@ -172,6 +176,11 @@ func _ready() -> void:
 	interact = load("res://scripts/interact.gd").new()
 	interact.name = "Interact"; interact.player = self
 	add_child(interact)
+	# V: the avatar, its creator and the view switch (scripts/avatar.gd), after Interact (it moves the
+	# held item into the avatar's hand in third person)
+	avatar = load("res://scripts/avatar.gd").new()
+	avatar.name = "Avatar"; avatar.player = self
+	add_child(avatar)
 	_light_btn_ok = buttons[2].visible
 	owner_hud_sync()
 	_spawn_1995_life()
@@ -554,7 +563,7 @@ func _process(dt: float) -> void:
 		var fwd := -transform.basis.z
 		var right := transform.basis.x
 		var run := RUN if (rmb_run or Input.is_physical_key_pressed(KEY_X) or Input.is_physical_key_pressed(KEY_SHIFT)) else 1.0
-		var step := (right * iv.x - fwd * iv.y) * SPEED * run * dt
+		var step := (right * iv.x - fwd * iv.y) * SPEED * run * dt * move_scale   # V: move_scale (third person)
 		_try_move(Vector3(step.x, 0, 0))
 		_try_move(Vector3(0, 0, step.z))
 	_update_prompt()
