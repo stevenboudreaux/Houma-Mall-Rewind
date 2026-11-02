@@ -2179,12 +2179,11 @@ func cinema_front(g, a, n, t, Ln):
 ## The Concourse's island under its lit ring (decision 7). Until Oct 16 2026 it was the Mr. Silverman
 ## jewelry island; Steven: "what was actually right here was the information desk ... we don't need
 ## those glass cases up top, and it actually extended a little bit" (east, toward the cookie shop).
-## Mr. Silverman's was deeper in the mall: re-add him when the kiosks are done (handoff notes).
+## Steven, Nov 2: there was no jewelry island here or anywhere in the concourse, under either name
+## (Mr. Silverman / Mr. Goldman): gold_kiosk() and island_kiosk() are gone (design/godot-directory.md).
 ## Built dynamic (dyn_info, lit by the bake's probes) so the change needs no rebake.
 func kiosks():
 	var centers = []
-	# the gold kiosk that stood in front of Gumballs (east of the cookie shop) is gone: Steven,
-	# Oct 8 ("remove the Goldman's kiosk in front of Gumballs"); gold_kiosk() is kept for now
 	var ms = Vector3(-52.0, 0, 54.0)
 	force_dyn = true
 	info_desk("info", ms + Vector3(1.2, 0, 0), ms)
@@ -2225,61 +2224,6 @@ func info_desk(g, c, rc):
 		cyl(g, "metal_dark", rc + Vector3(sd * 1.1, by + 0.29, 0), 0.006, 0.006, 6.5 - by - 0.29, 4, false)
 		label("Information", "serif", "#efe2c2", rc + Vector3(0, by, sd * 0.045), Vector3(0, 0, sd), 2.2, 0.26)
 	obst(["rect", c.x - sx * 0.5 - 0.5, c.z - sz * 0.5 - 0.5, c.x + sx * 0.5 + 0.5, c.z + sz * 0.5 + 0.5])
-
-func gold_kiosk(g, c, t, n):
-	# two runs of waist-high cases at a right angle: one along the stores, one out into the hall
-	var runs = [[c + t * 1.3, t, 2.6], [c + n * 0.9, n, 1.8]]
-	for rr in runs:
-		var mid = rr[0]
-		var dirv = rr[1]
-		var Lr = rr[2]
-		var other = Vector3(-dirv.z, 0, dirv.x)
-		box(g, "black", mid + Vector3(0, 0.38, 0), abs_size(dirv, Lr, 0.76, 0.62, other))
-		box(g, "velvet", mid + Vector3(0, 0.77, 0), abs_size(dirv, Lr - 0.08, 0.02, 0.54, other))
-		box(g, "brass", mid + Vector3(0, 1.0, 0), abs_size(dirv, Lr, 0.035, 0.64, other))
-		box("glass", "glass", mid + Vector3(0, 0.88, 0), abs_size(dirv, Lr, 0.22, 0.6, other), Transform3D.IDENTITY, ["-y"], true)
-		for k in 6:
-			cur_color = Color("#e8c766")
-			box(g, "vcolor", mid + dirv * (-Lr * 0.4 + k * Lr * 0.16) + Vector3(0, 0.8, 0), Vector3(0.08, 0.03, 0.08))
-		cur_color = Color.WHITE
-	# black track-light gantry
-	var p0 = c - n * 0.3 - t * 0.3
-	var corners = [p0, p0 + t * 3.2, p0 + n * 2.4, p0 + t * 3.2 + n * 2.4]
-	for q in corners:
-		box(g, "black", q + Vector3(0, 1.25, 0), Vector3(0.06, 2.5, 0.06))
-	for pr in [[corners[0], corners[1]], [corners[2], corners[3]], [corners[0], corners[2]], [corners[1], corners[3]]]:
-		var mm = (pr[0] + pr[1]) * 0.5 + Vector3(0, 2.5, 0)
-		var dv = (pr[1] - pr[0])
-		box(g, "black", mm, abs_size(dv.normalized(), dv.length(), 0.06, 0.06, Vector3(-dv.normalized().z, 0, dv.normalized().x)))
-	for k in 4:
-		var lp = p0 + t * (0.5 + k * 0.75) + n * 1.2 + Vector3(0, 2.4, 0)
-		box(g, "downlight", lp, Vector3(0.1, 0.1, 0.1))
-	add_omni(c + t * 1.2 + n * 0.9 + Vector3(0, 2.2, 0), 0.7, 4.0, Color(1.0, 0.93, 0.8))
-	obst(["rect", min(corners[0].x, corners[3].x) - 0.3, min(corners[0].z, corners[3].z) - 0.3, max(corners[0].x, corners[3].x) + 0.3, max(corners[0].z, corners[3].z) + 0.3])
-
-func island_kiosk(g, c):
-	var sx = 3.4
-	var sz = 1.8
-	for side in [[Vector3(0, 0, -sz * 0.5), Vector3(1, 0, 0), sx], [Vector3(0, 0, sz * 0.5), Vector3(1, 0, 0), sx], [Vector3(-sx * 0.5, 0, 0), Vector3(0, 0, 1), sz], [Vector3(sx * 0.5, 0, 0), Vector3(0, 0, 1), sz]]:
-		var mid = c + side[0]
-		var dv = side[1]
-		var ov = Vector3(-dv.z, 0, dv.x)
-		box(g, "column", mid + Vector3(0, 0.38, 0), abs_size(dv, side[2], 0.76, 0.5, ov))
-		box(g, "velvet", mid + Vector3(0, 0.77, 0), abs_size(dv, side[2] - 0.08, 0.02, 0.42, ov))
-		box("glass", "glass", mid + Vector3(0, 0.9, 0), abs_size(dv, side[2], 0.26, 0.5, ov), Transform3D.IDENTITY, ["-y"], true)
-	for qx in [-1.0, 1.0]:
-		for qz in [-1.0, 1.0]:
-			var q = c + Vector3(qx * (sx * 0.5 + 0.1), 0, qz * (sz * 0.5 + 0.1))
-			box(g, "column", q + Vector3(0, 0.4, 0), Vector3(0.6, 0.8, 0.6))
-			box("glass", "glass", q + Vector3(0, 1.3, 0), Vector3(0.58, 1.0, 0.58), Transform3D.IDENTITY, [], true)
-			box(g, "lane_ceiling", q + Vector3(0, 1.82, 0), Vector3(0.62, 0.04, 0.62))
-			box(g, "velvet", q + Vector3(0, 0.82, 0), Vector3(0.54, 0.02, 0.54))
-	cur_color = Color("#20242e")
-	box(g, "vcolor", c + Vector3(0, 1.95, 0), Vector3(1.8, 0.35, 0.06))
-	cur_color = Color.WHITE
-	label("Mr. Silverman", "serif", "#e8dcc0", c + Vector3(0, 1.95, 0.04), Vector3(0, 0, 1), 1.6, 0.2)
-	label("Mr. Silverman", "serif", "#e8dcc0", c + Vector3(0, 1.95, -0.04), Vector3(0, 0, -1), 1.6, 0.2)
-	obst(["rect", c.x - sx * 0.5 - 0.6, c.z - sz * 0.5 - 0.6, c.x + sx * 0.5 + 0.6, c.z + sz * 0.5 + 0.6])
 
 ## A floating white ring lit from inside, hung on cables, with small spots.
 func lit_ring(g, c):
@@ -2746,7 +2690,7 @@ func build():
 		print("stand-in: ", standin_slots.size(), " storefront slots at ", pack_standin(), " px/m")
 		standin_quads()
 	var avoid = kiosks() if YEAR != 2026 else []
-	# the mall directory kiosks (both years) and, in 1995, Mr. Silverman's jewelry island; also
+	# the mall directory kiosks (both years); also
 	# writes GEN/directory.json for the map (tools/stores/directory/kiosk.gd, design/godot-directory.md)
 	avoid += load("res://tools/stores/directory/kiosk.gd").place(self)
 	place_fixtures(avoid)

@@ -29,3 +29,6 @@ Steven (Nov 1): "the shapes are right; texture them more." New source: the store
 - **The display in front of Chick-fil-A (the ad):** a white rolling two-tier table of mesh and clear bags with a CONCEPTS card on a stem, in the concourse about 3 m out from the Chick-fil-A front (x -98, z 56.8). Its exact spot and look are guessed. It is built by `concepts()` (group `w9c_display`), so it sits in Concepts' wing.
 - **Period check (1995):** mesh and clear book bags were the Lafourche/Terrebonne school rule in the 1990s (the ad); spatter paint, vinyl tile: period. No anachronism.
 - Code: `wave9.gd` `concepts()`, `display()`; materials `w9_c_*`, `w9_concepts_sign_serif`; textures `tools/stores/small/paint9_d.py`. Evidence: `production/qa/evidence/wsD-concepts-preview-unbaked.jpg`, `wsD-lions-share-concepts-closeups-unbaked.jpg`.
+
+## Nov 2, 2026: the display in front of Chick-fil-A removed
+Steven (Nov 2): remove the Concepts display kiosk in front of Chick-fil-A (workstream D's rolling table from the ad, `wave9.gd display()`). Removed; the Concepts store itself stays as built. Wing 2's day lightmap (1995) keeps its baked shadow until the next bake.

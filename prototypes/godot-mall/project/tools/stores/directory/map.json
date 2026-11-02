@@ -3285,35 +3285,6 @@
      ],
      "vacant": false,
      "zone": "H5"
-    },
-    {
-     "cats": [
-      "jewelry"
-     ],
-     "id": "x_mr_silverman",
-     "jump": [
-      2,
-      -41.0,
-      56.5,
-      0.0
-     ],
-     "kiosk": true,
-     "known": true,
-     "label": [
-      -41.0,
-      54.0
-     ],
-     "name": "Mr. Silverman",
-     "num": 91,
-     "rects": [
-      [
-       -42.7,
-       53.1,
-       -39.3,
-       54.9
-      ]
-     ],
-     "vacant": false
     }
    ],
    "title": "Merchant List & Map"

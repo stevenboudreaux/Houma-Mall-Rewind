@@ -41,7 +41,7 @@ const CROWN_RISE := 0.13
 const CROWN_D := 0.10
 
 ## Called once per wing build (tools/build_mall.gd, after the halls): builds this year's kiosks that
-## stand in this wing, Mr. Silverman's island in 1995, and writes GEN/directory.json for the map.
+## stand in this wing, and writes GEN/directory.json for the map.
 ## Returns the centres to keep the benches and planters away from.
 static func place(b) -> Array:
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(DATA))
@@ -66,21 +66,8 @@ static func place(b) -> Array:
 		node.owner = b.mall
 		centers.append(c)
 		k += 1
-	# Mr. Silverman's jewelry island, back in 1995 (it was taken out Oct 16 when the island under
-	# the lit ring became the info desk). The 1994 Merchant List & Map puts #91, "Mr. Goldman",
-	# just east of E = Information in the concourse: that spot (design/godot-directory.md).
-	if b.YEAR != 2026:
-		for x in data.get(y, {}).get("extras", []):
-			if not x.get("kiosk", false):
-				continue
-			var c := Vector3(float(x.x), 0, float(x.z))
-			var zid = b.zone_at(c.x, c.z)
-			if zid == "misc" or not b.in_wing(b.wing_of_zone(zid)):
-				continue
-			b.force_dyn = true
-			b.island_kiosk("silverman", c)
-			b.force_dyn = false
-			centers.append(c)
+	# (Mr. Silverman's jewelry island, re-added at the 1994 list's #91 spot, was removed Nov 2:
+	# Steven, no jewelry island under either name; design/godot-directory.md)
 	# the map's data, both years, from the layout files (map_data.gd)
 	var md: Dictionary = load("res://tools/stores/directory/map_data.gd").compute()
 	DirAccess.make_dir_recursive_absolute(b.GEN)

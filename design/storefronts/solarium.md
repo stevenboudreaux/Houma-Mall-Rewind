@@ -25,3 +25,6 @@
 
 ## Files
 `tools/stores/small/wave9.gd` (`solarium()`, materials `w9_sol_*`). Hooks unchanged in `tools/build_mall.gd` and `tools/open_interiors.py`. Evidence: `production/qa/evidence/wsD-solarium-preview-unbaked.jpg`, `wsD-solarium-ingame-unbaked.jpg`.
+
+## Nov 2, 2026: answered (Steven)
+Solarium is **a women's clothing store, not a chain**, and not "Cleo" (he never meant a chain). The Cleo question is closed; nothing to ask. No geometry change: the Nov 1 build (a generic teal clothing shop under its own name) already fits; the stock reads as women's clothing.

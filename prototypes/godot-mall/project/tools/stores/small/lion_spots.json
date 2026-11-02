@@ -1,0 +1,11 @@
+{
+  "_note": "Lion's Share (1995, wing 2, store n36): the two lion spots either side of the door, kept for the Blender lion (models/bl_ls_lion) after workstream D's built-in lions were removed Nov 2, 2026. pos = floor point (m, world); the lion looks along +z (yaw_deg 0 = facing +z, out across the hall); 'mirror' true = the right-hand lion, mirrored (tail on the outside). D's size: lion 1.45 m tall on a 0.55 m plinth (0.62 x 0.72 m). Logged by the build as LION_SPOT (wave9.gd lions_share()). design/storefronts/lions-share.md",
+  "year": 1995,
+  "wing": 2,
+  "spots": [
+    {"side": "left",  "pos": [-47.6, 0.0, 48.55], "yaw_deg": 0.0, "right_dir": [-1, 0, 0], "mirror": false},
+    {"side": "right", "pos": [-43.9, 0.0, 48.55], "yaw_deg": 0.0, "right_dir": [1, 0, 0], "mirror": true}
+  ],
+  "plinth": {"h": 0.55, "w": 0.62, "d": 0.72},
+  "lion_h": 1.45
+}

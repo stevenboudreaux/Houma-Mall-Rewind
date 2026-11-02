@@ -5,7 +5,7 @@ Workstream A, Nov 1 2026 (branch `ws/a-directory`). Steven's top ask that day:
 2. Kiosks in both years.
 3. A map of every stall that jumps you to a store.
 4. A 1995 / 2026 toggle, each year looking like its own real directory.
-5. Mr. Silverman's jewelry island back in 1995.
+5. ~~Mr. Silverman's jewelry island back in 1995.~~ Withdrawn Nov 2 (below).
 
 ## Sources
 - **The 2026 kiosk** (refs pack, `refs/new/directory/`):
@@ -218,6 +218,11 @@ goes with the store, not the spot. Differences:
   2018 walkthrough remembered "Mr. Silverman", and the 1994 list prints "Mr. Goldman" (#91). The
   game keeps **Mr. Silverman** until Steven says otherwise; the label is in `directory_data.json`
   ("extras") and `island_kiosk()`.
+- **Answered Nov 2 (Steven): there was no jewelry island, under either name.** The island, its
+  "Mr. Silverman" labels, `island_kiosk()` and the old `gold_kiosk()` ("Mr. Goldman") are removed from
+  the build, and #91 is off the 1995 directory (`directory_data.json` "extras" is empty; `map.json`,
+  `tex/dir/panel_1995.png` and `hotspots.json` regenerated), so the map and the mall agree. Wing 2's
+  day lightmap carries the island's baked shadow until the next bake.
 
 ## Files
 - **Kiosk and data:**

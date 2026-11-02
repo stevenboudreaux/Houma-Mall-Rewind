@@ -97,9 +97,7 @@
    "MILLER'S OUTPOST": [23, "unisex", "Miller's Outpost"],
    "SPECIAL TEES": [73, "unisex", "Special Tees"]
   },
-  "extras": [
-   {"name": "Mr. Silverman", "num": 91, "cat": "jewelry", "x": -41.0, "z": 54.0, "w": 3.4, "d": 1.8, "kiosk": true, "note": "the 1994 list's #91 is 'Mr. Goldman', at this spot (east of E = Information)"}
-  ],
+  "extras": [],
   "places": [
    ["A", "Main Entrance", 33.0, 0.0],
    ["B", "Center Court", 1.0, -2.0],

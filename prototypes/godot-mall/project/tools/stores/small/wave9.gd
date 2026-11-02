@@ -197,32 +197,8 @@ static func concepts(b, a, t, n, W, D, rng):
 	AK.fourway(b, P(a, t, n, W * 0.5 + 1.2, 0, 6.4), 0.0, 0)
 	AK.table(b, P(a, t, n, W * 0.5, 0, 9.2), 0.0, 1.5, 0.9, 1, "w8_walnut")
 	AK.cash_wrap(b, P(a, t, n, 0.9, 0, D - 2.4), t, n, 2.4, 0.6, "w9_plum")
-	# Nov 1, 2026 (workstream D): the store's 1990s Courier ad (refs/era_1995/ads/ad_6.jpg) says
-	# "See our display in front of Chick-fil-A": a rolling display of school mesh bags out in the
-	# concourse in front of Chick-fil-A (x -102..-94 on the same z = 60 front), with a card.
-	display(b, Vector3(-98.0, 0.0, 56.8), t, n)
-
-## The Concepts display in the concourse (the ad: "See our display in front of Chick-fil-A"):
-## a white rolling table with two tiers of mesh and clear bags, a sign card on a stem.
-## Position guessed (in front of the Chick-fil-A front, out of its way).
-static func display(b, c, t, n):
-	var G = "w9c_display"
-	var o = c - t * 0.8 - n * 0.35
-	K.lbox(b, G, "w8_white", o, t, n, 0.0, 0.12, 0.0, 1.6, 0.06, 0.7)
-	K.lbox(b, G, "w8_white", o, t, n, 0.05, 0.75, 0.05, 1.5, 0.05, 0.6)
-	for q in [[0.05, 0.05], [1.5, 0.05], [0.05, 0.6], [1.5, 0.6]]:
-		K.lbox(b, G, "md_chrome", o, t, n, q[0], 0.0, q[1], 0.05, 0.8, 0.05)
-	# bags standing on both tiers, a strip of the bag wall on each long face
-	for y in [[0.18, 0.7], [0.8, 1.32]]:
-		for sg in [1.0, -1.0]:
-			K.fq(b, G, "w9_c_bags", c - t * 0.8 + n * (0.3 * sg), t, n * sg, 0.0, 1.6, y[0], y[1], 0.0, 0.0, 0.0, 0.4, 0.5)
-		b.box(G, "w9_c_bagtop", c + UP * (y[1] - 0.04), b.abs_size(t, 1.6, 0.08, 0.6, n))
-	# the card on its stem: CONCEPTS (the sign face)
-	b.cyl(G, "md_chrome", c + UP * 1.32, 0.012, 0.012, 0.45, 8, false, false)
-	var cc = c + UP * 1.86
-	for sg in [1.0, -1.0]:
-		K.fq(b, G, "w9_concepts_sign_serif", cc - t * 0.45 + n * (0.006 * sg), t, n * sg, 0.0, 0.9, -0.085, 0.085, 0.0)
-	K.ob(b, o, o + t * 1.6 + n * 0.7, 0.1)
+	# (Workstream D's rolling display of mesh bags "in front of Chick-fil-A", after the store's Courier
+	# ad, was removed Nov 2: Steven. The store itself stays; design/storefronts/concepts.md.)
 
 ## A deep white shadow box from u0 to u1 behind glass: the solids standing in it, lit from
 ## above. k picks the pair (0: sphere and cone; 1: cube and cylinder).
@@ -339,13 +315,14 @@ static func lions_share(b, a, t, n, W, D, rng):
 		b.box(F, "w8_dark_wood", P(a, t, n, du + s * (dw * 0.5 + 0.06), 1.2, -0.1), b.abs_size(t, 0.12, 2.4, 0.24, n), Transform3D.IDENTITY, ["-y"])
 		coach_lamp(b, F, P(a, t, n, du + s * (dw * 0.5 + 0.55), 2.0, -0.38), n)
 	W8.sign_q(b, F, "w9_plaque", a, t, n, W - 2.7, 1.3, 2.25, 3.88, -0.24)
-	# Nov 1, 2026 (Steven: "add the gold lion statues out front, as in the 2D game"): a gold
-	# lion sitting on a dark plinth either side of the door, looking straight out across the
-	# hall (index.html: the photo of a seated gold lion, "stands either side of the door (the
-	# right one mirrored)"). Sculpted from rounded solids; the size is a guess.
+	# The lions (Nov 2, Steven): workstream D's built-in gold lions are removed; a Blender lion is
+	# coming. Their spots, one either side of the door, are kept for it: floor point
+	# P(a, t, n, du + sg * (dw * 0.5 + 1.25), 0, -0.55) for sg = -1, +1, the lion's right-hand side
+	# along t * sg, looking along n (out across the hall), 1.45 m tall on a 0.55 m plinth.
+	# World values: tools/stores/small/lion_spots.json (design/storefronts/lions-share.md).
 	for sg in [-1.0, 1.0]:
-		var lu = du + sg * (dw * 0.5 + 1.25)
-		lion(b, "w9l_lions", P(a, t, n, lu, 0, -0.55), t * sg, n, 1.45)
+		var lp = P(a, t, n, du + sg * (dw * 0.5 + 1.25), 0, -0.55)
+		print("LION_SPOT sg=%d pos=%s look=%s right=%s yaw_deg=%.1f" % [int(sg), lp, n, t * sg, rad_to_deg(atan2(n.x, n.z))])
 	# the passage: brick walls, a low dark ceiling, red carpet
 	var cg = "w9l_shell"
 	for s in [-1.0, 1.0]:
@@ -387,79 +364,6 @@ static func lions_share(b, a, t, n, W, D, rng):
 	for c in [[3.0, 6.9], [9.0, 6.9]]:
 		var l = b.add_omni(P(a, t, n, c[0] * ks, 2.3, c[1]), 0.45, 6.0, Color(1.0, 0.78, 0.5))
 		b.tag(l, "", 0.35, 0.5)
-
-## An ellipsoid at c with semi-axes along the columns of `bs` (each scaled to its radius),
-## smooth normals. For the Lion's Share lions.
-static func ellipsoid(b, G, m, c, bs, rings = 10, segs = 16):
-	var s = b.st(G, m)
-	var inv_t = bs.inverse().transposed()
-	var pt = func(i, j):
-		var th = -PI * 0.5 + PI * float(i) / rings
-		var ph = TAU * float(j) / segs
-		var u = Vector3(cos(th) * cos(ph), sin(th), cos(th) * sin(ph))
-		return [c + bs * u, (inv_t * u).normalized()]
-	for i in rings:
-		for j in segs:
-			var q00 = pt.call(i, j); var q01 = pt.call(i, j + 1)
-			var q10 = pt.call(i + 1, j); var q11 = pt.call(i + 1, j + 1)
-			var fn = (q00[1] + q01[1] + q10[1] + q11[1]).normalized()
-			b._tri_n(s, [q00[0], q01[0], q11[0]], [q00[1], q01[1], q11[1]], [Vector2(0, 0), Vector2(1, 0), Vector2(1, 1)], fn)
-			b._tri_n(s, [q00[0], q11[0], q10[0]], [q00[1], q11[1], q10[1]], [Vector2(0, 0), Vector2(1, 1), Vector2(0, 1)], fn)
-
-## A seated gold lion on a dark plinth, at c (floor), r its right-hand side (the tail's side),
-## f the way it looks; `hgt` the lion's height (plinth not counted). After the 2D game's photo:
-## a full curly mane, the chest upright, the front legs straight down to big paws, the
-## haunches round either side, the tail curled round on the plinth.
-static func lion(b, G, c, r, f, hgt):
-	var ph = 0.55
-	var r2 = r.normalized()
-	b.box(G, "w9_lion_plinth", c + UP * (ph * 0.5), b.abs_size(r2, 0.62, ph, 0.72, f), Transform3D.IDENTITY, ["-y"])
-	b.box(G, "w9_lion_plinth", c + UP * (ph + 0.02), b.abs_size(r2, 0.68, 0.04, 0.78, f))
-	K.ob(b, c - r2 * 0.34 - f * 0.4, c + r2 * 0.34 + f * 0.4, 0.06)
-	var k = hgt / 1.0
-	var o = c + UP * (ph + 0.04)
-	var M = "w9_lion_gold"
-	# [centre (r, y, f), radii (r, y, f), tilt about r]
-	var parts = [
-		[Vector3(0.0, 0.34, -0.04), Vector3(0.15, 0.27, 0.17), -0.25],     # chest and body
-		[Vector3(-0.14, 0.15, -0.1), Vector3(0.11, 0.15, 0.2), 0.0],       # haunches
-		[Vector3(0.14, 0.15, -0.1), Vector3(0.11, 0.15, 0.2), 0.0],
-		[Vector3(-0.075, 0.21, 0.12), Vector3(0.05, 0.21, 0.055), 0.08],    # front legs
-		[Vector3(0.075, 0.21, 0.12), Vector3(0.05, 0.21, 0.055), 0.08],
-		[Vector3(-0.08, 0.03, 0.17), Vector3(0.058, 0.035, 0.085), 0.0],   # paws
-		[Vector3(0.08, 0.03, 0.17), Vector3(0.058, 0.035, 0.085), 0.0],
-		[Vector3(-0.17, 0.035, 0.06), Vector3(0.05, 0.035, 0.09), 0.0],    # hind paws
-		[Vector3(0.17, 0.035, 0.06), Vector3(0.05, 0.035, 0.09), 0.0],
-		[Vector3(0.0, 0.6, 0.0), Vector3(0.18, 0.2, 0.13), 0.1],           # mane
-		[Vector3(0.0, 0.47, 0.05), Vector3(0.15, 0.13, 0.12), 0.3],        # mane over the chest
-		[Vector3(0.0, 0.62, 0.09), Vector3(0.1, 0.11, 0.1), 0.0],          # head
-		[Vector3(0.0, 0.575, 0.17), Vector3(0.062, 0.05, 0.06), 0.0],      # muzzle
-		[Vector3(0.0, 0.6, 0.215), Vector3(0.025, 0.018, 0.015), 0.0],     # nose
-		[Vector3(-0.072, 0.715, 0.06), Vector3(0.032, 0.035, 0.02), 0.0],  # ears
-		[Vector3(0.072, 0.715, 0.06), Vector3(0.032, 0.035, 0.02), 0.0],
-		[Vector3(0.23, 0.03, -0.02), Vector3(0.03, 0.026, 0.17), 0.0],     # tail round the plinth
-		[Vector3(0.19, 0.04, 0.16), Vector3(0.04, 0.035, 0.04), 0.0],      # its tuft
-	]
-	for q in parts:
-		var cc = o + (r2 * q[0].x + UP * q[0].y + f * q[0].z) * k
-		var tilt = Basis(r2, q[2])
-		var bs = Basis(tilt * r2 * q[1].x * k, tilt * UP * q[1].y * k, tilt * f * q[1].z * k)
-		ellipsoid(b, G, M, cc, bs)
-	# the mane's locks: two rings of flat, overlapping tufts round the face, each tipped down and
-	# out like the photo's flowing mane (not round curls)
-	for ring in [[0.165, 16, 0.03, 0.05, 0.015], [0.125, 13, 0.07, 0.04, 0.03]]:
-		for i in ring[1]:
-			var ang = TAU * (i + 0.5 * float(ring[0] < 0.15)) / ring[1]
-			if sin(ang) < -0.75:
-				continue    # the chin: no locks under it
-			var radial = (UP * sin(ang) + r2 * cos(ang)).normalized()
-			var cc = o + (UP * 0.6 + radial * ring[0] + f * ring[2]) * k
-			var down = (radial * 0.5 - UP).normalized()
-			var side = down.cross(f).normalized()
-			ellipsoid(b, G, M, cc, Basis(side * ring[3] * k, down * ring[3] * 1.8 * k, f * ring[4] * k), 6, 8)
-	# the eyes, dark
-	for sx in [-0.035, 0.035]:
-		ellipsoid(b, G, "md_black", o + (r2 * sx + UP * 0.645 + f * 0.185) * k, Basis(r2 * 0.012 * k, UP * 0.008 * k, f * 0.006 * k), 4, 6)
 
 # ------------------------------------------------------------------ American Bank
 ## A white stucco front, the name in heavy rounded white letters on the shaded wall above, one

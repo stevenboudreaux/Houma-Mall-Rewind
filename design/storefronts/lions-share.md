@@ -33,3 +33,6 @@ Steven (Nov 1): "the crest is fine; add the gold lion statues out front, as in t
 seated anatomy on the side and back. It is not in the scene yet: it replaces `wave9.gd lion()` when the
 integration session swaps it in, at D's two spots (`P(lu, 0, -0.55)`, the right one mirrored). Size guess
 to settle: the model is ~0.95 m on a 0.32 m plinth, D's are 1.45 m on 0.55 m.
+
+## Nov 2, 2026: D's lions removed; Blender lion pending
+Steven (Nov 2): remove the gold lion statues (workstream D's `wave9.gd lion()`, sculpted from rounded solids). Removed from the build with `lion()` and its `ellipsoid()` helper; the spots either side of the door are empty. The crest (plaque) and the sign stay. **The Blender lion comes in the next job:** its two spots are kept in `tools/stores/small/lion_spots.json` (world floor points, the facing yaw, the mirror flag; logged by the build as `LION_SPOT`) and in a comment in `wave9.gd lions_share()`. Wing 2's day lightmap still carries the removed lions' baked shadows until the next bake.

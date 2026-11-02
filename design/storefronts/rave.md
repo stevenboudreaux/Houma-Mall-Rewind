@@ -30,3 +30,6 @@ Steven (Nov 1): "mostly party stuff, a few black items", then: "rave is a clothi
 - **Period check (1995):** slip dresses, sequins and satin going-out tops are mid-1990s juniors' and women's fashion; no anachronism.
 - **Unchanged:** the front (the black box sign with RAVE in pink, Oct 7 sign pass).
 - Code: `wave9.gd` `rave()`, materials `w9_rave_dresses`, `w9_rave_rack`. Evidence: `production/qa/evidence/wsD-rave-preview-unbaked.jpg`, `wsD-rave-ingame-unbaked.jpg`.
+
+## Nov 2, 2026: confirmed (Steven)
+Rave is **women's going-out clothes, with a few black items**: what the Nov 1 build shows. No geometry change.
