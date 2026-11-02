@@ -36,3 +36,20 @@ to settle: the model is ~0.95 m on a 0.32 m plinth, D's are 1.45 m on 0.55 m.
 
 ## Nov 2, 2026: D's lions removed; Blender lion pending
 Steven (Nov 2): remove the gold lion statues (workstream D's `wave9.gd lion()`, sculpted from rounded solids). Removed from the build with `lion()` and its `ellipsoid()` helper; the spots either side of the door are empty. The crest (plaque) and the sign stay. **The Blender lion comes in the next job:** its two spots are kept in `tools/stores/small/lion_spots.json` (world floor points, the facing yaw, the mirror flag; logged by the build as `LION_SPOT`) and in a comment in `wave9.gd lions_share()`. Wing 2's day lightmap still carries the removed lions' baked shadows until the next bake.
+
+## Nov 2, 2026 (workstream L): the Blender lion, third pass, placed
+Steven: pass two "still reads soft and blobby"; D's built-in lions are being removed (session D48), so the Blender
+lion is the only one that ships. Rebuilt from scratch (`design/godot-blender-pipeline.md` "The lion, third pass"):
+a carved relief face, ~140 draped, corrugated mane locks in tiers, separate legs and toed paws, gold driven by
+the baked AO and curvature. **Placed** at D's two spots (`P(lu, 0, -0.55)`, the left lion mirrored, tails on the
+outer sides) behind the one-line switch `BL_LION` in `wave9.gd` (on in branch `ws/l-lion`; the integration
+session decides). No D48 placement file existed on `origin/integration` (it was at `main`), so the spots are D's
+from `lions_share()`. **Size still to settle:** 0.95 m on a 0.32 m plinth (pass two's); D's were 1.45 m on
+0.55 m; `BL_LION_SCALE` changes it. Evidence: `production/qa/evidence/wsL-lion-ingame.jpg` (unbaked).
+
+Nov 2 afternoon (Steven): face reworked, a little muscle, **the plinth now the same gold as the lion and smaller
+(0.62 x 0.66 m)**, the lions **not** made bigger (size settled at 0.95 m on 0.32 m). Evidence:
+`wsL-lion-sheet-6.jpg`, `wsL-lion-ingame-2.jpg` (unbaked).
+
+## Nov 2, 2026 (INT, Demo 49): merged
+`BL_LION := true`, the `else` branch dropped (D's `lion()` and `ellipsoid()` are gone), `BL_LION_SCALE 1.0`: the 0.95 m lion on its 0.32 m gold plinth at both spots (Steven: "whatever is less work"). The left lion looked paler unbaked; judge it after the wing 2 bake.

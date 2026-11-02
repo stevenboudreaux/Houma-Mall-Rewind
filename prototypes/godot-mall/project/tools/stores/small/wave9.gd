@@ -17,6 +17,7 @@ const W8 = preload("res://tools/stores/small/wave8.gd")
 const UP = Vector3.UP
 const SIDE = 0.12
 const LET = "res://tools/stores/small/"
+const BL_LION := true   # workstream L: the Blender lion (models/bl_ls_lion) at the two spots (INT Demo 49: D's built-in lion() is gone)
 
 static func P(a, t, n, u, y, d):
 	return a + t * u - n * d + Vector3(0, y, 0)
@@ -315,14 +316,15 @@ static func lions_share(b, a, t, n, W, D, rng):
 		b.box(F, "w8_dark_wood", P(a, t, n, du + s * (dw * 0.5 + 0.06), 1.2, -0.1), b.abs_size(t, 0.12, 2.4, 0.24, n), Transform3D.IDENTITY, ["-y"])
 		coach_lamp(b, F, P(a, t, n, du + s * (dw * 0.5 + 0.55), 2.0, -0.38), n)
 	W8.sign_q(b, F, "w9_plaque", a, t, n, W - 2.7, 1.3, 2.25, 3.88, -0.24)
-	# The lions (Nov 2, Steven): workstream D's built-in gold lions are removed; a Blender lion is
-	# coming. Their spots, one either side of the door, are kept for it: floor point
+	# The lions (Nov 2, Steven): workstream D's built-in gold lions are removed; workstream L's Blender
+	# lion (0.95 m on its own 0.32 m plinth) stands at both spots, one either side of the door: floor point
 	# P(a, t, n, du + sg * (dw * 0.5 + 1.25), 0, -0.55) for sg = -1, +1, the lion's right-hand side
-	# along t * sg, looking along n (out across the hall), 1.45 m tall on a 0.55 m plinth.
+	# along t * sg, looking along n (out across the hall).
 	# World values: tools/stores/small/lion_spots.json (design/storefronts/lions-share.md).
 	for sg in [-1.0, 1.0]:
-		var lp = P(a, t, n, du + sg * (dw * 0.5 + 1.25), 0, -0.55)
-		print("LION_SPOT sg=%d pos=%s look=%s right=%s yaw_deg=%.1f" % [int(sg), lp, n, t * sg, rad_to_deg(atan2(n.x, n.z))])
+		var lu = du + sg * (dw * 0.5 + 1.25)
+		if BL_LION:
+			bl_lion(b, P(a, t, n, lu, 0, -0.55), t * sg, n)
 	# the passage: brick walls, a low dark ceiling, red carpet
 	var cg = "w9l_shell"
 	for s in [-1.0, 1.0]:
@@ -364,6 +366,30 @@ static func lions_share(b, a, t, n, W, D, rng):
 	for c in [[3.0, 6.9], [9.0, 6.9]]:
 		var l = b.add_omni(P(a, t, n, c[0] * ks, 2.3, c[1]), 0.45, 6.0, Color(1.0, 0.78, 0.5))
 		b.tag(l, "", 0.35, 0.5)
+
+## Workstream L (Nov 2, 2026): the Blender lion (tools/blender/assets_src/bl_ls_lion.py, design/
+## godot-blender-pipeline.md "third pass"), instanced at c (floor), its tail on r's side, looking along f.
+## The model is real size (0.95 m lion on a 0.32 m plinth 0.62 x 0.66 m, origin at the plinth's bottom centre, front
+## +Z, tail +X); where r is not +X of the frame (the other side of the door) it is mirrored.
+const BL_LION_SCENE = "res://models/bl_ls_lion/bl_ls_lion.glb"
+const BL_LION_SCALE = 1.0
+
+static func bl_lion(b, c, r, f):
+	var r2 = r.normalized()
+	K.ob(b, c - r2 * 0.32 - f * 0.34, c + r2 * 0.32 + f * 0.34, 0.06)
+	if b.mall == null or not ResourceLoader.exists(BL_LION_SCENE):
+		return
+	var holder = b.mall.get_node_or_null("BlenderProps")
+	if holder == null:
+		holder = Node3D.new()
+		holder.name = "BlenderProps"
+		b.mall.add_child(holder)
+		holder.owner = b.mall
+	var inst = load(BL_LION_SCENE).instantiate()
+	inst.name = "bl_ls_lion_%d" % holder.get_child_count()
+	inst.transform = Transform3D(Basis(r2, Vector3.UP, f.normalized()).scaled_local(Vector3.ONE * BL_LION_SCALE), c)
+	holder.add_child(inst)
+	inst.owner = b.mall
 
 # ------------------------------------------------------------------ American Bank
 ## A white stucco front, the name in heavy rounded white letters on the shaded wall above, one
