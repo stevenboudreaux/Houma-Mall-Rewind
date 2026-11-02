@@ -119,10 +119,10 @@ Sears / Lynn's (wing 4), Dillard's level 1 (wing 5) and the Southland Cinema lob
 |---|---|---|---|
 | w1 | 91.53 | 91.52 | Sears' meshes/textures out (−0.86), its picture in the opening in (+0.84) |
 | w2 | 93.52 | 91.06 | Dillard's out (−2.83), its picture in (+0.40) |
-| w1y26 | 26.27 | 25.23 | |
-| w2y26 | 70.65 | 67.57 | |
-| w4 / w4y26 | — | 35.64 / 13.43 | Sears / Lynn's, no lightmap yet |
-| w5 / w5y26 | — | 37.59 / 15.57 | Dillard's, no lightmap yet |
+| w1y26 | 26.27 | 25.24 | |
+| w2y26 | 70.65 | 67.80 | |
+| w4 / w4y26 | — | 35.64 / 13.66 | Sears / Lynn's, no lightmap yet |
+| w5 / w5y26 | — | 37.59 / 15.80 | Dillard's, no lightmap yet |
 | w6 / w6y26 | — | 20.57 / 3.96 | the cinema lobby; 1995 is mostly the avatar's bodies |
 | w3 / w3y26 | 30.89 / 13.81 | unchanged | |
 
