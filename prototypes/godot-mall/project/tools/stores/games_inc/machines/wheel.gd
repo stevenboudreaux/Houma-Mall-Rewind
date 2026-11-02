@@ -19,7 +19,7 @@ static func build(b, g, o, f, opts = {}):
 	var side = K.rg("wheel", "side")
 	K.tbox(b, g, body, xf, Vector3(0, 0.55, 0.45), Vector3(0.9, 1.1, 0.9), {"front": K.rg("wheel", "base"), "all": side})
 	# the wheel's back housing (a blue disc box) and the lit wheel face as a 20-gon
-	K.tbox(b, g, body, xf, Vector3(0, 1.85, 0.62), Vector3(1.1, 1.1, 0.3), {"all": side, "front": null})
+	K.tbox(b, g, body, xf, Vector3(0, 1.75, 0.62), Vector3(1.1, 1.3, 0.3), {"all": side, "front": null})
 	var wr = K.rg("wheel", "wheel")
 	var c = Vector3(0, 1.85, 0.46)
 	var Rw = 0.53

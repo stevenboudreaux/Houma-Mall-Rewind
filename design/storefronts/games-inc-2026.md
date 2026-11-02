@@ -12,8 +12,8 @@ standing in until each 2026 kind is painted).
 **Frame.** The s52 rect, 8 x 40 m (4 x 20 tiles at x 89, y 130), on the Concourse's south side
 between the vacant aqua-tile Pocket Change unit (s52b) and the food-court wall. The front faces
 the hall (north); u runs along the frontage from the hall viewer's right, d into the store.
-`tools/stores/games_inc/store.gd`, textures `paint.py` -> `tex/gi/`. Walkable: s52 is in
-`layout_2026.json`'s `interiors_open` (and `KEEP_OPEN` in `tools/make_layout_2026.py`).
+`tools/stores/games_inc/store.gd`, textures `paint.py` -> `tex/gi/`. Walkable: since Nov 2 (GI), see
+"Walk grid" below (`KEEP_OPEN` alone never opened it).
 
 ## The front (f003-f016)
 - Mustard 6 x 12 glazed tile in a running bond over the whole front: piers each side, the
@@ -164,3 +164,53 @@ mascot) is **not reproduced**: those areas become generic abstract translites in
 back-left corner behind the alleys; what is on the counter's staff side; the front wall's inside left of
 the opening (the plush window's back); the ceiling at the very back; any machine names that are blurred
 (M12, M22, M25, M26). Positions in d are ± 1 m.
+
+## Nov 2, 2026 (workstream GI): the rebuild
+
+**Accuracy level:** 3 for the room and the machines' placement (walked end to end; positions ± 1 m),
+2 for the cabinets (shape, size, colours and legible names from the frames; artwork simplified).
+
+**Files.** `tools/stores/games_inc/store.gd` (front, room, party corner, lights, placement),
+`tools/stores/games_inc/machines/` (the kit: `kit.gd` helpers and `gi_k_*` materials; one file per
+machine kind: `claw`, `merch`, `pusher`, `dice`, `gunbig`, `racer`, `upright`, `deal`, `hoop`, `ptower`,
+`dome`, `wheel`, `hockey`, `alley`, `counter`; `paint.py` paints `tex/gi/m_<kind>.png` (one 1024 x 512
+atlas each) and writes `atlas.json`, the region map the geometry reads; `gallery.gd` is a preview
+helper). Nothing from `tools/stores/pocket_change/` is used any more. `tools/stores/games_inc/paint.py`
+(plank, tile, panel) is still used; its band/slat/mural textures no longer are.
+
+**Front.** Three bays in the mustard tile frame: the frameless glass pair (u 0.55-2.05), the opening
+with the sign panel in its top (u 2.4-5.05, clear 2.35 m), the plush window (u 5.4-7.45) heaped with
+big generic plush figures; white end piers; cream mall wall over the tile head at 3.25 m.
+
+**Walk grid.** s52 was shut in every 2026 build so far: `make_layout_2026.py` only keeps tiles that
+were open in 1995, and Blockbuster Music had no walk-in interior. Now `OPEN_2026 = {"s52"}` opens its
+4 x 20 tiles (80 tiles, nothing else changes in `layout_2026.json`); the front wall, the glass, the
+counter, the tables and every machine are obstacles; the neighbours' tiles stay shut, so the side and
+back walls hold. Aisles: ≥ 1.1 m down both sides of the middle row, 1.2-1.4 m either side of the air
+hockey tables.
+
+**Interactables.** None. The Demo 46 build carried Pocket Change's owner-renamable marquees into
+games, inc. (37 `pc.*` entries in `gen/w2y26/signs.json`, including a playable cabinet `pc.video.03`
+and the COIN COMET pusher's Play): those came with the 1990s kit, not from games, inc., and are gone.
+No machine had a "look" prompt (prizes.gd's closer look only finds `*pc*_mach` meshes). One attendant
+spot (no NPC) is in `data/story/attendants.json`: (-111.1, 66.3), yaw 90, behind the counter.
+
+**Pack size (w2y26, this container's export, desktop = mobile):** before 70.6 MB (Demo 46, with the
+lightmap; the brief's 71.4 MB was measured on the Mac), after 53.3 MB with a lightmap of the old one's
+size (49.1 MB with none). The drop is Pocket Change's 1024 px machine textures leaving the 2026 pack.
+
+**Guessed.** All d positions to ± 1 m; the tables' exact spacing; the inside header over the glass bay
+(seen only far off in IMG_4445); the counter's staff side; the white column's u; the purple cabinet
+M26 and the alleys M25 (blurred); M12 and M22 have no legible name and carry none; the alley and
+drop-column faces; the music cabinet's name (none shown). The 8-11 m and 30-33.8 m stretches of the
+right wall and the back-left corner behind the alleys are not in the footage and are left empty.
+
+**Evidence** (`production/qa/evidence/`, all unbaked): `wsGI-zone-*.jpg` (11 zones, frame | web build),
+`wsGI-machines-1..4.jpg` (every kind beside its frame crop, probe-lit preview), `wsGI-unbaked-entrance.jpg`,
+`wsGI-unbaked-counter.jpg`, `wsGI-iphone-390.jpg` (390 px wide). Web check (Node port of movetest: the
+container has no Python Playwright): 16 camera loads, 0 errors; the touch walk goes from the hall at
+z 57 through the opening to z 65.
+
+**Open questions for Steven.** Which machines to make playable first (report); whether the prize wall
+should get the old prize-closer-look; the names of M12, M22, M25, M26; whether the white claw by the
+party corner is a claw or a prize merchandiser.

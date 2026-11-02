@@ -99,14 +99,17 @@ static func front(b, g, a, t, n, sd):
 	b.box(g, "vcolor_matte", P(a, t, n, (W0 + W1) * 0.5, 0.06, WALL_T * 0.5 + 0.05), b.abs_size(t, W1 - W0, 0.04, WALL_T + 0.1, n))
 	b.cur_color = Color.WHITE
 	var rng = RandomNumberGenerator.new(); rng.seed = 4443
-	var cols = ["#f6d23a", "#f08a2a", "#5db5e8", "#f6d23a", "#2a3a4a", "#f3e6c8", "#f6d23a", "#f08a2a"]
-	var i = 0
-	for row in [[0.1, 0.9], [1.0, 0.8], [1.85, 0.7]]:
-		var u = W0 + 0.35
-		while u < W1 - 0.25:
-			K().plush(b, g, P(a, t, n, u, row[0], 0.3), row[1] * 1.5, cols[i % cols.size()], rng)
-			u += 0.5 * row[1] + rng.randf_range(0.0, 0.08)
-			i += 1
+	# a jumble of giant plush (f003-f011): yellow, orange, blue, cream and dark slate, of mixed
+	# sizes, heaped and overlapping from the sill to the top of the glass (generic figures)
+	var cols = ["#f6d23a", "#f08a2a", "#5db5e8", "#f6d23a", "#2a3a4a", "#f3e6c8", "#f6d23a", "#f08a2a", "#5db5e8", "#e8b25a"]
+	var k = 0
+	for row in 4:
+		for col in 4:
+			var sc = rng.randf_range(1.0, 1.35)
+			var u = W0 + 0.28 + col * (W1 - W0 - 0.56) / 3.0 + rng.randf_range(-0.08, 0.08)
+			var y = 0.08 + row * 0.68 + rng.randf_range(-0.05, 0.08)
+			K().plush(b, g, P(a, t, n, u, y, rng.randf_range(0.29, 0.33)), sc, cols[(k * 7 + row) % cols.size()], rng)
+			k += 1
 	# the opening's tile returns and a dark head soffit
 	b.quad(g, "gi_tile", [P(a, t, n, O0, 0, 0), P(a, t, n, O0, 0, WALL_T), P(a, t, n, O0, SIGN_Y0, WALL_T), P(a, t, n, O0, SIGN_Y0, 0)], t, [Vector2(0, 0), Vector2(WALL_T / 0.6, 0), Vector2(WALL_T / 0.6, -SIGN_Y0 / 0.6), Vector2(0, -SIGN_Y0 / 0.6)])
 	b.quad(g, "gi_tile", [P(a, t, n, O1, 0, WALL_T), P(a, t, n, O1, 0, 0), P(a, t, n, O1, SIGN_Y0, 0), P(a, t, n, O1, SIGN_Y0, WALL_T)], -t, [Vector2(0, 0), Vector2(WALL_T / 0.6, 0), Vector2(WALL_T / 0.6, -SIGN_Y0 / 0.6), Vector2(0, -SIGN_Y0 / 0.6)])
