@@ -12,7 +12,7 @@ const SETS = [
 ]
 
 static func preview(b, g, o, f, opts = {}):
-	var row = SETS[int(opts.get("set", 0))]
+	var row = SETS[int(opts.get("set", 0))] if not opts.has("one") else [opts["one"]]
 	var tot = 0.0
 	for it in row:
 		tot += load(MK + it[0] + ".gd").footprint(it[1]).x + 0.3

@@ -23,12 +23,12 @@ static func build(b, g, o, f, opts = {}):
 	for sx in [-1, 1]:
 		K.tbox(b, g, body, xf, Vector3(sx * 0.4, 0.75, 0.35), Vector3(0.1, 1.5, 0.4), {"all": K.rg("dice", "pillar")})
 	# the die in its bay (a glossy lit cube, turned)
-	var dxf = xf * Transform3D(Basis(Vector3.UP, 0.5) * Basis(Vector3.RIGHT, 0.4), Vector3(0, 0.62, 0.32))
+	var dxf = xf * Transform3D(Basis(Vector3.UP, 0.5) * Basis(Vector3.RIGHT, 0.4), Vector3(0, 0.58, -0.08))
 	K.tbox(b, g, lit, dxf, Vector3.ZERO, Vector3(0.36, 0.36, 0.36), {"all": K.rg("dice", "die"), "bottom": K.rg("dice", "die")})
 	# base plinth with a cyan glow strip
 	K.cbox(b, g, "gi_k_black", xf, Vector3(0, 0.06, 0.45), Vector3(W, 0.12, D), "#ffffff")
 	K.led(b, g, xf, Vector3(-W * 0.5, 0.02, 0.0), Vector3(W * 0.5, 0.02, 0.0), "#2fe8ff", 0.03)
-	K.obst(b, xf, -W * 0.5, W * 0.5, 0, D, 0.15)
+	K.obst(b, xf, -W * 0.5, W * 0.5, -0.3, D, 0.15)
 
 static func fill_mat(m, key, b):
 	if key in ["body", "lit"]:

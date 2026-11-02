@@ -201,7 +201,10 @@ def claw():
     for name, col, light in CLAW_COLS:
         r = A.slot("lower_" + name, 160, 220)
         im = Image.new("RGB", (170, 220)); d = ImageDraw.Draw(im)
-        vgrad(im, light if name != "white" else "#f4f6f8", col if name != "white" else "#cfd6de")
+        # f041-f046: the lower body glows the full cabinet colour, a touch lighter at the top
+        vgrad(im, col if name != "white" else "#f4f6f8", col if name != "white" else "#cfd6de")
+        if name != "white":
+            d.rectangle([0, 0, 170, 10], fill=light)
         # the prize door: a big white rounded square with a round chute, low left
         d.rounded_rectangle([14, 78, 112, 200], radius=26, fill="#ffffff" if name != "white" else "#e4e8ee", outline="#00000030", width=2)
         d.ellipse([34, 104, 92, 162], fill=col if name != "white" else "#9aa6b2")
@@ -222,9 +225,10 @@ def claw():
         A.put(r, im)
     for name, col, light in CLAW_COLS:
         r = A.slot("side_" + name, 160, 40)
-        im = Image.new("RGB", (170, 40)); vgrad(im, light if name != "white" else "#f0f2f4", col if name != "white" else "#cfd6de"); A.put(r, im)
+        im = Image.new("RGB", (170, 40)); vgrad(im, col if name != "white" else "#f0f2f4", col if name != "white" else "#cfd6de"); A.put(r, im)
     r = A.slot("post", 64, 172)                     # a white post with LED studs (front edges)
     im = A.sub(r); d = ImageDraw.Draw(im); d.rectangle([0, 0, 64, 172], fill="#f4f4f6")
+    led_dots(d, (32, 4), (32, 168), "#ffffff", 5, 14)
     A.put(r, im)
     r = A.slot("cab", 256, 172)                     # plain white laminate (sides, header, back)
     im = A.sub(r); im.paste("#eceef2", [0, 0, 256, 172]); panel_noise(im, 4); A.put(r, im)
