@@ -56,7 +56,7 @@ from mathutils.bvhtree import BVHTree
 from lib import core, parts, mats
 
 PZ = 0.32                 # plinth height = the lion's seat
-PLINTH = (0.72, 0.76)     # plinth top, x by y
+PLINTH = (0.62, 0.66)     # plinth top, x by y (Steven, Nov 2: tighter round the lion, less overhang)
 VOXEL = 0.0024            # final remesh of body + mane: the finest lock groove
 FORM_VOXEL = 0.007        # the big anatomy
 CLOSE = 0.016             # fillet radius where the big forms meet
@@ -90,8 +90,8 @@ META = {
     "hipoly": 24000,
     "cage": 0.016,
     "lowpoly_voxel": 0.007,
-    "hipoly_keep": ["stone"],
-    "uv_shrink": {"stone": 0.3},
+    "hipoly_keep": ["plinth"],
+    "uv_shrink": {"plinth": 0.3},
     "refs": [["design/storefronts/refs/lions-share-lion.png", None, "Steven's lion (index.html media)"]],
 }
 
@@ -214,6 +214,14 @@ def body():
         E("elbow", (0.045, 0.05, 0.06), (sx * 0.095, -0.065, 0.29))
         E("forearm_m", (0.048, 0.05, 0.085), (sx * 0.085, -0.125, 0.22))        # the forearm's muscle
     E("chest", (0.135, 0.125, 0.17), (0, -0.075, 0.44))
+    # a little muscle (Steven, Nov 2): pectorals, deltoids, the forearm's outer muscle, the thigh and the
+    # hamstring over the haunch
+    for sx in (-1, 1):
+        E("pec", (0.068, 0.05, 0.09), (sx * 0.058, -0.168, 0.415), rot=(-12, 0, 0))
+        E("delt", (0.058, 0.06, 0.075), (sx * 0.125, -0.095, 0.465))
+        E("extensor", (0.026, 0.032, 0.075), (sx * 0.112, -0.135, 0.205), rot=(4, 0, 0))
+        E("quad", (0.055, 0.12, 0.06), (sx * 0.205, 0.02, 0.185), rot=(-14, 0, 0))
+        E("hamstring", (0.068, 0.065, 0.08), (sx * 0.13, 0.265, 0.165))
     E("ribcage", (0.135, 0.19, 0.14), (0, 0.05, 0.34), rot=(-32, 0, 0))
     taper("spine", (0.0, 0.03, 0.58), (0.0, 0.21, 0.18), 0.105, 0.12)
     E("back", (0.15, 0.17, 0.11), (0, 0.13, 0.40), rot=(-50, 0, 0))
@@ -250,13 +258,13 @@ def paws():
 
 
 def tail():
-    pts = [V(p) for p in [(0.0, 0.31, 0.06), (0.14, 0.34, 0.026), (0.29, 0.21, 0.022), (0.325, 0.02, 0.022), (0.31, -0.13, 0.026), (0.285, -0.20, 0.04)]]
+    pts = [V(p) for p in [(0.0, 0.31, 0.06), (0.13, 0.335, 0.026), (0.245, 0.23, 0.022), (0.272, 0.03, 0.022), (0.262, -0.12, 0.026), (0.245, -0.19, 0.04)]]
     pts = spline(pts, 18)
     nrm = [Vector((0, 0, 1))] * len(pts)
     t = ribbon("tail", pts, nrm, 0.044, 0.040, tip=0.75, sides=12, ridges=1)
     tf = []
     for k, (dx, dy, a) in enumerate(((0.0, 0.0, 0), (-0.018, -0.006, -25), (0.018, -0.006, 25))):   # the tuft: three locks
-        c = Vector((0.285 + dx, -0.20 + dy, 0.045))
+        c = Vector((0.245 + dx, -0.19 + dy, 0.045))
         p = [V(tuple(c)), V(tuple(c + Vector((math.sin(math.radians(a)) * 0.03, -0.05, 0.004)))), V(tuple(c + Vector((math.sin(math.radians(a)) * 0.05, -0.085, -0.008))))]
         p = spline(p, 8)
         tf.append(ribbon("tuft", p, [Vector((0, 0, 1))] * len(p), 0.034, 0.03, tip=0.1, sides=10, ridges=2, full=0.2))
@@ -321,8 +329,8 @@ def mane(dr, drf, rng):
         oval's margin (true x, z: x = 0.115 sin a, z = 0.752 + 0.138 cos a), converted to mane coordinates."""
         su, sh = math.sin(a), math.cos(a)
         if edge:
-            u0 = RC * math.asin(max(-1.0, min(1.0, 0.112 * su / 0.205)))
-            h0 = 0.752 + 0.133 * sh
+            h0 = 0.752 + 0.153 * 0.84 * sh
+            u0 = RC * math.asin(max(-1.0, min(1.0, float(face_hw(h0)) * 0.84 * su / 0.205)))
         else:
             u0, h0 = su * r0 * 1.05, FACE_H + sh * r0 * 0.95
         ctrl = []
@@ -332,7 +340,7 @@ def mane(dr, drf, rng):
             sw = sway * math.sin(t * math.pi * 1.3)
             u = u0 + su * rr * 1.05 + sh * sw
             hh = h0 + sh * rr * 0.95 - su * sw - g * (L * t) ** 2 * (1.0 + abs(su))
-            ctrl.append((u, hh, off0 + rise * min(1.0, t / 0.3) + lift * max(0.0, t - 0.45) / 0.55))
+            ctrl.append((u, hh, off0 + rise * min(1.0, t / 0.6) ** 1.5 + lift * max(0.0, t - 0.45) / 0.55))
         locks.append(lay(d or dr, name, ctrl, w, th, ridges=ridges))
 
     # 1. the inner ruff framing the face (over everything); the lowest ones become the beard
@@ -343,7 +351,7 @@ def mane(dr, drf, rng):
         if down > 0.93:
             continue                          # under the chin: the beard below
         L = (0.075 + 0.05 * abs(math.sin(a)) + 0.06 * down) * rng.uniform(0.9, 1.1)
-        radial(a, 0.0, L * 1.45, 1.4, 0.014, 0.022, rng.uniform(0.012, 0.02) * rng.choice((-1, 1)), 0.064 * rng.uniform(0.9, 1.1), 0.040, 2, "ruff", d=drf, edge=True, rise=0.034)
+        radial(a, 0.0, L * 1.45, 1.4, -0.004, 0.022, rng.uniform(0.012, 0.02) * rng.choice((-1, 1)), 0.064 * rng.uniform(0.9, 1.1), 0.040, 2, "ruff", d=drf, edge=True, rise=0.026)
     # 2. the middle ring: longer, heavier, bending down at the sides
     n = 24
     for i in range(n):
@@ -424,47 +432,63 @@ def _segd(x, z, a, b):
     return np.hypot(x - ax - t * vx, z - az - t * vz)
 
 
+EYE_X, EYE_Z = 0.054, 0.782
+
+
+def face_hw(z):
+    """The face's half-width at height z, from the picture: a broad forehead and cheeks narrowing to the chin
+    (a long wedge, not an oval)."""
+    return np.interp(z, [0.600, 0.630, 0.670, 0.720, 0.780, 0.840, 0.880, 0.905], [0.045, 0.066, 0.096, 0.112, 0.113, 0.100, 0.080, 0.050])
+
+
 def relief(x, z, sockets=True):
     """How far the carved face stands forward of YB at (x, z) (metres; z above the seat). Every feature is
     a smooth term, so the planes blend like carving instead of meeting like balls. Front-view positions are
-    measured from Steven's picture; the depths are guessed."""
+    measured from Steven's picture; the depths are guessed. Second face (Steven, Nov 2: "work on the face"):
+    the outline a wedge from the picture, a calm heavy brow, bigger eyes, a big broad flat-topped nose on a
+    broad bridge, a broad muzzle with fur strokes (no whisker dots), fur carved into the face's edge."""
     ax = np.abs(x)
     # the snout: the bridge slopes forward from between the eyes to the nose, then the muzzle falls back
-    prof = np.interp(z, [0.600, 0.625, 0.645, 0.662, 0.690, 0.708, 0.740, 0.790, 0.825], [0.0, 0.026, 0.040, 0.050, 0.058, 0.060, 0.046, 0.012, 0.0])
-    halfw = np.interp(z, [0.600, 0.640, 0.680, 0.702, 0.740, 0.790, 0.825], [0.030, 0.056, 0.064, 0.050, 0.029, 0.025, 0.030])
-    snout = prof * _sbox(x, halfw, 0.016)
-    nose = 0.007 * _sbox(x, np.interp(z, [0.695, 0.737], [0.018, 0.046]), 0.0035) * _sbox(z - 0.716, 0.021, 0.0035)
-    nostril = -0.011 * _g(np.hypot(ax - 0.025, (z - 0.700) * 1.4), 0.0065)
-    pads = 0.016 * _g(np.hypot(ax - 0.034, (z - 0.670) * 1.15), 0.028)
-    philtrum = -0.006 * _g(x, 0.0032) * _sbox(z - 0.672, 0.024, 0.004)
-    zm = 0.649 + 2.2 * x * x
-    mouth = -0.008 * _g(z - zm, 0.0034) * _sbox(x, 0.074, 0.008)
-    chin = 0.010 * _g(np.hypot(x, (z - 0.627) * 1.3), 0.022)
-    brow = 0.017 * _g(_segd(ax, z, (0.013, 0.794), (0.094, 0.823)), 0.011)
-    cheek = 0.013 * _g(np.hypot(ax - 0.080, z - 0.712), 0.036)
-    frown = -0.0045 * _g(x, 0.0026) * _sbox(z - 0.814, 0.019, 0.004) - 0.003 * _g(ax - 0.015, 0.0022) * _sbox(z - 0.812, 0.012, 0.004)
-    lid = 0.004 * _g(_segd(ax, z, (0.032, 0.762), (0.072, 0.768)), 0.004)
+    prof = np.interp(z, [0.600, 0.622, 0.642, 0.660, 0.690, 0.710, 0.742, 0.790, 0.825], [0.0, 0.026, 0.042, 0.054, 0.063, 0.066, 0.050, 0.014, 0.0])
+    halfw = np.interp(z, [0.600, 0.640, 0.675, 0.702, 0.742, 0.790, 0.825], [0.036, 0.074, 0.084, 0.062, 0.041, 0.037, 0.040])
+    snout = prof * _sbox(x, halfw, 0.011)
+    nose = 0.010 * _sbox(x, np.interp(z, [0.693, 0.712, 0.739], [0.012, 0.034, 0.053]), 0.003) * _sbox(z - 0.716, 0.023, 0.003)
+    nostril = -0.012 * _g(np.hypot(ax - 0.030, (z - 0.701) * 1.5), 0.0075)
+    pads = 0.024 * _g(np.hypot(ax - 0.040, (z - 0.665) * 1.1), 0.034)
+    philtrum = -0.006 * _g(x, 0.0034) * _sbox(z - 0.671, 0.023, 0.004)
+    zm = 0.647 + 1.8 * x * x
+    mouth = -0.012 * _g(z - zm, 0.0042) * _sbox(x, 0.084, 0.008)
+    chin = 0.012 * _g(np.hypot(x, (z - 0.628) * 1.3), 0.026)
+    brow = 0.015 * _g(_segd(ax, z, (0.016, 0.801), (0.090, 0.812)), 0.012)
+    cheek = 0.012 * _g(np.hypot(ax - 0.085, z - 0.722), 0.040)
+    frown = -0.003 * _g(x, 0.003) * _sbox(z - 0.830, 0.025, 0.006)
+    lid = 0.004 * _g(_segd(ax, z, (0.032, 0.768), (0.076, 0.774)), 0.004)
     feats = snout + nose + nostril + pads + philtrum + mouth + chin + brow + cheek + frown + lid
-    # the features fade out towards the face's oval; the dome runs to its edge (meeting the ruff, which
-    # covers the join); beyond the oval the relief sinks back into the skull and mane (no slab edges)
-    r = np.hypot(x / 0.118, (z - 0.752) / 0.140)
-    m = np.clip((1.0 - r) / 0.2, 0, 1)
-    sink = np.clip((r - 0.98) / 0.08, 0, 1)
+    # the outline: a superellipse over the picture's half-width, so the broad forehead and cheeks stay broad
+    rx = ax / face_hw(z)
+    rz = np.abs(z - 0.752) / 0.153
+    r = (rx ** 4 + rz ** 4) ** 0.25
+    m = np.clip((1.0 - r) / 0.25, 0, 1)
+    sink = np.clip((r - 0.95) / 0.30, 0, 1) ** 1.5     # a gentle slope into the mane, not a cliff
     dome = 0.064 * np.sqrt(np.clip(1 - r * r, 0, 1)) + 0.018
-    # carved fur strokes radiating from the nose over the cheeks, the brow and the forehead (not on the muzzle)
+    # carved fur: strokes radiating from the nose over the muzzle, cheeks and forehead (not on the nose,
+    # the bridge or across the eyes), growing into deep lock grooves at the face's edge, where the ruff
+    # grows out of it
     ang = np.arctan2(z - 0.700, x)
     rn = np.hypot(x, (z - 0.700) * 1.1)
-    strokes = 0.0026 * (0.5 + 0.5 * np.cos(ang * 34 + 6 * rn)) * np.clip((rn - 0.075) / 0.03, 0, 1) * np.clip((1.0 - r) / 0.12, 0, 1)
-    strokes = strokes * (1 - _g(_segd(ax, z, (0.012, 0.786), (0.088, 0.790)), 0.022))   # not across the eyes
-    feats = feats - strokes
-    d = (dome + feats * m) * (1 - sink) - 0.085 * sink
+    keep = (1 - _sbox(x, halfw * 0.75, 0.008) * _sbox(z - 0.765, 0.075, 0.01)) * (1 - _g(_segd(ax, z, (0.020, EYE_Z), (0.085, EYE_Z + 0.008)), 0.020))
+    fine = 0.0022 * (0.5 + 0.5 * np.cos(ang * 30 + 8 * rn)) * np.clip((rn - 0.04) / 0.03, 0, 1)
+    edge = np.clip((r - 0.72) / 0.22, 0, 1)
+    locks = 0.012 * edge * (0.5 + 0.5 * np.cos(ang * 18 + 14 * rn)) ** 2
+    feats = feats - fine * keep
+    d = (dome + feats * m) * (1 - sink) - locks * (1 - sink) - 0.085 * sink
     if sockets:
-        # almond sockets under the brow, outer corner up
-        c, s_ = math.cos(math.radians(14)), math.sin(math.radians(14))
-        u = (ax - 0.052) * c - (z - 0.777) * s_
-        v = (ax - 0.052) * s_ + (z - 0.777) * c
-        e = np.hypot(u / 0.026, v / 0.0135)
-        d = d - 0.024 * np.clip((1.15 - e) / 0.5, 0, 1) ** 1.5
+        # almond sockets under the brow, outer corner up, deepest under the brow (the upper lid's shadow)
+        c, s_ = math.cos(math.radians(10)), math.sin(math.radians(10))
+        u = (ax - EYE_X) * c - (z - EYE_Z) * s_
+        v = (ax - EYE_X) * s_ + (z - EYE_Z) * c
+        e = np.hypot(u / 0.028, v / 0.0148)
+        d = d - (0.024 + 0.006 * np.clip(v / 0.012, 0, 1)) * np.clip((1.15 - e) / 0.5, 0, 1) ** 1.5
     return d
 
 
@@ -515,14 +539,9 @@ def head():
 
 
 def cutters():
-    """Boolean cutters carved out of the face after its remesh: the whisker dots and the ear cups."""
+    """Boolean cutters carved out of the face after its remesh: the ear cups."""
     cs = []
     for sx in (-1, 1):
-        for r, (dz, cnt) in enumerate(((0.684, 3), (0.673, 3), (0.662, 3))):   # whisker dots in rows on the pads
-            for k in range(cnt):
-                x = sx * (0.020 + 0.012 * k + 0.003 * r)
-                y = YB + FY - float(relief(np.array(x), np.array(dz)))
-                cs.append(E("dot", (0.0024, 0.006, 0.0024), F((x, y - FY, dz)), seg=8, rings=6))
         cs.append(E("earcup", (0.019, 0.012, 0.022), F((sx * 0.098, -0.158, 0.885)), rot=(-10, sx * 25, sx * -15), seg=14, rings=8))
     return cs
 
@@ -531,11 +550,11 @@ def eyes():
     """The eyeballs in the sockets, their fronts a little behind the socket rims, looking straight out."""
     out = []
     for sx in (-1, 1):
-        x, z = sx * 0.052, 0.777
+        x, z = sx * EYE_X, EYE_Z
         rim = float(relief(np.array(x), np.array(z), sockets=False))
-        y = YB - rim + 0.009 + 0.011       # front 9 mm behind the un-cut surface; centre one radius behind
-        eye = E("eye", (0.022, 0.011, 0.0118), F((x, y, z)), rot=(0, 0, sx * -14), seg=24, rings=16)
-        pupil = E("pupil", (0.0065, 0.004, 0.0065), F((x - sx * 0.002, y - 0.011, z)), seg=12, rings=8)
+        y = YB - rim + 0.010 + 0.012       # front 10 mm behind the un-cut surface; centre one radius behind
+        eye = E("eye", (0.024, 0.012, 0.0128), F((x, y, z)), rot=(0, 0, sx * -10), seg=24, rings=16)
+        pupil = E("pupil", (0.0068, 0.004, 0.0068), F((x - sx * 0.002, y - 0.012, z)), seg=12, rings=8)
         carve(eye, [pupil])        # a drilled pupil, as on carved statues
         out.append(eye)
     return out
@@ -555,10 +574,10 @@ def ref_highpass():
     return out
 
 
-def gold_mat():
+def gold_mat(name="bronze", ref=True):
     """The hipoly's gold: the colour and roughness DETAIL (casting grain, scratches, Steven's picture
     projected on the front); finish_maps() then builds the final gold from the baked AO and curvature."""
-    m = mats.M("bronze", "#9c7430", 0.3, 1.0)
+    m = mats.M(name, "#9c7430", 0.3, 1.0)
     co = m.coords()
     # scratches: thin streaks (noise stretched along one axis) in two directions, a little brighter, rougher
     sc = []
@@ -575,7 +594,7 @@ def gold_mat():
     grain = m.noise(80.0, 4.0)
     base = m.mix(m.math("MULTIPLY", grain.outputs["Fac"], 0.25), "#9c7430", "#b08540")
     base = m.mix(m.math("MULTIPLY", scr, 0.35), base, "#e8c878")
-    if REF_DETAIL > 0 and os.path.exists(REF):
+    if ref and REF_DETAIL > 0 and os.path.exists(REF):
         img = m.node("ShaderNodeTexImage")
         img.image = bpy.data.images.load(ref_highpass(), check_existing=True)
         img.image.colorspace_settings.name = "Non-Color"
@@ -608,14 +627,6 @@ def gold_mat():
     m.link(base, m.bsdf.inputs["Base Color"])
     m.link(m.math("MULTIPLY_ADD", scr, 0.25, 0.3), m.bsdf.inputs["Roughness"])   # baked as the scratch layer
     m.bump(m.noise(500.0, 2.0).outputs["Fac"], 0.05, 0.0004)
-    return m.mat
-
-
-def stone_mat():
-    m = mats.M("stone", "#8d867b", 0.8)
-    n = m.noise(25.0, 5.0)
-    m.link(m.ramp(n.outputs["Fac"], [(0.35, "#7a7368"), (0.65, "#a19a8e")]), m.bsdf.inputs["Base Color"])
-    m.bump(m.noise(300.0, 3.0).outputs["Fac"], 0.25, 0.0008)
     return m.mat
 
 
@@ -747,10 +758,11 @@ def build():
     for ob in [L, Hd] + eyes():
         ob.data.materials.clear()
         ob.data.materials.append(gm)
-    # plinth: a moulded cast-stone block (pass two's)
-    st = stone_mat()
+    # plinth: a moulded block in the same gold as the lion (Steven, Nov 2), its own material so it stays
+    # out of the sculpt's decimation (crisp edges) and gets a small share of the atlas
+    st = gold_mat("plinth", ref=False)
     w, d = PLINTH
-    parts.box("plinth", (w - 0.04, d - 0.04, PZ - 0.08), loc=(0, 0.02, 0.04 + (PZ - 0.08) / 2), mat=st, bev=0.004)
-    parts.box("plinthbase", (w + 0.02, d + 0.02, 0.05), loc=(0, 0.02, 0.025), mat=st, bev=0.006, seg=3)
-    parts.box("plinthtop", (w, d, 0.035), loc=(0, 0.02, PZ - 0.0175), mat=st, bev=0.008, seg=3)
-    parts.trim("ogee", [(0.0, 0.0), (-0.006, 0.006), (-0.008, 0.014), (-0.014, 0.02)], w - 0.03, loc=(0, 0.02 - d / 2 + 0.03, PZ - 0.035 - 0.02), mat=st)
+    parts.box("plinth", (w - 0.04, d - 0.04, PZ - 0.08), loc=(0, 0.03, 0.04 + (PZ - 0.08) / 2), mat=st, bev=0.004)
+    parts.box("plinthbase", (w + 0.02, d + 0.02, 0.05), loc=(0, 0.03, 0.025), mat=st, bev=0.006, seg=3)
+    parts.box("plinthtop", (w, d, 0.035), loc=(0, 0.03, PZ - 0.0175), mat=st, bev=0.008, seg=3)
+    parts.trim("ogee", [(0.0, 0.0), (-0.006, 0.006), (-0.008, 0.014), (-0.014, 0.02)], w - 0.03, loc=(0, 0.03 - d / 2 + 0.03, PZ - 0.035 - 0.02), mat=st)

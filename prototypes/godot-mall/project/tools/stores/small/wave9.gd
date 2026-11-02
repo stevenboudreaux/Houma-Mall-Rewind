@@ -394,14 +394,14 @@ static func lions_share(b, a, t, n, W, D, rng):
 
 ## Workstream L (Nov 2, 2026): the Blender lion (tools/blender/assets_src/bl_ls_lion.py, design/
 ## godot-blender-pipeline.md "third pass"), instanced at c (floor), its tail on r's side, looking along f.
-## The model is real size (0.95 m lion on a 0.32 m plinth, origin at the plinth's bottom centre, front
+## The model is real size (0.95 m lion on a 0.32 m plinth 0.62 x 0.66 m, origin at the plinth's bottom centre, front
 ## +Z, tail +X); where r is not +X of the frame (the other side of the door) it is mirrored.
 const BL_LION_SCENE = "res://models/bl_ls_lion/bl_ls_lion.glb"
 const BL_LION_SCALE = 1.0
 
 static func bl_lion(b, c, r, f):
 	var r2 = r.normalized()
-	K.ob(b, c - r2 * 0.37 - f * 0.4, c + r2 * 0.37 + f * 0.4, 0.06)
+	K.ob(b, c - r2 * 0.32 - f * 0.34, c + r2 * 0.32 + f * 0.34, 0.06)
 	if b.mall == null or not ResourceLoader.exists(BL_LION_SCENE):
 		return
 	var holder = b.mall.get_node_or_null("BlenderProps")

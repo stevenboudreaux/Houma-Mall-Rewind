@@ -43,3 +43,7 @@ outer sides) behind the one-line switch `BL_LION` in `wave9.gd` (on in branch `w
 session decides). No D48 placement file existed on `origin/integration` (it was at `main`), so the spots are D's
 from `lions_share()`. **Size still to settle:** 0.95 m on a 0.32 m plinth (pass two's); D's were 1.45 m on
 0.55 m; `BL_LION_SCALE` changes it. Evidence: `production/qa/evidence/wsL-lion-ingame.jpg` (unbaked).
+
+Nov 2 afternoon (Steven): face reworked, a little muscle, **the plinth now the same gold as the lion and smaller
+(0.62 x 0.66 m)**, the lions **not** made bigger (size settled at 0.95 m on 0.32 m). Evidence:
+`wsL-lion-sheet-6.jpg`, `wsL-lion-ingame-2.jpg` (unbaked).

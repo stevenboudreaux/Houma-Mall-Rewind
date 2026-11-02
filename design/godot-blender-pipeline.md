@@ -214,8 +214,7 @@ curvature-driven gold. **Still open / would change next:** the face reads a litt
 petals from straight on (more fur crossing onto the cheeks and forehead would knit it in); the back of the
 mane is a curtain of hanging strips; the body is smooth (it is in the picture, too); the size (below).
 
-**Size (question for Steven):** kept pass two's size (0.95 m lion on a 0.32 m plinth, 1.27 m overall), as
-the brief asked; D's built-in lions were 1.45 m on 0.55 m (2.0 m overall). `BL_LION_SCALE` in `wave9.gd`
+**Size (settled Nov 2: Steven, "don't make the lions bigger"):** kept pass two's size (0.95 m lion on a 0.32 m plinth, 1.27 m overall); D's built-in lions were 1.45 m on 0.55 m (2.0 m overall). `BL_LION_SCALE` in `wave9.gd`
 scales both (1.5 gives D's size). In the unbaked in-game shot they read small beside the 2.4 m door.
 
 **In game:** `BL_LION := true` (one line, `tools/stores/small/wave9.gd`) instances the .glb at D's two spots
@@ -223,6 +222,25 @@ under `BlenderProps` in wing 2 (1995), the left one mirrored so both tails are o
 floor obstacle; false brings back `lion()` (until D48 removes it). The .glb imports with
 `meshes/light_baking=2` (static lightmaps, UV2 from Godot) at 0.05 m texels. Evidence (unbaked):
 `wsL-lion-ingame.jpg`. Wing 2 (1995) needs a rebake when this ships.
+
+### Steven's notes on the third pass (Nov 2, afternoon) and the changes
+Steven: the body is good; the face needs work; a little muscle on the body; **don't make the lions bigger**;
+make the plinth the same gold as the body and shrink it so the lion sits tighter on it.
+- **Face, second version** (`relief()`): the outline is the picture's (a long wedge: broad forehead and cheeks
+  narrowing to the chin, `face_hw()`), not an oval; calm heavy brow instead of the angry V; bigger, wider-set
+  eyes under a deeper upper lid; a broad bridge to a big, flat-topped, triangular nose; big whisker pads and a
+  deeper mouth line; no whisker dots (the picture shows none); fine fur strokes on the muzzle, cheeks and
+  forehead, growing into deep lock grooves at the face's edge. The edge slopes gently into the mane (it was a
+  cliff, which made the ruff kink into a lumpy "hood" rim) and the ruff grows flush out of the face, rising
+  over its first 60%.
+- **Muscle:** pectorals, deltoids, the forearm's outer muscle, the thigh over the haunch, the hamstring.
+- **Plinth:** the same gold (its own material, `bl_ls_lion_plinth`, so it keeps crisp edges and a small atlas
+  share; `finish_maps` gives it the same AO/curvature gold), 0.62 x 0.66 m (was 0.72 x 0.76), same 0.32 m
+  height; the tail pulled in to fit. The in-game floor obstacle follows (`wave9.gd bl_lion()`).
+- **Size:** unchanged (0.95 m lion), per Steven; `BL_LION_SCALE` stays 1.0.
+- Result: 23,524 tris, 2048 px. Evidence: `wsL-lion-sheet-6.jpg` (the reference, this build and the morning's),
+  `wsL-lion-ingame-2.jpg` (unbaked). Still visible up close: a faint line where the face shell meets the
+  mane on one side.
 
 ### Pipeline additions (workstream L)
 - `bake.py`: `META["curvature"]` bakes the hipoly's pointiness (kept in `.scratch/blender/<id>_curv.png`,
