@@ -71,6 +71,9 @@ func _ready() -> void:
 	if player and "mall" in player:
 		player.mall = mall
 	mall.changed.connect(_on_changed)
+	# R (Nov 2; design/godot-prize-counter.md): the "You received" pop-up and the redemption screen
+	add_child(preload("res://scripts/redemption.gd").new().setup(player, mall, db))
+	add_child(preload("res://scripts/received_popup.gd").new().setup(player, mall, db))
 	_build_ui()
 	hand_root = Node3D.new()
 	hand_root.name = "Hand"

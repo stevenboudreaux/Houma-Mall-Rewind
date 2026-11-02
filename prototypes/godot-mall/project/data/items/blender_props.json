@@ -50,6 +50,17 @@
    }
   },
   {
+   "id": "bl_pc_boombox",
+   "name": "Boom box",
+   "class": "hand",
+   "scene": "res://models/bl_pc_boombox/bl_pc_boombox_item.tscn",
+   "icon": "res://models/bl_pc_boombox/bl_pc_boombox_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "prize": "boombox",
+   "tickets": 500
+  },
+  {
    "id": "bl_pc_fingertrap",
    "name": "Chinese finger trap",
    "class": "pocket",
@@ -58,17 +69,7 @@
    "year": 1995,
    "store": "POCKET CHANGE",
    "tickets": 15,
-   "prize": "finger_trap",
-   "place": {
-    "wing": 2,
-    "year": 1995,
-    "pos": [
-     -108.4,
-     0.0,
-     63.2
-    ],
-    "yaw": 30
-   }
+   "prize": "finger_trap"
   },
   {
    "id": "bl_pc_plush_bear",
@@ -90,16 +91,7 @@
     "#7ccfa6",
     "#f2cc34"
    ],
-   "place": {
-    "wing": 2,
-    "year": 1995,
-    "pos": [
-     -107.0,
-     0.0,
-     65.6
-    ],
-    "yaw": -15
-   }
+   "tickets": 700
   },
   {
    "id": "bl_pc_plush_bunny",
@@ -121,16 +113,7 @@
     "#7ccfa6",
     "#f2cc34"
    ],
-   "place": {
-    "wing": 2,
-    "year": 1995,
-    "pos": [
-     -108.3,
-     0.0,
-     69.0
-    ],
-    "yaw": 40
-   }
+   "tickets": 700
   },
   {
    "id": "bl_pc_plush_dog",
@@ -152,16 +135,7 @@
     "#7ccfa6",
     "#f2cc34"
    ],
-   "place": {
-    "wing": 2,
-    "year": 1995,
-    "pos": [
-     -106.7,
-     0.0,
-     71.5
-    ],
-    "yaw": -60
-   }
+   "tickets": 700
   }
  ]
 }

@@ -868,12 +868,12 @@ func _build_ui() -> void:
 	prompt_key.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(prompt_key)
 	var pt := Label.new()
-	pt.text = "Look at the prizes"
+	pt.text = "Redeem tickets"   # R (Nov 2): the glass opens the redemption screen
 	pt.add_theme_font_size_override("font_size", 16)
 	pt.add_theme_color_override("font_color", Color(1, 0.97, 0.9))
 	pt.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(pt)
-	prompt.pressed.connect(func(): open_look())
+	prompt.pressed.connect(func(): redeem())
 	ui.add_child(prompt)
 	# the look screen
 	bar = Control.new()
@@ -973,6 +973,17 @@ func open_look(i := -1) -> void:
 	lcam.current = true
 	bar.visible = true
 	_go(view_i, 0.55)
+
+## R (Nov 2; design/godot-prize-counter.md "Redemption"): the counter glass opens the redemption screen
+## (scripts/redemption.gd, as mall.redemption); its "Look at the prizes" comes back here (open_look).
+## Without one (an old save path, a test scene) the glass still gives the closer look.
+func redeem() -> void:
+	var m = player.get("mall") if player else null
+	if m != null and m.get("redemption") != null:
+		prompt.visible = false
+		m.redemption.open()
+	else:
+		open_look()
 
 func close_look() -> void:
 	if not looking:
@@ -1112,7 +1123,7 @@ func _input(e: InputEvent) -> void:
 				go = true
 			if go:
 				get_viewport().set_input_as_handled()
-				open_look()
+				redeem()
 		return
 	var handled := true
 	if e is InputEventKey and e.pressed:

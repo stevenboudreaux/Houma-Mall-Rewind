@@ -72,13 +72,12 @@ func interact_prompt() -> String:
 	return "" if talking or body == null else "TALK"
 
 func interact(p: Node) -> void:
-	# --- R (the redemption screen, session R): the Pocket Change attendant opens it when it exists,
-	# else falls through to the PLACEHOLDER dialogue. Uncomment when R lands (R also hooks the
-	# counter glass, scripts/prizes*.gd, to the same call):
-	# if bool(entry.get("redemption", false)) and p.mall and "redemption" in p.mall and p.mall.redemption \
-	# 		and p.mall.redemption.has_method("open"):
-	# 	p.mall.redemption.open()
-	# 	return
+	# --- R (the redemption screen, session R; design/godot-prize-counter.md): the Pocket Change
+	# attendant opens it, else falls through to the PLACEHOLDER dialogue
+	if bool(entry.get("redemption", false)) and p.mall and "redemption" in p.mall and p.mall.redemption \
+			and p.mall.redemption.has_method("open"):
+		p.mall.redemption.open()
+		return
 	# --- end R
 	if story and dialogue != "":
 		story.talk(self, dialogue)
