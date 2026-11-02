@@ -18,6 +18,7 @@
 		{"id": "year", "label": "Year (menu: YEAR)", "kind": "event", "keys": ["Y"], "pad": [], "touch": "Year button"},
 		{"id": "jump", "label": "Jump to", "kind": "event", "keys": ["J"], "pad": [3], "touch": "Jump to button"},
 		{"id": "put_away", "label": "Put the held item away", "kind": "event", "keys": ["R"], "pad": [], "touch": "INVENTORY tab"},
-		{"id": "drop", "label": "Drop the held item", "kind": "event", "keys": ["G"], "pad": [], "touch": "INVENTORY tab"}
+		{"id": "drop", "label": "Drop the held item", "kind": "event", "keys": ["G"], "pad": [], "touch": "INVENTORY tab"},
+		{"id": "tilt", "label": "Coin pusher: nudge (too many tilts it)", "kind": "fixed", "keys": [], "also_keys": "N, B or Shift", "pad": [], "also_pad": "LB / RB", "touch": "NUDGE button, or shake the phone"}
 	]
 }

@@ -103,7 +103,7 @@ every start.
 | Year → YEAR tab | Y | — | year button | keys, pad |
 | Jump to | J | Y | Jump to button | keys, pad |
 | Put the held item away / Drop it | R / G | — | INVENTORY tab | keys, pad |
-| Tilt (the coin pusher) | — | — | — | **not on main yet** (D48): add a row to `actions.json` |
+| Coin pusher: nudge (tilts if overdone) | N, B, Shift (fixed, in `play/pusher.html`) | LB / RB | NUDGE button, shake | row `tilt`, kind `fixed` (INT, Demo 49) |
 
 **How a remap reaches code written for fixed keys** (so nothing else had to be rewritten, and other
 workstreams' new keys can join by adding a row):
