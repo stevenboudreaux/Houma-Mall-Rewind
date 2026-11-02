@@ -17,6 +17,14 @@
 extends RefCounted
 
 signal changed
+# --- R (Nov 2; design/godot-prize-counter.md "The pop-up contract") -------------------------------
+## Fires for every item that enters the player's things from outside: bought, given (add), picked up
+## (take). Not for moves between the hand and the bag. scripts/received_popup.gd shows a card for it.
+signal received(id: String)
+## The redemption screen (scripts/redemption.gd) once it is made; null until then. The Pocket Change
+## attendant and the counter glass call mall.redemption.open().
+var redemption = null
+# --- end R ----------------------------------------------------------------------------------------
 
 const VERSION := 1
 
@@ -42,10 +50,13 @@ func count(id: String) -> int:
 func has(id: String) -> bool:
 	return count(id) > 0
 
-## Put n of item id into the inventory (not the hand).
-func add(id: String, n := 1) -> void:
+## Put n of item id into the inventory (not the hand). R: shows the "You received" pop-up unless quiet
+## (quiet = a move between the hand and the bag).
+func add(id: String, n := 1, quiet := false) -> void:
 	if id == "" or n <= 0:
 		return
+	if not quiet:
+		received.emit(id)   # R
 	for e in inventory:
 		if e.id == id:
 			e.count = int(e.count) + n
@@ -77,7 +88,7 @@ func hold(id: String) -> bool:
 	if not remove(id):
 		return false
 	if hand != "":
-		add(hand)
+		add(hand, 1, true)   # R: quiet
 	hand = id
 	changed.emit()
 	return true
@@ -88,7 +99,7 @@ func put_away() -> void:
 		return
 	var id := hand
 	hand = ""
-	add(id)
+	add(id, 1, true)   # R: quiet
 
 # ------------------------------------------------------------------ the world
 ## Picked up from the world: no longer there; into the hand when to_hand and the hand is empty
@@ -97,8 +108,9 @@ func take(id: String, to_hand: bool) -> void:
 	moved[id] = {}
 	if to_hand:
 		if hand != "":
-			add(hand)
+			add(hand, 1, true)   # R: quiet
 		hand = id
+		received.emit(id)   # R
 		changed.emit()
 	else:
 		add(id)
