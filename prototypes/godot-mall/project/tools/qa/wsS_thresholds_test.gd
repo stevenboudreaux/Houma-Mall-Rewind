@@ -67,6 +67,10 @@ func _gate():
 			return g
 	return null
 
+func _gm():
+	var g = current_scene.get_node_or_null("Dynamic/dyn_cin_gate")
+	return g if g else current_scene.get_node_or_null("Static/cin_gate")
+
 func _next() -> void:
 	si += 1
 	t = 0
@@ -116,12 +120,12 @@ func _process(_dt: float) -> bool:
 			elif t == 30:
 				var g = _gate()
 				var said := false
-				for c in p.hud.get_parent().get_children():
-					if c is Label and str(c.text).begins_with("PLACEHOLDER locked message (Southland Cinema"):
-						said = true
+				var gn = _gate()
+				if gn and gn._note and gn._note.modulate.a > 0.5 and str(gn._note.text).begins_with("PLACEHOLDER locked message (Southland Cinema"):
+					said = true
 				_check(g != null and g.locked() and current_scene.scene_file_path == pending.scene and said,
 					"locked without the stick: message shown %s, still in %s, gate locked %s" % [said, current_scene.scene_file_path.get_file(), g.locked() if g else "no gate"])
-				var gm = current_scene.get_node_or_null("Dynamic/dyn_cin_gate")
+				var gm = _gm()
 				_check(gm != null and gm.visible and gm.transform == Transform3D.IDENTITY, "roll gate down (dyn_cin_gate)")
 				_next()
 		"hold":
@@ -143,14 +147,14 @@ func _process(_dt: float) -> bool:
 				pending = {"t0": Time.get_ticks_msec()}
 			elif t > 10:
 				# the roll-up takes 1.1 s of real time
-				var gm = current_scene.get_node_or_null("Dynamic/dyn_cin_gate")
+				var gm = _gm()
 				if (gm != null and not gm.visible) or Time.get_ticks_msec() - pending.t0 > 4000:
 					_check(gm != null and not gm.visible, "roll gate rolled up (%d ms)" % (Time.get_ticks_msec() - pending.t0))
 					_next()
 		"gate_open":
 			if t > 3:
 				var g = _gate()
-				var gm = current_scene.get_node_or_null("Dynamic/dyn_cin_gate")
+				var gm = _gm()
 				_check(g != null and not g.locked() and gm != null and not gm.visible, "after a reload: still unlocked, gate up")
 				_next()
 		"jump":

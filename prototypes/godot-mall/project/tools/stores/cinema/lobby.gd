@@ -44,5 +44,5 @@ static func build(b, R: Dictionary) -> void:
 	b.force_dyn = false
 	# a few lights: three warm downlights down the middle, real-time (this wing is never baked)
 	for k in 3:
-		var l = b.add_omni(Vector3(x0 + (x1 - x0) * (k + 1) / 4.0, H - 0.4, (z0 + z1) * 0.5), 0.7, 6.0, Color(1.0, 0.82, 0.6))
+		var l = b.add_omni(Vector3(x0 + (x1 - x0) * (k + 1) / 4.0, H - 0.4, (z0 + z1) * 0.5), 0.4, 6.0, Color(1.0, 0.82, 0.6))
 		l.light_bake_mode = Light3D.BAKE_DYNAMIC

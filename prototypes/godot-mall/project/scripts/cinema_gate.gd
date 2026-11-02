@@ -4,7 +4,8 @@
 ## (scripts/player.gd thresholds): pressing the action button there asks locks_threshold(6), and
 ## while locked try_open() runs instead of the crossing:
 ##   - holding the key item (Martin Folse's stick, folse_stick) sets the flag and rolls the gate up
-##     (the dynamic mesh dyn_cin_gate, tools/stores/cinema/front.gd / build_mall.gd); the next press
+##     (1995: the dynamic mesh dyn_cin_gate, tools/stores/cinema/front.gd; 2026: the vacant unit's
+##     grille, its own static mesh cin_gate, build_mall.gd); the next press
 ##     goes in;
 ##   - otherwise it shows the PLACEHOLDER message from data/story/gates.json.
 ## The flag lives where Q keeps flags (mall.flags, scripts/flags.gd); until Q merges, a fallback
@@ -57,7 +58,11 @@ func setup(p: Node3D, e: Dictionary) -> void:
 func _ready() -> void:
 	var root = player.get_parent() if player else null
 	if root:
+		# 1995: a dynamic mesh behind the door arches; 2026: the vacant unit's grille, a static
+		# (lightmapped) mesh of its own
 		_gate_mesh = root.get_node_or_null("Dynamic/dyn_cin_gate")
+		if _gate_mesh == null:
+			_gate_mesh = root.get_node_or_null("Static/cin_gate")
 	var f = _flags()
 	if f and f.has_signal("changed"):
 		f.changed.connect(func(_n, _v): _sync(true))
@@ -87,8 +92,35 @@ func say_locked(_door := false) -> void:
 	var st = player.get_node_or_null("Story") if player else null
 	if st and st.has_method("say"):
 		st.say(message)
-	elif player and player.has_method("_say"):
-		player._say(message)
+	else:
+		_notice(message)
+
+## Until Q's Story lands: the message just above the threshold prompt (player.gd's own _say sits
+## under the prompt, where the prompt hides it), for 2.6 s.
+var _note: Label = null
+func _notice(t: String) -> void:
+	if _note == null:
+		var layer := CanvasLayer.new()
+		layer.layer = 21
+		add_child(layer)
+		_note = Label.new()
+		_note.add_theme_font_size_override("font_size", 22)
+		_note.add_theme_color_override("font_color", Color(1, 0.95, 0.75))
+		_note.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+		_note.add_theme_constant_override("outline_size", 6)
+		_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_note.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+		_note.offset_left = -260; _note.offset_right = 260
+		_note.offset_top = -200; _note.offset_bottom = -140
+		_note.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+		_note.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		layer.add_child(_note)
+	_note.text = t
+	_note.modulate.a = 1.0
+	var tw := create_tween()
+	tw.tween_interval(2.0)
+	tw.tween_property(_note, "modulate:a", 0.0, 0.6)
 
 # ------------------------------------------------------------------ the gate's look
 ## Rolled down while locked; rolled up (squashed into its top, then hidden) once open.

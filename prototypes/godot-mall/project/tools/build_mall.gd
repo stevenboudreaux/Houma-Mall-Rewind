@@ -1947,16 +1947,24 @@ func storefront(g, e, a, b, n, t, Ln, inner_call = false):
 	if sd.vacant:
 		# closed grille in front of a dark space
 		# (workstream S: the 2026 cinema unit's grille is the cinema's roll gate, scripts/cinema_gate.gd
-		# rolls it up: its own dynamic mesh, dyn_cin_gate)
+		# rolls it up: its own static mesh, Static/cin_gate, still in the bake)
 		var gate26 = room_wing_of(e.store) == 6
 		var gg = "cin_gate" if gate26 else g
-		force_dyn = gate26
 		quad(gg, "grille", [p0, p1, p1 + Vector3(0, OPEN_H, 0), p0 + Vector3(0, OPEN_H, 0)], n, [], false, 1.0)
 		var k = 0.0
 		while k < OPEN_H:
 			box(gg, "metal_dark", (p0 + p1) * 0.5 + Vector3(0, k, 0) + n * 0.02, abs_size(t, width, 0.03, 0.03, n))
 			k += 0.18
-		force_dyn = false
+		if gate26:
+			# a dark recess behind it, so the open gate shows a dark space, not the lot (hidden behind
+			# the grille while it is down)
+			var dd = -n * 3.0
+			var H2 = Vector3(0, OPEN_H, 0)
+			quad("cin_back26", "black", [p1 + dd, p0 + dd, p0 + dd + H2, p1 + dd + H2], n)
+			quad("cin_back26", "black", [p0, p1, p1 + dd, p0 + dd], Vector3.UP)
+			quad("cin_back26", "black", [p0 + H2, p0 + dd + H2, p1 + dd + H2, p1 + H2], Vector3.DOWN)
+			quad("cin_back26", "black", [p0 + dd, p0, p0 + H2, p0 + dd + H2], (p1 - p0).normalized())
+			quad("cin_back26", "black", [p1, p1 + dd, p1 + dd + H2, p1 + H2], (p0 - p1).normalized())
 		if YEAR == 2026 and Ln >= 3.0:
 			for_lease_card(g, a, n, t, Ln)
 		return

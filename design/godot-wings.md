@@ -131,8 +131,14 @@ wing ("just make it a very small room; I want to see if the logic works", 12:38)
 - **The cinema in wing 1** keeps its front (`tools/stores/cinema/front.gd`) and its dim lobby behind
   the glass; a closed roll gate now stands behind the two door arches (1995; dynamic mesh
   `dyn_cin_gate`). In 2026 the unit is vacant in `layout_2026.json` and its existing full-width
-  grille is that gate (moved from the static mesh into `dyn_cin_gate`, so now probe-lit; before/after
-  in `production/qa/evidence/wsS-*cinema-2026*`).
+  grille is that gate: moved out of the H1a hall mesh into a static mesh of its own (`cin_gate`, still
+  lightmapped), with a plain dark 3 m recess behind it (`cin_back26`, hidden while the gate is down),
+  so an open gate shows a dark space instead of the lot. **Visible until wing 1 (2026) is rebaked:**
+  the unbaked grille reads lighter and H1a's old lightmap is misaligned on the bulkhead above it
+  (H1a's mesh changed); before/after `production/qa/evidence/wsS-cinema-2026-grille-before-after.jpg`.
+- **No shoppers in wing 6** (the lobby is one empty room). Wings 4 and 5 keep the shoppers that walked
+  Sears and Dillard's inside wings 1 and 2 (the crowd spawns round the player, so it is the same as
+  before); the Runner stays in wing 2 only.
 
 ### Thresholds (crossed like the seam)
 Each mall wing's `wing.json` gains `thresholds` ({to, line [x0, z, x1], side}); a room wing's has
@@ -162,7 +168,9 @@ merged): a node in group `"gate"` with `flag` = `cinema_unlocked`, made in wing 
 the gates file's entry with `"threshold": 6`. While the flag is false the cinema threshold's prompt
 still shows, but the press runs `try_open()`: holding `folse_stick` (M's
 `mall.inventory.held_id()`, until M lands B+C's `mall.hand`, the same fallback Q uses) sets the flag
-and rolls the gate up (1.1 s, then hidden); otherwise the PLACEHOLDER message from the gates file.
+and rolls the gate up (1.1 s, then hidden); otherwise the PLACEHOLDER message from the gates file
+(Q's `Story.say` once Q lands; until then the gate's own notice just above the prompt, where
+`player._say` would be hidden under it).
 The next press goes in. The flag is kept in Q's store (`mall.flags`; until Q lands, the same
 localStorage key `mall-flags-1` / Engine meta `mall_flags`, `{"v": 1, "flags": {...}}`), so it
 survives wing loads and reloads, one store for both years. Martin Folse's stick is a 1995 item, so

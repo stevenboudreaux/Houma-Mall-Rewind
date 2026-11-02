@@ -213,6 +213,8 @@ func _ready() -> void:
 func _spawn_1995_life() -> void:
 	if year != 1995:
 		return
+	if wing == 6:
+		return     # S: the cinema lobby placeholder is one empty room (design/godot-wings.md "Wings 4-6")
 	# the Runner, a window mannequin come to life (scripts/runner_ai.gd; Steven, Oct 16 2026). He
 	# replaced the Rougarou (scripts/rougarou_ai.gd, kept but no longer made).
 	var rn = load("res://scripts/runner_ai.gd").new()
