@@ -410,6 +410,10 @@ func _put_away() -> void:
 func open_panel(on: bool) -> void:
 	if on and _blocked():
 		return
+	# M (design/godot-menu.md): the inventory lives in the menu's INVENTORY tab now (scripts/menu/menu.gd)
+	if on and player.get("menu") != null and player.menu.has_method("open_tab"):
+		player.menu.open_tab("inventory")
+		return
 	panel.visible = on
 	if on:
 		if not player.frozen:

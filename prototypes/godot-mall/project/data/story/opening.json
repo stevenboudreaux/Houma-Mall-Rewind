@@ -1,0 +1,7 @@
+{
+	"_": "Workstream M (design/godot-menu.md): the opening screen, shown once at first start (scripts/menu/opening.gd). Steven writes the words; every PLACEHOLDER here is a slot for them. title and text are shown as written (text may hold blank lines); start and skip are the two buttons.",
+	"title": "PLACEHOLDER: title",
+	"text": "PLACEHOLDER: Steven's opening briefing goes here.",
+	"start": "START",
+	"skip": "Skip"
+}

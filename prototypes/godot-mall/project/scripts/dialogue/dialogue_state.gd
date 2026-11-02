@@ -4,7 +4,7 @@
 ##
 ##   flags          any flag name reads as its value (false when never set);
 ##                  `set some_flag = true` / `$> some_flag = false` writes mall.flags
-##   name           the player's name: mall.player_name (session M), "friend" until M lands
+##   name           the player's name: mall.player_name (session M), "friend" while it is ""
 ##   has("id")      the item is carried (bag or hand)
 ##   holding("id")  the item is in the hand right now
 ##   give("id")     mall.inventory gets one (session R adds the "You received …" pop-up)
@@ -58,19 +58,16 @@ func _set(prop: StringName, value: Variant) -> bool:
 
 # ------------------------------------------------------------------ the player
 func player_name() -> String:
-	# M: mall.player_name, set by the menu. Remove this fallback when M lands.
-	if mall != null and "player_name" in mall and str(mall.player_name) != "":
+	# M: mall.player_name, set by the menu's AVATAR tab ("" until typed)
+	if mall != null and str(mall.player_name) != "":
 		return str(mall.player_name)
 	return "friend"
 
-## The item in the hand. M exposes mall.inventory.held_id(); until it lands, B+C's mall.hand.
+## The item in the hand: M's mall.held_id() ("" when nothing is held).
 func held() -> String:
 	if mall == null:
 		return ""
-	var inv = mall.inventory
-	if inv is Object and inv.has_method("held_id"):
-		return str(inv.held_id())
-	return str(mall.hand) if "hand" in mall else ""     # remove when M lands
+	return str(mall.held_id())
 
 # ------------------------------------------------------------------ conditions
 func has(id: String) -> bool:

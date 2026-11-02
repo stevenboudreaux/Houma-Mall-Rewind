@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/timetravel.gd" id="1_tt"]
+[ext_resource type="Shader" path="res://scripts/timetravel.gdshader" id="2_tt"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tt"]
+shader = ExtResource("2_tt")
+shader_parameter/progress = 0.0
+shader_parameter/forward = 1.0
+
+[node name="TimeTravel" type="CanvasLayer"]
+layer = 60
+script = ExtResource("1_tt")
+duration = 1.5
+
+[node name="FX" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_tt")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Hum" type="AudioStreamPlayer" parent="."]

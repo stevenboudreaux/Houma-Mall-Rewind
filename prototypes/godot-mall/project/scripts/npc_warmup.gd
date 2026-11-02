@@ -27,6 +27,9 @@ const LOAD_BUDGET_MS := 400
 ## Held for the whole session so the skins stay in ResourceLoader's cache (npc_body.gd load()s by
 ## path). The skins are loaded anyway as the crowd fills in, so this costs no extra memory.
 static var held := {}
+## M (design/godot-menu.md): when set (scripts/npcs.gd, from npcs.json "years"), only these skin
+## scenes are warmed (2026's few shoppers).
+static var only: Array[String] = []
 
 var paths: Array[String] = []
 var self_light_on := 0.3      # npcs.json self_light_night (0 when lighting.json is day_only)
@@ -49,7 +52,7 @@ static func skin_paths() -> Array[String]:
 	var out: Array[String] = []
 	for e in NpcBody.manifest().get("skins", []):
 		var p := str(e.get("scn", ""))
-		if p != "" and ResourceLoader.exists(p):
+		if p != "" and ResourceLoader.exists(p) and (only.is_empty() or p in only):   # M: only
 			out.append(p)
 	return out
 
