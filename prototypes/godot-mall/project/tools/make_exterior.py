@@ -233,7 +233,8 @@ def main(src, out_path):
         mid = [(a[0] + b[0]) * 0.5, (a[1] + b[1]) * 0.5]
         out = [mid[0] - n[0] * (depth + 1.5), mid[1] - n[1] * (depth + 1.5)]
         inside = [mid[0] + n[0] * 1.6, mid[1] + n[1] * 1.6]
-        w = 1 if sid.startswith("s1") else 2
+        # workstream S (Nov 2 2026): the anchors are their own wings (Sears 4, Dillard's 5)
+        w = 4 if sid.startswith("s1") else 5
         doors.append(dict(store=sid, kind="exit", a=a, b=b, n=n, mid=mid, width=abs(b[0] - a[0]) + abs(b[1] - a[1]),
                           depth=depth, wing=w, zone="", out=out, inside=inside,
                           yaw_in=math.degrees(math.atan2(-n[0], -n[1])), yaw_out=math.degrees(math.atan2(n[0], n[1]))))

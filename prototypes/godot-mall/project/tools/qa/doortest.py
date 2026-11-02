@@ -3,12 +3,19 @@ standing inside the main entrance, check the "Go outside" prompt shows, press E,
 comes back as wing 3 outside the doors; then press E again at the outside spot and check it
 comes back as wing 1.
 
-Usage: python3 doortest.py <url-path> <out-prefix>   (server on :8765 serving the repo root)
+Usage: python3 doortest.py <url-path> <out-prefix> [wing cam to-wing [year]]
+   (server on :8765 serving the repo root)
+Workstream S (Nov 2 2026): any wing's door or threshold: start in <wing> at <cam> (x,z,yaw,pitch:
+standing at the door / threshold), press E, expect <to-wing>, press E again where it arrives and
+expect <wing> back. E.g. the Sears side exit "4 -4,-144.4,180,0 3", the Sears opening from the mall
+"1 -4,-94.5,0,0 4", the cinema lobby's doors "6 -60,-84.5,180,0 1". [year] 2026 adds ?year=2026.
 """
 import sys, time
 from playwright.sync_api import sync_playwright
 
 path, out = sys.argv[1], sys.argv[2]
+WING, CAM, TO = (sys.argv[3], sys.argv[4], sys.argv[5]) if len(sys.argv) > 5 else ("1", "34.5,0,-90,0", "3")
+YQ = "&year=2026" if len(sys.argv) > 6 and sys.argv[6] == "2026" else ""
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
 
 def ready(pg, t=300):
@@ -29,9 +36,9 @@ with sync_playwright() as p:
     pg.on("console", lambda m: logs.append(m.text))
     ok = True
     # inside the main entrance (wing 1, its inside spot is 34.5,0), looking out; then outside
-    for leg, (start, want) in enumerate([("34.5,0,-90,0", "wing=3"), (None, "wing=1")]):
+    for leg, (start, want) in enumerate([(CAM, "wing=" + TO), (None, "wing=" + WING)]):
         if start:
-            pg.goto(f"http://127.0.0.1:8765/{path}?wing=1&cam={start}&debug=1")
+            pg.goto(f"http://127.0.0.1:8765/{path}?wing={WING}&cam={start}&debug=1{YQ}")
         print("leg", leg, "ready_s", ready(pg))
         time.sleep(8)
         pg.screenshot(path=f"{out}-{leg}-prompt.png", timeout=180000)

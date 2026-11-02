@@ -62,6 +62,10 @@ func _spawn_gates() -> void:
 	if not (j is Dictionary):
 		return
 	for e in j.get("gates", []):
+		# INT (Demo 49): an entry with "threshold" (the cinema doors) is S's scripts/cinema_gate.gd's,
+		# made by player.gd; one gate node per entry, never two racing on the same flag
+		if not (e is Dictionary) or e.has("threshold"):
+			continue
 		if not in_year(e.get("years", "both"), int(player.year)):
 			continue
 		var here: bool = int(e.get("wing", 0)) == int(player.wing) or int(player.wing) == 0

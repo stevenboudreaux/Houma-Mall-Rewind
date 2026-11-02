@@ -15,6 +15,10 @@ const DATA := "res://tools/stores/directory/directory_data.json"
 ## spot stands on.
 const WING2_ZONES := ["C3", "H8", "H5", "C4", "H6", "H7"]
 const STAND_OUT := 2.2     # metres out from the frontage where a jump puts the player
+## Workstream S (Nov 2 2026, design/godot-wings.md "Wings 4-6"): the anchors that are wings of their
+## own are jumped into: STAND_OUT inside the mall opening (tools/build_mall.gd ROOM_WINGS thr), facing
+## in. Sears / Lynn's (s1) -> wing 4, Dillard's (s2) -> wing 5. [wing, x, z, yaw_deg]
+const ROOM_JUMPS := {"s1": [4, -4.0, -98.2, 0.0], "s2": [5, -4.0, 82.2, 180.0]}
 
 ## Returns {"years": {"1995": {...}, "2026": {...}}}. Each year: title, cats [[id, title, colour]],
 ## stalls [{id, name, num, cats, rects [[x0,z0,x1,z1]], label [x,z], jump [wing,x,z,yaw_deg],
@@ -135,7 +139,7 @@ static func _year(L: Dictionary, D: Dictionary) -> Dictionary:
 			next_num += 1
 		var fm := (Vector2(best.a[0], best.a[1]) + Vector2(best.b[0], best.b[1])) * 0.5 + Vector2(best.n[0], best.n[1]) * 1.0
 		stalls.append({"id": sid, "name": disp, "num": num, "cats": cl, "rects": rects, "vacant": vacant,
-			"label": _label_at(rects), "jump": _jump(L, best, hall, W, H, S, ox, oy), "known": info.size() > 0,
+			"label": _label_at(rects), "jump": ROOM_JUMPS.get(sid, _jump(L, best, hall, W, H, S, ox, oy)), "known": info.size() > 0,
 			"layout_name": nm, "front": [best.a[0], best.a[1], best.b[0], best.b[1], best.n[0], best.n[1]],
 			"zone": _zone_at(L, fm.x, fm.y)})
 	for x in D.get("extras", []):

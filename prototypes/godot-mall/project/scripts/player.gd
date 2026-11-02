@@ -80,7 +80,14 @@ var input_kind := "kb"      # "kb", "pad" or "touch": which glyph the prompt sho
 var vr: Node3D
 var vr_on := false
 const SEAM_NEAR := 2.6      # metres from the seam at which the prompt shows
-const WING_NAMES := {1: "Wing 1 · Sears & the main entrance", 2: "Wing 2 · Dillard's & JCPenney", 3: "Outside · the parking lot"}
+const WING_NAMES := {1: "Wing 1 · Sears & the main entrance", 2: "Wing 2 · Dillard's & JCPenney", 3: "Outside · the parking lot",
+	4: "Sears", 5: "Dillard's", 6: "Southland Cinema"}
+## S (Nov 2 2026, design/godot-wings.md "Wings 4-6"): the room wings' thresholds, from wing.json: each
+## {to, line [x0, z, x1], side}: a line like the seam (z = line[1], x line[0]..line[2]), the other wing
+## on the `side` (+1: +z) of it. Crossed like the seam; a gate (group "gate", locks_threshold(to))
+## may refuse it (the cinema, scripts/cinema_gate.gd).
+var thresholds: Array = []
+var thr_near = null         # the threshold whose prompt shows, or null
 ## The doors between inside and outside (design/godot-exterior.md, exterior.json via gen/w<n>/wing.json):
 ## in wings 1 and 2 the mall's exits and main entrance offer "Go outside" (wing 3, the lot); outside,
 ## each door offers the way back in. Each: store, kind, wing (the inside wing), out, inside (the
@@ -119,6 +126,7 @@ func _ready() -> void:
 		walk_rows = PackedStringArray(wj.get("walk", walk_rows))
 		seam = wj.get("seam", [])
 		other_side = float(wj.get("other_side", 1.0))
+		thresholds = wj.get("thresholds", [])   # S
 	# the doors between inside and outside (exterior.json, tools/make_exterior.py): in a mall wing,
 	# the ones that open from this wing; outside, all of them
 	if FileAccess.file_exists("res://exterior.json"):
@@ -204,6 +212,8 @@ func _ready() -> void:
 	menu = load("res://scripts/menu/menu.gd").new()
 	menu.name = "Menu"; menu.player = self
 	add_child(menu)
+	# S: the threshold gates (the cinema doors, data/story/gates.json; scripts/cinema_gate.gd)
+	load("res://scripts/cinema_gate.gd").make_all(self)
 	_light_btn_ok = buttons[2].visible
 	owner_hud_sync()
 	_spawn_1995_life()
@@ -215,6 +225,8 @@ func _ready() -> void:
 ## The Runner, the shoppers, the shirt words, the Stockrooms and the prize counter: 1995 only (2026
 ## is the building as it is today).
 func _spawn_1995_life() -> void:
+	if wing == 6:
+		return     # S: the cinema lobby placeholder is one empty room (design/godot-wings.md "Wings 4-6")
 	if year != 1995:
 		_spawn_2026_shoppers()   # M
 		return
@@ -667,7 +679,7 @@ func _build_wing_ui() -> void:
 	var top := CanvasLayer.new()
 	top.layer = 20
 	add_child(top)
-	if wing == 0 or (seam.size() < 3 and doors.is_empty()):
+	if wing == 0 or (seam.size() < 3 and doors.is_empty() and thresholds.is_empty()):
 		if arriving:
 			top.add_child(fade)
 			create_tween().tween_property(fade, "modulate:a", 0.0, 0.6).set_delay(0.25)
@@ -729,6 +741,23 @@ func _seam_dist() -> float:
 	var d := (z - position.z) * other_side
 	return d if d >= -0.2 else 1e9
 
+## S: the room-wing threshold beside the player (within SEAM_NEAR, on this wing's side), or null.
+func _thr_here():
+	for th in thresholds:
+		var ln: Array = th.line
+		if position.x < float(ln[0]) - 0.6 or position.x > float(ln[2]) + 0.6:
+			continue
+		var d := (float(ln[1]) - position.z) * float(th.side)
+		if d >= -0.2 and d < SEAM_NEAR:
+			return th
+	return null
+
+## S: a wing's name on the prompt ("Lynn's" for wing 4 in 2026).
+func _wing_name(w: int) -> String:
+	if w == 4 and year == 2026:
+		return "Lynn's"
+	return WING_NAMES.get(w, "Wing %d" % w)
+
 ## The door beside the player: in the mall, by its inside spot; outside, by its outside spot.
 func _door_here():
 	for d in doors:
@@ -743,7 +772,8 @@ func _update_prompt() -> void:
 	if prompt == null:
 		return
 	door_near = _door_here() if not leaving else null
-	var near := (door_near != null or _seam_dist() < SEAM_NEAR) and not leaving
+	thr_near = _thr_here() if not leaving and door_near == null else null
+	var near := (door_near != null or thr_near != null or _seam_dist() < SEAM_NEAR) and not leaving
 	if near != prompt.visible:
 		prompt.visible = near
 	if near:
@@ -754,6 +784,8 @@ func _update_prompt() -> void:
 				prompt_text.text = "Enter the mall · " + _door_name(door_near)
 			else:
 				prompt_text.text = "Go outside · " + _door_name(door_near)
+		elif thr_near != null:
+			prompt_text.text = "Enter " + _wing_name(int(thr_near.to))
 		else:
 			prompt_text.text = "Enter " + WING_NAMES[3 - wing]
 
@@ -845,6 +877,17 @@ func _cross() -> void:
 		else:
 			var sp: Array = d.out
 			_go_to_wing(3, float(sp[0]), float(sp[1]), deg_to_rad(float(d.yaw_out)), deg_to_rad(2.0))
+		return
+	if thr_near != null:
+		# S: a room wing's threshold (the mall opening of Sears / Dillard's, the cinema doors): the
+		# other side, 1.3 m past the line, same x and facing, unless a gate holds it shut
+		var th = thr_near
+		for gt in get_tree().get_nodes_in_group("gate"):
+			if gt.has_method("locks_threshold") and gt.locks_threshold(int(th.to)):
+				gt.try_open(self)
+				return
+		var ln: Array = th.line
+		_go_to_wing(int(th.to), clampf(position.x, float(ln[0]) + 0.5, float(ln[2]) - 0.5), float(ln[1]) + float(th.side) * 1.3, yaw, pitch)
 		return
 	if seam.size() < 3:
 		return

@@ -138,9 +138,11 @@ func _test_gate() -> void:
 func _test_gates_json() -> void:
 	var j = JSON.parse_string(FileAccess.get_file_as_string("res://data/story/gates.json"))
 	_check(j is Dictionary and j.get("gates") is Array, "data/story/gates.json reads")
+	# INT (Demo 49): Dillard's stays open (Steven, Nov 2); the one gate is the cinema's (S)
 	var dl := {}
 	for e in j.gates:
-		if str(e.get("id")) == "dillards":
+		_check(str(e.get("id")) != "dillards", "no Dillard's gate")
+		if str(e.get("id")) == "cinema":
 			dl = e
-	_check(dl.get("flag") == "dillards_unlocked" and str(dl.get("years")) == "both" and "s2e" in dl.get("doors", []) and "s2s" in dl.get("doors", []), "the Dillard's gate: flag, both years, both outside doors")
+	_check(dl.get("flag") == "cinema_unlocked" and int(dl.get("threshold", 0)) == 6 and dl.get("key_item") == "folse_stick" and dl.get("doors", []).is_empty(), "the cinema gate: flag, threshold 6, key folse_stick, no doors")
 	_check(str(dl.get("message", "")).begins_with("PLACEHOLDER"), "its message is a PLACEHOLDER")

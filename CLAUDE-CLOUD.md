@@ -60,7 +60,8 @@ GitHub release downloads work; YouTube and most other sites are blocked from the
 
 ## Build and test
 
-- **Build a wing:** `godot --headless --path . --script res://tools/build_mall.gd -- --wing=1` (2, 3 = outside;
+- **Build a wing:** `godot --headless --path . --script res://tools/build_mall.gd -- --wing=1` (2, 3 = outside,
+  4 = Sears / Lynn's, 5 = Dillard's level 1, 6 = the cinema lobby;
   add `--year=2026` for the 2026 scenes; `design/godot-2026-year.md`), then look for `BUILD OK`.
 - **Other QA tools:** `tools/qa/README.md` (unbaked_shots.gd, doortest.py, signstest.py, packtest.py …).
 - **Fast look, no bake:** `tools/qa/preview.sh <module|store:NAME> <out-prefix> "x,y,z,yaw,pitch;..." '{}' lit|dark`
@@ -74,6 +75,11 @@ GitHub release downloads work; YouTube and most other sites are blocked from the
 - **Cameras:** `?cam=x,z,yaw,pitch` in the game URL places the player.
 - **Baking:** don't. Cloud bakes need a 12 GB swap file and ~10 min per wing; the integration session does one bake
   per wing on Steven's Mac (Ultra). Your shots are unbaked; say so in the evidence file names.
+- **The Mac's `.autobake` list** (one line of `<scene>:<mode>` jobs, `addons/autobake`): since workstream S
+  (Nov 2 2026) it also takes the room wings, **`wing4:day wing5:day wing4_2026:day wing5_2026:day`** (Sears / Lynn's, Dillard's level 1; `design/godot-wings.md` "Wings 4-6").
+  Wing 6 (the cinema lobby placeholder) is never baked. After baking 4 / 5: `tools/capture_standin.sh 4` / `5`
+  (and `... 2026`), then recapture 1 / 2, export, publish. Until their first bake, wings 4 and 5 ship unlit
+  (`publish_build.sh` warns, does not refuse).
 
 ## Reference pictures: the `refs` branch
 

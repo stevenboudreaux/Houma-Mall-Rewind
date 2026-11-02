@@ -154,8 +154,23 @@ static func _arch(b, F, G, Pf, r, n, c, kind):
 				[Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)], true)
 			b.box(F, "cin_bronze", Pf.call((v0 + v1) * 0.5, 1.0, gd - 0.03), b.abs_size(r, 0.36, 0.03, 0.03, n))   # push bars
 			b.box(F, "cin_bronze", Pf.call((v0 + v1) * 0.5, 0.12, gd), b.abs_size(r, v1 - v0, 0.24, 0.07, n), Transform3D.IDENTITY, ["-y"])
+		# workstream S (Nov 2 2026): the closed roll gate behind the doors, the default look (the
+		# cinema is locked: scripts/cinema_gate.gd rolls it up once cinema_unlocked is set). Its own
+		# dynamic mesh (dyn_cin_gate) so it can move; not in the bake.
+		_roll_gate(b, Pf, r, n, c - rad + fw, c + rad - fw, gd + 0.07, TRANSOM)
 	b.obst(["rect", min(Pf.call(c - rad, 0, -0.1).x, Pf.call(c + rad, 0, gd + 0.1).x), min(Pf.call(c - rad, 0, -0.1).z, Pf.call(c + rad, 0, gd + 0.1).z),
 		max(Pf.call(c - rad, 0, -0.1).x, Pf.call(c + rad, 0, gd + 0.1).x), max(Pf.call(c - rad, 0, -0.1).z, Pf.call(c + rad, 0, gd + 0.1).z)])
+
+## A closed roll gate across one opening, v0..v1, d into the building, floor to `top`: a grille
+## panel and horizontal slats, in dynamic group "cin_gate" (scripts/cinema_gate.gd moves it).
+static func _roll_gate(b, Pf, r, n, v0, v1, d, top):
+	b.force_dyn = true
+	b.quad("cin_gate", "grille", [Pf.call(v0, 0, d), Pf.call(v1, 0, d), Pf.call(v1, top, d), Pf.call(v0, top, d)], n, [], false, 1.0)
+	var y = 0.0
+	while y < top:
+		b.box("cin_gate", "metal_dark", Pf.call((v0 + v1) * 0.5, y, d - 0.02), b.abs_size(r, v1 - v0, 0.03, 0.03, n))
+		y += 0.18
+	b.force_dyn = false
 
 ## The box office: a dark wood counter to 1.05 m, the ticket window above it with a speaking
 ## grille and a pass-through, the price cards along the top and a help-wanted card; inside, the

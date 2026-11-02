@@ -22,6 +22,10 @@ const EYE := 1.62          # the player's eye height (player.gd): where the came
 const SLOT := 384          # each face's picture, square in the atlas
 const ATLAS_W := 1152      # one row per door: [front | left | right]
 
+## Workstream S (Nov 2 2026): the anchors' own doors moved to their wings (Sears 4, Dillard's 5)
+## but keep their rows in the mall wing's atlas, so the atlases captured before stay valid.
+const ROW_WING := {4: 1, 5: 2}
+
 ## The doors of `wing` in exterior.json's order (the atlas rows).
 static func wing_doors(wing: int) -> Array:
 	if not FileAccess.file_exists("res://exterior.json"):
@@ -29,7 +33,8 @@ static func wing_doors(wing: int) -> Array:
 	var ex = JSON.parse_string(FileAccess.get_file_as_string("res://exterior.json"))
 	var out := []
 	for d in ex.get("doors", []):
-		if int(d.get("wing", 0)) == wing:
+		var dw := int(d.get("wing", 0))
+		if dw == wing or ROW_WING.get(dw, -1) == wing:
 			out.append(d)
 	return out
 
