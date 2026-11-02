@@ -70,7 +70,7 @@ with sync_playwright() as p:
     key(pg, "Enter", 4.0)                          # line 2, the question, and its three responses
     shot(pg, "desktop-three-choices")
     key(pg, "2", 4.0)                              # line 3 and the second level
-    key(pg, "Down", 1.0)
+    key(pg, "ArrowDown", 1.0)
     shot(pg, "desktop-second-level")
     key(pg, "2", 4.0)                              # line 4
     key(pg, "Enter", 3.0)                          # line 5: the give has happened
