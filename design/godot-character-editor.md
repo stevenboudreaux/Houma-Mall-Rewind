@@ -3,12 +3,20 @@
 **Asked for (Steven, Nov 2):** the character editor in Godot, driven by B1's bodies, shape keys, hair
 and outfits (`design/godot-characters.md`): character **presets as data** and a loader that dresses a
 B1 body on the NPC rig; the counter attendants on presets instead of Mixamo skins; an **owner-mode
-NPC editor** (turntable preview, BODY / SKIN / BASE LAYER / HAIR / OUTFIT / NAME, Save + download);
+NPC editor** (turntable preview, BODY / SKIN / HAIR / OUTFIT / NAME, Save + download);
 the **player's avatar creator** as the same editor in the menu's AVATAR tab; baking for NPCs; per-map
 packs. **Ground rule: machinery only.** No characters, names or story: the three attendant presets are
 **PLACEHOLDER** test data (`"name": "PLACEHOLDER"`).
 
-Branch `ws/b2-editor`, from `ws/b1-bodies`, with `ws/m-menu` (the menu, AVATAR tab) and `ws/q-dialogue`
+> **B-FIX (Steven, Nov 2, final): every character is clothed at all times.** The rule, its enforcement
+> and its test are in `design/godot-characters.md` "THE CLOTHED RULE"; it replaces the base-layer rule B2
+> shipped. This note is edited to match: no BASE tab, no A-pose view, no "none" in the top or bottom slot,
+> no base-layer pieces, "Basics only" instead of "Strip to base", and children (youth > 0) get plain
+> pieces only. The live branch is **`ws/chars-live`** (from `main`, character files only); B2's hooks into
+> the shared files below are saved as `design/chars-live-hooks.patch` (`git diff 2552ce2 ws/b2-editor`),
+> to be applied after Demo 49 once Q and M are merged.
+
+Branch `ws/b2-editor` (history; superseded by `ws/chars-live`), from `ws/b1-bodies`, with `ws/m-menu` (the menu, AVATAR tab) and `ws/q-dialogue`
 (the attendants) merged in, because both are unmerged and B2 builds on both (merge commits
 `c2644d1`, `2552ce2`; the three small conflicts, all "keep both", are described under "Merging").
 
@@ -17,7 +25,7 @@ Branch `ws/b2-editor`, from `ws/b1-bodies`, with `ws/m-menu` (the menu, AVATAR t
 |---|---|
 | `data/characters/<id>.json` | One preset per file (schema below). Today: `pocket_change`, `sound_shop`, `kay_bee` (PLACEHOLDER). |
 | `data/characters/_wardrobe.json` | What the player's creator offers (shipped in every pack). Not a preset (leading `_`). |
-| `scripts/chars/char_preset.gd` | `class_name CharPreset`: schema, `normalize()` (the base rule), `dress()`, `bake()`, `body_for()`, save / download / localStorage. |
+| `scripts/chars/char_preset.gd` | `class_name CharPreset`: schema, `normalize()` (the clothed and child rules), `dress()`, `bake()`, `body_for()`, save / download / localStorage. |
 | `scripts/chars/char_editor.gd` | The editor (CanvasLayer 47): owner and player modes, turntable, rows, input. |
 | `scripts/chars/char_owner.gd` | The owner's way in (K / left-stick click / touch button near an NPC with a preset). Made by `player.gd`. |
 | `scripts/chars/avatar_char.gd` | `class_name AvatarChar extends CharBody`: the player's avatar body from their preset (third person). |
@@ -27,7 +35,8 @@ Branch `ws/b2-editor`, from `ws/b1-bodies`, with `ws/m-menu` (the menu, AVATAR t
 | `tools/qa/char_perf.gd` | Frame cost: one / ten preset bodies (live, baked) vs Mixamo NPCs. |
 
 Shared files, small hunks marked `B2`:
-- `scripts/char_body.gd` (B1): the **base-top rule** (`BASE_DEFAULT`, `base_required()`, `ensure_base()`,
+- `scripts/char_body.gd` (B1): the **clothed rule** (B-FIX: `CLOSED_TOPS`, `BOTTOMS`, `FULL_OUTFITS`,
+  `CHILD_ALLOW`, `ensure_clothed()`, `is_clothed()`; B2's base-top rule is gone),
   `take_off()`), `CLASHES` (a full outfit vs top / bottom / underlayer), `wear_many()`,
   `strip_to_base()`, `make()` clears the old pieces, the piece owner warning.
 - `scripts/attendants/attendant.gd` (Q): `"look": "preset"` builds the body from the preset; `preset_id()`,
@@ -43,7 +52,7 @@ Shared files, small hunks marked `B2`:
 - `export_presets.cfg`: the `models/characters/...` entries of each wing preset's `include_filter`
   (written by `tools/chars/pack_list.py --write`).
 - `tools/blender/characters/loose.py` (B1): `apron_part` missed-ray fix.
-- `design/godot-characters.md` (B1): the editor default now has a female base top (below).
+- `design/godot-characters.md` (B1): THE CLOTHED RULE (B-FIX) at its top.
 
 ## Preset schema (`data/characters/<id>.json`)
 ```json
@@ -54,12 +63,11 @@ Shared files, small hunks marked `B2`:
   "skin": "#d7a98a", "iris": "#5a3a22",
   "hair": {"id": "hair_shoulder", "color": "#4a3020"},   // "" = no hair
   "outfit": {
-    "base_top": "base_sportsbra", "base_bottom": "base_briefs",   // the base layer (rule below)
     "under": "", "top": "top_polo", "bottom": "bot_slacks", "full": "",
     "outer": "full_storevest", "shoes": "shoe_sneakers",
     "extras": ["x_watch"],                                   // hat, glasses, watch
     "colors": {"top_polo": {"main": "#f2f2f0"}},             // per piece, per colour region
-    "patterns": {"base_briefs": "stripes"}                   // base-layer pieces only
+    "patterns": {"bot_longshorts": "stripes"}                // pieces with patterns (the jams)
   },
   "shape_from": "Curvy Missy (B1)"          // optional note: the shape preset it started from
 }
@@ -75,18 +83,15 @@ Shared files, small hunks marked `B2`:
 - `normalize()` (on every load and save) clamps sliders to their ranges and to the body (no `bust` on a
   male body), drops pieces that don't exist for the body or aren't in this pack, keeps unknown fields.
 
-### The base-layer rule (Steven, Nov 2), enforced in the loader
-- **Female presets always have a base top and a base bottom.** A preset missing either gets the default
-  (`base_sportsbra`, `base_briefs`). The one-piece swimsuit counts as both.
-- **Male presets always have a base bottom** (default `base_boxerbriefs`); the base top is optional.
-- Enforced three times, none of them only in the UI: `CharPreset.normalize()`; `CharBody.ensure_base()`
-  after every `make()` / `wear()` / `wear_many()` / `strip_to_base()`; `CharBody.take_off()` refuses a base
-  bottom, a one-piece and a **female base top**. The editor offers no "none" in a required base slot.
-  There is no flag, option or hidden path that removes a female base top.
-- **Strip to base** leaves exactly that: female = base top + base bottom (or the one-piece), male = base
-  bottom (+ the base top if one was chosen). Hair stays.
-- This changes B1's editor default (B1's note said "no base top, female and male alike"); B1's note is
-  updated to point here.
+### The clothed rule (B-FIX, Steven, Nov 2, final), enforced in the loader
+- Every preset, adult or child, wears a closed top and a bottom, or a full outfit; a missing one gets
+  the default (`top_tee`, `bot_jeans`, or the next one the pack ships). Base-layer ids in a file are dropped.
+- A child preset (`youth > 0` or `youth_small > 0`) keeps only `CharBody.CHILD_ALLOW` pieces; its bust
+  keys are dropped.
+- Enforced in `CharPreset.normalize()` and again in `CharBody` (see `design/godot-characters.md`), never
+  only in the UI. **Basics only** (was "Strip to base") leaves the top and bottom (or the full outfit) and hair.
+- The two PLACEHOLDER attendants that had a small `youth` value ("younger": `pocket_change` 0.15,
+  `sound_shop` 0.25) are set to 0, since any youth above 0 now makes a child's body; they are adult staff.
 
 ## Loader, NPCs and baking
 - `CharPreset.dress(cb, p)`: (re)make the body if the sex differs, swap pieces to exactly the preset's,
@@ -109,7 +114,7 @@ Shared files, small hunks marked `B2`:
   and press **K** (keyboard), the **left-stick click** (gamepad) or tap **Edit character (K)** (owner
   only, above the TALK prompt). Visitors never see the button; K does nothing for them.
 - **Preview:** a turntable: the character alone in its own world, neutral white light (key, fill, rim),
-  a grey stage disc, **white or dark backdrop**, **idle or A-pose** (B1's bind pose, the scan look).
+  a grey stage disc, **white or dark backdrop**, the idle clip (no A-pose view: B-FIX).
   Spins by itself; drag (mouse / touch), the right stick, `,` `.` or ⟲ ⟳ rotate (spin pauses 4 s);
   wheel, pinch, `-` `=` or − + zoom from the whole body to the face; **Front / Side / Back**.
   Pieces change while it spins. **In place / Turntable**: in place hides the turntable and edits the
@@ -118,8 +123,9 @@ Shared files, small hunks marked `B2`:
 - **Tabs:** BODY (Female / Male; the **shape presets** first: Straight / Curvy × Petite / Missy / Plus,
   or Slim / Regular / Athletic / Big & Tall; then every slider, grouped OVERALL / TORSO / LIMBS / HEAD /
   FACE; a shape preset sets the body and keeps head, face, age and posture), SKIN (the ten tones, eyes,
-  age), BASE (base top and bottom, their colours and pattern; always on), HAIR (style, colour), OUTFIT
-  (**Strip to base**, Dress as opened, then each slot: piece, each colour region; patterns on base
+  age), HAIR (style, colour), OUTFIT
+  (**Basics only**, Dress as opened, then each slot: piece, each colour region; no "none" in Top or
+  Bottom, "none (top + bottom)" in Full outfit; patterns on pieces that have them
   pieces), NAME (the name, PLACEHOLDER by default; the file it saves as; **Copy from** another preset;
   forget this browser's edit).
 - **Colours:** a palette per row (the piece's default first) and **…** for fine steps (hue, saturation,
@@ -148,7 +154,7 @@ A **new** NPC preset: copy an existing file to `data/characters/<new_id>.json`, 
 The same editor in player mode replaces V's creator inside M's AVATAR tab (same contract: `frame`,
 `embedded`, `feed()`, `sel`, `closed`), under M's NAME field (`mall.player_name`, unchanged).
 - **Default view:** BODY (female / male hidden until Advanced; shape presets; height, weight, muscle,
-  age), SKIN, HAIR, OUTFIT. **Advanced: on** shows every slider, the body choice and the BASE tab.
+  age), SKIN, HAIR, OUTFIT. **Advanced: on** shows every slider and the body choice.
 - **Done** (or closing the menu) saves the preset in `localStorage "mall-avatar-preset-1"`; the avatar
   is rebuilt from it (baked) and stands in third person; a held item still goes in the right hand
   (`AvatarChar.hand` on `mixamorig_RightHand`, V's grip unchanged).
@@ -185,7 +191,27 @@ from `tools/export_web.sh`) and fetched + mounted at start by `scripts/chars/cha
 | wing 1 2026 | 44.01 MB | 44.02 MB | 48.0 MB |
 | wing 2 2026 | 88.40 MB | 88.40 MB | 48.0 MB |
 | outside 2026 | 14.81 MB | 14.81 MB | 48.0 MB |
-Every pack is under 100 MB. `models/characters/` is 77.8 MB in all; a character pack is mostly the
+Every pack is under 100 MB.
+
+**B-FIX include list (Nov 2, `tools/chars/pack_list.py`, source-file sizes; the table above is B2's
+imported sizes).** `models/characters/` is now **67.9 MB** (was 77.8 MB: the 15 base-layer pieces and the
+lace / satin fabrics are gone). Every map ships the same 35 `.glb` + 33 textures (28.2 MB, was 32.5 MB):
+both bodies (`body_female`, `body_male`), the clothed defaults and wardrobe for both bodies (`top_tee`,
+`top_polo`, `top_flannel`, `top_sweatshirt`, `bot_jeans`, `bot_khakis`, `bot_longshorts`, `bot_skirt`
+(female), `shoe_sneakers`, `x_cap_fwd`, `x_glasses`), the six wardrobe hairs (`hair_shoulder`,
+`hair_long`, `hair_crew`, `hair_sidepart`, `hair_puffs`, `hair_bowl`), the skin / eye / lash / hair maps,
+the fabric maps those pieces use and the five pattern maps. Plus, per map, the attendants' own pieces:
+
+| Map | Presets | Extra files | Source total |
+|---|---|---|---|
+| wing 1 1995 | kay_bee, sound_shop | `full_storeapron_female`, `x_cap_back_male` | 28.7 MB |
+| wing 2 1995 | pocket_change | `bot_slacks_female`, `full_storevest_female`, `x_watch_female` | 29.6 MB |
+| outside 1995 | – | – | 28.2 MB |
+| wing 1 / 2 / outside 2026 | – | – | 28.2 MB each |
+
+B2 measured 48–50 MB imported for 32.5–33.8 MB of source; scaled, a character pack is now about
+42–44 MB imported, separate from the wing packs (unchanged, ≤ 95.8 MB). The 100 MB ceiling holds.
+(Computed with B2's `attendants.json` / `npcs.json`, which come with the hooks patch.) `models/characters/` is 77.8 MB in all; a character pack is mostly the
 two bodies (9.5 + 8.9 MB imported), the skin maps and the wardrobe. The wardrobe is the size knob.
 
 ## Apron (B1's known defect)
@@ -205,12 +231,14 @@ session): the generator fix is untested until the next `garments.py` run.
 - Merge order for the integration session: M, Q, B1, then this branch (it already contains them).
 
 ## Checks (Nov 2)
-- `tools/qa/char_editor_test.gd --only=unit` (headless): **CHAR EDITOR OK (25 checks)**: the base rule in
-  `normalize()` and in `CharBody` (female top + bottom, male bottom, one-piece, full outfits, strip to
-  base, take_off refuses a female base top), every preset loads, bakes, keeps its size, no blend shapes
+- B-FIX: `tools/qa/char_clothed_test.gd` (headless): **CHAR CLOTHED OK (1608 checks)**;
+  `tools/qa/char_editor_test.gd --only=unit`: **CHAR EDITOR OK (16 checks)** (its base-rule checks replaced
+  by clothed-rule ones). The B2 runs below predate B-FIX.
+- `tools/qa/char_editor_test.gd --only=unit` (headless, B2): **CHAR EDITOR OK (25 checks)**: the rules in
+  `normalize()` and in `CharBody`, every preset loads, bakes, keeps its size, no blend shapes
   left; save / download / forget.
 - Native wing 1 (opengl3, unbaked): the attendants are baked preset bodies; K opens the editor; every
-  tab at 1280×720 and 390×844; strip to base; an edit saved and worn baked by the attendant; the
+  tab at 1280×720 and 390×844; strip to base (now "Basics only"); an edit saved and worn baked by the attendant; the
   menu's AVATAR tab hosts the editor (desktop, phone); closing saves the player's preset; the avatar is
   an AvatarChar. All checks passed; the run hit its 15-min timeout after the last shot (the third-person
   shot missed the avatar: fixed in the test, not re-run).

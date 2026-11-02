@@ -1,0 +1,1 @@
+B-FIX: skin_albedo / skin_normal / skin_orm painted with the base layer over chest_f, chest_b, pelvis_f, pelvis_b, crotch (tools/blender/characters/flatten.py). 14.4 % of the map.

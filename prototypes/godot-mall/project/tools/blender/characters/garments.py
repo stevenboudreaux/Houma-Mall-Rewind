@@ -1,4 +1,4 @@
-"""Base layer and outfit pieces (B1), built per base body from the CATALOGUE below.
+"""Outfit pieces (B1; no base layer since B-FIX), built per base body from the CATALOGUE below.
 
 A 'surface' piece is cut from the body's own game-mesh skin:
   1. keep(F) is a signed field over the skin (> 0 keep, metres), built from fields.py's
@@ -372,46 +372,9 @@ def catalogue(L, sex):
     C = []
     def add(pid, label, slot, layer, sexes, keep, **o):
         C.append((pid, label, slot, layer, sexes if isinstance(sexes, tuple) else (sexes,), keep, o))
-    # ---- base layer (layer 0). Bottoms are compulsory, tops optional (manifest rule).
-    add("base_sportsbra", "Sports bra (racerback)", "base_top", 0, F_,
-        lambda F, L: U(I(above(F, c - 0.085), np.where(F["front"] > 0, below(F, c + 0.085), below(F, c + 0.02)), sleeve(F, -0.035),
-                         np.where(F["front"] > 0, 1, np.maximum(below(F, c - 0.03), 0.045 - np.abs(F["x"]) - (F["y"] - c) * 0.35)), neck(F, L, 0.07, 0.0)),
-                       I(straps(F, L, 0.07, 0.03), neck(F, L, 0.0, 0.0) + 0.02)),
-        tex="knit", tris=2100, default="#f2f2f0", patterns=True)
-    add("base_lacebra", "Lace bra", "base_top", 0, F_,
-        lambda F, L: U(I(above(F, c - 0.07), np.where(F["front"] > 0, below(F, c + 0.055) - np.clip(0.03 - np.abs(F["x"]), 0, 0.03), below(F, c - 0.025)),
-                         sleeve(F, -0.04)), straps(F, L, 0.085, 0.012)),
-        tex="lace", tris=2100, default="#e9d9d0", patterns=True)
-    add("base_camisole", "Camisole", "base_top", 0, F_,
-        lambda F, L: U(I(above(F, w - 0.04), neck(F, L, 0.13, 0.10), sleeve(F, -0.035)), straps(F, L, 0.085, 0.010)),
-        tex="satin", tris=2100, default="#efe6dc", patterns=True)
-    add("base_bikinitop", "Bikini top", "base_top", 0, F_,
-        lambda F, L: U(I(above(F, c - 0.06), np.where(F["front"] > 0, below(F, c + 0.045) - np.clip(0.035 - np.abs(F["x"]), 0, 0.035) * 2, below(F, c - 0.035)),
-                         sleeve(F, -0.05)), straps(F, L, 0.075, 0.008)),
-        tex="satin", tris=2100, default="#2b5f8a", patterns=True)
-    add("base_onepiece", "One-piece swimsuit (top + bottom)", "base_full", 0, F_,
-        lambda F, L: U(I(neck(F, L, 0.12, 0.13), sleeve(F, -0.04), legline(F, L, r(0.2))), straps(F, L, 0.085, 0.02)),
-        tex="satin", tris=2100, default="#1d1d24", patterns=True, coarse=True, counts_as=["base_top", "base_bottom"])
-    add("base_briefs", "Briefs", "base_bottom", 0, F_,
-        lambda F, L: I(below(F, r(0.62)), legline(F, L, r(0.15))), tex="knit", tris=2100, default="#f2f2f0", patterns=True)
-    add("base_boyshorts", "Boyshorts", "base_bottom", 0, F_,
-        lambda F, L: I(below(F, r(0.55)), legline(F, L, cr - 0.045, cr - 0.05, 1)), tex="knit", tris=2100, default="#3a3a40", patterns=True)
-    add("base_bikinibottom", "Bikini bottom", "base_bottom", 0, F_,
-        lambda F, L: I(below(F, r(0.3) - 0.02 * np.abs(np.sin(np.radians(F["az"])))), legline(F, L, r(0.05))), tex="satin", tris=2100, default="#2b5f8a", patterns=True)
-    add("base_panties", "Panties (hipster)", "base_bottom", 0, F_,
-        lambda F, L: I(below(F, r(0.4)), legline(F, L, r(-0.05), p=1.2)), tex="knit", tris=2100, default="#d9b8c4", patterns=True)
-    add("base_boxerbriefs", "Boxer-briefs (trunks)", "base_bottom", 0, M_,
-        lambda F, L: I(below(F, r(0.7)), legcut(F, 0.17)), tex="knit", tris=2100, default="#2a2c33", patterns=True, waistband=0.03)
-    add("base_mbriefs", "Briefs", "base_bottom", 0, M_,
-        lambda F, L: I(below(F, r(0.68)), legline(F, L, r(0.12))), tex="knit", tris=2100, default="#f2f2f0", patterns=True, waistband=0.025)
-    add("base_boxers", "Boxers", "base_bottom", 0, M_,
-        lambda F, L: I(below(F, r(0.7)), legcut(F, 0.23)), tex="woven", tris=2100, default="#8fa6c7", patterns=True, ease="boxers", waistband=0.025)
-    add("base_swimtrunks", "Swim trunks", "base_bottom", 0, M_,
-        lambda F, L: I(below(F, r(0.6)), legcut(F, 0.21)), tex="woven", tris=2100, default="#c8492e", patterns=True, ease="boxers", waistband=0.03)
-    add("base_tank", "Tank undershirt", "base_top", 0, M_,
-        lambda F, L: U(I(neck(F, L, 0.11, 0.05), sleeve(F, -0.045), above(F, h - 0.02)), I(straps(F, L, 0.085, 0.04), above(F, h))), tex="rib", tris=2100, default="#f2f2f0", patterns=True, layer_gap=1, coarse=True)
-    add("base_fittedtee", "Fitted tee (undershirt)", "base_top", 0, M_,
-        lambda F, L: I(neck(F, L, 0.03, 0.005), sleeve(F, 0.17), above(F, h - 0.03)), tex="knit", tris=1600, default="#f2f2f0", patterns=True, layer_gap=1, coarse=True)
+    # ---- no base layer (B-FIX, Steven, Nov 2, final): every character is always clothed, the body
+    # itself carries a painted opaque base layer (tex.py) and a flattened chest / groin (flatten.py).
+    # Underwear, lingerie and swimwear pieces are not made for the live game.
     # ---- tops (layer 2; flannel / cardigan are outerwear, 3)
     add("top_tee", "T-shirt", "top", 2, B_, lambda F, L: I(neck(F, L, 0.025, 0.004), sleeve(F, 0.23), above(F, h - 0.045)),
         tex="knit", tris=2000, default="#ffffff", ease="top", shirt_words=True)

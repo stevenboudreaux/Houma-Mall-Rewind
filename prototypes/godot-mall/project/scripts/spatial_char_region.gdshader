@@ -25,6 +25,12 @@ group_uniforms layering;
 // bit r set = body region r (UV2.x) is covered by an outer piece: discard it
 uniform int hide_mask = 0;
 uniform bool use_vertex_color = false;
+group_uniforms base_layer;
+// B-FIX (Nov 2): the clothed rule's permanent base layer. On skin surfaces, bit r set = body region r
+// is drawn as plain opaque fabric (base_color, not tinted by the skin tone). The albedo map is also
+// painted there, so even a plain material shows no bare chest or groin.
+uniform int base_mask = 0;
+uniform vec4 base_color : source_color = vec4(0.74, 0.73, 0.69, 1.0);
 
 varying flat int region;
 
@@ -41,8 +47,12 @@ void fragment() {
 	if (use_vertex_color) {
 		c *= COLOR.rgb;
 	}
+	bool based = base_mask != 0 && ((base_mask >> region) & 1) == 1;
+	if (based) {
+		c = base_color.rgb;
+	}
 	ALBEDO = c;
-	float r = roughness;
+	float r = based ? 0.85 : roughness;
 	if (has_orm) {
 		vec3 o = texture(orm_tex, UV).rgb;
 		AO = o.r;

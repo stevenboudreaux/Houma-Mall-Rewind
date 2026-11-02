@@ -3,7 +3,7 @@ piece materials. Every piece has up to three tintable colour regions:
   main    the cloth (fabric texture x tint)
   trim    cuffs, waistbands, collars, hems, soles (rib / same fabric, own tint)
   accent  plackets, buttons, buckles, name tags (plain, own tint)
-Base-layer pieces also take a PATTERN (manifest "patterns": solid / stripes / dots / floral /
+Pieces with patterns (since B-FIX only the long shorts) take a PATTERN (manifest "patterns": solid / stripes / dots / floral /
 check), an albedo texture B2 swaps in, still tinted.
 UV scale: piece UVs are the body atlas' (about 1.6 m per unit); fab_scale() says how many repeats.
 """

@@ -1,4 +1,4 @@
-## B2 (design/godot-character-editor.md): presets, the base rule, baking, the owner's editor on an
+## B2 (design/godot-character-editor.md): presets, the clothed rule (in full: char_clothed_test.gd), baking, the owner's editor on an
 ## attendant, the player's editor in the menu's AVATAR tab and the avatar in third person. Native,
 ## unbaked (LightmapGI removed):
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 \
@@ -63,57 +63,17 @@ func _size(s: Vector2i) -> void:
 func _unit() -> void:
 	var host := Node3D.new()
 	root.add_child(host)
-	# the base rule in normalize()
-	var f := CharPreset.normalize({"body": "female", "outfit": {"top": "top_tee"}})
-	_check(f.outfit.base_top != "" and f.outfit.base_bottom != "", "female preset missing both base pieces gets a base top and bottom")
-	var m := CharPreset.normalize({"body": "male", "outfit": {}})
-	_check(m.outfit.base_bottom != "" and m.outfit.base_top == "", "male preset gets a base bottom, base top optional (none)")
-	var m2 := CharPreset.normalize({"body": "male", "outfit": {"base_top": "base_tank"}})
-	_check(m2.outfit.base_top == "base_tank", "male base top kept when chosen")
-	var f2 := CharPreset.normalize({"body": "female", "outfit": {"base_top": "", "base_bottom": ""}})
-	_check(f2.outfit.base_top == "base_sportsbra" and f2.outfit.base_bottom == "base_briefs", "female empty base slots -> defaults")
-	var one := CharPreset.normalize({"body": "female", "outfit": {"base_bottom": "base_onepiece"}})
-	_check(one.outfit.base_top == "base_onepiece" and one.outfit.base_bottom == "base_onepiece", "one-piece fills both base slots")
-	var st := CharPreset.stripped(CharPreset.get_preset("pocket_change", false))
-	var worn := []
-	for e in CharPreset.worn(st): worn.append(str(e.slot))
-	worn.sort()
-	_check(worn == ["base_bottom", "base_top", "hair"], "strip to base (female) leaves exactly base top + base bottom (+ hair): %s" % [worn])
-	var stm := CharPreset.stripped(CharPreset.get_preset("sound_shop", false))
-	worn = []
-	for e in CharPreset.worn(stm): worn.append(str(e.slot))
-	worn.sort()
-	_check(worn == ["base_bottom", "hair"], "strip to base (male, no base top) leaves the base bottom (+ hair): %s" % [worn])
+	# the clothed rule (B-FIX; the full walk is tools/qa/char_clothed_test.gd)
+	var f := CharPreset.normalize({"body": "female", "outfit": {"base_top": "base_lacebra", "base_bottom": "base_panties"}})
+	_check(f.outfit.top != "" and f.outfit.bottom != "" and not f.outfit.has("base_top"), "a preset asking for a base layer gets a top and a bottom instead")
 	var fu := CharPreset.normalize({"body": "female", "outfit": {"top": "top_tee", "bottom": "bot_jeans", "full": "full_cheer"}})
 	_check(fu.outfit.top == "" and fu.outfit.bottom == "" and fu.outfit.full == "full_cheer", "a full outfit replaces top and bottom")
-	# the base rule in the loader itself
 	var cb := CharBody.new()
 	host.add_child(cb)
 	cb.make("female")
-	var slots := []
-	for k in cb.pieces: slots.append(str(cb.pieces[k].slot))
-	_check(slots.has("base_top") and slots.has("base_bottom"), "CharBody.make(female) wears a base top and bottom: %s" % [slots])
-	var top_id := ""
-	for k in cb.pieces:
-		if str(cb.pieces[k].slot) == "base_top": top_id = k
-	_check(not cb.take_off(top_id), "CharBody.take_off refuses a female base top")
-	cb.wear("base_onepiece")
-	cb.wear("base_lacebra")
-	slots = []
-	for k in cb.pieces: slots.append(str(cb.pieces[k].slot))
-	_check(slots.has("base_top") and slots.has("base_bottom"), "female: one-piece swapped for a bra keeps a base bottom: %s" % [slots])
-	cb.wear("top_tee"); cb.wear("bot_jeans")
+	_check(cb.is_clothed(), "CharBody.make(female) is clothed: %s" % [cb.pieces.keys()])
 	cb.strip_to_base()
-	slots = []
-	for k in cb.pieces: slots.append(str(cb.pieces[k].slot))
-	slots.sort()
-	_check(slots == ["base_bottom", "base_top"], "CharBody.strip_to_base (female) leaves base top + bottom: %s" % [slots])
-	var cm := CharBody.new()
-	host.add_child(cm)
-	cm.make("male")
-	slots = []
-	for k in cm.pieces: slots.append(str(cm.pieces[k].slot))
-	_check(slots == ["base_bottom"], "CharBody.make(male) wears only a base bottom: %s" % [slots])
+	_check(cb.is_clothed(), "CharBody.strip_to_base keeps it clothed: %s" % [cb.pieces.keys()])
 	# presets: each repo file builds, bakes, and the bake keeps the shape
 	for id in CharPreset.list_ids():
 		var p := CharPreset.get_preset(id, false)
@@ -221,8 +181,8 @@ func _mall() -> void:
 		var slots := []
 		for kk in ed.pv.pieces: slots.append(str(ed.pv.pieces[kk].slot))
 		slots.sort()
-		_check(not slots.has("top") and slots.has("base_top" if ed.preset.body == "female" else "base_bottom"), "strip to base on the turntable (%s): %s" % [tag, slots])
-		await _shot("editor-%s-stripped" % tag)
+		_check(ed.pv.is_clothed() and not slots.has("outer"), "basics only on the turntable stays clothed (%s): %s" % [tag, slots])
+		await _shot("editor-%s-basics" % tag)
 		ed._reset()
 		await _secs(0.3)
 	await _size(DESK)
@@ -237,10 +197,7 @@ func _mall() -> void:
 	ed.dark = true; ed._backdrop(); ed._face(PI * 0.5)
 	await _secs(0.6)
 	await _shot("editor-desk-edited-dark-side")
-	ed.a_pose = true; ed._pose(); ed._face(0.0); ed.dark = false; ed._backdrop()
-	await _secs(0.4)
-	await _shot("editor-desk-apose")
-	ed.a_pose = false; ed._pose()
+	ed._face(0.0); ed.dark = false; ed._backdrop()
 	ed._toggle_place()
 	await _secs(0.8)
 	_check(ed.in_place and att.body is CharBody and not bool(att.body.get_meta("baked", false)), "view in place: the attendant itself is live-edited")

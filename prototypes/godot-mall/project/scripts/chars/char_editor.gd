@@ -1,13 +1,17 @@
 ## B2 (design/godot-character-editor.md): the character editor. One editor, two modes:
 ##  - "owner": the owner's NPC editor (scripts/chars/char_owner.gd opens it on an NPC that wears a
-##    preset): tabs BODY · SKIN · BASE · HAIR · OUTFIT · NAME, Save (this browser) + Download (the
+##    preset): tabs BODY · SKIN · HAIR · OUTFIT · NAME, Save (this browser) + Download (the
 ##    file Steven commits to data/characters/), Reset, Copy from another preset, view in place.
 ##  - "player": the player's avatar creator inside the menu's AVATAR tab (scripts/menu/menu.gd hosts
 ##    it as it hosted V's creator: frame, embedded, feed(), sel, closed): BODY · SKIN · HAIR · OUTFIT
-##    by default; "Advanced" adds BASE and every slider. The NAME is the menu's own field above.
+##    by default; "Advanced" adds every slider and the body choice. The NAME is the menu's own field above.
+##
+## B-FIX (Steven, Nov 2, final): every character is clothed at all times (CharBody's clothed rule, enforced
+## in CharBody and CharPreset.normalize(), not here). So the editor has no base-layer tab, no A-pose view,
+## and no "none" in the top or bottom slot; a child body (youth > 0) is offered only CharBody.CHILD_ALLOW.
 ##
 ## The preview is a turntable: the character alone in its own world (SubViewport), neutral light,
-## white or dark backdrop, idle or A-pose; drag or the arrows on the view row rotate, the wheel /
+## white or dark backdrop, the idle clip; drag or the arrows on the view row rotate, the wheel /
 ## pinch / − + zoom, Front / Side / Back. Pieces change while it spins. The body is live (blend
 ## shapes); NPCs in the mall are baked (CharPreset.bake).
 ##
@@ -30,7 +34,6 @@ const SIMPLE_KEYS := ["height", "weight", "muscle", "age"]
 ## Clothes palette (1995 mall clothes and neutrals; V's palettes and B1's defaults are added per piece).
 const CLOTH := ["#f4f4f2", "#1c1c1f", "#8d8e90", "#e8eef5", "#1f6f6a", "#5b2a5e", "#2f4a2e", "#7a1f2b", "#c79a2c",
 	"#24346b", "#b8352f", "#4a6a96", "#8fb0d3", "#c2ab84", "#3e4b5a", "#d9b8c4", "#f4c6d0", "#6b4f3a"]
-const UNDER := ["#f2f2f0", "#e9d9d0", "#d9b8c4", "#efe6dc", "#c9a58c", "#8a6450", "#3a3a40", "#1d1d24", "#2b5f8a", "#c8492e", "#2a2c33", "#8fa6c7"]
 
 # ---- what menu.gd (and V's contract) reads
 var year := 1995
@@ -54,7 +57,6 @@ var tab := "body"
 var tabs: Array = []
 var in_place := false
 var dark := false
-var a_pose := false
 var copy_from := 0
 var msg := ""
 var _msg_t := 0.0
@@ -125,9 +127,9 @@ func _exit_tree() -> void:
 
 func _tabs() -> void:
 	if mode == "owner":
-		tabs = ["body", "skin", "base", "hair", "outfit", "name"]
+		tabs = ["body", "skin", "hair", "outfit", "name"]
 	else:
-		tabs = ["body", "skin", "hair", "outfit"] + (["base"] if advanced else [])
+		tabs = ["body", "skin", "hair", "outfit"]
 	if not (tab in tabs): tab = tabs[0]
 
 # ------------------------------------------------------------------ the turntable
@@ -183,22 +185,12 @@ func _backdrop() -> void:
 	var st := vp.get_node_or_null("Stage") as MeshInstance3D
 	if st: (st.material_override as StandardMaterial3D).albedo_color = Color(0.22, 0.22, 0.23) if dark else Color(0.82, 0.82, 0.82)
 
-## Idle (the shoppers' clip) or the A-pose (the bind pose B1 modelled the mesh in).
+## The idle clip (the shoppers'). There is no A-pose view in the live game (B-FIX).
 func _pose() -> void:
 	for body in _bodies():
 		if body == null or body.ap == null: continue
-		if a_pose:
-			body.ap.stop()
-			var bones: Dictionary = CharBody.cman().bodies[body.sex].bones
-			for i in range(body.sk.get_bone_count()):
-				var n = body.sk.get_bone_name(i)
-				if not bones.has(n): continue
-				var q: Array = bones[n].bind_rot
-				body.sk.set_bone_pose_rotation(i, Quaternion(q[0], q[1], q[2], q[3]))
-				body.sk.set_bone_pose_position(i, body.sk.get_bone_rest(i).origin)
-		else:
-			body.clip = ""
-			body.play("idle", 0.0)
+		body.clip = ""
+		body.play("idle", 0.0)
 
 ## The bodies an edit goes to: the turntable's, and the NPC's own when viewing in place.
 func _bodies() -> Array:
@@ -267,15 +259,12 @@ func _push() -> void:
 			b.apply(preset.keys)
 		else:
 			P.paint(b, _shown(b))
-	if what != "paint" and a_pose:
-		_pose()
-	elif what == "dress" and not a_pose:
+	if what == "dress":
 		for b in _bodies(): b.clip = ""; b.play("idle", 0.0)
 
-## What a body shows: the preset, but on the BASE tab the turntable shows the base layer alone
-## (the clothes come back on the other tabs; the preset itself keeps them).
-func _shown(b) -> Dictionary:
-	return P.stripped(preset) if (tab == "base" and b == pv) else preset
+## What a body shows: the preset (always clothed).
+func _shown(_b) -> Dictionary:
+	return preset
 
 func _changed(what: String) -> void:
 	dirty = true
@@ -620,8 +609,7 @@ func _rows_for_tab() -> Array:
 	var view := [["⟲", func(): _turn(-1)], ["⟳", func(): _turn(1)], ["Front", func(): _face(0.0)],
 		["Side", func(): _face(PI * 0.5)], ["Back", func(): _face(PI)], ["−", func(): _zoom(-0.4)],
 		["+", func(): _zoom(0.4)], ["Spin" if not spin else "Stop", func(): spin = not spin; _after()],
-		["Dark" if not dark else "White", func(): dark = not dark; _backdrop(); _after()],
-		["A-pose" if not a_pose else "Idle", func(): a_pose = not a_pose; _pose(); _after()]]
+		["Dark" if not dark else "White", func(): dark = not dark; _backdrop(); _after()]]
 	if mode == "owner" and target != null:
 		view.append(["In place" if not in_place else "Turntable", _toggle_place])
 	rows.append({"kind": "view", "items": view})
@@ -646,7 +634,7 @@ func _rows_for_tab() -> Array:
 						rows.append({"kind": "header", "label": str(g[0]).to_upper()}); any = true
 					rows.append(_key_row(sl))
 			if mode == "player" and not advanced:
-				rows.append({"kind": "note", "label": "Advanced: on (the button below) shows every slider, the body choice and the base layer."})
+				rows.append({"kind": "note", "label": "Advanced: on (the button below) shows every slider and the body choice."})
 		"skin":
 			var tones := []
 			for t in CharBody.cman().skin_tones: tones.append(str(t[1]))
@@ -662,11 +650,6 @@ func _rows_for_tab() -> Array:
 				if str(sl.name) == "age":
 					rows.append({"kind": "note", "label": "Age also deepens the skin's wrinkles (the age slider, BODY)."})
 					rows.append(_key_row(sl))
-		"base":
-			rows.append({"kind": "note", "label": "The base layer is always worn and can't be removed, only swapped." +
-				(" A female body always has a base top and a base bottom." if sex == "female" else " A male body always has a base bottom; the base top is optional.")})
-			for bs in P.BASE_SLOTS:
-				rows.append_array(_piece_rows(str(bs.slot), str(bs.label)))
 		"hair":
 			rows.append_array(_piece_rows("hair", "Hair style"))
 			var hc := []
@@ -675,7 +658,9 @@ func _rows_for_tab() -> Array:
 			rows.append(_color_row("hairc", "Hair colour", hc, func(): return preset.hair.color, func(v): preset.hair.color = v))
 			rows.append(_sub_sliders("hairc", func(): return preset.hair.color, func(v): preset.hair.color = v))
 		"outfit":
-			rows.append({"kind": "buttons", "items": [["Strip to base", _strip], ["Dress as opened", func(): _restore_outfit()]]})
+			rows.append({"kind": "note", "label": "Always dressed: a top and a bottom, or a full outfit." +
+				(" A child's body is offered plain pieces only." if CharBody.is_child(preset.keys) else "")})
+			rows.append({"kind": "buttons", "items": [["Basics only", _strip], ["Dress as opened", func(): _restore_outfit()]]})
 			for s in P.SLOTS:
 				rows.append_array(_piece_rows(str(s.slot), str(s.label)))
 		"name":
@@ -694,26 +679,37 @@ func _rows_for_tab() -> Array:
 
 func _key_row(sl: Dictionary) -> Dictionary:
 	var n := str(sl.name)
-	return {"kind": "slider", "label": n.replace("_", " "), "min": float(sl.range[0]), "max": float(sl.range[1]),
+	var lbl := n.replace("_", " ")
+	if n in ["youth", "youth_small"]: lbl += " (above 0 = a child)"
+	return {"kind": "slider", "label": lbl, "min": float(sl.range[0]), "max": float(sl.range[1]),
 		"step": 0.05, "get": _get_key.bind(n), "set": _set_key.bind(n)}
 
 func _get_key(n: String) -> float:
 	return float(preset.keys.get(n, 0.0))
 
 func _set_key(v: float, n: String) -> void:
+	var was_child := CharBody.is_child(preset.keys)
 	if absf(v) < 0.001: preset.keys.erase(n)
 	else: preset.keys[n] = snappedf(v, 0.01)
 	preset.erase("shape_from")
-	_changed("keys")
+	preset = P.normalize(preset)    # the child rule on every slider change
+	if was_child != CharBody.is_child(preset.keys):
+		_changed("dress")
+		_build_rows()
+	else:
+		_changed("keys")
 
-## A piece slot: the choice of pieces (none where allowed), then each colour region of the worn one.
+## A piece slot: the choice of pieces, then each colour region of the worn one. "none" only where
+## it can't leave a body undressed: never in the top or bottom slot; in the full-outfit slot it means
+## a top and a bottom (the clothed rule fills them in).
+const NO_NONE := ["top", "bottom"]
 func _piece_rows(slot: String, label: String) -> Array:
 	var rows := []
 	var sex: String = preset.body
 	var opts := []
-	var required := slot in CharBody.base_required(sex)
-	if not required: opts.append(["none", ""])
-	for e in P.options(sex, slot): opts.append([str(e.label), str(e.base_id)])
+	if slot == "full": opts.append(["none (top + bottom)", ""])
+	elif not (slot in NO_NONE): opts.append(["none", ""])
+	for e in P.options(sex, slot, CharBody.is_child(preset.keys)): opts.append([str(e.label), str(e.base_id)])
 	if opts.is_empty(): return rows
 	rows.append({"kind": "choice", "label": label, "opts": opts, "get": func(): return _slot_get(slot), "set": func(v): _slot_set(slot, str(v))})
 	var cur := _slot_get(slot)
@@ -722,7 +718,7 @@ func _piece_rows(slot: String, label: String) -> Array:
 	var mats: Dictionary = e.get("materials", {})
 	for reg in mats:
 		var dflt := str(mats[reg].get("default", ""))
-		var pal: Array = (UNDER if slot.begins_with("base_") else CLOTH).duplicate()
+		var pal: Array = CLOTH.duplicate()
 		if dflt != "" and not pal.has(dflt): pal.insert(0, dflt)
 		pal.append("+")
 		var key := cur + ":" + str(reg)
@@ -780,11 +776,6 @@ func _slot_set(slot: String, id: String) -> void:
 		if id != "": ex.append(id)
 		preset.outfit.extras = ex
 	else:
-		var full_base := id != "" and str(P._entry(str(preset.body), id).get("slot", "")) == "base_full"
-		if slot.begins_with("base_") and not full_base:
-			# leaving the one-piece: the other base slot falls back to its default (the base rule)
-			for o in ["base_top", "base_bottom"]:
-				if o != slot and P._is_full_base(str(preset.body), str(preset.outfit[o])): preset.outfit[o] = ""
 		if slot == "full" and id != "":
 			preset.outfit.top = ""; preset.outfit.bottom = ""; preset.outfit.under = ""
 		elif slot in ["top", "bottom", "under"] and id != "":
@@ -792,7 +783,7 @@ func _slot_set(slot: String, id: String) -> void:
 		for o in ["under", "top", "outer"]:
 			if o != slot and id != "" and str(preset.outfit.get(o, "")) == id: preset.outfit[o] = ""
 		preset.outfit[slot] = id
-	preset = P.normalize(preset)    # the base rule, every time
+	preset = P.normalize(preset)    # the clothed rule, every time
 	_changed("dress")
 
 func _choice_text(r: Dictionary) -> String:
@@ -803,8 +794,6 @@ func _choice_text(r: Dictionary) -> String:
 
 # ------------------------------------------------------------------ edits
 func _go_tab(t: String) -> void:
-	if (t == "base") != (tab == "base"):
-		_need = "dress"
 	tab = t
 	_scroll = 0.0
 	sel = 0
@@ -848,13 +837,13 @@ func _apply_shape(name_: String) -> void:
 	preset.keys = k
 	preset = P.normalize(preset)
 	preset.shape_from = name_
-	_changed("keys")
+	_changed("dress")      # the child rule may change the outfit too
 	_say("Shape: " + name_)
 
 func _strip() -> void:
 	preset = P.stripped(preset)
 	_changed("dress")
-	_say("Stripped to the base layer")
+	_say("Basics only (always dressed)")
 
 func _restore_outfit() -> void:
 	preset.outfit = loaded.outfit.duplicate(true)

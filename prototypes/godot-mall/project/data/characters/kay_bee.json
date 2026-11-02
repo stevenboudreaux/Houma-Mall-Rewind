@@ -23,8 +23,6 @@
 		"color": "#1b1714"
 	},
 	"outfit": {
-		"base_top": "base_sportsbra",
-		"base_bottom": "base_briefs",
 		"top": "top_tee",
 		"bottom": "bot_khakis",
 		"outer": "full_storeapron",

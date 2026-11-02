@@ -1,8 +1,54 @@
-# Character bodies, hair, base layer and outfits (Godot mall, workstream B1, Nov 2 2026)
+# Character bodies, hair and outfits (Godot mall, workstream B1, Nov 2 2026; B-FIX the same day)
+
+## THE CLOTHED RULE (Steven, Nov 2, final). Read this first.
+**In the live game ALL characters are clothed AT ALL TIMES.** This replaces every earlier base-layer
+rule; there is no optional base layer, no "none" that shows less, and no flag or option around it.
+Branch `ws/chars-live` is the only character branch the live game uses (`ws/b1-bodies` is never used).
+
+- **Always dressed.** Every body, adult or child, wears a closed top (`top_tee`, `top_polo`,
+  `top_buttondown`, `top_sweatshirt`, `top_tank`, `top_babytee`) **and** a bottom (any `bot_*`), **or** a
+  full outfit (`full_football`, `full_cheer`, `full_waitress`, `full_coveralls`). An open flannel or
+  cardigan, a store vest or a store apron goes *over* a top; it is never the top. A missing top / bottom
+  gets the first one the pack ships of `top_tee`, `top_polo`, … / `bot_jeans`, `bot_khakis`, ….
+- **Enforced in the code, not the UI**: `CharBody` (`scripts/char_body.gd`: `make`, `apply` on every
+  slider change, `wear`, `wear_many`, `take_off`, `strip_to_base`, `ensure_clothed`) and
+  `CharPreset.normalize()` (every preset and save file on load and save: repo files, this browser's
+  owner edits, the player's saved avatar, a hand-written JSON). `take_off()` refuses the only top,
+  bottom or full outfit; `strip_to_base()` (the editor's "Basics only") leaves exactly a top and a bottom
+  or the full outfit, plus hair. A preset or save that tries to undress is corrected on load.
+- **No base layer, no lingerie, no swimwear.** Every base-layer piece (sports bra, lace bra, camisole,
+  bikini, one-piece, briefs, boyshorts, panties, boxer-briefs, boxers, swim trunks, tank undershirt,
+  fitted tee) is deleted from `models/characters/`, the manifest and the generator (`garments.py`);
+  `CharBody` refuses any `base_*` slot even from a hand-made entry. Swimwear was dropped rather than
+  kept as an adult outfit.
+- **A permanent base layer is painted into the body itself**, so a stripped pack or a bug still shows no
+  bare chest or groin on any body: `tools/blender/characters/flatten.py` (numpy, on the shipped files)
+  flattens the body mesh's chest (front), front pelvis and crotch (Laplacian, at most 4 mm, never
+  outward, on the rest mesh and every blend shape that touches them; all four bodies), and paints
+  `skin_albedo.png` flat grey (no areolae), `skin_normal.png` flat and `skin_orm.png` rough over
+  chest front / back, pelvis front / back and crotch. In the game `spatial_char_region.gdshader` also
+  draws those regions as untinted fabric (`base_mask`, `CharBody.BASE_REGIONS` / `BASE_COLOR`).
+- **Children.** A body with `youth > 0` or `youth_small > 0` (checked on every slider change and load)
+  is a child: it wears only `CharBody.CHILD_ALLOW` (tee, polo, button-down, sweatshirt, flannel,
+  cardigan; jeans, wide jeans, khakis, slacks, long shorts, overalls; sneakers, boots, dress shoes,
+  sandals; caps, glasses, watch; any hair), an allow-list inside `wear()` / `wear_many()` and
+  `normalize()`. No short shorts, tank, baby tee, skirt, uniforms or full outfits; its bust sliders are
+  held at 0. The editor labels the youth sliders "above 0 = a child".
+- **Evidence**: no body sheets, no base-layer sheets, no sheets of child figures. Only fully clothed
+  adults in the game scene (`tools/qa/char_clothed_shot.gd` refuses a child or an undressed body).
+  `sheets.py` renders only dressed adults, into `.scratch/` (never evidence).
+- **Test**: `godot --headless --path . --script res://tools/qa/char_clothed_test.gd` walks every slider
+  end of both bodies (adult and child), every preset (repo, shape presets, extremes), a preset JSON that
+  bypasses the editor (`tools/qa/fixtures/char_bypass_preset.json`) through every load path, the
+  CharBody API and the editor's rows. It must print `CHAR CLOTHED OK`.
+
+---
+
+The B1 record follows, edited to the rule above (B1 originally shipped a base layer; it is gone).
+
 
 **Asked for (Steven, Nov 2):** the machinery for an NPC / avatar body editor "as accurate as possible":
-two base bodies with shape-key sliders and presets, a hair library, a base layer that is always worn, a
-layered 1995-first outfit library, all on the NPC skeleton so every existing clip plays; exported as
+two base bodies with shape-key sliders and presets, a hair library, a layered 1995-first outfit library, all on the NPC skeleton so every existing clip plays; exported as
 .glb with a manifest so B2's Godot editor is data-driven. **No characters, names or story**: the cast
 sheet's people are only test extremes the sliders must reach (the cast sheet file was not in the repo;
 the five extremes are the ones in the brief).
@@ -17,7 +63,8 @@ python3 $C/body.py && $B $C/tex.py 2048                        # bodies + skin /
 $B $C/hair.py && $B $C/garments.py                             # 22 hairs, 71 pieces (both bodies)
 python3 $C/manifest.py                                         # models/characters/characters.json
 $B $C/fitcheck.py > .scratch/chars/fitcheck.txt                # poke-through at the extremes
-TT_SAMPLES=12 python3 $C/sheets.py bodies presets hair base tops bottoms full shoes extras   # evidence
+python3 $C/flatten.py                                          # B-FIX: the painted, flattened base layer
+TT_SAMPLES=12 python3 $C/sheets.py hair tops bottoms full shoes extras   # dressed adults, .scratch only
 godot --headless --path . --script res://tools/qa/char_check.gd                              # skeleton
 xvfb-run -a godot --path . --rendering-driver opengl3 --script res://tools/qa/char_ingame.gd # in-game shot
 ```
@@ -106,7 +153,7 @@ make exact. Height, proportions and bust interact linearly (approximation).
 
 **Presets** (`presets.json` → manifest `presets`): women Straight Petite / Missy / Plus, Curvy Petite /
 Missy / Plus; men Slim / Regular / Athletic / Big & Tall. **Extremes** (QA only): skinny 74, heavy-set
-52, muscular 20, curvy larger, child 7. Sheets: `wsB1-body-<sex>-extremes.jpg`, `wsB1-body-<sex>-presets.jpg` (each body in its base bottom only).
+52, muscular 20, curvy larger, child 7 (the child extreme is under the child rule). No body sheets (B-FIX).
 
 ## Skin
 - One map set for every tone: `skin_albedo.png` (2048, near-white with *relative* colour only: lips,
@@ -125,19 +172,6 @@ displacement, puffs, braid tubes, a bald crown. Rigid on the Head bone (as asked
 skin for blend shapes, so head size, age and weight move it. One strand texture, tinted
 (`hair_colors`, 11, black → white); COLOR_0 darkens the roots. Sheet: `wsB1-hair-<sex>.jpg`.
 **Weak:** the perm reads as a helmet; braids are tubes; a fade is a thin dark shell (no skin blend).
-
-## Base layer (slot `base_top` / `base_bottom` / `base_full`, layer 0)
-**Rule (enforced in the loader, `CharBody.ensure_base()` / `take_off()`):** every body always wears a
-base bottom (or the one-piece); it can be replaced, never removed. **Superseded for female bodies
-(Steven, Nov 2, B2):** a female body also always wears a base top (default the sports bra); male base
-tops stay optional. See `design/godot-character-editor.md` "The base-layer rule".
-- Female tops: sports bra (racerback, white default), lace bra, camisole, bikini top, one-piece swimsuit
-  (`counts_as` top + bottom). Female bottoms: briefs, boyshorts, bikini bottom, panties (hipster).
-- Male bottoms: boxer-briefs (dark trunks default), briefs, boxers, swim trunks. Male tops: tank
-  undershirt, fitted tee ("none" = no base top).
-- Each has a colour (main / trim) and a pattern (`patterns`: solid, stripes, dots, floral, check:
-  `pattern_<name>.png`, B2 swaps the main albedo). Cut from the game skin itself, 2.5 mm off it.
-Sheets: `wsB1-outfit-base-<sex>.jpg`.
 
 ## Outfits (`garments.py` CATALOGUE; 1995-first, no brands)
 Tops: T-shirt (keeps the shirt words: `shirt_words_at` = Spine2 + chest height), polo, button-down,
@@ -170,21 +204,20 @@ Every piece exists for both bodies where it applies (fits come from each body). 
    256 px tiles, grey, tinted; `uv_scale` in the material extras).
 
 ### Layering (what we do, and where it fails)
-- Order **base (0) → underlayer (1) → top / bottom (2) → outerwear (3) → shoes (4) → extras (5)**;
-  a flannel (3) over a tee (2) over the base; a cardigan (3) over a button-down (2).
+- Order **underlayer (1) → top / bottom (2) → outerwear (3) → shoes (4) → extras (5)** (layer 0 is
+  unused: the body carries its own painted base layer); a flannel (3) over a tee (2); a cardigan (3)
+  over a button-down (2).
 - **Region hiding** (the main tool): each piece lists `hides`, the regions it covers completely
   (computed). The loader (`CharBody._layers()`) gives every surface a `spatial_char_region` material
   whose `hide_mask` discards the regions covered by anything on a higher layer: the body under jeans,
-  the bra under a tee, the tee's torso under a closed vest, while the tee's collar (neck) and anything
+  an underlayer tee's torso under a polo, the tee's torso under a closed vest, while the tee's collar (neck) and anything
   outside the covered regions still show. A region is hidden only when it is *entirely* covered, so
   hiding never makes a hole.
 - **Push-out by construction**: the layer gaps keep stacked pieces apart; the `fit_over` blend shape
-  (+6 mm) of a piece on layer ≥ 1 is turned on when another piece of its own layer or the one below
-  (base excluded) is worn.
+  (+6 mm) of a piece on layer ≥ 1 is turned on when another piece of its own layer or the one below is worn.
 - **Where it fails**: (a) a lower layer that is *looser* than the one above (a sweatshirt under a
-  button-down) clips; swap instead. (b) Partially covered regions rely on the gaps alone: on the curviest
-  body the base briefs show through the seat of jeans in a renderer without hiding (in the game the seat
-  is hidden). (c) Sliders combine linearly, so the push-out (per blend shape) can miss combinations:
+  button-down) clips; swap instead. (b) Partially covered regions rely on the gaps alone (the B-FIX flattening only moves
+  the body inward, so it adds no poke-through). (c) Sliders combine linearly, so the push-out (per blend shape) can miss combinations:
   `fitcheck.py` on the exported files, all 71 pieces × 6 test bodies, leaves at most a handful of
   vertices (≤ 15 of ~1000) within 4–8 mm inside the skin, almost all on "curvy larger" (bust + hips +
   weight together); glasses' temples tuck into the head by design. (d) The open flannel's fronts hang
@@ -200,7 +233,9 @@ layer, label, tris, budget, hides, materials with labels and defaults, default_c
 patterns, counts_as, shirt_words_at, fit_over, style for hair).
 
 ## In Godot (`scripts/char_body.gd`, `class_name CharBody extends NpcBody`)
-`make(sex, hi)`, `apply(sliders)`, `wear(piece)`, `take_off(piece)` (refuses the base bottom),
+`make(sex, hi)`, `apply(sliders)`, `wear(piece)` / `wear_many(list)` (refuse base-layer and, on a child,
+non-allowed pieces), `take_off(piece)` (refuses the only top / bottom / full outfit), `strip_to_base()`
+(the clothed minimum), `is_clothed()`, `ensure_clothed()`,
 `paint(material prefix, colour)`, plus everything NpcBody does (clips, gestures, walk speed, IK, look).
 `tools/qa/char_check.gd` (numbers), `tools/qa/char_ingame.gd` (the shot next to Ch01).
 
@@ -209,17 +244,13 @@ patterns, counts_as, shirt_words_at, fit_over, style for hair).
   Blend shapes cost per frame per vertex: for crowds, **bake** a body once its sliders are set
   (apply the blend shapes into a new ArrayMesh at load, then no blend shapes run), and use Godot's import
   LODs. The shipping NPCs are 0.9k–10k tris; this is heavier (see `production/qa/evidence/wsB1-ingame-*`).
-- The web build will need the `models/characters/` pack (≈ 75 MB for everything; ship only the pieces
-  a year map uses, or stream).
+- The web build will need the `models/characters/` pack (67.9 MB of source files for everything since
+  B-FIX; ship only the pieces a year map uses: `tools/chars/pack_list.py`).
 - Pieces must be on the same skeleton: always move their meshes under the body's `Skeleton3D` and call
   `_bones()` (joint offsets) and `_layers()` after any change.
 - Joint offsets assume the rest is recomputed on every slider change (cheap: 65 bones).
 - The face slots for Steven's face passes: replace `head` (and `skin_face`), keep the neck seam vertices.
-- **Editor defaults (Steven, Nov 2):** a new body starts in its compulsory base bottom only (briefs /
-  boxer-briefs) and **no base top**, female and male alike; base tops are options.
-  **Superseded the same day (Steven's B2 brief):** female bodies always have a base top and a base
-  bottom (defaults: sports bra, briefs), enforced in `CharBody.ensure_base()` / `take_off()`; male bodies
-  a base bottom, base top optional (`design/godot-character-editor.md`).
+- **The clothed rule** (top of this file) is enforced in `CharBody` itself; never add a path around it.
 
 ## Known defects (Nov 2, for the next pass)
 - **Store apron**: a stray panel hangs at one side (visible from behind on every body; 2 vertices 35 mm
@@ -229,11 +260,12 @@ patterns, counts_as, shirt_words_at, fit_over, style for hair).
   roughness or add strand alpha cards. The perm is a helmet.
 - Fit check (`fitcheck.py`, exported files, 71 pieces x 6 bodies): 34 pieces never touch the skin;
   the rest have at most 2 % of vertices up to 5.4 mm inside, nearly all on "curvy larger".
-- In a renderer without region hiding (the Blender sheets) the base layer shows through the seat of
-  bottoms on the curviest bodies; in the game those regions are hidden.
+- `fitcheck.py` and the dressed sheets were not re-run after B-FIX (no Blender in the cloud session);
+  the flattening moves the body only inward (≤ 4 mm), so fits can only gain clearance.
 
 ## Guesses (written down, to confirm)
 - 1995 store uniform colours (red vest, green apron) and the football / cheer colours are placeholders;
   the colour regions take any store's colours.
 - Neutral heights 1.59 m / 1.73 m (US adult means are ~1.62 / 1.76): the height slider covers it.
-- Panties = a hipster cut; "briefs" (female) = full-coverage briefs.
+- B-FIX: the painted base-layer colour (`#bdbab0`, a plain undershirt / bike-short grey) and its regions
+  (chest front / back, pelvis front / back, crotch; belly and shoulders stay skin) are guesses.

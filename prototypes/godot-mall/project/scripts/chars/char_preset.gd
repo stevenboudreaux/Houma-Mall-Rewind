@@ -4,15 +4,17 @@
 ## A preset is data/characters/<id>.json:
 ##   {"id", "name", "body": "female"|"male", "keys": {slider: value}, "skin": "#hex", "iris": "#hex",
 ##    "hair": {"id": "hair_long" | "", "color": "#hex"},
-##    "outfit": {"base_top", "base_bottom", "under", "top", "bottom", "full", "outer", "shoes",
+##    "outfit": {"under", "top", "bottom", "full", "outer", "shoes",
 ##               "extras": [ids], "colors": {piece base_id: {region: "#hex"}},
 ##               "patterns": {piece base_id: "stripes"}}}
 ## Piece ids are B1's base ids (characters.json "pieces" base_id: "top_tee", not "top_tee_female").
 ## "" = nothing in that slot. Unknown keys are kept (so a later field survives a round trip).
 ##
-## The base-layer rule is enforced in normalize() and again by CharBody itself (ensure_base, take_off):
-## female presets always have a base top and a base bottom (a missing one gets the default), male
-## presets always a base bottom; a male base top is optional. Nothing here can remove a female base top.
+## THE CLOTHED RULE (Steven, Nov 2, final; CharBody.CLOSED_TOPS / BOTTOMS / FULL_OUTFITS) is enforced in
+## normalize() and again by CharBody itself (apply, wear, take_off): every preset, adult or child, wears
+## a closed top and a bottom, or a full outfit; a missing one gets the default. There is no base layer:
+## base-layer ids in a preset or save file are dropped on load. THE CHILD RULE: a preset with youth > 0
+## or youth_small > 0 keeps only CharBody.CHILD_ALLOW pieces, and its bust sliders are 0.
 ##
 ## Owner edits are kept per browser in localStorage "mall-char-<id>" (get_preset() prefers them, so Steven
 ## sees his edit in the mall at once); the repo copy changes only when Steven commits the downloaded
@@ -39,17 +41,13 @@ const SLOTS := [
 	{"slot": "glasses", "label": "Glasses", "from": ["glasses"], "extra": true},
 	{"slot": "watch", "label": "Watch", "from": ["watch"], "extra": true},
 ]
-const BASE_SLOTS := [
-	{"slot": "base_top", "label": "Base top", "from": ["base_top", "base_full"]},
-	{"slot": "base_bottom", "label": "Base bottom", "from": ["base_bottom", "base_full"]},
-]
-const OUTFIT_KEYS := ["base_top", "base_bottom", "under", "top", "bottom", "full", "outer", "shoes"]
+const OUTFIT_KEYS := ["under", "top", "bottom", "full", "outer", "shoes"]
 
 # ------------------------------------------------------------------ the data
 static func man() -> Dictionary:
 	return CharBody.cman()
 
-## A new preset: the body at neutral in its base layer only (female: base top + bottom).
+## A new preset: the body at neutral in the clothed defaults (a tee and jeans).
 static func blank(sex := "female") -> Dictionary:
 	var p := {"id": "", "name": "", "body": sex, "keys": {}, "skin": "#c99a7c", "iris": "#5a3a22",
 		"hair": {"id": "", "color": "#3a2a1e"}, "outfit": {}}
@@ -104,13 +102,17 @@ static func normalize(src: Dictionary) -> Dictionary:
 			if kin.has(sl.name):
 				var x := clampf(float(kin[sl.name]), float(sl.range[0]), float(sl.range[1]))
 				if absf(x) > 0.0005: keys[sl.name] = snappedf(x, 0.001)
+	var child := CharBody.is_child(keys)
+	if child:
+		for k in CharBody.CHILD_ZERO_KEYS: keys.erase(k)
 	p.keys = keys
 	p.skin = _hex(p.get("skin", ""), "#c99a7c")
 	p.iris = _hex(p.get("iris", ""), "#5a3a22")
 	var h = p.get("hair", {})
 	if not (h is Dictionary): h = {"id": str(h)}
 	var hid := str(h.get("id", ""))
-	if hid != "" and (_entry(sex, hid).is_empty() or not in_pack(_entry(sex, hid))): hid = ""
+	if hid != "" and (_entry(sex, hid).is_empty() or not in_pack(_entry(sex, hid))
+			or str(_entry(sex, hid).slot) != "hair"): hid = ""
 	p.hair = {"id": hid, "color": _hex(h.get("color", ""), "#3a2a1e")}
 	var o = p.get("outfit", {})
 	if not (o is Dictionary): o = {}
@@ -118,29 +120,31 @@ static func normalize(src: Dictionary) -> Dictionary:
 	for k in OUTFIT_KEYS:
 		var v := str(o.get(k, ""))
 		if v != "" and not slot_offers(sex, k, v): v = ""
+		if v != "" and child and not CharBody.child_ok(_entry(sex, v)): v = ""
 		out[k] = v
 	var ex := []
 	for v in o.get("extras", []):
 		var e := _entry(sex, str(v))
-		if not e.is_empty() and in_pack(e) and not ex.has(str(e.base_id)): ex.append(str(e.base_id))
+		if e.is_empty() or not in_pack(e) or ex.has(str(e.base_id)): continue
+		if not (str(e.slot) in ["hat", "glasses", "watch"]): continue
+		if child and not CharBody.child_ok(e): continue
+		ex.append(str(e.base_id))
 	out.extras = ex
 	# full outfits replace top / bottom / underlayer (CharBody.CLASHES)
 	if out.full != "":
 		out.top = ""; out.bottom = ""; out.under = ""
 	if out.under != "" and out.under == out.top: out.under = ""
-	# the one-piece is both base slots
-	if _is_full_base(sex, out.base_top) or _is_full_base(sex, out.base_bottom):
-		var one: String = out.base_top if _is_full_base(sex, out.base_top) else out.base_bottom
-		out.base_top = one; out.base_bottom = one
-	# ---- THE BASE RULE (Steven, Nov 2). No flag or option skips it.
-	var dflt: Dictionary = CharBody.BASE_DEFAULT[sex]
-	for sl in CharBody.base_required(sex):
-		if str(out[sl]) == "": out[sl] = str(dflt[sl])
+	# ---- THE CLOTHED RULE (Steven, Nov 2, final). No flag or option skips it.
+	if out.full == "":
+		if CharBody.covers({"base_id": out.top}) != "top" and CharBody.covers({"base_id": out.under}) != "top":
+			out.top = _clothed_default(sex, "top", child)
+		if CharBody.covers({"base_id": out.bottom}) != "bottom":
+			out.bottom = _clothed_default(sex, "bottom", child)
 	var cols := {}
 	var cin = o.get("colors", {})
 	if cin is Dictionary:
 		for k in cin:
-			if cin[k] is Dictionary:
+			if cin[k] is Dictionary and _live_piece(sex, str(k)):
 				var c := {}
 				for r in cin[k]: c[str(r)] = _hex(cin[k][r], "#808080")
 				cols[str(k)] = c
@@ -148,15 +152,23 @@ static func normalize(src: Dictionary) -> Dictionary:
 	var pats := {}
 	var pin = o.get("patterns", {})
 	if pin is Dictionary:
-		for k in pin: pats[str(k)] = str(pin[k])
+		for k in pin:
+			if _live_piece(sex, str(k)): pats[str(k)] = str(pin[k])
 	out.patterns = pats
 	p.outfit = out
 	return p
 
-static func _is_full_base(sex: String, id: String) -> bool:
-	if id == "": return false
+## A piece that exists for this body and isn't a base-layer piece (colours / patterns are kept only
+## for those, so a saved file never names a base-layer piece).
+static func _live_piece(sex: String, id: String) -> bool:
 	var e := _entry(sex, id)
-	return not e.is_empty() and str(e.slot) == "base_full"
+	return not e.is_empty() and not str(e.slot).begins_with("base_")
+
+## The first clothed default (CharBody.CLOTHED_DEFAULT) this pack offers in that slot.
+static func _clothed_default(sex: String, slot: String, child: bool) -> String:
+	for id in CharBody.CLOTHED_DEFAULT[slot]:
+		if slot_offers(sex, slot, str(id)) and (not child or CharBody.CHILD_ALLOW.has(str(id))): return str(id)
+	return str(CharBody.CLOTHED_DEFAULT[slot][0])
 
 static func _hex(v, fallback: String) -> String:
 	var s := str(v)
@@ -171,15 +183,16 @@ static func _entry(sex: String, id: String) -> Dictionary:
 		if str(e.body) == sex and (str(e.base_id) == id or str(e.id) == id): return e
 	return {}
 
-## The editor slot description (SLOTS / BASE_SLOTS) of a slot name, or {}.
+## The editor slot description (SLOTS) of a slot name, or {}.
 static func slot_info(slot: String) -> Dictionary:
-	for s in SLOTS + BASE_SLOTS:
+	for s in SLOTS:
 		if s.slot == slot: return s
 	if slot == "hair": return {"slot": "hair", "label": "Hair", "from": ["hair"]}
 	return {}
 
-## The pieces (manifest entries) an editor slot offers for a body, in manifest order.
-static func options(sex: String, slot: String) -> Array:
+## The pieces (manifest entries) an editor slot offers for a body, in manifest order. child: only
+## CharBody.CHILD_ALLOW pieces (the child rule). Base-layer pieces are never offered.
+static func options(sex: String, slot: String, child := false) -> Array:
 	var si := slot_info(slot)
 	if si.is_empty(): return []
 	var out := []
@@ -188,6 +201,8 @@ static func options(sex: String, slot: String) -> Array:
 		if si.has("layer") and int(e.layer) != int(si.layer): continue
 		if si.has("only") and not (si.only as Array).has(str(e.base_id)): continue
 		if not in_pack(e): continue
+		if str(e.slot).begins_with("base_"): continue
+		if child and not CharBody.child_ok(e): continue
 		out.append(e)
 	return out
 
@@ -216,7 +231,7 @@ static func worn_entry(sex: String, slot: String, id: String) -> Dictionary:
 		if int(si.get("as_layer", -1)) >= 0: e.layer = int(si.as_layer)
 	return e
 
-## Every piece entry a preset wears, base layer first.
+## Every piece entry a preset wears, in slot order.
 static func worn(p: Dictionary) -> Array:
 	var sex: String = p.body
 	var o: Dictionary = p.outfit
@@ -236,12 +251,14 @@ static func worn(p: Dictionary) -> Array:
 		if not e.is_empty(): out.append(e)
 	return out
 
-## Strip to base: the preset with only its base layer (and hair) left. For a female preset that is
-## exactly a base top + a base bottom (or the one-piece); for a male one a base bottom (+ the base
-## top if one was chosen).
+## Basics: the preset with only its clothed minimum (and hair) left: its full outfit, or its closed
+## top and its bottom (the defaults if it had none). Never less (the clothed rule).
 static func stripped(p: Dictionary) -> Dictionary:
-	var q: Dictionary = p.duplicate(true)
-	for k in ["under", "top", "bottom", "full", "outer", "shoes"]: q.outfit[k] = ""
+	var q: Dictionary = normalize(p)
+	if str(q.outfit.full) == "":
+		if CharBody.covers({"base_id": q.outfit.top}) != "top": q.outfit.top = q.outfit.under
+		q.outfit.under = ""
+	for k in ["outer", "shoes"]: q.outfit[k] = ""
 	q.outfit.extras = []
 	return normalize(q)
 
@@ -302,7 +319,7 @@ static func paint(cb: CharBody, p: Dictionary) -> void:
 		if e.get("patterns", false):
 			pattern(cb, e, str(pats.get(bid, "solid")))
 
-## A base-layer piece's pattern (characters.json "patterns"): the main region's albedo map swapped
+## A piece's pattern (characters.json "patterns"; no live piece has one since the base layer went): the main region's albedo map swapped
 ## for pattern_<name>.png (solid = the piece's own fabric).
 static func pattern(cb: CharBody, e: Dictionary, pname: String) -> void:
 	var path := "res://models/characters/pattern_%s.png" % pname

@@ -7,7 +7,8 @@ and mounted by scripts/chars/char_pack.gd at start. A character pack ships only:
   - the presets that map uses: data/story/attendants.json (wing, years, "look": "preset") and
     scripts/npcs.json "presets" (shoppers, every interior wing, both years), their bodies and pieces;
   - the player's wardrobe, data/characters/_wardrobe.json (the avatar creator, every pack);
-  - the textures those .glb files reference, the skin wrinkle map, the base-layer patterns.
+  - the clothed defaults (a tee and jeans) for every body it ships (the clothed rule, B-FIX);
+  - the textures those .glb files reference, the skin wrinkle map, the piece patterns.
 The game copes with a missing piece (scripts/chars/char_preset.gd offers only pieces in the pack).
 
     python3 tools/chars/pack_list.py                  # print the lists and sizes
@@ -49,14 +50,18 @@ def glb_images(path):
     return [i["uri"] for i in j.get("images", []) if "uri" in i]
 
 
+# the clothed rule's defaults (scripts/char_body.gd CLOTHED_DEFAULT, first of each): every pack ships
+# them for every body it ships, so a body missing a top or a bottom is always dressed (B-FIX).
+CLOTHED_DEFAULT = ["top_tee", "bot_jeans"]
+
+
 def preset_ids(p):
-    """the base ids a preset wears (as char_preset.gd worn(), plus the B1 base defaults)"""
+    """the base ids a preset wears (as char_preset.gd worn(); no base layer since B-FIX)"""
     o = p.get("outfit", {})
-    ids = [o.get(k, "") for k in ("base_top", "base_bottom", "under", "top", "bottom", "full", "outer", "shoes")]
+    ids = [o.get(k, "") for k in ("under", "top", "bottom", "full", "outer", "shoes")]
     ids += list(o.get("extras", []))
     ids.append((p.get("hair") or {}).get("id", ""))
-    ids += ["base_sportsbra", "base_briefs"] if p.get("body") == "female" else ["base_boxerbriefs"]
-    return [i for i in ids if i]
+    return [i for i in ids if i and not i.startswith("base_")]
 
 
 def files_for(sexes, ids_by_sex):
@@ -66,7 +71,7 @@ def files_for(sexes, ids_by_sex):
     for s, ids in ids_by_sex.items():
         for i in ids:
             e = entry(s, i)
-            if e:
+            if e and not e["slot"].startswith("base_"):
                 files.add(e["glb"].replace("res://", ""))
     tex = set()
     for f in list(files):
@@ -112,7 +117,7 @@ def plan():
                 used.append(a.get("preset"))
         if wing in (1, 2):
             used += [v for v in npc.values() if v]
-        ids = {s: list(v) for s, v in W.items()}
+        ids = {s: list(v) + CLOTHED_DEFAULT for s, v in W.items()}
         sexes = set(W.keys())
         for pid in used:
             p = presets.get(pid)
@@ -120,7 +125,7 @@ def plan():
                 continue
             s = p.get("body", "female")
             sexes.add(s)
-            ids.setdefault(s, [])
+            ids.setdefault(s, list(CLOTHED_DEFAULT))
             ids[s] += preset_ids(p)
         f, t = files_for(sorted(sexes), ids)
         out[feat] = {"presets": sorted(set(used)), "files": f, "tex": t}

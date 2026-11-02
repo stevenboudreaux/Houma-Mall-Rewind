@@ -10,7 +10,6 @@
 		"chest": -0.3,
 		"shoulders": -0.2,
 		"arms": -0.3,
-		"youth": 0.25,
 		"height": 0.15
 	},
 	"skin": "#a87455",
@@ -20,7 +19,6 @@
 		"color": "#1b1714"
 	},
 	"outfit": {
-		"base_bottom": "base_boxerbriefs",
 		"under": "top_tee",
 		"outer": "top_flannel",
 		"bottom": "bot_jeans",

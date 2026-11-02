@@ -10,11 +10,12 @@
 ##   Each blend shape also moves joints ("joints": local rest-translation offsets per bone), so
 ##   bones follow the flesh: new rests, and new bind poses on every Skin (body + pieces share one
 ##   skeleton and one set of inverse bind matrices).
-## Pieces (hair, base layer, outfits) are glbs on the same 65-bone skeleton; their meshes move
+## Pieces (hair, clothes) are glbs on the same 65-bone skeleton; their meshes move
 ## under this body's Skeleton3D, get the same blend shape weights (the names they carry), and
 ## hide body / lower-layer regions they cover (scripts/spatial_char_region.gdshader, region id in UV2.x).
 ##
-## This is B1's proof loader; B2's editor builds on it.
+## This is B1's proof loader; B2's editor builds on it. B-FIX (Nov 2): the clothed rule and the child
+## rule below replace every base-layer rule.
 class_name CharBody
 extends NpcBody
 
@@ -47,8 +48,7 @@ func make(s: String, hi := false) -> void:
 	_skins.clear()
 	for mi in sk.find_children("*", "MeshInstance3D", true, false):
 		_own_skin(mi)
-	apply({})
-	ensure_base()
+	apply({})          # dresses the body in the clothed defaults (the clothed rule)
 
 func _own_skin(mi: MeshInstance3D) -> void:
 	if mi.skin:
@@ -69,10 +69,15 @@ static func shape_weights(vals: Dictionary, s: String) -> Dictionary:
 		if p > 0.0: w[c.shape] = p
 	return w
 
-## Set every slider at once (missing = 0) and rebuild bones, binds and the rig.
+## Set every slider at once (missing = 0) and rebuild bones, binds and the rig. Runs the clothed
+## rule and the child rule (below) on every call, so a slider that makes a body a child takes off
+## anything a child may not wear.
 func apply(vals: Dictionary) -> void:
 	values = vals.duplicate()
+	if is_child(values):
+		for k in CHILD_ZERO_KEYS: values.erase(k)
 	weights = shape_weights(values, sex)
+	ensure_clothed(false)
 	for mi in sk.find_children("*", "MeshInstance3D", true, false):
 		_weigh(mi)
 	_bones()
@@ -131,45 +136,70 @@ func _bones() -> void:
 ## Dress: wear a piece from the manifest (characters.json "pieces" entry, or its id). Its meshes
 ## move under this skeleton; layers are then resolved (_layers): covered regions hidden below,
 ## 'fit_over' turned on where it sits over another piece. A piece in the same slot is replaced.
-func wear(p) -> void:
+## Refused (false): an unknown piece, a base-layer piece (none in the live game), and on a child body
+## anything outside CHILD_ALLOW. The clothed rule runs after, so a body is never left undressed.
+func wear(p) -> bool:
 	var e: Dictionary = p if p is Dictionary else piece_entry(str(p))
+	if not _may_wear(e): return false
+	_clear_for(e)
+	var ok := _attach_piece(e)
+	ensure_clothed(false)
+	_bones()
+	_layers()
+	return ok
+
+## Wear several pieces at once (one rebuild of bones and layers at the end), with the same rules as
+## wear(); the clothed rule runs after. Returns the ids actually worn.
+func wear_many(list: Array) -> Array:
+	var done := []
+	for p in list:
+		var e: Dictionary = p if p is Dictionary else piece_entry(str(p))
+		if not _may_wear(e): continue
+		_clear_for(e)
+		if _attach_piece(e): done.append(str(e.id))
+	ensure_clothed(false)
+	_bones()
+	_layers()
+	return done
+
+func _may_wear(e: Dictionary) -> bool:
 	if e.is_empty():
-		push_warning("char_body: no piece " + str(p)); return
+		push_warning("char_body: no such piece"); return false
+	if str(e.slot).begins_with("base_"):
+		push_warning("char_body: base-layer pieces are not worn in the live game: " + str(e.get("id", "")))
+		return false
+	if is_child(values) and not child_ok(e):
+		push_warning("char_body: not a child's piece: " + str(e.get("id", "")))
+		return false
+	return true
+
+## Take off what a new piece replaces (same slot, counts_as, CLASHES).
+func _clear_for(e: Dictionary) -> void:
 	for other in pieces.keys():
 		if pieces[other].slot == e.slot or (e.get("counts_as", []) as Array).has(pieces[other].slot) \
 				or (pieces[other].get("counts_as", []) as Array).has(e.slot) \
 				or (CLASHES.get(e.slot, []) as Array).has(pieces[other].slot):
 			_remove(other)
-	if not _attach_piece(e): return
-	ensure_base(false)     # B2: replacing the one-piece by a top alone must not leave a body bare
-	_bones()
-	_layers()
 
-## B2: wear several pieces at once (one rebuild of bones and layers at the end), with the same
-## replacing rules as wear(); the base rule is applied after.
-func wear_many(list: Array) -> void:
-	for p in list:
-		var e: Dictionary = p if p is Dictionary else piece_entry(str(p))
-		if e.is_empty():
-			push_warning("char_body: no piece " + str(p)); continue
-		for other in pieces.keys():
-			if pieces[other].slot == e.slot or (e.get("counts_as", []) as Array).has(pieces[other].slot) \
-					or (pieces[other].get("counts_as", []) as Array).has(e.slot) \
-					or (CLASHES.get(e.slot, []) as Array).has(pieces[other].slot):
-				_remove(other)
-		_attach_piece(e)
-	ensure_base(false)
-	_bones()
-	_layers()
-
-## B2: take off every piece except what the base rule keeps (the editor's "strip to base" and the
-## preset loader's undress). Returns what is left.
-func strip_to_base(keep_base := true) -> Array:
+## Take off everything except the clothed minimum: hair, plus the full outfit, or one closed top and
+## one bottom (the clothed defaults if none is worn). Never less (the clothed rule). Returns what is left.
+## (The name is kept from B2; there is no base layer to strip to.)
+func strip_to_base(_unused := true) -> Array:
+	var keep := {}
+	var top := ""; var bot := ""; var full := ""
+	for k in pieces:
+		var c := covers(pieces[k])
+		if c == "full" and full == "": full = k
+		elif c == "top" and top == "": top = k
+		elif c == "bottom" and bot == "": bot = k
+		if str(pieces[k].slot) == "hair": keep[k] = true
+	if full != "": keep[full] = true
+	else:
+		if top != "": keep[top] = true
+		if bot != "": keep[bot] = true
 	for k in pieces.keys():
-		var sl: String = pieces[k].slot
-		if keep_base and sl.begins_with("base_"): continue
-		_remove(k)
-	ensure_base(false)
+		if not keep.has(k): _remove(k)
+	ensure_clothed(false)
 	_bones()
 	_layers()
 	return pieces.keys()
@@ -198,17 +228,18 @@ func piece_entry(id: String) -> Dictionary:
 		if e.body == sex and (e.id == id or e.base_id == id): return e
 	return {}
 
-## Take a piece off. The base bottom cannot be removed (Steven's rule): only replaced by another.
+## Take a piece off. Refused (false) when it is the only thing covering the chest or the groin
+## (the clothed rule): a closed top, a bottom or a full outfit can only be replaced by another.
 func take_off(id: String) -> bool:
 	var key := ""
 	for k in pieces:
 		if k == id or pieces[k].base_id == id: key = k
 	if key == "": return false
-	var s: String = pieces[key].slot
-	if s == "base_bottom" or s == "base_full":
+	var rest := pieces.duplicate()
+	rest.erase(key)
+	var c := coverage(rest)
+	if not (c.top and c.bottom):
 		return false
-	if s == "base_top" and sex == "female":
-		return false       # B2 (Steven, Nov 2): a female body's base top is never removed, only replaced
 	_remove(key)
 	_layers()
 	return true
@@ -221,34 +252,84 @@ func _remove(key: String) -> void:
 			mi.queue_free()
 	pieces.erase(key)
 
-## The base-layer rule (Steven, Nov 2; B2, design/godot-character-editor.md), enforced here and not
-## only in an editor: every body always wears a base bottom; a FEMALE body also always wears a base
-## top (the one-piece swimsuit counts as both). Missing ones get the defaults below. A male base top
-## is optional. There is deliberately no way around this (no flag, no option).
-const BASE_DEFAULT := {"female": {"base_top": "base_sportsbra", "base_bottom": "base_briefs"},
-	"male": {"base_bottom": "base_boxerbriefs"}}
-## B2: a full outfit (football, cheer, waitress, coveralls) replaces top, bottom and underlayer, and
+## THE CLOTHED RULE (Steven, Nov 2, final; design/godot-characters.md). In the live game every
+## character, adult or child, is clothed at all times: it always wears a closed top and a bottom, or a
+## full outfit. Enforced here (make, apply, wear, wear_many, take_off, strip_to_base) and in
+## CharPreset.normalize(), not only in an editor. There is no base layer, no flag and no option around
+## it. Under the clothes the body itself is painted with an opaque base layer (scripts/
+## spatial_char_region.gdshader base_mask + the albedo map) and its chest and groin are flattened, so a
+## missing piece or a bug still shows no bare chest or groin.
+const CLOSED_TOPS := ["top_tee", "top_polo", "top_buttondown", "top_sweatshirt", "top_tank", "top_babytee"]
+const BOTTOMS := ["bot_jeans", "bot_widejeans", "bot_khakis", "bot_slacks", "bot_longshorts",
+	"bot_shortshorts", "bot_skirt", "bot_overalls"]
+const FULL_OUTFITS := ["full_football", "full_cheer", "full_waitress", "full_coveralls"]
+## What a body missing a top / a bottom is given (the first one this pack ships).
+const CLOTHED_DEFAULT := {"top": ["top_tee", "top_polo", "top_sweatshirt", "top_buttondown"],
+	"bottom": ["bot_jeans", "bot_khakis", "bot_slacks", "bot_longshorts"]}
+## THE CHILD RULE: a body with youth > 0 or youth_small > 0 is a child. A child wears only these
+## plain pieces (and any hair); nothing else is offered, loaded or kept, whatever a preset says.
+const CHILD_ALLOW := ["top_tee", "top_polo", "top_buttondown", "top_sweatshirt", "top_flannel", "top_cardigan",
+	"bot_jeans", "bot_widejeans", "bot_khakis", "bot_slacks", "bot_longshorts", "bot_overalls",
+	"shoe_sneakers", "shoe_boots", "shoe_dressshoes", "shoe_sandals",
+	"x_cap_fwd", "x_cap_back", "x_glasses", "x_watch"]
+## Adult-only shape sliders, held at 0 on a child body.
+const CHILD_ZERO_KEYS := ["bust", "bust_lift"]
+## The painted base layer: body regions (characters.json "regions") drawn as plain fabric, not skin.
+const BASE_REGIONS := ["chest_f", "chest_b", "pelvis_f", "pelvis_b", "crotch"]
+const BASE_COLOR := Color(0.74, 0.73, 0.69)   # a plain undershirt / bike-short grey
+## A full outfit (football, cheer, waitress, coveralls) replaces top, bottom and underlayer, and
 ## each of those replaces a full outfit.
 const CLASHES := {"full": ["top", "bottom", "under"], "top": ["full"], "bottom": ["full"], "under": ["full"]}
 
-## The base slots this body must wear (the rule above).
-static func base_required(s: String) -> Array:
-	return ["base_top", "base_bottom"] if s == "female" else ["base_bottom"]
+static func is_child(vals: Dictionary) -> bool:
+	return float(vals.get("youth", 0.0)) > 0.0 or float(vals.get("youth_small", 0.0)) > 0.0
 
-func ensure_base(rebuild := true) -> void:
-	var have := {}
-	for k in pieces:
-		var sl: String = pieces[k].slot
-		have[sl] = true
-		for c in pieces[k].get("counts_as", []): have[str(c)] = true
-	for sl in base_required(sex):
-		if not have.has(sl):
-			var e := piece_entry(str(BASE_DEFAULT[sex][sl]))
-			if e.is_empty(): continue
-			if rebuild:
-				wear(e)
-			else:
-				_attach_piece(e)
+static func child_ok(e: Dictionary) -> bool:
+	return str(e.get("slot", "")) == "hair" or CHILD_ALLOW.has(str(e.get("base_id", "")))
+
+## What a piece covers for the clothed rule: "full", "top", "bottom" or "".
+static func covers(e: Dictionary) -> String:
+	var b := str(e.get("base_id", ""))
+	if FULL_OUTFITS.has(b): return "full"
+	if CLOSED_TOPS.has(b): return "top"
+	if BOTTOMS.has(b): return "bottom"
+	return ""
+
+## Whether a set of worn pieces (id -> entry) covers the chest and the groin.
+static func coverage(ps: Dictionary) -> Dictionary:
+	var c := {"top": false, "bottom": false}
+	for k in ps:
+		match covers(ps[k]):
+			"full": c.top = true; c.bottom = true
+			"top": c.top = true
+			"bottom": c.bottom = true
+	return c
+
+func is_clothed() -> bool:
+	var c := coverage(pieces)
+	return c.top and c.bottom
+
+## The clothed rule and the child rule on the worn pieces: base-layer pieces and (on a child) pieces
+## outside CHILD_ALLOW come off; a missing top or bottom gets the first default this pack ships.
+func ensure_clothed(rebuild := true) -> void:
+	var child := is_child(values)
+	for k in pieces.keys():
+		if str(pieces[k].slot).begins_with("base_") or (child and not child_ok(pieces[k])):
+			_remove(k)
+	var c := coverage(pieces)
+	for need in ["top", "bottom"]:
+		if c[need]: continue
+		var ok := false
+		for id in CLOTHED_DEFAULT[need]:
+			var e := piece_entry(str(id))
+			if e.is_empty() or (child and not child_ok(e)): continue
+			if _attach_piece(e):
+				ok = true; break
+		if not ok:
+			push_warning("char_body: this pack ships no %s; the painted base layer shows" % need)
+	if rebuild:
+		_bones()
+		_layers()
 
 ## Layering: each surface hides the regions covered by any piece on a HIGHER layer (the body is
 ## below everything); a piece above the base layer gets its 'fit_over' push-out when another piece
@@ -273,6 +354,15 @@ func _layers() -> void:
 		if mi.mesh:
 			var fi: int = mi.find_blend_shape_by_name("fit_over")
 			if fi >= 0: mi.set_blend_shape_value(fi, 1.0 if over else 0.0)
+
+## The painted base layer's region bits (BASE_REGIONS in characters.json "regions").
+static func base_mask() -> int:
+	var reg: Array = cman().get("regions", [])
+	var m := 0
+	for r in BASE_REGIONS:
+		var i := reg.find(r)
+		if i >= 0: m |= 1 << i
+	return m
 
 const REGION_SHADER := preload("res://scripts/spatial_char_region.gdshader")
 
@@ -304,6 +394,8 @@ func _shade(mi: MeshInstance3D, mask: int) -> void:
 			sm.set_shader_parameter("use_vertex_color", m.vertex_color_use_as_albedo)
 			if str(m.resource_name).begins_with("skin_"):
 				sm.set_shader_parameter("wrinkle_tex", load("res://models/characters/skin_wrinkle.png"))
+				sm.set_shader_parameter("base_mask", base_mask())
+				sm.set_shader_parameter("base_color", BASE_COLOR)
 			if m.cull_mode == BaseMaterial3D.CULL_DISABLED:
 				sm.render_priority = 0
 			mi.set_surface_override_material(i, sm)
