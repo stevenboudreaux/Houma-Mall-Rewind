@@ -25,6 +25,9 @@ var inventory: Array = []      # [{"id": String, "count": int}]
 var tickets := 0
 var hand := ""
 var moved := {}
+## Q (design/godot-quests.md): the quest flags, scripts/flags.gd; made by interact.gd. Saved apart
+## (localStorage "mall-flags-1", both years), not in this file's JSON.
+var flags = null
 ## Where save()/load_saved() keep the JSON. null: localStorage on the web, else Engine metadata
 ## (survives a scene change in the editor or a test). A Dictionary: kept in it (unit tests).
 var backend = null
