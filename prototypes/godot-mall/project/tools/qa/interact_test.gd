@@ -1,5 +1,5 @@
 ## The interaction system natively (scripts/interact.gd; design/godot-interaction.md), unbaked:
-##   --wing=2: Pocket Change's loose prizes: placed, the prompt in reach, picked up into the hand and
+##   --wing=2: Pocket Change's prizes (dropped there by the test's saved state; none lie there at first): the prompt in reach, picked up into the hand and
 ##             the bag, the bag panel, drop and pick up again, owner/visitor HUD.
 ##   --wing=1: the Stockrooms: Martin Folse's stick in its corner, picked up, held, swung.
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 \
@@ -23,6 +23,14 @@ func _initialize() -> void:
 		elif a.begins_with("--wing="): wing = int(a.substr(7))
 	DirAccess.make_dir_recursive_absolute(out.get_base_dir())
 	Engine.set_meta("mall_state_1995", "")      # start empty
+	if wing == 2:
+		# R (Nov 2): nothing lies at Pocket Change any more (the prizes are the counter's stock), so
+		# the test drops its five prizes where they used to lie: a saved state with them "moved" there
+		var mv := {}
+		for e in [["spring", -107.6, 63.9, 20], ["dice", -108.8, 67.0, -35], ["pogs", -105.9, 70.4, 70],
+				["slap", -105.3, 72.6, 10], ["candy_neck", -109.2, 62.4, 0]]:
+			mv[e[0]] = {"wing": 2, "year": 1995, "pos": [e[1], 0.0, e[2]], "yaw": e[3]}
+		Engine.set_meta("mall_state_1995", JSON.stringify({"v": 1, "year": 1995, "inventory": [], "tickets": 0, "hand": "", "moved": mv}))
 	if wing == 2:
 		Engine.set_meta("mall_xfer", {"x": -108.6, "z": 71.5, "yaw": deg_to_rad(-42.0), "pitch": deg_to_rad(-20.0)})
 	scn = load("res://wing%d.tscn" % wing).instantiate()
@@ -74,7 +82,7 @@ func _w2() -> bool:
 		0:
 			if clock > 1.5:
 				var n := scn.get_tree().get_nodes_in_group("interactable").filter(func(x): return x.name.begins_with("it_")).size()
-				_check(n == 5, "five loose prizes placed in Pocket Change (%d)" % n)
+				_check(n == 5, "five dropped prizes lie in Pocket Change (%d)" % n)
 				_check(player.mall != null and player.mall.inventory.is_empty() and player.mall.hand == "", "player.mall starts empty")
 				_check(not player.hud.visible and not player.buttons[0].visible and not player.buttons[1].visible and player.jump_open_btn.visible, "visitor HUD: no fps, no toggles, Jump to shown")
 				_shot("hud-visitor")
