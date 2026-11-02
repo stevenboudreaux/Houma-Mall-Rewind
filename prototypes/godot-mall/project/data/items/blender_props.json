@@ -50,6 +50,17 @@
    }
   },
   {
+   "id": "bl_pc_boombox",
+   "name": "Boom box",
+   "class": "hand",
+   "scene": "res://models/bl_pc_boombox/bl_pc_boombox_item.tscn",
+   "icon": "res://models/bl_pc_boombox/bl_pc_boombox_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "prize": "boombox",
+   "tickets": 500
+  },
+  {
    "id": "bl_pc_fingertrap",
    "name": "Chinese finger trap",
    "class": "pocket",

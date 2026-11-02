@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://models/bl_pc_boombox/bl_pc_boombox.glb" id="1_bb"]
+
+[node name="bl_pc_boombox" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_bb")]
+
+[node name="Grip" type="Marker3D" parent="."]
+transform = Transform3D(0.8660, 0, -0.5000, 0, 1, 0, 0.5000, 0, 0.8660, 0, 0.308, -0.03)
