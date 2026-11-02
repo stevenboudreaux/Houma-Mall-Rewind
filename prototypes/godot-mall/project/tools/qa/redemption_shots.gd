@@ -133,12 +133,16 @@ func _process(dt: float) -> bool:
 				var av = player.get("avatar")
 				if av and av.has_method("toggle_view"):
 					av.toggle_view()
-				_at(-105.8, 66.5, -90.0, -12.0)
+				_at(-9.0, 61.0, 90.0, -12.0)   # the hall: the arcade machines behind you in Pocket Change block the camera boom
 				step = 8; clock = 0.0
 		8:
 			if clock > 2.5:
 				_shot("held-third")
 				var av = player.get("avatar")
+				if av:
+					printerr("third: %s body %s vis %s at %s boom %s cam %s item in avatar hand %s" % [av.third, av.body != null,
+						av.body.visible if av.body else false, av.body.global_position if av.body else Vector3.ZERO, av.get("_boom"),
+						av.tp_cam.current if av.tp_cam else false, it.hand_item != null and it.hand_item.get_parent() != it.hand_root])
 				if av and av.get("third"):
 					av.toggle_view()   # leave the saved look as it was
 				printerr("REDEMPTION SHOTS OK (%d checks)" % oks if errors.is_empty() else "REDEMPTION SHOTS FAILED: " + str(errors))

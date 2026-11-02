@@ -171,7 +171,16 @@ agree; Steven changes them there (or with a `tickets` in `redemption.json`).
   ticket and bag round trip through a save, the pop-up contract and queue.
 - `tools/qa/interact_test.gd --wing=2` now drops its five test prizes through a saved state (nothing
   lies there at first).
-- Evidence `production/qa/evidence/wsR-*.jpg` (unbaked).
+- `tools/qa/redemption_shots.gd` (native, unbaked, `--resolution 1280x720` and `390x844`): REDEMPTION SHOTS
+  OK (11 checks): the empty floor, the prompt, the screen at 0 and 600 tickets, the boom box bought, its
+  pop-up, the screen after (100 tickets), the boom box held in first person; in third person in the hall
+  (in Pocket Change the arcade machines behind you shorten the camera boom and the avatar hides).
+- `tools/qa/redemption_webtest.py` (web export, iPhone 390 × 844 and 844 × 390, touch): REDEMPTION WEB OK,
+  0 console errors. The tap that opens the screen no longer reaches a card on its release.
+- `tools/qa/movetest.py`, wing 2: 1995 (Pocket Change floor shot, walk from inside the store) and 2026
+  (walk from the hall spawn; the 2026 Pocket Change space is a closed vacant store): 0 errors, MOVED.
+- Evidence `production/qa/evidence/wsR-*.jpg`: `wsR-unbaked-desk-*`, `wsR-unbaked-iphone-*` (native),
+  `wsR-web-*` (the web build with the published lightmaps), `wsR-boombox-sheet.jpg`.
 
 ## Open
 - **Boom box price:** 500 on the screen (Steven's number), 5,000 on the wall's tags. Which one?

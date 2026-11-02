@@ -32,6 +32,7 @@ var _saved_vis := []
 var _stick_latch := false
 var _touch_at := Vector2.ZERO
 var _touch_moved := false
+var _touch_live := false     # a touch that began while the screen was open (not the tap that opened it)
 
 # ui
 var ui: CanvasLayer
@@ -109,6 +110,7 @@ func open() -> void:
 		_build_ui()
 	stock = read_stock(db, int(mall.year))
 	is_open = true
+	_touch_live = false
 	if player:
 		if not player.frozen:
 			player.frozen = true
@@ -136,6 +138,14 @@ func open() -> void:
 	_fill()
 	ui.visible = true
 	_paint_sel()
+	_scroll_to_sel.call_deferred()
+
+## Opens at the top, with the selected card in view (whatever the input).
+func _scroll_to_sel() -> void:
+	await get_tree().process_frame     # the grid has its size after a frame
+	scroll.scroll_vertical = 0
+	if sel >= 0 and sel < cards.size():
+		scroll.ensure_control_visible(cards[sel].card)
 
 func close() -> void:
 	if not is_open:
@@ -264,8 +274,11 @@ func _layout() -> void:
 	panel.custom_minimum_size = Vector2(w, h)
 	grid.columns = maxi(2, int((w - 24.0) / 150.0))
 	var cw := (w - 24.0 - 8.0 * (grid.columns - 1) - 14.0) / grid.columns
+	var short := h < 460.0
 	for c in cards:
 		c.card.custom_minimum_size = Vector2(cw, 0)
+		c.icon.custom_minimum_size = Vector2(0, 44 if short else 72)
+		c.name.custom_minimum_size = Vector2(0, 20 if short else 36)
 	btn_look.visible = _prizes_node() != null
 	btn_look.text = "Look at the prizes" if w >= 420.0 else "Look"
 
@@ -307,7 +320,7 @@ func _fill() -> void:
 		b.custom_minimum_size = Vector2(0, 38)
 		v.add_child(b)
 		grid.add_child(card)
-		cards.append({"card": card, "buy": b, "i": i, "icon": ic})
+		cards.append({"card": card, "buy": b, "i": i, "icon": ic, "name": nm})
 	_layout()
 	_refresh()
 
@@ -399,7 +412,9 @@ func _input(e: InputEvent) -> void:
 		if e.pressed:
 			_touch_at = e.position
 			_touch_moved = false
-		elif not _touch_moved:
+			_touch_live = true
+		elif _touch_live and not _touch_moved:
+			_touch_live = false
 			_tap(e.position)
 	elif e is InputEventScreenDrag:
 		if e.position.distance_to(_touch_at) > 12.0:
