@@ -120,9 +120,12 @@ func _process(_dt: float) -> bool:
 			elif t == 30:
 				var g = _gate()
 				var said := false
-				var gn = _gate()
-				if gn and gn._note and gn._note.modulate.a > 0.5 and str(gn._note.text).begins_with("PLACEHOLDER locked message (Southland Cinema"):
-					said = true
+				# INT (Demo 49): the message goes through Q's Story.say (its notice layer, above the prompt)
+				var st = p.get_node_or_null("Story")
+				if st and st._notes:
+					for l in st._notes.get_children():
+						if l is Label and not l.is_queued_for_deletion() and str(l.text).begins_with("PLACEHOLDER locked message (Southland Cinema"):
+							said = true
 				_check(g != null and g.locked() and current_scene.scene_file_path == pending.scene and said,
 					"locked without the stick: message shown %s, still in %s, gate locked %s" % [said, current_scene.scene_file_path.get_file(), g.locked() if g else "no gate"])
 				var gm = _gm()

@@ -141,9 +141,12 @@ func _w2() -> bool:
 				step = 7; clock = 0.0
 		7:
 			if clock > 0.5:
-				_check(it.panel.visible and player.frozen and it.panel_rows.size() == 5, "the bag lists 5 things (%d)" % it.panel_rows.size())
+				# INT (Demo 49): since M the bag is the menu's INVENTORY tab (scripts/menu/menu.gd)
+				var mn = player.get("menu")
+				var things: int = player.mall.inventory.size() + (1 if player.mall.hand != "" else 0)
+				_check(mn != null and mn.is_open and mn.tab == "inventory" and player.frozen and things == 5, "the INVENTORY tab opens on 5 things (%d)" % things)
 				_shot("bag")
-				it.open_panel(false)
+				mn.close()
 				_check(not player.frozen, "closing the bag lets you walk again")
 				it.drop("dice")
 				step = 8; clock = 0.0

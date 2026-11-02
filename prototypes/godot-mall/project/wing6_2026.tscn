@@ -6,32 +6,32 @@
 [ext_resource type="Script" path="res://scripts/mall_runtime.gd" id="4_nev2k"]
 [ext_resource type="Script" path="res://scripts/signs.gd" id="5_8344o"]
 
-[node name="Mall" type="Node3D" unique_id=912450165]
+[node name="Mall" type="Node3D" unique_id=1148578467]
 metadata/wing = 6
 metadata/year = 2026
 metadata/gen = "res://gen/w6y26/"
 
-[node name="Lights" type="Node3D" parent="." unique_id=423331076]
+[node name="Lights" type="Node3D" parent="." unique_id=676863954]
 
-[node name="@OmniLight3D@2" type="OmniLight3D" parent="Lights" unique_id=137946300]
+[node name="@OmniLight3D@2" type="OmniLight3D" parent="Lights" unique_id=1684914045]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -63, 2.8, -82)
 light_color = Color(1, 0.82, 0.6, 1)
 light_energy = 0.4
 omni_range = 6.0
 
-[node name="@OmniLight3D@3" type="OmniLight3D" parent="Lights" unique_id=235971338]
+[node name="@OmniLight3D@3" type="OmniLight3D" parent="Lights" unique_id=1545901336]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60, 2.8, -82)
 light_color = Color(1, 0.82, 0.6, 1)
 light_energy = 0.4
 omni_range = 6.0
 
-[node name="@OmniLight3D@4" type="OmniLight3D" parent="Lights" unique_id=949252663]
+[node name="@OmniLight3D@4" type="OmniLight3D" parent="Lights" unique_id=1581888416]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57, 2.8, -82)
 light_color = Color(1, 0.82, 0.6, 1)
 light_energy = 0.4
 omni_range = 6.0
 
-[node name="Sun" type="DirectionalLight3D" parent="." unique_id=34811639]
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=307880987]
 transform = Transform3D(-0.70710677, 0.6403711, -0.2998747, 0, 0.42408684, 0.9056215, 0.70710677, 0.6403711, -0.2998747, 0, 0, 0)
 light_color = Color(1, 0.95, 0.86, 1)
 light_energy = 1.1
@@ -40,30 +40,30 @@ light_bake_mode = 1
 shadow_enabled = true
 metadata/only = "day"
 
-[node name="Env" type="WorldEnvironment" parent="." unique_id=352794916]
+[node name="Env" type="WorldEnvironment" parent="." unique_id=21552007]
 environment = ExtResource("1_e7ywm")
 
-[node name="Static" type="Node3D" parent="." unique_id=1009622529]
+[node name="Static" type="Node3D" parent="." unique_id=1078799523]
 
-[node name="Dynamic" type="Node3D" parent="." unique_id=1151268350]
+[node name="Dynamic" type="Node3D" parent="." unique_id=1393552489]
 
-[node name="dyn_cin6" type="MeshInstance3D" parent="Dynamic" unique_id=1672136310]
+[node name="dyn_cin6" type="MeshInstance3D" parent="Dynamic" unique_id=1096234230]
 cast_shadow = 0
 gi_mode = 2
 mesh = ExtResource("2_gxnl6")
 
-[node name="LightmapGI" type="LightmapGI" parent="." unique_id=1538213997]
+[node name="LightmapGI" type="LightmapGI" parent="." unique_id=524514490]
 quality = 3
 denoiser_strength = 0.25
 max_texture_size = 4096
 generate_probes_subdiv = 1
 
-[node name="Player" type="Node3D" parent="." unique_id=397264974]
+[node name="Player" type="Node3D" parent="." unique_id=113310078]
 script = ExtResource("3_64rbf")
 walk_rows = PackedStringArray()
 
-[node name="Runtime" type="Node" parent="." unique_id=2090056404]
+[node name="Runtime" type="Node" parent="." unique_id=781052824]
 script = ExtResource("4_nev2k")
 
-[node name="Signs" type="Node" parent="." unique_id=1188152739]
+[node name="Signs" type="Node" parent="." unique_id=959833568]
 script = ExtResource("5_8344o")
