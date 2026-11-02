@@ -22,6 +22,10 @@ var interact: Node = null
 ## move_scale slows walking in third person to a walking pace (1.0 in first person, as before).
 var avatar: Node = null
 var move_scale := 1.0
+## M (design/godot-menu.md): the full-screen menu (scripts/menu/menu.gd: AVATAR, CONTROLS, INVENTORY,
+## YEAR), the opening screen and the remappable controls; the year change plays the time-travel
+## transition (scripts/timetravel.tscn) first.
+var menu: Node = null
 ## Walkable map tiles (rows of "0"/"1"), and how map tiles map to metres.
 @export var walk_rows: PackedStringArray = []
 @export var map_origin := Vector2(148, 100)
@@ -190,6 +194,10 @@ func _ready() -> void:
 	avatar = load("res://scripts/avatar.gd").new()
 	avatar.name = "Avatar"; avatar.player = self
 	add_child(avatar)
+	# M: the menu, after Avatar (it hosts the creator and the inventory list)
+	menu = load("res://scripts/menu/menu.gd").new()
+	menu.name = "Menu"; menu.player = self
+	add_child(menu)
 	_light_btn_ok = buttons[2].visible
 	owner_hud_sync()
 	_spawn_1995_life()
@@ -202,6 +210,7 @@ func _ready() -> void:
 ## is the building as it is today).
 func _spawn_1995_life() -> void:
 	if year != 1995:
+		_spawn_2026_shoppers()   # M
 		return
 	# the Runner, a window mannequin come to life (scripts/runner_ai.gd; Steven, Oct 16 2026). He
 	# replaced the Rougarou (scripts/rougarou_ai.gd, kept but no longer made).
@@ -232,6 +241,17 @@ func _spawn_1995_life() -> void:
 		var pz = load("res://scripts/prizes.gd").new()
 		pz.name = "Prizes"; pz.player = self
 		get_parent().add_child.call_deferred(pz)
+
+## M (design/godot-menu.md): 2026 has a few shoppers too: npcs.json "years" sets how many and who
+## (scripts/npcs.gd); no Runner, Stockrooms or prize counter. Not outside (wing 3).
+func _spawn_2026_shoppers() -> void:
+	if wing == 3:
+		return
+	var np = load("res://scripts/npcs.gd").new()
+	np.name = "Shoppers"; np.player = self
+	if OS.has_feature("web"):
+		np.force = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('npcs') || ''"))
+	get_parent().add_child.call_deferred(np)
 
 func _build_hud() -> void:
 	var cl := CanvasLayer.new()
@@ -559,9 +579,11 @@ func _apply_rot() -> void:
 	cam.rotation = Vector3(pitch, 0, 0)
 
 func _process(dt: float) -> void:
+	# M: the walking keys are InputMap actions (remappable, scripts/menu/controls.gd); _mkey falls back
+	# to W A S D when they aren't set up
 	var iv := Vector2(
-		Input.get_axis("ui_left", "ui_right") + float(Input.is_physical_key_pressed(KEY_D)) - float(Input.is_physical_key_pressed(KEY_A)),
-		Input.get_axis("ui_up", "ui_down") + float(Input.is_physical_key_pressed(KEY_S)) - float(Input.is_physical_key_pressed(KEY_W)))
+		Input.get_axis("ui_left", "ui_right") + _mkey("mall_right", KEY_D) - _mkey("mall_left", KEY_A),
+		Input.get_axis("ui_up", "ui_down") + _mkey("mall_back", KEY_S) - _mkey("mall_forward", KEY_W))
 	if move_touch != -1:
 		iv = move_vec
 	iv = iv.limit_length(1.0)
@@ -571,7 +593,7 @@ func _process(dt: float) -> void:
 		hint.visible = false
 		var fwd := -transform.basis.z
 		var right := transform.basis.x
-		var run := RUN if (rmb_run or Input.is_physical_key_pressed(KEY_X) or Input.is_physical_key_pressed(KEY_SHIFT)) else 1.0
+		var run := RUN if (rmb_run or _mkey("mall_run", KEY_X) > 0.0 or (not InputMap.has_action("mall_run") and Input.is_physical_key_pressed(KEY_SHIFT))) else 1.0   # M: _mkey
 		var step := (right * iv.x - fwd * iv.y) * SPEED * run * dt * move_scale   # V: move_scale (third person)
 		_try_move(Vector3(step.x, 0, 0))
 		_try_move(Vector3(0, 0, step.z))
@@ -584,6 +606,12 @@ func _process(dt: float) -> void:
 			hud.text = "Houma Mall Rewind · Godot mall (%d)   %d fps" % [year, Engine.get_frames_per_second()]
 		if debug:
 			print("DBG pos=", position, " touch=", move_touch, " vec=", move_vec, " iv=", iv, " free_here=", _free(position.x, position.z), " rows=", walk_rows.size())
+
+## M: how far a walking / running action is held (its InputMap action; key k when there is none).
+func _mkey(act: String, k: Key) -> float:
+	if InputMap.has_action(act):
+		return Input.get_action_strength(act)
+	return float(Input.is_physical_key_pressed(k))
 
 func _try_move(d: Vector3) -> void:
 	var p := position + d
@@ -740,11 +768,29 @@ func _build_year_ui() -> void:
 	year_btn.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	year_btn.offset_left = -200; year_btn.offset_right = -10
 	year_btn.offset_top = 168; year_btn.offset_bottom = 200
-	year_btn.pressed.connect(_switch_year)
+	year_btn.pressed.connect(_year_pressed)   # M: opens the menu's YEAR tab
 	# Workstream F (Nov 1 2026): the outside has a 2026 build too (wing3_2026.tscn), so the button
 	# shows there as everywhere else (design/godot-exterior.md "The 2026 outside")
 	year_btn.visible = true
 	_cl.add_child(year_btn)
+
+## M: the year button and Y open the menu on its YEAR tab (scripts/menu/menu.gd), whose buttons
+## call _switch_year(); without the menu, the switch happens at once as before.
+func _year_pressed() -> void:
+	if menu and menu.has_method("open_tab"):
+		menu.open_tab("year")
+	else:
+		_switch_year()
+
+## M: the time-travel transition (scripts/timetravel.tscn) before a year change; returns when it
+## has finished (at once in VR, where a flat overlay isn't seen).
+func _time_travel(to_year: int) -> void:
+	if vr_on or not ResourceLoader.exists("res://scripts/timetravel.tscn"):
+		return
+	var tt = load("res://scripts/timetravel.tscn").instantiate()
+	add_child(tt)
+	tt.play(year, to_year)
+	await tt.finished
 
 func _switch_year() -> void:
 	if leaving:
@@ -756,6 +802,7 @@ func _switch_year() -> void:
 	leaving = true
 	if prompt:
 		prompt.visible = false
+	await _time_travel(other)   # M: the transition, then the fade and the reload as before
 	var tw := create_tween()
 	tw.tween_property(fade, "modulate:a", 1.0, 0.35)
 	tw.tween_callback(func():
@@ -803,6 +850,8 @@ func _go_to_wing(w: int, x: float, z: float, yaw_to: float, pitch_to: float, yea
 	print("crossing to wing ", w)
 	if prompt:
 		prompt.visible = false
+	if year_to != 0 and year_to != year:
+		await _time_travel(year_to)   # M: a jump into the other year travels in time too
 	var tw := create_tween()
 	tw.tween_property(fade, "modulate:a", 1.0, 0.35)
 	tw.tween_callback(func():
@@ -913,7 +962,7 @@ func _jump_input(e: InputEvent) -> bool:
 	if e is InputEventKey and e.pressed and not e.echo:
 		var k: int = e.physical_keycode
 		if k == KEY_Y and not open:
-			_switch_year()
+			_year_pressed()   # M: the menu's YEAR tab
 			return true
 		if k == KEY_J:
 			_jump_show(not open)

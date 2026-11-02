@@ -1,0 +1,23 @@
+{
+	"_": "Workstream M (design/godot-menu.md): every action the CONTROLS tab lists, in order. keys / pad = the DEFAULT bindings, which must match what the game's code listens for (player.gd, interact.gd, avatar.gd, menu.gd). The table shows the InputMap's current bindings (actions 'mall_<id>'). kind: 'poll' = read from the InputMap every frame (walking, running); 'event' = the code checks its default key, so a remapped key is translated to the default one (scripts/menu/controls.gd); 'menu' = the menu's own keys (only while it is open); 'fixed' = shown, not remappable. Keys are Godot key names (OS.find_keycode_from_string), pad buttons are JOY_BUTTON_* numbers. also_keys / also_pad = shown after the bindings, not remappable.",
+	"actions": [
+		{"id": "forward", "label": "Walk forward", "kind": "poll", "keys": ["W"], "also_keys": "Up arrow", "pad": [], "also_pad": "Left stick", "touch": "Drag on the left half"},
+		{"id": "back", "label": "Walk back", "kind": "poll", "keys": ["S"], "also_keys": "Down arrow", "pad": [], "also_pad": "Left stick", "touch": "Drag on the left half"},
+		{"id": "left", "label": "Step left", "kind": "poll", "keys": ["A"], "also_keys": "Left arrow", "pad": [], "also_pad": "Left stick", "touch": "Drag on the left half"},
+		{"id": "right", "label": "Step right", "kind": "poll", "keys": ["D"], "also_keys": "Right arrow", "pad": [], "also_pad": "Left stick", "touch": "Drag on the left half"},
+		{"id": "run", "label": "Run (hold)", "kind": "poll", "keys": ["X", "Shift"], "also_keys": "right mouse button", "pad": [], "also_pad": "", "touch": ""},
+		{"id": "look", "label": "Look around", "kind": "fixed", "keys": [], "also_keys": "drag with the mouse", "pad": [], "also_pad": "", "touch": "Drag on the right half"},
+		{"id": "interact", "label": "Action (use / pick up / swing)", "kind": "event", "keys": ["E"], "pad": [2], "touch": "Use / Swing button"},
+		{"id": "enter", "label": "Go through (wing, door)", "kind": "fixed", "keys": [], "also_keys": "Action key, Enter", "pad": [], "also_pad": "A", "touch": "Tap the prompt"},
+		{"id": "menu", "label": "Menu (open / close)", "kind": "menu", "keys": ["Tab"], "also_keys": "Esc closes", "pad": [6], "also_pad": "B closes", "touch": "Menu button"},
+		{"id": "tab_prev", "label": "Menu: previous tab", "kind": "menu", "keys": ["Q"], "pad": [9], "touch": "Swipe right, or tap a tab"},
+		{"id": "tab_next", "label": "Menu: next tab", "kind": "menu", "keys": ["E"], "pad": [10], "touch": "Swipe left, or tap a tab"},
+		{"id": "view", "label": "First / third person", "kind": "event", "keys": ["V"], "pad": [8], "touch": "View button"},
+		{"id": "avatar", "label": "Avatar (menu: AVATAR)", "kind": "event", "keys": ["C"], "pad": [], "touch": "Avatar button"},
+		{"id": "inventory", "label": "Inventory (menu: INVENTORY)", "kind": "event", "keys": ["I"], "pad": [4], "touch": "Bag button"},
+		{"id": "year", "label": "Year (menu: YEAR)", "kind": "event", "keys": ["Y"], "pad": [], "touch": "Year button"},
+		{"id": "jump", "label": "Jump to", "kind": "event", "keys": ["J"], "pad": [3], "touch": "Jump to button"},
+		{"id": "put_away", "label": "Put the held item away", "kind": "event", "keys": ["R"], "pad": [], "touch": "INVENTORY tab"},
+		{"id": "drop", "label": "Drop the held item", "kind": "event", "keys": ["G"], "pad": [], "touch": "INVENTORY tab"}
+	]
+}
