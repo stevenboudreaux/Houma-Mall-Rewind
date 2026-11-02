@@ -130,9 +130,17 @@ VR is otherwise untouched.
 One unique person behind each counter, 1995 only (all three stores are gone in 2026; see Open).
 | Store | Wing | Skin (Steven may swap) | Behind the counter (area x0,z0 → x1,z1) | Faces | Talk spot | PLACEHOLDER file | Gives (placeholder) |
 |---|---|---|---|---|---|---|---|
-| Pocket Change | 2 | **Ch22** (f) | −103.2, 63.6 → −102.85, 67.8 (between the showcase and the prize wall) | −x (the room) | −104.65, 65.7 | `PLACEHOLDER_pocket_change.dialogue` | `candy_neck` (Candy necklace) |
+| Pocket Change | 2 | **Ch22** (f) | −103.2, 65.8 → −102.85, 67.8 (the north end, between the showcase and the prize wall) | −x (the room) | **−104.0, 68.9** (the counter's north end; see below) | `PLACEHOLDER_pocket_change.dialogue` | `candy_neck` (Candy necklace) |
 | Sound Shop | 1 | **Ch38** (m) | −14.1, −58.9 → −11.7, −58.65 (between the register counter and the back counter) | −z | −12.9, −60.35 | `PLACEHOLDER_sound_shop.dialogue` | `rs_microcassette` |
 | Kay-Bee Toys | 1 | **Ch41** (f) | −14.1, −52.85 → −12.2, −52.65 (between the cash wrap and the video case) | −z | −13.1, −54.0 | `PLACEHOLDER_kay_bee.dialogue` | `slap` (Slap bracelet) |
+
+**Pocket Change's talk spot:** in front of both cases (the long showcase and the short case by
+the door) the prize counter's closer look (`scripts/prizes.gd`, "Look at the prizes") shows its
+own prompt, and while it shows the shared action button does nothing (`design/godot-interaction.md`),
+so an attendant there could never be talked to. The talk spot is therefore the open north end of
+the counter (outside both closer-look zones), and the attendant keeps to the north half of the space
+behind it. When session R's redemption screen lands, R decides how the glass and the attendant
+share the button.
 
 Positions are read from the stores' builders and collision rects (`tools/stores/pocket_change/`,
 `tools/stores/media/sound_shop.gd`, `tools/stores/kay_bee/store.gd`, `gen/w*/collide.json`). Skins
@@ -171,7 +179,21 @@ that sets `placeholder_book_finished`.
 ## Checks
 - `godot --headless --path . --script res://tools/qa/dialogue_walk.gd` → `DIALOGUE WALK OK`.
 - `godot --headless --path . --script res://tools/qa/flags_test.gd` → `FLAGS TEST OK`.
-- Evidence `production/qa/evidence/wsQ-*.jpg` (unbaked).
+- Native, unbaked (no lightmap, night lighting as `interact_test.gd`):
+  `xvfb-run -a -s "-screen 0 1600x1000x24" godot --path . --rendering-driver opengl3 --resolution 1280x720 --script res://tools/qa/dialogue_shots.gd -- --wing=2 --out=/tmp/q/w2`
+  → DIALOGUE SHOTS OK (26 checks); `--wing=1` → OK (18); `--resolution 390x844 … --wing=2 --phone` → OK (16).
+- Web: `python3 tools/qa/wsq_webtest.py <build>/index.html <out>` (server on :8765 at the repo root).
+- Evidence `production/qa/evidence/wsQ-unbaked-*.jpg`: each attendant's approach (TALK prompt), the
+  camera on its way, the face shot with a line, the three choices; Pocket Change's second level,
+  the give ("Received: Candy necklace") and the bag after; the Dillard's locked messages (opening,
+  outside door); the bag's Read button; the book's page, choices and end; `-phone-` at 390 × 844.
+
+## Notices
+"Received: …" (until R's pop-up) shows above the talk box or the book while they are up (the HUD
+is hidden then); otherwise, and for the gates, `story.say()` prints a line bottom middle on its
+own layer. Found on the way: **`player._say()`'s label lands off-screen in a native window** (at
+1280 × 720 it was placed at 1080, 1350: its position is added to its bottom-centre anchors). Not
+changed here (shared file; the web build may differ); `story.say()` sidesteps it.
 
 ## Open (questions for Steven)
 - Names, lines, what each attendant gives and why: all PLACEHOLDER until written.

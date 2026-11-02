@@ -16,7 +16,7 @@ from playwright.sync_api import sync_playwright
 
 path, out = sys.argv[1], sys.argv[2]
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
-PC = "-104.65,65.7,-90,-6"     # the Pocket Change attendant's talk spot, facing the counter
+PC = "-104.0,68.9,-25,-6"     # the Pocket Change attendant's talk spot (the counter's north end), facing them
 fails = []
 
 def url(q):
