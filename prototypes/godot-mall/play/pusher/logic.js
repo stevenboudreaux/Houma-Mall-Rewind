@@ -18,7 +18,7 @@
     startQuarters: 20,        // $5.00 to a new player; also what "Get quarters" refills to (a placeholder for a change machine)
     ticketsPerCoin: 50,       // Steven, Nov 2: quarters to play, tickets to win. A coin into the cup pays this many
                               // tickets to mall.tickets (the count B+C's prize counter uses); it is not a quarter back
-    lipMm: 1,                 // the lip's height over the shelf (owner setting; the house's payout control).
+    lipMm: 0.5,               // the lip's height over the shelf (owner setting; the house's payout control).
                               // Tuned with sim.js GEOM.coinFriction for ~8 % of coins dropped into the cup (soak table
                               // in design/storefronts/pocket-change.md)
     lipRange: [0, 6],
@@ -32,7 +32,8 @@
     slotMm: 24.5,             // a bigger coin won't go in; a smaller one goes in and is lost
     slotHalfW: 23.0,          // cm the coin mechanism slides to either side of the centre
     slotSpeed: 30,            // cm/s with the keys or a stick
-    quality: { low: 540, medium: 620, high: 720 },   // coins in a fresh machine (sim.js fresh(): both single layers full at 525, then the ridges)
+    quality: { low: 540, medium: 620, high: 760 },   // coins in a fresh machine (sim.js fresh(): both single layers full at 525, then the ridges); high
+                              // 760 is the tuned heap (Demo 48 soak); fewer coins pay less
     positions: 6,             // three per side
     saveVersion: 1,
   };

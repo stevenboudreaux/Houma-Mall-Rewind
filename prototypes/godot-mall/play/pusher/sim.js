@@ -29,8 +29,9 @@ export const GEOM = {
   deckY: 7.5,         // the deck's top above the shelf (pusher.gd Y_PT - Y_SH)
   deckFront: 35.5,    // mean z of the deck's front face (pusher.gd Z_PUSH - Z_DROP, less half the stroke)
   deckLen: 46,        // deck block length (its back always stays under the back wall)
-  stroke: 4.5,        // cm, the crank's throw x 2; with the drive's play (snap) the deck travels 5.0 (measured: ~50 mm)
-  period: 4.5,        // s per crank turn (measured: 4.46-4.62 s)
+  stroke: 9,          // cm, the crank's throw x 2. TUNED Nov 2 (Demo 48 soak): the measured ~50 mm (4.5) stores every
+                      //     coin behind any lip; 9 with the faster crank and a 760-coin heap pays 5.3 % at a 0.5 mm lip
+  period: 2.5,        // s per crank turn. TUNED Nov 2 (measured on the Silver Falls: 4.46-4.62 s; see stroke)
   rod: 11,            // connecting rod (guess; it only shapes the motion a little)
   rumble: 0.01,       // cm: the deck's vertical shake from the gear motor (the video: "kind of loud", a bearing rattle)
   rumbleHz: 23,

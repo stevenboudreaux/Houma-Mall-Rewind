@@ -10,19 +10,19 @@ function t(name, f) { f(); n++; console.log('ok', name); }
   const { createSim, deckZ, GEOM } = await import('../../../prototypes/godot-mall/play/pusher/sim.js');
   await R.init({});
 
-  t('the crank: period 4.5 s, the deck travels 5 cm about deckFront, back at t = 0', () => {
+  t('the crank: period and travel from GEOM (tuned Nov 2: 2.5 s, 9.5 cm) about deckFront, back at t = 0', () => {
     const z0 = deckZ(0), zh = deckZ(GEOM.period / 2), z1 = deckZ(GEOM.period);
     assert.ok(Math.abs(z0 - z1) < 1e-9, 'periodic');
     let lo = 1e9, hi = -1e9;
     for (let k = 0; k < 900; k++) { const z = deckZ(k * GEOM.period / 900); lo = Math.min(lo, z); hi = Math.max(hi, z); }
     // the deck's travel: the crank's throw plus the drive's play it snaps across at each end (5.0 cm measured)
-    assert.ok(Math.abs((hi - lo) - (GEOM.stroke + 2 * GEOM.snap)) < 0.02 && Math.abs((hi - lo) - 5.0) < 0.05, 'travel ' + (hi - lo).toFixed(3));
+    assert.ok(Math.abs((hi - lo) - (GEOM.stroke + 2 * GEOM.snap)) < 0.02 && Math.abs((hi - lo) - 9.5) < 0.05, 'travel ' + (hi - lo).toFixed(3));
     assert.ok(z0 > GEOM.deckFront && zh < GEOM.deckFront, 'back at 0, forward at half');
   });
 
   const sim = createSim(R, { lipMm: 2.5 }).fresh(7, 540, 2);
   t('a fresh machine: about 540 coins, every one on a tier (none fallen), both tiers packed', () => {
-    assert.ok(Math.abs(sim.count() - 540) <= 30, 'count ' + sim.count());      // the fill gives back what settled over the edge or into a hole
+    assert.ok(Math.abs(sim.count() - 540) <= 45, 'count ' + sim.count());      // (45: the tuned 9 cm stroke settles a few more over the edge) the fill gives back what settled over the edge or into a hole
     let deck = 0, shelf = 0;
     for (const c of sim.coins.values()) { const p = c.body.translation(); assert.ok(p.y > -0.5, 'below the shelf'); if (p.y > GEOM.deckY - 0.5) deck++; else shelf++; }
     assert.ok(shelf > 250 && deck > 200, 'shelf ' + shelf + ' deck ' + deck);

@@ -177,6 +177,31 @@ Source: Steven's teardown video of a Silver Falls single-player quarter pusher (
 - **Guessed:** the lip default, the tilt thresholds, the stake, friction and restitution, the rod length, the chute's drop point (straight down at the wall, as the Silver Falls' chute lands its coins at the back), every sound.
 - **Performance:** the physics step in Chromium's wasm on the cloud box (x86, one core; `tests/unit/pusher/page_test.py` prints the same): low 528 coins **4.0 ms** a step, medium 609 **6.1 ms**, high 711 **7.0 ms** — at 120 Hz that is 8 / 12 / 14 ms of each 16.7 ms frame before drawing, so phones start at **low** and computers at **high** (`pusher.quality`). Nearly every coin stays awake (the deck carries half of them and the shelf's heap is one contact island), so sleeping buys nothing; the cost is the narrow phase. Not measured on a real iPhone. A slow frame gets at most 3 physics steps (the machine runs slow rather than the frame spiralling). The renderer: one instanced mesh for all coins.
 
+## Demo 48: tickets and the tuning (Nov 2, 2026)
+Steven (Nov 2): **quarters to play, tickets to win**, and a return of about 8 % with a lip.
+- **Payout:** a drop still spends one quarter from `mall-state-<year>`.quarters (a new player has 20, $5.00). A coin into the cup no longer comes back as a quarter: it pays **50 tickets** to `mall.tickets` (B+C's count, the prize counter's), `logic.js CONFIG.ticketsPerCoin`. The HUD shows quarters and tickets, a "+50" rises from the cup when a coin pays (it only fades with reduced motion), the chute sound is kept. The old `currency` switch is gone.
+- **Get quarters:** at 0 quarters a "Get quarters" button refills to $5.00, free. **A placeholder for a change machine** (no economy yet).
+- **The tuning (soak, `tests/unit/pusher/soak.mjs <lip> <coins> 400 1 300 '<GEOM JSON>'`, P's size: 300 drops warm, 400 measured, a coin every 1.6 s; ~70 min a run four at a time on the cloud box).** Return = coins into the cup / coins dropped. Order as asked: lip, friction, stroke/speed, heap, restitution; 11 of the 12-run cap used.
+
+  | lip | friction | other | return % | side holes % | cup coins/min |
+  |---|---|---|---|---|---|
+  | 1 mm | 0.06 | P's machine (stroke 4.5 cm, period 4.5 s, 540 coins) | 0.0 | 10.8 | 0 |
+  | 2 mm | 0.06 | ″ | 0.0 | 13.5 | 0 |
+  | 3 mm | 0.06 | ″ | 0.0 | 8.5 | 0 |
+  | 1 mm | 0.10 | ″ | 0.0 | 1.3 | 0 |
+  | 1 mm | 0.15 | ″ | 0.0 | 0.0 | 0 |
+  | 1 mm | 0.06 | stroke 9 cm | 0.3 | 23.8 | 0.09 |
+  | 1 mm | 0.06 | stroke 9 cm, 760-coin heap | 1.3 | 23.5 | 0.47 |
+  | 1 mm | 0.06 | stroke 9, heap 760, period 2.5 s | 1.3 | 24.8 | 0.47 |
+  | 1 mm | 0.06 | stroke 12, heap 760, period 2.5 s | 1.5 | 26.0 | 0.56 |
+  | 1 mm | 0.06 | stroke 9, heap 760, period 2.5 s, restitution 0.30 | 1.5 | 18.8 | 0.56 |
+  | **0.5 mm** | **0.06** | **stroke 9, heap 760, period 2.5 s** | **5.3** | 20.0 | 1.97 |
+
+  (P's lip 0 baseline: 3.8 %.) Higher friction stops the flow entirely; a longer, faster stroke and a fuller heap are what move it.
+- **Shipped: lip 0.5 mm, friction 0.06, stroke 9 cm (deck travel 9.5 cm with the drive's play), crank period 2.5 s, high quality 760 coins → 5.3 % into the cup.** **8 % with a lip was not reached within the cap.** The stroke and period are now tunings, not the Silver Falls measurement (50 mm, 4.5 s), written so in `sim.js`. Phones start at low quality (540 coins), which will pay less than 5.3 % (not soaked). The owner's lip setting (⚙, 0–6 mm) is kept.
+- **Next to try:** stroke 12 cm at lip 0.5 mm (it beat 9 cm at 1 mm); narrower side holes (they take 20–26 %, four times the cup, and some of that is flow the lip turned sideways); a heap saved from a long soak as the fresh fill (the field still grows from ~730 to ~1,300 over 700 drops, so the machine is still filling, not at its steady state); P's "forward creep" on the shelf for the deck's hammering; a soak at phone quality.
+- Tests: `logic.test.js` (13: the wallet pays tickets, no quarter back, refill), `sim.test.js` (7, the crank from GEOM), `page_test.py` (ALL OK: the tickets HUD, Get quarters, the counts from CONFIG). Evidence: `production/qa/evidence/d48-*`.
+
 ## Sign pass (Oct 7, 2026)
 See photos/ (Steven's photos for this store) and tools/stores/signs/ (make_logos.py batch3, channel.gd sg_* materials).
 Steven: "make the pocket change facade a little bigger, more similar to heights of nearby stores." Opening head 2.4 → 2.9 m, fascia top 3.45 → 4.3 m, the stepped tile two rows taller, letters 5 % bigger. (The photo's proportions were the source for the old sizes.)

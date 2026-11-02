@@ -60,7 +60,7 @@ with sync_playwright() as p:
     time.sleep(2)
     s0 = st(pg)
     # the fill sheds a few coins into the side holes while it settles (sim.test.js checks the fill itself)
-    check(-45 <= s0["coins"] - 540 <= 5 or -45 <= s0["coins"] - 720 <= 5, "a fresh machine holds the low count on a phone, else high: %d coins" % s0["coins"])
+    check(-45 <= s0["coins"] - 540 <= 5 or -45 <= s0["coins"] - pg.evaluate("window.PUSHER.CONFIG.quality.high") <= 5, "a fresh machine holds the low count on a phone, else high: %d coins" % s0["coins"])
     check(s0["q"] == 20, "a new player has 20 quarters (%d)" % s0["q"])
     pg.evaluate("PUSHER_PAGE.setSlider(5); PUSHER_PAGE.drop()")
     time.sleep(0.2)
@@ -142,7 +142,7 @@ with sync_playwright() as p:
         s5 = st(pg)
         per_step = s5["simMs"] * s5["frames"] / max(1, s5["steps"])
         print("     %s: %d coins, %d awake: sim %.2f ms/step (%.1f ms a frame at 120 Hz), whole frame %.1f ms with the software renderer" % (q, s5["coins"], s5["awake"], per_step, per_step * 2, s5["ms"]))
-        check(-45 <= s5["coins"] - {"low": 540, "medium": 620, "high": 720}[q] <= 5, "%s quality fills %d coins" % (q, s5["coins"]))
+        check(-45 <= s5["coins"] - pg.evaluate("window.PUSHER.CONFIG.quality")[q] <= 5, "%s quality fills %d coins" % (q, s5["coins"]))
         ctx.close()
 
     b.close()
