@@ -1,0 +1,41 @@
+{
+	"_": "PLACEHOLDER preset (workstream B2 test data, no character): a body, skin, hair and clothes for the editor and the loader to work on. The cast sheet was not in the repo; shapes start from B1's presets. Steven edits it in the owner's character editor and commits the downloaded file here.",
+	"id": "sound_shop",
+	"name": "PLACEHOLDER",
+	"version": 1,
+	"body": "male",
+	"keys": {
+		"weight": -0.5,
+		"muscle": -0.2,
+		"chest": -0.3,
+		"shoulders": -0.2,
+		"arms": -0.3,
+		"youth": 0.25,
+		"height": 0.15
+	},
+	"skin": "#a87455",
+	"iris": "#3c2a1c",
+	"hair": {
+		"id": "hair_sidepart",
+		"color": "#1b1714"
+	},
+	"outfit": {
+		"base_bottom": "base_boxerbriefs",
+		"under": "top_tee",
+		"outer": "top_flannel",
+		"bottom": "bot_jeans",
+		"shoes": "shoe_sneakers",
+		"extras": [
+			"x_cap_back"
+		],
+		"colors": {
+			"top_tee": {
+				"main": "#2b2b2b"
+			},
+			"top_flannel": {
+				"main": "#8c2a22"
+			}
+		}
+	},
+	"shape_from": "Slim (B1), younger"
+}
