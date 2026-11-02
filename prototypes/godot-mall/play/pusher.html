@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>COIN COMET</title>
+<!--
+  The playable coin pusher in Pocket Change (workstream P, Nov 2026): COIN COMET, the three-player
+  pusher played from both sides. Walk up to any of its six positions in the mall and press Play
+  (scripts/pusher_play.gd), or open this page directly: pusher.html?pos=<1..6>&name=<title>&year=1995.
+  The mechanics are the Silver Falls quarter pusher of Steven's teardown video (refs/coin_pusher):
+  a coin mechanism that slides along the top slot, two tiers (a crank-driven deck under a fixed
+  back wall, a fixed shelf with the drop edge), the adjustable lip, the side holes to the house,
+  the payout chute into the cup, and the tilt (3 s alarm, the flipper gate to the house).
+  Rules: pusher/logic.js (tested with Node). Physics: pusher/sim.js on Rapier (lib/rapier3d-compat.mjs,
+  Apache-2.0), real quarters, 120 Hz. Textures: the mall cabinet's own (paint_pusher_game.py).
+  The mall page shows this in a full-window frame and listens for "emu-close".
+  Kept in this browser (localStorage): each position's machine ("pusher.machine.<pos>": every
+  coin's pose, the ledger, the lip), the sound and quality settings, and the player's quarters in
+  the mall state B+C keeps ("mall-state-<year>".quarters; design/godot-interaction.md).
+  Test hooks: window.PUSHER_PAGE (the sim, drop/nudge, stats) for tests/unit/pusher/page_test.py.
+-->
+<style>
+  :root { --bg: #07060a; --fg: #f4f0e8; --dim: #a49eb2; --accent: #ffd23c; --red: #ff3a1e; --blue: #4a7cff; --line: #2a2634; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); overflow: hidden;
+               font: 16px/1.4 -apple-system, "Helvetica Neue", Arial, sans-serif; -webkit-user-select: none; user-select: none;
+               -webkit-touch-callout: none; touch-action: none; }
+  #bar { position: fixed; top: 0; left: 0; right: 0; height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 10px;
+         padding-top: env(safe-area-inset-top); background: #000; border-bottom: 1px solid var(--line); z-index: 20; }
+  #bar b { flex: 1; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: italic; color: var(--accent); }
+  button { font: inherit; color: #1a0a20; background: var(--accent); border: 0; border-radius: 10px; padding: 9px 14px; font-weight: 800; cursor: pointer; }
+  button.ghost { background: transparent; color: var(--fg); border: 1px solid #3a3446; font-weight: 600; }
+  #stage { position: fixed; top: calc(48px + env(safe-area-inset-top)); left: 0; right: 0; bottom: 0; }
+  #gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .chip { position: absolute; top: 10px; padding: 6px 12px; border-radius: 999px; background: rgba(8, 6, 14, .72);
+          border: 1px solid rgba(255, 255, 255, .12); font-weight: 700; font-size: 15px; pointer-events: none; z-index: 5;
+          font-variant-numeric: tabular-nums; }
+  #qtr { right: 10px; text-align: right; }
+  #qtr span { color: var(--accent); font-size: 20px; }
+  #qtr small { display: block; font-size: 11px; color: var(--dim); font-weight: 600; letter-spacing: .08em; }
+  #meter { left: 10px; display: flex; align-items: center; gap: 8px; }
+  #meter i { display: block; width: 70px; height: 8px; border-radius: 4px; background: #2a2236; overflow: hidden; }
+  #meter i b { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ffd23c, #ff3a1e); transition: width .15s; }
+  #meter.hot { color: var(--red); }
+  #cup { position: absolute; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 5; pointer-events: none;
+         padding: 6px 14px; border-radius: 999px; background: rgba(8, 6, 14, .72); border: 1px solid rgba(255, 255, 255, .12); font-weight: 700; font-size: 14px;
+         color: var(--dim); white-space: nowrap; transition: transform .15s; }
+  #cup.pop { transform: translateX(-50%) scale(1.15); color: var(--accent); }
+  #drop { position: absolute; right: 14px; bottom: calc(18px + env(safe-area-inset-bottom)); width: 104px; height: 104px; border-radius: 50%;
+          z-index: 6; font-size: 19px; letter-spacing: .06em; color: #2a0404;
+          background: radial-gradient(circle at 40% 35%, #ff8a7a 0, #e02a1a 55%, #8a0c08 100%); border: 4px solid #cfd3da; box-shadow: 0 5px 14px rgba(0,0,0,.6); touch-action: none; }
+  #drop:active { transform: translateY(2px); }
+  #drop:disabled { filter: grayscale(.8) brightness(.6); }
+  #bump { position: absolute; left: 14px; bottom: calc(18px + env(safe-area-inset-bottom)); width: 84px; height: 84px; border-radius: 50%;
+          z-index: 6; font-size: 15px; color: #fff; background: radial-gradient(circle at 40% 35%, #6a8aff 0, #2a4acc 55%, #10206a 100%);
+          border: 4px solid #cfd3da; box-shadow: 0 5px 14px rgba(0,0,0,.6); touch-action: none; }
+  #bump:active { transform: translateY(2px); }
+  #slot { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); width: min(62vw, 360px); height: 26px; z-index: 6; touch-action: none;
+          border-radius: 13px; background: rgba(8, 6, 14, .55); border: 1px solid rgba(255, 255, 255, .18); }
+  #slot i { position: absolute; top: 2px; width: 44px; height: 20px; margin-left: -22px; border-radius: 6px; left: 50%;
+            background: linear-gradient(180deg, #f2f4f8, #9aa0ac 60%, #d8dce4); box-shadow: 0 2px 6px rgba(0,0,0,.6); }
+  #slot i::after { content: ""; position: absolute; left: 12px; right: 12px; top: 8px; height: 4px; border-radius: 2px; background: #22262e; }
+  #msg { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 7; width: min(420px, calc(100% - 24px)); text-align: center; pointer-events: none; }
+  #msg .card { background: rgba(10, 6, 18, .92); border: 1px solid rgba(255, 210, 60, .35); border-radius: 16px; padding: 14px 16px 16px;
+               box-shadow: 0 8px 30px rgba(0, 0, 0, .5); pointer-events: auto; }
+  #msg h2 { margin: 0 0 4px; font-size: 26px; font-style: italic; letter-spacing: .05em; color: var(--accent);
+            text-shadow: 0 0 12px rgba(255, 60, 30, .6), 2px 2px 0 #3a2a90; }
+  #msg p { margin: 4px 0 10px; color: #ddd6e8; font-size: 15px; }
+  #msg .big { font-size: 20px; padding: 12px 26px; }
+  #flash { position: absolute; left: 50%; top: 24%; transform: translate(-50%, -50%); z-index: 6; pointer-events: none; text-align: center;
+           font-weight: 900; font-style: italic; font-size: clamp(30px, 9vw, 64px); color: #fff; letter-spacing: .04em; opacity: 0;
+           text-shadow: 0 0 18px #ff3a1e, 0 0 4px #ff3a1e, 3px 3px 0 #3a2a90; transition: opacity .2s; white-space: nowrap; }
+  #flash.tilt { animation: tiltblink .25s steps(2) infinite; color: #ff3a1e; text-shadow: 0 0 22px #ff3a1e, 3px 3px 0 #000; }
+  @keyframes tiltblink { to { opacity: .2; } }
+  #hint { position: absolute; left: 50%; bottom: calc(52px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 5; pointer-events: none;
+          font-size: 13px; color: var(--dim); text-align: center; width: calc(100% - 250px); max-width: 420px; }
+  #set { position: fixed; inset: 0; z-index: 25; background: rgba(4, 3, 8, .92); display: none; overflow: auto; padding: 60px 14px 30px; }
+  #set .wrap { max-width: 460px; margin: 0 auto; }
+  #set h2 { font-style: italic; color: var(--accent); letter-spacing: .05em; margin: 0 0 4px; }
+  #set .row { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; background: #0e0b16; }
+  #set .row label { flex: 1; font-weight: 700; }
+  #set .row label small { display: block; color: var(--dim); font-weight: 500; font-size: 12px; }
+  #set input[type=range] { width: 150px; }
+  #set select { font: inherit; background: #1a1424; color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 6px; }
+  #set .close { position: fixed; top: 10px; right: 10px; }
+  #set .stat { color: var(--dim); font-size: 13px; margin-top: 10px; font-variant-numeric: tabular-nums; white-space: pre-wrap; }
+  #load { position: fixed; inset: 0; z-index: 30; background: radial-gradient(circle at 50% 38%, #10204a 0, #0b0710 60%, #050407 100%);
+          display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 16px; }
+  #load h1 { margin: 0; font-size: clamp(38px, 11vw, 76px); font-style: italic; letter-spacing: .06em; color: var(--accent);
+             text-shadow: 0 0 22px rgba(255, 60, 30, .75), 4px 4px 0 #3a2a90; }
+  #load .sub { color: var(--dim); margin: 8px 0 26px; }
+  #load .track { width: min(380px, 80vw); height: 10px; border-radius: 6px; background: #2a2236; overflow: hidden; }
+  #load .bar { height: 100%; width: 0; background: linear-gradient(90deg, #ff3a1e, #ffd23c); transition: width .2s; }
+  #load .err { color: #ff8a8a; margin-top: 14px; min-height: 1.4em; }
+</style>
+</head>
+<body>
+<div id="bar"><button class="ghost" id="back">&#8592; Mall</button><b id="title">COIN COMET</b><button class="ghost" id="gear" style="display:none" aria-label="Settings">&#9881;</button><button class="ghost" id="snd" aria-label="Sound">&#128266;</button></div>
+<div id="stage">
+  <canvas id="gl"></canvas>
+  <div id="slot"><i id="knob"></i></div>
+  <div class="chip" id="meter">TILT <i><b id="meterbar"></b></i></div>
+  <div class="chip" id="qtr"><span id="qn">0</span><small>QUARTERS</small></div>
+  <div id="cup">CUP &middot; 0</div>
+  <button id="bump">NUDGE</button>
+  <button id="drop">DROP</button>
+  <div id="hint"></div>
+  <div id="flash"></div>
+  <div id="msg"></div>
+</div>
+<div id="set"><button class="ghost close" id="setclose">Close</button><div class="wrap"><h2>MACHINE SETTINGS</h2>
+  <div class="row"><label>Lip height<small id="lipv">2.5 mm over the shelf (the house's payout control)</small></label><input type="range" id="lip" min="0" max="6" step="0.5"></div>
+  <div class="row"><label>Coins<small>how full the machine is: fewer on a slow phone</small></label><select id="quality"><option value="low">Low (540)</option><option value="medium">Medium (620)</option><option value="high">High (720)</option></select></div>
+  <div class="row"><label>Refill<small>empty this position and start it fresh</small></label><button id="reset">Refill</button></div>
+  <div class="stat" id="stat"></div></div></div>
+<div id="load"><h1 id="ltitle">COIN COMET</h1><div class="sub" id="lsub">Pocket Change &middot; coin pusher</div>
+  <div class="track"><div class="bar" id="lbar"></div></div><div class="err" id="lerr"></div></div>
+<script src="lib/three.min.js"></script>
+<script src="pusher/logic.js"></script>
+<script type="module">
+import RAPIER from './lib/rapier3d-compat.mjs';
+import { createSim, GEOM } from './pusher/sim.js';
+const PL = window.PUSHER, CFG = PL.CONFIG, T3 = window.THREE;
+const Q = new URLSearchParams(location.search);
+const POS = Math.max(1, Math.min(CFG.positions, parseInt(Q.get('pos'), 10) || 1));
+const YEAR = /^\d{4}$/.test(Q.get('year') || '') ? Q.get('year') : '1995';
+const NAME = (Q.get('name') || 'COIN COMET').slice(0, 24);
+const TESTING = Q.get('test') === '1';
+const inFrame = window.parent && window.parent !== window;
+document.getElementById('title').textContent = NAME;
+document.getElementById('ltitle').textContent = NAME;
+document.getElementById('lsub').textContent = 'Pocket Change · coin pusher · position ' + POS + ' of ' + CFG.positions;
+document.title = NAME;
+
+// ------------------------------------------------------------------ storage (per browser)
+function load(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }
+function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+let soundOn = load('pusher.sound', true) !== false;
+const isOwner = (function () { try { return localStorage.getItem('southland-editor') === '1' || Q.get('owner') === '1'; } catch (e) { return false; } })();
+const mobile = /iPhone|iPad|Android|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) < 900);
+let quality = load('pusher.quality', null);
+if (!CFG.quality[quality]) quality = mobile ? 'low' : 'high';      // measured: 4 / 6 / 7 ms a physics step in wasm (design note)
+const STATE_KEY = 'mall-state-' + YEAR;
+function mallState() { const s = load(STATE_KEY, null); return (s && typeof s === 'object') ? s : null; }
+function quarters() { return PL.balance(mallState()); }
+function setMall(s) { save(STATE_KEY, s); try { if (window.parent && window.parent.mall) Object.assign(window.parent.mall, { quarters: s.quarters, tickets: s.tickets }); } catch (e) {} }
+const MKEY = PL.machineKey(POS);
+function now() { return performance.now(); }
+
+// ------------------------------------------------------------------ renderer
+const stage = document.getElementById('stage'), canvas = document.getElementById('gl');
+let renderer;
+try { renderer = new T3.WebGLRenderer({ canvas, antialias: !mobile, powerPreference: 'high-performance' }); }
+catch (e) { document.getElementById('lerr').textContent = 'This browser could not start 3D graphics.'; throw e; }
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 2 : 2));
+renderer.outputColorSpace = T3.SRGBColorSpace;
+renderer.toneMapping = T3.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+const scene = new T3.Scene();
+scene.background = new T3.Color(0x050407);
+const camera = new T3.PerspectiveCamera(52, 1, 0.02, 12);
+
+// The cabinet frame (tools/stores/pocket_change/pusher.gd): x to the player's right, y up, z
+// into the machine from its front face. three.js looks down -z, so world z = -z_in.
+function V(x, y, zin) { return new T3.Vector3(x, y, -zin); }
+const G = { PH: 0.2635, Y_SH: 0.82, Z_DROP: 0.12, Y_PT: 0.895, Z_BACK: 0.80, Y_CEIL: 1.47, Z_BAND: 0.30, Y_BAND: 1.48, Y_TOP: 1.79,
+            Y_M0: 1.83, Y_M1: 2.18, Z_M: 0.29, G0: [0.06, 0.78], G1: [0.30, 1.48] };
+// sim (cm, shelf-top origin at the drop edge) -> cabinet metres
+const S2W = (x, y, z) => V(x / 100, G.Y_SH + y / 100, G.Z_DROP + z / 100);
+
+// ------------------------------------------------------------------ textures
+const TEX = {};
+const TEX_LIST = ['marquee', 'back', 'front', 'side', 'band', 'mech', 'inner', 'ramp', 'perf', 'glass', 'coins', 'edge', 'quarter', 'steel'];
+const loader = new T3.TextureLoader();
+function loadAll() {
+  return new Promise((done, fail) => {
+    let n = 0;
+    TEX_LIST.forEach((k) => {
+      loader.load('pusher/' + k + '.webp', (t) => {
+        t.colorSpace = T3.SRGBColorSpace; t.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+        TEX[k] = t; n++;
+        document.getElementById('lbar').style.width = (90 * n / TEX_LIST.length) + '%';
+        if (n === TEX_LIST.length) done();
+      }, undefined, () => fail(new Error('Could not load the machine (' + k + '). Check the connection and reload.')));
+    });
+  });
+}
+
+// ------------------------------------------------------------------ materials (pusher.gd fill_mat)
+const S = T3.MeshStandardMaterial, MATS = {};
+function rep(t, u, v) { const c = t.clone(); c.wrapS = c.wrapT = T3.RepeatWrapping; c.repeat.set(u, v); c.needsUpdate = true; return c; }
+function mat(k) {
+  if (MATS[k]) return MATS[k];
+  let m;
+  switch (k) {
+    case 'marquee': m = new S({ map: TEX.marquee, emissiveMap: TEX.marquee, emissive: 0xffffff, emissiveIntensity: 1.3, roughness: 0.3 }); break;
+    case 'back': m = new S({ map: TEX.back, emissiveMap: TEX.back, emissive: 0xffffff, emissiveIntensity: 1.15, roughness: 0.3 }); break;
+    case 'front': m = new S({ map: TEX.front, roughness: 0.45 }); break;
+    case 'band': m = new S({ map: TEX.band, roughness: 0.45 }); break;
+    case 'mech': m = new S({ map: TEX.mech, roughness: 0.25, metalness: 0.3 }); break;
+    case 'inner': m = new S({ map: TEX.inner, roughness: 0.5 }); break;
+    case 'ramp': m = new S({ map: TEX.ramp, emissiveMap: TEX.ramp, emissive: 0xffffff, emissiveIntensity: 0.45, roughness: 0.3, side: T3.DoubleSide }); break;
+    case 'perf': m = new S({ map: rep(TEX.perf, 6, 1.4), roughness: 0.35, metalness: 0.4 }); break;
+    case 'glass': m = new S({ map: TEX.glass, transparent: true, opacity: 0.22, roughness: 0.05, metalness: 0.1, side: T3.DoubleSide, depthWrite: false }); break;
+    case 'slide': m = new S({ color: 0xffffff, transparent: true, opacity: 0.16, roughness: 0.1, side: T3.DoubleSide, depthWrite: false }); break;
+    case 'steel': m = new S({ map: rep(TEX.steel, 3, 3), color: 0xc8ccd2, metalness: 0.75, roughness: 0.38 }); break;
+    case 'steeldk': m = new S({ map: rep(TEX.steel, 2, 2), color: 0x3a3e46, metalness: 0.6, roughness: 0.55, side: T3.DoubleSide }); break;
+    case 'coinsfx': m = new S({ map: rep(TEX.coins, 1.5, 1), roughness: 0.5, metalness: 0.5 }); break;
+    case 'alu': m = new S({ color: 0xd0d4da, metalness: 0.45, roughness: 0.32 }); break;
+    case 'chrome': m = new S({ color: 0xeceef2, metalness: 0.7, roughness: 0.18 }); break;
+    case 'dark': m = new S({ color: 0x14182a, roughness: 0.6 }); break;
+    case 'black': m = new S({ color: 0x050507, roughness: 0.9 }); break;
+    case 'cup': m = new S({ color: 0x101012, roughness: 0.45 }); break;
+    case 'chute': m = new S({ color: 0xf4f4f0, roughness: 0.3 }); break;
+    case 'ceil': m = new S({ color: 0xe8ecf0, emissive: 0xe6eeff, emissiveIntensity: 0.55, roughness: 0.8 }); break;
+    case 'tube': m = new S({ color: 0xffffff, emissive: 0xeef5ff, emissiveIntensity: 2.2 }); break;
+    case 'bulb': m = new S({ color: 0xffd080, emissive: 0xffb040, emissiveIntensity: 1.6 }); break;
+    case 'gate': m = new S({ color: 0x9a9ea6, metalness: 0.6, roughness: 0.4 }); break;
+    default: m = new S({ color: 0xff00ff });
+  }
+  MATS[k] = m; return m;
+}
+
+// ------------------------------------------------------------------ the cabinet (one position)
+function box(k, cx, cy, czin, sx, sy, sz) { const m = new T3.Mesh(new T3.BoxGeometry(sx, sy, sz), mat(k)); m.position.copy(V(cx, cy, czin)); scene.add(m); return m; }
+function quad(k, p, uv) {
+  const g = new T3.BufferGeometry();
+  const pos = [], uvs = [], idx = [0, 1, 2, 0, 2, 3];
+  p.forEach((v, i) => { pos.push(v.x, v.y, v.z); uvs.push(uv ? uv[i][0] : 0, uv ? 1 - uv[i][1] : 0); });
+  g.setAttribute('position', new T3.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T3.Float32BufferAttribute(uvs, 2)); g.setIndex(idx); g.computeVertexNormals();
+  const m = new T3.Mesh(g, mat(k)); scene.add(m); return m;
+}
+const UVR = [[0, 1], [1, 1], [1, 0], [0, 0]];
+let deckMesh, mechMesh, gateMesh, lipMesh, slideMesh;
+function buildCabinet() {
+  const PH = G.PH, W = GEOM.halfW / 100, third = (POS - 1) % 3;
+  // translite (this position's third of the back art), the fins beside it
+  quad('back', [V(-PH, G.Y_PT - 0.004, G.Z_BACK), V(PH, G.Y_PT - 0.004, G.Z_BACK), V(PH, G.Y_CEIL, G.Z_BACK), V(-PH, G.Y_CEIL, G.Z_BACK)],
+    [[third / 3, 1], [(third + 1) / 3, 1], [(third + 1) / 3, 0], [third / 3, 0]]);
+  for (const s of [-1, 1]) {
+    // partition fin (pusher.gd FIN) as a thin box set, and the inner side wall below the glass
+    const x = s * (PH - 0.004);
+    box('steeldk', x, (G.Y_PT + G.Y_CEIL) / 2, (0.71 + G.Z_BACK) / 2, 0.008, G.Y_CEIL - G.Y_PT, G.Z_BACK - 0.71);
+    const fin = quad('steeldk', [V(x, G.Y_PT, 0.50), V(x, G.Y_PT, 0.71), V(x, G.Y_CEIL, 0.71), V(x, 1.06 - 0.0, 0.71)]);
+    fin.material = mat('steeldk');
+    const fin2 = quad('steeldk', [V(x, G.Y_PT, 0.50), V(x, 1.06, 0.71), V(x, 0.94, 0.50), V(x, G.Y_PT, 0.50)]);
+    // the blue art ramp along the position's edge over the shelf, and the side wall of the sim beside it
+    const zf = G.Z_DROP + 0.012, yr0 = G.Y_SH + 0.034, yr1 = G.Y_SH + 0.072, xr = s * PH;
+    quad('ramp', [V(xr - s * 0.056, G.Y_SH, zf), V(xr, yr0, zf), V(xr, yr1, 0.50), V(xr - s * 0.056, G.Y_SH, 0.50)], [[0, 1], [1, 1], [1, 0], [0, 0]]);
+    box('chrome', xr, (yr0 + yr1) / 2 + 0.004, (zf + 0.5) / 2, 0.012, 0.01, 0.5 - zf);
+    // dark wall of the position above the ramp, up to the band
+    box('dark', s * (PH + 0.003), (G.Y_SH + 1.48) / 2, 0.45, 0.006, 1.48 - G.Y_SH, 0.8);
+  }
+  // the lit top: diffuser and the tube behind its valance
+  quad('ceil', [V(-PH, G.Y_CEIL, G.Z_BACK), V(PH, G.Y_CEIL, G.Z_BACK), V(PH, G.Y_CEIL, G.Z_BAND), V(-PH, G.Y_CEIL, G.Z_BAND)]).material.side = T3.DoubleSide;
+  const tube = new T3.Mesh(new T3.CylinderGeometry(0.013, 0.013, 2 * PH, 10), mat('tube')); tube.rotation.z = Math.PI / 2; tube.position.copy(V(0, 1.437, 0.37)); scene.add(tube);
+  box('alu', 0, 1.4325, 0.327, 2 * PH, 0.075, 0.006);
+  // the shelf (steel), the trough below the drop edge, the drop edge's front face
+  const hz0 = GEOM.holeZ0 / 100, hz1 = GEOM.holeZ1 / 100, hw = GEOM.holeW / 100;
+  box('steel', 0, G.Y_SH - 0.0062, G.Z_DROP + 0.38, 2 * (W - hw), 0.01, 0.76);     // 1.2 mm under the sim's shelf: no z-fight with the coins
+  for (const s of [-1, 1]) {
+    const xc = s * (W - hw / 2);
+    box('steel', xc, G.Y_SH - 0.0062, G.Z_DROP + hz0 / 2, hw, 0.01, hz0);
+    box('steel', xc, G.Y_SH - 0.0062, G.Z_DROP + (hz1 + 0.76) / 2, hw, 0.01, 0.76 - hz1);
+    box('black', xc, G.Y_SH - 0.06, G.Z_DROP + (hz0 + hz1) / 2, hw, 0.001, hz1 - hz0);     // the hole: the house's bucket below
+  }
+  box('dark', 0, 0.72, (0.065 + G.Z_DROP) / 2, 2 * PH, 0.002, G.Z_DROP - 0.065);
+  box('dark', 0, (0.72 + G.G0[1]) / 2, 0.066, 2 * PH, G.G0[1] - 0.72, 0.002);
+  box('dark', 0, (0.72 + G.Y_SH - 0.016) / 2, G.Z_DROP, 2 * W, G.Y_SH - 0.016 - 0.72, 0.004);
+  box('steel', 0, G.Y_SH - 0.0095, G.Z_DROP - 0.001, 2 * W, 0.013, 0.002);
+  // the lip (height from the settings), on the drop edge
+  lipMesh = box('chrome', 0, G.Y_SH, G.Z_DROP + 0.003, 2 * W, 0.001, 0.006);
+  // the deck (kinematic in the sim): a steel block whose front face is the riser
+  const dl = GEOM.deckLen / 100, dy = GEOM.deckY / 100;
+  deckMesh = new T3.Group();
+  const dk = new T3.Mesh(new T3.BoxGeometry(2 * W, dy - 0.0012, dl), mat('steel')); dk.position.set(0, (dy - 0.0012) / 2, -dl / 2); deckMesh.add(dk);
+  const riser = new T3.Mesh(new T3.PlaneGeometry(2 * W, dy), mat('steeldk')); riser.position.set(0, dy / 2, 0.0003); deckMesh.add(riser);
+  scene.add(deckMesh);
+  // the fixed back wall: a dark panel standing just over the deck, in front of the translite
+  box('dark', 0, (G.Y_PT + 0.0012 + 1.06) / 2, G.Z_DROP + GEOM.wallZ / 100 + 0.005, 2 * W, 1.06 - G.Y_PT - 0.0012, 0.01);
+  box('chrome', 0, G.Y_PT + 0.004, G.Z_DROP + GEOM.wallZ / 100 - 0.001, 2 * W, 0.006, 0.004);
+  // the coin slide: a clear ramp from the slot in the band down to the chute's foot at the wall
+  const foot = S2W(0, GEOM.deckY + GEOM.chuteY, GEOM.chuteZ);
+  slideMesh = quad('slide', [V(-PH + 0.02, G.Y_BAND + 0.02, G.Z_BAND + 0.02), V(PH - 0.02, G.Y_BAND + 0.02, G.Z_BAND + 0.02), V(PH - 0.02, foot.y + 0.012, -foot.z), V(-PH + 0.02, foot.y + 0.012, -foot.z)]);
+  for (const s of [-1, 1]) {
+    const e = quad('slide', [V(s * (PH - 0.02), G.Y_BAND + 0.02, G.Z_BAND + 0.02), V(s * (PH - 0.02), G.Y_BAND + 0.05, G.Z_BAND + 0.02), V(s * (PH - 0.02), foot.y + 0.042, -foot.z), V(s * (PH - 0.02), foot.y + 0.012, -foot.z)]);
+  }
+  // the window glass and its frame, the sill, the coin band with the sliding mechanism
+  quad('glass', [V(-PH, G.G0[1], G.G0[0]), V(PH, G.G0[1], G.G0[0]), V(PH, G.G1[1], G.G1[0]), V(-PH, G.G1[1], G.G1[0])], UVR).renderOrder = 10;
+  const gl = Math.hypot(G.G1[0] - G.G0[0], G.G1[1] - G.G0[1]), ga = Math.atan2(G.G1[0] - G.G0[0], G.G1[1] - G.G0[1]);
+  for (const [y, zin, h] of [[G.G0[1] + 0.03, G.G0[0] + 0.01, 0.06], [G.G1[1] - 0.02, G.G1[0] - 0.007, 0.04]]) {
+    const b = new T3.Mesh(new T3.BoxGeometry(2 * PH, h, 0.02), mat('alu')); b.position.copy(V(0, y, zin - 0.012)); b.rotation.x = ga; scene.add(b);
+  }
+  box('alu', 0, 0.7425, 0.03, 2 * PH, 0.085, 0.09);
+  quad('band', [V(-PH, G.Y_BAND, G.Z_BAND), V(PH, G.Y_BAND, G.Z_BAND), V(PH, G.Y_TOP, G.Z_BAND), V(-PH, G.Y_TOP, G.Z_BAND)], [[0.33 * third, 1], [0.33 * third + 0.33, 1], [0.33 * third + 0.33, 0], [0.33 * third, 0]]);
+  box('chrome', 0, G.Y_TOP - 0.006, G.Z_BAND - 0.004, 2 * PH, 0.014, 0.012);
+  box('black', 0, 1.645, G.Z_BAND - 0.001, 2 * (CFG.slotHalfW / 100) + 0.06, 0.016, 0.004);   // the slot the mechanism rides in
+  mechMesh = new T3.Group();
+  const mb = new T3.Mesh(new T3.BoxGeometry(0.10, 0.11, 0.03), mat('chrome')); mechMesh.add(mb);
+  const mf = new T3.Mesh(new T3.PlaneGeometry(0.10, 0.11), mat('mech')); mf.position.z = 0.0155; mechMesh.add(mf);
+  mechMesh.position.copy(V(0, 1.645, G.Z_BAND - 0.015)); scene.add(mechMesh);
+  // the marquee over the band, with its chaser bulbs
+  box('dark', 0, (G.Y_M0 + G.Y_M1) / 2, (G.Z_M + 0.48) / 2, 2 * PH, G.Y_M1 - G.Y_M0, 0.48 - G.Z_M);
+  quad('marquee', [V(-PH, G.Y_M0 + 0.03, G.Z_M - 0.003), V(PH, G.Y_M0 + 0.03, G.Z_M - 0.003), V(PH, G.Y_M1 - 0.03, G.Z_M - 0.003), V(-PH, G.Y_M1 - 0.03, G.Z_M - 0.003)],
+    [[(0.772 - PH) / 1.544 + third * PH * 2 / 1.544, 1], [(0.772 + PH) / 1.544 + third * PH * 2 / 1.544 - 0, 1], [(0.772 + PH) / 1.544 + third * PH * 2 / 1.544, 0], [(0.772 - PH) / 1.544 + third * PH * 2 / 1.544, 0]]);
+  for (const yb of [G.Y_M0 + 0.015, G.Y_M1 - 0.015]) {
+    box('chrome', 0, yb, G.Z_M - 0.008, 2 * PH, 0.03, 0.014);
+    for (let i = 0; i < 5; i++) { const b = new T3.Mesh(new T3.SphereGeometry(0.0105, 8, 6), mat('bulb')); b.position.copy(V(-0.2 + 0.1 * i, yb, G.Z_M - 0.015)); scene.add(b); }
+  }
+  // the lower front: this position's door (its third of the front art) with the payout cup
+  quad('front', [V(-PH, 0.07, 0), V(PH, 0.07, 0), V(PH, 0.70, 0), V(-PH, 0.70, 0)], [[(0.79 - PH) / 1.58, 1], [(0.79 + PH) / 1.58, 1], [(0.79 + PH) / 1.58, 0], [(0.79 - PH) / 1.58, 0]]);
+  box('cup', 0, 0.195, -0.035, 0.15, 0.012, 0.07);
+  for (const sx of [-1, 1]) box('cup', sx * 0.069, 0.23, -0.035, 0.012, 0.058, 0.07);
+  box('cup', 0, 0.214, -0.068, 0.15, 0.036, 0.008);
+  box('cup', 0, 0.274, -0.022, 0.15, 0.012, 0.044);
+  // the payout chute behind the drop edge, the flipper gate inside it (swings to the house side)
+  box('dark', 0, 0.55, 0.09, 0.2, 0.3, 0.004);
+  gateMesh = new T3.Mesh(new T3.BoxGeometry(0.18, 0.004, 0.09), mat('gate')); gateMesh.position.copy(V(0, 0.60, 0.075)); scene.add(gateMesh);
+  // the room: dark, with the arcade's carpet far below
+  box('black', 0, -0.01, 0.4, 6, 0.02, 4);
+}
+
+// ------------------------------------------------------------------ coins: one instanced mesh
+let coinMesh, MAXC = 1000;
+const dummy = new T3.Object3D();
+function coinGeometry() {
+  // a cylinder along y: caps mapped to the quarter texture's halves (heads up, tails down),
+  // the rim to the texture's plain corner
+  const g = new T3.CylinderGeometry(GEOM.coinR / 100, GEOM.coinR / 100, 2 * GEOM.coinHH / 100, 22, 1, false);
+  const uv = g.attributes.uv, pos = g.attributes.position, n = g.attributes.normal;
+  for (let i = 0; i < uv.count; i++) {
+    const ny = n.getY(i), x = pos.getX(i), z = pos.getZ(i), r = GEOM.coinR / 100;
+    if (ny > 0.5) uv.setXY(i, 0.25 + 0.245 * (x / r), 0.5 + 0.49 * (z / r));
+    else if (ny < -0.5) uv.setXY(i, 0.75 + 0.245 * (x / r), 0.5 + 0.49 * (z / r));
+    else uv.setXY(i, 0.5 + (uv.getX(i) - 0.5) * 0.02, 0.98);
+  }
+  uv.needsUpdate = true;
+  return g;
+}
+function buildCoins() {
+  const m = new S({ map: TEX.quarter, metalness: 0.78, roughness: 0.3, color: 0xffffff });
+  coinMesh = new T3.InstancedMesh(coinGeometry(), m, MAXC);
+  coinMesh.instanceMatrix.setUsage(T3.DynamicDrawUsage);
+  coinMesh.frustumCulled = false;
+  scene.add(coinMesh);
+}
+function syncCoins() {
+  let i = 0;
+  const sh = G.Y_SH, zd = G.Z_DROP;
+  for (const c of sim.coins.values()) {
+    if (i >= MAXC) break;
+    const p = c.body.translation(), q = c.body.rotation();
+    dummy.position.set(p.x / 100, sh + p.y / 100, -(zd + p.z / 100));
+    dummy.quaternion.set(-q.x, -q.y, q.z, q.w);     // the sim's z is into the machine: in the z-mirrored frame a rotation (x,y,z,w) is (-x,-y,z,w)
+    dummy.updateMatrix();
+    coinMesh.setMatrixAt(i++, dummy.matrix);
+  }
+  // the coin sliding down the slide (not yet in the sim)
+  for (const s of slides) {
+    if (i >= MAXC) break;
+    const k = Math.min(1, (now() - s.t0) / SLIDE_MS);
+    const a = V(s.x / 100, G.Y_BAND + 0.035, G.Z_BAND + 0.03), b = S2W(s.x, GEOM.deckY + GEOM.chuteY + 0.5, GEOM.chuteZ);
+    dummy.position.lerpVectors(a, b, k);
+    dummy.quaternion.setFromEuler(new T3.Euler(-Math.atan2(a.y - b.y, b.z - a.z) * 0 + 0.3, 0, 1.5));
+    dummy.updateMatrix();
+    coinMesh.setMatrixAt(i++, dummy.matrix);
+  }
+  coinMesh.count = i;
+  coinMesh.instanceMatrix.needsUpdate = true;
+}
+
+// ------------------------------------------------------------------ light and the environment
+function buildLight() {
+  scene.add(new T3.HemisphereLight(0x9aa6c8, 0x14121a, 0.55));
+  const tube = new T3.PointLight(0xf0f6ff, 2.2, 2.5, 2); tube.position.copy(V(0, 1.42, 0.40)); scene.add(tube);
+  const back = new T3.PointLight(0xc0a0ff, 0.6, 1.8, 2); back.position.copy(V(0, 1.2, 0.72)); scene.add(back);
+  const key = new T3.DirectionalLight(0xffffff, 0.9); key.position.copy(V(0.3, 2.2, -0.6)); key.target.position.copy(V(0, 0.85, 0.3)); scene.add(key); scene.add(key.target);
+  // a small painted environment (the lit top, dark walls) so the metal has something to reflect
+  const size = 32, faces = [];
+  for (let f = 0; f < 6; f++) {
+    const c = document.createElement('canvas'); c.width = c.height = size; const g = c.getContext('2d');
+    const grad = g.createLinearGradient(0, 0, 0, size);
+    if (f === 2) { g.fillStyle = '#d8e2f4'; g.fillRect(0, 0, size, size); g.fillStyle = '#ffffff'; g.fillRect(4, 10, 24, 6); }
+    else if (f === 3) { g.fillStyle = '#101018'; g.fillRect(0, 0, size, size); }
+    else { grad.addColorStop(0, '#8090b8'); grad.addColorStop(0.5, '#2a2a40'); grad.addColorStop(1, '#0a0a10'); g.fillStyle = grad; g.fillRect(0, 0, size, size); if (f === 5) { g.fillStyle = '#6050c0'; g.fillRect(6, 10, 20, 12); } }
+    faces.push(c);
+  }
+  const env = new T3.CubeTexture(faces); env.colorSpace = T3.SRGBColorSpace; env.needsUpdate = true;
+  scene.environment = env;
+}
+
+// ------------------------------------------------------------------ the camera: at the position, looking down through the glass
+let shake = 0, shakeT = 0;
+function placeCamera() {
+  const w = stage.clientWidth, h = stage.clientHeight, portrait = h > w * 1.1;
+  camera.aspect = w / h; camera.fov = portrait ? 66 : 50; camera.updateProjectionMatrix();
+  camera.position.copy(V(0, portrait ? 1.52 : 1.48, portrait ? -0.42 : -0.52));
+  camera.lookAt(V(0, portrait ? 0.80 : 0.86, portrait ? 0.30 : 0.36));
+  if (shake > 0) {
+    const k = shake * 0.012;
+    camera.position.x += Math.sin(shakeT * 61) * k; camera.position.y += Math.sin(shakeT * 47) * k * 0.6;
+  }
+}
+function resize() { const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h, false); placeCamera(); }
+window.addEventListener('resize', resize);
+
+// ------------------------------------------------------------------ sound (all made here, no samples)
+let AC = null, master = null, hum = null, humGain = null, siren = null;
+function audio() {
+  if (AC || !(window.AudioContext || window.webkitAudioContext)) return AC;
+  AC = new (window.AudioContext || window.webkitAudioContext)();
+  master = AC.createGain(); master.gain.value = soundOn ? 0.6 : 0; master.connect(AC.destination);
+  // the motor: a low hum with a whine, loud enough to notice (the video's is "kind of loud")
+  const o1 = AC.createOscillator(), o2 = AC.createOscillator(), f = AC.createBiquadFilter();
+  o1.type = 'sawtooth'; o1.frequency.value = 58; o2.type = 'triangle'; o2.frequency.value = 116.5;
+  f.type = 'lowpass'; f.frequency.value = 320; f.Q.value = 1.2;
+  humGain = AC.createGain(); humGain.gain.value = 0.0;
+  const g2 = AC.createGain(); g2.gain.value = 0.35;
+  o1.connect(f); o2.connect(g2); g2.connect(f); f.connect(humGain); humGain.connect(master); o1.start(); o2.start();
+  hum = { o1, o2 };
+  return AC;
+}
+function unlock() { audio(); if (AC && AC.state === 'suspended') AC.resume(); if (humGain) humGain.gain.setTargetAtTime(0.09, AC.currentTime, 0.5); }
+function tone(type, f0, f1, t0, dur, vol, dest) {
+  if (!AC) return;
+  const o = AC.createOscillator(), g = AC.createGain(); o.type = type;
+  o.frequency.setValueAtTime(f0, t0); if (f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g); g.connect(dest || master); o.start(t0); o.stop(t0 + dur + 0.02);
+}
+let noiseBuf = null;
+function noise(t0, dur, vol, fq, q) {
+  if (!AC) return;
+  if (!noiseBuf) { noiseBuf = AC.createBuffer(1, AC.sampleRate, AC.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+  const s = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain();
+  s.buffer = noiseBuf; f.type = 'bandpass'; f.frequency.value = fq; f.Q.value = q || 1;
+  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  s.connect(f); f.connect(g); g.connect(master); s.start(t0, Math.random() * 0.5); s.stop(t0 + dur + 0.02);
+}
+let lastClink = 0;
+const SFX = {
+  // a quarter landing on quarters: two ringing partials, pitch a little random
+  clink(vol, dull) {
+    if (!AC) return; const t = AC.currentTime; if (t - lastClink < 0.012) return; lastClink = t;
+    const p = 0.9 + Math.random() * 0.25, v = vol || 0.12;
+    tone('triangle', 3900 * p, 3850 * p, t, dull ? 0.05 : 0.12, v); tone('sine', 6100 * p, 6000 * p, t, 0.07, v * 0.5); noise(t, 0.03, v * 0.6, 5000, 3);
+  },
+  // down the chute into the cup: a clatter of clinks on a hollow thud
+  cup() { if (!AC) return; const t = AC.currentTime; for (let i = 0; i < 4; i++) tone('triangle', 2400 + Math.random() * 1800, 2000, t + 0.08 + i * 0.055, 0.1, 0.12); tone('sine', 220, 120, t + 0.3, 0.16, 0.5); noise(t + 0.28, 0.12, 0.3, 900, 2); },
+  // into the house's bucket: farther away and duller
+  house() { if (!AC) return; const t = AC.currentTime; tone('triangle', 2000, 1800, t + 0.25, 0.08, 0.05); tone('sine', 150, 90, t + 0.3, 0.14, 0.2); },
+  // the player's shove on the cabinet
+  bump(p) { if (!AC) return; const t = AC.currentTime; tone('sine', 90, 45, t, 0.16, 0.5 + 0.3 * p); noise(t, 0.08, 0.35, 500, 1); },
+  // the flipper gate: a loud clunk (the video's "that was loud")
+  gate() { if (!AC) return; const t = AC.currentTime; tone('square', 180, 70, t, 0.09, 0.45); noise(t, 0.12, 0.6, 1200, 1.2); tone('sine', 60, 40, t + 0.03, 0.2, 0.6); },
+  reject() { if (!AC) return; const t = AC.currentTime; tone('square', 300, 200, t, 0.1, 0.15); },
+  motorClunk() { if (!AC) return; const t = AC.currentTime; tone('sine', 110, 70, t, 0.08, 0.12); noise(t, 0.05, 0.1, 700, 1); },
+  siren(on) {
+    if (!AC) return;
+    if (!on) { if (siren) { siren.g.gain.setTargetAtTime(0.0001, AC.currentTime, 0.03); siren.o.stop(AC.currentTime + 0.3); siren.l.stop(AC.currentTime + 0.3); siren = null; } return; }
+    if (siren) return;
+    const o = AC.createOscillator(), g = AC.createGain(), l = AC.createOscillator(), lg = AC.createGain();
+    o.type = 'square'; o.frequency.value = 1500; l.type = 'triangle'; l.frequency.value = 3.5; lg.gain.value = 600;
+    l.connect(lg); lg.connect(o.frequency); g.gain.value = 0.22; o.connect(g); g.connect(master); o.start(); l.start();
+    siren = { o, g, l };
+  },
+};
+
+// ------------------------------------------------------------------ the machine
+let sim = null, ledger = PL.ledger(), lipMm = CFG.lipMm, dirty = false, lastSave = 0;
+let tiltLog = null, tiltAt = null, gateNow = 'player', cupCount = 0, cupTotal = 0;
+let sliderX = 0, axis = 0, slides = [], ready = false, paused = false;
+const SLIDE_MS = 420;
+const stats = { frames: 0, ms: 0, worst: 0, hist: [], simMs: 0, steps: 0 };
+function newMachine() {
+  sim.fresh((Date.now() ^ (POS * 7919)) >>> 0, CFG.quality[quality], 2.5);
+  ledger = PL.ledger(); dirty = true;
+}
+function restoreMachine() {
+  const u = PL.unpackMachine(load(MKEY, null));
+  if (!u) { newMachine(); return false; }
+  sim.restore(u); ledger = u.ledger; lipMm = u.lipMm; sim.setLip(lipMm);
+  return true;
+}
+function saveMachine() {
+  if (!sim) return;
+  save(MKEY, PL.packMachine(sim.save(), ledger, lipMm)); dirty = false; lastSave = now();
+}
+function applyLip(mm) { lipMm = mm; sim.setLip(mm); lipMesh.scale.y = Math.max(0.5, mm); lipMesh.position.y = G.Y_SH + (mm / 1000) / 2; dirty = true; }
+
+// a drop: pays a quarter in, the coin slides down to the chute's foot, then it is the sim's
+function drop() {
+  if (!ready || paused) return;
+  const st = PL.payIn(mallState());
+  if (!st) { showFlash('NO QUARTERS', 'see the token changer'); setTimeout(hideFlash, 1400); SFX.reject(); return; }
+  setMall(st); ui();
+  ledger.in++;
+  slides.push({ x: sliderX, t0: now() });
+  SFX.clink(0.06, true);
+  dirty = true;
+}
+function nudge(power, source) {
+  if (!ready || paused) return;
+  const t = now(), r = PL.nudge(tiltLog, t, power);
+  tiltLog = r.log; if (!r.accepted) return;
+  ledger.nudges++;
+  sim.nudge(0, 1, power);        // a shove on the front: the coins slide toward the player
+  shake = 0.5 + power; SFX.bump(power);
+  meter(r.power);
+  if (r.tripped && tiltAt === null) trip();
+}
+function trip() {
+  tiltAt = now(); ledger.tilts++;
+  showFlash('TILT', 'the gate is over: the house takes the next coins', true);
+  SFX.siren(true); SFX.gate();
+  setTimeout(() => { if (tiltAt !== null) hideFlash(); }, CFG.tiltAlarmMs);
+}
+function tiltTick() {
+  const s = PL.tiltState(tiltAt, now());
+  if (!s.alarm && siren) SFX.siren(false);
+  if (s.gate !== gateNow) { gateNow = s.gate; sim.setGate(s.gate); if (s.gate === 'player') SFX.gate(); }
+  if (tiltAt !== null && !s.alarm && s.gate === 'player' && !s.swinging) { tiltAt = null; tiltLog = null; meter(0); }
+  gateMesh.rotation.x += ((s.gate === 'house' ? 0.9 : 0) - gateMesh.rotation.x) * 0.25;
+  document.getElementById('meter').classList.toggle('hot', tiltAt !== null);
+}
+function meter(p) { document.getElementById('meterbar').style.width = Math.min(100, 100 * p / CFG.tiltTrip) + '%'; }
+function onEvent(e) {
+  ledger = PL.book(ledger, e.type);
+  if (e.type === 'cup') {
+    cupCount++; cupTotal++;
+    setTimeout(() => { setMall(PL.payOut(mallState(), 1)); ui(); SFX.cup(); const c = document.getElementById('cup'); c.classList.add('pop'); setTimeout(() => c.classList.remove('pop'), 200); }, 350);
+  } else if (e.type === 'side') SFX.house();
+  else if (e.type === 'house-tilt') { setTimeout(() => SFX.house(), 200); }
+  dirty = true;
+}
+let lastPhase = 0;
+function frame() {
+  const t0 = now();
+  const dt = Math.min(0.1, (t0 - (frame.last || t0)) / 1000); frame.last = t0;
+  if (ready && !paused) {
+    // coins that reached the chute's foot enter the sim
+    for (let i = slides.length - 1; i >= 0; i--) if (t0 - slides[i].t0 >= SLIDE_MS) { sim.drop(slides[i].x); slides.splice(i, 1); }
+    const s0 = now();
+    const n0 = sim.steps;
+    const ev = sim.step(dt);
+    stats.simMs += now() - s0; stats.steps += sim.steps - n0;
+    for (const e of ev) onEvent(e);
+    // a clink when a dropped coin lands (its first second), and the motor's clunk at the crank's dead points
+    const ph = (sim.t % GEOM.period) / GEOM.period;
+    if ((lastPhase < 0.5 && ph >= 0.5) || (lastPhase > ph)) SFX.motorClunk();
+    lastPhase = ph;
+    for (const c of sim.coins.values()) {
+      if (sim.t - c.born < 1.2 && !c.clinked) { const v = c.body.linvel(); if (c.body.translation().y < GEOM.deckY + 1.2 && Math.abs(v.y) < 12 && sim.t - c.born > 0.25) { c.clinked = true; SFX.clink(0.14); } }
+    }
+    tiltTick();
+    if (dirty && t0 - lastSave > 4000) saveMachine();
+  }
+  if (sim) {
+    deckMesh.position.z = -(G.Z_DROP + sim.deckZ() / 100);
+    mechMesh.position.x = sliderX / 100;
+    syncCoins();
+  }
+  if (shake > 0) { shake = Math.max(0, shake - dt * 3); shakeT += dt; }
+  placeCamera();
+  renderer.render(scene, camera);
+  const ms = now() - t0;
+  stats.frames++; stats.ms += ms; stats.worst = Math.max(stats.worst, ms); stats.hist.push(ms); if (stats.hist.length > 600) stats.hist.shift();
+  requestAnimationFrame(frame);
+}
+
+// ------------------------------------------------------------------ input
+const slot = document.getElementById('slot'), knob = document.getElementById('knob');
+function setSlider(x) { sliderX = Math.max(-CFG.slotHalfW, Math.min(CFG.slotHalfW, x)); knob.style.left = (50 + 50 * sliderX / CFG.slotHalfW * 0.86) + '%'; }
+let dragging = null;
+function slotX(clientX) { const r = slot.getBoundingClientRect(); return ((clientX - r.left) / r.width * 2 - 1) / 0.86 * CFG.slotHalfW; }
+stage.addEventListener('pointerdown', (e) => {
+  if (e.target.closest('button') || e.target.closest('#msg')) return;
+  unlock(); motionPermission();
+  if (e.target === slot || e.target === knob) { dragging = { mode: 'slot' }; setSlider(slotX(e.clientX)); }
+  else dragging = { mode: 'pan', x0: e.clientX, s0: sliderX, moved: false };
+  stage.setPointerCapture && stage.setPointerCapture(e.pointerId);
+});
+stage.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  if (dragging.mode === 'slot') setSlider(slotX(e.clientX));
+  else { const dx = e.clientX - dragging.x0; if (Math.abs(dx) > 6) dragging.moved = true; setSlider(dragging.s0 + dx / stage.clientWidth * 2.2 * CFG.slotHalfW); }
+});
+stage.addEventListener('pointerup', (e) => {
+  if (!dragging) return;
+  if (dragging.mode === 'pan' && !dragging.moved && !e.target.closest('.chip')) drop();      // a tap drops
+  dragging = null;
+});
+stage.addEventListener('pointercancel', () => { dragging = null; });
+document.getElementById('drop').addEventListener('pointerdown', (e) => { e.stopPropagation(); unlock(); motionPermission(); drop(); });
+document.getElementById('bump').addEventListener('pointerdown', (e) => { e.stopPropagation(); unlock(); nudge(0.7, 'button'); });
+const keys = {};
+window.addEventListener('keydown', (e) => {
+  if (e.repeat) { keys[e.code] = true; return; }
+  keys[e.code] = true; unlock();
+  if (e.code === 'Space' || e.code === 'Enter' || e.code === 'KeyE') { e.preventDefault(); drop(); }
+  else if (e.code === 'KeyN' || e.code === 'KeyB' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') nudge(0.7, 'key');
+  else if (e.code === 'Escape') back();
+});
+window.addEventListener('keyup', (e) => { keys[e.code] = false; });
+const padPrev = {};
+let padSeen = false;
+window.addEventListener('gamepadconnected', () => { padSeen = true; ui(); });
+function pollPads(dt) {
+  const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+  let ax = 0;
+  for (let i = 0; i < pads.length; i++) {
+    const p = pads[i]; if (!p) continue;
+    const a = p.buttons[0] && p.buttons[0].pressed, lb = p.buttons[4] && p.buttons[4].pressed, rb = p.buttons[5] && p.buttons[5].pressed;
+    const bb = p.buttons[1] && p.buttons[1].pressed;
+    const prev = padPrev[p.index] || {};
+    if (a && !prev.a) drop();
+    if ((lb && !prev.lb) || (rb && !prev.rb)) nudge(0.7, 'pad');
+    if (bb && !prev.bb) back();
+    const x = p.axes[0] || 0, dl = p.buttons[14] && p.buttons[14].pressed, dr = p.buttons[15] && p.buttons[15].pressed;
+    if (Math.abs(x) > 0.2) ax = x; if (dl) ax = -1; if (dr) ax = 1;
+    padPrev[p.index] = { a, lb, rb, bb };
+  }
+  return ax;
+}
+function inputTick(dt) {
+  let ax = pollPads(dt);
+  if (keys.ArrowLeft || keys.KeyA) ax = -1; if (keys.ArrowRight || keys.KeyD) ax = 1;
+  if (ax) setSlider(PL.slide(sliderX, ax, dt));
+}
+// a shake of the phone is a nudge (iOS asks for permission inside a tap)
+let motionAsked = false, lastShake = 0;
+function motionPermission() {
+  if (motionAsked || typeof DeviceMotionEvent === 'undefined') return;
+  motionAsked = true;
+  if (typeof DeviceMotionEvent.requestPermission === 'function') DeviceMotionEvent.requestPermission().then((r) => { if (r === 'granted') listenMotion(); }).catch(() => {});
+  else listenMotion();
+}
+function listenMotion() {
+  window.addEventListener('devicemotion', (e) => {
+    const a = e.acceleration; if (!a) return;
+    const m = Math.hypot(a.x || 0, a.y || 0, a.z || 0);
+    if (m > 9 && now() - lastShake > CFG.nudgeMinMs) { lastShake = now(); nudge(Math.min(1, (m - 6) / 14), 'shake'); }
+  });
+}
+
+// ------------------------------------------------------------------ HUD
+const flashEl = document.getElementById('flash');
+function showFlash(a, b, tilt) { flashEl.innerHTML = a + (b ? '<small style="display:block;font-size:.4em;letter-spacing:.1em">' + b + '</small>' : ''); flashEl.style.opacity = 1; flashEl.classList.toggle('tilt', !!tilt); }
+function hideFlash() { flashEl.style.opacity = 0; flashEl.classList.remove('tilt'); }
+function ui() {
+  document.getElementById('qn').textContent = quarters();
+  document.getElementById('cup').textContent = 'CUP · ' + cupTotal + (cupTotal ? ' won' : '');
+  document.getElementById('hint').textContent = mobile ? 'Drag to aim · tap to drop · shake or NUDGE to bump' : 'Drag or ← → to aim · Space/E/click to drop · N or Shift to nudge' + (padSeen ? ' · pad: stick, A, shoulders' : '');
+}
+function title() {
+  const m = document.getElementById('msg');
+  m.innerHTML = '<div class="card"><h2>' + esc(NAME) + '</h2><p>Slide the coin slot left and right and drop your quarters onto the top deck. The pusher shoves the heap toward the edge; what falls over the front is yours. ' +
+    'The side holes are the house\'s. Bump the machine if you must, but too much trips the <b>TILT</b>.</p><p>You have <b>' + quarters() + '</b> quarters.</p><button class="big" id="go">PLAY</button></div>';
+  m.querySelector('#go').addEventListener('pointerdown', (e) => { e.stopPropagation(); });
+  m.querySelector('#go').addEventListener('click', (e) => { e.stopPropagation(); m.innerHTML = ''; unlock(); motionPermission(); paused = false; });
+  paused = true;
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function back() { saveMachine(); SFX.siren(false); if (AC) { try { AC.close(); } catch (e) {} } if (inFrame) window.parent.postMessage('emu-close', '*'); else if (history.length > 1) history.back(); }
+document.getElementById('back').addEventListener('click', back);
+const sndBtn = document.getElementById('snd');
+function sndUi() { sndBtn.innerHTML = soundOn ? '&#128266;' : '&#128263;'; }
+sndBtn.addEventListener('click', () => { soundOn = !soundOn; save('pusher.sound', soundOn); unlock(); if (master) master.gain.value = soundOn ? 0.6 : 0; sndUi(); });
+sndUi();
+// owner settings: the lip, the coin count, a refill
+const setEl = document.getElementById('set');
+if (isOwner) document.getElementById('gear').style.display = '';
+document.getElementById('gear').addEventListener('click', () => { setEl.style.display = 'block'; paused = true; settingsUi(); });
+document.getElementById('setclose').addEventListener('click', () => { setEl.style.display = 'none'; paused = false; saveMachine(); });
+const lipIn = document.getElementById('lip'), qIn = document.getElementById('quality');
+function settingsUi() {
+  lipIn.value = lipMm; qIn.value = quality;
+  document.getElementById('lipv').textContent = lipMm.toFixed(1) + ' mm over the shelf (the house\'s payout control; 0 = off)';
+  const avg = stats.frames ? stats.ms / stats.frames : 0;
+  document.getElementById('stat').textContent = 'Position ' + POS + ' · ' + sim.count() + ' coins (' + sim.awake() + ' awake) · ' + avg.toFixed(1) + ' ms a frame (worst ' + stats.worst.toFixed(0) + ')\n' +
+    'Ledger: in ' + ledger.in + ' · cup ' + ledger.cup + ' · side holes ' + ledger.side + ' · tilt ' + ledger.tilt + ' · nudges ' + ledger.nudges + ' · tilts ' + ledger.tilts + ' · RTP ' + (100 * PL.rtp(ledger)).toFixed(0) + '%';
+}
+lipIn.addEventListener('input', () => { applyLip(parseFloat(lipIn.value)); settingsUi(); });
+qIn.addEventListener('change', () => { quality = qIn.value; save('pusher.quality', quality); if (confirm('Refill this position with ' + CFG.quality[quality] + ' coins?')) { newMachine(); saveMachine(); } settingsUi(); });
+document.getElementById('reset').addEventListener('click', () => { if (confirm('Refill position ' + POS + '? Its heaps start fresh.')) { newMachine(); cupTotal = 0; saveMachine(); settingsUi(); ui(); } });
+window.addEventListener('pagehide', saveMachine);
+document.addEventListener('visibilitychange', () => { if (document.hidden) saveMachine(); });
+
+// ------------------------------------------------------------------ start
+(async function start() {
+  try {
+    await loadAll();
+    await RAPIER.init({});
+    document.getElementById('lbar').style.width = '95%';
+    buildLight(); buildCabinet(); buildCoins(); resize();
+    sim = createSim(RAPIER, { lipMm: CFG.lipMm });
+    const restored = TESTING && Q.get('fresh') === '1' ? (newMachine(), false) : restoreMachine();
+    applyLip(lipMm);
+    saveMachine();
+    document.getElementById('load').style.display = 'none';
+    ready = true;
+    ui(); setSlider(0);
+    if (!TESTING) title(); else paused = false;
+    let last = now();
+    setInterval(() => { const t = now(); inputTick((t - last) / 1000); last = t; }, 16);
+    requestAnimationFrame(frame);
+    window.PUSHER_PAGE = { dbg() {
+        const pr = (v) => { const w = v.clone().project(camera); return [((w.x + 1) / 2 * stage.clientWidth).toFixed(0), ((1 - w.y) / 2 * stage.clientHeight).toFixed(0)]; };
+        let sz = -9, szc = null; for (const c of sim.coins.values()) { const q = c.body.translation(); if (q.y < 3 && q.z > sz) { sz = q.z; szc = q; } }
+        const dm = new T3.Vector3(); deckMesh.getWorldPosition(dm);
+        let dmin = null, dmax = null; for (const c of sim.coins.values()) { const q = c.body.translation(); if (q.y > 3) { if (!dmin || q.z < dmin.z) dmin = q; if (!dmax || q.z > dmax.z) dmax = q; } }
+        return { deckCoinMin: [dmin.x, dmin.y, dmin.z, pr(S2W(dmin.x, dmin.y, dmin.z))], deckCoinMax: [dmax.z, pr(S2W(dmax.x, dmax.y, dmax.z))], riserTop: pr(V(0, G.Y_PT, G.Z_DROP + sim.deckZ() / 100)), wallFoot: pr(V(0, G.Y_PT, G.Z_DROP + 0.66)), stageTop: stage.getBoundingClientRect().top,
+          lip: pr(V(0, G.Y_SH, G.Z_DROP)), shelfBack: pr(S2W(szc.x, szc.y, szc.z)), riser: pr(V(0, G.Y_SH, G.Z_DROP + sim.deckZ() / 100)), deckMeshZ: dm.z, riserExpected: -(G.Z_DROP + sim.deckZ() / 100), coin0: coinMesh.count, firstCoin: (() => { const m = new T3.Matrix4(); coinMesh.getMatrixAt(0, m); return new T3.Vector3().setFromMatrixPosition(m).toArray(); })(), firstSim: sim.coins.values().next().value.body.translation() };
+      }, sim, drop, nudge, trip, stats, onEvent, get ledger() { return ledger; }, get gate() { return gateNow; }, get tiltAt() { return tiltAt; },
+      quarters, setSlider, saveMachine, restored, get cupTotal() { return cupTotal; }, mallState, applyLip, newMachine, get paused() { return paused; }, set paused(v) { paused = v; } };
+  } catch (e) {
+    document.getElementById('lerr').textContent = e && e.message ? e.message : String(e);
+    console.error(e);
+  }
+})();
+</script>
+</body>
+</html>

@@ -91,6 +91,9 @@ func _ready() -> void:
 	_stickers()
 	_build_play_ui()
 	_fetch_roms()
+	# P (COIN COMET, Nov 2026): the coin pusher's six play positions, B+C interactables under this node
+	if recs.has("pc.pusher.1"):
+		add_child(load("res://scripts/pusher_play.gd").new())
 	var o = JavaScriptBridge.eval("(function(){try{var q=new URLSearchParams(location.search).get('owner');if(q==='1')localStorage.setItem('southland-editor','1');return localStorage.getItem('southland-editor')==='1'?'1':'0'}catch(e){return '0'}})()")
 	is_owner = str(o) == "1"
 	if is_owner:

@@ -1,0 +1,2 @@
+Apache-2.0. rapier3d-compat 0.19.3 (https://github.com/dimforge/rapier.js), copyright Dimforge. The wasm is inlined as base64 in rapier3d-compat.mjs.
+License text: https://www.apache.org/licenses/LICENSE-2.0

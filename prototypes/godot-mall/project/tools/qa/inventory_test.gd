@@ -32,6 +32,7 @@ func _initialize() -> void:
 	_test_persist()
 	_test_bad_input()
 	_test_item_files()
+	_test_extra_fields()
 	printerr("INVENTORY TEST OK (%d checks)" % oks if errors.is_empty() else "INVENTORY TEST FAILED: " + str(errors))
 	quit(0 if errors.is_empty() else 1)
 
@@ -147,3 +148,17 @@ func _test_item_files() -> void:
 	_check(ItemDB.check({"id": "a", "name": "A", "class": "pocket", "scene": "", "icon": "", "year": "both"}) == "", "year \"both\" is fine")
 	_check(ItemDB.check({"id": "a", "name": "A", "class": "pocket", "scene": "", "icon": "", "year": 1995, "place": {"wing": 1}}) != "", "a place without pos is refused")
 	_check(db.ids_for_year(2026).is_empty() or db.ids_for_year(2026).all(func(i): return ItemDB.in_year(db.get_item(i), 2026)), "ids_for_year filters by year")
+
+## P (COIN COMET): a field another system wrote (quarters) survives a round trip and a save.
+func _test_extra_fields() -> void:
+	var m = _fresh()
+	_check(m.from_json('{"v":1,"year":1995,"inventory":[],"tickets":2,"hand":"","moved":{},"quarters":13}'), "a state with quarters is read")
+	m.add("pogs")
+	var d = m.to_dict()
+	_check(int(d.get("quarters", -1)) == 13 and d.tickets == 2 and d.inventory.size() == 1, "quarters come back out of to_dict() beside ours")
+	m.save()
+	var m2 = _fresh()
+	m2.backend = m.backend
+	m2.load_saved()
+	_check(int(m2.extra.get("quarters", -1)) == 13, "quarters survive save/load")
+	_check(not m.to_dict().has("v2") and m.from_dict({"v": 1, "tickets": 1, "v2": 9}) and m.to_dict().get("v2") == 9, "unknown fields are kept, known ones are ours")
