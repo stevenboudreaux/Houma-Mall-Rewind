@@ -75,13 +75,22 @@ func _process(dt: float) -> bool:
 		it = player.get_node_or_null("Interact")
 		clock = 0.0
 		return false
+	# R: every pick-up shows the "You received" card (scripts/received_popup.gd), which holds the player;
+	# this test is about the pick-ups, so it closes the cards at once (redemption_test checks them)
+	_close_cards()
 	return _w2() if wing == 2 else _w1()
+
+func _close_cards() -> void:
+	for c in it.get_children():
+		if c.has_method("dismiss"):
+			while c.is_showing():
+				c.dismiss()
 
 func _w2() -> bool:
 	match step:
 		0:
 			if clock > 1.5:
-				var n := scn.get_tree().get_nodes_in_group("interactable").filter(func(x): return x.name.begins_with("it_")).size()
+				var n := scn.get_tree().get_nodes_in_group("interactable").filter(func(x): return x.name in ["it_spring", "it_dice", "it_pogs", "it_slap", "it_candy_neck"]).size()
 				_check(n == 5, "five dropped prizes lie in Pocket Change (%d)" % n)
 				_check(player.mall != null and player.mall.inventory.is_empty() and player.mall.hand == "", "player.mall starts empty")
 				_check(not player.hud.visible and not player.buttons[0].visible and not player.buttons[1].visible and player.jump_open_btn.visible, "visitor HUD: no fps, no toggles, Jump to shown")
@@ -104,7 +113,7 @@ func _w2() -> bool:
 				step = 3; clock = 0.0
 		3:
 			if clock > 0.3:
-				it.action()
+				it.action(); _close_cards()
 				_check(player.mall.hand == "spring" and (_pick("spring") == null or _pick("spring").is_queued_for_deletion()), "action: the spring is in the hand")
 				_check(it.hand_item != null, "the spring is drawn in the hand")
 				player.pitch = deg_to_rad(-5.0); player._apply_rot()
@@ -117,17 +126,17 @@ func _w2() -> bool:
 		5:
 			if clock > 0.4:
 				_check(it.prompt_text.text == "Take Pog pack", "prompt: " + it.prompt_text.text)
-				it.action()
+				it.action(); _close_cards()
 				_check(player.mall.count("pogs") == 1 and player.mall.hand == "spring", "pocket item into the bag, hand unchanged")
 				_face(_pick("dice"), 1.0)
 				step = 6; clock = 0.0
 		6:
 			if clock > 0.4:
-				it.action()
+				it.action(); _close_cards()
 				_check(player.mall.hand == "dice" and player.mall.count("spring") == 1, "picking up another hand item puts the first away")
 				for id in ["slap", "candy_neck"]:
 					var n := _pick(id)
-					if n: n.interact(player)
+					if n: n.interact(player); _close_cards()
 				it.open_panel(true)
 				step = 7; clock = 0.0
 		7:
@@ -143,7 +152,7 @@ func _w2() -> bool:
 				var d := _pick("dice")
 				_check(d != null and player.mall.hand == "" and player.mall.moved.dice.has("pos"), "dropped dice lie in front")
 				_check(it.target != null and it.target.name == "it_dice", "and can be picked up again")
-				it.action()
+				it.action(); _close_cards()
 				_check(player.mall.hand == "dice", "picked up again")
 				# the saved state, as a wing load would read it
 				var saved := str(Engine.get_meta("mall_state_1995", ""))
@@ -181,7 +190,7 @@ func _w1() -> bool:
 			if clock > 0.6:
 				_check(it.target != null and it.prompt_text.text == "Pick up Martin Folse's stick", "prompt: " + it.prompt_text.text)
 				_shot("stick-prompt")
-				it.action()
+				it.action(); _close_cards()
 				_check(player.mall.hand == "folse_stick", "the stick is in the hand")
 				player.pitch = 0.0; player._apply_rot()
 				step = 3; clock = 0.0
@@ -189,7 +198,7 @@ func _w1() -> bool:
 			if clock > 0.5:
 				_shot("stick-held")
 				_check(it.prompt.visible and it.prompt_text.text.begins_with("Swing"), "nothing in reach: the button swings (" + it.prompt_text.text + ")")
-				it.action()
+				it.action(); _close_cards()
 				_check(it.swinging, "swinging")
 				step = 4; clock = 0.0
 		4:
