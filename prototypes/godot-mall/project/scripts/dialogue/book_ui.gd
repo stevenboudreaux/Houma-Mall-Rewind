@@ -110,7 +110,7 @@ func _next(id: String) -> void:
 	_clear_choices()
 	var has: bool = l.responses.size() > 0
 	turn_b.visible = not has
-	turn_b.text = "Turn page ▸"
+	turn_b.text = "Turn page >"
 	if has:
 		for i in l.responses.size():
 			var b := Button.new()
@@ -261,7 +261,7 @@ func _build() -> void:
 	title_l.add_theme_color_override("font_color", Color(0.4, 0.32, 0.22))
 	top.add_child(title_l)
 	close_b = Button.new()
-	close_b.text = "✕"
+	close_b.text = "X"
 	close_b.focus_mode = Control.FOCUS_NONE
 	close_b.custom_minimum_size = Vector2(44, 44)
 	close_b.pressed.connect(close)

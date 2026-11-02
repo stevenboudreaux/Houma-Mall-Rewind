@@ -386,7 +386,7 @@ func _build() -> void:
 	resp_box.add_theme_constant_override("separation", 4)
 	v.add_child(resp_box)
 	more_l = Label.new()
-	more_l.text = "continue ▸"
+	more_l.text = "continue >"
 	more_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	more_l.add_theme_font_size_override("font_size", 15)
 	more_l.add_theme_color_override("font_color", Color(0.93, 0.85, 0.66, 0.85))

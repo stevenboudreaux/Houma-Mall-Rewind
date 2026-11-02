@@ -99,7 +99,7 @@ only state it is given is `dialogue_state.gd`, which reads and writes `mall.flag
 compile error prints the file and line and the conversation doesn't start. If Steven enables the
 plugin (Project → Plugins) to use its editor, the files get imported; loading still works (the
 runner falls back to `load()`).
-Web export: checked (below).
+Web export: checked, works (see Checks).
 
 ## The conversation screen (`dialogue_ui.gd`)
 Anything in groups **`"talker"`** and **`"interactable"`** whose `interact()` calls
@@ -111,7 +111,7 @@ Anything in groups **`"talker"`** and **`"interactable"`** whose `interact()` ca
 | Interact → the player stops (`player.frozen`), the HUD hides (every other CanvasLayer), the NPC stops, turns to the player at once and plays its idle | |
 | A camera of its own tweens from the current view (first or third person) to the face | **0.5 s**, cubic in-out; FOV 70 → **45°** |
 | The face shot | **0.85 m** in front of the eyes on the line toward the player, aimed **0.12 m below** the eyes, so the face sits in the upper middle above the box |
-| The box | bottom, 16 px from the edges, at most 900 px wide; name in gold 18 px; the line 21 px, typed at **50 characters/s**; "continue ▸" |
+| The box | bottom, 16 px from the edges, at most 900 px wide; name in gold 18 px; the line 21 px, typed at **50 characters/s**; "continue >" |
 | Continue | E, Enter, Space, a gamepad's A or X, a click, a tap anywhere. A press while typing finishes the line. |
 | Responses | a vertical list, rows 56 px tall (tap targets); **1–3** (1–9), ↑↓ / W S + Enter / E, d-pad or left stick + A, a click, a tap |
 | END | the camera tweens back (0.5 s) to the view it came from; the HUD returns; control returns; the NPC resumes |
@@ -166,8 +166,8 @@ makes the counter glass (`scripts/prizes*.gd`, R's files) call the same `mall.re
 ## Books (`book_ui.gd`, `data/story/books.json`)
 A book is an item id mapped to a `.dialogue` file. **Each line is a page**; a line followed by
 responses is a branch point, its responses printed as the choices at the foot of the page; flags
-and effects work as in conversations. Controls: "Turn page ▸" (E, Enter, Space, →, A/X, a tap or
-click on the page), choices 1–3 / arrows + Enter / d-pad + A / tap, Esc / B / ✕ closes (it opens at
+and effects work as in conversations. Controls: "Turn page >" (E, Enter, Space, →, A/X, a tap or
+click on the page), choices 1–3 / arrows + Enter / d-pad + A / tap, Esc / B / X closes (it opens at
 the start next time). The last page shows "Close the book".
 Opened from: **the bag** ("Read" on the book's row) and **the hand** (the action button reads
 "Read …" when a book is held and nothing else is in reach). The B. Dalton paperback ids
@@ -182,7 +182,14 @@ that sets `placeholder_book_finished`.
 - Native, unbaked (no lightmap, night lighting as `interact_test.gd`):
   `xvfb-run -a -s "-screen 0 1600x1000x24" godot --path . --rendering-driver opengl3 --resolution 1280x720 --script res://tools/qa/dialogue_shots.gd -- --wing=2 --out=/tmp/q/w2`
   → DIALOGUE SHOTS OK (26 checks); `--wing=1` → OK (18); `--resolution 390x844 … --wing=2 --phone` → OK (16).
-- Web: `python3 tools/qa/wsq_webtest.py <build>/index.html <out>` (server on :8765 at the repo root).
+- Web: `CHROMIUM=/opt/pw-browsers/chromium python3 tools/qa/wsq_webtest.py <build>/index.html <out>`
+  (server on :8765 at the repo root). Nov 2, wings 1+2 1995 exported with this branch: **ALL OK, 0
+  console errors** in each run: desktop right path (the give lands in `mall-state-1995`, the flag in
+  `mall-flags-1`, both survive a reload, a second talk is the "already done" line), phone 390 × 844
+  (touch continue), the Dillard's gate, the book from the bag (its ending flag saved). So Dialogue
+  Manager runs in the web export, plugin off, files compiled at run time. Evidence
+  `wsQ-web-unbaked-*.jpg`. Seen there and fixed after: the web font has no ▸ / ✕ glyphs (boxes);
+  the box and book now say "continue >", "Turn page >", "X".
 - Evidence `production/qa/evidence/wsQ-unbaked-*.jpg`: each attendant's approach (TALK prompt), the
   camera on its way, the face shot with a line, the three choices; Pocket Change's second level,
   the give ("Received: Candy necklace") and the bag after; the Dillard's locked messages (opening,
