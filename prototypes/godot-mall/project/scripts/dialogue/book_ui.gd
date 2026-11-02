@@ -208,6 +208,23 @@ func _input(e: InputEvent) -> void:
 				_turn()
 		vp.set_input_as_handled()
 
+## A short notice at the top of the screen (an effect in the book: "Received: …").
+func toast(t: String) -> void:
+	var l := Label.new()
+	l.text = t
+	l.add_theme_font_size_override("font_size", 20)
+	l.add_theme_color_override("font_color", Color(1, 0.95, 0.75))
+	l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	l.add_theme_constant_override("outline_size", 6)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.position = Vector2(0, 4)
+	l.size = Vector2(get_viewport().get_visible_rect().size.x, 30)
+	add_child(l)
+	var tw := create_tween()
+	tw.tween_interval(2.2)
+	tw.tween_property(l, "modulate:a", 0.0, 0.5)
+	tw.tween_callback(l.queue_free)
+
 # ------------------------------------------------------------------ building
 func _build() -> void:
 	var shade := ColorRect.new()

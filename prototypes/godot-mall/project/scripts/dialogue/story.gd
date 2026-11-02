@@ -105,12 +105,22 @@ func _spawn_attendants() -> void:
 func make_state(res: Resource):
 	var s = State.new(player.mall)
 	s.known = res.get_meta("flag_names", []) if res else []
-	s.say = Callable(player, "_say") if player.has_method("_say") else Callable()
+	s.say = _notice
 	var it = player.interact
 	if it and it.get("db"):
 		for id in it.db.ids_for_year(int(player.year)):
 			s.item_names[id] = str(it.db.get_item(id).get("name", id))
 	return s
+
+## A notice from a dialogue effect: on the talk screen while it is up (the HUD is hidden), else the
+## usual bottom-middle line.
+func _notice(t: String) -> void:
+	if ui and ui.active:
+		ui.toast(t)
+	elif book and book.active:
+		book.toast(t)
+	elif player.has_method("_say"):
+		player._say(t)
 
 func talk(npc: Node3D, path: String, cue := "") -> void:
 	if busy():

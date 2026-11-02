@@ -322,6 +322,23 @@ func _input(e: InputEvent) -> void:
 
 var _stick_held := false
 
+## A short notice above the box ("Received: …" until session R's pop-up), the HUD being hidden.
+func toast(t: String) -> void:
+	var l := Label.new()
+	l.text = t
+	l.add_theme_font_size_override("font_size", 22)
+	l.add_theme_color_override("font_color", Color(1, 0.95, 0.75))
+	l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	l.add_theme_constant_override("outline_size", 6)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	l.offset_left = -300; l.offset_right = 300; l.offset_top = 24; l.offset_bottom = 60
+	root.add_child(l)
+	var tw := create_tween()
+	tw.tween_interval(2.2)
+	tw.tween_property(l, "modulate:a", 0.0, 0.5)
+	tw.tween_callback(l.queue_free)
+
 # ------------------------------------------------------------------ building
 func _style(bg: Color, border: Color, radius: int, pad: int) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
