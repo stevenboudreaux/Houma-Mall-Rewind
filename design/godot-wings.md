@@ -98,3 +98,81 @@ and must stay current as facades change.
   6. Run `seamtest.py` and the bake check shots.
   7. Commit to main.
   8. Run `publish_build.sh`.
+
+## Wings 4-6: rooms that are wings of their own (workstream S, Nov 2 2026)
+**Asked for (Steven, Nov 2):** Sears (Lynn's in 2026) and Dillard's level 1 as their own wings, with
+their own packs and load screens, for headroom under GitHub's 100 MB file limit (wing 2 was at
+94.8 MB and wing 1 at 91.5, and both anchors will only grow); plus a placeholder Southland Cinema
+wing ("just make it a very small room; I want to see if the logic works", 12:38).
+
+| Wing | What | Scenes | Packs | Lightmap slots | Mall wing |
+|---|---|---|---|---|---|
+| 4 | the Sears box (1995), Lynn's Interiors (2026): workstream E's build, `tools/stores/sears/` | `wing4.tscn`, `wing4_2026.tscn` | `w4`, `w4y26` | `wing4_day`, `wing4_2026_day` | 1 |
+| 5 | Dillard's level 1, both years: `tools/stores/dillards/` | `wing5.tscn`, `wing5_2026.tscn` | `w5`, `w5y26` | `wing5_day`, `wing5_2026_day` | 2 |
+| 6 | the Southland Cinema lobby: a 12 x 8 m dark box, three lights (`tools/stores/cinema/lobby.gd`) | `wing6.tscn`, `wing6_2026.tscn` | `w6`, `w6y26` | none (never baked) | 1 |
+
+- **Where it's set:** `tools/build_mall.gd` `ROOM_WINGS`: per wing the layout store, the box it owns
+  (`tile_wing()` gives its tiles to the room wing, so the mall wing's walk grid is closed there), the
+  threshold line and the mall wing. Build: `--wing=4|5|6` (and `--year=2026`), like the others.
+- **What a room wing contains:** the anchor's own frontage built for real (fascia, sign, E's whole
+  box) and, like any wing, every hall and court of the mall at the coarse stand-in texel, with every
+  other storefront as a picture. Those pictures are the mall wings' own atlases (`from_w1_*` for
+  wing 1's fronts, `from_w2_*` for wing 2's): `room_standin()` packs the slots exactly as wing 2 and
+  wing 1 pack them, so they need no capture of their own. Wing 6 holds only its room.
+- **What the mall wing shows of it:** the anchor's front (fascia, sign, piers, soffit) stays in
+  wing 1 / 2; the opening is filled by one picture of the inside (`anchor_standin()`,
+  `tex/standin/[y26_]from_w<4|5>_{day,night}.png`), taken by `tools/capture_anchor.gd` from a camera
+  8 m out in the mall at eye height, its frustum framed exactly on the opening, its near plane on it
+  (so the mall-side copy in the room wing is clipped). It lines up from there and reads right from
+  the court. `tools/capture_standin.sh 4` / `5` (and `... 2026`) takes it and stamps it with
+  `tools/wing_hash.sh 4` / `5`. Wing 1's fingerprint counts the Sears picture and wing 2's the
+  Dillard's one (the other mall wing's stand-in shows them through the opening), so after a new
+  anchor picture recapture 1 / 2 as well; `publish_build.sh` says so.
+- **The cinema in wing 1** keeps its front (`tools/stores/cinema/front.gd`) and its dim lobby behind
+  the glass; a closed roll gate now stands behind the two door arches (1995; dynamic mesh
+  `dyn_cin_gate`). In 2026 the unit is vacant in `layout_2026.json` and its existing full-width
+  grille is that gate (moved from the static mesh into `dyn_cin_gate`, so now probe-lit; before/after
+  in `production/qa/evidence/wsS-*cinema-2026*`).
+
+### Thresholds (crossed like the seam)
+Each mall wing's `wing.json` gains `thresholds` ({to, line [x0, z, x1], side}); a room wing's has
+one, back to its mall wing. Within 2.6 m of the line on this side, the prompt reads "Enter Sears"
+("Enter Lynn's" in 2026), "Enter Dillard's", "Enter Southland Cinema", and back "Enter Wing 1 ·
+Sears & the main entrance" / "Enter Wing 2 · Dillard's & JCPenney"; E / A / a tap fades out and loads
+the other wing 1.3 m past the line at the same x (clamped 0.5 m inside the opening), facing the same
+way (`scripts/player.gd` `_thr_here`, `_cross`). The web shell shows the dark crossing card titled
+"Sears" / "Lynn's" / "Dillard's" / "Southland Cinema" (2026 adds " · 2026"), no sub-line.
+
+Map tiles are `tx = x / 2 + 148`, `ty = z / 2 + 100` (2 m tiles; layout origin 148, 100):
+
+| Threshold | Line | Mall side (tiles) | Room side (tiles) |
+|---|---|---|---|
+| Sears / Lynn's (1 ↔ 4) | z = −96, x −16..8 | row 52, tx 140–151 (C1) | row 51, tx 140–151 |
+| Dillard's (2 ↔ 5) | z = 80, x −10..2 | row 139, tx 143–148 (H8) | row 140, tx 143–148 |
+| Southland Cinema (1 ↔ 6) | z = −86, x −66..−54 | row 56, tx 115–120 (H1a) | row 57, tx 115–120 |
+
+**For workstream Q:** the Dillard's opening stays one walkable threshold: in wing 2 the tiles up to
+row 139 are open and row 140 is wing 5's; in wing 5 row 140 is open and row 139 is wing 2's. A gate
+node there sits on the line z = 80, x −10..2 (cells above). Q's `dillards_unlocked` gate is not kept
+(Steven, Nov 2: Dillard's stays open): `data/story/gates.json` on this branch has only the cinema.
+
+### The cinema gate (`scripts/cinema_gate.gd`, `data/story/gates.json`)
+Built against Q's documented contract (`design/godot-quests.md` on `origin/ws/q-dialogue`, read, not
+merged): a node in group `"gate"` with `flag` = `cinema_unlocked`, made in wing 1 (both years) from
+the gates file's entry with `"threshold": 6`. While the flag is false the cinema threshold's prompt
+still shows, but the press runs `try_open()`: holding `folse_stick` (M's
+`mall.inventory.held_id()`, until M lands B+C's `mall.hand`, the same fallback Q uses) sets the flag
+and rolls the gate up (1.1 s, then hidden); otherwise the PLACEHOLDER message from the gates file.
+The next press goes in. The flag is kept in Q's store (`mall.flags`; until Q lands, the same
+localStorage key `mall-flags-1` / Engine meta `mall_flags`, `{"v": 1, "flags": {...}}`), so it
+survives wing loads and reloads, one store for both years. Martin Folse's stick is a 1995 item, so
+in 2026 the gate opens only once it was opened in 1995.
+
+### Exterior doors and jumps
+- `exterior.json` (`tools/make_exterior.py`): the anchors' own doors now belong to their wings
+  (`s1x`, `s1e` → 4; `s2e`, `s2s` → 5), so "Go outside" from inside Sears / Dillard's goes to wing 3
+  and "Enter the mall" there comes back into wing 4 / 5. Their rows in the door-picture atlases stay
+  in wing 1's / 2's (`door_view.gd ROW_WING`), so the captured atlases are unchanged.
+- The mall directory's "Jump to this store?" for Sears / Lynn's and Dillard's lands in wings 4 / 5,
+  2.2 m inside the opening, facing in (`tools/stores/directory/map_data.gd ROOM_JUMPS`). The J menu's
+  "Sears" and "Dillard's" keep Steven's spots in the mall (Oct 9: back to the entrance, looking out).

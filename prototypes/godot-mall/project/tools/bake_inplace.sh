@@ -2,6 +2,8 @@
 # usage: tools/bake_inplace.sh <wing> [mode] [--year=2026] [--dry-run] [--make-swap] [--no-build]
 #   (from the project folder; godot 4.7.2 on PATH)
 #   <wing>  1, 2 or 3 (3 = the outside, 1995 only)      [mode]  day (default) | night | fastday | fastnight
+#           4 or 5 (workstream S, Nov 2 2026: Sears / Lynn's, Dillard's level 1; their own wings, both
+#           years, day only); 6 (the cinema lobby) is an unlit placeholder and is never baked
 #           ("fast" = Medium quality, the cloud's quick bake; the shipped Ultra bake is done on Steven's Mac)
 #
 # Bakes one wing's lightmap on a Linux box, the way Demo 45/46 did by hand (workstream H, Nov 1 2026;
@@ -45,6 +47,7 @@ done
 [ -f project.godot ] || { echo "run from the project folder"; exit 2; }
 SCENE=wing$W; [ "$YEAR" = 2026 ] && SCENE=wing${W}_2026
 [ "$YEAR" = 2026 ] && [ "$W" = 3 ] && { echo "the outside has no 2026 scene"; exit 2; }
+[ "$W" = 6 ] && { echo "wing 6 (the cinema lobby placeholder) is never baked: its lights are real-time"; exit 2; }
 M=${MODE#fast}
 LM="${SCENE}_$M"
 P=$(pwd); REL=$(git rev-parse --show-prefix); REL=${REL%/}

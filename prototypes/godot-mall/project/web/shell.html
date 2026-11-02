@@ -708,7 +708,12 @@ const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
 // cache (Cache Storage), so crossing over does not download it again.
 // ?year=2026: the mall as it is today (same building, today's stores), its own pair of files per
 // wing: w1y26.* / w2y26.* (scripts/player.gd's 1995 / 2026 switch sets it).
-const PACK_SIZES = {"w1": {"desktop": 0, "mobile": 0}, "w2": {"desktop": 0, "mobile": 0}, "w3": {"desktop": 0, "mobile": 0}, "w1y26": {"desktop": 0, "mobile": 0}, "w2y26": {"desktop": 0, "mobile": 0}, "w3y26": {"desktop": 0, "mobile": 0}}; // PACK_SIZES
+const PACK_SIZES = {"w1": {"desktop": 0, "mobile": 0}, "w2": {"desktop": 0, "mobile": 0}, "w3": {"desktop": 0, "mobile": 0}, "w1y26": {"desktop": 0, "mobile": 0}, "w2y26": {"desktop": 0, "mobile": 0}, "w3y26": {"desktop": 0, "mobile": 0}, "w4": {"desktop": 0, "mobile": 0}, "w5": {"desktop": 0, "mobile": 0}, "w6": {"desktop": 0, "mobile": 0}, "w4y26": {"desktop": 0, "mobile": 0}, "w5y26": {"desktop": 0, "mobile": 0}, "w6y26": {"desktop": 0, "mobile": 0}}; // PACK_SIZES
+// Workstream S (Nov 2 2026, design/godot-wings.md "Wings 4-6"): rooms that are wings of their own,
+// entered through a threshold in a mall wing: 4 = Sears (Lynn's in 2026), 5 = Dillard's level 1,
+// 6 = the Southland Cinema (a placeholder lobby). MALL_ROOM: each room wing's mall wing.
+const MALL_ROOM = {4: 1, 5: 2, 6: 1};
+const MALL_ROOM_NAME = {4: ['Sears', "Lynn's"], 5: ["Dillard's", "Dillard's"], 6: ['Southland Cinema', 'Southland Cinema']};
 function mallPackKind() {
 	try { const q = new URLSearchParams(location.search).get('pack'); if (q === 'desktop' || q === 'mobile') { return q; } } catch (e) { /* ignore */ }
 	try { const s = localStorage.getItem('southland-pack'); if (s === 'desktop' || s === 'mobile') { return s; } } catch (e) { /* ignore */ }
@@ -729,7 +734,7 @@ function mallPackKind() {
 window.__mallPack = mallPackKind();
 window.__mallWing = (function () {
 	// wing 3 is the outside (design/godot-exterior.md): the lot round the building, both years since Nov 1
-	try { const w = new URLSearchParams(location.search).get('wing'); if (w === '2') { return 2; } if (w === '3') { return 3; } } catch (e) { /* ignore */ }
+	try { const w = new URLSearchParams(location.search).get('wing'); if (w === '2') { return 2; } if (w === '3') { return 3; } if (w === '4' || w === '5' || w === '6') { return +w; } } catch (e) { /* ignore */ }
 	return 1;
 }());
 window.__mallYear = (function () {
@@ -745,13 +750,13 @@ if (mallSize(window.__mallWing)) { GODOT_CONFIG['fileSizes'][GODOT_CONFIG['mainP
 // years share it: until Oct 28 the cache was per year and switching years threw the other year's
 // files away, so every 1995 <-> 2026 switch downloaded its wing again (a minute on a slow line).
 const mallSizeOf = (name) => (PACK_SIZES[name] || {})[window.__mallPack] || 0;
-const MALL_CACHE = 'mall-wings-' + ['w1', 'w2', 'w3', 'w1y26', 'w2y26', 'w3y26'].map(mallSizeOf).join('-');
+const MALL_CACHE = 'mall-wings-' + ['w1', 'w2', 'w3', 'w1y26', 'w2y26', 'w3y26', 'w4', 'w5', 'w6', 'w4y26', 'w5y26', 'w6y26'].map(mallSizeOf).join('-');
 const mallPackUrl = (w, year) => new URL('w' + w + (year === undefined ? window.__mallYear : year) + '.' + window.__mallPack + '.pck', location.href).toString();
 if ('caches' in window) {
 	const netFetch = window.fetch.bind(window);
 	window.fetch = function (input, init) {
 		const url = typeof input === 'string' ? input : (input && input.url) || '';
-		if (/w[123](y26)?\.(desktop|mobile)\.pck(\?|$)/.test(url)) {
+		if (/w[1-6](y26)?\.(desktop|mobile)\.pck(\?|$)/.test(url)) {
 			const abs = new URL(url, location.href).toString();
 			return caches.open(MALL_CACHE).then((c) => c.match(abs)).then((r) => r || netFetch(input, init)).catch(() => netFetch(input, init));
 		}
@@ -766,8 +771,10 @@ window.mallPrefetchOther = function () {
 	// other year's file); then the other wing in the other year. Outside (wing 3), the other year
 	// is the outside's own other year (w3 / w3y26) when that file exists.
 	// A line the browser marks as metered or "save data" only gets the other wing.
-	const other = window.__mallWing === 3 ? 1 : 3 - window.__mallWing;
-	const here = window.__mallWing === 3 ? 1 : window.__mallWing;
+	// a room wing (4-6): its mall wing first, then that wing as from there
+	const room = MALL_ROOM[window.__mallWing];
+	const other = room ? room : (window.__mallWing === 3 ? 1 : 3 - window.__mallWing);
+	const here = room ? room : (window.__mallWing === 3 ? 1 : window.__mallWing);
 	const otherYear = window.__mallYear ? '' : 'y26';
 	let wanted = [mallPackUrl(other)];
 	const conn = navigator.connection || {};
@@ -786,8 +793,9 @@ let mallXfer = '';
 try { mallXfer = sessionStorage.getItem('mall-xfer') || ''; } catch (e) { /* ignore */ }
 if (mallXfer) {
 	document.body.classList.add('xfer');
-	document.getElementById('load-title').textContent = (window.__mallWing === 3 ? 'Outside' : (window.__mallWing === 2 ? 'Wing 2' : 'Wing 1')) + (window.__mallYear ? ' \u00b7 2026' : '');
-	document.getElementById('load-sub').textContent = window.__mallWing === 3 ? 'The parking lot' : (window.__mallWing === 2 ? "Dillard's & JCPenney" : 'Sears & the main entrance');
+	const roomName = MALL_ROOM_NAME[window.__mallWing];
+	document.getElementById('load-title').textContent = (roomName ? roomName[window.__mallYear ? 1 : 0] : (window.__mallWing === 3 ? 'Outside' : (window.__mallWing === 2 ? 'Wing 2' : 'Wing 1'))) + (window.__mallYear ? ' \u00b7 2026' : '');
+	document.getElementById('load-sub').textContent = roomName ? '' : (window.__mallWing === 3 ? 'The parking lot' : (window.__mallWing === 2 ? "Dillard's & JCPenney" : 'Sears & the main entrance'));
 }
 // Fun facts on the load screen (first open and every wing crossing): one at random, then a
 // fresh one every few seconds until the mall appears. Source of truth: web/fun_facts.json;
