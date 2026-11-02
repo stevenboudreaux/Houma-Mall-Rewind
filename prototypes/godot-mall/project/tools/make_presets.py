@@ -44,7 +44,10 @@ def filters(w, year):
                "wing%d_day.lmbake" % w, "wing%d_day.exr" % w, "tex/items/*", "tex/dir/*", "items/*", "models/bl_sr_folse_*"]
         if R["pics"]:
             inc += ["tex/standin/from_w1_*.png", "tex/standin/from_w2_*.png"]
-        exc = ["tools/*", "web/*", "*.md", "npc/skins/Character_*", "npc_src/*", "prizes/*", "tex/fronts/*", "fronts.json"]
+        # the avatar's bodies (design/godot-avatar.md) as the outside ships them: minus the three it
+        # doesn't offer; no shoppers walk the room wings
+        exc = ["tools/*", "web/*", "*.md", "npc/skins/Character_*", "npc/skins/Ch06*", "npc/skins/Ch17*", "npc/skins/Ch36*",
+               "npc_src/*", "prizes/*", "tex/fronts/*", "fronts.json"]
         exc += gens_except("w%d" % w)
         exc += ["wing%d*" % o for o in ALL if o != w] + ["wing%d_2026*" % w, "main*", "layout_2026.json", "data/eras_2026.json",
                                                          "tex/standin/y26_*", "tex/standin/door_*"]

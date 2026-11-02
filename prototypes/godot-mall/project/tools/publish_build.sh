@@ -45,7 +45,7 @@ for w in 4 5 6; do
   [ "$w" = "6" ] && continue
   for lm in wing${w}_day wing${w}_2026_day; do
     for f in exr exr.import lmbake; do
-      [ -s $lm.$f ] || { echo "warning: no $lm.$f: wing $w is not baked yet and ships unlit (allowed until its first bake; on the Mac: echo \"wing$w:day wing${w}_2026:day\" > .autobake)"; break; }
+      [ -s $lm.$f ] || { echo "warning: no $lm.$f: wing $w is not baked yet and ships unlit (allowed until its first bake: add \"wing$w:day wing${w}_2026:day\" to the Mac's .autobake jobs)"; break; }
     done
   done
   mw=$((w - 3))
