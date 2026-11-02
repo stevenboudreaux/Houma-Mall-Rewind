@@ -1,0 +1,45 @@
+{
+ "_": "Counter attendants (workstream Q, design/godot-dialogue.md 'Attendants'). One unique person behind each counter. wing/years: where they exist (a store closed that year has none). skin: an npc/skins.json id the wing's pack ships (Ch*/Remy); Steven may swap. area: [x0, z0, x1, z1] world metres behind the counter they wander in; face: the direction they stand facing (toward the shop floor); talk_at: where the interactable stands (the shop side of the counter, so the 1.6 m reach works across it). name and dialogue are PLACEHOLDERs until Steven writes them. redemption: true = the redemption screen (session R) opens first when it exists.",
+ "attendants": [
+  {
+   "id": "pocket_change",
+   "store": "POCKET CHANGE",
+   "wing": 2,
+   "years": [1995],
+   "skin": "Ch22",
+   "sex": "f",
+   "name": "PLACEHOLDER Pocket Change attendant",
+   "dialogue": "res://data/story/placeholder/PLACEHOLDER_pocket_change.dialogue",
+   "area": [-103.2, 63.6, -102.85, 67.8],
+   "face": [-1, 0],
+   "talk_at": [-104.65, 65.7],
+   "redemption": true
+  },
+  {
+   "id": "sound_shop",
+   "store": "SOUND SHOP",
+   "wing": 1,
+   "years": [1995],
+   "skin": "Ch38",
+   "sex": "m",
+   "name": "PLACEHOLDER Sound Shop attendant",
+   "dialogue": "res://data/story/placeholder/PLACEHOLDER_sound_shop.dialogue",
+   "area": [-14.1, -58.9, -11.7, -58.65],
+   "face": [0, -1],
+   "talk_at": [-12.9, -60.35]
+  },
+  {
+   "id": "kay_bee",
+   "store": "KAY-BEE TOYS",
+   "wing": 1,
+   "years": [1995],
+   "skin": "Ch41",
+   "sex": "f",
+   "name": "PLACEHOLDER Kay-Bee Toys attendant",
+   "dialogue": "res://data/story/placeholder/PLACEHOLDER_kay_bee.dialogue",
+   "area": [-14.1, -52.85, -12.2, -52.65],
+   "face": [0, -1],
+   "talk_at": [-13.1, -54.0]
+  }
+ ]
+}

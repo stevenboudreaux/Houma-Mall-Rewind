@@ -1,0 +1,19 @@
+# PLACEHOLDER book (workstream Q). Not story: Steven writes the real book.
+# One line = one page. A line followed by responses is a branch point: the choices print at the
+# foot of that page. Grammar: design/godot-dialogue.md "Books".
+
+~ start
+PLACEHOLDER page 1.
+PLACEHOLDER page 2 (a branch point).
+- PLACEHOLDER choice A
+	PLACEHOLDER page A1.
+	PLACEHOLDER page A2.
+	=> ending
+- PLACEHOLDER choice B
+	PLACEHOLDER page B1.
+	=> ending
+
+~ ending
+PLACEHOLDER last page (the ending).
+set placeholder_book_finished = true
+=> END
