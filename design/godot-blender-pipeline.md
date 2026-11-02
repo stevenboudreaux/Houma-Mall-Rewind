@@ -171,7 +171,8 @@ size Steven wants. Unbaked comparison beside D's lion: `wsT2-bl_ls_lion-ingame.j
 | `bl_pc_boombox` "Boom box" | hand | 4,628 (budget 5,000) | 2048 (albedo, ORM, normal; 3.3 MB) | **not placed**: Pocket Change's redemption stock only, 500 tickets (Steven); no quest | **none**: the reference pack has no boom box (`refs/INDEX.md`) and Wikimedia is blocked from the cloud; the type from Steven's brief and Wikipedia's "Boombox" (CD players from the mid 90s) | everything: 0.54 × 0.15 × 0.24 m body plus handle; dark grey worn plastic, silver speaker rings, perforated grilles, a detachable-looking centre panel (dark seam, two release tabs) with the tuner LCD and the twin cassette doors (DECK A, DECK B REC/PLAY), a CD lid with a smoked round window on top, ten transport keys along the top front edge, two top knobs, a carry handle with a rubber grip, a telescoping antenna on a swivel at the back left, a battery label on the back. Brand **KREWE KR-95CD** (invented, IP rule) |
 
 - **Held by the handle:** the item's scene is `models/bl_pc_boombox/bl_pc_boombox_item.tscn` (the .glb plus a
-  `Grip` at the handle, turned 30° so it shows in first person), set through `META["item"]["scene"]`
+  `Grip` at the top edge under the handle, turned 30° and tipped 40° toward you so the front shows in
+  first person, bottom right; a carried-at-the-side pose would be off screen), set through `META["item"]["scene"]`
   (build.py copies item keys into the entry, so the override survives a rebuild).
 - Budget: the first build was 6,292 tris; grille discs lost their bevel, rings went to 28 sides and the
   ten keys to one bevel segment. Sheet: `production/qa/evidence/wsR-boombox-sheet.jpg` (no reference cell).

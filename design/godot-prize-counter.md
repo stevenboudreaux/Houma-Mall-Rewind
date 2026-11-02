@@ -37,7 +37,8 @@ bins with price cards, glass prize cases, back walls of hanging plush.
 
 ## The closer look
 - Standing in front of either case, facing it, a prompt shows: **"E · Look at the prizes"**
-  (A on a pad, Tap on a phone).
+  (A on a pad, Tap on a phone). *Since Nov 2 (R) the prompt reads "Redeem tickets" and opens the
+  redemption screen; the closer look is its "Look at the prizes" button.*
 - The camera glides (0.55 s) to the view you were facing. Seven views, in order along the
   counter: the short case; the long case bay by bay (an angled look down through the front glass
   from just above the counter top: all three levels); the prize wall in two halves.
@@ -88,7 +89,93 @@ by me."
   from the back of the store and from the door, the prompt, every view, a price, back to walking.
   Evidence `production/qa/evidence/d34-prizes-*.png`.
 
+## Redemption (workstream R, Steven Nov 2 2026)
+**Asked for:** ticket redemption at the counter, a "You received" pop-up, the boom box prize, and
+"nothing on the ground at Pocket Change". Ground rule: Steven writes the story; this is machinery only
+(no characters, lines, quests or new items beyond the boom box).
+
+**The floor is clear.** The five Godot-built prizes (`data/items/pocket_change.json`), the Blender finger
+trap and the three claw plush (`blender_props.json`) lost their `place`; the entries stay as stock.
+Nothing else in the mall moved (the lava lamp `bl_gb_lavalamp` is Gumballs', wing 1; Martin Folse's
+stick stays in the stockrooms). The cases keep their 3D display prizes (static, not pick-ups).
+
+**The screen** (`scripts/redemption.gd`, made by `interact.gd` in every wing, reachable as
+`mall.redemption`): `mall.redemption.open()` shows the stock as cards (icon, name, ticket price) with
+**Your tickets** at the top. **BUY** when tickets ≥ price: the tickets go down, the item goes into the
+bag, put away (`mall.add`), the state is saved, and the pop-up shows. What you can't afford is greyed
+out and its BUY disabled. The panel fits the screen (up to 640 × 560, two columns at iPhone portrait
+width, three or four on a phone in landscape and on desktop); a touch drag scrolls.
+
+| | Keyboard / mouse | Gamepad | Touch |
+|---|---|---|---|
+| Choose | arrows / WASD | d-pad, left stick | tap a card |
+| Buy | Enter, E, Space, or click BUY | A | tap BUY |
+| Look at the prizes (the closer look) | L or the button | Y | the button |
+| Back | Esc, Q, Backspace, Tab, Back, a click outside | B, Select | Back, a tap outside |
+
+**Who opens it:** the counter glass. The prompt at either case now reads **"Redeem tickets"** (E / A /
+Tap) and opens the screen; the closer look is still there, through the screen's "Look at the prizes"
+(`prizes.gd redeem()`; with no screen it falls back to the closer look). The Pocket Change attendant
+(workstream Q) calls `mall.redemption.open()` if it exists.
+
+**The stock** (`scripts/redemption.json`: order, the item handed over, and where the price comes from).
+Prices are `scripts/prizes.json`'s wherever the prize has one, so the card in the case and the screen
+agree; Steven changes them there (or with a `tickets` in `redemption.json`).
+
+| Prize | Item id | Tickets | Price from |
+|---|---|---|---|
+| Chocolate chews | `pc_chew` | 5 | prizes.json |
+| Chinese finger trap | `bl_pc_fingertrap` | 15 | prizes.json |
+| Jelly finger trap | `pc_jelly_trap` | 20 | prizes.json |
+| Candy necklace | `candy_neck` | 20 | prizes.json |
+| Candy cigarettes | `pc_candy_cig` | 25 | prizes.json |
+| Slap bracelet | `slap` | 75 | prizes.json |
+| Pog pack | `pogs` | 100 | prizes.json |
+| Rainbow coil spring | `spring` | 150 | prizes.json |
+| Fuzzy dice | `dice` | 300 | prizes.json |
+| **Boom box** | `bl_pc_boombox` | **500** | Steven (Nov 2); **the wall tags say 5,000** (prizes.json) |
+| Giant fuzzy dice | `pc_big_dice` | 600 | prizes.json |
+| Plush bear / bunny / dog | `bl_pc_plush_bear` / `_bunny` / `_dog` | 700 each | **guess** (between the giant dice and the alien) |
+| Alien plush | `pc_alien` | 800 | prizes.json |
+| Basketball | `pc_ball` | 900 | prizes.json |
+| Virtual pet | `pc_vpet` | 1,500 | prizes.json |
+| Lava lamp | `pc_lava` | 2,500 | prizes.json |
+
+- The prizes that had no item (chews, jelly trap, candy cigarettes, virtual pet, alien, giant dice,
+  basketball) got stock-only items in `data/items/pocket_change_stock.json`. Their models are the
+  counter's own shapes, one unit each (`scripts/items/prize_model.gd` builds them with `prizes.gd`'s
+  meshes and materials; scenes `scripts/items/pc_*.tscn`; icons `tex/items/pc_*.png`), so nothing new is
+  drawn. The candy-cigarette box is the word-free art (the counter paints its words at load time).
+- `pc_lava` is a second lava lamp with Gumballs' Blender model and icon, so buying one never takes the
+  one at Gumballs off its shelf (an item id is one thing in the world).
+- Buying the same prize again counts up in the bag. Dropping keeps the existing rule (one place per id:
+  a second drop of the same id moves the first).
+- Export: Wing 2 now also packs `models/bl_gb_*` (the lava lamp), Wing 1 `models/bl_pc_*` and
+  `prizes/*.png`, so a bought prize carried across the seam still shows in the hand.
+
+## The pop-up contract ("You received", `scripts/received_popup.gd`)
+- `mall.received(id)` (a signal in `scripts/inventory.gd`) fires for **every item that enters the
+  player's things from outside**: bought (`redemption.gd`), given (a dialogue calls `mall.add(id)`),
+  picked up (`mall.take`). Moving a thing between hand and bag (`hold`, `put_away`, the hand swap on a
+  pick-up) passes `quiet` and doesn't fire.
+- The pop-up (made by `interact.gd`, every wing) shows a card over everything: "YOU RECEIVED", the
+  item's icon (the Blender items' are 256 px renders, the Godot ones 128 px), its name, "You received
+  <name>". After 0.6 s ("Press any key" / "Press any button" / "Tap to continue" appears) any key,
+  button, click or tap dismisses it. Several in a row queue. While it shows the player is held and
+  `mall` meta `popup_open` is true.
+- To give an item from a dialogue: `player.mall.add(id); player.mall.save()`; the card follows.
+
+## Checks (R)
+- `godot --headless --path . --script res://tools/qa/redemption_test.gd`: REDEMPTION TEST OK: the floor
+  is clear, the stock covers prizes.json and the Blender prizes, buying with 0 / 600 / 100 tickets, the
+  ticket and bag round trip through a save, the pop-up contract and queue.
+- `tools/qa/interact_test.gd --wing=2` now drops its five test prizes through a saved state (nothing
+  lies there at first).
+- Evidence `production/qa/evidence/wsR-*.jpg` (unbaked).
+
 ## Open
-- Redemption: still deferred. A ticket balance (`mall.tickets`) and an inventory (the Bag) exist
-  since Nov 1 (design/godot-interaction.md); five prizes lie loose on the floor as pick-ups.
-- No sound; no selection highlight beyond the tooltip; VR has no prompt.
+- **Boom box price:** 500 on the screen (Steven's number), 5,000 on the wall's tags. Which one?
+- **Plush prices** (700) are a guess.
+- The closer look's Back returns to walking, not to the redemption screen.
+- Nothing earns tickets yet (workstream D48's coin pusher pays out).
+- No sound; VR has no prompt.
