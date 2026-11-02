@@ -10,9 +10,10 @@
    "sex": "f",
    "name": "PLACEHOLDER Pocket Change attendant",
    "dialogue": "res://data/story/placeholder/PLACEHOLDER_pocket_change.dialogue",
-   "area": [-103.2, 63.6, -102.85, 67.8],
+   "area": [-103.2, 65.8, -102.85, 67.8],
    "face": [-1, 0],
-   "talk_at": [-104.65, 65.7],
+   "talk_at_note": "the north end of the counter: in front of the cases the prize counter's closer look (scripts/prizes.gd) owns the action button",
+   "talk_at": [-104.0, 68.9],
    "redemption": true
   },
   {

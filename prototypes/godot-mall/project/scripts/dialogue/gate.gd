@@ -78,8 +78,12 @@ func locks_door(store_key: String) -> bool:
 	return locked() and store_key in doors
 
 func say_locked(door := false) -> void:
-	if player and player.has_method("_say"):
-		player._say(door_message if door else message)
+	var t := door_message if door else message
+	var st = player.get_node_or_null("Story") if player else null
+	if st and st.has_method("say"):
+		st.say(t)
+	elif player and player.has_method("_say"):
+		player._say(t)
 
 func _process(dt: float) -> void:
 	_said_t = maxf(0.0, _said_t - dt)

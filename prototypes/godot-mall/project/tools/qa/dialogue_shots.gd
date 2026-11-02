@@ -113,7 +113,7 @@ func _talk_plan(id: String, tag: String, full: bool) -> Array:
 		[1.6, func():
 			_check(ui.resp_btns.size() == 3, tag + ": three responses (%d)" % ui.resp_btns.size())
 			_shot(tag + "-three-choices")
-			ui._choose(1)],
+			ui._choose(1 if full else 0)],      # the short run takes a wrong answer, which ends
 	]
 	if full:
 		p += [
@@ -132,7 +132,8 @@ func _talk_plan(id: String, tag: String, full: bool) -> Array:
 			[1.3, func():
 				_check(not ui.active and not player.frozen, "END: control back")
 				_check(root.get_camera_3d() == player.cam, "END: the walking camera is current again")
-				player.interact.open_panel(true)
+				player.interact.open_panel(true)],
+			[0.4, func():
 				_shot(tag + "-bag-after")
 				player.interact.open_panel(false)],
 		]
@@ -162,6 +163,9 @@ func _plan_w2() -> Array:
 				player._try_move(Vector3(0, 0, 0.1))
 			_check(player.position.z < 80.0 and player.position.z > 79.0, "walking in stops at the opening (z %.2f)" % player.position.z)],
 		[0.3, func():
+			var said := root.find_children("*", "Label", true, false).filter(func(l): return str(l.text).begins_with("PLACEHOLDER locked"))
+			_check(said.size() == 1 and said[0].is_visible_in_tree(), "the locked message is on screen (%d)" % said.size())
+			for l in said: printerr("msg rect ", l.get_global_rect(), " vis ", l.is_visible_in_tree(), " mod ", l.modulate)
 			_shot("wsQ-dillards-locked")
 			# an outside door from inside (s2e): locked
 			_at(28.4, 98.2, 90.0, 0.0)
@@ -191,7 +195,8 @@ func _book_plan() -> Array:
 				if r.id == "bl_bd_paperback":
 					for b in r.btns:
 						if b[0].text == "Read": has_read = true
-			_check(has_read, "the bag's paperback row has Read")
+			_check(has_read, "the bag's paperback row has Read")],
+		[0.4, func():
 			_shot("wsQ-bag-read")
 			player.interact.open_panel(false)
 			_check(story.read_item("bl_bd_paperback"), "the book opens")],

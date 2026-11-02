@@ -108,7 +108,7 @@ func _next(id: String) -> void:
 	text_l.text = str(l.text)
 	page_l.text = "%d" % page
 	_clear_choices()
-	var has := l.responses.size() > 0
+	var has: bool = l.responses.size() > 0
 	turn_b.visible = not has
 	turn_b.text = "Turn page ▸"
 	if has:
@@ -120,7 +120,7 @@ func _next(id: String) -> void:
 			b.focus_mode = Control.FOCUS_NONE
 			b.custom_minimum_size = Vector2(0, 52)
 			b.add_theme_font_size_override("font_size", 18)
-			var k := i
+			var k: int = i
 			b.pressed.connect(func(): _choose(k))
 			choice_box.add_child(b)
 			choice_btns.append(b)
@@ -161,14 +161,22 @@ func _clear_choices() -> void:
 
 func _paint() -> void:
 	for i in choice_btns.size():
-		choice_btns[i].modulate = Color(1, 1, 1) if i == sel else Color(0.75, 0.72, 0.68)
+		var on: bool = i == sel
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(0.45, 0.36, 0.25) if on else Color(0.86, 0.82, 0.72)
+		sb.set_corner_radius_all(4)
+		sb.content_margin_left = 12; sb.content_margin_right = 12
+		for st in ["normal", "hover", "pressed", "focus"]:
+			choice_btns[i].add_theme_stylebox_override(st, sb)
+		for c in ["font_color", "font_hover_color", "font_pressed_color"]:
+			choice_btns[i].add_theme_color_override(c, Color(1, 0.97, 0.9) if on else Color(0.2, 0.15, 0.1))
 
 # ------------------------------------------------------------------ input
 func _input(e: InputEvent) -> void:
 	if not active:
 		return
 	var vp := get_viewport()
-	var has := line != null and line.responses.size() > 0
+	var has: bool = line != null and line.responses.size() > 0
 	if e is InputEventKey and e.pressed and not e.echo:
 		var k: int = e.physical_keycode
 		if k == KEY_ESCAPE:

@@ -119,8 +119,35 @@ func _notice(t: String) -> void:
 		ui.toast(t)
 	elif book and book.active:
 		book.toast(t)
-	elif player.has_method("_say"):
-		player._say(t)
+	else:
+		say(t)
+
+var _notes: CanvasLayer
+## A notice bottom middle, above the prompts (the gates' locked messages, a give outside a talk).
+## Its own layer and anchors: player._say()'s label lands off-screen in a native window.
+func say(t: String) -> void:
+	if _notes == null:
+		_notes = CanvasLayer.new()
+		_notes.layer = 21
+		add_child(_notes)
+	for c in _notes.get_children():
+		c.queue_free()
+	var l := Label.new()
+	l.text = t
+	l.add_theme_font_size_override("font_size", 24)
+	l.add_theme_color_override("font_color", Color(1, 0.95, 0.75))
+	l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	l.add_theme_constant_override("outline_size", 6)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.anchor_left = 0.0; l.anchor_right = 1.0; l.anchor_top = 1.0; l.anchor_bottom = 1.0
+	l.offset_left = 16; l.offset_right = -16; l.offset_top = -200; l.offset_bottom = -150
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_notes.add_child(l)
+	var tw := l.create_tween()
+	tw.tween_interval(2.4)
+	tw.tween_property(l, "modulate:a", 0.0, 0.5)
+	tw.tween_callback(l.queue_free)
 
 func talk(npc: Node3D, path: String, cue := "") -> void:
 	if busy():

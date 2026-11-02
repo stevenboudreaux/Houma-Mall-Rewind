@@ -247,7 +247,7 @@ func _show_responses() -> void:
 			b.add_theme_stylebox_override(st, _resp_style(false))
 		b.add_theme_color_override("font_color", Color(0.93, 0.85, 0.66))
 		b.add_theme_color_override("font_hover_color", Color(1, 0.97, 0.9))
-		var k := i
+		var k: int = i
 		b.pressed.connect(func(): _choose(k))
 		b.mouse_entered.connect(func(): sel = k; _paint())
 		resp_box.add_child(b)
@@ -262,7 +262,7 @@ func _clear_responses() -> void:
 
 func _paint() -> void:
 	for i in resp_btns.size():
-		var on := i == sel
+		var on: bool = i == sel
 		for st in ["normal", "hover", "pressed", "focus"]:
 			resp_btns[i].add_theme_stylebox_override(st, _resp_style(on))
 		resp_btns[i].add_theme_color_override("font_color", Color(1, 0.97, 0.9) if on else Color(0.93, 0.85, 0.66))
@@ -272,7 +272,7 @@ func _input(e: InputEvent) -> void:
 	if not active:
 		return
 	var vp := get_viewport()
-	var has_resp := line != null and not typing and line.responses.size() > 0
+	var has_resp: bool = line != null and not typing and line.responses.size() > 0
 	if e is InputEventKey and e.pressed and not e.echo:
 		var k: int = e.physical_keycode
 		if has_resp and k >= KEY_1 and k <= KEY_9:
@@ -369,11 +369,13 @@ func _build() -> void:
 	box.add_child(v)
 	name_l = Label.new()
 	name_l.add_theme_font_size_override("font_size", 18)
+	name_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART     # a long name wraps at phone width
 	name_l.add_theme_color_override("font_color", Color(0.95, 0.78, 0.4))
 	v.add_child(name_l)
 	text_l = RichTextLabel.new()
 	text_l.bbcode_enabled = true
 	text_l.fit_content = true
+	text_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_l.scroll_active = false
 	text_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	text_l.add_theme_font_size_override("normal_font_size", 21)
