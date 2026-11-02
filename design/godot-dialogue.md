@@ -190,6 +190,8 @@ that sets `placeholder_book_finished`.
   Manager runs in the web export, plugin off, files compiled at run time. Evidence
   `wsQ-web-unbaked-*.jpg`. Seen there and fixed after: the web font has no ▸ / ✕ glyphs (boxes);
   the box and book now say "continue >", "Turn page >", "X".
+- movetest (wing 2 web, cams at the Pocket Change talk spot and the Dillard's opening): 0 errors, the
+  touch-drag walk MOVED (`wsQ-web-unbaked-movetest-*.jpg`).
 - Evidence `production/qa/evidence/wsQ-unbaked-*.jpg`: each attendant's approach (TALK prompt), the
   camera on its way, the face shot with a line, the three choices; Pocket Change's second level,
   the give ("Received: Candy necklace") and the bag after; the Dillard's locked messages (opening,
