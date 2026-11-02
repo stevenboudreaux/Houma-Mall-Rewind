@@ -1,0 +1,393 @@
+diff --git a/prototypes/godot-mall/project/data/story/attendants.json b/prototypes/godot-mall/project/data/story/attendants.json
+index 5aa19c0..55e12b9 100644
+--- a/prototypes/godot-mall/project/data/story/attendants.json
++++ b/prototypes/godot-mall/project/data/story/attendants.json
+@@ -1,8 +1,10 @@
+ {
+- "_": "Counter attendants (workstream Q, design/godot-dialogue.md 'Attendants'). One unique person behind each counter. wing/years: where they exist (a store closed that year has none). skin: an npc/skins.json id the wing's pack ships (Ch*/Remy); Steven may swap. area: [x0, z0, x1, z1] world metres behind the counter they wander in; face: the direction they stand facing (toward the shop floor); talk_at: where the interactable stands (the shop side of the counter, so the 1.6 m reach works across it). name and dialogue are PLACEHOLDERs until Steven writes them. redemption: true = the redemption screen (session R) opens first when it exists.",
++ "_": "Counter attendants (workstream Q, design/godot-dialogue.md 'Attendants'). One unique person behind each counter. wing/years: where they exist (a store closed that year has none). skin: an npc/skins.json id the wing's pack ships (Ch*/Remy); Steven may swap. area: [x0, z0, x1, z1] world metres behind the counter they wander in; face: the direction they stand facing (toward the shop floor); talk_at: where the interactable stands (the shop side of the counter, so the 1.6 m reach works across it). name and dialogue are PLACEHOLDERs until Steven writes them. redemption: true = the redemption screen (session R) opens first when it exists. look (B2, design/godot-character-editor.md): \"preset\" = a B1 body dressed from data/characters/<preset>.json; \"legacy\" = the Mixamo skin above (the fallback when the preset is missing).",
+  "attendants": [
+   {
+    "id": "pocket_change",
++   "look": "preset",
++   "preset": "pocket_change",
+    "store": "POCKET CHANGE",
+    "wing": 2,
+    "years": [1995],
+@@ -18,6 +20,8 @@
+   },
+   {
+    "id": "sound_shop",
++   "look": "preset",
++   "preset": "sound_shop",
+    "store": "SOUND SHOP",
+    "wing": 1,
+    "years": [1995],
+@@ -31,6 +35,8 @@
+   },
+   {
+    "id": "kay_bee",
++   "look": "preset",
++   "preset": "kay_bee",
+    "store": "KAY-BEE TOYS",
+    "wing": 1,
+    "years": [1995],
+diff --git a/prototypes/godot-mall/project/export_presets.cfg b/prototypes/godot-mall/project/export_presets.cfg
+index 09a30e7..7887916 100644
+--- a/prototypes/godot-mall/project/export_presets.cfg
++++ b/prototypes/godot-mall/project/export_presets.cfg
+@@ -675,6 +675,102 @@ script_export_mode=2
+ 
+ [preset.14.options]
+ 
++custom_template/debug=""
++custom_template/release=""
++variant/extensions_support=false
++variant/thread_support=false
++vram_texture_compression/for_desktop=false
++vram_texture_compression/for_mobile=true
++html/export_icon=true
++html/custom_html_shell="res://web/shell.html"
++html/head_include=""
++html/canvas_resize_policy=2
++html/focus_canvas_on_start=true
++html/experimental_virtual_keyboard=false
++progressive_web_app/enabled=false
++progressive_web_app/ensure_cross_origin_isolation_headers=true
++progressive_web_app/offline_page=""
++progressive_web_app/display=1
++progressive_web_app/orientation=0
++progressive_web_app/icon_144x144=""
++progressive_web_app/icon_180x180=""
++progressive_web_app/icon_512x512=""
++progressive_web_app/background_color=Color(0, 0, 0, 1)
++threads/emscripten_pool_size=8
++threads/godot_pool_size=4
++
++[preset.15]
++
++name="Characters Desktop"
++platform="Web"
++runnable=false
++advanced_options=false
++dedicated_server=false
++custom_features="chars"
++export_filter="resources"
++export_files=PackedStringArray()
++include_filter=""
++exclude_filter=""
++export_path=""
++patches=PackedStringArray()
++encryption_include_filters=""
++encryption_exclude_filters=""
++seed=0
++encrypt_pck=false
++encrypt_directory=false
++script_export_mode=2
++
++[preset.15.options]
++
++
++custom_template/debug=""
++custom_template/release=""
++variant/extensions_support=false
++variant/thread_support=false
++vram_texture_compression/for_desktop=true
++vram_texture_compression/for_mobile=false
++html/export_icon=true
++html/custom_html_shell="res://web/shell.html"
++html/head_include=""
++html/canvas_resize_policy=2
++html/focus_canvas_on_start=true
++html/experimental_virtual_keyboard=false
++progressive_web_app/enabled=false
++progressive_web_app/ensure_cross_origin_isolation_headers=true
++progressive_web_app/offline_page=""
++progressive_web_app/display=1
++progressive_web_app/orientation=0
++progressive_web_app/icon_144x144=""
++progressive_web_app/icon_180x180=""
++progressive_web_app/icon_512x512=""
++progressive_web_app/background_color=Color(0, 0, 0, 1)
++threads/emscripten_pool_size=8
++threads/godot_pool_size=4
++
++[preset.16]
++
++name="Characters Mobile"
++platform="Web"
++runnable=false
++advanced_options=false
++dedicated_server=false
++custom_features="chars"
++export_filter="resources"
++export_files=PackedStringArray()
++include_filter=""
++exclude_filter=""
++export_path=""
++patches=PackedStringArray()
++encryption_include_filters=""
++encryption_exclude_filters=""
++seed=0
++encrypt_pck=false
++encrypt_directory=false
++script_export_mode=2
++
++[preset.16.options]
++
++
+ custom_template/debug=""
+ custom_template/release=""
+ variant/extensions_support=false
+diff --git a/prototypes/godot-mall/project/scripts/attendants/attendant.gd b/prototypes/godot-mall/project/scripts/attendants/attendant.gd
+index aea04fd..437f5bb 100644
+--- a/prototypes/godot-mall/project/scripts/attendants/attendant.gd
++++ b/prototypes/godot-mall/project/scripts/attendants/attendant.gd
+@@ -45,6 +45,11 @@ func setup(p: Node3D, st: Node, e: Dictionary) -> bool:
+ 	position = Vector3(float(t[0]), 0, float(t[1]))
+ 	add_to_group("interactable")
+ 	add_to_group("talker")
++	# --- B2 (design/godot-character-editor.md): "look": "preset" = a B1 body dressed from
++	# data/characters/<preset>.json (baked); "legacy" (or none) = the Mixamo skin below, as before.
++	if str(e.get("look", "legacy")) == "preset" and AvatarChar.available() and _make_preset_body():
++		return true
++	# --- end B2
+ 	# the body: a skin from npc/skins.json (the pack must ship it)
+ 	var skin := {}
+ 	for s in NpcBody.manifest().get("skins", []):
+@@ -132,3 +137,44 @@ func _process(dt: float) -> void:
+ 	if _wait <= 0.0 and not near:
+ 		_wait = _rng.randf_range(WANDER_S.x, WANDER_S.y)
+ 		_goal = Vector3(_rng.randf_range(area.position.x, area.end.x), 0, _rng.randf_range(area.position.y, area.end.y))
++
++# ------------------------------------------------------------------ B2: a preset body
++## The preset id this attendant wears ("" for a Mixamo skin).
++func preset_id() -> String:
++	return str(entry.get("preset", "")) if str(entry.get("look", "legacy")) == "preset" else ""
++
++## Build (or rebuild) the body from the preset: this browser's saved edit, else the repo file.
++## p: a preset to wear instead (the owner's editor, "view in place": live, not baked).
++func _make_preset_body(p := {}, live := false) -> bool:
++	if p.is_empty():
++		p = CharPreset.get_preset(str(entry.get("preset", "")))
++	if p.is_empty():
++		push_warning("attendant %s: no preset %s" % [entry.get("id"), entry.get("preset")])
++		return false
++	var at := Vector3(area.get_center().x, 0, area.get_center().y)
++	var yaw_was := 0.0
++	if body:
++		at = body.global_position
++		yaw_was = body.yaw
++		body.queue_free()
++	body = CharPreset.body_for(p, not live)
++	body.top_level = true
++	add_child(body)
++	body.walk_clip = "walk_f" if str(p.body) == "female" else "walk_m"
++	body.play(str(entry.get("idle", "idle")))
++	body.global_position = at
++	body.face(face_dir if yaw_was == 0.0 else Vector3(sin(yaw_was), 0, cos(yaw_was)))
++	_goal = body.global_position
++	_rng.randomize()
++	_wait = _rng.randf_range(WANDER_S.x, WANDER_S.y)
++	return true
++
++## The character pack was mounted after this attendant was made (the web: scripts/chars/char_pack.gd):
++## swap the Mixamo fallback for the preset body.
++func chars_ready() -> void:
++	if str(entry.get("look", "legacy")) == "preset" and not (body is CharBody):
++		_make_preset_body()
++
++## The owner's editor saved (or previews) a new look: wear it now.
++func wear_preset(p: Dictionary, live := false) -> void:
++	_make_preset_body(p, live)
+diff --git a/prototypes/godot-mall/project/scripts/avatar.gd b/prototypes/godot-mall/project/scripts/avatar.gd
+index eeefca3..1661696 100644
+--- a/prototypes/godot-mall/project/scripts/avatar.gd
++++ b/prototypes/godot-mall/project/scripts/avatar.gd
+@@ -42,7 +42,7 @@ const GAITS := [["walk", 0.0], ["jog", 2.4], ["run", 3.6], ["sprint", 5.4]]
+ 
+ var player: Node3D
+ var look := {}
+-var body: AvatarBody
++var body                   # B2: an AvatarChar (a B1 body, the player's preset) or V's AvatarBody
+ var tp_cam: Camera3D
+ var third := false            # the saved choice
+ var creator: Node = null
+@@ -73,11 +73,12 @@ func _ready() -> void:
+ 		if Engine.has_meta("avatar_view"): third = str(Engine.get_meta("avatar_view")) == "third"
+ 		force_open = bool(Engine.get_meta("avatar_open", false))
+ 		cam_q = true
+-	body = AvatarBody.new()
++	# B2 (design/godot-character-editor.md): the B1 body from the player's preset when this pack ships it
++	body = AvatarChar.new() if AvatarChar.available() else AvatarBody.new()
+ 	body.name = "Avatar"
+ 	player.get_parent().add_child.call_deferred(body)
+ 	body.ready.connect(func():
+-		body.wear(look, player.year)
++		_wear_body()
+ 		body.visible = false, CONNECT_ONE_SHOT)
+ 	tp_cam = Camera3D.new()
+ 	tp_cam.name = "ThirdPersonCam"
+@@ -321,7 +322,7 @@ func _creator_closed(L: Dictionary, how: String) -> void:
+ 			third = true            # you just made it: see it
+ 		look.view = "third" if third else "first"
+ 		Look.save_look(look)
+-		body.wear(look, player.year)
++		_wear_body()
+ 	creator.queue_free()
+ 	creator = null
+ 	if _froze:
+@@ -387,3 +388,31 @@ func _input(e: InputEvent) -> void:
+ func _say(t: String) -> void:
+ 	if player.has_method("_say"):
+ 		player._say(t)
++
++## B2: the character pack is mounted (scripts/chars/char_pack.gd): V's body gives way to the player's
++## preset body (a held item moves with the hand on the next frame).
++func chars_ready() -> void:
++	if body is AvatarChar or not AvatarChar.available():
++		return
++	var was_visible: bool = body.visible
++	var old = body
++	body = AvatarChar.new()
++	body.name = "AvatarB2"
++	old.get_parent().add_child(body)
++	_wear_body()
++	body.position = old.position
++	body.rotation = old.rotation
++	body.visible = was_visible
++	var it = player.interact
++	if it and "hand_item" in it and it.hand_item and is_instance_valid(it.hand_item) and old.is_ancestor_of(it.hand_item):
++		var item: Node3D = it.hand_item
++		item.reparent(it.hand_root, false)
++		item.transform = _hand_xf.get(item.get_instance_id(), item.transform)
++	old.queue_free()
++
++## B2: dress the avatar (an AvatarChar wears the player's preset; V's body its look).
++func _wear_body() -> void:
++	if body is AvatarChar:
++		(body as AvatarChar).wear_look(look, player.year)
++	elif body is AvatarBody:
++		(body as AvatarBody).wear(look, player.year)
+diff --git a/prototypes/godot-mall/project/scripts/menu/menu.gd b/prototypes/godot-mall/project/scripts/menu/menu.gd
+index d54675b..f5b7669 100644
+--- a/prototypes/godot-mall/project/scripts/menu/menu.gd
++++ b/prototypes/godot-mall/project/scripts/menu/menu.gd
+@@ -333,8 +333,14 @@ func _make_creator() -> void:
+ 	var av = player.avatar
+ 	if av == null:
+ 		return
+-	var ps: PackedScene = load(CREATOR)
+-	_creator = ps.instantiate()
++	# B2 (design/godot-character-editor.md): the character editor in its player mode replaces V's
++	# creator here when the pack ships the B1 bodies (same contract: frame, embedded, feed, sel, closed)
++	if AvatarChar.available():
++		_creator = load("res://scripts/chars/char_editor.gd").new()
++		_creator.setup("player", AvatarChar.preset_for(av.look, player.year))
++	else:
++		var ps: PackedScene = load(CREATOR)
++		_creator = ps.instantiate()
+ 	_creator.year = player.year
+ 	_creator.look = av.look.duplicate(true)
+ 	_creator.first_time = not bool(av.look.get("done", false))
+@@ -771,6 +777,8 @@ func _menu_input(e: InputEvent) -> void:
+ 		elif not e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
+ 			if _creator:
+ 				_creator.feed(e)
++		elif e.pressed and tab == "avatar" and _creator and (e.button_index == MOUSE_BUTTON_WHEEL_UP or e.button_index == MOUSE_BUTTON_WHEEL_DOWN):
++			_creator.feed(e)      # B2: the editor's zoom / list scroll
+ 		elif e.pressed and _scroll and (e.button_index == MOUSE_BUTTON_WHEEL_UP or e.button_index == MOUSE_BUTTON_WHEEL_DOWN):
+ 			_scroll.scroll_vertical += -48 if e.button_index == MOUSE_BUTTON_WHEEL_UP else 48
+ 		return
+diff --git a/prototypes/godot-mall/project/scripts/npcs.gd b/prototypes/godot-mall/project/scripts/npcs.gd
+index d44dc81..a23b4af 100644
+--- a/prototypes/godot-mall/project/scripts/npcs.gd
++++ b/prototypes/godot-mall/project/scripts/npcs.gd
+@@ -366,10 +366,20 @@ func _pick(list: Array, fallback := "idle") -> String:
+ 
+ ## A body for a skin, dressed with its sex's walk and idle and a gesture hook.
+ func _make_body(e: Dictionary, s: Shopper = null) -> NpcBody:
+-	var b := NpcBody.new()
+-	b.set_skin(e)
++	# B2 (design/godot-character-editor.md): npcs.json "presets" {skin id: preset id} swaps a
++	# shopper's Mixamo skin for a B1 body dressed from data/characters/<preset>.json (baked).
++	# Empty (today) = every shopper keeps its Mixamo skin.
++	var b: NpcBody = null
++	var pid := str(cfg.get("presets", {}).get(str(e.id), ""))
++	var pre := CharPreset.get_preset(pid) if pid != "" else {}
++	if not pre.is_empty():
++		b = CharPreset.body_for(pre, true)
++		b.add_to_group("char_preset_npc")     # the owner's editor finds it (scripts/chars/char_owner.gd)
++	else:
++		b = NpcBody.new()
++		b.set_skin(e)
+ 	add_child(b)
+-	var sx := _sex(str(e.id))
++	var sx := _sex(str(e.id)) if pre.is_empty() else ("f" if str(pre.body) == "female" else "m")
+ 	b.walk_clip = _pick(cfg.walks.get(sx, ["walk_m"]), "walk_m")
+ 	b.play(_pick(cfg.idles.get(sx, ["idle"])))
+ 	if s:
+diff --git a/prototypes/godot-mall/project/scripts/npcs.json b/prototypes/godot-mall/project/scripts/npcs.json
+index 8e56c76..c21a9c3 100644
+--- a/prototypes/godot-mall/project/scripts/npcs.json
++++ b/prototypes/godot-mall/project/scripts/npcs.json
+@@ -466,5 +466,7 @@
+ 		"_": "Workstream M (design/godot-menu.md): NPCs per year. count = the crowd's size; ids = which characters (empty: the first count of the crowd pool, npc/skins.json order); roles false = no drunk, pairs, arcade players or salon visitors; layout = the year's stores. 1995 keeps the numbers above.",
+ 		"1995": {},
+ 		"2026": {"count": 3, "ids": [], "roles": false, "layout": "res://layout_2026.json"}
+-	}
++	},
++	"presets_": "B2: {skin id: preset id} swaps that shopper for a B1 body dressed from data/characters/<preset>.json; empty = Mixamo skins (design/godot-character-editor.md)",
++	"presets": {}
+ }
+diff --git a/prototypes/godot-mall/project/scripts/player.gd b/prototypes/godot-mall/project/scripts/player.gd
+index e32d0f9..951b22c 100644
+--- a/prototypes/godot-mall/project/scripts/player.gd
++++ b/prototypes/godot-mall/project/scripts/player.gd
+@@ -204,6 +204,13 @@ func _ready() -> void:
+ 	var story = load("res://scripts/dialogue/story.gd").new()
+ 	story.name = "Story"; story.player = self
+ 	add_child(story)
++	# B2: the owner's character editor on an NPC that wears a preset (K; design/godot-character-editor.md)
++	var char_pack = load("res://scripts/chars/char_pack.gd").new()   # the character pack (web)
++	char_pack.name = "CharPack"; char_pack.player = self
++	add_child(char_pack)
++	var char_owner = load("res://scripts/chars/char_owner.gd").new()
++	char_owner.name = "CharOwner"; char_owner.player = self
++	add_child(char_owner)
+ 	_light_btn_ok = buttons[2].visible
+ 	owner_hud_sync()
+ 	_spawn_1995_life()
+diff --git a/prototypes/godot-mall/project/tools/export_web.sh b/prototypes/godot-mall/project/tools/export_web.sh
+index 358534e..2aba4cd 100755
+--- a/prototypes/godot-mall/project/tools/export_web.sh
++++ b/prototypes/godot-mall/project/tools/export_web.sh
+@@ -46,4 +46,9 @@ Y3D=$(sz w3y26 desktop); Y3M=$(sz w3y26 mobile)
+ sed -i "s|const PACK_SIZES = {\"w1\": {\"desktop\": 0, \"mobile\": 0}, \"w2\": {\"desktop\": 0, \"mobile\": 0}, \"w3\": {\"desktop\": 0, \"mobile\": 0}, \"w1y26\": {\"desktop\": 0, \"mobile\": 0}, \"w2y26\": {\"desktop\": 0, \"mobile\": 0}, \"w3y26\": {\"desktop\": 0, \"mobile\": 0}};|const PACK_SIZES = {\"w1\": {\"desktop\": $S1D, \"mobile\": $S1M}, \"w2\": {\"desktop\": $S2D, \"mobile\": $S2M}, \"w3\": {\"desktop\": $S3D, \"mobile\": $S3M}, \"w1y26\": {\"desktop\": $Y1D, \"mobile\": $Y1M}, \"w2y26\": {\"desktop\": $Y2D, \"mobile\": $Y2M}, \"w3y26\": {\"desktop\": $Y3D, \"mobile\": $Y3M}};|" "$OUT/index.html"
+ grep -q "\"desktop\": $S1D" "$OUT/index.html" || { echo "could not write pack sizes into index.html"; exit 1; }
+ rm -rf "$T"
++# B2 (design/godot-character-editor.md): one character pack per map exported here (chars_<map>.*.pck)
++MAPS=""; for y in $YEARS; do for w in $WINGS; do
++  if [ "$y" = "2026" ]; then [ "$w" = "3" ] && [ ! -f wing3_2026.tscn ] && continue; MAPS="$MAPS w${w}y26"; else MAPS="$MAPS wing$w"; fi
++done; done
++bash tools/chars/export_chars.sh "$OUT" "$MAPS"
+ echo "wing1 desktop $S1D mobile $S1M  wing2 desktop $S2D mobile $S2M  outside $S3D/$S3M  2026: wing1 $Y1D/$Y1M wing2 $Y2D/$Y2M outside $Y3D/$Y3M"
+diff --git a/prototypes/godot-mall/project/web/shell.html b/prototypes/godot-mall/project/web/shell.html
+index e91389b..0f54dd1 100644
+--- a/prototypes/godot-mall/project/web/shell.html
++++ b/prototypes/godot-mall/project/web/shell.html
+@@ -751,6 +751,14 @@ if ('caches' in window) {
+ 	const netFetch = window.fetch.bind(window);
+ 	window.fetch = function (input, init) {
+ 		const url = typeof input === 'string' ? input : (input && input.url) || '';
++		// B2: the map's character pack (scripts/chars/char_pack.gd), kept in the same cache once fetched
++		if (/chars_w[123](y26)?\.(desktop|mobile)\.pck(\?|$)/.test(url)) {
++			const abs = new URL(url, location.href).toString();
++			return caches.open(MALL_CACHE).then((c) => c.match(abs).then((r) => r || netFetch(input, init).then((resp) => {
++				if (resp && resp.ok) { c.put(abs, resp.clone()).catch(() => {}); }
++				return resp;
++			}))).catch(() => netFetch(input, init));
++		}
+ 		if (/w[123](y26)?\.(desktop|mobile)\.pck(\?|$)/.test(url)) {
+ 			const abs = new URL(url, location.href).toString();
+ 			return caches.open(MALL_CACHE).then((c) => c.match(abs)).then((r) => r || netFetch(input, init)).catch(() => netFetch(input, init));
