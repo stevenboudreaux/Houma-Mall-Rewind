@@ -1,6 +1,8 @@
 # The menu, the time-travel transition, the opening and the player's name (Godot mall, workstream M, Nov 2 2026)
 
-**Asked for (Steven, Nov 2):** one full-screen menu (AVATAR, CONTROLS, INVENTORY, YEAR) on a key, a
+**Asked for (Steven, Nov 2):** one full-screen menu (tabs, left to right: **INVENTORY, AVATAR, CONTROLS,
+YEAR**; Steven, later Nov 2: "the first thing that shows up [is] the inventory on the far left, then the
+avatar builder") on a key, a
 gamepad's Start and a touch button; the creator and a NAME field in AVATAR; a controls table read from
 the InputMap with click-to-remap; the inventory in a tab with HELD / PUT AWAY and the TICKETS count; the
 year switch in a tab, with a short time-travel effect; an opening screen whose words are data; 2026
@@ -37,6 +39,7 @@ Shared files, small hunks marked `M`:
   `data/eras_2026.json`, as before in effect), so `data/story/opening.json` ships in every pack.
 
 ## The menu
+Tabs, left to right: **INVENTORY · AVATAR · CONTROLS · YEAR**. Opening it shows INVENTORY.
 | | Keyboard / mouse | Gamepad | Touch |
 |---|---|---|---|
 | Open / close | **Tab** (Esc closes too), the **Menu (Tab)** button top left | **Start** (B closes too) | **Menu** button, ✕ |
@@ -44,7 +47,8 @@ Shared files, small hunks marked `M`:
 | Inside a tab | ↑↓←→ (W S A D) + Enter / Space | d-pad + A | taps; drag to scroll |
 Tab is Steven's call; Tab is the default and it is remappable (CONTROLS). The old ways in open their tab:
 **I** / Bag → INVENTORY, **C** / Avatar → AVATAR, **Y** / the year button → YEAR. (A gamepad's Start used
-to open the creator; it opens the menu now, on the last tab.) The player is frozen while it is open
+to open the creator; it opens the menu now.) **Tab, Start and the Menu button always open on INVENTORY**,
+the far-left tab (Steven). The player is frozen while it is open
 (`player.frozen`), so nothing behind it reacts. The menu doesn't open while something else has the screen
 (the prize counter's closer look, the directory), while leaving, or in VR. The Menu button sits top left
 (under the owner's fps line); the owner-only HUD rules (design/godot-interaction.md) are unchanged.
@@ -166,8 +170,23 @@ opened by itself); START leads to the creator.
 - Only those characters are warmed up behind the loading card (`npc_warmup.gd` `only`).
 - 1995 is untouched (17, all roles). The outside (wing 3) 2026 has none. No new NPCs.
 
-## Checks (Nov 2, unbaked)
-See "Evidence" for the shots; results are in the session report.
+## Checks (Nov 2, on `ws/m-menu`)
+- `tools/qa/menu_unit_test.gd` (headless): **MENU UNIT OK (35 checks)**: the name contract, held_id(), rebinds,
+  refusals, the translation routing, save / load / reset, a tampered save. `inventory_test.gd` still OK (41).
+- `tools/qa/menu_test.gd` (native, unbaked, wing 2): **MENU TEST OK (64 checks)**: the opening, START → AVATAR
+  with NAME focused, typing a name, every tab at 1280×720 / 390×844 / 844×390 with every control on screen,
+  Tab opens on INVENTORY, Q / E, I / C / Y open their tabs, a remap (E → F; F works as E, E released; a fresh
+  load keeps it; F refused for another action; reset), HELD / PUT AWAY with the dice in the first- and
+  third-person hand, the owner's opening again and Esc = Skip, the transition, then 2026 with 3 shoppers
+  (Ch01, Ch02, Ch08) and the name carried over. `--only=2026` shoots the three shoppers.
+- `tools/qa/menu_webtest.py` (web build, wings 1–2, both years): **MENU WEB OK, 0 console errors**: desktop
+  first visit (opening, Enter, typed name saved, Tab, the tabs, Action remapped to F with the keyboard,
+  a reload keeps F, no opening once named), phone portrait (tap START, swipes through the tabs, ×),
+  phone landscape.
+- `tools/qa/movetest.py`: wing 1 1995 and 2026 **MOVED**, 0 errors; wing 2 hall / arcade and 2026 hall load
+  with 0 errors.
+- `tools/qa/vrtest.py` (IWER Quest 2): **ALL OK (25)**: VR enters, walks, turns, jumps, plays a machine and
+  crosses the seam as before.
 - Native: `xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 --script res://tools/qa/menu_test.gd -- --wing=2 --out=…`
   → `MENU TEST OK (n checks)`.
 - Web: `tools/export_web.sh .scratch/builds/wsm "1 2"`, then

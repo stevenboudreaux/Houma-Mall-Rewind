@@ -125,7 +125,7 @@ func _plan() -> void:
 	# ---- every tab at three sizes
 	for s in sizes:
 		var sz: Vector2i = s
-		for t in ["avatar", "controls", "inventory", "year"]:
+		for t in ["inventory", "avatar", "controls", "year"]:
 			var tt: String = t
 			_do(func(): _size(sz); menu.open_tab(tt), 0.7)
 			_do(func():
@@ -141,9 +141,10 @@ func _plan() -> void:
 	_do(func(): _size(Vector2i(1280, 720)); menu.open_tab("avatar"), 0.5)
 	# ---- tab switching keys
 	_do(func(): _key(KEY_E); _key(KEY_E, false), 0.3)
-	_do(func(): _check(menu.tab == "controls", "E: next tab"); _key(KEY_Q); _key(KEY_Q, false), 0.3)
+	_do(func(): _check(menu.tab == "controls", "E: next tab (AVATAR -> CONTROLS)"); _key(KEY_Q); _key(KEY_Q, false), 0.3)
 	_do(func(): _check(menu.tab == "avatar", "Q: previous tab"); _key(KEY_TAB); _key(KEY_TAB, false), 0.4)
-	_do(func(): _check(not menu.is_open and not player.frozen, "Tab closes the menu, the player free"), 0.2)
+	_do(func(): _check(not menu.is_open and not player.frozen, "Tab closes the menu, the player free"); _key(KEY_TAB); _key(KEY_TAB, false), 0.4)
+	_do(func(): _check(menu.is_open and menu.tab == "inventory" and menu.TABS[0] == "inventory", "Tab opens on INVENTORY, the far-left tab"); menu.close(), 0.2)
 	_do(func(): _key(KEY_I); _key(KEY_I, false), 0.4)
 	_do(func(): _check(menu.is_open and menu.tab == "inventory", "I opens the INVENTORY tab"); menu.close(), 0.2)
 	_do(func(): _key(KEY_C); _key(KEY_C, false), 0.4)

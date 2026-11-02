@@ -86,10 +86,12 @@ with sync_playwright() as p:
     check(ls(pg, "mall-avatar-1") is not None, "desktop: Tab closes the menu (the creator's look kept)")
     shot(pg, "web-closed-desktop")
     key(pg, "Tab", 3)
-    for t in ["controls", "inventory", "year"]:
+    shot(pg, "web-inventory-desktop")      # the menu opens on INVENTORY (far left)
+    key(pg, "e", 3)                        # AVATAR
+    for t in ["controls", "year"]:
         key(pg, "e", 3)
         shot(pg, f"web-{t}-desktop")
-    key(pg, "q", 2); key(pg, "q", 3)     # back to CONTROLS
+    key(pg, "q", 3)                        # back to CONTROLS
     # the remappable rows: forward, back, left, right, run, interact (6th)
     for _ in range(5):
         key(pg, "ArrowDown", 0.6)
@@ -104,7 +106,7 @@ with sync_playwright() as p:
     pg.goto(url("cam=-20,54,90,-8")); ready(pg, logs); time.sleep(12)
     pg.mouse.click(640, 700); time.sleep(1)
     shot(pg, "web-reload-closed-desktop")
-    key(pg, "Tab", 3); key(pg, "e", 3)
+    key(pg, "Tab", 3); key(pg, "e", 3); key(pg, "e", 3)
     shot(pg, "web-controls-after-reload-desktop")
     check(json.loads(ls(pg, "mall-controls-1") or "{}").get("interact", {}).get("keys") == [70], "desktop: a reload keeps F")
     pg.goto(url()); ready(pg, logs); time.sleep(12)
@@ -124,7 +126,7 @@ with sync_playwright() as p:
     shot(pg, "web-start-phone-portrait")
     tap(pg, 195 + 70, 422 + 230, 1)
     shot(pg, "web-avatar-phone-portrait")
-    for t in ["controls", "inventory", "year"]:
+    for t in ["controls", "year"]:
         swipe(pg, cdp, 300, 30, 120, 30, 3)
         shot(pg, f"web-{t}-phone-portrait")
     tap(pg, 390 - 30, 26, 2)       # the close button

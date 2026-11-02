@@ -1,7 +1,7 @@
 ## Workstream M (design/godot-menu.md): the full-screen menu. Made by scripts/player.gd as its child
 ## "Menu" (every wing, both years), after Avatar.
 ##
-## Tabs, left to right: AVATAR (the creator, scripts/avatar_creator.gd, inside the tab, and the NAME
+## Tabs, left to right: INVENTORY (below), AVATAR (the creator, scripts/avatar_creator.gd, inside the tab, and the NAME
 ## field: mall.player_name), CONTROLS (every action with its keyboard key, gamepad button and touch
 ## control, read from the InputMap; click a key or button to remap it: scripts/menu/controls.gd),
 ## INVENTORY (the TICKETS count and the carried items with HELD / PUT AWAY and Drop) and YEAR (1995 /
@@ -24,7 +24,8 @@ const Controls = preload("res://scripts/menu/controls.gd")
 const Opening = preload("res://scripts/menu/opening.gd")
 const CREATOR := "res://scripts/avatar_creator.tscn"
 const OPENING_KEY := "mall-opening-1"     # localStorage: "skipped" once the opening was skipped
-const TABS := ["avatar", "controls", "inventory", "year"]
+## Steven, Nov 2: INVENTORY first (far left, and what the menu opens on), then the avatar builder.
+const TABS := ["inventory", "avatar", "controls", "year"]
 const TAB_NAMES := {"avatar": "AVATAR", "controls": "CONTROLS", "inventory": "INVENTORY", "year": "YEAR"}
 const YEARS := [1995, 2026]
 const BG := Color(0.07, 0.055, 0.045, 0.97)
@@ -35,7 +36,7 @@ const AMBER := Color(0.85, 0.62, 0.22)
 var player: Node3D
 var controls: Controls
 var is_open := false
-var tab := "avatar"
+var tab := "inventory"
 var opening: CanvasLayer = null
 
 var _layer: CanvasLayer
@@ -155,7 +156,7 @@ func _build_menu_button() -> void:
 	_menu_btn.add_theme_font_size_override("font_size", 14)
 	_menu_btn.position = Vector2(10, 8)
 	_menu_btn.size = Vector2(110, 32)
-	_menu_btn.pressed.connect(func(): open_tab(tab))
+	_menu_btn.pressed.connect(func(): open_tab("inventory"))
 	player._cl.add_child(_menu_btn)
 
 func _process(dt: float) -> void:
@@ -682,12 +683,12 @@ func _catch(e: InputEvent) -> void:
 	if _is(e, "menu"):
 		if _can_open():
 			get_viewport().set_input_as_handled()
-			open_tab(tab)
+			open_tab("inventory")
 		return
 	if e is InputEventScreenTouch and e.pressed:
 		if _menu_btn.is_visible_in_tree() and _menu_btn.get_global_rect().has_point(e.position):
 			get_viewport().set_input_as_handled()
-			open_tab(tab)
+			open_tab("inventory")
 		elif player.year_btn and player.year_btn.is_visible_in_tree() and player.year_btn.get_global_rect().has_point(e.position) and _can_open():
 			get_viewport().set_input_as_handled()
 			open_tab("year")
