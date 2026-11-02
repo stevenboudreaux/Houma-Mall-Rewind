@@ -42,6 +42,13 @@ if [ -s "$SRC/w3.desktop.pck" ]; then
   [ -s wing3_day.lmbake ] || { echo "missing wing3_day.lmbake (bake the outside)"; exit 1; }
   cp "$SRC"/w3.*.pck "$W/play/"
   cp wing3_day.* "$W/lightmaps/"
+  # the 2026 outside (Workstream F, Nov 1 2026) when it was exported and baked
+  if [ -s "$SRC/w3y26.desktop.pck" ]; then
+    [ -s "$SRC/w3y26.mobile.pck" ] || { echo "2026 outside export incomplete: no w3y26.mobile.pck"; exit 1; }
+    [ -s wing3_2026_day.lmbake ] || { echo "missing wing3_2026_day.lmbake (bake the 2026 outside)"; exit 1; }
+    cp "$SRC"/w3y26.*.pck "$W/play/"
+    cp wing3_2026_day.* "$W/lightmaps/"
+  fi
 fi
 cp wing1_night.* wing1_day.* wing2_night.* wing2_day.* "$W/lightmaps/"
 cp wing1_2026_day.* wing2_2026_day.* "$W/lightmaps/" 2>/dev/null || true
