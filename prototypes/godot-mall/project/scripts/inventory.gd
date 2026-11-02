@@ -8,7 +8,7 @@
 ## switches and reloads. The JSON shape (version 1):
 ##   {"v": 1, "year": 1995,
 ##    "inventory": [{"id": "pogs", "count": 1}, ...],   # carried, not in the hand; pickup order
-##    "tickets": 0,                                      # the ticket balance (nothing earns any yet)
+##    "tickets": 0,                                      # the ticket balance (COIN COMET pays 50 a coin)
 ##    "hand": "folse_stick",                             # the item in the hand, "" for none
 ##    "moved": {"folse_stick": {},                        # {} = not in the world (carried)
 ##              "spring": {"wing": 2, "year": 1995, "pos": [x, y, z], "yaw": 30.0}}}  # dropped here

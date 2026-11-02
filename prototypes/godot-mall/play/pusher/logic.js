@@ -15,12 +15,12 @@
   'use strict';
 
   var CONFIG = {
-    currency: 'quarters',     // 'quarters' (the count in the player's mall state) or 'tickets'
-    startQuarters: 20,        // $5.00 to a new player
-    ticketsPerCoin: 1,        // when currency is 'tickets': one ticket plays, one ticket per coin won
-    lipMm: 0,                 // the lip's height over the shelf (owner setting). 0 for now: with any lip this sim's
-                              // heaps store every coin and pay nothing (soak table in the design note); the real
-                              // machine's lip is the house's control and the setting stays for when the flow is right
+    startQuarters: 20,        // $5.00 to a new player; also what "Get quarters" refills to (a placeholder for a change machine)
+    ticketsPerCoin: 50,       // Steven, Nov 2: quarters to play, tickets to win. A coin into the cup pays this many
+                              // tickets to mall.tickets (the count B+C's prize counter uses); it is not a quarter back
+    lipMm: 1,                 // the lip's height over the shelf (owner setting; the house's payout control).
+                              // Tuned with sim.js GEOM.coinFriction for ~8 % of coins dropped into the cup (soak table
+                              // in design/storefronts/pocket-change.md)
     lipRange: [0, 6],
     tiltWindowMs: 6000,       // nudges inside this window add up (6 s: at the low friction the sim needs, bumps pay) ...
     tiltTrip: 2.6,            // ... and trip the tilt when their power passes this
@@ -57,35 +57,42 @@
   }
 
   // ------------------------------------------------------------------ the wallet
-  /** The player's stake in the mall state (design/godot-interaction.md "mall"): quarters, or
-   *  tickets when cfg.currency is 'tickets'. A state with no quarters gets the starting stake. */
+  /** Quarters to play, tickets to win (Steven, Nov 2). The player's quarters in the mall state
+   *  (design/godot-interaction.md "mall"); a state with no quarters gets the starting stake. */
   function balance(state, cfg) {
     cfg = cfg || CONFIG;
-    if (cfg.currency === 'tickets') return Math.max(0, (state && +state.tickets) || 0);
     if (!state || typeof state.quarters !== 'number' || !(state.quarters >= 0)) return cfg.startQuarters;
     return Math.floor(state.quarters);
   }
 
-  /** The state after the player pays one coin in (null when they cannot). */
+  /** The player's tickets (mall.tickets, B+C's count). */
+  function tickets(state) {
+    return Math.max(0, Math.floor((state && +state.tickets) || 0));
+  }
+
+  /** The state after the player pays one quarter in (null when they have none). */
   function payIn(state, cfg) {
     cfg = cfg || CONFIG;
     var b = balance(state, cfg);
-    var cost = cfg.currency === 'tickets' ? cfg.ticketsPerCoin : 1;
-    if (b < cost) return null;
-    return setBalance(state, b - cost, cfg);
+    if (b < 1) return null;
+    var s = Object.assign({}, state || {});
+    s.quarters = b - 1;
+    return s;
   }
 
-  /** The state after n coins are paid out to the player. */
+  /** The state after n coins fall into the cup: cfg.ticketsPerCoin tickets each; quarters untouched. */
   function payOut(state, n, cfg) {
     cfg = cfg || CONFIG;
-    var gain = cfg.currency === 'tickets' ? n * cfg.ticketsPerCoin : n;
-    return setBalance(state, balance(state, cfg) + gain, cfg);
+    var s = Object.assign({}, state || {});
+    s.tickets = tickets(state) + n * cfg.ticketsPerCoin;
+    return s;
   }
 
-  function setBalance(state, v, cfg) {
+  /** "Get quarters": the stake back to cfg.startQuarters (free for now; a change machine later). */
+  function refill(state, cfg) {
     cfg = cfg || CONFIG;
     var s = Object.assign({}, state || {});
-    if (cfg.currency === 'tickets') s.tickets = v; else s.quarters = v;
+    s.quarters = cfg.startQuarters;
     return s;
   }
 
@@ -163,7 +170,7 @@
     return { t: +s.t || 0, coins: s.coins, ledger: l, lipMm: lip };
   }
 
-  var api = { CONFIG: CONFIG, accept: accept, slide: slide, balance: balance, payIn: payIn, payOut: payOut,
+  var api = { CONFIG: CONFIG, accept: accept, slide: slide, balance: balance, payIn: payIn, payOut: payOut, tickets: tickets, refill: refill,
               nudge: nudge, tiltPower: tiltPower, tiltState: tiltState, ledger: ledger, book: book, rtp: rtp,
               machineKey: machineKey, packMachine: packMachine, unpackMachine: unpackMachine };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

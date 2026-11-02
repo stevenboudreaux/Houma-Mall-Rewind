@@ -38,6 +38,16 @@
   #qtr { right: 10px; text-align: right; }
   #qtr span { color: var(--accent); font-size: 20px; }
   #qtr small { display: block; font-size: 11px; color: var(--dim); font-weight: 600; letter-spacing: .08em; }
+  #tkt { right: 10px; top: 72px; text-align: right; }
+  #tkt span { color: #ffd23c; font-size: 20px; }
+  #tkt small { display: block; font-size: 11px; color: var(--dim); font-weight: 600; letter-spacing: .08em; }
+  .plus { position: absolute; left: 50%; bottom: calc(52px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 6; pointer-events: none;
+          font-weight: 900; font-size: 26px; color: #ffd23c; text-shadow: 0 0 12px rgba(255, 210, 60, .7), 2px 2px 0 #000; animation: plusup 1s ease-out forwards; }
+  @keyframes plusup { from { opacity: 1; transform: translate(-50%, 0); } to { opacity: 0; transform: translate(-50%, -60px); } }
+  @media (prefers-reduced-motion: reduce) { .plus { animation: plusfade 1s steps(1) forwards; } @keyframes plusfade { to { opacity: 0; } } }
+  #getq { position: absolute; right: 14px; bottom: calc(132px + env(safe-area-inset-bottom)); z-index: 7; display: none; padding: 10px 16px; border-radius: 999px;
+          border: 2px solid #ffd23c; background: #2a1d05; color: #ffd23c; font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; }
+  #getq.on { display: block; }
   #meter { left: 10px; display: flex; align-items: center; gap: 8px; }
   #meter i { display: block; width: 70px; height: 8px; border-radius: 4px; background: #2a2236; overflow: hidden; }
   #meter i b { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ffd23c, #ff3a1e); transition: width .15s; }
@@ -101,6 +111,8 @@
   <div id="slot"><i id="knob"></i></div>
   <div class="chip" id="meter">TILT <i><b id="meterbar"></b></i></div>
   <div class="chip" id="qtr"><span id="qn">0</span><small>QUARTERS</small></div>
+  <div class="chip" id="tkt"><span id="tn">0</span><small>TICKETS</small></div>
+  <button id="getq">Get quarters</button>
   <div id="cup">CUP &middot; 0</div>
   <button id="bump">NUDGE</button>
   <button id="drop">DROP</button>
@@ -492,7 +504,7 @@ function applyLip(mm) { lipMm = mm; sim.setLip(mm); lipMesh.scale.y = Math.max(0
 function drop() {
   if (!ready || paused) return;
   const st = PL.payIn(mallState());
-  if (!st) { showFlash('NO QUARTERS', 'see the token changer'); setTimeout(hideFlash, 1400); SFX.reject(); return; }
+  if (!st) { showFlash('NO QUARTERS', 'tap Get quarters'); ui(); setTimeout(hideFlash, 1400); SFX.reject(); return; }
   setMall(st); ui();
   ledger.in++;
   slides.push({ x: sliderX, t0: now() });
@@ -528,7 +540,7 @@ function onEvent(e) {
   ledger = PL.book(ledger, e.type);
   if (e.type === 'cup') {
     cupCount++; cupTotal++;
-    setTimeout(() => { setMall(PL.payOut(mallState(), 1)); ui(); SFX.cup(); const c = document.getElementById('cup'); c.classList.add('pop'); setTimeout(() => c.classList.remove('pop'), 200); }, 350);
+    setTimeout(() => { setMall(PL.payOut(mallState(), 1)); ui(); SFX.cup(); plus(); const c = document.getElementById('cup'); c.classList.add('pop'); setTimeout(() => c.classList.remove('pop'), 200); }, 350);
   } else if (e.type === 'side') SFX.house();
   else if (e.type === 'house-tilt') { setTimeout(() => SFX.house(), 200); }
   dirty = true;
@@ -648,14 +660,22 @@ const flashEl = document.getElementById('flash');
 function showFlash(a, b, tilt) { flashEl.innerHTML = a + (b ? '<small style="display:block;font-size:.4em;letter-spacing:.1em">' + b + '</small>' : ''); flashEl.style.opacity = 1; flashEl.classList.toggle('tilt', !!tilt); }
 function hideFlash() { flashEl.style.opacity = 0; flashEl.classList.remove('tilt'); }
 function ui() {
-  document.getElementById('qn').textContent = quarters();
-  document.getElementById('cup').textContent = 'CUP · ' + cupTotal + (cupTotal ? ' won' : '');
+  const q = quarters();
+  document.getElementById('qn').textContent = q;
+  document.getElementById('tn').textContent = PL.tickets(mallState());
+  document.getElementById('getq').classList.toggle('on', q < 1);
+  document.getElementById('cup').textContent = 'CUP · ' + cupTotal + (cupTotal ? ' coins · ' + cupTotal * CFG.ticketsPerCoin + ' tickets' : '');
   document.getElementById('hint').textContent = mobile ? 'Drag to aim · tap to drop · shake or NUDGE to bump' : 'Drag or ← → to aim · Space/E/click to drop · N or Shift to nudge' + (padSeen ? ' · pad: stick, A, shoulders' : '');
 }
+// a coin into the cup: "+50" (tickets) rises from the cup
+function plus() { const d = document.createElement('div'); d.className = 'plus'; d.textContent = '+' + CFG.ticketsPerCoin; document.getElementById('stage').appendChild(d); setTimeout(() => d.remove(), 1100); }
+// "Get quarters": back to $5.00, free (a placeholder for a change machine; design note)
+document.getElementById('getq').addEventListener('pointerdown', (e) => e.stopPropagation());
+document.getElementById('getq').addEventListener('click', (e) => { e.stopPropagation(); setMall(PL.refill(mallState())); ui(); SFX.clink(0.05, true); });
 function title() {
   const m = document.getElementById('msg');
-  m.innerHTML = '<div class="card"><h2>' + esc(NAME) + '</h2><p>Slide the coin slot left and right and drop your quarters onto the top deck. The pusher shoves the heap toward the edge; what falls over the front is yours. ' +
-    'The side holes are the house\'s. Bump the machine if you must, but too much trips the <b>TILT</b>.</p><p>You have <b>' + quarters() + '</b> quarters.</p><button class="big" id="go">PLAY</button></div>';
+  m.innerHTML = '<div class="card"><h2>' + esc(NAME) + '</h2><p>Slide the coin slot left and right and drop your quarters onto the top deck. The pusher shoves the heap toward the edge; every coin that falls over the front pays <b>' + CFG.ticketsPerCoin + ' tickets</b>. ' +
+    'The side holes are the house\'s. Bump the machine if you must, but too much trips the <b>TILT</b>.</p><p>You have <b>' + quarters() + '</b> quarters and <b>' + PL.tickets(mallState()) + '</b> tickets.</p><button class="big" id="go">PLAY</button></div>';
   m.querySelector('#go').addEventListener('pointerdown', (e) => { e.stopPropagation(); });
   m.querySelector('#go').addEventListener('click', (e) => { e.stopPropagation(); m.innerHTML = ''; unlock(); motionPermission(); paused = false; });
   paused = true;

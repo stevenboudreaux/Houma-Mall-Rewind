@@ -47,7 +47,7 @@ def page(b, q, w=390, h=844, storage=None):
 def st(pg):
     return pg.evaluate("""() => { const P = PUSHER_PAGE, s = P.sim; let d = 0, sh = 0;
       for (const c of s.coins.values()) { if (c.body.translation().y > 3) d++; else sh++; }
-      return { coins: s.count(), deck: d, shelf: sh, awake: s.awake(), q: P.quarters(), cup: P.cupTotal, ledger: P.ledger, gate: P.gate, t: s.t,
+      return { coins: s.count(), deck: d, shelf: sh, awake: s.awake(), q: P.quarters(), tk: window.PUSHER.tickets(P.mallState()), plus: document.querySelectorAll('.plus').length, cup: P.cupTotal, ledger: P.ledger, gate: P.gate, t: s.t,
                frames: P.stats.frames, ms: P.stats.ms / Math.max(1, P.stats.frames), simMs: P.stats.simMs / Math.max(1, P.stats.frames), steps: P.stats.steps }; }""")
 
 
@@ -83,7 +83,16 @@ with sync_playwright() as p:
     check(r["got"] >= 3, "coins fell over the front edge into the chute after %d bumps (%d)" % (r["n"], r["got"]))
     time.sleep(2.5)
     s2 = st(pg)
-    check(s2["ledger"]["cup"] >= 3 and s2["q"] == 20 + s2["ledger"]["cup"], "the ledger books them to the cup and the quarters go up (%d, %d quarters)" % (s2["ledger"]["cup"], s2["q"]))
+    tpc = pg.evaluate("window.PUSHER.CONFIG.ticketsPerCoin")
+    check(s2["ledger"]["cup"] >= 3 and s2["q"] == 20 and s2["tk"] == tpc * s2["ledger"]["cup"],
+          "the ledger books them to the cup; each pays %d tickets, no quarters back (%d coins, %d tickets, %d quarters)" % (tpc, s2["ledger"]["cup"], s2["tk"], s2["q"]))
+    check(pg.evaluate("document.getElementById('tn').textContent") == str(s2["tk"]), "the HUD shows the tickets")
+    # out of quarters: the Get quarters button shows and refills to $5.00
+    pg.evaluate("(() => { const P = PUSHER_PAGE; const m = Object.assign({}, P.mallState() || {}, { quarters: 0 }); localStorage.setItem('mall-state-1995', JSON.stringify(m)); P.drop(); })()")
+    check(pg.evaluate("getComputedStyle(document.getElementById('getq')).display") != "none", "at 0 quarters the Get quarters button shows")
+    pg.click("#getq"); time.sleep(0.3)
+    check(st(pg)["q"] == 20 and pg.evaluate("getComputedStyle(document.getElementById('getq')).display") == "none", "Get quarters refills to 20 ($5.00) and hides")
+    pg.screenshot(path=OUT + "-2b-getq.png")
     pg.screenshot(path=OUT + "-2-cascade.png")
     ctx.close()
 
