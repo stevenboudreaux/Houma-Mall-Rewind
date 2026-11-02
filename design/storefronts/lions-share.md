@@ -33,3 +33,13 @@ Steven (Nov 1): "the crest is fine; add the gold lion statues out front, as in t
 seated anatomy on the side and back. It is not in the scene yet: it replaces `wave9.gd lion()` when the
 integration session swaps it in, at D's two spots (`P(lu, 0, -0.55)`, the right one mirrored). Size guess
 to settle: the model is ~0.95 m on a 0.32 m plinth, D's are 1.45 m on 0.55 m.
+
+## Nov 2, 2026 (workstream L): the Blender lion, third pass, placed
+Steven: pass two "still reads soft and blobby"; D's built-in lions are being removed (session D48), so the Blender
+lion is the only one that ships. Rebuilt from scratch (`design/godot-blender-pipeline.md` "The lion, third pass"):
+a carved relief face, ~140 draped, corrugated mane locks in tiers, separate legs and toed paws, gold driven by
+the baked AO and curvature. **Placed** at D's two spots (`P(lu, 0, -0.55)`, the left lion mirrored, tails on the
+outer sides) behind the one-line switch `BL_LION` in `wave9.gd` (on in branch `ws/l-lion`; the integration
+session decides). No D48 placement file existed on `origin/integration` (it was at `main`), so the spots are D's
+from `lions_share()`. **Size still to settle:** 0.95 m on a 0.32 m plinth (pass two's); D's were 1.45 m on
+0.55 m; `BL_LION_SCALE` changes it. Evidence: `production/qa/evidence/wsL-lion-ingame.jpg` (unbaked).

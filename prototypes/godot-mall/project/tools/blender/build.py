@@ -212,7 +212,8 @@ def main():
     written = bake.bake_object(main_ob, aid, out_dir, size=size, ao=meta.get("ao", 0.0),
                                normal=meta.get("normal", True), uv=meta.get("uv", "smart"),
                                samples=8 if fast else 16, source=high, cage=meta.get("cage", 0.02),
-                               uv_shrink=meta.get("uv_shrink"))
+                               uv_shrink=meta.get("uv_shrink"), curvature=meta.get("curvature", False),
+                               finish=getattr(mod, "finish_maps", None), scratch=scratch)
     if high is not None:
         bpy.data.objects.remove(high)
         bpy.context.view_layer.update()

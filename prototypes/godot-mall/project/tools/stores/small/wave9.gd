@@ -17,6 +17,7 @@ const W8 = preload("res://tools/stores/small/wave8.gd")
 const UP = Vector3.UP
 const SIDE = 0.12
 const LET = "res://tools/stores/small/"
+const BL_LION := true   # workstream L: the Blender lion (models/bl_ls_lion) at the two spots; false = the built-in lion()
 
 static func P(a, t, n, u, y, d):
 	return a + t * u - n * d + Vector3(0, y, 0)
@@ -345,7 +346,10 @@ static func lions_share(b, a, t, n, W, D, rng):
 	# right one mirrored)"). Sculpted from rounded solids; the size is a guess.
 	for sg in [-1.0, 1.0]:
 		var lu = du + sg * (dw * 0.5 + 1.25)
-		lion(b, "w9l_lions", P(a, t, n, lu, 0, -0.55), t * sg, n, 1.45)
+		if BL_LION:
+			bl_lion(b, P(a, t, n, lu, 0, -0.55), t * sg, n)
+		else:
+			lion(b, "w9l_lions", P(a, t, n, lu, 0, -0.55), t * sg, n, 1.45)
 	# the passage: brick walls, a low dark ceiling, red carpet
 	var cg = "w9l_shell"
 	for s in [-1.0, 1.0]:
@@ -387,6 +391,30 @@ static func lions_share(b, a, t, n, W, D, rng):
 	for c in [[3.0, 6.9], [9.0, 6.9]]:
 		var l = b.add_omni(P(a, t, n, c[0] * ks, 2.3, c[1]), 0.45, 6.0, Color(1.0, 0.78, 0.5))
 		b.tag(l, "", 0.35, 0.5)
+
+## Workstream L (Nov 2, 2026): the Blender lion (tools/blender/assets_src/bl_ls_lion.py, design/
+## godot-blender-pipeline.md "third pass"), instanced at c (floor), its tail on r's side, looking along f.
+## The model is real size (0.95 m lion on a 0.32 m plinth, origin at the plinth's bottom centre, front
+## +Z, tail +X); where r is not +X of the frame (the other side of the door) it is mirrored.
+const BL_LION_SCENE = "res://models/bl_ls_lion/bl_ls_lion.glb"
+const BL_LION_SCALE = 1.0
+
+static func bl_lion(b, c, r, f):
+	var r2 = r.normalized()
+	K.ob(b, c - r2 * 0.37 - f * 0.4, c + r2 * 0.37 + f * 0.4, 0.06)
+	if b.mall == null or not ResourceLoader.exists(BL_LION_SCENE):
+		return
+	var holder = b.mall.get_node_or_null("BlenderProps")
+	if holder == null:
+		holder = Node3D.new()
+		holder.name = "BlenderProps"
+		b.mall.add_child(holder)
+		holder.owner = b.mall
+	var inst = load(BL_LION_SCENE).instantiate()
+	inst.name = "bl_ls_lion_%d" % holder.get_child_count()
+	inst.transform = Transform3D(Basis(r2, Vector3.UP, f.normalized()).scaled_local(Vector3.ONE * BL_LION_SCALE), c)
+	holder.add_child(inst)
+	inst.owner = b.mall
 
 ## An ellipsoid at c with semi-axes along the columns of `bs` (each scaled to its radius),
 ## smooth normals. For the Lion's Share lions.
