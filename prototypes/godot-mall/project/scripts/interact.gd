@@ -64,6 +64,10 @@ func _ready() -> void:
 	# a saved hand item that isn't an item of this year (data changed) goes back to the inventory
 	if mall.hand != "" and not ItemDB.in_year(db.get_item(mall.hand), mall.year):
 		mall.put_away()
+	# Q: the quest flags beside the carried state, mall.flags (scripts/flags.gd, design/godot-quests.md)
+	mall.flags = load("res://scripts/flags.gd").new()
+	mall.flags.load_saved()
+	mall.flags.install_debug(player != null and player.has_method("is_owner") and player.is_owner())
 	if player and "mall" in player:
 		player.mall = mall
 	mall.changed.connect(_on_changed)
@@ -288,6 +292,9 @@ func _process(dt: float) -> void:
 		txt = r[1]
 		if target == null and _can_swing():
 			txt = "Swing " + _short_name(hand_id)
+		# Q: a book in the hand reads (scripts/dialogue/story.gd, design/godot-dialogue.md "Books")
+		if target == null and txt == "" and _book_in_hand():
+			txt = "Read " + _short_name(hand_id)
 	var show := txt != ""
 	prompt.visible = show and input_kind != "touch" or (show and input_kind == "touch" and target != null)
 	if show:
@@ -296,7 +303,7 @@ func _process(dt: float) -> void:
 		prompt_text.text = txt
 	act_btn.visible = show and input_kind == "touch"
 	if act_btn.visible:
-		act_btn.text = "Use" if target != null else "Swing"
+		act_btn.text = "Use" if target != null else ("Read" if _book_in_hand() and not _can_swing() else "Swing")   # Q: Read
 	# the panel and the bag button stay out of the way of the other full-screen moments
 	bag_btn.visible = not (player.frozen and not _froze) and not player.vr_on
 	_layout_bag()
@@ -350,7 +357,7 @@ func _input(e: InputEvent) -> void:
 	if e is InputEventKey and e.pressed and not e.echo:
 		match e.physical_keycode:
 			KEY_E:
-				if target != null or _can_swing():
+				if target != null or _can_swing() or _book_in_hand():   # Q: _book_in_hand
 					get_viewport().set_input_as_handled()
 					action()
 			KEY_I:
@@ -385,6 +392,13 @@ func action() -> void:
 		t.interact(player)
 	elif _can_swing():
 		swing()
+	elif _book_in_hand():   # Q
+		player.get_node("Story").read_item(mall.hand)
+
+## Q: the held item is a book (data/story/books.json), read with the action button.
+func _book_in_hand() -> bool:
+	var st = player.get_node_or_null("Story") if player else null
+	return st != null and mall.hand != "" and st.book_for(mall.hand) != ""
 
 func _put_away() -> void:
 	var nm := str(db.get_item(mall.hand).get("name", ""))
@@ -465,6 +479,12 @@ func _row(id: String, n: int, in_hand: bool) -> void:
 	elif str(e.get("class", "")) == "hand":
 		btns.append(_pbtn(row, "Hold", func():
 			mall.hold(id); mall.save()))
+	# Q: a book reads from the bag (scripts/dialogue/story.gd, design/godot-dialogue.md "Books")
+	var st = player.get_node_or_null("Story")
+	if st and st.book_for(id) != "":
+		btns.append(_pbtn(row, "Read", func():
+			open_panel(false)
+			st.read_item(id)))
 	btns.append(_pbtn(row, "Drop", func():
 		drop(id)))
 	panel_list.add_child(row)

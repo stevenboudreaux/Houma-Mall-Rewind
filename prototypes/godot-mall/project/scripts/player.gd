@@ -190,6 +190,12 @@ func _ready() -> void:
 	avatar = load("res://scripts/avatar.gd").new()
 	avatar.name = "Avatar"; avatar.player = self
 	add_child(avatar)
+	# Q: the story machinery (scripts/dialogue/story.gd: gates, counter attendants, the conversation
+	# screen, the book reader; design/godot-dialogue.md), after Interact (it needs mall.flags) and
+	# before the shoppers (a locked gate closes the walk grid they copy)
+	var story = load("res://scripts/dialogue/story.gd").new()
+	story.name = "Story"; story.player = self
+	add_child(story)
 	_light_btn_ok = buttons[2].visible
 	owner_hud_sync()
 	_spawn_1995_life()
@@ -780,6 +786,12 @@ func _cross() -> void:
 	if door_near != null:
 		# through a door: into the lot, or back into the wing the door belongs to
 		var d = door_near
+		# Q: a door a gate keeps locked (data/story/gates.json, design/godot-quests.md)
+		var st = get_node_or_null("Story")
+		var g = st.door_gate(str(d.get("store", ""))) if st else null
+		if g:
+			g.say_locked(true)
+			return
 		if wing == 3:
 			var sp: Array = d.inside
 			_go_to_wing(int(d.wing), float(sp[0]), float(sp[1]), deg_to_rad(float(d.yaw_in)), deg_to_rad(2.0))

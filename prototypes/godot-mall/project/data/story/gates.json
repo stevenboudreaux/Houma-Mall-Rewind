@@ -1,0 +1,15 @@
+{
+ "_": "Locked places (workstream Q, design/godot-quests.md). While `flag` is false: the walk grid is closed over `rect` ([x0, z0, x1, z1] world metres, snapped out to the 2 m tiles) in `wing`, and the exterior doors listed in `doors` (exterior.json \"store\" keys) refuse to open, in any wing. Walking into the rect, or pressing E at a listed door, shows `message`. `years`: 1995, 2026 or \"both\". Messages are PLACEHOLDER: Steven writes them.",
+ "gates": [
+  {
+   "id": "dillards",
+   "flag": "dillards_unlocked",
+   "years": "both",
+   "wing": 2,
+   "rect": [-10.0, 80.0, 2.0, 82.0],
+   "doors": ["s2e", "s2s"],
+   "message": "PLACEHOLDER locked message (Dillard's mall opening)",
+   "door_message": "PLACEHOLDER locked message (Dillard's outside doors)"
+  }
+ ]
+}
