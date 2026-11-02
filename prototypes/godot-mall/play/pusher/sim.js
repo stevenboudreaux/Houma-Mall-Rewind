@@ -29,23 +29,34 @@ export const GEOM = {
   deckY: 7.5,         // the deck's top above the shelf (pusher.gd Y_PT - Y_SH)
   deckFront: 35.5,    // mean z of the deck's front face (pusher.gd Z_PUSH - Z_DROP, less half the stroke)
   deckLen: 46,        // deck block length (its back always stays under the back wall)
-  stroke: 5.0,        // cm, crank throw x 2 (measured: ~50 mm)
+  stroke: 4.5,        // cm, the crank's throw x 2; with the drive's play (snap) the deck travels 5.0 (measured: ~50 mm)
   period: 4.5,        // s per crank turn (measured: 4.46-4.62 s)
   rod: 11,            // connecting rod (guess; it only shapes the motion a little)
+  rumble: 0.01,       // cm: the deck's vertical shake from the gear motor (the video: "kind of loud", a bearing rattle)
+  rumbleHz: 23,
+  snap: 0.25,         // cm: the backlash in the crank's drive. At each reversal the deck stands for a moment and then
+                      //     snaps through the play (the clunk); the jolt is what makes the loose top coins slide,
+                      //     back into the gap at the wall and forward over the edge. Without it a heap jams.
   wallZ: 66,          // the fixed back wall's front face (deckFront + the translite's 0.30 m)
   wallGap: 0.05,      // the wall's bottom edge above the deck: well under a coin's half thickness
-  holeZ0: 3.0,        // the side holes: from 3 cm behind the drop edge ...
-  holeZ1: 17.0,       // ... to 17 cm
-  holeW: 2.8,         // gap between the shelf and the side wall (a quarter falls in flat)
+  holeZ0: 4.0,        // the side holes: from 4 cm behind the drop edge ...
+  holeZ1: 13.0,       // ... to 13 cm (tuned: at 3-17 cm and 2.8 cm wide they took ten times the cup)
+  holeW: 2.5,         // gap between the shelf and the side wall (a quarter falls in flat, just)
   chuteY: 11.0,       // the coin chute's foot above the deck
   chuteZ: 64.4,       // ... right at the back wall: a coin lands in the gap that opens behind the heap
                       //     when the deck is forward, and ratchets the heap forward (the real mechanism)
   coinR: 1.213,
   coinHH: 0.0875,     // half thickness
   coinDensity: 7.01,  // g/cm^3 -> 5.67 g
-  coinFriction: 0.32, // cupronickel on cupronickel / steel, dry (guess, tuned)
+  coinFriction: 0.06, // coin on coin: TUNED, not real (dry cupronickel is ~0.3). In this sim a pushed coin lifts
+                      //     (its own weight) long before it moves a heap of hundreds (mu x their weight), so at
+                      //     real friction the heaps pile up and never flow; at 0.05-0.08 they flow as a real
+                      //     machine's do. The soak table in the design note is at this value.
   coinRest: 0.12,
-  steelFriction: 0.28,
+  nudgeV0: 1.5,       // cm/s the heap is jolted by the lightest bump ...
+  nudgeV1: 2.5,       // ... plus this at full power (tuned: at 9-23 cm/s a bump dumped the front rows at this friction;
+                      //     at 1.5-4 the button's bump pays ~0.75 coin with no lip, 0 with one)
+  steelFriction: 0.06, // coin on the deck and shelf: tuned with it
 };
 
 /** Deck front z at time t (crank-slider, throw stroke/2, rod G.rod). */
@@ -56,7 +67,11 @@ export function deckZ(t, G = GEOM) {
   // slider from the crank centre, minus its mean, so deckFront is the middle of the stroke
   const x = r * Math.cos(th) + Math.sqrt(l * l - r * r * s * s);
   const mean = l - (r * r) / (4 * l);   // close enough to the mean of the term above
-  return G.deckFront + (x - mean);
+  // the drive's play: the deck sits a little behind the crank in its direction of travel, so at
+  // each reversal it stands still while the crank takes up the slack, then snaps across it
+  const vsign = -Math.sin(th) >= 0 ? 1 : -1;      // sign of dx/dt
+  const snap = (G.snap || 0) * vsign;
+  return G.deckFront + (x - mean) - snap;
 }
 
 export function createSim(R, opts = {}) {
@@ -69,6 +84,7 @@ export function createSim(R, opts = {}) {
   const ip = world.integrationParameters;
   if (ip) {
     if ('numSolverIterations' in ip) ip.numSolverIterations = opts.iters || 4;
+    if ('numInternalPgsIterations' in ip) ip.numInternalPgsIterations = opts.pgs || 1;
     if ('lengthUnit' in ip) ip.lengthUnit = 1.0;
   }
 
@@ -87,9 +103,10 @@ export function createSim(R, opts = {}) {
     // side walls, from below the shelf to the glass
     box(s * (W + 0.5), 20, L / 2 - 4, 0.5, 30, L / 2 + 4);
   }
-  // the back wall: fixed, its bottom edge just over the deck
-  const wallB = G.deckY + G.wallGap;
-  box(0, wallB + 20, G.wallZ + 0.5, W, 20, 0.5);
+  // the back wall: fixed, reaching down into the deck (the two ignore each other), so no coin
+  // squeezed against it can slip under its edge; what the player sees is its bottom edge wallGap
+  // over the deck
+  box(0, G.deckY + 19, G.wallZ + 0.5, W, 20, 0.5);
   // a lid over the deck behind the chute so nothing escapes over the wall
   // the lip: a ridge along the drop edge, lipH tall (owner setting)
   let lip = null;
@@ -113,7 +130,7 @@ export function createSim(R, opts = {}) {
   const coins = new Map();       // handle -> {body, id, born, ccdUntil}
   let nextId = 1;
   // a rounded cylinder: the same size, and a quarter cheaper in the narrow phase than a sharp one
-  const cdesc = () => R.ColliderDesc.roundCylinder(G.coinHH - 0.02, G.coinR - 0.02, 0.02)
+  const cdesc = () => (G.sharp ? R.ColliderDesc.cylinder(G.coinHH, G.coinR) : R.ColliderDesc.roundCylinder(G.coinHH - 0.02, G.coinR - 0.02, 0.02))
     .setDensity(G.coinDensity).setFriction(G.coinFriction).setRestitution(G.coinRest);
   function addCoin(p, q, v, sleep, ccd) {
     const bd = R.RigidBodyDesc.dynamic().setTranslation(p.x, p.y, p.z)
@@ -153,7 +170,8 @@ export function createSim(R, opts = {}) {
   }
 
   function moveDeck() {
-    deck.setNextKinematicTranslation({ x: 0, y: 0, z: deckZ(t, G) + G.deckLen / 2 });
+    const y = G.rumble * Math.sin(2 * Math.PI * G.rumbleHz * t);
+    deck.setNextKinematicTranslation({ x: 0, y, z: deckZ(t, G) + G.deckLen / 2 });
   }
 
   // classify and remove coins that have left the playfield
@@ -192,7 +210,7 @@ export function createSim(R, opts = {}) {
     /** A fresh machine: n coins laid in packed layers on both tiers (the shelf's heap first,
      *  full to the lip; then the deck's; then a second layer on the shelf's front half and the
      *  deck's back half, as in the video), then settled. */
-    fresh(seed = 1, n = 600, settle = 2.5) {      // n: logic.js CONFIG.quality; ~785 fills every spot
+    fresh(seed = 1, n = 600, settle = 4) {      // n: logic.js CONFIG.quality; 525 fills both single layers, ~785 every spot
       for (const c of [...coins.values()]) removeCoin(c);
       rngState = (seed >>> 0) || 1;
       t = 0; moveDeck();
@@ -217,14 +235,24 @@ export function createSim(R, opts = {}) {
       // from the wall forward, then the second layers: a low coin count shortens the deck's heap
       spots.push(...s1, ...d1, ...s2, ...d2);
       const take = Math.min(n, spots.length);
+      // the lattice is broken up on purpose: a perfect hex packing between two walls jams like a
+      // crystal (pushes arch across it and the pushing coin climbs instead); a jumble of tilted,
+      // overlapping coins, as a real heap is, flows
       for (let i = 0; i < take; i++) {
         const [x, y, z] = spots[i];
-        const j = 0.06;
-        addCoin({ x: x + (rnd() - 0.5) * j, y: y + rnd() * 0.3, z: z + (rnd() - 0.5) * j },
-          flatQ(rnd() * 6.283, rnd() * 0.08, rnd() * 6.283), null, false, false);
+        const j = 0.5;
+        addCoin({ x: x + (rnd() - 0.5) * j, y: y + rnd() * 0.6, z: z + (rnd() - 0.5) * j },
+          flatQ(rnd() * 6.283, rnd() * 0.45, rnd() * 6.283), null, false, false);
       }
       api.capacity = spots.length;
       api.run(settle, true);
+      // a fresh machine must not pay by itself: whatever settled hanging over the drop edge or
+      // into a side hole goes back to the house before the player sees it
+      for (const c of [...coins.values()]) {
+        const p = c.body.translation();
+        if (p.y < 3 && (p.z < 1.3 || (Math.abs(p.x) > W - hw - 0.8 && p.z > G.holeZ0 - 1.5 && p.z < G.holeZ1 + 1.5))) removeCoin(c);
+      }
+      api.run(1.0, true);
       events.length = 0;
       return api;
     },
@@ -258,14 +286,14 @@ export function createSim(R, opts = {}) {
     drop(x) {
       x = Math.max(-W + 1.5, Math.min(W - 1.5, x));
       const q = flatQ(rnd() * 6.283, 1.2 + rnd() * 0.3, Math.PI / 2);   // on edge-ish, rolling out of the chute
-      const c = addCoin({ x, y: G.deckY + G.chuteY, z: G.chuteZ }, q, { x: (rnd() - 0.5) * 6, y: -40, z: -3 - rnd() * 4 }, false, true);
+      const c = addCoin({ x, y: G.deckY + G.chuteY, z: G.chuteZ }, q, { x: (rnd() - 0.5) * 6, y: -40, z: -(rnd() * 3) }, false, true);
       return c.id;
     },
 
     /** A bump of the cabinet: every coin on the playfield gets a jolt (the cabinet moves, the
      *  coins slide on); dir is the push direction in the xz plane, power 0..1. */
     nudge(dx, dz, power) {
-      const v = 9 + 14 * Math.max(0, Math.min(1, power));    // cm/s, a hand's shove (guess)
+      const v = G.nudgeV0 + G.nudgeV1 * Math.max(0, Math.min(1, power));    // cm/s, a hand's shove (tuned, see GEOM)
       for (const c of coins.values()) {
         const b = c.body;
         const lv = b.linvel();

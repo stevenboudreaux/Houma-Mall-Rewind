@@ -18,9 +18,11 @@
     currency: 'quarters',     // 'quarters' (the count in the player's mall state) or 'tickets'
     startQuarters: 20,        // $5.00 to a new player
     ticketsPerCoin: 1,        // when currency is 'tickets': one ticket plays, one ticket per coin won
-    lipMm: 2.5,               // the lip's height over the shelf (owner setting; soak table in the design note)
+    lipMm: 0,                 // the lip's height over the shelf (owner setting). 0 for now: with any lip this sim's
+                              // heaps store every coin and pay nothing (soak table in the design note); the real
+                              // machine's lip is the house's control and the setting stays for when the flow is right
     lipRange: [0, 6],
-    tiltWindowMs: 2500,       // nudges inside this window add up ...
+    tiltWindowMs: 6000,       // nudges inside this window add up (6 s: at the low friction the sim needs, bumps pay) ...
     tiltTrip: 2.6,            // ... and trip the tilt when their power passes this
     nudgeMinMs: 220,          // a nudge sooner than this after the last is ignored (the cabinet is still rocking)
     tiltAlarmMs: 3000,        // the alarm (measured: "set up for three seconds")
@@ -30,7 +32,7 @@
     slotMm: 24.5,             // a bigger coin won't go in; a smaller one goes in and is lost
     slotHalfW: 23.0,          // cm the coin mechanism slides to either side of the centre
     slotSpeed: 30,            // cm/s with the keys or a stick
-    quality: { low: 450, medium: 600, high: 750 },   // coins in a fresh machine (sim.js fresh(): the shelf packed first)
+    quality: { low: 540, medium: 620, high: 720 },   // coins in a fresh machine (sim.js fresh(): both single layers full at 525, then the ridges)
     positions: 6,             // three per side
     saveVersion: 1,
   };

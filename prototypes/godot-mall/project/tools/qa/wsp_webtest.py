@@ -13,6 +13,7 @@ import json, os, sys, time
 from playwright.sync_api import sync_playwright
 
 path, out = sys.argv[1], sys.argv[2]
+ONLY = sys.argv[3] if len(sys.argv) > 3 else ""      # "phone" or "desktop" runs one half (each takes minutes)
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
 fails = []
 # the six positions' fronts (tools/qa/pusher_play_test.gd): x of the front face, z of the centre
@@ -49,14 +50,11 @@ def state(pg):
     return json.loads(s) if s else {}
 
 
-with sync_playwright() as p:
-    b = p.chromium.launch(args=ARGS, **({"executable_path": os.environ["CHROMIUM"]} if os.environ.get("CHROMIUM") else {}))
+def desktop(b):
     ctx = b.new_context(viewport={"width": 1280, "height": 720})
     pg = ctx.new_page(); logs = []
     pg.on("console", lambda m: logs.append(m.text))
     pg.set_default_timeout(180000)
-
-    # ---- position 1, keyboard
     pg.goto(url(f"wing=2&cam={POS1[0] + 0.8:.2f},{POS1[1]:.2f},90,-20"))
     check(ready(pg), "wing 2 loaded at position 1")
     time.sleep(2)
@@ -77,10 +75,13 @@ with sync_playwright() as p:
         time.sleep(2)
     check(frame_src(pg) == "", "Back closed the frame: the mall is back")
     pg.screenshot(path=f"{out}-pos1-back.png")
+    ctx.close()
+    return logs
 
-    # ---- position 4, the other side, touch
+
+def phone(b):
     ctx2 = b.new_context(viewport={"width": 844, "height": 390}, has_touch=True, is_mobile=True)
-    pg2 = ctx2.new_page(); pg2.set_default_timeout(180000)
+    pg2 = ctx2.new_page(); pg2.set_default_timeout(180000); logs = []
     pg2.on("console", lambda m: logs.append(m.text))
     pg2.goto(url(f"wing=2&cam={POS4[0] - 0.8:.2f},{POS4[1]:.2f},270,-20"))
     check(ready(pg2), "wing 2 loaded at position 4 (phone)")
@@ -89,7 +90,7 @@ with sync_playwright() as p:
         cdp.send("Input.dispatchTouchEvent", {"type": "touchStart", "touchPoints": [{"x": x, "y": y, "id": 1}]}); time.sleep(0.08)
         cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": []}); time.sleep(0.35)
     tap(300, 200); time.sleep(1.5)
-    pg2.screenshot(path=f"{out}-pos4-prompt.png")
+    pg2.screenshot(path=f"{out}-pos4-prompt.png", timeout=300000)
     tap(844 - 80, 390 - 192); time.sleep(3)      # the round Use button (interact.gd)
     src = frame_src(pg2)
     check("pusher.html?pos=4" in src, "the Use button opened position 4: " + src.split("/")[-1])
@@ -97,11 +98,23 @@ with sync_playwright() as p:
     if fr:
         fr.wait_for_function("window.PUSHER_PAGE", timeout=180000)
         time.sleep(3)
-        pg2.screenshot(path=f"{out}-pos4-game.png")
+        pg2.screenshot(path=f"{out}-pos4-game.png", timeout=300000)
         fr.evaluate("document.getElementById('back').click()")
         time.sleep(2)
     check(frame_src(pg2) == "", "Back closed the frame (phone)")
-    errs = [l for l in logs if "ERROR" in l.upper() and "favicon" not in l and "deprecated" not in l]
+    ctx2.close()
+    return logs
+
+
+with sync_playwright() as p:
+    b = p.chromium.launch(args=ARGS, **({"executable_path": os.environ["CHROMIUM"]} if os.environ.get("CHROMIUM") else {}))
+    logs = []
+    if ONLY != "phone":
+        logs += desktop(b)
+    if ONLY != "desktop":
+        logs += phone(b)
+    errs = [l for l in logs if "ERROR" in l.upper() and "favicon" not in l and "deprecated" not in l
+            and "could not keep the next files" not in l]      # the shell's offline cache: a scratch build has no wing-1 packs
     print("errors", len(errs), errs[:3])
     check(not errs, "0 errors")
     b.close()

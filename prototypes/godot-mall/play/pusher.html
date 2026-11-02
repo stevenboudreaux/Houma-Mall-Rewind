@@ -110,7 +110,7 @@
 </div>
 <div id="set"><button class="ghost close" id="setclose">Close</button><div class="wrap"><h2>MACHINE SETTINGS</h2>
   <div class="row"><label>Lip height<small id="lipv">2.5 mm over the shelf (the house's payout control)</small></label><input type="range" id="lip" min="0" max="6" step="0.5"></div>
-  <div class="row"><label>Coins<small>how full the machine is: fewer on a slow phone</small></label><select id="quality"><option value="low">Low (450)</option><option value="medium">Medium (600)</option><option value="high">High (750)</option></select></div>
+  <div class="row"><label>Coins<small>how full the machine is: fewer on a slow phone</small></label><select id="quality"><option value="low">Low (540)</option><option value="medium">Medium (620)</option><option value="high">High (720)</option></select></div>
   <div class="row"><label>Refill<small>empty this position and start it fresh</small></label><button id="reset">Refill</button></div>
   <div class="stat" id="stat"></div></div></div>
 <div id="load"><h1 id="ltitle">COIN COMET</h1><div class="sub" id="lsub">Pocket Change &middot; coin pusher</div>
@@ -139,7 +139,7 @@ let soundOn = load('pusher.sound', true) !== false;
 const isOwner = (function () { try { return localStorage.getItem('southland-editor') === '1' || Q.get('owner') === '1'; } catch (e) { return false; } })();
 const mobile = /iPhone|iPad|Android|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) < 900);
 let quality = load('pusher.quality', null);
-if (!CFG.quality[quality]) quality = mobile ? 'medium' : 'high';
+if (!CFG.quality[quality]) quality = mobile ? 'low' : 'high';      // measured: 4 / 6 / 7 ms a physics step in wasm (design note)
 const STATE_KEY = 'mall-state-' + YEAR;
 function mallState() { const s = load(STATE_KEY, null); return (s && typeof s === 'object') ? s : null; }
 function quarters() { return PL.balance(mallState()); }
@@ -675,7 +675,7 @@ document.getElementById('setclose').addEventListener('click', () => { setEl.styl
 const lipIn = document.getElementById('lip'), qIn = document.getElementById('quality');
 function settingsUi() {
   lipIn.value = lipMm; qIn.value = quality;
-  document.getElementById('lipv').textContent = lipMm.toFixed(1) + ' mm over the shelf (the house\'s payout control)';
+  document.getElementById('lipv').textContent = lipMm.toFixed(1) + ' mm over the shelf (the house\'s payout control; 0 = off)';
   const avg = stats.frames ? stats.ms / stats.frames : 0;
   document.getElementById('stat').textContent = 'Position ' + POS + ' · ' + sim.count() + ' coins (' + sim.awake() + ' awake) · ' + avg.toFixed(1) + ' ms a frame (worst ' + stats.worst.toFixed(0) + ')\n' +
     'Ledger: in ' + ledger.in + ' · cup ' + ledger.cup + ' · side holes ' + ledger.side + ' · tilt ' + ledger.tilt + ' · nudges ' + ledger.nudges + ' · tilts ' + ledger.tilts + ' · RTP ' + (100 * PL.rtp(ledger)).toFixed(0) + '%';
@@ -711,7 +711,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) saveM
         let dmin = null, dmax = null; for (const c of sim.coins.values()) { const q = c.body.translation(); if (q.y > 3) { if (!dmin || q.z < dmin.z) dmin = q; if (!dmax || q.z > dmax.z) dmax = q; } }
         return { deckCoinMin: [dmin.x, dmin.y, dmin.z, pr(S2W(dmin.x, dmin.y, dmin.z))], deckCoinMax: [dmax.z, pr(S2W(dmax.x, dmax.y, dmax.z))], riserTop: pr(V(0, G.Y_PT, G.Z_DROP + sim.deckZ() / 100)), wallFoot: pr(V(0, G.Y_PT, G.Z_DROP + 0.66)), stageTop: stage.getBoundingClientRect().top,
           lip: pr(V(0, G.Y_SH, G.Z_DROP)), shelfBack: pr(S2W(szc.x, szc.y, szc.z)), riser: pr(V(0, G.Y_SH, G.Z_DROP + sim.deckZ() / 100)), deckMeshZ: dm.z, riserExpected: -(G.Z_DROP + sim.deckZ() / 100), coin0: coinMesh.count, firstCoin: (() => { const m = new T3.Matrix4(); coinMesh.getMatrixAt(0, m); return new T3.Vector3().setFromMatrixPosition(m).toArray(); })(), firstSim: sim.coins.values().next().value.body.translation() };
-      }, sim, drop, nudge, trip, stats, get ledger() { return ledger; }, get gate() { return gateNow; }, get tiltAt() { return tiltAt; },
+      }, sim, drop, nudge, trip, stats, onEvent, get ledger() { return ledger; }, get gate() { return gateNow; }, get tiltAt() { return tiltAt; },
       quarters, setSlider, saveMachine, restored, get cupTotal() { return cupTotal; }, mallState, applyLip, newMachine, get paused() { return paused; }, set paused(v) { paused = v; } };
   } catch (e) {
     document.getElementById('lerr').textContent = e && e.message ? e.message : String(e);
