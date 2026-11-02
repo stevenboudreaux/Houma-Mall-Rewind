@@ -5,6 +5,9 @@ All Godot work is under `prototypes/godot-mall/project` ("the project" below).
 
 ## Rules
 
+- **Steven writes the story; Claude builds the machinery.** No session invents a character, name, dialogue,
+  quest, item or fixture unless asked for that specific thing. Inferences from references are questions in the
+  report, not builds. Test content is marked PLACEHOLDER.
 - **Your own branch, code only.** Work on the branch your brief names (`ws/<letter>-<slug>`), push it, and stop.
   **Never push to `main` or `godot-build`, never run `tools/publish_build.sh`, never publish.** Pushing to main
   makes the site live. Merging, the Ultra rebake on Steven's Mac and the publish happen in one integration session.
