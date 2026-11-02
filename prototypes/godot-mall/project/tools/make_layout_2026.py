@@ -139,6 +139,16 @@ for sid in L.get("interiors_open", []):
             if walk[y][x] == "1":
                 walk[y][x] = "0"; shut += 1
 
+# workstream GI (Nov 2 2026): games, inc. (s52) is walked end to end in the footage, but Blockbuster
+# Music (1995 s52) had no walk-in interior, so KEEP_OPEN alone never opened its tiles. Open its rect
+# for 2026; its walls, counter and machines are obstacles (tools/stores/games_inc/store.gd).
+OPEN_2026 = {"s52"}
+for sid in OPEN_2026:
+    st = ST95[sid]
+    for y in range(st["y"], st["y"] + st["h"]):
+        for x in range(st["x"], st["x"] + st["w"]):
+            walk[y][x] = "1"
+
 out = dict(L)
 out["edges"] = merged
 out["stores"] = stores
