@@ -1,0 +1,15 @@
+{
+ "_comment": "Attendant SPOTS for the integration session: where a staff figure would stand, nothing more. No NPC is placed, no dialogue or story here (workstream GI ground rule, Nov 2 2026). World coordinates of the 2026 map (layout_2026.json); yaw in degrees as in ?cam= (0 faces -z toward the Concourse, 90 faces -x, 180 faces +z into the stores).",
+ "spots": [
+  {
+   "id": "games_inc_counter",
+   "store": "s52",
+   "name": "games, inc.",
+   "year": 2026,
+   "wing": 2,
+   "pos": [-111.1, 0.0, 66.3],
+   "yaw": 90.0,
+   "_comment": "Behind the GALACTIC PRIZE PORTAL counter (design/storefronts/games-inc-2026.md P5): between the black counter (u 5.75-6.35) and the prize wall (u 7.43), 6.3 m in from the hall, facing the aisle (-x). Frames f019, f027."
+  }
+ ]
+}
