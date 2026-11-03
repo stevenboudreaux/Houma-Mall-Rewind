@@ -1,0 +1,15 @@
+ok   the mall loads (40 s)
+ok   E at alley 1 opens Skee-Ball with year=1995 (http://127.0.0.1:8765/.scratch/builds/econ/skeeball.html?year=1995&lane=1)
+ok   Back closes Skee-Ball (5 tickets)
+ok   whirlwind.html opens in the mall's frame
+ok   Back closes WHIRLWIND after 4 plays (13 tickets)
+ok   claw.html opens in the mall's frame
+ok   the claw wins a 200-ticket capsule; Back closes it
+ok   pusher.html opens in the mall's frame
+ok   COIN COMET: one drop, 3 coins into the cup (150 tickets); Back closes it
+ok   every win is in the 1995 tickets, once: {'skee': 5, 'whirlwind': 13, 'claw': 200, 'pusher': 150} = 368 (bank 368; 2026 0)
+ok   the wallet: $100.00 - Skee-Ball 0.25 - WHIRLWIND 1.00 - claw 0.25 - one drop 0.25 = 9825 (9825)
+ok   after a reload the bank still holds 368 (the screenshot shows 'Your tickets: 368')
+ok   0 console errors, the mall and every game (0) []
+ECON WEB OK
+WEB-END

@@ -22,6 +22,7 @@ ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-
 SKEE_CAM = "-105.93,68.18,90,-10"          # alley 1's front (signs.gd SKEE_FRONT_X / SKEE_Z0 / SKEE_W), facing up it
 COUNTER_CAM = "-104.8,64.2,-90,-18"        # the long case (tools/qa/redemption_webtest.py)
 fails = []
+NO_W1 = True        # the scratch build has only wing 2: the shell's prefetch of wing 1 for later fails (not ECON's)
 
 
 def check(ok, what):
@@ -30,13 +31,26 @@ def check(ok, what):
         fails.append(what)
 
 
-def ready(logs, t=300):
+def ready(pg, t=600):
+    """The wing is up: web/shell.html has removed its loading overlay (#status)."""
     t0 = time.time()
     while time.time() - t0 < t:
-        if any("fps" in l or "npcs:" in l for l in logs):
-            return time.time() - t0
-        time.sleep(1)
+        try:
+            if pg.evaluate("!!window.mallRoms && !document.getElementById('status')"):   # shell.html removes it when the game starts
+                return round(time.time() - t0)
+        except Exception:
+            pass
+        time.sleep(2)
     return None
+
+
+def open_game(pg, url, name, hook):
+    """Open a game in the mall's frame (as signs.gd does) and wait for its page to be up (swiftshader: slow)."""
+    pg.evaluate("u => window.mallRoms.open(u)", url)
+    g = Game(pg)
+    ok = wait(lambda: name in g.src() and g.evaluate("!!window." + hook), 600)
+    check(ok, "%s opens in the mall's frame" % name)
+    return g if ok else None
 
 
 def wait(fn, t=180):
@@ -51,11 +65,17 @@ def wait(fn, t=180):
     return False
 
 
-def frame_of(pg, name):
-    for f in pg.frames:
-        if name in f.url:
-            return f
-    return None
+class Game:
+    """The game page in the mall's frame, driven through window.mallRoms.frame.contentWindow (same origin), the
+    frame web/shell.html makes. (Playwright's own frame list proved unreliable for a frame that replaces another.)"""
+    def __init__(self, pg):
+        self.pg = pg
+
+    def evaluate(self, expr):
+        return self.pg.evaluate("e => { const f = window.mallRoms.frame; if (!f || !f.contentWindow) throw new Error('no frame'); return f.contentWindow.eval(e); }", expr)
+
+    def src(self):
+        return self.pg.evaluate("window.mallRoms.frame ? window.mallRoms.frame.src : ''")
 
 
 def ls(pg, k):
@@ -64,7 +84,7 @@ def ls(pg, k):
 
 
 def close_frame(pg, f):
-    f.evaluate("document.getElementById('back').click()")
+    f.evaluate("document.getElementById('back').click(); 1")
     return wait(lambda: pg.evaluate("window.mallRoms.isOpen()") == "0", 30)
 
 
@@ -75,23 +95,26 @@ with sync_playwright() as p:
     ctx.add_init_script("try{if(!sessionStorage.getItem('econ-seeded')){localStorage.clear();localStorage.setItem('claw.pile.1', %s);sessionStorage.setItem('econ-seeded','1')}}catch(e){}"
                         % json.dumps(json.dumps({"seed": 1, "plays": 6, "items": caps})))
     pg = ctx.new_page(); logs = []; errs_all = []
-    pg.on("console", lambda m: (logs.append(m.text), errs_all.append(m.text) if m.type == "error" or "ERROR" in m.text.upper() else None))
+    pg.on("console", lambda m: (logs.append(m.text), errs_all.append(m.text) if (m.type == "error" or "ERROR" in m.text.upper()) and "Failed to load resource" not in m.text and not ("could not keep the next files" in m.text and NO_W1) else None))
     pg.on("pageerror", lambda e: errs_all.append("pageerror " + str(e)))
+    # a missing file is an error, except this scratch build's absent wing 1 (only wing 2 is exported), the favicon and
+    # play/prize_text.json (scripts/prizes.gd asks for the owner's published prize words; none are published yet)
+    pg.on("response", lambda r: errs_all.append("%d %s" % (r.status, r.url)) if r.status >= 400 and not r.url.endswith("favicon.ico") and "/w1." not in r.url and "/prize_text.json" not in r.url else None)
     url = f"http://127.0.0.1:8765/{path}?wing=2"
     pg.goto(url + "&cam=" + SKEE_CAM)
-    took = ready(logs, 300)
+    took = ready(pg)
     check(took is not None, "the mall loads (%s s)" % took)
     time.sleep(20)
     paid = {}
 
     # ---- 1. Skee-Ball through the mall's own Play
     pg.keyboard.press("e")
-    opened = wait(lambda: frame_of(pg, "skeeball.html") is not None, 90)
-    src = pg.evaluate("window.mallRoms.frame ? window.mallRoms.frame.src : ''")
+    g = Game(pg)
+    opened = wait(lambda: "skeeball.html" in g.src() and g.evaluate("!!window.__skee"), 600)
+    src = g.src()
     check(opened and "year=1995" in src and "lane=1" in src, "E at alley 1 opens Skee-Ball with year=1995 (%s)" % src)
-    f = frame_of(pg, "skeeball.html")
+    f = g if opened else None
     if f:
-        wait(lambda: f.evaluate("!!window.__skee"), 120)
         f.evaluate("__skee.start()")
         for i in range(9):
             f.evaluate("__skee.roll(%f, %f)" % ((i % 3 - 1) * 0.04, 0.55 + 0.05 * (i % 4))); time.sleep(0.5)
@@ -101,9 +124,7 @@ with sync_playwright() as p:
         check(close_frame(pg, f), "Back closes Skee-Ball (%d tickets)" % paid["skee"])
 
     # ---- 2. the other three, at the URLs the mall builds
-    pg.evaluate("window.mallRoms.open('whirlwind.html?year=1995&name=WHIRLWIND')")
-    wait(lambda: frame_of(pg, "whirlwind.html") is not None and frame_of(pg, "whirlwind.html").evaluate("!!window.__ww"), 120)
-    f = frame_of(pg, "whirlwind.html")
+    f = open_game(pg, "whirlwind.html?year=1995&name=WHIRLWIND", "whirlwind.html", "__ww")
     if f:
         time.sleep(1)
         won = 0
@@ -116,9 +137,7 @@ with sync_playwright() as p:
         pg.screenshot(path=f"{out}-whirlwind.png", timeout=180000)
         check(close_frame(pg, f), "Back closes WHIRLWIND after 4 plays (%d tickets)" % won)
 
-    pg.evaluate("window.mallRoms.open('claw.html?year=1995&machine=1&name=CLAW')")
-    wait(lambda: frame_of(pg, "claw.html") is not None and frame_of(pg, "claw.html").evaluate("!!window.__claw"), 120)
-    f = frame_of(pg, "claw.html")
+    f = open_game(pg, "claw.html?year=1995&machine=1&name=CLAW", "claw.html", "__claw")
     if f:
         time.sleep(1)
         f.evaluate("__claw.start()")
@@ -129,15 +148,13 @@ with sync_playwright() as p:
         pg.screenshot(path=f"{out}-claw.png", timeout=180000)
         check(paid["claw"] == 200 and close_frame(pg, f), "the claw wins a 200-ticket capsule; Back closes it")
 
-    pg.evaluate("window.mallRoms.open('pusher.html?pos=1&year=1995&name=COIN%20COMET&test=1')")
-    wait(lambda: frame_of(pg, "pusher.html") is not None and frame_of(pg, "pusher.html").evaluate("!!window.PUSHER_PAGE"), 240)
-    f = frame_of(pg, "pusher.html")
+    f = open_game(pg, "pusher.html?pos=1&year=1995&name=COIN%20COMET&test=1", "pusher.html", "PUSHER_PAGE")
     if f:
         time.sleep(2)
         f.evaluate("PUSHER_PAGE.drop()"); time.sleep(1)
-        r = f.evaluate("""() => { const P = PUSHER_PAGE, s = P.sim; let got = 0; P.paused = true; P.applyLip(0);
+        r = f.evaluate("""(() => { const P = PUSHER_PAGE, s = P.sim; let got = 0; P.paused = true; P.applyLip(0);
           for (let i = 0; i < 30 && got < 2; i++) { s.nudge(0, 1, 1); s.run(0.8); for (const e of s.step(0)) { P.onEvent(e); if (e.type === 'cup') got++; } }
-          P.paused = false; return got; }""")
+          P.paused = false; return got; })()""")
         paid["pusher"] = r * f.evaluate("window.PUSHER.CONFIG.ticketsPerCoin")
         time.sleep(1)
         pg.screenshot(path=f"{out}-pusher.png", timeout=180000)
@@ -151,7 +168,7 @@ with sync_playwright() as p:
 
     # ---- 4. the counter
     pg.goto(url + "&cam=" + COUNTER_CAM)
-    logs.clear(); ready(logs, 300); time.sleep(20)
+    ready(pg); time.sleep(30)
     pg.keyboard.press("e")
     time.sleep(25)                      # swiftshader handles input many seconds late
     pg.screenshot(path=f"{out}-redemption.png", timeout=180000)

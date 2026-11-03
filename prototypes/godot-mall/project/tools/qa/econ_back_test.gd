@@ -21,6 +21,7 @@ var errors := []
 var oks := 0
 var way := 0
 var start_pos := Vector3.ZERO
+var vis0 := []      # the HUD's visibility before the counter opened (desktop hides the touch buttons)
 const WAYS := ["button", "Esc", "Q", "B", "Backspace", "E", "pad B"]
 
 func _initialize() -> void:
@@ -71,6 +72,12 @@ func _leave() -> void:
 			var u := e.duplicate(); u.pressed = false
 			Input.parse_input_event(u)
 
+func _hud() -> Array:
+	var v := []
+	for b in player.buttons + [player.jump_open_btn, player.year_btn]:
+		if b is Control: v.append(b.visible)
+	return v
+
 func _at() -> void:
 	player.position = Vector3(-104.8, 0, 64.2)
 	player.yaw = deg_to_rad(-90.0); player.pitch = deg_to_rad(-18.0); player._apply_rot()
@@ -86,6 +93,7 @@ func _process(dt: float) -> bool:
 		0:   # open the counter, then the closer look from the screen's button
 			if clock > (2.0 if way == 0 else 0.6):
 				_at()
+				vis0 = _hud()
 				rd = player.mall.redemption
 				pz.redeem()
 				step = 1; clock = 0.0
@@ -104,12 +112,12 @@ func _process(dt: float) -> bool:
 			if clock > 1.2:
 				var w: String = WAYS[way]
 				var menu_open: bool = menu != null and bool(menu.get("is_open"))
-				var btns_back: bool = player.buttons.is_empty() or player.buttons.any(func(b): return b.visible)
+				var btns_back: bool = _hud() == vis0
 				_check(not pz.looking, "[%s] the closer look is shut" % w)
 				_check(not rd.is_open, "[%s] the redemption screen did not come back" % w)
 				_check(not menu_open, "[%s] the menu did not open" % w)
 				_check(not player.frozen and player.cam.current, "[%s] the player is free, on their own camera" % w)
-				_check(btns_back, "[%s] the HUD buttons are back" % w)
+				_check(btns_back, "[%s] the HUD is as it was before the counter (%s)" % [w, str(_hud())])
 				start_pos = player.position
 				_key(KEY_S, true)
 				step = 4; clock = 0.0

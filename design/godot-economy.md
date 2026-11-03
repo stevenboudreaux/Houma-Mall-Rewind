@@ -118,19 +118,25 @@ After each: the look and the screen are shut, the menu didn't open, the player i
 HUD buttons are back, and walking moves the player. That is what Steven believed, and it already worked; no code
 change was needed. (If Back should go back to the screen instead, it is one line in `prizes.gd close_look()`.)
 
-## Checks
-- `node tests/unit/econ/bank.test.js`: ECON BANK OK (the shared cases, the money format, a throwing
+## Checks (all on this branch)
+- `node tests/unit/econ/bank.test.js`: ECON BANK OK (13: the shared cases, the money format, a throwing
   localStorage, the ledger's caps, the four game prices).
-- `godot --headless --path . --script res://tools/qa/econ_test.gd`: ECON TEST OK (the same cases on
+- `godot --headless --path . --script res://tools/qa/econ_test.gd`: ECON TEST OK (44: the same cases on
   `bank.gd`, the API, year separation, migration through a real `load_saved()`, the counter at 4,999 / 5,100
   tickets, the price field).
-- `tests/unit/econ/pages_test.py` (Chromium on the pages): ECON PAGES OK, 0 page errors. Run against `main`'s
-  pages it fails 21 checks (the claw "wins 200" and the bank stays at 0; a 160-point Skee-Ball game pays 0):
-  `production/qa/evidence/wsECON-pages-before.txt`.
-- `tests/unit/pusher/page_test.py` updated (money instead of quarters, NO MONEY instead of Get quarters): ALL OK.
-- `tools/qa/econ_back_test.gd`: ECON BACK OK (item 7).
-- `tools/qa/econ_webtest.py` (the web build, wing 2 1995): each game opened in the mall's frame wins tickets, the
-  frame closes, and the counter's "Your tickets" shows the sum.
+- `tests/unit/econ/pages_test.py` (Chromium on the three pages): ECON PAGES OK, 0 page errors. Run against
+  `main`'s pages it fails 21 checks (the claw "wins 200" and the bank stays at 0; a 160-point Skee-Ball game pays
+  0): `production/qa/evidence/wsECON-pages-before.txt`.
+- `tests/unit/pusher/page_test.py` (money instead of quarters, NO MONEY instead of Get quarters): ALL OK;
+  `logic.test.js` 10 ok.
+- `tools/qa/econ_back_test.gd` (native, unbaked, 1280 x 720): ECON BACK OK (50).
+- `tools/qa/econ_webtest.py` (web export of wing 2, 1995, swiftshader): ECON WEB OK, 0 console errors. E at Skee-Ball
+  alley 1 opens `skeeball.html?year=1995&lane=1`; Skee-Ball 5, WHIRLWIND 13 (4 plays), the claw 200, COIN COMET 150
+  (3 coins) = 368 in `mall.tickets-1995`, 0 in 2026; the wallet $98.25; after a reload the counter reads "Your
+  tickets: 368". (Evidence pictures from the run before, identical but for WHIRLWIND's 9: 364.)
+- Unchanged and still OK: INVENTORY 45, REDEMPTION 32, MENU UNIT 35, FLAGS 31, PUSHER PLAY 20, INT D49 18.
+- `tools/qa/menu_test.gd` fails 4 checks, **the same 4 on `main`** (a hard-coded `_nav[0][1]` row; stale since
+  the menu merge), not ECON's.
 - Evidence: `production/qa/evidence/wsECON-*`.
 
 ## Open (for Steven)
