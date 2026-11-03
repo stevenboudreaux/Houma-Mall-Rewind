@@ -4,7 +4,10 @@ running speeds in the web build, headless Chromium (swiftshader).
 Usage: python3 tools/qa/walk_webtest.py <url-path> <out-prefix> "<name>:x,z,yaw,pitch[=xmax:-46.5];..."
   (server on :8765 serving the repo root; <url-path> e.g.
    prototypes/godot-mall/project/.scratch/builds/wswalk/index.html?wing=2)
-Each spot loads ?view=third&debug=1&cam=... on a fresh profile (the default avatar, no creator), then:
+Each spot loads ?view=third&debug=1&warm=0&cam=... on a fresh profile (the default avatar, no
+creator; warm=0: the NPC warm-up stands every skin in front of the camera for a few frames behind
+the loading card, which on this 0.1-0.2 fps renderer runs on for minutes after the card lifts and
+would put other bodies in the frames), then:
   - walks (W held) and runs (W + X held), reading the player's "DBG pos=" lines and the avatar's
     "DBG gait=" lines (scripts/avatar.gd, ?debug=1, one per half game-second, with the position and
     the game clock gt): the ground speed (metres per game second: the headless renderer draws a frame
@@ -156,7 +159,7 @@ with sync_playwright() as p:
         ctx = b.new_context(viewport={"width": 1280, "height": 720})
         pg = ctx.new_page(); logs = []
         pg.on("console", lambda m: logs.append((time.time(), m.text)))
-        pg.goto(url(f"view=third&debug=1&cam={cam}"))
+        pg.goto(url(f"view=third&debug=1&warm=0&cam={cam}"))
         print(nm, "ready_s", ready(pg, logs), flush=True); pause(pg, 12)
         pg.mouse.move(640, 360); pg.mouse.click(640, 360)
         gs = gaits(logs, 0, time.time())
@@ -177,7 +180,7 @@ with sync_playwright() as p:
     ctx = b.new_context(viewport={"width": 844, "height": 390}, has_touch=True, is_mobile=True)
     pg = ctx.new_page(); logs = []
     pg.on("console", lambda m: logs.append((time.time(), m.text)))
-    pg.goto(url(f"view=third&debug=1&cam={cam}")); ready(pg, logs); pause(pg, 12)
+    pg.goto(url(f"view=third&debug=1&warm=0&cam={cam}")); ready(pg, logs); pause(pg, 12)
     cdp = ctx.new_cdp_session(pg)
     def touch(t, x, y):
         cdp.send("Input.dispatchTouchEvent", {"type": t, "touchPoints": [] if t == "touchEnd" else [{"x": x, "y": y, "id": 1}]})
