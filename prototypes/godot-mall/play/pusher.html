@@ -128,7 +128,7 @@
   <div id="msg"></div>
 </div>
 <div id="set"><button class="ghost close" id="setclose">Close</button><div class="wrap"><h2>MACHINE SETTINGS</h2>
-  <div class="row"><label>Lip height<small id="lipv">2.5 mm over the shelf (the house's payout control)</small></label><input type="range" id="lip" min="0" max="6" step="0.5"></div>
+  <div class="row"><label>Lip height<small id="lipv">0.5 mm over the main tier (the house's payout control)</small></label><input type="range" id="lip" min="0" max="6" step="0.5"></div>
   <div class="row"><label>Coins<small>how full the machine is: fewer on a slow phone (low also runs the physics at 90 Hz; takes effect on reload)</small></label><select id="quality"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div>
   <div class="row"><label>Refill<small>empty this position and start it fresh</small></label><button id="reset">Refill</button></div>
   <div class="stat" id="stat"></div></div></div>
@@ -712,7 +712,7 @@ const lipIn = document.getElementById('lip'), qIn = document.getElementById('qua
 function settingsUi() {
   lipIn.value = lipMm; qIn.value = quality;
   for (const o of qIn.options) o.textContent = o.value[0].toUpperCase() + o.value.slice(1) + ' (' + CFG.quality[o.value] + ')';
-  document.getElementById('lipv').textContent = lipMm.toFixed(1) + ' mm over the shelf (the house\'s payout control; 0 = off)';
+  document.getElementById('lipv').textContent = lipMm.toFixed(1) + ' mm over the main tier (the house\'s payout control; 0 = off)';
   const avg = stats.frames ? stats.ms / stats.frames : 0;
   document.getElementById('stat').textContent = 'Position ' + POS + ' · ' + sim.count() + ' coins (' + sim.awake() + ' awake) · ' + avg.toFixed(1) + ' ms a frame (worst ' + stats.worst.toFixed(0) + ')\n' +
     'Ledger: in ' + ledger.in + ' · cup ' + ledger.cup + ' · lost at the sides ' + ledger.side + ' · tilt ' + ledger.tilt + ' · nudges ' + ledger.nudges + ' · tilts ' + ledger.tilts + ' · RTP ' + (100 * PL.rtp(ledger)).toFixed(0) + '%';
