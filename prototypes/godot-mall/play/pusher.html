@@ -129,7 +129,7 @@
 </div>
 <div id="set"><button class="ghost close" id="setclose">Close</button><div class="wrap"><h2>MACHINE SETTINGS</h2>
   <div class="row"><label>Lip height<small id="lipv">2.5 mm over the shelf (the house's payout control)</small></label><input type="range" id="lip" min="0" max="6" step="0.5"></div>
-  <div class="row"><label>Coins<small>how full the machine is: fewer on a slow phone</small></label><select id="quality"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div>
+  <div class="row"><label>Coins<small>how full the machine is: fewer on a slow phone (low also runs the physics at 90 Hz; takes effect on reload)</small></label><select id="quality"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div>
   <div class="row"><label>Refill<small>empty this position and start it fresh</small></label><button id="reset">Refill</button></div>
   <div class="stat" id="stat"></div></div></div>
 <div id="load"><h1 id="ltitle">COIN COMET</h1><div class="sub" id="lsub">Pocket Change &middot; coin pusher</div>
@@ -159,7 +159,8 @@ let soundOn = load('pusher.sound', true) !== false;
 const isOwner = (function () { try { return localStorage.getItem('southland-editor') === '1' || Q.get('owner') === '1'; } catch (e) { return false; } })();
 const mobile = /iPhone|iPad|Android|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) < 900);
 let quality = load('pusher.quality', null);
-if (!CFG.quality[quality]) quality = mobile ? 'low' : 'high';      // measured: 4 / 6 / 7 ms a physics step in wasm (design note)
+if (!CFG.quality[quality]) quality = mobile ? 'low' : 'high';      // the coin count; low also steps the physics at 90 Hz instead of 120 (design note, Performance)
+const SIM_HZ = quality === 'low' ? 90 : 120;
 // ECON (Nov 3): the wallet (both years) and this year's tickets, read and written at the moment of use
 const BANK = window.MALLBANK.make(localStorage), SESSION = window.MALLBANK.session();
 let cupSeq = 0, cupSaved = true;   // a cup credit saves the machine after its step, so the coin can't fall twice
@@ -729,7 +730,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) saveM
     await RAPIER.init({});
     document.getElementById('lbar').style.width = '95%';
     buildLight(); buildCabinet(); buildCoins(); resize();
-    sim = createSim(RAPIER, { lipMm: CFG.lipMm });
+    sim = createSim(RAPIER, { lipMm: CFG.lipMm, hz: SIM_HZ });
     const restored = TESTING && Q.get('fresh') === '1' ? (newMachine(), false) : restoreMachine();
     applyLip(lipMm);
     saveMachine();

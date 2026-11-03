@@ -234,7 +234,19 @@ Steven (Nov 3): the build did not play like his machine, and coins kept falling 
 
 - **Timing matters, a little:** TIMING_LINE
 - **Lost at the sides: 0** in every run (the target was "effectively none"); 0 through the tier, 0 out of the world.
-- **Performance:** PERF_LINE
+- **Performance:** the physics step on the cloud box's one core (Node, four jobs running; `tests/unit/pusher/page_test.py` prints Chromium's own figures), a primed field after 60 drops:
+
+  | step rate | solver iterations | coins asked | on the field | ms a step | ms a 60 fps frame | cup coins / 60 drops |
+  |---|---|---|---|---|---|---|
+  | 120 Hz | 4 | 460 (high) | 461 | 6.3 | 12.7 | 78 |
+  | 120 Hz | 2 | 460 | 435 | 6.9 | 13.7 | 116 |
+  | 90 Hz | 4 | 460 | 449 | 6.6 | 9.9 | 92 |
+  | 90 Hz | 2 | 460 | 378 | 7.3 | 11.0 | 178 |
+  | 120 Hz | 4 | 360 (low) | 416 | 5.7 | 11.4 | 29 |
+  | 90 Hz | 2 | 360 | 376 | 7.4 | 11.1 | 89 |
+  | 60 Hz | 4 | 460 | 464 | 10.2 | 10.2 | 89 |
+
+  Fewer solver iterations save nothing (the cost is the narrow phase) and loosen the heap so it pays more, so the solver stays at 4. The step rate is what buys time: **phones (low quality) step at 90 Hz, computers at 120** (`pusher.html SIM_HZ`); at 90 Hz the flow is a little freer (92 cup coins against 78 in a 60-drop sample, inside the noise of such a short run; not soaked at full length). No coin tunnelled or was lost at any setting. The old build's 540 coins cost 4.0 ms a step in Chromium on this box; this field has more coins in contact (three layers, two tiers walled), so a step costs more for the count. Not measured on a real iPhone: the box's core is slow, and a phone's wasm is likely two to three times faster.
 - **Guessed:** the tilt (2°, a feel number), the deck's exposed length, the guides' slope, the tier step (Steven's "an inch or two": 3 cm), the period and stroke as play values, the primed fill's layers.
 - **Not done:** the mall's cabinet model (`tools/stores/pocket_change/pusher.gd`) still has the old proportions (the deck 7.5 cm up, 38 cm back); the page's cabinet and the mall's prop no longer match. The Godot hook (`scripts/pusher_play.gd`) and its tests are untouched.
 - **Tests:** `node tests/unit/pusher/logic.test.js` (ECON's 10), `node tests/unit/pusher/sim.test.js` (10: the crank and the gap, the fill, a drop into the gap, the sweep, the clamp, save/restore and the off-field filter, the gate, the lip), `python3 tests/unit/pusher/page_test.py` (ALL OK), `python3 tests/unit/pusher/coin_path.py` (one coin's path, ringed, from the drop to the slot: `production/qa/evidence/wsPUSHER-coin-path.jpg`). Evidence: `production/qa/evidence/wsPUSHER-*`.
