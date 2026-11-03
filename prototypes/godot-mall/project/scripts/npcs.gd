@@ -347,6 +347,10 @@ func _pick_skin() -> Dictionary:
 			if not in_use.has(str(e.id)): free.append(e)
 		if free.is_empty(): return {}
 		var e: Dictionary = free[rng.randi() % free.size()]
+		# CUCOS (design/godot-cucos.md): "always" skins (the football lady) come first, so she is
+		# always somewhere in the mall in the years whose crowd has her
+		for f in free:
+			if str(f.id) in cfg.get("always", []): e = f; break
 		in_use[str(e.id)] = true
 		return e
 	if weights.is_empty(): return {}

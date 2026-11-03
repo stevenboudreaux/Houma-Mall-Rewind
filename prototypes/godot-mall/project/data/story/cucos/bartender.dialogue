@@ -1,0 +1,21 @@
+# The Cuco's bartender (workstream CUCOS, Nov 3 2026; design/godot-cucos.md). 1995.
+# The coupon lines are Steven's. His name is a PLACEHOLDER, and so is the gift line.
+# Without the coupon in the hand he doesn't use this file: the shop opens instead
+# (mall.shop.open("cucos"), data/story/shops.json "cucos", whose greeting is his first line).
+#
+# Flags (mall.flags, saved): cu_coupon_used (the coupon is spent), cu_doubloon_given (the doubloon is
+# handed over once only).
+
+~ start
+if holding cu_coupon
+	PLACEHOLDER Bartender: Oh, wow, you have a top-shelf margarita coupon. That's great. Let me get that for you.
+	take cu_coupon
+	set cu_coupon_used = true
+	PLACEHOLDER Bartender: Here you go.
+	give cu_topshelf
+	if not cu_doubloon_given
+		set cu_doubloon_given = true
+		PLACEHOLDER Bartender: PLACEHOLDER (he gives you a Cuco's Mardi Gras doubloon too, as a gift; Steven to write the line)
+		give cu_doubloon
+	=> END
+=> END

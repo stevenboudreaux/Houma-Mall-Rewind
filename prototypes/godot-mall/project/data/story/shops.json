@@ -1,0 +1,15 @@
+{
+ "_": "Shops: what each counter sells (the format agreed between workstreams SHOPS and CUCOS, Nov 3 2026; design/godot-cucos.md 'The shop contract'). id: what mall.shop.open(id) is called with. attendant: the attendant id behind the counter. greeting: the attendant's first line. items: [{item: a data/items id, price_cents: whole cents, ready_line: what the attendant says handing it over}]. Prices are Steven's. ready_line: PLACEHOLDER until Steven writes them.",
+ "shops": [
+  {
+   "id": "cucos",
+   "attendant": "cucos_bartender",
+   "greeting": "Welcome to Cuco's. What can I get for you today?",
+   "items": [
+    {"item": "cu_beer", "price_cents": 200, "ready_line": "PLACEHOLDER Here's your beer."},
+    {"item": "cu_margarita", "price_cents": 300, "ready_line": "PLACEHOLDER Here's your margarita."},
+    {"item": "cu_topshelf", "price_cents": 1000, "ready_line": "PLACEHOLDER Here's your top-shelf margarita."}
+   ]
+  }
+ ]
+}

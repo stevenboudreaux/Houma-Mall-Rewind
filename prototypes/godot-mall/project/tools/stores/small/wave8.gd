@@ -227,6 +227,27 @@ static func cucos(b, a, t, n, W, D, rng):
 		b.cur_color = Color.WHITE
 		b.cyl("w8c_small", "w8_red_vinyl", sc + UP * 0.72, 0.19, 0.19, 0.08, 12, true, true)
 		sd += 0.9
+	# --- CUCOS (Nov 3 2026, design/godot-cucos.md): the beer taps, a chrome tower on the bartender's
+	# side of the counter top between the two patrons, three handles over a drip tray (the back bar's
+	# bottles are the painted w8_bar shelves). No drinks waiting on the bar.
+	var tp = P(a, t, n, W - 1.33, 1.1, 9.8)
+	b.cur_color = Color("#b8bcc2")
+	b.box("w8c_small", "vcolor", tp - (-t) * 0.08 + UP * 0.01, b.abs_size(-n, 0.42, 0.02, 0.16, -t))
+	b.cur_color = Color("#2a2a2c")
+	b.box("w8c_small", "vcolor", tp - (-t) * 0.08 + UP * 0.025, b.abs_size(-n, 0.38, 0.01, 0.12, -t))
+	b.cur_color = Color("#c9ccd2")
+	b.cyl("w8c_small", "vcolor", tp, 0.035, 0.035, 0.36, 10, true, false)
+	b.box("w8c_small", "vcolor", tp + UP * 0.36, b.abs_size(-n, 0.36, 0.05, 0.05, -t))
+	var handles = [Color("#c8202c"), Color("#f2c94c"), Color("#2e7d4f")]
+	for k in 3:
+		var hp = tp + (-n) * (-0.13 + 0.13 * k) + UP * 0.36
+		b.cur_color = Color("#c9ccd2")
+		b.box("w8c_small", "vcolor", hp - (-t) * 0.06 - UP * 0.02, b.abs_size(-n, 0.018, 0.018, 0.1, -t))
+		b.cyl("w8c_small", "vcolor", hp - (-t) * 0.1 - UP * 0.07, 0.008, 0.008, 0.05, 6, false, true)
+		b.cur_color = handles[k]
+		b.cyl("w8c_small", "vcolor", hp - (-t) * 0.09 + UP * 0.0, 0.012, 0.016, 0.16, 8, true, false)
+	b.cur_color = Color.WHITE
+	# --- end CUCOS
 	# arched niches on the back wall, either side of the kitchen door
 	for nu in [2.4, W - 3.4]:
 		arch(b, G, "w8_dark", P(a, t, n, nu, 0, D - SIDE - 0.01), t, n, 1.2, 1.9)

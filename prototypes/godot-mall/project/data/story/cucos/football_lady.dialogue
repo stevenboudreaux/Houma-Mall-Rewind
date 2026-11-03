@@ -1,0 +1,62 @@
+# The football lady (workstream CUCOS, Nov 3 2026; design/godot-cucos.md). 1995.
+# Every line she says and every response is Steven's, as he wrote it. The stage direction "she looks
+# confused" is the gesture `act("thinking")` (the rig has no "confused" clip). She has no speaker name:
+# Steven didn't give one.
+#
+# Flags (mall.flags, saved): cu_lady_mad (answered "what a win": mad for good), cu_lady_cold (doesn't
+# watch football: cold for good), cu_lady_cold_n (which of her two cold lines is next),
+# cu_coupon_given (the coupon is handed over once only).
+
+~ start
+if cu_lady_mad
+	I'm still mad about the game.
+	=> END
+if cu_lady_cold
+	if cu_lady_cold_n == 1
+		set cu_lady_cold_n = 0
+		I don't want to talk to you.
+	else
+		set cu_lady_cold_n = 1
+		Well, what are we supposed to talk about if you don't watch football?
+	=> END
+Oh, hey, did you watch the game last night?
+- Sure did. Wow, what a win.
+	set cu_lady_mad = true
+	Is that supposed to be some kind of a joke or something? You clearly didn't watch the game, or at least the end of it, when we lost in overtime. Makes me mad just thinking about it.
+	=> END
+- Yeah, I did. Tough loss, but we'll get 'em next time.
+	=> rest_of_day
+- No, I don't watch football.
+	set cu_lady_cold = true
+	set cu_lady_cold_n = 0
+	$> act("thinking")
+	Don't watch sports? Well, what else is there to life than family, country and football? I don't understand you.
+	=> END
+
+~ rest_of_day
+I know, right? Breaks my heart when we lose in overtime like that. But we'll get 'em next time. What are you doing for the rest of the day?
+- Watching another football game, of course.
+	=> where
+- Go see a movie, because the last thing I want to do is think about football again.
+	Well, have fun with that. Who dat?
+	=> END
+- Just hang out at the mall, I guess.
+	Well, have fun with that. Who dat?
+	=> END
+
+~ where
+Ain't that the truth? Another chance for our team to let us down. AGAIN. Ha ha ha ha ha. Where are you watching the game?
+- At my house, on my couch with my wife and a beer.
+	Well, have fun. Let's get that W. Who dat?
+	=> END
+- My podnas are watching the game on the east side, so I'm going there.
+	Well, have fun. Let's get that W. Who dat?
+	=> END
+- I think I'm going to watch it at Cuco's, but I haven't decided yet.
+	if cu_coupon_given
+		PLACEHOLDER (she already gave you the coupon; Steven to write what she says the second time)
+		=> END
+	Hey, well, you're in Cuco's, huh? Well, you're actually in luck. I have a coupon for a free top-shelf margarita at Cuco's. They normally charge $10 for it. It's free.
+	set cu_coupon_given = true
+	give cu_coupon
+	=> END
