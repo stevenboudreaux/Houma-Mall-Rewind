@@ -19,7 +19,8 @@ var jump_locked := false   # inside the Stockrooms on a visitor's browser: no Ju
 var mall = null
 var interact: Node = null
 ## V (design/godot-avatar.md): the avatar and the first / third person switch (scripts/avatar.gd);
-## move_scale slows walking in third person to a walking pace (1.0 in first person, as before).
+## move_scale slows walking in third person to a walking pace (1.0 in first person, as before);
+## WALK (Nov 3 2026) raised that pace to 3.0 m/s (run 6.6) and sub-steps every move (MOVE_SUB).
 var avatar: Node = null
 var move_scale := 1.0
 ## M (design/godot-menu.md): the full-screen menu (scripts/menu/menu.gd: AVATAR, CONTROLS, INVENTORY,
@@ -33,6 +34,7 @@ var menu: Node = null
 const EYE := 1.62
 const SPEED := 4.0
 const RUN := 2.2      # holding X (or Shift) runs: Steven, Oct 6, "add back the ability to run by hitting x"
+const MOVE_SUB := 0.08   # WALK: the longest step tested against the walls and glass at once, m (see _process)
 const RADIUS := 0.3
 var yaw := PI * 0.5   # looking west (-x) from the entrance
 var pitch := 0.06
@@ -613,8 +615,14 @@ func _process(dt: float) -> void:
 		var right := transform.basis.x
 		var run := RUN if (rmb_run or _mkey("mall_run", KEY_X) > 0.0 or (not InputMap.has_action("mall_run") and Input.is_physical_key_pressed(KEY_SHIFT))) else 1.0   # M: _mkey
 		var step := (right * iv.x - fwd * iv.y) * SPEED * run * dt * move_scale   # V: move_scale (third person)
-		_try_move(Vector3(step.x, 0, 0))
-		_try_move(Vector3(0, 0, step.z))
+		# WALK (Nov 3 2026): in sub-steps no longer than MOVE_SUB, so a long frame at speed (6.6 m/s in
+		# third person is 0.33 m at 20 fps, 8.8 m/s in first person more) can't jump a 0.10 m glass rect
+		# (the thinnest in wing 2) or a 0.2 m store front: the rect test has no margin. Same speed, same
+		# x-then-z sliding, per sub-step.
+		var n := maxi(1, int(ceil(Vector2(step.x, step.z).length() / MOVE_SUB)))
+		for i in n:
+			_try_move(Vector3(step.x / n, 0, 0))
+			_try_move(Vector3(0, 0, step.z / n))
 	_update_prompt()
 	_light_poll(dt)
 	fps_t += dt

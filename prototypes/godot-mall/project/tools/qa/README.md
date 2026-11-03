@@ -23,6 +23,12 @@ Run the .gd tools with `godot --headless --path . --script res://tools/qa/<tool>
 - `avatar_test.gd` (native, unbaked), `avatar_webtest.py` (web build), `avatar_sheet.gd` (every
   avatar body, own colours vs recoloured): the avatar and the first / third person view
   (workstream V, `design/godot-avatar.md` "Checks").
+- `walk_webtest.py <url-path> <out> "<spot>:x,z,yaw,pitch[=xmax:…];…"` (workstream WALK, Nov 3 2026):
+  third-person walking and running speeds in the web build (`?debug=1` prints `DBG gait=` from
+  `scripts/avatar.gd`): ground speed against TP_WALK 3.0 / run 6.6 m/s, the clip played at ground
+  speed, the camera keeping up, the player always on free floor and inside a spot's bounds (a glass
+  pane run at), a phone's full-stick touch walk; a 4-frame strip per walk and run.
+  `avatar_test.gd` now also checks the run (sprint clip at ground speed, the camera pivot on the player).
 - Workstream S (Nov 2 2026; design/godot-wings.md "Wings 4-6", the room wings 4 Sears / Lynn's, 5 Dillard's level 1, 6 the cinema lobby):
   - `wsS_thresholds_test.gd [-- 2026]` (headless): the Sears and Dillard's openings both ways (wing, position, facing), the cinema gate (locked message, the stick opens it, the flag saved, wing 6 and back, a reload keeps it open), the directory's jumps into wings 4 and 5. Prints `WSS TEST OK`.
   - `wsS_webtest.py <url-path> <out> [1995|2026] [sears,dillards,cinema,jump]`: the same on a web export, with screenshots (the opening's picture, the crossing card, inside, back; the gate down / locked / up / lobby / after a reload).

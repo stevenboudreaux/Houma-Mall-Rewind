@@ -1,9 +1,11 @@
 ## Workstream V (design/godot-avatar.md): the avatar and the first / third person switch, natively,
 ## unbaked (no lightmap). In one wing:
 ##   - the creator: opened, shot at desktop and phone sizes (portrait and landscape), Random, Done;
-##   - for each spot: third person walking (the walk clip at ground speed) and standing (idle), the
-##     camera kept inside the walk grid and off the glass; then first person at the same spot, which
-##     must be exactly the old view (player.cam current at eye height, move_scale 1, avatar hidden);
+##   - for each spot: third person walking (TP_WALK m/s, the walk clip at ground speed) and running
+##     (TP_WALK x RUN, the sprint clip at ground speed, the camera pivot on the player, not trailing;
+##     WALK, Nov 3 2026) and standing (idle), the camera kept inside the walk grid and off the glass;
+##     then first person at the same spot, which must be exactly the old view (player.cam current at
+##     eye height, move_scale 1, avatar hidden);
 ##   - a held item in the avatar's right hand (wing 2: the fuzzy dice);
 ##   - the fps cost of the avatar: the same third-person view with the body shown and hidden.
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 \
@@ -128,9 +130,30 @@ func _plan() -> void:
 			_check(av._free(cp.x, cp.z) or av._boom < 0.05, "%s: camera clear of walls and glass (boom %.2f m, side %d)" % [nm, av._boom, av._side])
 			_check(cp.y <= av.CAM_TOP + 0.01 and cp.y >= av.CAM_LOW - 0.01, "%s: camera under the hanging signs (%.2f m)" % [nm, cp.y])
 			_shot("tp-walk-" + nm), 0.0)
-		_do(func(): Input.action_release("ui_up"), 1.2)
+		# WALK: running (the run action held with the stick) is TP_WALK x RUN = 6.6 m/s on the sprint clip,
+		# played at ground speed; the camera's pivot sits on the player (it used to trail at speed)
 		_do(func():
-			_check(not str(av.body.clip).begins_with("walk"), "%s: standing plays idle (%s)" % [nm, av.body.clip])
+			if not InputMap.has_action("mall_run"): InputMap.add_action("mall_run")
+			Input.action_press("mall_run"), 1.0)
+		_do(func():
+			var b = av.body
+			var own := float(NpcBody.meta().clips.get(b.clip, {}).get("mps", 1.0))
+			var want_s: float = av.TP_WALK * player.RUN
+			_check(str(b.clip) == "sprint" or str(b.clip) == "run", "%s: running plays a run clip (%s)" % [nm, b.clip])
+			_check(absf(b.ap.speed_scale - av._speed / own) < 0.05 and absf(av._speed - want_s) < 0.35 and b.ap.speed_scale <= av.GAIT_MAX,
+				"%s: run at ground speed: %.2f m/s (want %.1f) / %.3f = x%.2f (playing x%.2f)" % [nm, av._speed, want_s, own, av._speed / own, b.ap.speed_scale])
+			var cp: Vector3 = av.tp_cam.global_position
+			var pv: Vector3 = player.position + Vector3(0, av.PIVOT_H, 0) + Basis(Vector3.UP, player.yaw) * av._pivot
+			var back: float = (cp - pv).dot(player.transform.basis.z)   # along the boom, behind the player
+			_check(absf(Vector2(pv.x - player.position.x, pv.z - player.position.z).length() - av.SHOULDER) < 0.08 or av._side == 0.0,
+				"%s: the camera pivot rides the player at speed (%.2f m off, side %d)" % [nm, Vector2(pv.x - player.position.x, pv.z - player.position.z).length(), av._side])
+			_check(back > 0.0 and back <= av.BOOM + 0.01, "%s: camera %.2f m behind the player (boom %.2f)" % [nm, back, av._boom])
+			_check(av._free(cp.x, cp.z) or av._boom < 0.05, "%s: running camera clear of walls and glass" % nm)
+			_check(player._free(player.position.x, player.position.z), "%s: the runner stands on free floor (walls and glass held)" % nm)
+			_shot("tp-run-" + nm), 0.0)
+		_do(func(): Input.action_release("mall_run"); Input.action_release("ui_up"), 1.2)
+		_do(func():
+			_check(not str(av.body.clip).begins_with("walk") and not str(av.body.clip) in ["sprint", "run", "jog"], "%s: standing plays idle (%s)" % [nm, av.body.clip])
 			_shot("tp-idle-" + nm), 0.0)
 		_do(func(): av.third = false, 0.4)
 		_do(func():

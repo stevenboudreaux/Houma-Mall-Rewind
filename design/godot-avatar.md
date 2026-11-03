@@ -108,21 +108,32 @@ Saved with the look (`view`). `?view=third|first` sets it for one load (tests).
 - **The body** stands at the player's position, turns (smoothly) to the way it walks, keeps its
   facing when still. It is an `NpcBody`, so it plays the shoppers' clips through the same `NpcRig`
   retargeting.
-- **Walking pace:** third person walks at **2.0 m/s** at full stick (first person stays 4.0, untouched:
-  `player.move_scale` is 1.0 there); running (X / Shift / the right mouse button, ×2.2) is 4.4 m/s.
-  A guess: 4 m/s is a jog, and the brief asks for the walk clip.
-- **Gaits:** walk below 2.4 m/s (`walk_m` / `walk_f` by the body's sex in `npcs.json`), jog to 3.6,
-  run to 5.4, sprint above, with a little hysteresis. **Playback = ground speed / the clip's own
+- **Walking pace** (workstream WALK, Nov 3 2026; Steven: "in third person the avatar walks slower than
+  first person, it needs a faster cadence, and the run about 50 % faster"): third person walks at
+  **3.0 m/s** at full stick (first person stays 4.0, untouched: `player.move_scale` is 1.0 there);
+  running (X / Shift / the right mouse button, ×2.2) is **6.6 m/s**. V had 2.0 / 4.4 (a guess: "4 m/s is
+  a jog"). Touch keeps the 46 px full stick and the 0.05 deadzone; a gamepad's full stick is 3.0.
+- **Gaits** (WALK retune): walk below 3.4 m/s (`walk_m` / `walk_f` by the body's sex in `npcs.json`),
+  jog to 4.6, run to 6.0, sprint above, with 0.25 m/s of hysteresis (V: 2.4 / 3.6 / 5.4; a plain speed
+  change alone would have made the full-stick walk a jog). **Playback = ground speed / the clip's own
   speed** from `npc/anims.json`: `walk_m` 1.616 m/s, `walk_f` 1.623, `jog` 2.512, `run` 4.555, `sprint`
   5.973 (the 1.765 m/s in the brief was the retired Demo 36 clip, still in `npc/skins.json`
-  `walk_mps`). So a full-stick walk plays `walk_m` at ×1.24 and a run plays `run` at ×0.97; a half
-  stick plays the walk slower. The test checks the playback against the measured speed.
+  `walk_mps`), capped at ×2.0 (`GAIT_MAX`). So a full-stick walk plays `walk_m` at **×1.86** (a brisk
+  walk: the walk clip's pose and arm swing at a quicker cadence, ~3.6 steps/s, the feet matching the
+  ground) and a full run plays `sprint` at **×1.10**; a half stick while running (3.3 m/s) is `walk` at
+  ×2.0 just under the jog threshold, then `jog` ×1.35-1.8 and `run` ×1.0-1.3 across the stick. A body
+  without a clip falls to the next gait down (not to a sliding walk). The tests check the playback
+  against the measured speed, walking and running.
 - **Idle** (`idle`) when the ground speed drops under 0.15 m/s.
 - **The camera** rides a boom from a pivot 1.5 m up and 0.35 m to the right, 2.4 m back along the
   view (the view pitches −60°…+29° in third person). Before every frame the boom is marched in 6 cm
   steps against **the same walk grid and obstacle list the player walks on** (walls, store fronts,
   the glass rects, columns, the arcade's machines, gondolas and counters, the benches when shown),
-  with 14 cm clearance; it is pulled in at once and let out slowly (no pumping).
+  with 14 cm clearance; it is pulled in at once and let out slowly (no pumping). **The pivot rides the
+  player exactly** (WALK): V glided the pivot in world space at 6/s, which trailed the player by
+  speed / 6 (1.1 m at the new 6.6 m/s run, so the avatar shrank into the frame and the clearance was
+  tested from the wrong place); now only the shoulder offset glides, in the player's frame, when the
+  camera changes side.
 - **Hanging signs** are not in that list, and the lowest hang at 2.0 m (Kay-Bee's sale cards,
   2.0–2.6 m; department boards from 2.56 m). So the camera stays between 0.35 and **1.95 m**: the
   boom tilts only as far as that allows, and the view pitches on its own (looking down, the avatar
@@ -208,7 +219,9 @@ changed, so **no rebake is needed** for this workstream).
 - The words are flat on the chest; on a body leaning forward they can float a few millimetres.
 - The arm swing doesn't hold the item differently: the walk clip's right arm swings with it.
 - In a crowd the avatar can pass through a shopper (no physics, as before in first person).
-- The palettes and the 2.0 m/s pace are guesses for Steven to tune (`avatar_look.gd`, `avatar.gd` `TP_WALK`).
+- The palettes are guesses for Steven to tune (`avatar_look.gd`). The pace is WALK's 3.0 / 6.6 m/s
+  (`avatar.gd` `TP_WALK`, `player.gd` `RUN`); if the ×1.86 walk reads too hurried, the lever is the jog
+  threshold (`GAITS`): at 3.0 the `jog` clip would play at ×1.19 instead.
 - First-visit creator for a shared `?cam=` link is skipped on purpose; the button is there.
 - The Top row's 11 swatches are ~28 px on a 390 px-wide phone, under Apple's 44 pt guideline; they
   tap fine in the test, but a two-row palette may be kinder.
