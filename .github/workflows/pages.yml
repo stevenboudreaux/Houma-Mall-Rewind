@@ -1,8 +1,13 @@
-# Deploys the whole site to GitHub Pages: everything on main, plus the current Godot mall
-# build from the godot-build branch copied into prototypes/godot-mall/play/. The Godot
-# build is kept out of main's history so the repository does not grow with every demo.
-# Runs on every push to main (editor publishes, photo approvals) and when godot-build
-# changes (its own workflow starts this one).
+# Deploys the site to GitHub Pages: the game (the current build from the godot-build branch plus the
+# play/ files tracked on main) at the site root, and the original game as classic.html. The build is kept
+# out of main's history so the repository does not grow with every demo.
+# Runs on every push to main and when godot-build changes (its own workflow starts this one).
+#
+# Two sites (Nov 3 2026, design/godot-build-hosting.md "Two sites"): a Pages site may hold 1 GB and the
+# build is more, so this site does not carry the computer packs (w*.desktop.pck). They are served by
+# stevenboudreaux/Houma-Mall-Rewind-desktop's site, which tools/publish_build.sh refreshes; the game asks
+# for them there (web/shell.html MALL_DESKTOP_SITE). Only what the site serves is deployed: the repo's
+# source, design notes and QA pictures are not.
 name: Deploy site to Pages
 on:
   push:
@@ -25,29 +30,28 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-          path: site
+          path: main
       - uses: actions/checkout@v4
         with:
           ref: godot-build
           path: build
-      - name: Add the Godot mall build
-        run: |
-          mkdir -p site/prototypes/godot-mall/play
-          cp build/play/* site/prototypes/godot-mall/play/
-          rm -rf site/.git
-      # The game is the front page (Steven, Nov 3 2026). Only the deployed copy changes:
-      # - the repo's index.html (the original game) is served as classic.html, next to photos.json,
-      #   photos/ and review.html, so its relative links still work. The editor's Publish reads and
-      #   writes index.html through the GitHub API, so it is unaffected;
-      # - the game's files (play/) move to the site root. They only fetch relative paths; the owner's
-      #   sign/prize/shirt/ROM publishing writes the repo paths through the API, also unaffected;
+      # - the game's files at the root: main's tracked play/ files, then the build over them (as before);
+      #   they fetch only relative paths, and the owner's sign/prize/shirt/ROM publishing writes the repo
+      #   paths through the GitHub API, so it is unaffected;
+      # - the original game (the repo's index.html) as classic.html, next to photos.json, photos/,
+      #   pending.json, pending/ and review.html; the editor's Publish writes index.html through the API;
       # - every old prototypes/godot-mall/play/*.html address forwards to its new place;
       # - the tab title says only the working title, until the next export carries project.godot's.
-      - name: The game is the front page
+      - name: The site
         run: |
-          mv site/index.html site/classic.html
-          P=site/prototypes/godot-mall/play
-          mv $P/* site/
+          mkdir -p site
+          cp -a main/prototypes/godot-mall/play/. site/
+          cp -a build/play/. site/
+          rm -f site/*.desktop.pck
+          cp main/index.html site/classic.html
+          for f in review.html photos.json pending.json .nojekyll; do [ -e "main/$f" ] && cp "main/$f" site/; done
+          for d in photos pending; do [ -d "main/$d" ] && cp -a "main/$d" site/; done
+          python3 main/prototypes/godot-mall/project/tools/desktop_site/patch_index.py site/index.html main/prototypes/godot-mall/project/web/shell.html
           # builds exported before project.godot's name changed: the engine sets the old name as the
           # tab title when it starts, so strip its suffix there (no-op once a new export is published)
           if ! grep -q '<title>Houma Mall Rewind</title>' site/index.html; then
@@ -57,6 +61,8 @@ jobs:
             sed -i '/<\/title>/r /tmp/title.js' site/index.html
           fi
           sed -i 's#<title>[^<]*</title>#<title>Houma Mall Rewind</title>#' site/index.html
+          P=site/prototypes/godot-mall/play
+          mkdir -p $P
           for f in site/*.html; do
             b=$(basename "$f")
             case "$b" in classic.html|review.html) continue;; esac
@@ -65,8 +71,11 @@ jobs:
               "<script>location.replace(\"../../../$b\" + location.search + location.hash);</script></head>" \
               "<body><p><a href=\"../../../$b\">Houma Mall Rewind</a></p></body></html>" > "$P/$b"
           done
-          test -s site/classic.html && test -s site/index.wasm && test -s site/w1.desktop.pck && test -s $P/index.html
+          test -s site/classic.html && test -s site/index.wasm && test -s site/w1.mobile.pck && test -s $P/index.html
           grep -q '<title>Houma Mall Rewind</title>' site/index.html
+          grep -q 'MALL_DESKTOP_SITE' site/index.html
+          B=$(du -sb site | cut -f1); echo "site: $B bytes"
+          [ "$B" -lt 1000000000 ] || { echo "::error::the site is $B bytes, over Pages' 1 GB"; exit 1; }
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

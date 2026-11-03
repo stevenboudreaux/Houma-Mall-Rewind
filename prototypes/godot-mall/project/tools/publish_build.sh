@@ -58,6 +58,14 @@ for w in 4 5 6; do
     for k in desktop mobile; do [ "$SRC/w$mw$Y.$k.pck" -nt tex/standin/${P}${w}_day.png ] || { echo "the export is older than wing $w's ($y) picture: export again"; exit 1; }; done
   done
 done
+# Two sites (Nov 3 2026, design/godot-build-hosting.md "Two sites"): a Pages site may hold 1 GB. The main
+# site carries the phone packs and the rest of play/, the second site the computer packs; each must fit
+# (0.95 GB here, for main's own files and headroom).
+DESK=$(cat "$SRC"/w*.desktop.pck | wc -c); MOB=$(cat "$SRC"/w*.mobile.pck | wc -c)
+REST=$(find "$SRC" -maxdepth 1 -type f ! -name '*.pck' -exec cat {} + | wc -c)
+echo "sites: main $(( (MOB + REST) / 1000000 )) MB (phone packs + page), desktop $(( DESK / 1000000 )) MB (computer packs); each must stay under 950"
+[ $((MOB + REST)) -lt 950000000 ] || { echo "the main site would be over GitHub Pages' 1 GB: make the phone packs smaller first"; exit 1; }
+[ "$DESK" -lt 950000000 ] || { echo "the desktop site would be over GitHub Pages' 1 GB: make the computer packs smaller first"; exit 1; }
 if [ "${DRY_RUN:-0}" = "1" ]; then echo "dry run: all checks passed; nothing published (room wings in the export:${ROOMS:- none})"; exit 0; fi
 REPO=$(git rev-parse --show-toplevel)
 W=$(mktemp -d)
@@ -92,5 +100,20 @@ git init -q -b godot-build
 git add -A
 git -c user.name="Steven Boudreaux" -c user.email="steven_boudreaux@outlook.com" commit -q -m "$MSG"
 git push -q --force "$(git -C "$REPO" remote get-url origin)" godot-build 2>&1 | grep -iv "moved\|new location\|github.com/stevenboudreaux\|^remote: *$\|GH001\|gh.io\|lfs\|recommended maximum" || true
+B=$(git rev-parse HEAD)
 echo "published $(git rev-parse --short HEAD)"
+cd / && rm -rf "$W"
+# the second site: one commit (its workflow and the build's name) replaces the desktop repo's main; the push
+# starts its Pages workflow, which copies the computer packs from godot-build ("Two sites")
+D=${DESKTOP_REPO:-https://github.com/stevenboudreaux/Houma-Mall-Rewind-desktop}
+W=$(mktemp -d); mkdir -p "$W/.github/workflows"
+cp "$REPO/prototypes/godot-mall/project/tools/desktop_site/pages.yml" "$W/.github/workflows/pages.yml"
+cp "$REPO/prototypes/godot-mall/project/tools/desktop_site/README.md" "$W/README.md"
+echo "$B" > "$W/build.txt"
+cd "$W"
+git init -q -b main
+git add -A
+git -c user.name="Steven Boudreaux" -c user.email="steven_boudreaux@outlook.com" commit -q -m "computer packs of $MSG"
+git push -q --force "$D" main 2>&1 | grep -iv "moved\|new location\|^remote: *$" || true
+echo "desktop site: asked to deploy the computer packs of $(echo $B | cut -c1-7)"
 cd / && rm -rf "$W"

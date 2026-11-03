@@ -132,3 +132,29 @@ Sears / Lynn's (wing 4), Dillard's level 1 (wing 5) and the Southland Cinema lob
   lightmaps should shrink. The real headroom: everything Steven adds to the Sears departments and to
   Dillard's from now on lands in wings 4 / 5 (35.6 and 37.6 MB, plus their lightmaps), not in 1 / 2.
 - The brief quoted wing 2 at 94.8 MB; this branch's export of the Demo 48 state measured 93.52.
+
+## Two sites (Nov 3 2026, after the move to Houma-Mall-Rewind)
+
+**Why.** A GitHub Pages site may hold 1 GB. Demo 49's 24 packs are 1.08 GB on their own, and the workflow
+also deployed all of main (585 MB: the project source, design notes, QA pictures). From Demo 49 on, both
+repos' deploys warned "Uploaded artifact size of 1166045103 bytes exceeds the allowed size of 1 GB.
+Deployment might fail", and on Steven's iPhone the game stopped at "Could not start: Load failed".
+
+**How.** Each device downloads only its own set (above), so the sets go to two sites on one origin:
+- `stevenboudreaux.github.io/Houma-Mall-Rewind/` (this repo, `.github/workflows/pages.yml`): the page,
+  `index.js` / `.wasm`, the phone packs (`w*.mobile.pck`), main's tracked `play/` files, the original game
+  as `classic.html` and its photo files. Nothing else from main is deployed.
+- `stevenboudreaux.github.io/Houma-Mall-Rewind-desktop/` (repo `Houma-Mall-Rewind-desktop`): only the
+  computer packs, copied from `godot-build` by that repo's workflow (source:
+  `prototypes/godot-mall/project/tools/desktop_site/pages.yml`).
+
+`web/shell.html` (`MALL_DESKTOP_SITE`, `MALL_PACK_BASE`) asks for computer packs on the second site when
+the page is on github.io, and next to the page anywhere else (local servers, `tools/qa`). One origin, so
+Cache Storage, the pack prefetch and the fetch wrapper work as before. Exports made before this change
+get the same lines at deploy time (`tools/desktop_site/patch_index.py`, a no-op on newer exports).
+
+**Publishing.** `tools/publish_build.sh` refuses when either site's set reaches 0.95 GB, then, after
+replacing `godot-build`, replaces the desktop repo's single commit (its workflow, `README.md`, and
+`build.txt` = the `godot-build` commit); that push deploys the computer packs. A cloud session that
+publishes needs `Houma-Mall-Rewind-desktop` attached with push access as well. The two deploys finish a
+minute or two apart; a computer that loads in that gap may get the previous build's pack once.

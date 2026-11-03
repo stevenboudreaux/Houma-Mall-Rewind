@@ -20,6 +20,10 @@ hooks and rules, run at `modes.rigor: minimal`.
   (the build's `play/` files move there) and the repo's `index.html`, the original game, as
   `classic.html`; old `prototypes/godot-mall/play/*.html` addresses forward. Only the deployed copy
   changes: the editor's Publish still writes `index.html` in the repo.
+- **Two sites** (`design/godot-build-hosting.md` "Two sites"): a Pages site may hold 1 GB and the game
+  is more. The computer packs are served by `stevenboudreaux/Houma-Mall-Rewind-desktop`'s site, which
+  `tools/publish_build.sh` refreshes; this site deploys only what it serves, minus those packs. Both
+  deploys refuse to go over 1 GB; never work around that.
 - **Backend**: Google Apps Script (`apps-script/Code.gs`), deployed by hand from
   Steven's Google account. Editing the file here does not redeploy it.
 - **Version Control**: Git, trunk-based on `main`.
