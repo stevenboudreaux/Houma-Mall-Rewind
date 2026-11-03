@@ -36,6 +36,9 @@ Built on `main` at 326ed7c (Demo 47). Branch `ws/m-menu`.
 | `scripts/timetravel.tscn`, `.gd`, `.gdshader` | The time-travel transition (a CanvasLayer at 60; the look is the shader). |
 | `tools/qa/menu_test.gd` | Native, unbaked: opening, name, every tab at 3 sizes, keys, remap, HELD / PUT AWAY in both views, the transition, 2026's shoppers. |
 | `tools/qa/menu_webtest.py` | The web build: opening, typed name, tabs, remap by keyboard and a reload, phone portrait / landscape by touch. |
+| `scripts/menu/portrait.gd` | MENU2: MAIN's turning character. |
+| `scripts/timetravel_trip.gd`, `data/directory_twins.json` | MENU2: the trip from a directory's year toggle, and each kiosk's twin. |
+| `tools/qa/menu_trip_webtest.js` | MENU2: the trip on the web, both ways, the load screen never shown, the landing. |
 
 Shared files, small hunks marked `M`:
 - `scripts/player.gd`: `var menu`, making `Menu`; walking / running read the InputMap (`_mkey`, falls back
@@ -219,6 +222,15 @@ whether those two should travel, hide the toggle, or whether 2026 should get kio
   and a manual refresh shows the normal load screen (the key is removed when read).
 - The other year's file is usually already in the cache (`mallPrefetchOther` fetches this wing's other
   year second); on a cold cache the vortex simply loops for as long as the download takes.
+- **The page's main thread is blocked for seconds at a time while the engine starts** (compiling the
+  wasm, opening the pack: under swiftshader the veil drew 10 frames in 17 s). WebGL only draws between
+  those stalls, so the veil also has `#tt-spin`, a disc of the vortex's tints turned by a CSS animation,
+  which runs on the compositor and keeps turning while the main thread is busy. The WebGL veil is drawn
+  at most 360 px wide (scaled up; the vortex is soft) about 20 times a second, to leave the GPU to the
+  starting game.
+- **The snapshot** (`get_image()` of the frame) is a GPU read-back: a few ms on a real GPU, ~15 s under
+  swiftshader in the cloud tests. It happens before the effect starts, so a slow device shows a brief
+  hitch there, not a break in the vortex.
 - **Reduced motion:** no ripple, flashes or vortex on either side: a dark veil that lifts. **VR:** the
   directory isn't used in the headset; a trip refuses to start in VR.
 
@@ -266,6 +278,37 @@ opened by itself); START leads to the creator.
 - `layout`: 2026's store doors, so the 2026 shoppers walk into 2026's open stores and windows.
 - Only those characters are warmed up behind the loading card (`npc_warmup.gd` `only`).
 - 1995 is untouched (17, all roles). The outside (wing 3) 2026 has none. No new NPCs.
+
+## Checks (MENU2, Nov 3, on `ws/menu2`; unbaked)
+- `tools/qa/menu_unit_test.gd` (headless): **MENU UNIT OK (64 checks)**, adding: no year action and no Y
+  default anywhere, an old saved year remap dropped, the kiosk twins (both filmed kiosks have one, the
+  1995-only ones don't), `landing()` (same-facing twin, and a twin turned 90°), the loop never black and
+  smooth frame to frame, the outro ends clear.
+- `tools/qa/menu_test.gd` (native, wing 2): **MENU TEST OK (89 checks)**: tabs MAIN / INVENTORY /
+  CONTROLS; MAIN's portrait, name, money (stub), tickets; Edit inside MAIN and Done back to MAIN; every tab
+  and Edit at 1280×720 / 390×844 / 844×390; Q / E, LB / RB, LT / RT; Tab opens on MAIN; Esc and B close;
+  I, C; **Y does nothing**, no year row, no year button; then the JCPenney court directory: the sign shows
+  1995 with the toggle, Y closes it and starts the trip, a frame every 0.15 s, the scene changes under the
+  loop (no reload natively), lands in 2026 0.00 m from the twin spot, same facing, the vortex unwinds and
+  the player is free; 2026's 3 shoppers as before. (Test fix: workstream R's "You received" cards hold the
+  player after `take()`, so the test dismisses them before opening INVENTORY.)
+- `tools/qa/menu_trip_webtest.js` (web build, Node Playwright, wing 1's H2 kiosk): **MENU TRIP WEB OK (20
+  checks)**: 1995 → 2026 and back, each: the trip begins, the load screen never visible (0 of ~33 frames the
+  page could sample, and 0 of 292 / 430 screencast frames look like it), the veil covers the reload, lands
+  0.00 m from the twin spot with the same facing, the right year's file, 0 console errors.
+  `node tools/qa/menu_trip_webtest.js "<build>/index.html" <out>` (server on :8765 at the repo root).
+- `tools/qa/menu_webtest.py` (web, wing 2): **MENU WEB OK (8 checks), 0 console errors**, with MAIN first.
+- Found and fixed on the way (web only): the arriving trip was added to the root while it was still
+  setting up the first scene, so it never entered the tree, and in a release build the wait loop then
+  spun forever on a null `get_tree()`, freezing the page; it is now added deferred and lands from `_ready`.
+
+## Evidence (MENU2: `production/qa/evidence/wsMENU-*`, unbaked)
+MAIN at 1280×720 / 390×844 / 844×390, Edit inside MAIN, INVENTORY, CONTROLS, the opening, the directory
+with its year and toggle (and a close-up), the native trip as frames
+(`wsMENU-trip-native-1995-2026-frames-unbaked.jpg`), the web trips both ways as screencast frame sheets
+through the reload (`wsMENU-web-trip-<dir>-frames-unbaked.jpg`) with the directory before and the arrival
+after, the web menu (desktop, phone), and the test logs (`wsMENU-*-test.log.txt`). The swiftshader
+timeline is slow (the snapshot ~15 s, the engine start ~60 s); on a phone's GPU both are far shorter.
 
 ## Checks (Nov 2, on `ws/m-menu`)
 - `tools/qa/menu_unit_test.gd` (headless): **MENU UNIT OK (35 checks)**: the name contract, held_id(), rebinds,

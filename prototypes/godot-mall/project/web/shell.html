@@ -295,6 +295,13 @@ body.xfer .lr-text { font-size: clamp(15.5px, 0.25vw + 14px, 18px); }
    place of the load screen, which stays for every other load. */
 #tt-veil { position: fixed; inset: 0; z-index: 2147483000; background: #000 center / 100% 100% no-repeat; pointer-events: none; transition: opacity 0.35s linear; }
 #tt-veil canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* the page's main thread is busy for seconds at a time while the game starts (rAF stops), so the
+   veil also turns on the compositor: a slow spin of a disc of the vortex that never stops */
+#tt-spin { position: absolute; left: 50%; top: 50%; width: 150vmax; height: 150vmax; margin: -75vmax 0 0 -75vmax; border-radius: 50%;
+	background: radial-gradient(circle, rgba(255,247,230,0.55) 0, rgba(255,247,230,0) 9%), repeating-conic-gradient(from 0deg, rgba(89,204,255,0.0) 0deg, rgba(89,204,255,0.22) 18deg, rgba(242,102,242,0.18) 36deg, rgba(255,184,77,0.2) 48deg, rgba(89,204,255,0.0) 60deg);
+	mix-blend-mode: screen; animation: tt-spin 2.4s linear infinite; will-change: transform; pointer-events: none; }
+#tt-spin.back { animation-direction: reverse; }
+@keyframes tt-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 html.tt, html.tt body { background: #05030a; }
 html.tt #load-card { display: none !important; }
 html.tt #status { opacity: 0 !important; }
@@ -438,6 +445,7 @@ html.tt #status { opacity: 0 !important; }
 	document.body.appendChild(veil);
 	var cv = document.createElement('canvas');
 	veil.appendChild(cv);
+	if (!rm) { var spin = document.createElement('div'); spin.id = 'tt-spin'; if (info.to < info.from) { spin.className = 'back'; } veil.appendChild(spin); }
 	var gl = null;
 	try { gl = cv.getContext('webgl', { alpha: false, antialias: false, premultipliedAlpha: false }); } catch (e) { gl = null; }
 	var fwd = (info.to >= info.from) ? 1 : -1;
@@ -516,12 +524,20 @@ html.tt #status { opacity: 0 !important; }
 		}
 	}
 	window.__mallTTFrames = 0;
-	function frame() {
+	// the vortex is soft: drawn at most VEIL_W px wide and scaled up by the page, about 20 times a
+	// second, so it leaves the GPU to the game that is starting underneath it (its start-up makes many
+	// waiting GL calls, and a busy GPU stretches them out)
+	var VEIL_W = 360, VEIL_MS = 48;
+	var last = 0;
+	function frame(now) {
 		if (!live) { return; }
+		requestAnimationFrame(frame);
+		if (now && now - last < VEIL_MS) { return; }
+		last = now || 0;
 		var t = Date.now() / 1000 - info.start;
 		if (gl) {
-			var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-			var w = Math.max(1, Math.round(innerWidth * dpr)), h = Math.max(1, Math.round(innerHeight * dpr));
+			var sc = Math.min(1, VEIL_W / Math.max(1, innerWidth));
+			var w = Math.max(1, Math.round(innerWidth * sc)), h = Math.max(1, Math.round(innerHeight * sc));
 			if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
 			gl.viewport(0, 0, w, h);
 			var e = ttEnv(t, -1);
@@ -532,9 +548,8 @@ html.tt #status { opacity: 0 !important; }
 			veil.style.filter = 'hue-rotate(' + Math.round(t * 120) + 'deg) brightness(0.8)';
 		}
 		window.__mallTTFrames++;
-		requestAnimationFrame(frame);
 	}
-	frame();
+	frame(0);
 	// called by lift() when the game is ready: fade into the game's own vortex
 	window.mallTTLift = function () {
 		window.__mallTTLifted = 1;

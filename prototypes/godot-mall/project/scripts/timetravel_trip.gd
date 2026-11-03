@@ -165,13 +165,25 @@ static func arrive(p: Node) -> void:
 		return
 	trip = load("res://scripts/timetravel_trip.gd").new()
 	trip.name = "TimeTravelTrip"
-	root.add_child(trip)
 	trip.from_year = int(info.get("from", 1995))
 	trip.to_year = int(info.get("to", 2026))
-	trip.tt = load(TT).instantiate()
-	trip.add_child(trip.tt)
-	trip.tt.start_loop(trip.from_year, trip.to_year, began)
-	trip._land(p, true)
+	trip._began = began
+	trip._arriving = p
+	p.frozen = true
+	# the root is still setting up the first scene here: add the trip once it can take children; it
+	# lands from its _ready
+	root.add_child.call_deferred(trip)
+
+var _began := 0.0
+var _arriving: Node = null
+
+func _ready() -> void:
+	if _arriving == null:
+		return
+	tt = load(TT).instantiate()
+	add_child(tt)
+	tt.start_loop(from_year, to_year, _began)
+	_land(_arriving, true)
 
 func _land(p: Node, web: bool) -> void:
 	player = p
@@ -180,8 +192,10 @@ func _land(p: Node, web: bool) -> void:
 		# the shell's overlay lifts when the new year is ready (its load-screen rule); then it fades
 		# into this vortex, and the vortex unwinds
 		JavaScriptBridge.eval("window.__mallTTGodot=1", true)
-		while str(JavaScriptBridge.eval("window.__mallTTLifted?'1':''", true)) != "1":
+		while is_inside_tree() and str(JavaScriptBridge.eval("window.__mallTTLifted?'1':''", true)) != "1":
 			await get_tree().process_frame
+		if not is_inside_tree():
+			return
 		await get_tree().create_timer(SHELL_FADE).timeout
 	else:
 		await get_tree().create_timer(0.3).timeout

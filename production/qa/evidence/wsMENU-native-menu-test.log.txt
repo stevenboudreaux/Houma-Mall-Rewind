@@ -1,0 +1,92 @@
+ok   player has its Menu node
+ok   a first start shows the opening, the player frozen
+ok   the opening's words come from data/story/opening.json (PLACEHOLDER: Steven's opening )
+ok   START opens MAIN with the avatar editing
+ok   the NAME field is focused
+ok   the creator is inside the tab
+ok   the name is mall.player_name (TESTER)
+ok   the name is saved
+ok   tabs: MAIN, INVENTORY, CONTROLS (["main", "inventory", "controls"])
+ok   MAIN shows the character (not editing)
+ok   MAIN has the character's portrait
+ok   MAIN: the name (TESTER)
+ok   MAIN: the money, mall.money (stub: ECON not merged) ($0.00)
+ok   MAIN: the tickets, mall.tickets (140)
+ok   Edit opens the avatar editing inside MAIN
+ok   the NAME field is in MAIN's editing
+ok   Done goes back to MAIN, the menu still open
+ok   tab main open at 1280x720
+ok   every main control on screen at 1280x720
+ok   tab edit open at 1280x720
+ok   every edit control on screen at 1280x720
+ok   the creator fits the tab at 1280x720
+ok   tab inventory open at 1280x720
+ok   every inventory control on screen at 1280x720
+ok   tab controls open at 1280x720
+ok   every controls control on screen at 1280x720
+ok   tab main open at 390x844
+ok   every main control on screen at 390x844
+ok   tab edit open at 390x844
+ok   every edit control on screen at 390x844
+ok   the creator fits the tab at 390x844
+ok   tab inventory open at 390x844
+ok   every inventory control on screen at 390x844
+ok   tab controls open at 390x844
+ok   every controls control on screen at 390x844
+ok   tab main open at 844x390
+ok   every main control on screen at 844x390
+ok   tab edit open at 844x390
+ok   every edit control on screen at 844x390
+ok   the creator fits the tab at 844x390
+ok   tab inventory open at 844x390
+ok   every inventory control on screen at 844x390
+ok   tab controls open at 844x390
+ok   every controls control on screen at 844x390
+ok   E: next tab (MAIN -> INVENTORY)
+ok   Q: previous tab
+ok   RB: next tab
+ok   LB: previous tab
+ok   RT: next tab
+ok   LT: previous tab
+ok   Tab closes the menu, the player free
+ok   Tab opens on MAIN, the far-left tab
+ok   Esc closes the menu
+ok   B closes the menu
+ok   I opens the INVENTORY tab
+ok   C opens MAIN's avatar editing
+ok   Y does nothing (no year switch on the player's keys)
+ok   CONTROLS lists no year action
+ok   no year button on the HUD
+ok   the InputMap has Action on F
+ok   the table reads F from the InputMap
+ok   the remap is saved
+ok   F is sent on as E (the code's key)
+ok   F released: E released
+ok   a fresh load (a reload) keeps F
+ok   F can't also be First / third person
+ok   Reset to defaults
+ok   held_id() is the dice
+ok   PUT AWAY: nothing held (held_id "")
+ok   HELD: the dice in the hand
+ok   first person: the dice in the hand
+ok   third person: the dice in the avatar's hand
+ok   the owner's Show the opening again
+ok   the opening again
+ok   Esc skips it
+ok   a directory kiosk in wing 2
+ok   the directory is open
+ok   the directory shows 1995 with the toggle beside it
+time travel: 1995 -> 2026 from kiosk (-142.0, 71.5) to wing 2 (-142.30, 73.10)
+ok   the toggle closes the directory
+ok   the trip starts
+time travel: arrived in 2026 at -142.30,73.10 yaw 0.0
+ok   the trip lands in 2026 (res://wing2_2026.tscn)
+ok   the kiosk has a twin in 2026
+ok   landed within 1 m of the twin spot (0.00 m)
+ok   same facing
+ok   the vortex unwinds, the player free in 2026
+ok   2026: 3 shoppers (3: ["Ch08", "Ch02", "Ch01"])
+ok   the name crosses into 2026
+ok   no opening once named
+ok   2026: 3 shoppers (3)
+MENU TEST OK (89 checks)
