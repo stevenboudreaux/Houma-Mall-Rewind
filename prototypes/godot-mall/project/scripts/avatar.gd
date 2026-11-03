@@ -61,7 +61,8 @@ var _gait := "walk"
 var _hand_xf := {}            # the hand item's first-person local transform, by instance id
 var _tp_active := false
 var _tint := Color(1, 1, 1)
-var _dbg_t := 0.0             # WALK: the ?debug=1 gait report's timer
+var _dbg_t := 0.0             # WALK: the ?debug=1 gait report's timer, and its game clock
+var _dbg_gt := 0.0
 # ui
 var view_btn: Button
 var make_btn: Button
@@ -119,11 +120,14 @@ func _process(dt: float) -> void:
 	# second, for tools/qa/walk_webtest.py (the web build has no other way to read them)
 	if tp and player.get("debug") == true:
 		_dbg_t += dt
+		_dbg_gt += dt
 		if _dbg_t > 0.5:
 			_dbg_t = 0.0
 			var ps: float = body.ap.speed_scale if body.ap else 0.0
 			var cd := Vector2(tp_cam.global_position.x - player.position.x, tp_cam.global_position.z - player.position.z).length()
-			print("DBG gait=%s x%.2f v=%.2f cam=%.2f boom=%.2f side=%d" % [body.clip, ps, _speed, cd, _boom, int(_side)])
+			# gt: the game's own clock (the process deltas summed), so a slow test renderer measures the
+			# same metres per game second as a phone does per real second
+			print("DBG gait=%s x%.2f v=%.2f cam=%.2f boom=%.2f side=%d pos=%.3f,%.3f gt=%.3f" % [body.clip, ps, _speed, cd, _boom, int(_side), player.position.x, player.position.z, _dbg_gt])
 	# walking speed: third person walks at a walking pace (the first person's 4 m/s is untouched)
 	if "move_scale" in player:
 		player.move_scale = (TP_WALK / player.SPEED) if tp else 1.0
@@ -173,7 +177,17 @@ func _move_body(dt: float) -> void:
 			body.ap.speed_scale = clampf(_speed / own, 0.3, GAIT_MAX)
 	else:
 		_speed = 0.0 if _speed < 0.05 else _speed
+		# WALK: NpcBody.set_speed(0) only knows the walk clips; a stop from jog / run / sprint (one long
+		# frame can drop the speed straight from 6.6 to 0) must come back to idle itself
+		if _is_gait(str(body.clip)) and not str(body.clip).begins_with("walk"):
+			body.base = "idle"
+			body.play("idle", 0.3, false)
 		body.set_speed(0.0)
+
+func _is_gait(c: String) -> bool:
+	for g in GAITS:
+		if c == str(g[0]): return true
+	return false
 
 ## The gait for a ground speed, with a little hysteresis so it doesn't flicker at a boundary.
 func _pick_gait(s: float) -> String:

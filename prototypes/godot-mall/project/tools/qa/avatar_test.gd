@@ -145,9 +145,10 @@ func _plan() -> void:
 			var cp: Vector3 = av.tp_cam.global_position
 			var pv: Vector3 = player.position + Vector3(0, av.PIVOT_H, 0) + Basis(Vector3.UP, player.yaw) * av._pivot
 			var back: float = (cp - pv).dot(player.transform.basis.z)   # along the boom, behind the player
-			_check(absf(Vector2(pv.x - player.position.x, pv.z - player.position.z).length() - av.SHOULDER) < 0.08 or av._side == 0.0,
+			# the pivot sits on the player (at most a shoulder off; V's glide trailed it by v/6 = 1.1 m here)
+			_check(Vector2(pv.x - player.position.x, pv.z - player.position.z).length() <= av.SHOULDER + 0.08,
 				"%s: the camera pivot rides the player at speed (%.2f m off, side %d)" % [nm, Vector2(pv.x - player.position.x, pv.z - player.position.z).length(), av._side])
-			_check(back > 0.0 and back <= av.BOOM + 0.01, "%s: camera %.2f m behind the player (boom %.2f)" % [nm, back, av._boom])
+			_check(back >= -0.01 and back <= av.BOOM + 0.01, "%s: camera %.2f m behind the player (boom %.2f; 0 in a tight spot)" % [nm, back, av._boom])
 			_check(av._free(cp.x, cp.z) or av._boom < 0.05, "%s: running camera clear of walls and glass" % nm)
 			_check(player._free(player.position.x, player.position.z), "%s: the runner stands on free floor (walls and glass held)" % nm)
 			_shot("tp-run-" + nm), 0.0)
@@ -184,7 +185,7 @@ func _plan() -> void:
 				and is_equal_approx(player.move_scale, 1.0), "VR: no avatar, no third-person camera, V ignored, buttons hidden, speed x1")
 			player.vr_on = false, 0.5)
 		_do(func():
-			_check(av.tp_cam.current and av.body.visible, "leaving VR: back to the saved third person"), 0.0)
+			_check(av.tp_cam.current and av.body.visible, "leaving VR: back to the saved third person (cam %s, body %s, boom %.2f, leaving %s, frozen %s)" % [av.tp_cam.current, av.body.visible, av._boom, player.leaving, player.frozen]), 0.0)
 	# fps cost: one view, the avatar shown vs hidden (a debug hide; the view and camera stay)
 	if not spots.is_empty():
 		_do(func(): av.third = true; _at(spots[0][1]), 1.0)
