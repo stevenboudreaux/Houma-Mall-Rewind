@@ -178,7 +178,12 @@ func _plan() -> void:
 			_shot("tp-hand"), 0.0)
 		_do(func(): av.third = false, 0.4)
 		_do(func():
-			_check(player.interact.hand_item.get_parent() == player.interact.hand_root, "first person: the item is back in the first-person hand"), 0.0)
+			_check(player.interact.hand_item.get_parent() == player.interact.hand_root, "first person: the item is back in the first-person hand")
+			# the "You received" card (scripts/received_popup.gd, after V) froze the player on take():
+			# dismiss it, as a tap would, or VR below finds the player frozen
+			for c in player.interact.get_children():
+				if c.has_method("is_showing") and c.has_method("dismiss") and c.is_showing():
+					c.dismiss(), 0.0)
 	# VR: always first person, whatever is saved (vr.gd sets player.vr_on; its own XR camera then)
 	if not spots.is_empty():
 		_do(func(): av.third = true; _at(spots[0][1]); player.vr_on = true, 0.5)
