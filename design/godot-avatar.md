@@ -108,21 +108,32 @@ Saved with the look (`view`). `?view=third|first` sets it for one load (tests).
 - **The body** stands at the player's position, turns (smoothly) to the way it walks, keeps its
   facing when still. It is an `NpcBody`, so it plays the shoppers' clips through the same `NpcRig`
   retargeting.
-- **Walking pace:** third person walks at **2.0 m/s** at full stick (first person stays 4.0, untouched:
-  `player.move_scale` is 1.0 there); running (X / Shift / the right mouse button, ×2.2) is 4.4 m/s.
-  A guess: 4 m/s is a jog, and the brief asks for the walk clip.
-- **Gaits:** walk below 2.4 m/s (`walk_m` / `walk_f` by the body's sex in `npcs.json`), jog to 3.6,
-  run to 5.4, sprint above, with a little hysteresis. **Playback = ground speed / the clip's own
+- **Walking pace** (workstream WALK, Nov 3 2026; Steven: "in third person the avatar walks slower than
+  first person, it needs a faster cadence, and the run about 50 % faster"): third person walks at
+  **3.0 m/s** at full stick (first person stays 4.0, untouched: `player.move_scale` is 1.0 there);
+  running (X / Shift / the right mouse button, ×2.2) is **6.6 m/s**. V had 2.0 / 4.4 (a guess: "4 m/s is
+  a jog"). Touch keeps the 46 px full stick and the 0.05 deadzone; a gamepad's full stick is 3.0.
+- **Gaits** (WALK retune): walk below 3.4 m/s (`walk_m` / `walk_f` by the body's sex in `npcs.json`),
+  jog to 4.6, run to 6.0, sprint above, with 0.25 m/s of hysteresis (V: 2.4 / 3.6 / 5.4; a plain speed
+  change alone would have made the full-stick walk a jog). **Playback = ground speed / the clip's own
   speed** from `npc/anims.json`: `walk_m` 1.616 m/s, `walk_f` 1.623, `jog` 2.512, `run` 4.555, `sprint`
   5.973 (the 1.765 m/s in the brief was the retired Demo 36 clip, still in `npc/skins.json`
-  `walk_mps`). So a full-stick walk plays `walk_m` at ×1.24 and a run plays `run` at ×0.97; a half
-  stick plays the walk slower. The test checks the playback against the measured speed.
+  `walk_mps`), capped at ×2.0 (`GAIT_MAX`). So a full-stick walk plays `walk_m` at **×1.86** (a brisk
+  walk: the walk clip's pose and arm swing at a quicker cadence, ~3.6 steps/s, the feet matching the
+  ground) and a full run plays `sprint` at **×1.10**; a half stick while running (3.3 m/s) is `walk` at
+  ×2.0 just under the jog threshold, then `jog` ×1.35-1.8 and `run` ×1.0-1.3 across the stick. A body
+  without a clip falls to the next gait down (not to a sliding walk). The tests check the playback
+  against the measured speed, walking and running.
 - **Idle** (`idle`) when the ground speed drops under 0.15 m/s.
 - **The camera** rides a boom from a pivot 1.5 m up and 0.35 m to the right, 2.4 m back along the
   view (the view pitches −60°…+29° in third person). Before every frame the boom is marched in 6 cm
   steps against **the same walk grid and obstacle list the player walks on** (walls, store fronts,
   the glass rects, columns, the arcade's machines, gondolas and counters, the benches when shown),
-  with 14 cm clearance; it is pulled in at once and let out slowly (no pumping).
+  with 14 cm clearance; it is pulled in at once and let out slowly (no pumping). **The pivot rides the
+  player exactly** (WALK): V glided the pivot in world space at 6/s, which trailed the player by
+  speed / 6 (1.1 m at the new 6.6 m/s run, so the avatar shrank into the frame and the clearance was
+  tested from the wrong place); now only the shoulder offset glides, in the player's frame, when the
+  camera changes side.
 - **Hanging signs** are not in that list, and the lowest hang at 2.0 m (Kay-Bee's sale cards,
   2.0–2.6 m; department boards from 2.56 m). So the camera stays between 0.35 and **1.95 m**: the
   boom tilts only as far as that allows, and the view pitches on its own (looking down, the avatar
@@ -203,12 +214,51 @@ changed, so **no rebake is needed** for this workstream).
 - First person unchanged: `wsV-fp-hall-unchanged-unbaked`, `wsV-fp-arcade-unchanged-unbaked`,
   `wsV-web-fp-hall-desktop`, `wsV-web-fp-camlink-unchanged`.
 
+## Checks (Nov 3 2026, workstream WALK, on `ws/walk-speed`)
+Same tools, retuned for the new pace; nothing baked changed, so **no rebake is needed**. All shots
+are unbaked (native) or the web build with the published lightmaps.
+- Native, unbaked (`tools/qa/avatar_test.gd`, now also running back the way it came): wing 2
+  (hall `-20,54,90,-8`, Pocket Change aisle `-105,69,180,-10`, the dice in hand, VR) **43 checks
+  OK**; wing 1 (hall `30,0,90,-8`, Kay-Bee aisle `-13,-56.2,90,-8`) **41 OK**; wing 2 2026 (hall
+  `-60,54,90,-8`, Games Inc. `-114,56,180,-10`) **41 OK**. Each spot: walking at **3.00 m/s** plays
+  `walk_m` / `walk_f` at ×1.86 / ×1.85; running at **6.60 m/s** plays `sprint` at ×1.10; the camera's
+  pivot is on the player (0.35 m, the shoulder; 0.00-0.02 m in a tight aisle, where the boom is 0
+  and the avatar hidden as before) and the camera 2.38 m behind in a hall; the runner always ends on
+  free floor; letting go goes to `idle`; first person unchanged (eye camera 1.62 m, speed ×1, no body).
+- Web (`tools/export_web.sh`, wings 1-2 both years; `tools/qa/walk_webtest.py`, `?warm=0`, the
+  default avatar): **WALK WEB OK** in all four, 25 / 16 / 16 / 16 checks, 0 console errors. Ground
+  speed over the game's own clock **3.0 m per game second walking and 6.6 running** (keyboard W and
+  W+X), `walk_m` ×1.86 and `sprint` ×1.10, the camera 2.34-2.40 m behind the player at both speeds
+  (walk and run alike: it no longer trails), the player always on free floor, idle after the run.
+  Wing 2 1995 also walks and runs at a 0.2 m glass pane (`-132.25,71.5` facing +z, the pane at
+  z = 73.0): the position reaches 72.95 and never crosses, in frames of up to 1.3 s. A phone
+  (844×390, touch): a full-stick drag walks at 3.0 m/s with `walk_m`. (The headless renderer draws
+  a frame every 3-8 s, so the "frame sequences" are consecutive-ish game frames 0.5-1 game-second
+  apart, labelled with the game clock and the position; where a shopper crosses the hall it can
+  stand between the camera and the avatar for a frame.)
+- Found on the way, fixed here: a stop from jog / run / sprint never returned to idle
+  (`NpcBody.set_speed(0)` only knows the walk clips; on a long frame the speed drops straight to 0,
+  so it showed in the headless tests at once; on a phone it would have shown as a run-in-place after
+  a hard stop). The native test now dismisses the "You received" card (R) before VR and runs back
+  the way it came (6.6 m on from Pocket Change's spot is the prize counter's closer look).
+
+**Evidence** (`production/qa/evidence/wsWALK-*`): native `tp-hall-walk-unbaked`,
+`tp-hall-run-unbaked`, `tp-hall-idle-after-run-unbaked`, `tp-arcade-pocketchange-run-unbaked`,
+`tp-store-kaybee-walk-unbaked`, `tp-store-kaybee-run-unbaked`, `tp-hall-2026-run-unbaked`,
+`tp-arcade-gamesinc-2026-run-unbaked`; web frame strips `web-w2-hall-walk-frames`,
+`web-w2-hall-run-frames`, `web-w2-hall-idle-after-run`, `web-w2-glass-run-frames`,
+`web-w2-phone-touch-walk`, `web-w2-2026-hall-walk-frames`, `web-w2-2026-hall-run-frames`,
+`web-w1-hall-walk-frames`, `web-w1-hall-run-frames`, `web-w1-2026-hall-walk-frames`,
+`web-w1-2026-hall-run-frames`.
+
 ## Not done / open
 - Hair **style** is the body's (16 hairstyles across the bodies, Ch01 bald); only its colour changes.
 - The words are flat on the chest; on a body leaning forward they can float a few millimetres.
 - The arm swing doesn't hold the item differently: the walk clip's right arm swings with it.
 - In a crowd the avatar can pass through a shopper (no physics, as before in first person).
-- The palettes and the 2.0 m/s pace are guesses for Steven to tune (`avatar_look.gd`, `avatar.gd` `TP_WALK`).
+- The palettes are guesses for Steven to tune (`avatar_look.gd`). The pace is WALK's 3.0 / 6.6 m/s
+  (`avatar.gd` `TP_WALK`, `player.gd` `RUN`); if the ×1.86 walk reads too hurried, the lever is the jog
+  threshold (`GAITS`): at 3.0 the `jog` clip would play at ×1.19 instead.
 - First-visit creator for a shared `?cam=` link is skipped on purpose; the button is there.
 - The Top row's 11 swatches are ~28 px on a 390 px-wide phone, under Apple's 44 pt guideline; they
   tap fine in the test, but a two-row palette may be kinder.

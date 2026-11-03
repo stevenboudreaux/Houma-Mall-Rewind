@@ -17,7 +17,8 @@
 ##   against the same walk grid and obstacle list the player walks on (walls, store glass, the
 ##   arcade's machines), pulled in at once when something is in the way, let out slowly; very close
 ##   in, the avatar is hidden so the view is never from inside its head. Walking in third person is
-##   at a walking pace (TP_WALK m/s; running x2.2 as in first person) so the walk clip fits.
+##   at a brisk walking pace (TP_WALK m/s; running x2.2 as in first person), the walk clip played
+##   quicker to match (WALK: Steven, Nov 3 2026, "a faster cadence", about 50 % faster than V's 2.0).
 ## - In VR (design/godot-vr.md) the view is always first person and the avatar is hidden.
 ## - A held item (B+C, scripts/interact.gd) is moved into the avatar's right hand in third person and
 ##   back to the first-person hand after; a swing turns it there too.
@@ -27,7 +28,8 @@ const Look = preload("res://scripts/avatar_look.gd")
 const AvatarBody = preload("res://scripts/avatar_body.gd")
 const CREATOR := "res://scripts/avatar_creator.tscn"
 
-const TP_WALK := 2.0          # m/s at full stick in third person (first person stays 4.0); a guess
+const TP_WALK := 3.0          # m/s at full stick in third person (first person stays 4.0); running x player.RUN
+                              # (2.2) = 6.6 m/s. WALK (Nov 3 2026): up from V's 2.0 / 4.4 by half
 const PIVOT_H := 1.5          # the boom's pivot, m above the floor (shoulder height)
 const SHOULDER := 0.35        # the pivot's offset to the right, m
 const BOOM := 2.4             # the boom's length when nothing is in the way, m
@@ -37,8 +39,13 @@ const CAM_LOW := 0.35         # lowest camera, m
 const HIDE_UNDER := 0.75      # boom shorter than this: the avatar is hidden
 const PITCH_MIN := -1.05      # third person looks at most this far down / up (rad)
 const PITCH_MAX := 0.5
-## gaits: clip, the speed (m/s) from which it is used
-const GAITS := [["walk", 0.0], ["jog", 2.4], ["run", 3.6], ["sprint", 5.4]]
+## gaits: clip, the speed (m/s) from which it is used. A full-stick walk (TP_WALK, 3.0 m/s) stays the
+## walk clip, played at x1.86 (walk_m 1.616 m/s), a brisk walk; a full run (6.6 m/s) is the sprint
+## clip at x1.10 (5.973 m/s); between them (a half stick while running) jog x1.3-1.8 and run x1-1.3.
+## GAIT_MAX caps the playback so a clip never plays absurdly fast if the speeds are tuned again.
+const GAITS := [["walk", 0.0], ["jog", 3.4], ["run", 4.6], ["sprint", 6.0]]
+const GAIT_HYST := 0.25       # m/s under a gait's threshold before it drops back (no flicker)
+const GAIT_MAX := 2.0         # playback cap (and 0.3 the floor)
 
 var player: Node3D
 var look := {}
@@ -54,6 +61,8 @@ var _gait := "walk"
 var _hand_xf := {}            # the hand item's first-person local transform, by instance id
 var _tp_active := false
 var _tint := Color(1, 1, 1)
+var _dbg_t := 0.0             # WALK: the ?debug=1 gait report's timer, and its game clock
+var _dbg_gt := 0.0
 # ui
 var view_btn: Button
 var make_btn: Button
@@ -128,6 +137,31 @@ func _process(dt: float) -> void:
 	body.visible = not hide and _boom > HIDE_UNDER and not has_meta("qa_hide")   # qa_hide: tools/qa/avatar_test.gd fps
 	if not player.frozen and not tp_cam.current:
 		tp_cam.current = true
+	if player.get("debug") == true:
+		_dbg_report(dt)
+
+## WALK: ?debug=1 (player.debug) reports the gait, its playback and where the camera is, twice a
+## second, for tools/qa/walk_webtest.py (the web build has no other way to read them). After the
+## camera is placed for this frame, so the distance is this frame's. gt is the game's own clock (the
+## process deltas summed): a slow test renderer measures the same metres per game second as a phone
+## does per real second.
+func _dbg_report(dt: float) -> void:
+	_dbg_t += dt
+	_dbg_gt += dt
+	if _dbg_t < 0.5:
+		return
+	_dbg_t = 0.0
+	var ps: float = body.ap.speed_scale if body.ap else 0.0
+	var cd := Vector2(tp_cam.global_position.x - player.position.x, tp_cam.global_position.z - player.position.z).length()
+	# other bodies (shoppers, the Runner) within 3 m: a figure in a test frame can be one of them
+	var near := 0
+	var near_id := "-"
+	for n in get_tree().current_scene.find_children("*", "NpcBody", true, false):
+		if n == body or not (n as Node3D).visible: continue
+		var d := Vector2(n.global_position.x - player.position.x, n.global_position.z - player.position.z).length()
+		if d < 3.0:
+			near += 1; near_id = "%s@%.1fm" % [n.id, d]
+	print("DBG gait=%s x%.2f v=%.2f cam=%.2f boom=%.2f side=%d pos=%.3f,%.3f gt=%.3f body=%s vis=%d near=%d %s" % [body.clip, ps, _speed, cd, _boom, int(_side), player.position.x, player.position.z, _dbg_gt, body.id, int(body.visible), near, near_id])
 
 func _move_body(dt: float) -> void:
 	var p: Vector3 = player.position
@@ -153,10 +187,20 @@ func _move_body(dt: float) -> void:
 		body.set_speed(_speed)
 		if body.ap and body.clip == clip:
 			var own := float(NpcBody.meta().clips.get(clip, {}).get("mps", 1.6))
-			body.ap.speed_scale = clampf(_speed / own, 0.3, 2.0)
+			body.ap.speed_scale = clampf(_speed / own, 0.3, GAIT_MAX)
 	else:
 		_speed = 0.0 if _speed < 0.05 else _speed
+		# WALK: NpcBody.set_speed(0) only knows the walk clips; a stop from jog / run / sprint (one long
+		# frame can drop the speed straight from 6.6 to 0) must come back to idle itself
+		if _is_gait(str(body.clip)) and not str(body.clip).begins_with("walk"):
+			body.base = "idle"
+			body.play("idle", 0.3, false)
 		body.set_speed(0.0)
+
+func _is_gait(c: String) -> bool:
+	for g in GAITS:
+		if c == str(g[0]): return true
+	return false
 
 ## The gait for a ground speed, with a little hysteresis so it doesn't flicker at a boundary.
 func _pick_gait(s: float) -> String:
@@ -166,10 +210,10 @@ func _pick_gait(s: float) -> String:
 	var best := 0
 	for i in GAITS.size():
 		if s >= float(GAITS[i][1]): best = i
-	if best < cur and s > float(GAITS[cur][1]) - 0.25:
+	if best < cur and s > float(GAITS[cur][1]) - GAIT_HYST:
 		best = cur
-	if not NpcBody.has_clip(str(GAITS[best][0])) and best > 0:
-		best = 0
+	while best > 0 and not NpcBody.has_clip(str(GAITS[best][0])):
+		best -= 1              # a body without the clip: the next gait down, not a sliding walk
 	_gait = str(GAITS[best][0])
 	return _gait
 
@@ -204,12 +248,17 @@ func _place_cam(dt: float) -> void:
 	var pivot: Vector3 = lens[_side][1]
 	var want: float = lens[_side][0]
 	_boom = want if want < _boom else lerpf(_boom, want, clampf(dt * 3.0, 0.0, 1.0))
-	_pivot = pivot if _pivot == Vector3.INF else _pivot.lerp(pivot, clampf(dt * 6.0, 0.0, 1.0))
-	var at: Vector3 = _pivot + bb * Vector3(0, 0, 1) * _boom
+	# WALK (Nov 3 2026): the pivot used to glide in world space (lerp at 6/s), so at speed it trailed the
+	# player by v/6 m: 1.1 m behind at the new 6.6 m/s run, and the clearance was tested from the wrong
+	# place. Now the pivot rides the player exactly and only the shoulder offset (in the player's own
+	# frame, so a turn carries it) glides when the camera changes side.
+	var off_local: Vector3 = by.inverse() * (pivot - base)
+	_pivot = off_local if _pivot == Vector3.INF else _pivot.lerp(off_local, clampf(dt * 6.0, 0.0, 1.0))
+	var at: Vector3 = base + by * _pivot + bb * Vector3(0, 0, 1) * _boom
 	tp_cam.global_transform = Transform3D(by * Basis(Vector3.RIGHT, pitch), at)
 
 var _side := 1.0              # 1 right shoulder, -1 left, 0 straight behind
-var _pivot := Vector3.INF
+var _pivot := Vector3.INF     # the shoulder offset from the pivot's base, in the player's frame (glides)
 
 ## How long the boom can be along basis b's +Z from the pivot before a wall, glass or a machine.
 func _boom_len(pivot: Vector3, b: Basis) -> float:
