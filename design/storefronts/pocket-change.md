@@ -232,7 +232,7 @@ Steven (Nov 3): the build did not play like his machine, and coins kept falling 
 
   (The Nov 2 build, for comparison: 5.3 % return, 20 % into the side holes, 760 coins.) "Still storing" is how many more coins the field held at the end of the 200 measured drops than at their start: the shipped machine is within a few coins of its steady state after 200 warm drops, the lipped ones are still filling. Ms a step is the cloud box's one slow core (four runs at once); a phone's figure is in Performance below.
 
-- **Timing matters, a little:** TIMING_LINE
+- **Timing matters, a little:** the soak's `phase` option lands every coin with the gap open (the deck out) or closed (in), 200 warm and 200 measured drops at the shipped settings: **gap open: 82.5 % return, a win on 43 % of drops, 20 cascades of 3+, the biggest 9; gap closed: 74.5 %, 40 %, 10 cascades, the biggest 22; random: 90.5 %, 45 %, 25, 14.** Runs of 200 drops differ by about this much between seeds, so the honest reading is the research note's: timing is a mild bonus, not a gate. A coin into the open gap moves the heap at once (more frequent, smaller wins); a coin onto the closed deck's heap waits for the next gap and the wins come lumpier. The GAP OPEN cue is kept because it teaches the mechanism Steven described, and the page is fun to time.
 - **Lost at the sides: 0** in every run (the target was "effectively none"); 0 through the tier, 0 out of the world.
 - **Performance:** the physics step on the cloud box's one core (Node, four jobs running; `tests/unit/pusher/page_test.py` prints Chromium's own figures), a primed field after 60 drops:
 

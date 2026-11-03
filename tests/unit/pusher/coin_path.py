@@ -2,8 +2,9 @@
 drop, onto the top shelf while it is out, swept off its edge onto the main tier, pushed to the
 lip and over into the payout slot. The page runs in headless Chromium with its test hooks
 (?test=1, window.PUSHER_PAGE); the machine is primed first by fast-forwarding drops, then the
-tracked coin is dropped into the open gap and the sim is run on, a drop at a time (up to 900: a
-primed pusher turns its field over slowly), taking a frame whenever the coin has moved to a new
+tracked coin is dropped into the open gap and the sim is run on, a drop at a time (up to 1,500: a
+primed pusher turns its field over slowly), the drops aimed over the coin's column and the NUDGE
+button pressed every tenth drop, as a player who wants that coin out would play, taking a frame whenever the coin has moved to a new
 stage (and every 40 drops in between), with the coin ringed in red in the picture. A contact sheet of the frames is the evidence
 (production/qa/evidence/wsPUSHER-coin-path.jpg).
 
@@ -30,10 +31,13 @@ DROP = """() => { const P = PUSHER_PAGE, s = P.sim;
   while (s.outness() < 0.9) s.run(1 / 60, true);
   const id = s.drop(0); P.track(id); s.run(0.3, true); return { id, t: s.t }; }"""
 
-# run on a drop at a time (random x, the deck phase free) and report where the tracked coin is
-STEP = """() => { const P = PUSHER_PAGE, s = P.sim;
-  let rs = 4242 + Math.round(s.t * 1000); const rnd = () => { rs = (rs * 1664525 + 1013904223) >>> 0; return rs / 4294967296; };
-  s.drop((rnd() * 2 - 1) * 14); s.run(1.6, true); s.step(0);
+# run on a drop at a time, played as a player would who wants that coin out: the drop aimed over the
+# tracked coin's column (the deck phase free), and the NUDGE button every tenth drop
+STEP = """(i) => { const P = PUSHER_PAGE, s = P.sim;
+  let rs = 4242 + i; const rnd = () => { rs = (rs * 1664525 + 1013904223) >>> 0; return rs / 4294967296; };
+  const w = P.tracked();
+  const x = Math.max(-16, Math.min(16, (w ? w.x : 0) + (rnd() - 0.5) * 6));
+  s.drop(x); s.run(0.8, true); if (i % 10 === 9) s.nudge(0, 1, 0.7); s.run(0.8, true); s.step(0);
   return P.tracked(); }"""
 
 
@@ -46,7 +50,7 @@ def stage(w):
         return "deck"
     if y > G["deckY"] - 0.4:
         return "falling"
-    if z < 2.6:
+    if z < 3.2:
         return "lip"
     return "main"
 
@@ -68,7 +72,7 @@ with sync_playwright() as p:
     t_sim0 = d["t"]
     # a coin's residence in a primed pusher is long (hundreds of drops: the whole field turns over
     # once for every field's worth of coins in), so this runs up to 900 drops, fast-forwarded
-    for i in range(900):
+    for i in range(1500):
         w = pg.evaluate("PUSHER_PAGE.tracked()")
         st = stage(w)
         if st != last_stage or since >= 40:
@@ -85,7 +89,7 @@ with sync_playwright() as p:
             since += 1
         if st == "slot":
             break
-        pg.evaluate(STEP)
+        pg.evaluate(STEP, i)
     got = pg.evaluate("PUSHER_PAGE.trackedEvent")
     b.close()
 
