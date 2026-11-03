@@ -13,6 +13,10 @@
   (tools/stores/pocket_change/paint_skeeball_game.py); geometry follows skee.gd.
   The mall page shows this in a full-window frame and listens for "emu-close".
   Kept in this browser (localStorage): the best score ("skeeball.best") and sound on/off.
+  Money and tickets (ECON, Nov 3; design/godot-economy.md, lib/mallbank.js): a game takes 25 cents
+  (1 token) from the wallet; the tickets the score has earned go to the year's tickets
+  ("mall.tickets-<year>", ?year=, default 1995) as each ball scores, so leaving mid-game or a
+  reload keeps what was won; the ticket strip at the end is the picture of it.
 -->
 <style>
   :root { --bg: #07060a; --fg: #f4f0e8; --dim: #a49eb2; --accent: #ffd23c; --red: #ff3a1e; --line: #2a2634; }
@@ -23,6 +27,8 @@
          padding-top: env(safe-area-inset-top); background: #000; border-bottom: 1px solid var(--line); z-index: 20; }
   #bar b { flex: 1; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: italic; color: var(--accent); }
   button { font: inherit; color: #1a0a20; background: var(--accent); border: 0; border-radius: 10px; padding: 9px 14px; font-weight: 800; cursor: pointer; }
+  button:disabled { opacity: .45; cursor: default; }
+  .broke { color: #ff9a8a; }
   button.ghost { background: transparent; color: var(--fg); border: 1px solid #3a3446; font-weight: 600; }
   #stage { position: fixed; top: calc(48px + env(safe-area-inset-top)); left: 0; right: 0; bottom: 0; cursor: crosshair; }
   #gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -72,7 +78,7 @@
 <div id="stage">
   <canvas id="gl"></canvas>
   <div class="chip" id="balls"></div>
-  <div class="chip" id="score">SCORE <span id="sc">0</span><small>TICKETS <span id="tk">0</span> &middot; BEST <span id="best">0</span></small></div>
+  <div class="chip" id="score">SCORE <span id="sc">0</span><small>TICKETS <span id="tk">0</span> &middot; BEST <span id="best">0</span> &middot; <span id="cash">$0.00</span></small></div>
   <div id="meter"><div id="mfill"></div></div>
   <div id="flash"></div>
   <div id="msg"></div>
@@ -82,6 +88,7 @@
   <div class="track"><div class="bar" id="lbar"></div></div><div class="err" id="lerr"></div></div>
 <script src="lib/three.min.js"></script>
 <script src="skeeball/logic.js"></script>
+<script src="lib/mallbank.js"></script>
 <script>
 (function () {
 'use strict';
@@ -96,6 +103,14 @@ var TOUCH_LAG = 55;     // ms: a phone shows the meter this late (as WHIRLWIND's
 // ------------------------------------------------------------------ storage (per browser)
 function load(k, d) { try { var v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }
 function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+// ECON: the wallet (both years) and this year's tickets
+var YEAR = /^\d{4}$/.test(Q.get('year') || '') ? parseInt(Q.get('year'), 10) : 1995;
+var BANK = window.MALLBANK.make(localStorage), SESSION = window.MALLBANK.session(), FMT = window.MALLBANK.fmt;
+var gameNo = 0, credited = 0;   // tickets of this game already in the bank
+function creditSoFar() {
+  var owed = SK.tickets(S.score, S.pockets);
+  if (owed > credited && BANK.credit(YEAR, owed - credited, 'SKEE-BALL alley ' + LANE, 'skee:' + SESSION + ':' + gameNo + ':' + owed)) credited = owed;
+}
 var best = load('skeeball.best', 0);
 if (typeof best !== 'number' || best < 0 || best > 990) best = 0;
 var soundOn = load('skeeball.sound', true) !== false;
@@ -553,7 +568,10 @@ var live = [];   // balls on the alley: { path, res, t0, mesh, shadow, ei, done 
 var pressFx = 0;
 
 function startGame() {
-  unlock(); SFX.coin();
+  unlock();
+  if (!BANK.spend(CFG.priceCents, 'SKEE-BALL alley ' + LANE)) { lastMsg = ''; ui(); return; }   // ui() says why
+  gameNo++; credited = 0;
+  SFX.coin();
   S.mode = 'play'; S.score = 0; S.thrown = 0; S.counted = 0; S.pockets = 0; S.newBest = false; S.tickets = 0; S.owed = 0; S.fed = 0;
   live.forEach(function (b) { scene.remove(b.mesh); scene.remove(b.shadow); }); live = [];
   troughBalls.forEach(function (m) { m.visible = true; });
@@ -591,6 +609,7 @@ function settle(bl) {
   if (v === 100) { S.pockets++; S.beaconUntil = now() + 4000; showFlash('100!', 'POCKET'); setTimeout(hideFlash, 1400); }
   else if (v >= 40) { showFlash(String(v)); setTimeout(hideFlash, 700); }
   drawLed(S.score, S.counted);
+  creditSoFar();
   if (S.counted >= CFG.balls) setTimeout(endGame, 700);
   ui();
 }
@@ -703,19 +722,23 @@ function ui() {
   document.getElementById('balls').innerHTML = h;
   document.getElementById('sc').textContent = S.score;
   document.getElementById('tk').textContent = S.tickets;
+  var cash = BANK.money(), broke = cash < CFG.priceCents;
+  document.getElementById('cash').textContent = FMT(cash);
+  var need = broke ? '<p class="broke">You need <b>' + FMT(CFG.priceCents) + '</b> to play. You have <b>' + FMT(cash) + '</b>.</p>' : '';
+  var dis = broke ? ' disabled' : '';
   document.getElementById('best').textContent = best;
   var touch = matchMedia('(pointer: coarse)').matches;
   var m = '', pad = padSeen;
   if (S.mode === 'title') {
-    m = '<div class="card"><h2>SKEE-BALL</h2><p>Alley ' + LANE + ' &middot; 1 token = 9 balls</p>' +
-        '<button class="big" id="go">INSERT TOKEN</button><p style="margin:10px 0 0;font-size:13px;color:#a49eb2">' +
+    m = '<div class="card"><h2>SKEE-BALL</h2><p>Alley ' + LANE + ' &middot; 1 token (' + FMT(CFG.priceCents) + ') = 9 balls &middot; you have <b>' + FMT(cash) + '</b></p>' + need +
+        '<button class="big" id="go"' + dis + '>INSERT TOKEN</button><p style="margin:10px 0 0;font-size:13px;color:#a49eb2">' +
         (touch ? 'Press and hold to pick up a ball, slide to line it up, let go to roll. Hold longer to roll harder: the meter rises, then falls back.'
                : 'Hold the mouse button (or Space' + (pad ? ', or &#9398;' : '') + ') to wind up, let go to roll. Move the mouse (or &#8592; &#8594;) to line up.') + '</p></div>';
   } else if (S.mode === 'play') {
     if (S.thrown === 0) m = '<span class="hint">' + (touch ? 'Hold, slide to line up, let go' : 'Hold, line up, let go') + '</span>';
   } else if (S.mode === 'over') {
     m = '<div class="card"><h2>' + S.score + ' POINTS</h2><p>' + S.tickets + ' tickets' + (S.pockets ? ' (' + S.pockets + ' &times; 100 pocket)' : '') +
-        ' &middot; best ' + best + (S.newBest ? ' &mdash; new best!' : '') + '</p><button class="big" id="go">PLAY AGAIN</button></div>';
+        ' &middot; best ' + best + (S.newBest ? ' &mdash; new best!' : '') + ' &middot; you have <b>' + FMT(cash) + '</b></p>' + need + '<button class="big" id="go"' + dis + '>PLAY AGAIN &middot; ' + FMT(CFG.priceCents) + '</button></div>';
   }
   if (m !== lastMsg) {
     lastMsg = m;
@@ -839,7 +862,7 @@ loadAll(function () {
   layout(); ui();
   document.getElementById('load').style.display = 'none';
   frame();
-  window.__skee = { S: S, SK: SK, start: startGame, roll: rollBall, live: function () { return live; } };   // for tests
+  window.__skee = { S: S, SK: SK, BANK: BANK, YEAR: YEAR, start: startGame, roll: rollBall, live: function () { return live; } };   // for tests
 });
 })();
 </script>

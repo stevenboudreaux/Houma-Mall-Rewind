@@ -133,9 +133,9 @@ agree; Steven changes them there (or with a `tickets` in `redemption.json`).
 | Pog pack | `pogs` | 100 | prizes.json |
 | Rainbow coil spring | `spring` | 150 | prizes.json |
 | Fuzzy dice | `dice` | 300 | prizes.json |
-| **Boom box** | `bl_pc_boombox` | **500** | Steven (Nov 2); **the wall tags say 5,000** (prizes.json) |
+| **Boom box** | `bl_pc_boombox` | **5,000** | prizes.json, the wall tags (Steven, Nov 3; was 500 on Nov 2) |
 | Giant fuzzy dice | `pc_big_dice` | 600 | prizes.json |
-| Plush bear / bunny / dog | `bl_pc_plush_bear` / `_bunny` / `_dog` | 700 each | **guess** (between the giant dice and the alien) |
+| Plush bear / bunny / dog | `bl_pc_plush_bear` / `_bunny` / `_dog` | 700 each | Steven, Nov 3 ("700 stays") |
 | Alien plush | `pc_alien` | 800 | prizes.json |
 | Basketball | `pc_ball` | 900 | prizes.json |
 | Virtual pet | `pc_vpet` | 1,500 | prizes.json |
@@ -183,8 +183,7 @@ agree; Steven changes them there (or with a `tickets` in `redemption.json`).
   `wsR-web-*` (the web build with the published lightmaps), `wsR-boombox-sheet.jpg`.
 
 ## Open
-- **Boom box price:** 500 on the screen (Steven's number), 5,000 on the wall's tags. Which one?
-- **Plush prices** (700) are a guess.
-- The closer look's Back returns to walking, not to the redemption screen.
-- Nothing earns tickets yet (workstream D48's coin pusher pays out).
+- Settled Nov 3 (ECON, `design/godot-economy.md`): the boom box is 5,000, the plush 700; the closer look's Back
+  returns to walking (checked by `tools/qa/econ_back_test.gd`); every ticket game now pays into the year's
+  tickets, and the counter spends only 1995's (`mall.spend_tickets`).
 - No sound; VR has no prompt.

@@ -3,6 +3,7 @@
 ##   {"id": "pogs", "name": "Pog pack", "class": "hand" | "pocket",
 ##    "scene": "res://scripts/items/pogs.tscn", "icon": "res://tex/items/pogs.png",
 ##    "year": 1995 | 2026 | "both", "tickets": 100,                       # tickets: optional
+##    "price": 299,                       # ECON: optional; what a store asks, in whole cents ($2.99)
 ##    "place": {"wing": 2, "year": 1995, "pos": [x, y, z], "yaw": 90}}   # place: optional
 ## Later files win on a repeated id. Bad entries are skipped with a warning.
 extends RefCounted
@@ -56,6 +57,10 @@ static func check(e) -> String:
 	var y = e.year
 	if not (str(y) == "both" or int(y) in [1995, 2026]):
 		return "year must be 1995, 2026 or both"
+	if e.has("price"):   # ECON: whole cents
+		var pr = e.price
+		if not (pr is float or pr is int) or float(pr) < 0.0 or float(pr) != floor(float(pr)):
+			return "price must be whole cents, 0 or more"
 	if e.has("place"):
 		var p = e.place
 		if not (p is Dictionary) or not (p.get("pos") is Array) or p.pos.size() < 3:
@@ -69,6 +74,11 @@ func get_item(id: String) -> Dictionary:
 ## Whether an entry belongs to the year on show.
 static func in_year(e: Dictionary, year: int) -> bool:
 	return str(e.get("year", "")) == "both" or int(e.get("year", 0)) == year
+
+## ECON (design/godot-economy.md): what a store asks for the item, in whole cents; -1 when it has no
+## "price" (not for sale). The buying code pairs it with mall.can_afford() / mall.spend().
+static func price(e: Dictionary) -> int:
+	return int(e.price) if e.has("price") and (e.price is float or e.price is int) and float(e.price) >= 0 else -1
 
 func ids_for_year(year: int) -> Array:
 	return order.filter(func(id): return in_year(items[id], year))

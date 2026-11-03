@@ -11,8 +11,12 @@
   Rules and timing: whirlwind/logic.js (measured from Steven's video). Textures are the
   mall cabinet's own (tools/stores/pocket_change/paint_whirlwind_game.py).
   The mall page shows this in a full-window frame and listens for "emu-close".
-  Kept in this browser (localStorage): the bonus ("whirlwind.bonus") and the best $1.00
-  score ("whirlwind.best").
+  Kept in this browser (localStorage): the bonus ("whirlwind.bonus"), the best $1.00
+  score ("whirlwind.best") and the plays left on the machine ("whirlwind.credits", so a dollar
+  you walk away from is still there when you come back). Money and tickets (ECON, Nov 3;
+  design/godot-economy.md, lib/mallbank.js): START takes $1.00 from the wallet; each play's win
+  goes to the year's tickets ("mall.tickets-<year>", ?year=, default 1995) the moment the light
+  stops, so leaving during the payout, or a reload, keeps it.
 -->
 <style>
   :root { --bg: #07060a; --fg: #f4f0e8; --dim: #a49eb2; --accent: #ffd23c; --pink: #f43e9c; --line: #2a2634; }
@@ -23,6 +27,8 @@
          padding-top: env(safe-area-inset-top); background: #000; border-bottom: 1px solid var(--line); z-index: 20; }
   #bar b { flex: 1; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: italic; color: var(--accent); }
   button { font: inherit; color: #1a0a20; background: var(--accent); border: 0; border-radius: 10px; padding: 9px 14px; font-weight: 800; cursor: pointer; }
+  button:disabled { opacity: .45; cursor: default; }
+  .broke { color: #ff9a8a; }
   button.ghost { background: transparent; color: var(--fg); border: 1px solid #3a3446; font-weight: 600; }
   #stage { position: fixed; top: calc(48px + env(safe-area-inset-top)); left: 0; right: 0; bottom: 0; cursor: pointer; }
   #gl, #fx { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -68,7 +74,7 @@
 <div id="stage">
   <canvas id="gl"></canvas><canvas id="fx"></canvas>
   <div class="chip" id="plays"></div>
-  <div class="chip" id="score">TICKETS <span id="tk">0</span><small>BEST <span id="best">0</span></small></div>
+  <div class="chip" id="score">TICKETS <span id="tk">0</span><small>BEST <span id="best">0</span> &middot; <span id="cash">$0.00</span></small></div>
   <div id="flash"></div>
   <div id="msg"></div>
   <button id="skip">SKIP &#9654;&#9654;</button>
@@ -76,6 +82,7 @@
 <div id="load"><h1 id="ltitle">WHIRLWIND</h1><div class="sub">Pocket Change &middot; light-ring ticket game</div>
   <div class="track"><div class="bar" id="lbar"></div></div><div class="err" id="lerr"></div></div>
 <script src="whirlwind/logic.js"></script>
+<script src="lib/mallbank.js"></script>
 <script>
 (function () {
 'use strict';
@@ -95,6 +102,11 @@ if (typeof bonus !== 'number' || !(bonus >= CFG.bonusStart) || bonus > 9999) bon
 var best = load('whirlwind.best', 0);
 if (typeof best !== 'number' || best < 0) best = 0;
 var soundOn = load('whirlwind.sound', true) !== false;
+// ECON: the wallet (both years) and this year's tickets
+var YEAR = /^\d{4}$/.test(Q.get('year') || '') ? parseInt(Q.get('year'), 10) : 1995;
+var BANK = window.MALLBANK.make(localStorage), SESSION = window.MALLBANK.session(), FMT = window.MALLBANK.fmt;
+var savedCredits = load('whirlwind.credits', 0);
+if (typeof savedCredits !== 'number' || !(savedCredits > 0) || savedCredits > CFG.plays) savedCredits = 0;
 
 // ------------------------------------------------------------------ cabinet geometry (metres)
 // x = the player's right, y = up, z = into the machine (the console's front face is z = 0).
@@ -582,7 +594,9 @@ var stripAnim = [];            // [startMs] of each ticket's feed, for the strip
 function now() { return performance.now(); }
 
 function startDollar() {
-  unlock(); SFX.coin();
+  unlock();
+  if (!BANK.spend(CFG.priceCents, NAME + ': ' + CFG.plays + ' plays')) { ui(); return; }   // ui() shows why
+  SFX.coin();
   S.credits = CFG.plays; S.playNo = 0; S.total = 0; S.newBest = false;
   stripTickets = 0; stripAnim = [];
   hideFlash();
@@ -592,7 +606,7 @@ function startGame(at) {
   unlock();
   if (S.credits <= 0) return;
   if (S.mode !== 'title') SFX.coin();
-  S.credits--; S.playNo++;
+  S.credits--; S.playNo++; save('whirlwind.credits', S.credits);
   S.mode = 'chase'; S.t0 = at; S.start = Math.floor(Math.random() * CFG.lamps); S.result = null; S.lastLamp = -1;
   hideFlash();
   ui();
@@ -603,6 +617,7 @@ function stopGame(t) {
   var r = WW.judge(ms, S.start);
   S.result = r; S.stopAt = t; S.mode = 'stopped';
   S.won = WW.payout(r, bonus, VALUES);
+  BANK.credit(YEAR, S.won, NAME, 'whirlwind:' + SESSION + ':' + S.playNo);   // ECON: paid now, fed after
   var oldBonus = bonus;
   if (!r.bonus) { bonus = WW.nextBonus(r, bonus); save('whirlwind.bonus', bonus); }
   S.paidBonus = r.bonus ? oldBonus : 0;
@@ -694,14 +709,17 @@ function ui() {
   var left = S.mode === 'title' ? CFG.plays : S.credits + ((S.mode === 'chase') ? 0 : 0);
   var used = S.mode === 'title' ? 0 : CFG.plays - S.credits;
   for (var i = 0; i < CFG.plays; i++) h += '<i class="' + (i < used ? 'used' : '') + '"></i>';
-  pl.innerHTML = h + '<span style="margin-left:4px">' + (S.mode === 'title' || S.mode === 'over' ? '$1.00 = 4 PLAYS' : 'PLAY ' + S.playNo + ' OF ' + CFG.plays) + '</span>';
+  pl.innerHTML = h + '<span style="margin-left:4px">' + (S.mode === 'title' || S.mode === 'over' ? FMT(CFG.priceCents) + ' = ' + CFG.plays + ' PLAYS' : 'PLAY ' + S.playNo + ' OF ' + CFG.plays) + '</span>';
   document.getElementById('tk').textContent = S.total;
   document.getElementById('best').textContent = best;
+  var cash = BANK.money(), broke = cash < CFG.priceCents;
+  document.getElementById('cash').textContent = FMT(cash);
+  var need = broke ? '<p class="broke">You need <b>' + FMT(CFG.priceCents) + '</b> to play. You have <b>' + FMT(cash) + '</b>.</p>' : '';
   var m = document.getElementById('msg');
   var pad = padSeen ? ' or &#9398;' : '';
   if (S.mode === 'title') {
-    m.innerHTML = '<div class="card"><h2>' + esc(NAME) + '</h2><p>You have <b>$1.00</b>: four plays. Stop the light on <b>BONUS</b> to win the bonus. ' +
-      'Anywhere else wins the tickets beside the light.</p><button class="big" id="go">START</button></div>';
+    m.innerHTML = '<div class="card"><h2>' + esc(NAME) + '</h2><p><b>' + FMT(CFG.priceCents) + '</b> buys four plays. Stop the light on <b>BONUS</b> to win the bonus. ' +
+      'Anywhere else wins the tickets beside the light. You have <b>' + FMT(cash) + '</b>.</p>' + need + '<button class="big" id="go"' + (broke ? ' disabled' : '') + '>START &middot; ' + FMT(CFG.priceCents) + '</button></div>';
     document.getElementById('go').onclick = function (e) { e.stopPropagation(); startDollar(); };
   } else if (S.mode === 'chase') {
     m.innerHTML = '<span class="hint">STOP: tap, click, Space' + pad + '</span>';
@@ -709,7 +727,7 @@ function ui() {
     m.innerHTML = '<span class="hint">Press the flashing button to START play ' + (S.playNo + 1) + ' (' + S.credits + ' left)</span>';
   } else if (S.mode === 'over') {
     m.innerHTML = '<div class="card"><h2>' + S.total + ' TICKETS</h2><p>' + (S.newBest ? '<b style="color:#ffd23c">New high score!</b> ' : 'Best: ' + best + '. ') +
-      'That was your dollar.</p><button class="big" id="go">PLAY AGAIN &middot; $1.00</button></div>';
+      'That was your dollar. You have <b>' + FMT(cash) + '</b>.</p>' + need + '<button class="big" id="go"' + (broke ? ' disabled' : '') + '>PLAY AGAIN &middot; ' + FMT(CFG.priceCents) + '</button></div>';
     document.getElementById('go').onclick = function (e) { e.stopPropagation(); startDollar(); };
   } else m.innerHTML = '';
   document.getElementById('skip').style.display = (S.mode === 'stopped' || S.mode === 'payout') ? 'block' : 'none';
@@ -973,10 +991,11 @@ loadAssets(function () {
   try { buildScene(); } catch (e) { document.getElementById('lerr').textContent = 'The game could not start: ' + e.message; return; }
   resize();
   window.addEventListener('resize', resize);
+  if (savedCredits > 0) { S.credits = savedCredits; S.playNo = CFG.plays - savedCredits; S.mode = 'ready'; }   // ECON: plays left on the machine
   ui();
   document.getElementById('load').style.display = 'none';
   requestAnimationFrame(frame);
-  window.__ww = { S: S, WW: WW, get bonus() { return bonus; }, get best() { return best; }, action: action, skip: skip, cv: function () { return [consoleCv.toDataURL(), bonusCv.toDataURL()]; } };
+  window.__ww = { S: S, BANK: BANK, YEAR: YEAR, WW: WW, get bonus() { return bonus; }, get best() { return best; }, action: action, skip: skip, cv: function () { return [consoleCv.toDataURL(), bonusCv.toDataURL()]; } };
 });
 })();
 </script>

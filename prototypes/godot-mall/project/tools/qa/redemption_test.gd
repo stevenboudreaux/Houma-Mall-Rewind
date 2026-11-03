@@ -61,7 +61,7 @@ func _initialize() -> void:
 	_check(bad.is_empty(), "every stock item has an icon, a scene and a price %s" % str(bad))
 	for k in ["bl_pc_fingertrap", "bl_pc_plush_bear", "bl_pc_plush_bunny", "bl_pc_plush_dog", "bl_pc_boombox"]:
 		_check(by_id.has(k), "the Blender prize %s is in the stock" % k)
-	_check(by_id.has("bl_pc_boombox") and int(by_id.bl_pc_boombox.tickets) == 500, "the boom box costs 500 tickets")
+	_check(by_id.has("bl_pc_boombox") and int(by_id.bl_pc_boombox.tickets) == 5000, "the boom box costs 5,000 tickets (ECON, Nov 3: the wall tags)")
 	_check(by_id.has("pogs") and int(by_id.pogs.tickets) == int(pj.items.pogs.tickets), "prices come from prizes.json (Pog pack %d)" % int(pj.items.pogs.tickets))
 	_check(Redemption.read_stock(db, 2026).is_empty(), "no 1995 prize in the 2026 stock")
 	# ---- buying
@@ -79,9 +79,9 @@ func _initialize() -> void:
 		if r.stock[i].item == "bl_pc_plush_bear": plush = i
 	m.tickets = 0
 	_check(not r.can_buy(bb) and not r.buy(bb) and m.tickets == 0 and not m.has("bl_pc_boombox") and got.is_empty(), "0 tickets: can't buy the boom box, nothing changes")
-	m.tickets = 600
-	_check(r.can_buy(bb) and r.buy(bb), "600 tickets: the boom box can be bought")
-	_check(m.tickets == 100, "tickets go down by the price (600 - 500 = %d)" % m.tickets)
+	m.tickets = 5100
+	_check(r.can_buy(bb) and r.buy(bb), "5,100 tickets: the boom box can be bought")
+	_check(m.tickets == 100, "tickets go down by the price (5,100 - 5,000 = %d)" % m.tickets)
 	_check(m.count("bl_pc_boombox") == 1 and m.hand == "", "the boom box is in the bag, put away (not in the hand)")
 	_check(got == ["bl_pc_boombox"], "mall.received fired once for it %s" % str(got))
 	_check(not r.buy(plush) and m.tickets == 100 and not m.has("bl_pc_plush_bear"), "100 tickets: the plush (700) is refused, nothing changes")

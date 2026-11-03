@@ -4,12 +4,12 @@ Usage (from the repo root, with the play folder served):
     (cd prototypes/godot-mall/play && python3 -m http.server 8766 &)
     python3 tests/unit/pusher/page_test.py [out-prefix]
 Runs, each in a fresh browser profile, with the page's test hooks (?test=1, window.PUSHER_PAGE):
-  1. a fresh machine: a drop pays a quarter in, the coin lands on the deck and stays on the field
-  2. a cascade into the cup: the lip at 0 and hard bumps; coins reach the cup and the quarters go up
-     by what fell (after the 350 ms chute delay)
+  1. a fresh machine: a drop takes 25 cents from the wallet (mall.money, ECON), the coin lands on the deck and stays on the field
+  2. a cascade into the cup: the lip at 0 and hard bumps; coins reach the cup and the year's tickets
+     go up by 50 each, at once; at $0.00 a drop is refused with NO MONEY
   3. a tilt: nudges in a burst trip it; the alarm and the gate time out as logic.js says; coins
      falling meanwhile are booked to the house
-  4. state survives a reload: the coin poses and the quarters come back from localStorage
+  4. state survives a reload: the coin poses and the money come back from localStorage
   5. frame times for each quality level (the physics step cost in Chromium's wasm; the
      renderer here is software, so only the sim figure is comparable to a phone, and only with the box idle)
   6. 0 page errors over all of it
@@ -47,7 +47,7 @@ def page(b, q, w=390, h=844, storage=None):
 def st(pg):
     return pg.evaluate("""() => { const P = PUSHER_PAGE, s = P.sim; let d = 0, sh = 0;
       for (const c of s.coins.values()) { if (c.body.translation().y > 3) d++; else sh++; }
-      return { coins: s.count(), deck: d, shelf: sh, awake: s.awake(), q: P.quarters(), tk: window.PUSHER.tickets(P.mallState()), plus: document.querySelectorAll('.plus').length, cup: P.cupTotal, ledger: P.ledger, gate: P.gate, t: s.t,
+      return { coins: s.count(), deck: d, shelf: sh, awake: s.awake(), q: P.money(), tk: P.tickets(), plus: document.querySelectorAll('.plus').length, cup: P.cupTotal, ledger: P.ledger, gate: P.gate, t: s.t,
                frames: P.stats.frames, ms: P.stats.ms / Math.max(1, P.stats.frames), simMs: P.stats.simMs / Math.max(1, P.stats.frames), steps: P.stats.steps }; }""")
 
 
@@ -61,10 +61,10 @@ with sync_playwright() as p:
     s0 = st(pg)
     # the fill sheds a few coins into the side holes while it settles (sim.test.js checks the fill itself)
     check(-45 <= s0["coins"] - 540 <= 5 or -45 <= s0["coins"] - pg.evaluate("window.PUSHER.CONFIG.quality.high") <= 5, "a fresh machine holds the low count on a phone, else high: %d coins" % s0["coins"])
-    check(s0["q"] == 20, "a new player has 20 quarters (%d)" % s0["q"])
+    check(s0["q"] == 10000, "a new player has $100.00 (%d cents)" % s0["q"])
     pg.evaluate("PUSHER_PAGE.setSlider(5); PUSHER_PAGE.drop()")
     time.sleep(0.2)
-    check(st(pg)["q"] == 19, "a drop pays one quarter in")
+    check(st(pg)["q"] == 9975, "a drop takes 25 cents (%d)" % st(pg)["q"])
     time.sleep(3)
     s1 = st(pg)
     check(s1["coins"] <= s0["coins"] + 1 and s1["coins"] > s0["coins"] - 40 and s1["deck"] >= s0["deck"] - 30, "the coin landed on the deck and stayed (%d deck, %d shelf)" % (s1["deck"], s1["shelf"]))
@@ -81,18 +81,22 @@ with sync_playwright() as p:
         for (const e of s.step(0)) { P.onEvent(e); if (e.type === 'cup') got++; } }
       P.paused = false; return { n, got, coins: s.count() }; }""")
     check(r["got"] >= 3, "coins fell over the front edge into the chute after %d bumps (%d)" % (r["n"], r["got"]))
+    s2a = st(pg)
+    check(s2a["tk"] == pg.evaluate("window.PUSHER.CONFIG.ticketsPerCoin") * s2a["ledger"]["cup"], "the tickets are credited the moment a coin falls, before the picture (%d)" % s2a["tk"])
     time.sleep(2.5)
     s2 = st(pg)
     tpc = pg.evaluate("window.PUSHER.CONFIG.ticketsPerCoin")
-    check(s2["ledger"]["cup"] >= 3 and s2["q"] == 20 and s2["tk"] == tpc * s2["ledger"]["cup"],
-          "the ledger books them to the cup; each pays %d tickets, no quarters back (%d coins, %d tickets, %d quarters)" % (tpc, s2["ledger"]["cup"], s2["tk"], s2["q"]))
+    check(s2["ledger"]["cup"] >= 3 and s2["q"] == 10000 and s2["tk"] == tpc * s2["ledger"]["cup"],
+          "the ledger books them to the cup; each pays %d tickets, no money back (%d coins, %d tickets, %d cents)" % (tpc, s2["ledger"]["cup"], s2["tk"], s2["q"]))
     check(pg.evaluate("document.getElementById('tn').textContent") == str(s2["tk"]), "the HUD shows the tickets")
-    # out of quarters: the Get quarters button shows and refills to $5.00
-    pg.evaluate("(() => { const P = PUSHER_PAGE; const m = Object.assign({}, P.mallState() || {}, { quarters: 0 }); localStorage.setItem('mall-state-1995', JSON.stringify(m)); P.drop(); })()")
-    check(pg.evaluate("getComputedStyle(document.getElementById('getq')).display") != "none", "at 0 quarters the Get quarters button shows")
-    pg.click("#getq"); time.sleep(0.3)
-    check(st(pg)["q"] == 20 and pg.evaluate("getComputedStyle(document.getElementById('getq')).display") == "none", "Get quarters refills to 20 ($5.00) and hides")
-    pg.screenshot(path=OUT + "-2b-getq.png")
+    # no money, no play
+    inn = pg.evaluate("PUSHER_PAGE.ledger.in")
+    pg.evaluate("(() => { localStorage.setItem('mall.money', '10'); PUSHER_PAGE.drop(); })()")
+    time.sleep(0.2)
+    check(pg.evaluate("PUSHER_PAGE.ledger.in") == inn and st(pg)["q"] == 10 and "NO MONEY" in pg.evaluate("document.getElementById('flash').textContent"),
+          "with 10 cents a drop is refused, nothing taken, NO MONEY shows")
+    check(pg.evaluate("document.getElementById('qn').textContent") == "$0.10", "the HUD shows the money")
+    pg.screenshot(path=OUT + "-2b-nomoney.png")
     pg.screenshot(path=OUT + "-2-cascade.png")
     ctx.close()
 
@@ -115,22 +119,22 @@ with sync_playwright() as p:
     check(s3["gate"] == "player" and pg.evaluate("PUSHER_PAGE.tiltAt") is None, "the alarm and the gate time out (gate %s)" % s3["gate"])
     ctx.close()
 
-    # ---- 4. a reload keeps the machine and the quarters
+    # ---- 4. a reload keeps the machine and the money
     ctx, pg = page(b, "fresh=1&pos=4")
     time.sleep(1)
     pg.evaluate("PUSHER_PAGE.drop(); PUSHER_PAGE.drop()")
     time.sleep(3)
     before = st(pg)
-    saved = pg.evaluate("() => { PUSHER_PAGE.saveMachine(); return { m: localStorage.getItem('pusher.machine.4'), s: localStorage.getItem('mall-state-1995') }; }")
+    saved = pg.evaluate("() => { PUSHER_PAGE.saveMachine(); return { m: localStorage.getItem('pusher.machine.4'), s: localStorage.getItem('mall.money') }; }")
     pose0 = pg.evaluate("() => { const c = PUSHER_PAGE.sim.coins.values().next().value.body.translation(); return [c.x, c.y, c.z]; }")
     ctx.close()
-    ctx, pg = page(b, "pos=4", storage={"pusher.machine.4": saved["m"], "mall-state-1995": saved["s"]})
+    ctx, pg = page(b, "pos=4", storage={"pusher.machine.4": saved["m"], "mall.money": saved["s"], "mall.econ": "1"})
     after = st(pg)
     restored = pg.evaluate("PUSHER_PAGE.restored")
     pose1 = pg.evaluate("() => { const c = PUSHER_PAGE.sim.coins.values().next().value.body.translation(); return [c.x, c.y, c.z]; }")
-    check(restored and after["coins"] == before["coins"] and after["q"] == 18, "the reload restores %d coins and 18 quarters (%s, %d, %d)" % (before["coins"], restored, after["coins"], after["q"]))
+    check(restored and after["coins"] == before["coins"] and after["q"] == 9950, "the reload restores %d coins and $99.50 (%s, %d, %d)" % (before["coins"], restored, after["coins"], after["q"]))
     check(all(abs(a - b) < 0.6 for a, b in zip(pose0, pose1)), "the first coin is back where it was (%s vs %s)" % ([round(v, 2) for v in pose0], [round(v, 2) for v in pose1]))
-    check(json.loads(saved["s"]).get("quarters") == 18, "the quarters are in the mall state record (mall-state-1995.quarters)")
+    check(saved["s"] == "9950", "the money is in mall.money (%s)" % saved["s"])
     ctx.close()
 
     # ---- 5. frame times per quality

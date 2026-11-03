@@ -1,0 +1,51 @@
+ok   the counter opens the redemption screen
+ok   [button] "Look at the prizes" shuts the screen and opens the closer look
+ok   [button] the closer look is shut
+ok   [button] the redemption screen did not come back
+ok   [button] the menu did not open
+ok   [button] the player is free, on their own camera
+ok   [button] the HUD is as it was before the counter ([false, false, false, true, true])
+ok   [button] S walks (backing away from the counter): back to walking (2.16 m)
+ok   [Esc] "Look at the prizes" shuts the screen and opens the closer look
+ok   [Esc] the closer look is shut
+ok   [Esc] the redemption screen did not come back
+ok   [Esc] the menu did not open
+ok   [Esc] the player is free, on their own camera
+ok   [Esc] the HUD is as it was before the counter ([false, false, false, true, true])
+ok   [Esc] S walks (backing away from the counter): back to walking (2.09 m)
+ok   [Q] "Look at the prizes" shuts the screen and opens the closer look
+ok   [Q] the closer look is shut
+ok   [Q] the redemption screen did not come back
+ok   [Q] the menu did not open
+ok   [Q] the player is free, on their own camera
+ok   [Q] the HUD is as it was before the counter ([false, false, false, true, true])
+ok   [Q] S walks (backing away from the counter): back to walking (2.18 m)
+ok   [B] "Look at the prizes" shuts the screen and opens the closer look
+ok   [B] the closer look is shut
+ok   [B] the redemption screen did not come back
+ok   [B] the menu did not open
+ok   [B] the player is free, on their own camera
+ok   [B] the HUD is as it was before the counter ([false, false, false, true, true])
+ok   [B] S walks (backing away from the counter): back to walking (2.18 m)
+ok   [Backspace] "Look at the prizes" shuts the screen and opens the closer look
+ok   [Backspace] the closer look is shut
+ok   [Backspace] the redemption screen did not come back
+ok   [Backspace] the menu did not open
+ok   [Backspace] the player is free, on their own camera
+ok   [Backspace] the HUD is as it was before the counter ([false, false, false, true, true])
+ok   [Backspace] S walks (backing away from the counter): back to walking (2.12 m)
+ok   [E] "Look at the prizes" shuts the screen and opens the closer look
+ok   [E] the closer look is shut
+ok   [E] the redemption screen did not come back
+ok   [E] the menu did not open
+ok   [E] the player is free, on their own camera
+ok   [E] the HUD is as it was before the counter ([false, false, false, true, true])
+ok   [E] S walks (backing away from the counter): back to walking (2.13 m)
+ok   [pad B] "Look at the prizes" shuts the screen and opens the closer look
+ok   [pad B] the closer look is shut
+ok   [pad B] the redemption screen did not come back
+ok   [pad B] the menu did not open
+ok   [pad B] the player is free, on their own camera
+ok   [pad B] the HUD is as it was before the counter ([false, false, false, true, true])
+ok   [pad B] S walks (backing away from the counter): back to walking (2.07 m)
+ECON BACK OK (50 checks)

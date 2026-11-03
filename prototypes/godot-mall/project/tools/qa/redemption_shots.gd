@@ -1,5 +1,5 @@
 ## Native, unbaked evidence shots of Pocket Change's redemption (workstream R; design/godot-prize-counter.md):
-## the empty floor, the "Redeem tickets" prompt, the screen with 0 and 600 tickets, a buy and its pop-up,
+## the empty floor, the "Redeem tickets" prompt, the screen with 0 and 5,100 tickets, a buy and its pop-up,
 ## the screen after it, the boom box held in first and third person. Also checks the flow as it goes.
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 \
 ##     --script res://tools/qa/redemption_shots.gd -- --out=/tmp/rd/desk
@@ -91,7 +91,7 @@ func _process(dt: float) -> bool:
 				_check(dis == rd.cards.size(), "with 0 tickets every BUY is greyed out (%d)" % dis)
 				_shot("screen-0")
 				rd.close()
-				player.mall.tickets = 600
+				player.mall.tickets = 5100   # ECON: the boom box is 5,000 (was 600 for a 500 boom box)
 				rd.open()
 				step = 3; clock = 0.0
 		3:
@@ -99,7 +99,7 @@ func _process(dt: float) -> bool:
 				var ok := 0
 				for c in rd.cards:
 					if not c.buy.disabled: ok += 1
-				_check(ok > 0 and ok < rd.cards.size(), "with 600 tickets some can be bought (%d of %d)" % [ok, rd.cards.size()])
+				_check(ok == rd.cards.size(), "with 5,100 tickets every prize can be bought (%d of %d)" % [ok, rd.cards.size()])
 				for i in rd.stock.size():
 					if rd.stock[i].item == "bl_pc_boombox": rd.sel = i
 				rd._paint_sel()

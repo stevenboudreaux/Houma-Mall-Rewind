@@ -93,11 +93,12 @@ func _test_round_trip() -> void:
 	m.hold("folse_stick")
 	var s: String = m.to_json()
 	var d = JSON.parse_string(s)
-	_check(d is Dictionary and int(d.v) == 1 and int(d.year) == 1995 and d.inventory is Array and d.has("tickets") and d.has("hand") and d.moved is Dictionary,
-		"JSON shape: v, year, inventory, tickets, hand, moved")
+	_check(d is Dictionary and int(d.v) == 1 and int(d.year) == 1995 and d.inventory is Array and not d.has("tickets") and d.has("hand") and d.moved is Dictionary,
+		"JSON shape: v, year, inventory, hand, moved (ECON: tickets live in the bank, mall.tickets-<year>)")
 	var n = _fresh()
 	_check(n.from_json(s), "read back")
 	_check(n.to_json() == s, "round trip is exact")
+	n.backend = m.backend
 	_check(n.count("pogs") == 3 and n.tickets == 125 and n.hand == "folse_stick" and n.where("spring", null) is Dictionary and n.where("folse_stick", {"pos": [0, 0, 0]}) == null,
 		"round trip keeps counts, tickets, hand and the world")
 	# the field names the 2D game will join on
@@ -149,16 +150,17 @@ func _test_item_files() -> void:
 	_check(ItemDB.check({"id": "a", "name": "A", "class": "pocket", "scene": "", "icon": "", "year": 1995, "place": {"wing": 1}}) != "", "a place without pos is refused")
 	_check(db.ids_for_year(2026).is_empty() or db.ids_for_year(2026).all(func(i): return ItemDB.in_year(db.get_item(i), 2026)), "ids_for_year filters by year")
 
-## P (COIN COMET): a field another system wrote (quarters) survives a round trip and a save.
+## P (COIN COMET): a field another system wrote survives a round trip and a save. ECON (Nov 3): the old
+## "quarters" and "tickets" are not carried on (bank.gd folds them in; tools/qa/econ_test.gd).
 func _test_extra_fields() -> void:
 	var m = _fresh()
-	_check(m.from_json('{"v":1,"year":1995,"inventory":[],"tickets":2,"hand":"","moved":{},"quarters":13}'), "a state with quarters is read")
+	_check(m.from_json('{"v":1,"year":1995,"inventory":[],"tickets":2,"hand":"","moved":{},"quarters":13,"other":5}'), "a state with quarters is read")
 	m.add("pogs")
 	var d = m.to_dict()
-	_check(int(d.get("quarters", -1)) == 13 and d.tickets == 2 and d.inventory.size() == 1, "quarters come back out of to_dict() beside ours")
+	_check(not d.has("quarters") and not d.has("tickets") and int(d.get("other", -1)) == 5 and d.inventory.size() == 1, "another system's field comes back out of to_dict(); the old quarters and tickets don't")
 	m.save()
 	var m2 = _fresh()
 	m2.backend = m.backend
 	m2.load_saved()
-	_check(int(m2.extra.get("quarters", -1)) == 13, "quarters survive save/load")
+	_check(int(m2.extra.get("other", -1)) == 5, "another system's field survives save/load")
 	_check(not m.to_dict().has("v2") and m.from_dict({"v": 1, "tickets": 1, "v2": 9}) and m.to_dict().get("v2") == 9, "unknown fields are kept, known ones are ours")

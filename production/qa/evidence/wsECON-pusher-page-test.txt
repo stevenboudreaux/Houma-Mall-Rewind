@@ -1,0 +1,26 @@
+ok   a fresh machine holds the low count on a phone, else high: 724 coins
+ok   a new player has $100.00 (10000 cents)
+ok   a drop takes 25 cents (9975)
+ok   the coin landed on the deck and stayed (264 deck, 461 shelf)
+ok   the ledger counts it in
+ok   coins fell over the front edge into the chute after 6 bumps (4)
+ok   the tickets are credited the moment a coin falls, before the picture (200)
+ok   the ledger books them to the cup; each pays 50 tickets, no money back (4 coins, 200 tickets, 10000 cents)
+ok   the HUD shows the tickets
+ok   with 10 cents a drop is refused, nothing taken, NO MONEY shows
+ok   the HUD shows the money
+ok   a burst of 3 full nudges trips the tilt
+ok   the gate swings to the house side
+ok   coins over the edge while the gate is over go to the house (18 house, 0 cup)
+ok   the alarm and the gate time out (gate player)
+ok   the reload restores 733 coins and $99.50 (True, 733, 9950)
+ok   the first coin is back where it was ([-22.93, 0.2, 19.43] vs [-22.93, 0.19, 19.43])
+ok   the money is in mall.money (9950)
+     low: 497 coins, 498 awake: sim 11.71 ms/step (23.4 ms a frame at 120 Hz), whole frame 43.9 ms with the software renderer
+ok   low quality fills 497 coins
+     medium: 593 coins, 594 awake: sim 11.83 ms/step (23.7 ms a frame at 120 Hz), whole frame 41.9 ms with the software renderer
+ok   medium quality fills 593 coins
+     high: 715 coins, 716 awake: sim 15.48 ms/step (31.0 ms a frame at 120 Hz), whole frame 51.1 ms with the software renderer
+ok   high quality fills 715 coins
+ok   0 page errors (0)
+ALL OK

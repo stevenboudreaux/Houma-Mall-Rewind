@@ -8,7 +8,7 @@
 ## switches and reloads. The JSON shape (version 1):
 ##   {"v": 1, "year": 1995,
 ##    "inventory": [{"id": "pogs", "count": 1}, ...],   # carried, not in the hand; pickup order
-##    "tickets": 0,                                      # the ticket balance (COIN COMET pays 50 a coin)
+##    (no "tickets" since ECON, Nov 3: tickets and money live in scripts/bank.gd's own keys)
 ##    "hand": "folse_stick",                             # the item in the hand, "" for none
 ##    "moved": {"folse_stick": {},                        # {} = not in the world (carried)
 ##              "spring": {"wing": 2, "year": 1995, "pos": [x, y, z], "yaw": 30.0}}}  # dropped here
@@ -30,7 +30,81 @@ const VERSION := 1
 
 var year := 1995
 var inventory: Array = []      # [{"id": String, "count": int}]
-var tickets := 0
+# --- ECON (Nov 3; design/godot-economy.md): money and tickets, kept by scripts/bank.gd in their own
+## storage keys and read at the moment of use, so a game page in the frame and the mall agree.
+## mall.tickets: THIS year's tickets (Pocket Change 1995, Games, Inc. 2026). Setting it saves it.
+var tickets: int:
+	get: return bank().tickets(year)
+	set(v):
+		bank().set_tickets(year, v)
+		changed.emit()
+## mall.money: the wallet in whole cents, one for both years (a new player has $100.00).
+var money: int:
+	get: return bank().money()
+var _bank = null
+## The bank object (scripts/bank.gd) on this state's storage.
+func bank():
+	if _bank == null:
+		_bank = load("res://scripts/bank.gd").new()
+	_bank.backend = backend
+	return _bank
+## True when the wallet holds at least cents.
+func can_afford(cents: int) -> bool:
+	return bank().can_afford(cents)
+## Take cents out of the wallet for reason ("Orange Julius: a small drink"). False, and nothing
+## changes, when it doesn't cover them.
+func spend(cents: int, reason: String) -> bool:
+	var ok: bool = bank().spend(cents, reason)
+	if ok:
+		changed.emit()
+	return ok
+## Put cents into the wallet (change, a refund).
+func add_money(cents: int, reason: String) -> bool:
+	var ok: bool = bank().earn(cents, reason)
+	if ok:
+		changed.emit()
+	return ok
+## n tickets won in this year; id (optional) names the payout so it counts once.
+func add_tickets(n: int, reason: String, id := "") -> bool:
+	var ok: bool = bank().credit(year, n, reason, id)
+	if ok:
+		changed.emit()
+	return ok
+## Spend n of this year's tickets (the redemption counter). False when there are fewer.
+func spend_tickets(n: int, reason: String) -> bool:
+	var ok: bool = bank().spend_tickets(year, n, reason)
+	if ok:
+		changed.emit()
+	return ok
+## The ids of the inbox entries already in the bag (the last 200; saved in this year's record as "got"), so a
+## thing won in a game page arrives once even if the mall stops between the bag's save and the inbox's.
+var got: Array = []
+## Things won in a game page (the claw's plush, figure and POGs; Steven Nov 3) into the bag: each arrives once,
+## with the "You received" card (mall.add). Called by load_saved() and when a game's frame closes
+## (interact.gd). Returns how many arrived.
+func collect() -> int:
+	var b = bank()
+	var done: Array = []
+	var n := 0
+	for e in b.inbox(year):
+		var pid := str(e.id)
+		if not got.has(pid):
+			add(str(e.item), maxi(1, int(e.get("n", 1))))
+			got.append(pid)
+			n += 1
+		done.append(pid)
+	if done.is_empty():
+		return 0
+	if got.size() > 200:
+		got = got.slice(got.size() - 200)
+	if n > 0:
+		save()             # the bag and "got" first ...
+	b.inbox_remove(year, done)    # ... then the inbox
+	return n
+## Money as the player reads it: 1234 -> "$12.34".
+static func money_text(cents: int) -> String:
+	return load("res://scripts/bank.gd").fmt(cents)
+# --- end ECON
 var hand := ""
 var moved := {}
 # P (COIN COMET, Nov 2026): fields other systems keep in this record, carried through a round
@@ -190,7 +264,7 @@ func where(id: String, place) -> Variant:
 # ------------------------------------------------------------------ JSON
 func to_dict() -> Dictionary:
 	var d := extra.duplicate(true)      # P: other systems' fields first, so ours win on a clash
-	d.merge({"v": VERSION, "year": year, "inventory": inventory.duplicate(true), "tickets": tickets,
+	d.merge({"v": VERSION, "year": year, "inventory": inventory.duplicate(true), "got": got.duplicate(),
 		"hand": hand, "moved": moved.duplicate(true)}, true)
 	return d
 
@@ -206,7 +280,9 @@ func from_dict(d) -> bool:
 		if e is Dictionary and str(e.get("id", "")) != "" and int(e.get("count", 0)) > 0:
 			inv.append({"id": str(e.id), "count": int(e.count)})
 	inventory = inv
-	tickets = maxi(0, int(d.get("tickets", 0)))
+	got = []
+	for g in d.get("got", []):
+		got.append(str(g))
 	hand = str(d.get("hand", ""))
 	# JSON numbers come back as floats: put the ints back, so a round trip is exact
 	moved = {}
@@ -223,9 +299,9 @@ func from_dict(d) -> bool:
 				"pos": [float(m.pos[0]), float(m.pos[1]), float(m.pos[2])], "yaw": float(m.get("yaw", 0.0))}
 	if d.has("year"):
 		year = int(d.year)
-	extra = {}      # P: keep what we don't know (quarters)
-	for k in d:
-		if not (str(k) in ["v", "year", "inventory", "tickets", "hand", "moved"]):
+	extra = {}      # P: keep what we don't know. ECON: "tickets" and "quarters" are old saves'
+	for k in d:     # (bank.gd migrate() folds them into the bank), never carried on
+		if not (str(k) in ["v", "year", "inventory", "tickets", "hand", "moved", "quarters", "got"]):
 			extra[str(k)] = d[k]
 	changed.emit()
 	return true
@@ -242,13 +318,14 @@ func save() -> void:
 	if backend is Dictionary:
 		backend[storage_key()] = s
 	elif OS.has_feature("web"):
-		JavaScriptBridge.eval("(function(){try{localStorage.setItem(%s,%s)}catch(e){}try{var m=JSON.parse(%s);window.mall=Object.assign(window.mall||{},{inventory:m.inventory,tickets:m.tickets,hand:m.hand,year:m.year})}catch(e){}})()" % [JSON.stringify(storage_key()), JSON.stringify(s), JSON.stringify(s)], true)
+		JavaScriptBridge.eval("(function(){try{localStorage.setItem(%s,%s)}catch(e){}try{var m=JSON.parse(%s);window.mall=Object.assign(window.mall||{},{inventory:m.inventory,tickets:%d,money:%d,hand:m.hand,year:m.year})}catch(e){}})()" % [JSON.stringify(storage_key()), JSON.stringify(s), JSON.stringify(s), tickets, money], true)
 	else:
 		Engine.set_meta("mall_state_%d" % year, s)
 
 ## Load this year's saved state, if any. True when one was read.
 func load_saved() -> bool:
 	load_player_name()   # M: the name, kept apart from the per-year state
+	bank().ready()       # ECON: fold older saves' tickets and quarters into the bank first
 	var s := ""
 	if backend is Dictionary:
 		s = str(backend.get(storage_key(), ""))

@@ -21,49 +21,14 @@ t('slider: moves at slotSpeed and stops at the ends of the slot', () => {
   assert.strictEqual(P.slide(3, 0, 1), 3);
 });
 
-// ---- the wallet
-t('wallet: a new player has the starting stake; a saved count is kept whole', () => {
-  assert.strictEqual(P.balance(null), C.startQuarters);
-  assert.strictEqual(P.balance({ v: 1, inventory: [] }), C.startQuarters);
-  assert.strictEqual(P.balance({ quarters: 7.9 }), 7);
-  assert.strictEqual(P.balance({ quarters: -3 }), C.startQuarters);
-});
-t('wallet: paying in takes one quarter and keeps the rest of the state', () => {
-  const s0 = { v: 1, year: 1995, inventory: [{ id: 'pogs', count: 1 }], tickets: 5, quarters: 2 };
-  const s1 = P.payIn(s0);
-  assert.strictEqual(s1.quarters, 1);
-  assert.deepStrictEqual(s1.inventory, s0.inventory);
-  assert.strictEqual(s1.tickets, 5, 'a drop costs no tickets');
-  assert.strictEqual(s0.quarters, 2, 'no mutation');
-  const s2 = P.payIn(s1);
-  assert.strictEqual(s2.quarters, 0);
-  assert.strictEqual(P.payIn(s2), null, 'broke');
-  assert.strictEqual(P.payIn(null).quarters, C.startQuarters - 1, 'a new player pays from the starting stake');
-});
-t('wallet: quarters to play, tickets to win: a coin into the cup pays ticketsPerCoin to mall.tickets, no quarter back', () => {
+// ---- the wallet (ECON, Nov 3: play/lib/mallbank.js; tests/unit/econ/bank.test.js)
+t('wallet: a drop costs priceCents (25) from the shared wallet; a cup coin pays ticketsPerCoin; the free stake is gone', () => {
+  assert.strictEqual(C.priceCents, 25);
   assert.strictEqual(C.ticketsPerCoin, 50);
-  const s = P.payOut({ tickets: 5, quarters: 4, inventory: [] }, 3);
-  assert.strictEqual(s.tickets, 5 + 3 * 50);
-  assert.strictEqual(s.quarters, 4, 'quarters untouched');
-  assert.strictEqual(P.payOut(null, 1).tickets, 50, 'a state with no tickets starts at 0');
-  assert.strictEqual(P.payOut({ tickets: 1 }, 2, Object.assign({}, C, { ticketsPerCoin: 7 })).tickets, 15, 'the config value is used');
-  assert.strictEqual(P.tickets({ tickets: 9.6 }), 9);
-  assert.strictEqual(P.tickets({}), 0);
-});
-t('wallet: 20 drops from a new player, 2 coins won: 0 quarters, 100 tickets, then Get quarters refills to $5.00', () => {
-  let s = { v: 1, inventory: [], tickets: 0 };
-  for (let i = 0; i < C.startQuarters; i++) s = P.payIn(s);
-  s = P.payOut(s, 2);
-  assert.strictEqual(P.balance(s), 0);
-  assert.strictEqual(P.tickets(s), 100);
-  assert.strictEqual(P.payIn(s), null);
-  const r = P.refill(s);
-  assert.strictEqual(P.balance(r), C.startQuarters);
-  assert.strictEqual(C.startQuarters * 0.25, 5.0);
-  assert.strictEqual(P.tickets(r), 100, 'refill keeps the tickets');
+  assert.strictEqual(C.startQuarters, undefined, 'no free quarters stake');
+  for (const k of ['balance', 'payIn', 'payOut', 'refill']) assert.strictEqual(P[k], undefined, k + ' is gone (mallbank.js keeps money)');
 });
 
-// ---- the tilt
 t('tilt: small nudges spread out never trip; the meter forgets them after the window', () => {
   let log = null, r;
   for (let i = 0; i < 10; i++) { r = P.nudge(log, i * 2000, 0.4); log = r.log; assert.strictEqual(r.tripped, false, 'nudge ' + i); }

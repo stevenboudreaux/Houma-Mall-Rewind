@@ -95,7 +95,8 @@ func can_buy(i: int) -> bool:
 func buy(i: int) -> bool:
 	if not can_buy(i):
 		return false
-	mall.tickets = int(mall.tickets) - price(i)
+	if not mall.spend_tickets(price(i), "redeemed " + str(stock[i].item)):   # ECON: this year's tickets
+		return false
 	mall.add(str(stock[i].item))
 	mall.save()
 	if is_open:
