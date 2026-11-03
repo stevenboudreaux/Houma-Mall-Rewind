@@ -105,14 +105,39 @@ cp tex/standin/*.png tex/standin/*.stamp "$W/standin/"
 cd "$W"
 git init -q -b godot-build
 git add -A
-git -c user.name="Steven Boudreaux" -c user.email="steven_boudreaux@outlook.com" commit -q -m "$MSG"
-git push -q --force "$(git -C "$REPO" remote get-url origin)" godot-build 2>&1 | grep -iv "moved\|new location\|github.com/stevenboudreaux\|^remote: *$\|GH001\|gh.io\|lfs\|recommended maximum" || true
+export GIT_AUTHOR_NAME="Steven Boudreaux" GIT_AUTHOR_EMAIL="steven_boudreaux@outlook.com" GIT_COMMITTER_NAME="Steven Boudreaux" GIT_COMMITTER_EMAIL="steven_boudreaux@outlook.com"
+git commit -q -m "$MSG"
 B=$(git rev-parse HEAD)
+# Demo 49b (Nov 3 2026): a 1 GB push fails with a 502, and the old `| grep ... || true` hid that and
+# printed "published" anyway. Now the build goes up in pieces of about PIECE_MB (120) through one
+# temporary branch, tmp/publish (each push carries only the new files), then godot-build is forced, which
+# sends only the commit, and the remote ref is read back before anything is called published.
+# GitHub redirects the old mixed-case URL ("moved"): the lowercase one is used.
+ORIGIN=$(git -C "$REPO" remote get-url origin | tr 'A-Z' 'a-z' | sed 's/\.git$//')
+PIECE=$(( ${PIECE_MB:-120} * 1000000 ))
+push_ref() { # <commit> <branch>: force-push, then confirm the remote has it
+  local out; out=$(git push -q --force "$ORIGIN" "$1:refs/heads/$2" 2>&1) || { echo "$out" | grep -iv "moved\|new location\|^remote: *$\|GH001\|gh.io\|lfs\|recommended maximum"; echo "push of $2 failed"; return 1; }
+  local r; r=$(git ls-remote "$ORIGIN" "refs/heads/$2" | cut -f1)
+  [ "$r" = "$1" ] || { echo "after the push, $2 on GitHub is ${r:-missing}, not $1"; return 1; }
+}
+export GIT_INDEX_FILE="$W/.git/piece-index"
+rm -f "$GIT_INDEX_FILE"; SUM=0; N=0
+while IFS= read -r -d '' f; do
+  git update-index --add "$f"
+  SUM=$(( SUM + $(stat -c %s "$f") ))
+  if [ $SUM -ge $PIECE ]; then
+    N=$((N + 1)); C=$(git commit-tree "$(git write-tree)" -m "piece $N of $MSG")
+    echo "piece $N: $(( SUM / 1000000 )) MB"; push_ref "$C" tmp/publish || exit 1; SUM=0
+  fi
+done < <(find . -path ./.git -prune -o -type f -print0 | sort -z)
+unset GIT_INDEX_FILE
+push_ref "$B" godot-build || exit 1
+git push -q "$ORIGIN" --delete tmp/publish 2>/dev/null || echo "note: could not delete tmp/publish on GitHub (Steven can)"
 echo "published $(git rev-parse --short HEAD)"
 cd / && rm -rf "$W"
 # the second site: one commit (its workflow and the build's name) replaces the desktop repo's main; the push
 # starts its Pages workflow, which copies the computer packs from godot-build ("Two sites")
-D=${DESKTOP_REPO:-https://github.com/stevenboudreaux/Houma-Mall-Rewind-desktop}
+D=$(echo "${DESKTOP_REPO:-https://github.com/stevenboudreaux/houma-mall-rewind-desktop}" | tr 'A-Z' 'a-z')
 W=$(mktemp -d); mkdir -p "$W/.github/workflows"
 cp "$REPO/prototypes/godot-mall/project/tools/desktop_site/pages.yml" "$W/.github/workflows/pages.yml"
 cp "$REPO/prototypes/godot-mall/project/tools/desktop_site/README.md" "$W/README.md"
@@ -120,7 +145,7 @@ echo "$B" > "$W/build.txt"
 cd "$W"
 git init -q -b main
 git add -A
-git -c user.name="Steven Boudreaux" -c user.email="steven_boudreaux@outlook.com" commit -q -m "computer packs of $MSG"
-git push -q --force "$D" main 2>&1 | grep -iv "moved\|new location\|^remote: *$" || true
+git commit -q -m "computer packs of $MSG"
+ORIGIN=$D; push_ref "$(git rev-parse HEAD)" main || { echo "the desktop repo was NOT updated: godot-build is $B, push build.txt there by hand"; exit 1; }
 echo "desktop site: asked to deploy the computer packs of $(echo $B | cut -c1-7)"
 cd / && rm -rf "$W"
