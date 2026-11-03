@@ -214,6 +214,43 @@ changed, so **no rebake is needed** for this workstream).
 - First person unchanged: `wsV-fp-hall-unchanged-unbaked`, `wsV-fp-arcade-unchanged-unbaked`,
   `wsV-web-fp-hall-desktop`, `wsV-web-fp-camlink-unchanged`.
 
+## Checks (Nov 3 2026, workstream WALK, on `ws/walk-speed`)
+Same tools, retuned for the new pace; nothing baked changed, so **no rebake is needed**. All shots
+are unbaked (native) or the web build with the published lightmaps.
+- Native, unbaked (`tools/qa/avatar_test.gd`, now also running back the way it came): wing 2
+  (hall `-20,54,90,-8`, Pocket Change aisle `-105,69,180,-10`, the dice in hand, VR) **43 checks
+  OK**; wing 1 (hall `30,0,90,-8`, Kay-Bee aisle `-13,-56.2,90,-8`) **41 OK**; wing 2 2026 (hall
+  `-60,54,90,-8`, Games Inc. `-114,56,180,-10`) **41 OK**. Each spot: walking at **3.00 m/s** plays
+  `walk_m` / `walk_f` at ×1.86 / ×1.85; running at **6.60 m/s** plays `sprint` at ×1.10; the camera's
+  pivot is on the player (0.35 m, the shoulder; 0.00-0.02 m in a tight aisle, where the boom is 0
+  and the avatar hidden as before) and the camera 2.38 m behind in a hall; the runner always ends on
+  free floor; letting go goes to `idle`; first person unchanged (eye camera 1.62 m, speed ×1, no body).
+- Web (`tools/export_web.sh`, wings 1-2 both years; `tools/qa/walk_webtest.py`, `?warm=0`, the
+  default avatar): **WALK WEB OK** in all four, 25 / 16 / 16 / 16 checks, 0 console errors. Ground
+  speed over the game's own clock **3.0 m per game second walking and 6.6 running** (keyboard W and
+  W+X), `walk_m` ×1.86 and `sprint` ×1.10, the camera 2.34-2.40 m behind the player at both speeds
+  (walk and run alike: it no longer trails), the player always on free floor, idle after the run.
+  Wing 2 1995 also walks and runs at a 0.2 m glass pane (`-132.25,71.5` facing +z, the pane at
+  z = 73.0): the position reaches 72.95 and never crosses, in frames of up to 1.3 s. A phone
+  (844×390, touch): a full-stick drag walks at 3.0 m/s with `walk_m`. (The headless renderer draws
+  a frame every 3-8 s, so the "frame sequences" are consecutive-ish game frames 0.5-1 game-second
+  apart, labelled with the game clock and the position; where a shopper crosses the hall it can
+  stand between the camera and the avatar for a frame.)
+- Found on the way, fixed here: a stop from jog / run / sprint never returned to idle
+  (`NpcBody.set_speed(0)` only knows the walk clips; on a long frame the speed drops straight to 0,
+  so it showed in the headless tests at once; on a phone it would have shown as a run-in-place after
+  a hard stop). The native test now dismisses the "You received" card (R) before VR and runs back
+  the way it came (6.6 m on from Pocket Change's spot is the prize counter's closer look).
+
+**Evidence** (`production/qa/evidence/wsWALK-*`): native `tp-hall-walk-unbaked`,
+`tp-hall-run-unbaked`, `tp-hall-idle-after-run-unbaked`, `tp-arcade-pocketchange-run-unbaked`,
+`tp-store-kaybee-walk-unbaked`, `tp-store-kaybee-run-unbaked`, `tp-hall-2026-run-unbaked`,
+`tp-arcade-gamesinc-2026-run-unbaked`; web frame strips `web-w2-hall-walk-frames`,
+`web-w2-hall-run-frames`, `web-w2-hall-idle-after-run`, `web-w2-glass-run-frames`,
+`web-w2-phone-touch-walk`, `web-w2-2026-hall-walk-frames`, `web-w2-2026-hall-run-frames`,
+`web-w1-hall-walk-frames`, `web-w1-hall-run-frames`, `web-w1-2026-hall-walk-frames`,
+`web-w1-2026-hall-run-frames`.
+
 ## Not done / open
 - Hair **style** is the body's (16 hairstyles across the bodies, Ch01 bald); only its colour changes.
 - The words are flat on the chest; on a body leaning forward they can float a few millimetres.
