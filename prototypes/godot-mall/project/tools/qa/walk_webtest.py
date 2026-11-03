@@ -15,7 +15,8 @@ Each spot loads ?view=third&debug=1&cam=... on a fresh profile (the default avat
   - during each, a short frame sequence (4 screenshots, game-clock stamped: at ~0.2 fps here every
     screenshot is the next frame or so) composed into one strip <out>-<spot>-walk.png / -run.png;
   - the player's position always on free floor (free_here=true), and inside the spot's bounds
-    (=xmax:/xmin:/zmax:/zmin:, e.g. a glass pane run at: the position must stay on this side);
+    (=xmax:/xmin:/zmax:/zmin:: a glass pane 1.5 m ahead, walked and run at: the position must reach
+    it and never cross it; such a spot gets no speed or clip checks, it stands at the glass);
   - at the first spot, on a phone (844x390, touch): a full-stick touch drag walks at TP_WALK.
 Prints WALK WEB OK (n checks), or the failures; 0 console errors expected.
 """
@@ -127,22 +128,26 @@ def hold(pg, logs, keys, samples, name, title, nshots=4, wall_max=420):
 
 def judge(nm, what, logs, t0, t1, want, clips, bounds, open_hall):
     gs = gaits(logs, t0, t1)[1:]   # the first report can straddle the key press
-    v = speed_of(gs)
-    check(v is not None and abs(v - want) < want * 0.15, f"{nm} {what}: ground speed {v if v is None else round(v, 2)} m per game second (want {want}, {len(gs)} samples)")
-    g = gs[-1] if gs else None
-    check(g is not None and g[1] in clips, f"{nm} {what}: plays {g[1] if g else '-'} (want one of {clips})")
-    if g:
-        own = float(ANIMS.get(g[1], {}).get("mps", 1.0)); x = float(g[2]); gv = float(g[3])
-        check(abs(x - min(2.0, gv / own)) < 0.06, f"{nm} {what}: clip at ground speed: {gv:.2f} / {own:.3f} = x{gv / own:.2f} (playing x{x:.2f})")
-        cams = [float(q[4]) for q in gs]
-        if open_hall:
-            check(max(cams) <= BOOM + SHOULDER + 0.2 and min(cams) > 1.0, f"{nm} {what}: camera keeps up, {min(cams):.2f}-{max(cams):.2f} m behind the player")
     allp = positions(logs, t0, t1 + 1.0)
+    if open_hall:
+        v = speed_of(gs)
+        check(v is not None and abs(v - want) < want * 0.15, f"{nm} {what}: ground speed {v if v is None else round(v, 2)} m per game second (want {want}, {len(gs)} samples)")
+        g = gs[-1] if gs else None
+        check(g is not None and g[1] in clips, f"{nm} {what}: plays {g[1] if g else '-'} (want one of {clips})")
+        if g:
+            own = float(ANIMS.get(g[1], {}).get("mps", 1.0)); x = float(g[2]); gv = float(g[3])
+            check(abs(x - min(2.0, gv / own)) < 0.06, f"{nm} {what}: clip at ground speed: {gv:.2f} / {own:.3f} = x{gv / own:.2f} (playing x{x:.2f})")
+            cams = [float(q[4]) for q in gs]
+            # BOOM back and SHOULDER aside is 2.43 m across the floor; a lagging pivot showed as more
+            check(max(cams) <= math.hypot(BOOM, SHOULDER) + 0.05 and min(cams) > 1.0, f"{nm} {what}: camera keeps up, {min(cams):.2f}-{max(cams):.2f} m behind the player")
     check(allp and all(p[3] for p in allp), f"{nm} {what}: the player always on free floor ({len(allp)} samples)")
+    # a bounded spot is a collision test: it walks 1.5 m into a glass pane and must reach it (the
+    # grid behind it would allow more) and never cross it
     for k, lim in bounds.items():
         ax = 1 if k[0] == "x" else 2
         bad = [p for p in allp if (p[ax] > lim + 0.01 if k.endswith("max") else p[ax] < lim - 0.01)]
         check(not bad, f"{nm} {what}: stayed {k} {lim} ({len(bad)} crossings; last {allp[-1][1]:.2f},{allp[-1][2]:.2f})")
+        check(allp and abs(allp[-1][ax] - lim) < 0.15, f"{nm} {what}: reached the pane ({allp[-1][ax]:.2f} vs {lim})")
 
 with sync_playwright() as p:
     b = p.chromium.launch(args=ARGS, **({"executable_path": os.environ["CHROMIUM"]} if os.environ.get("CHROMIUM") else {}))

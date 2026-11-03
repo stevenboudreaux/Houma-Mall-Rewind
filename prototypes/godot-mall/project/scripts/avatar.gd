@@ -116,18 +116,6 @@ func _process(dt: float) -> void:
 		creator._skip()
 	var tp: bool = third and not player.vr_on and creator == null
 	var hide: bool = player.frozen or player.leaving
-	# WALK: ?debug=1 (player.debug) reports the gait, its playback and where the camera is, twice a
-	# second, for tools/qa/walk_webtest.py (the web build has no other way to read them)
-	if tp and player.get("debug") == true:
-		_dbg_t += dt
-		_dbg_gt += dt
-		if _dbg_t > 0.5:
-			_dbg_t = 0.0
-			var ps: float = body.ap.speed_scale if body.ap else 0.0
-			var cd := Vector2(tp_cam.global_position.x - player.position.x, tp_cam.global_position.z - player.position.z).length()
-			# gt: the game's own clock (the process deltas summed), so a slow test renderer measures the
-			# same metres per game second as a phone does per real second
-			print("DBG gait=%s x%.2f v=%.2f cam=%.2f boom=%.2f side=%d pos=%.3f,%.3f gt=%.3f" % [body.clip, ps, _speed, cd, _boom, int(_side), player.position.x, player.position.z, _dbg_gt])
 	# walking speed: third person walks at a walking pace (the first person's 4 m/s is untouched)
 	if "move_scale" in player:
 		player.move_scale = (TP_WALK / player.SPEED) if tp else 1.0
@@ -149,6 +137,23 @@ func _process(dt: float) -> void:
 	body.visible = not hide and _boom > HIDE_UNDER and not has_meta("qa_hide")   # qa_hide: tools/qa/avatar_test.gd fps
 	if not player.frozen and not tp_cam.current:
 		tp_cam.current = true
+	if player.get("debug") == true:
+		_dbg_report(dt)
+
+## WALK: ?debug=1 (player.debug) reports the gait, its playback and where the camera is, twice a
+## second, for tools/qa/walk_webtest.py (the web build has no other way to read them). After the
+## camera is placed for this frame, so the distance is this frame's. gt is the game's own clock (the
+## process deltas summed): a slow test renderer measures the same metres per game second as a phone
+## does per real second.
+func _dbg_report(dt: float) -> void:
+	_dbg_t += dt
+	_dbg_gt += dt
+	if _dbg_t < 0.5:
+		return
+	_dbg_t = 0.0
+	var ps: float = body.ap.speed_scale if body.ap else 0.0
+	var cd := Vector2(tp_cam.global_position.x - player.position.x, tp_cam.global_position.z - player.position.z).length()
+	print("DBG gait=%s x%.2f v=%.2f cam=%.2f boom=%.2f side=%d pos=%.3f,%.3f gt=%.3f" % [body.clip, ps, _speed, cd, _boom, int(_side), player.position.x, player.position.z, _dbg_gt])
 
 func _move_body(dt: float) -> void:
 	var p: Vector3 = player.position
