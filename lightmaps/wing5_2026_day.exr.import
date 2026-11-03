@@ -1,0 +1,30 @@
+[remap]
+
+importer="2d_array_texture"
+type="CompressedTexture2DArray"
+uid="uid://cfjsqsgihs0ct"
+path.bptc="res://.godot/imported/wing5_2026_day.exr-f6e16daa8a8bbd1861669ecf6063e044.bptc.ctexarray"
+path.astc="res://.godot/imported/wing5_2026_day.exr-f6e16daa8a8bbd1861669ecf6063e044.astc.ctexarray"
+metadata={
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
+}
+
+[deps]
+
+source_file="res://wing5_2026_day.exr"
+dest_files=["res://.godot/imported/wing5_2026_day.exr-f6e16daa8a8bbd1861669ecf6063e044.bptc.ctexarray", "res://.godot/imported/wing5_2026_day.exr-f6e16daa8a8bbd1861669ecf6063e044.astc.ctexarray"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
+compress/hdr_compression=1
+compress/channel_pack=1
+mipmaps/generate=false
+mipmaps/limit=-1
+slices/horizontal=1
+slices/vertical=3
