@@ -290,7 +290,16 @@ body.xfer .lr-text { font-size: clamp(15.5px, 0.25vw + 14px, 18px); }
 	text-align: center;
 	z-index: 1;
 }
+/* MENU2 (Nov 3 2026, design/godot-menu.md "Time travel at the directory"): a trip between years
+   reloads the page into the other year's file; the vortex (#tt-veil, below) covers the reload in
+   place of the load screen, which stays for every other load. */
+#tt-veil { position: fixed; inset: 0; z-index: 2147483000; background: #000 center / 100% 100% no-repeat; pointer-events: none; transition: opacity 0.35s linear; }
+#tt-veil canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+html.tt, html.tt body { background: #05030a; }
+html.tt #load-card { display: none !important; }
+html.tt #status { opacity: 0 !important; }
 		</style>
+		<script>/* MENU2: a time-travel trip is landing: no load screen, from the first paint (#tt-veil below) */try { if (sessionStorage.getItem('mall-tt')) { document.documentElement.classList.add('tt'); } } catch (e) { /* ignore */ }</script>
 		$GODOT_HEAD_INCLUDE
 	</head>
 	<body>
@@ -404,6 +413,137 @@ body.xfer .lr-text { font-size: clamp(15.5px, 0.25vw + 14px, 18px); }
 	</div>
 			<div id="status-notice"></div>
 		</div>
+		<!-- MENU2 ---- the time-travel vortex over the reload (scripts/timetravel_trip.gd) -->
+		<script>
+// The trip from a mall directory (scripts/timetravel_trip.gd) leaves sessionStorage 'mall-tt' =
+// {start: wall-clock second the trip began, from, to, snap: a JPEG (base64) of the last frame}.
+// This page then shows no load screen: #tt-veil runs the same effect as scripts/timetravel.gdshader
+// (TT_FRAG is a copy of it in WebGL) on that picture, in step with the Godot side because every
+// value is a function of the time since the trip began (ttEnv = timetravel.gd env()). When the game
+// is ready (the load screen's own rule, lift() below) the veil fades into the game's own vortex,
+// which unwinds into the other year. Keep TT_FRAG and ttEnv the same as the Godot files.
+(function () {
+	var raw = '';
+	try { raw = sessionStorage.getItem('mall-tt') || ''; sessionStorage.removeItem('mall-tt'); } catch (e) { /* ignore */ }
+	if (!raw) { return; }
+	var info = null; try { info = JSON.parse(raw); } catch (e) { info = null; }
+	if (!info || !(info.start > 0) || Date.now() / 1000 - info.start > 120) { document.documentElement.classList.remove('tt'); return; }
+	window.__mallTT = raw;
+	document.documentElement.classList.add('tt');
+	var rm = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+	var veil = document.createElement('div');
+	veil.id = 'tt-veil';
+	var src = info.snap ? 'data:image/jpeg;base64,' + info.snap : '';
+	if (src) { veil.style.backgroundImage = 'url(' + src + ')'; }
+	document.body.appendChild(veil);
+	var cv = document.createElement('canvas');
+	veil.appendChild(cv);
+	var gl = null;
+	try { gl = cv.getContext('webgl', { alpha: false, antialias: false, premultipliedAlpha: false }); } catch (e) { gl = null; }
+	var fwd = (info.to >= info.from) ? 1 : -1;
+	function pulse(t, at, w) { var d = (t - at) / w; return Math.exp(-d * d); }
+	function sm(a, b, x) { var t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); }
+	// = scripts/timetravel.gd env()
+	function ttEnv(t, u) {
+		if (rm) { var dk = 0.85 * sm(0, 0.5, t); if (u >= 0) { dk *= 1 - sm(0, 0.6, u); } return { amt: 0, ph: 0, flash: 0, vort: 0, dark: dk }; }
+		var ph = t / 1.5, amt = sm(0, 0.675, t), vort = 0.85 * sm(0.7, 1.7, t);
+		var flash = pulse(t, 0.21, 0.0525) * 0.7 + pulse(t, 0.54, 0.06) * 0.85 + pulse(t, 0.93, 0.09);
+		if (t > 1.4) { flash += 0.3 * Math.pow(0.5 + 0.5 * Math.sin((t - 1.4) * 2 * Math.PI / 1.6 - Math.PI * 0.5), 8); }
+		if (u >= 0) { var k = 1 - sm(0, 1.1, u); amt *= k; vort *= 1 - sm(0, 0.7, u); flash = Math.max(flash * k, pulse(u, 0.06, 0.14)); }
+		return { amt: amt, ph: ph, flash: flash, vort: vort, dark: 0 };
+	}
+	window.mallTTEnv = ttEnv;
+	var TT_VERT = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
+	// = scripts/timetravel.gdshader, SCREEN_UV / SCREEN_PIXEL_SIZE from the canvas
+	var TT_FRAG = [
+		'precision mediump float;',
+		'uniform sampler2D screen_tex; uniform vec2 res;',
+		'uniform float amt; uniform float ph; uniform float flash; uniform float vort; uniform float dark; uniform float forward;',
+		'const vec3 tint_a = vec3(1.0, 0.72, 0.30); const vec3 tint_b = vec3(0.35, 0.80, 1.00); const vec3 tint_c = vec3(0.95, 0.40, 0.95);',
+		'void main(){',
+		' vec2 uv = vec2(gl_FragCoord.x / res.x, 1.0 - gl_FragCoord.y / res.y);',
+		' vec2 c = uv - vec2(0.5);',
+		' float aspect = res.x / res.y;',
+		' vec2 cc = vec2(c.x / aspect, c.y);',
+		' float r = length(cc);',
+		' float wave = sin(r * 38.0 - ph * 40.0 * forward) * 0.012 * amt;',
+		' float ang = amt * 0.35 * (1.0 - r) * forward + vort * 1.2 * (1.0 - smoothstep(0.0, 0.6, r)) * forward;',
+		' mat2 rot = mat2(vec2(cos(ang), -sin(ang)), vec2(sin(ang), cos(ang)));',
+		' vec2 q = rot * c * (1.0 - 0.06 * amt - 0.25 * vort) + normalize(c + 1e-5) * wave + 0.5;',
+		' float split = 0.012 * amt;',
+		' vec3 col;',
+		' col.r = texture2D(screen_tex, q + normalize(c + 1e-5) * split).r;',
+		' col.g = texture2D(screen_tex, q).g;',
+		' col.b = texture2D(screen_tex, q - normalize(c + 1e-5) * split).b;',
+		' float cyc = fract(ph * 3.0 + r * 0.6 * forward);',
+		' vec3 wash = mix(mix(tint_a, tint_b, smoothstep(0.0, 0.5, cyc)), tint_c, smoothstep(0.5, 1.0, cyc));',
+		' col = mix(col, col * 0.4 + wash * 0.8, amt * 0.55);',
+		' float band = smoothstep(0.92, 1.0, sin((uv.y + ph * 3.0) * 60.0)) * amt * 0.35;',
+		' col += wash * band;',
+		' float a = atan(cc.y, cc.x);',
+		' float depth = 0.3 / (r + 0.06);',
+		' float tw = a / 6.2832 + depth * 0.2 * forward + ph * 0.3 * forward;',
+		' float s1 = 0.5 + 0.5 * sin(tw * 6.2832 * 6.0);',
+		' float s2 = 0.5 + 0.5 * sin((depth - ph * 2.4) * 6.2832);',
+		' float cyc2 = fract(depth * 0.35 - ph * 0.8);',
+		' vec3 wash2 = mix(mix(tint_a, tint_b, smoothstep(0.0, 0.5, cyc2)), tint_c, smoothstep(0.5, 1.0, cyc2));',
+		' vec3 vc = mix(tint_b * 0.12, wash2, s1 * 0.85) * (0.45 + 0.55 * s2) + wash2 * pow(s1 * s2, 6.0) * 0.8;',
+		' vc += vec3(1.0, 0.97, 0.9) * (1.0 - smoothstep(0.0, 0.12, r)) * 0.7;',
+		' col = mix(col, vc, clamp(vort * (0.3 + 0.7 * smoothstep(0.04, 0.32, r)), 0.0, 1.0));',
+		' col = mix(col, vec3(1.0, 0.97, 0.9), clamp(flash, 0.0, 1.0));',
+		' col *= 1.0 - smoothstep(0.35, 0.95, r) * max(amt, vort) * 0.8;',
+		' col *= 1.0 - dark;',
+		' gl_FragColor = vec4(col, 1.0);',
+		'}'].join('\n');
+	var U = {}, live = true;
+	if (gl) {
+		var sh = function (type, txt) { var o = gl.createShader(type); gl.shaderSource(o, txt); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) { console.warn('time travel shader:', gl.getShaderInfoLog(o)); return null; } return o; };
+		var vs = sh(gl.VERTEX_SHADER, TT_VERT), fs = sh(gl.FRAGMENT_SHADER, TT_FRAG);
+		var pg = vs && fs ? gl.createProgram() : null;
+		if (pg) { gl.attachShader(pg, vs); gl.attachShader(pg, fs); gl.linkProgram(pg); if (!gl.getProgramParameter(pg, gl.LINK_STATUS)) { pg = null; } }
+		if (!pg) { gl = null; } else {
+			gl.useProgram(pg);
+			var b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+			var loc = gl.getAttribLocation(pg, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+			['screen_tex', 'res', 'amt', 'ph', 'flash', 'vort', 'dark', 'forward'].forEach(function (n) { U[n] = gl.getUniformLocation(pg, n); });
+			var tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 255]));
+			if (src) { var im = new Image(); im.onload = function () { gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im); }; im.src = src; }
+			gl.uniform1i(U.screen_tex, 0);
+		}
+	}
+	window.__mallTTFrames = 0;
+	function frame() {
+		if (!live) { return; }
+		var t = Date.now() / 1000 - info.start;
+		if (gl) {
+			var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+			var w = Math.max(1, Math.round(innerWidth * dpr)), h = Math.max(1, Math.round(innerHeight * dpr));
+			if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+			gl.viewport(0, 0, w, h);
+			var e = ttEnv(t, -1);
+			gl.uniform2f(U.res, w, h); gl.uniform1f(U.forward, fwd);
+			['amt', 'ph', 'flash', 'vort', 'dark'].forEach(function (n) { gl.uniform1f(U[n], e[n]); });
+			gl.drawArrays(gl.TRIANGLES, 0, 3);
+		} else {
+			veil.style.filter = 'hue-rotate(' + Math.round(t * 120) + 'deg) brightness(0.8)';
+		}
+		window.__mallTTFrames++;
+		requestAnimationFrame(frame);
+	}
+	frame();
+	// called by lift() when the game is ready: fade into the game's own vortex
+	window.mallTTLift = function () {
+		window.__mallTTLifted = 1;
+		veil.style.opacity = '0';
+		setTimeout(function () { live = false; if (veil.parentNode) { veil.parentNode.removeChild(veil); } document.documentElement.classList.remove('tt'); }, 400);
+	};
+}());
+		</script>
+		<!-- end MENU2 -->
 
 		<script>
 // Owner-editable signs (scripts/signs.gd): publishing the owner's sign edits to
@@ -1127,6 +1267,7 @@ const engine = new Engine(GODOT_CONFIG);
 			let frames = 0;
 			const lift = () => {
 				setStatusMode('hidden');
+				if (window.mallTTLift) { window.mallTTLift(); }   // MENU2: the time-travel veil fades into the game
 				window.__mallControlAt = performance.now();
 				// fetch the other wing once this one is running and has settled
 				setTimeout(window.mallPrefetchOther, 6000);

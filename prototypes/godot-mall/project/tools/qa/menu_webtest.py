@@ -4,11 +4,12 @@ Usage: CHROMIUM=/opt/pw-browsers/chromium python3 tools/qa/menu_webtest.py <url-
   (server on :8765 serving the repo root; <url-path> e.g.
    prototypes/godot-mall/project/.scratch/builds/wsm/index.html?wing=2)
 Checks, each in a fresh browser profile:
-  1. desktop 1280x720, first visit: the opening; Enter = START opens AVATAR with NAME focused; typing a
-     name saves localStorage "mall.player_name"; Tab closes; Tab opens; E walks through the tabs
+  MENU2 (Nov 3): the tabs are MAIN (the character, money, tickets; Edit inside), INVENTORY, CONTROLS.
+  1. desktop 1280x720, first visit: the opening; Enter = START opens MAIN's editing with NAME focused;
+     typing a name saves localStorage "mall.player_name"; Tab closes; Tab opens MAIN; E walks the tabs
      (a shot of each); CONTROLS: Action remapped to F with the keyboard (saved in "mall-controls-1");
      a reload keeps F and doesn't show the opening again (a name is set).
-  2. phone portrait 390x844 (touch), first visit: the opening; tap START; the AVATAR tab; swipes
+  2. phone portrait 390x844 (touch), first visit: the opening; tap START; MAIN's editing; swipes
      through the tabs (a shot of each); the Menu button opens it after closing.
   3. phone landscape 844x390 (touch): the opening's Skip; the Menu button; each tab.
 Prints MENU WEB OK, or the failures; 0 console errors expected.
@@ -77,21 +78,19 @@ with sync_playwright() as p:
     pg.mouse.click(640, 700); time.sleep(1)     # focus the canvas (a click on empty background)
     shot(pg, "web-opening-desktop")
     key(pg, "Enter", 3)
-    shot(pg, "web-avatar-name-focused-desktop")
+    shot(pg, "web-main-edit-name-focused-desktop")
     pg.keyboard.type("TESTER", delay=120); time.sleep(1)
     key(pg, "Enter", 2)
     check(ls(pg, "mall.player_name") == "TESTER", f"desktop: the name is saved ({ls(pg, 'mall.player_name')})")
-    shot(pg, "web-avatar-desktop")
+    shot(pg, "web-main-edit-desktop")
     key(pg, "Tab", 2)
     check(ls(pg, "mall-avatar-1") is not None, "desktop: Tab closes the menu (the creator's look kept)")
     shot(pg, "web-closed-desktop")
     key(pg, "Tab", 3)
-    shot(pg, "web-inventory-desktop")      # the menu opens on INVENTORY (far left)
-    key(pg, "e", 3)                        # AVATAR
-    for t in ["controls", "year"]:
+    shot(pg, "web-main-desktop")           # the menu opens on MAIN (far left)
+    for t in ["inventory", "controls"]:
         key(pg, "e", 3)
         shot(pg, f"web-{t}-desktop")
-    key(pg, "q", 3)                        # back to CONTROLS
     # the remappable rows: forward, back, left, right, run, interact (6th)
     for _ in range(5):
         key(pg, "ArrowDown", 0.6)
@@ -125,8 +124,8 @@ with sync_playwright() as p:
     tap(pg, 195 + 70, 422 + 250, 3)
     shot(pg, "web-start-phone-portrait")
     tap(pg, 195 + 70, 422 + 230, 1)
-    shot(pg, "web-avatar-phone-portrait")
-    for t in ["controls", "year"]:
+    shot(pg, "web-main-edit-phone-portrait")
+    for t in ["inventory", "controls"]:
         swipe(pg, cdp, 300, 30, 120, 30, 3)
         shot(pg, f"web-{t}-phone-portrait")
     tap(pg, 390 - 30, 26, 2)       # the close button
