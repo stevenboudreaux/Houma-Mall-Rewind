@@ -307,5 +307,7 @@ has the table and the files). Where the build differs from the numbers above, an
 | — | (not in §5) | the monuments and the UA marquee (1995) move with the roads: West Park (103, −11.5), Bayou Gardens (−126, 201.5), Armour (−19, −244), marquee (−96, −244) | |
 | — | (not in §5) | the Shoe Dept. box / loading-lane notch at x 30..44, z 50..80 is kept | "Not mismatches" above; Dillard's NE corner and the gallery stub face into it |
 
-Open for Steven: the service lane's width by Dillard's (above); whether the pavilion's doors should turn
-east inside the loggia; what is on Lynn's north face besides the side exit (§9 q2 still open).
+Steven (Nov 3, after the build): the service lane by Dillard's looks right as built. Whether the
+pavilion's doors turn east inside the loggia, and what else is on Lynn's north face, he does not know:
+both stay as built (doors facing south; a plain white wall with the side exit and a GUESS sign) until a
+photo or a visit settles them.
