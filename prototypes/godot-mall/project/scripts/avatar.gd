@@ -153,7 +153,15 @@ func _dbg_report(dt: float) -> void:
 	_dbg_t = 0.0
 	var ps: float = body.ap.speed_scale if body.ap else 0.0
 	var cd := Vector2(tp_cam.global_position.x - player.position.x, tp_cam.global_position.z - player.position.z).length()
-	print("DBG gait=%s x%.2f v=%.2f cam=%.2f boom=%.2f side=%d pos=%.3f,%.3f gt=%.3f body=%s vis=%d" % [body.clip, ps, _speed, cd, _boom, int(_side), player.position.x, player.position.z, _dbg_gt, body.id, int(body.visible)])
+	# other bodies (shoppers, the Runner) within 3 m: a figure in a test frame can be one of them
+	var near := 0
+	var near_id := "-"
+	for n in get_tree().current_scene.find_children("*", "NpcBody", true, false):
+		if n == body or not (n as Node3D).visible: continue
+		var d := Vector2(n.global_position.x - player.position.x, n.global_position.z - player.position.z).length()
+		if d < 3.0:
+			near += 1; near_id = "%s@%.1fm" % [n.id, d]
+	print("DBG gait=%s x%.2f v=%.2f cam=%.2f boom=%.2f side=%d pos=%.3f,%.3f gt=%.3f body=%s vis=%d near=%d %s" % [body.clip, ps, _speed, cd, _boom, int(_side), player.position.x, player.position.z, _dbg_gt, body.id, int(body.visible), near, near_id])
 
 func _move_body(dt: float) -> void:
 	var p: Vector3 = player.position
