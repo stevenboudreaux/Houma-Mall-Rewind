@@ -238,3 +238,51 @@ exit is a white box 40 m away; the dock canopy is on the north face, where the r
 shutter side exit looking at Big Lots; Dillard's south face is a blank wall where the gallery and the
 entrance are; the 2026 skins (Lynn's, Red Seal, gold fan, yellow stalls) are right in kind, so the
 year layer is unaffected by the layout fixes except for moving with them.
+
+## 9. Decisions (Steven, Nov 3 2026, after reading §1–§8)
+
+| Question (§7) | Steven's answer | What it means for the build |
+|---|---|---|
+| 1 South side depth | "The pavilion wall needs to be from JCPenney to the Dillard's side, at least 3/4 of that length." | The wing wall is one straight run from the pavilion to Dillard's west wall, ≥ 75 m of the ~100 m between the two anchors, in line with the pavilion's front. Take the plan's line: wing south face z 118, pavilion front z 118, JCPenney's south face z 106 (mismatch #8, the FILL option). The red-box plan (§3 figure, `wsEXT-top-all-*`) is approved as drawn: "you nailed it". |
+| 2 Sears's north face | Open (Steven asked it back). | Only the shutter side exit is filmed (4413). The site plan shows nothing attached to that face. Build it as the plain white painted block wall of the west face with the side exit on the main-aisle axis (E's `s1x`), and a GUESS "Sears" on that face toward Armour Dr; mark it a guess in the note. |
+| 3 Kirschman's | "Kirschman's" (typed twice); the strip across Armour Dr existed in 1995. | 1995 sign `Kirschman's`; the strip stays in both years at (−50..10, −300..−272), Big Lots in 2026. |
+| 4 Bank pad on West Park | A bank in 1995, not Chase. | Build a generic bank on the pad [68, −73, 84, −55] in both years, no brand (IP rule); 2026 may use a generic name too. |
+| 5 Dillard's portal | Yes, on the south (Bayou Gardens) face, with the gallery on the south and West Park faces. | Mismatch #7 as proposed; `s2s` moves to z 138. |
+| 6 Grow the map | Yes, three sides. | Mismatch #9 as proposed (Armour Dr ≈ −252, Bayou Gardens ≈ 216, the west lot to ≈ −360). |
+| 7 Sun | Yes, switch to the afternoon. | Day bake sun from the game's N/NE, 35–45° up (#13). |
+
+## 10. Handoff: what goes to whom
+
+This branch (`ws/ext-sequence`) is the deliverable of the analysis: this note, the plan figure and the
+evidence. It changes no game file, so it merges without a rebake. From here the work splits in two:
+
+1. **A build workstream** (a cloud session on its own branch, `ws/ext-build` or similar), started from
+   the brief below. It changes `tools/exterior/wall_fixes.py`, `tools/make_exterior.py` (map growth),
+   `tools/exterior/exterior.gd` / `exterior_2026.gd` (dock, gallery, bank, Big Lots, sun), regenerates
+   `exterior.json`, and rebuilds wings 3 (both years). Because the exits' `out` spots move (s43, s55,
+   s2s, the Sears door spots), `player.gd` reads the new `exterior.json` but needs no code change unless
+   a door is added.
+2. **The integration session on the Mac** (as `CLAUDE-CLOUD.md`): merges, one `wing3:fastday` and one
+   `wing3_2026:fastday` bake, then `tools/capture_standin.sh 3` and `3 2026` (the door pictures of
+   wings 1, 2, 4, 5 look out at the new lot), export, publish.
+
+### Draft brief for the build session
+
+> Workstream EXT-B: build the real outside. Branch `ws/ext-build` from `main` after `ws/ext-sequence`
+> merges. Read `CLAUDE-CLOUD.md`, `design/godot-exterior.md`, `design/exterior-sequence.md` (§4, §5, §9).
+> Do the mismatches in order #1–#9, then #10–#15, as the numbers in §5 and the decisions in §9:
+> Sears 115 × 50 flush with the facade with the dock, truck well and bike-rack wall on the west face;
+> the cinema box flush and 45 m long; the map grown on three sides with the roads, Unitech and the
+> Bayou Gardens / Armour monuments at their real places; Kirschman's / Big Lots across Armour Dr;
+> JCPenney 60 × 120 with the tank at its NE corner and the docks on the north face; the tank yard
+> moved; Dillard's 87 × 58 with the gallery on the south and east faces and the portal on the south;
+> the wing wall to z 118 with the pavilion; the generic bank pad on West Park; Ground Pat'i to the
+> SE corner; the east entrance recess 10 m; the day sun from the game's N/NE. Keep every exit's inside
+> spot; move only the `out` spots. Textures come later: reuse today's skins, no new paintings except
+> where a face did not exist. Verify by looking at the same 13 cameras as `wsEXT-*` (the camera
+> string is in this note's history: `tools/exterior/exshots.gd`, top views −80,−20,440 and
+> −50,−95,230, the ten eye-height views) and keep them as `wsEXTB-*.jpg`. Report which door spots
+> changed so the inside wings' stand-in captures are redone at integration.
+
+The 13 cameras used for `wsEXT-*` (exshots `--cams`):
+`top:-80,-20,440:top-all;top:-50,-95,230:top-sears-cinema;top:-150,40,230:top-jcp-south;-96,1.7,-91,-90,2:exit-s41;-92,1.7,-84,-45,4:exit-north-dock;-100,1.7,-45,-25,4:cinema-west-wall;-115,1.7,-25,-50,4:staff-lot-to-cinema;-175,1.7,5,180,4:jcp-north-face;-140,1.7,118,0,4:south-entrance;-12,1.7,142,0,4:dillards-south;-4,1.7,-170,180,4:lynns-north-face;62,1.7,-91,90,4:east-entrance-s43;62,1.7,-125,90,4:lynns-east-face`
