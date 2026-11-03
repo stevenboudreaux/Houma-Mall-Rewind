@@ -135,3 +135,26 @@ Measured: stroke, period, lip adjustability, side holes, tilt time. Sourced but 
 4. **The Silver Falls coin entry is a moving slider with a stop button** per two dealer pages; the owner's description does not mention it. Check the teardown video for whether COIN COMET's entry moves.
 5. **"An inch or two lower" has no outside confirmation.** No patent or manual gives the tier step; madmodder's "two inches" is the pile, not the step. Measure it from the video.
 6. **Fill level matters more than the description implies.** Operators prime each section with hundreds of coins. Start the sim primed.
+
+## Applied in the build (workstream PUSHER, Nov 3, 2026)
+
+What the rebuilt `play/pusher/sim.js` took from this note and from Steven's description (the numbers are
+in `design/storefronts/pocket-change.md`, "COIN COMET plays like a pusher"):
+
+- **The cycle is Steven's and Wikipedia's:** a fixed back wall at the back of the top tier, the deck sliding
+  out from under it; the chute lands the coin 1.5 cm in front of the wall, so a coin dropped while the deck
+  is out falls into the gap behind the deck's heap and the wall shoves that heap forward when the deck comes
+  back in. The page cues the open gap (section 3's "land behind the heap, in open space").
+- **A short lower field** (9 rows of quarters from the deck's face to the lip, section 8's 6–8) and a small
+  step between the tiers (3 cm, Steven's "an inch or two") in place of the Nov 1 build's 14 rows and 7.5 cm.
+- **No side holes** (Steven's call; section 4's skill-pusher patent shows machines built that way). The blue
+  art ramps are side guides in the sim; the soak counts a coin past a side wall as a failure and found none.
+- **Primed fill** (section 1's Coastal manuals: operators hand-fill a field before it pays): three layers on
+  both tiers at high quality.
+- **Stroke 6 cm, period 3 s** against the teardown's 50 mm and 4.5 s: play values. A 2° forward tilt of the
+  whole field (not in any source; a feel number) is what makes the rigid-body heap creep instead of hoard.
+- **Not applied:** the Silver Falls' skill-stop button (section 1); the house take through side holes
+  (section 5): with walls the long-run return in coins tends to 100 %, and the house's margin is the drop's
+  price against the tickets a coin pays (ECON's knob).
+- **The open question from section 3** (do timing guides apply?): the soak's `phase` option drops every coin
+  with the gap open or closed; the result is in the design note's "Timing matters" line.

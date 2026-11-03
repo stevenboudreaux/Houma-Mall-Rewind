@@ -217,7 +217,20 @@ Steven (Nov 3): the build did not play like his machine, and coins kept falling 
 - **The page (`play/pusher.html`):** the cabinet follows the new geometry (one slab tier, the guides, the lower deck, the wall with the translite above it); the look, the 3D view, the sounds, nudge and tilt are as before. New: a **GAP OPEN** cue (the slot knob and the DROP button glow gold, and a label under the slot) while a coin dropped now would land in the open gap, counting the slide's 0.4 s and the fall. The title card says what to do. ECON's wallet and tickets (Nov 3) are untouched.
 - **The soak (`tests/unit/pusher/soak.mjs <lip> <coins> <drops> 1 <warm> '<GEOM JSON>' [gap] [phase]`),** one position, a quarter every 1.6 s at a random x, 460 coins to start, 200 drops to warm up and 200 measured. Return = coins into the cup / coins dropped; pay = drops followed by at least one coin into the cup; cascades = runs of three or more cup coins less than 1.2 s apart. With no side holes the machine keeps nothing for good once it is full (what goes in comes out), so the long-run return tends toward 100 % and the lip decides how much the heap stores on the way; the house's take is the price of the drop against the tickets a coin pays (ECON's knob, `ticketsPerCoin`).
 
-SOAK_TABLE
+  | run (final geometry unless said) | return | pay | cascades (3+) / 200 | biggest | still storing | on the field | ms a step |
+  |---|---|---|---|---|---|---|---|
+  | **lip 0.5 mm, tilt 2°** (shipped) | **90.5 %** | **45 %** | **25** | **14** | 19 | 499 | 7.9 |
+  | lip 1 mm, tilt 2° | 48.0 % | 30 % | 11 | 9 | 104 | 646 | 11.2 |
+  | lip 0.5 mm, tilt 2°, before the guides and the longer deck (11 cm out) | 66.5 % | 35 % | 18 | 8 | 67 | 539 | 8.9 |
+  | lip 2 mm, tilt 2°, same | 12.0 % | 11 % | 1 | 3 | 176 | 775 | 16.9 |
+  | lip 4 mm, tilt 2°, same | 1.5 % | 2 % | 0 | 1 | 197 | 810 | 17.2 |
+  | lip 2 mm, tilt 3°, same | 20.5 % | 15 % | 4 | 6 | 159 | 736 | 17.5 |
+  | lip 0.5 mm, **no tilt**, first cut (150 drops, 100 warm) | 10.7 % | 9 % | 0 | 2 | 134 | 558 | 7.3 |
+  | lip 0.5 mm, tilt 2°, first cut | 36.7 % | 26 % | 6 | 5 | 95 | 472 | 6.5 |
+  | friction 0.15, tilt 3°, first cut | 18.0 % | 14 % | 1 | 4 | 123 | 561 | 7.4 |
+  | friction 0.30, tilt 4°, flatter fill, first cut | 24.0 % | 15 % | 3 | 7 | 114 | 548 | 7.3 |
+
+  (The Nov 2 build, for comparison: 5.3 % return, 20 % into the side holes, 760 coins.) "Still storing" is how many more coins the field held at the end of the 200 measured drops than at their start: the shipped machine is within a few coins of its steady state after 200 warm drops, the lipped ones are still filling. Ms a step is the cloud box's one slow core (four runs at once); a phone's figure is in Performance below.
 
 - **Timing matters, a little:** TIMING_LINE
 - **Lost at the sides: 0** in every run (the target was "effectively none"); 0 through the tier, 0 out of the world.
