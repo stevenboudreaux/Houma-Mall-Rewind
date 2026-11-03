@@ -234,8 +234,14 @@ are unbaked (native) or the web build with the published lightmaps.
   z = 73.0): the position reaches 72.95 and never crosses, in frames of up to 1.3 s. A phone
   (844×390, touch): a full-stick drag walks at 3.0 m/s with `walk_m`. (The headless renderer draws
   a frame every 3-8 s, so the "frame sequences" are consecutive-ish game frames 0.5-1 game-second
-  apart, labelled with the game clock and the position; where a shopper crosses the hall it can
-  stand between the camera and the avatar for a frame.)
+  apart, labelled with the game clock and the position.) **Seen in those strips, not understood:**
+  in a few frames the avatar's clothes draw in another skin's colours (a black polo, then a tan
+  one, on Ch01's white-polo body: `wsWALK-web-w1-hall-walk-frames`, `-w2-hall-walk-frames`,
+  `-w2-2026-hall-walk-frames`). The gait report of the same run says body Ch01, shown, no other
+  body within 3 m, and the native (llvmpipe) shots never do it; it happened in every headless run,
+  with the NPC warm-up on or off. It looks like the GL Compatibility renderer binding another
+  texture to the recolour material for a frame on SwiftShader. Not from this workstream's code
+  (`avatar_body.gd` is untouched); worth a look on a phone (V's "not measured on an iPhone").
 - Found on the way, fixed here: a stop from jog / run / sprint never returned to idle
   (`NpcBody.set_speed(0)` only knows the walk clips; on a long frame the speed drops straight to 0,
   so it showed in the headless tests at once; on a phone it would have shown as a run-in-place after
@@ -263,3 +269,6 @@ are unbaked (native) or the web build with the published lightmaps.
 - The Top row's 11 swatches are ~28 px on a 390 px-wide phone, under Apple's 44 pt guideline; they
   tap fine in the test, but a two-row palette may be kinder.
 - Entering VR with the creator open closes it (Skip on a first visit); the headset can't show it.
+- WALK: in the headless web frame strips the avatar's clothes sometimes draw in another skin's
+  colours for a frame (see "Checks (Nov 3 2026)"). Check on a phone; if it shows there, suspect the
+  recolour material's texture binding in the Compatibility renderer (`avatar_body.gd` `_build`).
