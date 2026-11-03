@@ -56,6 +56,17 @@ t('the ledger keeps the last 40 changes and 200 ids', () => {
   assert.strictEqual(b.tickets(1995), 250);
   assert.strictEqual(b.credit(1995, 1, 'x', 'id249'), false, 'a recent id is still refused');
 });
+t('give: a won plush waits in the year\'s inbox for the bag, once', () => {
+  const st = fakeStorage({ 'mall.econ': '1', 'mall.money': '100' });
+  const b = B.make(st);
+  assert.strictEqual(b.give(1995, 'pc_claw_gator', 1, 'CLAW', 'claw-item:1:s:7'), true);
+  assert.strictEqual(b.give(1995, 'pc_claw_gator', 1, 'CLAW', 'claw-item:1:s:7'), false, 'the same payout twice');
+  assert.strictEqual(b.give(1995, 'pc_claw_pogEye', 1, 'CLAW', ''), false, 'a give needs an id');
+  assert.strictEqual(b.give(2026, 'pc_claw_pogEye', 1, 'Games, Inc.', 'x:1'), true);
+  assert.deepStrictEqual(b.inbox(1995).map((e) => e.item), ['pc_claw_gator']);
+  assert.deepStrictEqual(b.inbox(2026).map((e) => e.item), ['pc_claw_pogEye'], 'each year its own inbox');
+  assert.strictEqual(b.money(), 100, 'a give costs nothing');
+});
 t('the game prices are data: pusher 25, claw 25, Skee-Ball 25, WHIRLWIND 100 for 4 plays', () => {
   const P = '../../../prototypes/godot-mall/play/';
   assert.strictEqual(require(P + 'pusher/logic.js').CONFIG.priceCents, 25);

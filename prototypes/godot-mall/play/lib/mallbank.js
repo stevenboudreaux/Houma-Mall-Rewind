@@ -10,6 +10,9 @@
  *   "mall.ledger"         {"log": the last 40 changes, "ids": the last 200 credit ids}: a credit with an
  *                         id that is already there is refused, so a payout can never be counted twice
  *   "mall.econ"           "1" once older saves have been folded in (migrate(), below)
+ *   "mall.inbox-<year>"   things won in a game page, waiting for the mall to put them in the bag:
+ *                         [{"id": payout id, "item": data/items id, "n": 1, "reason": ...}]. The mall (scripts/
+ *                         inventory.gd collect()) takes them in once, with the "You received" card.
  *
  * Usage: var B = MALLBANK.make(localStorage);  B.spend(25, 'COIN COMET drop') -> true | false;
  *        B.credit(1995, 50, 'COIN COMET cup', 'pusher:...') -> true | false;  B.money();  B.tickets(1995)
@@ -18,7 +21,7 @@
 (function (root) {
   'use strict';
   var K = {
-    money: 'mall.money', tickets: 'mall.tickets-', ledger: 'mall.ledger', migrated: 'mall.econ',
+    money: 'mall.money', tickets: 'mall.tickets-', inbox: 'mall.inbox-', ledger: 'mall.ledger', migrated: 'mall.econ',
     legacyClaw: 'mall.tickets', state: 'mall-state-'
   };
   var START_CENTS = 10000, QUARTER = 25, YEARS = [1995, 2026], LOG_MAX = 40, IDS_MAX = 200;
@@ -120,8 +123,21 @@
       note('redeem', year, n, reason);
       return true;
     }
+    /** An item won in year (a claw plush), for the bag: queued in "mall.inbox-<year>" until the mall takes it.
+     *  id names the payout; a second give with the same id is refused (false). */
+    function give(year, item, n, reason, id) {
+      n = int(n) || 1; year = int(year);
+      if (!item || n <= 0 || YEARS.indexOf(year) < 0 || !id || seen(id)) return false;
+      var box = json(get(K.inbox + year)); if (!Array.isArray(box)) box = [];
+      box.push({ id: String(id), item: String(item), n: n, reason: String(reason || '') });
+      set(K.inbox + year, JSON.stringify(box));
+      note('give', year, n, String(item) + ' ' + String(reason || ''), id);
+      return true;
+    }
+    /** What is waiting for the bag in year. */
+    function inbox(year) { var box = json(get(K.inbox + int(year))); return Array.isArray(box) ? box : []; }
     return { money: money, canAfford: canAfford, spend: spend, earn: earn, tickets: tickets, credit: credit,
-             spendTickets: spendTickets, migrate: migrate, seen: seen, ledger: ledger };
+             spendTickets: spendTickets, migrate: migrate, seen: seen, ledger: ledger, give: give, inbox: inbox };
   }
 
   /** 1234 -> "$12.34" */

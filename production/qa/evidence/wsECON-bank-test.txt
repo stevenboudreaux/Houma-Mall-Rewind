@@ -10,5 +10,6 @@ ok case: after migration, a stray old field is not counted again
 ok fmt: cents as the player reads them
 ok a storage that throws (private mode) does not break a page
 ok the ledger keeps the last 40 changes and 200 ids
+ok give: a won plush waits in the year's inbox for the bag, once
 ok the game prices are data: pusher 25, claw 25, Skee-Ball 25, WHIRLWIND 100 for 4 plays
-ECON BANK OK (13 tests)
+ECON BANK OK (14 tests)

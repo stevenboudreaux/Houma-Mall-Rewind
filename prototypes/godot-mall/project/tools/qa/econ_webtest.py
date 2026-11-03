@@ -148,6 +148,22 @@ with sync_playwright() as p:
         pg.screenshot(path=f"{out}-claw.png", timeout=180000)
         check(paid["claw"] == 200 and close_frame(pg, f), "the claw wins a 200-ticket capsule; Back closes it")
 
+    # a plush from the claw: into the bag when the frame closes, with the "You received" card (Steven, Nov 3)
+    gators = [dict(c, id="g%d" % i, kind="gator") for i, c in enumerate(caps)]
+    pg.evaluate("p => localStorage.setItem('claw.pile.1', p)", json.dumps({"seed": 2, "plays": 13, "items": gators}))
+    f = open_game(pg, "claw.html?year=1995&machine=1&name=CLAW", "claw.html", "__claw")
+    if f:
+        time.sleep(1)
+        f.evaluate("__claw.start()"); f.evaluate("__claw.setPos(%f, %f)" % (gators[2]["x"], gators[2]["z"])); f.evaluate("__claw.drop()")
+        wait(lambda: f.evaluate("__claw.ST.mode === 'over'"), 200)
+        won = f.evaluate("(__claw.ST.won && __claw.ST.won.kind) || ''")
+        check(won == "plush" and close_frame(pg, f), "the claw wins a Gator plush; Back closes it")
+        inbag = wait(lambda: any(e.get("id") == "pc_claw_gator" for e in json.loads(pg.evaluate("localStorage.getItem('mall-state-1995')") or "{}").get("inventory", [])), 120)
+        time.sleep(15)
+        pg.screenshot(path=f"{out}-claw-received.png", timeout=180000)
+        check(inbag and not pg.evaluate("localStorage.getItem('mall.inbox-1995')"), "the mall puts the Gator plush in the bag (mall-state-1995) and empties the inbox; screenshot: the card")
+        pg.keyboard.press("Space"); time.sleep(10)
+
     f = open_game(pg, "pusher.html?pos=1&year=1995&name=COIN%20COMET&test=1", "pusher.html", "PUSHER_PAGE")
     if f:
         time.sleep(2)
@@ -164,7 +180,7 @@ with sync_playwright() as p:
     total = sum(paid.values())
     t95, t26, money = ls(pg, "mall.tickets-1995"), ls(pg, "mall.tickets-2026"), ls(pg, "mall.money")
     check(t95 == total and t26 == 0, "every win is in the 1995 tickets, once: %s = %d (bank %d; 2026 %d)" % (paid, total, t95, t26))
-    check(money == 10000 - 25 - 100 - 25 - 25, "the wallet: $100.00 - Skee-Ball 0.25 - WHIRLWIND 1.00 - claw 0.25 - one drop 0.25 = %d (%d)" % (10000 - 175, money))
+    check(money == 10000 - 25 - 100 - 25 - 25 - 25, "the wallet: $100.00 - Skee-Ball 0.25 - WHIRLWIND 1.00 - claw 2 x 0.25 - one drop 0.25 = %d (%d)" % (10000 - 200, money))
 
     # ---- 4. the counter
     pg.goto(url + "&cam=" + COUNTER_CAM)
@@ -173,6 +189,9 @@ with sync_playwright() as p:
     time.sleep(25)                      # swiftshader handles input many seconds late
     pg.screenshot(path=f"{out}-redemption.png", timeout=180000)
     check(ls(pg, "mall.tickets-1995") == total, "after a reload the bank still holds %d (the screenshot shows 'Your tickets: %s')" % (total, format(total, ",")))
+    st = json.loads(pg.evaluate("localStorage.getItem('mall-state-1995')") or "{}")
+    check(sum(e.get("count", 0) for e in st.get("inventory", []) if e.get("id") == "pc_claw_gator") + (1 if st.get("hand") == "pc_claw_gator" else 0) == 1,
+          "after the reload the bag holds one Gator plush, not two")
     check(not errs_all, "0 console errors, the mall and every game (%d) %s" % (len(errs_all), errs_all[:3]))
     b.close()
 print("ECON WEB", "OK" if not fails else "FAILED %d" % len(fails))

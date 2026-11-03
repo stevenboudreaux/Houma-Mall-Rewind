@@ -5,6 +5,8 @@
 ##   4. migration through a real load (load_saved): old tickets and quarters folded in once, nothing lost
 ##   5. the redemption counter spends this year's tickets; the boom box costs 5,000, the plush 700
 ##   6. ItemDB.price: the data-driven price field
+##   7. the claw's prizes into the bag (Steven Nov 3): every claw kind is an item with a model and an icon; what the
+##      page leaves in mall.inbox-<year> arrives once, with the card, even if the mall stops between its two saves
 ##   godot --headless --path . --script res://tools/qa/econ_test.gd
 ## Prints ECON TEST OK (n checks), or the failed checks. Exit code 0 / 1.
 extends SceneTree
@@ -37,6 +39,7 @@ func _initialize() -> void:
 	_test_migration_load()
 	_test_redemption()
 	_test_price()
+	_test_claw_bag()
 	printerr("ECON TEST OK (%d checks)" % oks if errors.is_empty() else "ECON TEST FAILED: " + str(errors))
 	quit(0 if errors.is_empty() else 1)
 
@@ -181,3 +184,36 @@ func _test_price() -> void:
 		var x := e.duplicate()
 		x.price = bad
 		_check(ItemDB.check(x) != "", "a price of %s is refused" % str(bad))
+
+## 7. The claw's prizes into the bag.
+func _test_claw_bag() -> void:
+	var db = ItemDB.new().load_dir()
+	var kinds := ["gator", "crawfish", "pelican", "nutria", "rougarou", "comet", "bruiser", "pogSkull", "pogGator", "pogEye", "slammer"]
+	var bad := []
+	for k in kinds:
+		var e: Dictionary = db.get_item("pc_claw_" + k)
+		if e.is_empty() or not ResourceLoader.exists(str(e.scene)) or not ResourceLoader.exists(str(e.icon)) or int(e.year) != 1995 or e.has("place"):
+			bad.append(k)
+		elif not (load(str(e.scene)) is PackedScene):
+			bad.append(k + " scene")
+	_check(bad.is_empty(), "every claw prize is a 1995 bag item with a model and an icon, never placed %s" % str(bad))
+	_check(db.get_item("pc_claw_gator").class == "hand" and db.get_item("pc_claw_pogSkull").class == "pocket", "plush are held, POGs go in the pocket")
+	var store := {"mall.econ": "1", "mall.money": "100",
+		"mall.inbox-1995": JSON.stringify([{"id": "claw-item:1:s:7", "item": "pc_claw_gator", "n": 1}, {"id": "claw-item:1:s:9", "item": "pc_claw_pogEye", "n": 1}]),
+		"mall.inbox-2026": JSON.stringify([{"id": "gi:1", "item": "pc_claw_slammer", "n": 1}])}
+	var m = _mall(store, 1995)
+	m.load_saved()
+	var cards := []
+	m.received.connect(func(id): cards.append(id))
+	_check(m.collect() == 2 and m.count("pc_claw_gator") == 1 and m.count("pc_claw_pogEye") == 1, "the 1995 inbox arrives in the bag")
+	_check(cards == ["pc_claw_gator", "pc_claw_pogEye"], "each with its \"You received\" card")
+	_check(not store.has("mall.inbox-1995") and store.has("mall.inbox-2026") and not m.has("pc_claw_slammer"), "the 1995 inbox is emptied; 2026's waits for 2026")
+	_check(m.collect() == 0 and m.count("pc_claw_gator") == 1, "collecting again adds nothing")
+	# the mall stops after saving the bag but before emptying the inbox: the entry is still there on the next load
+	store["mall.inbox-1995"] = JSON.stringify([{"id": "claw-item:1:s:7", "item": "pc_claw_gator", "n": 1}, {"id": "claw-item:1:s:12", "item": "pc_claw_comet", "n": 1}])
+	var m2 = _mall(store, 1995)
+	m2.load_saved()
+	_check(m2.collect() == 1 and m2.count("pc_claw_gator") == 1 and m2.count("pc_claw_comet") == 1, "after a stop between the two saves, the old prize isn't added twice; the new one arrives")
+	var m3 = _mall(store, 1995)
+	m3.load_saved()
+	_check(m3.count("pc_claw_comet") == 1 and m3.got.has("claw-item:1:s:12"), "the bag and what it got survive a reload")

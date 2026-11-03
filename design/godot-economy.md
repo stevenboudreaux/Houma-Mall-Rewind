@@ -119,11 +119,11 @@ HUD buttons are back, and walking moves the player. That is what Steven believed
 change was needed. (If Back should go back to the screen instead, it is one line in `prizes.gd close_look()`.)
 
 ## Checks (all on this branch)
-- `node tests/unit/econ/bank.test.js`: ECON BANK OK (13: the shared cases, the money format, a throwing
+- `node tests/unit/econ/bank.test.js`: ECON BANK OK (14: the shared cases, the inbox, the money format, a throwing
   localStorage, the ledger's caps, the four game prices).
-- `godot --headless --path . --script res://tools/qa/econ_test.gd`: ECON TEST OK (44: the same cases on
+- `godot --headless --path . --script res://tools/qa/econ_test.gd`: ECON TEST OK (52: the same cases on
   `bank.gd`, the API, year separation, migration through a real `load_saved()`, the counter at 4,999 / 5,100
-  tickets, the price field).
+  tickets, the price field, the claw's prizes into the bag once).
 - `tests/unit/econ/pages_test.py` (Chromium on the three pages): ECON PAGES OK, 0 page errors. Run against
   `main`'s pages it fails 21 checks (the claw "wins 200" and the bank stays at 0; a 160-point Skee-Ball game pays
   0): `production/qa/evidence/wsECON-pages-before.txt`.
@@ -131,19 +131,47 @@ change was needed. (If Back should go back to the screen instead, it is one line
   `logic.test.js` 10 ok.
 - `tools/qa/econ_back_test.gd` (native, unbaked, 1280 x 720): ECON BACK OK (50).
 - `tools/qa/econ_webtest.py` (web export of wing 2, 1995, swiftshader): ECON WEB OK, 0 console errors. E at Skee-Ball
-  alley 1 opens `skeeball.html?year=1995&lane=1`; Skee-Ball 5, WHIRLWIND 13 (4 plays), the claw 200, COIN COMET 150
-  (3 coins) = 368 in `mall.tickets-1995`, 0 in 2026; the wallet $98.25; after a reload the counter reads "Your
-  tickets: 368". (Evidence pictures from the run before, identical but for WHIRLWIND's 9: 364.)
+  alley 1 opens `skeeball.html?year=1995&lane=1`; Skee-Ball 5, WHIRLWIND 14 (4 plays), the claw 200, COIN COMET 100
+  (2 coins) = 319 in `mall.tickets-1995`, 0 in 2026; a second claw play wins a Gator plush, and on Back the mall
+  puts it in the bag with its card; the wallet $98.00; after a reload the counter reads "Your tickets: 319" and the
+  bag holds one Gator plush. Evidence `wsECON-web-*`.
+- `tools/claw_prizes/claw_prizes_shot.gd` (native, unbaked): CLAW PRIZES SHOT OK, the eleven models and the Gator
+  in the hand (`wsECON-claw-*`). Wing 2's pack is 97.74 MB (Demo 49: 97.05).
 - Unchanged and still OK: INVENTORY 45, REDEMPTION 32, MENU UNIT 35, FLAGS 31, PUSHER PLAY 20, INT D49 18.
 - `tools/qa/menu_test.gd` fails 4 checks, **the same 4 on `main`** (a hard-coded `_nav[0][1]` row; stale since
   the menu merge), not ECON's.
 - Evidence: `production/qa/evidence/wsECON-*`.
 
+## Steven's answers (Nov 3, after the first round)
+- **Tokens:** "maybe later, but right now just straight from the wallet." Kept: each game takes 25¢ from the wallet.
+- **Skee-Ball:** "you keep it even if you walk off." Kept: paid ball by ball.
+- **Claw plush and POGs:** "put them in the bag, like you get those." Built (below). Better models later ("if we need
+  to Blender them more, that's cool").
+- **Earning money:** TBD, a future enhancement once the engine runs. Nothing earns money yet.
+- **Prices:** "do your best with the game's incorporated prices": the 1995 prices above stand.
+
+## Claw prizes in the bag
+- **The items** (`data/items/claw_prizes.json`): every prize the claw game hands out that isn't tickets, named as the
+  claw names it (`play/claw/logic.js` KINDS): Gator, Crawfish, Pelican, Nutria, Rougarou and Captain Comet plush and
+  the Bayou Bruiser stretch figure (held in the hand), the three POG capsules (Swamp Skull ×3; Gator Bite +
+  Lightning; Eye Spy + 8-Ball) and the Hologram Eye slammer (in the pocket). Ids `pc_claw_<kind>`, 1995, never placed.
+  The figure is a guess at "plush and POGs" (it comes out of the same chute); say if it shouldn't.
+- **The models are the claw page's own.** `tools/claw_prizes/export_claw_prizes.py` reads each prize from the page
+  (its three.js meshes, colours and textures, as data) and draws its 256 px icon (`tex/items/pc_claw_<kind>.png`);
+  `tools/claw_prizes/build_claw_prizes.gd` builds `models/pc_claw_<kind>.scn` with the page's textures
+  (`models/pc_claw_tex_*.res`, shared, 256 px). 0.48 MB for all eleven. A POG capsule's item is the POGs inside
+  it. Blender models can replace them later under the same names. (three's glTF exporter, from npm, was not used:
+  code fetched from outside is not run here.)
+- **How it arrives** (the same once-only rule as the tickets): when the claw drops a plush or POGs in the chute the
+  page leaves it in `localStorage "mall.inbox-<year>"` with a payout id (`mallbank.js give()`). The mall
+  (`inventory.gd collect()`) takes the inbox into the bag when the game's frame closes (`interact.gd` watches it)
+  and when a wing loads, each with the "You received" card; the ids it took are saved in the year's record
+  (`"got"`, the last 200) before the inbox is emptied, so a stop between the two never doubles a prize.
+- **Export:** wings 1 and 2 (1995) pack `models/pc_claw_*` beside `models/bl_pc_*` (`export_presets.cfg`, four
+  presets); the icons are in `tex/items/`, which every wing packs.
+- The claw page still keeps its own prize list (its Prizes panel, `localStorage "mall.inventory"`).
+
 ## Open (for Steven)
-- **Tokens:** should Pocket Change sell tokens you carry (a changer at $1 = 4), or is "the game takes 25¢" fine?
-- **Skee-Ball mid-game:** tickets are paid ball by ball (you keep what you scored if you walk off). Real alleys
-  pay at the end; say if leaving should forfeit.
-- **Claw prizes** (plush, POGs) still go only to the claw page's own list (`mall.inventory` key), not into the
-  bag. Not in this brief; say if they should arrive in the bag like the counter's prizes.
-- **How does a player get more money** once the $100 is gone? Nothing earns money yet (by design: no store).
+- Is the **Bayou Bruiser** figure meant to come to the bag too (it does now)?
 - **Games, Inc. 2026 prices:** unknown (card kiosks); nothing there is playable yet.
+- **Earning money:** TBD (future).

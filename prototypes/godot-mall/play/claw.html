@@ -18,7 +18,9 @@
   is for the future: things to do with prizes later. Money and tickets (ECON, Nov 3;
   design/godot-economy.md, lib/mallbank.js): a play takes 25 cents (1 token) from the wallet; a
   ticket capsule's tickets go to the year's tickets ("mall.tickets-<year>", ?year=, default 1995)
-  when it drops in the chute. The old "mall.tickets" count is folded into 1995 once.
+  when it drops in the chute. The old "mall.tickets" count is folded into 1995 once. A plush, the
+  figure, POGs or the slammer goes to the mall's bag as item "pc_claw_<kind>" (data/items/claw_prizes.json)
+  through "mall.inbox-<year>"; the mall takes it in, once, when you come back (Steven, Nov 3).
 -->
 <style>
   :root { --bg: #07060a; --fg: #f4f0e8; --dim: #a49eb2; --accent: #ffd23c; --red: #ff3a1e; --line: #2a2634; }
@@ -604,6 +606,7 @@ function finishPlay() {
       var rec = CL.record(out.won, M, Date.now());
       inventory.push(rec); save('mall.inventory', inventory);
       if (rec.tickets) BANK.credit(YEAR, rec.tickets, NAME + ' capsule', 'claw:' + M + ':' + SESSION + ':' + ST.playNo);
+      else BANK.give(YEAR, 'pc_claw_' + out.won.kind, 1, NAME, 'claw-item:' + M + ':' + SESSION + ':' + ST.playNo);   // ECON: into the bag
       ST.won = rec;
     }
   }
@@ -833,7 +836,7 @@ loadAll(function () {
   layout(); ui();
   document.getElementById('load').style.display = 'none';
   frame();
-  window.__claw = { ST: ST, CL: CL, BANK: BANK, YEAR: YEAR, pile: function () { return pile; }, start: insertToken, drop: startDrop, setPos: function (x, z) { ST.pos = [x, z]; },
+  window.__claw = { ST: ST, CL: CL, BANK: BANK, YEAR: YEAR, make: makePrize, pile: function () { return pile; }, start: insertToken, drop: startDrop, setPos: function (x, z) { ST.pos = [x, z]; },
                     setGrip: function (g) { ST.grip = g; }, inventory: function () { return inventory; }, error: function () { errorMode = true; } };
 });
 })();

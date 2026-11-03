@@ -1,6 +1,7 @@
-econ_test: ECON TEST OK (44 checks) 
+econ_test: ECON TEST OK (52 checks) 
 inventory_test: INVENTORY TEST OK (45 checks) 
 redemption_test: REDEMPTION TEST OK (32 checks) 
 menu_unit_test: MENU UNIT OK (35 checks) 
 flags_test: FLAGS TEST OK (31 checks) 
 pusher_play_test: PUSHER PLAY TEST OK (20 checks) 
+int_d49_test: INT D49 TEST OK 

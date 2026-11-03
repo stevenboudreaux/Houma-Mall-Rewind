@@ -11,6 +11,8 @@
 ##   "mall.ledger"         {"log": the last 40 changes, "ids": the last 200 credit ids}; a credit whose id
 ##                         is already there is refused, so a payout counts once
 ##   "mall.econ"           "1" once older saves are folded in (migrate())
+##   "mall.inbox-<year>"   things a game page won for the bag (the claw's plush and POGs), waiting:
+##                         [{"id": payout id, "item": data/items id, "n", "reason"}]; inventory.gd collect() takes them
 ## Storage: a Dictionary backend (unit tests), else localStorage on the web, else Engine metadata (the
 ## editor, native tests). Off the web, "mall-state-<year>" maps onto inventory.gd's own metadata.
 extends RefCounted
@@ -21,6 +23,7 @@ const LEDGER_KEY := "mall.ledger"
 const MIGRATED_KEY := "mall.econ"
 const LEGACY_CLAW_KEY := "mall.tickets"     # the claw page's old ticket count (1995 capsules)
 const STATE_PREFIX := "mall-state-"
+const INBOX_PREFIX := "mall.inbox-"
 const START_CENTS := 10000
 const QUARTER := 25
 const YEARS := [1995, 2026]
@@ -216,6 +219,30 @@ func spend_tickets(year: int, n: int, reason: String) -> bool:
 	kv_set(TICKETS_PREFIX + str(year), tickets(year) - n)
 	_note("redeem", year, n, reason)
 	return true
+
+# ------------------------------------------------------------------ the inbox (things won for the bag)
+## What a game page left for the bag in year, oldest first.
+func inbox(year: int) -> Array:
+	var b = _parse(kv_get(INBOX_PREFIX + str(year)))
+	var out: Array = []
+	if b is Array:
+		for e in b:
+			if e is Dictionary and str(e.get("id", "")) != "" and str(e.get("item", "")) != "":
+				out.append(e)
+	return out
+
+## Take the entries with these ids out of year's inbox (after they are safely in the bag).
+func inbox_remove(year: int, ids: Array) -> void:
+	var keep: Array = []
+	var b = _parse(kv_get(INBOX_PREFIX + str(year)))
+	if b is Array:
+		for e in b:
+			if not (e is Dictionary and ids.has(str(e.get("id", "")))):
+				keep.append(e)
+	if keep.is_empty():
+		kv_del(INBOX_PREFIX + str(year))
+	else:
+		kv_set(INBOX_PREFIX + str(year), JSON.stringify(keep))
 
 ## 1234 -> "$12.34"
 static func fmt(cents: int) -> String:

@@ -76,6 +76,31 @@ func spend_tickets(n: int, reason: String) -> bool:
 	if ok:
 		changed.emit()
 	return ok
+## The ids of the inbox entries already in the bag (the last 200; saved in this year's record as "got"), so a
+## thing won in a game page arrives once even if the mall stops between the bag's save and the inbox's.
+var got: Array = []
+## Things won in a game page (the claw's plush, figure and POGs; Steven Nov 3) into the bag: each arrives once,
+## with the "You received" card (mall.add). Called by load_saved() and when a game's frame closes
+## (interact.gd). Returns how many arrived.
+func collect() -> int:
+	var b = bank()
+	var done: Array = []
+	var n := 0
+	for e in b.inbox(year):
+		var pid := str(e.id)
+		if not got.has(pid):
+			add(str(e.item), maxi(1, int(e.get("n", 1))))
+			got.append(pid)
+			n += 1
+		done.append(pid)
+	if done.is_empty():
+		return 0
+	if got.size() > 200:
+		got = got.slice(got.size() - 200)
+	if n > 0:
+		save()             # the bag and "got" first ...
+	b.inbox_remove(year, done)    # ... then the inbox
+	return n
 ## Money as the player reads it: 1234 -> "$12.34".
 static func money_text(cents: int) -> String:
 	return load("res://scripts/bank.gd").fmt(cents)
@@ -239,7 +264,7 @@ func where(id: String, place) -> Variant:
 # ------------------------------------------------------------------ JSON
 func to_dict() -> Dictionary:
 	var d := extra.duplicate(true)      # P: other systems' fields first, so ours win on a clash
-	d.merge({"v": VERSION, "year": year, "inventory": inventory.duplicate(true),
+	d.merge({"v": VERSION, "year": year, "inventory": inventory.duplicate(true), "got": got.duplicate(),
 		"hand": hand, "moved": moved.duplicate(true)}, true)
 	return d
 
@@ -255,6 +280,9 @@ func from_dict(d) -> bool:
 		if e is Dictionary and str(e.get("id", "")) != "" and int(e.get("count", 0)) > 0:
 			inv.append({"id": str(e.id), "count": int(e.count)})
 	inventory = inv
+	got = []
+	for g in d.get("got", []):
+		got.append(str(g))
 	hand = str(d.get("hand", ""))
 	# JSON numbers come back as floats: put the ints back, so a round trip is exact
 	moved = {}
@@ -273,7 +301,7 @@ func from_dict(d) -> bool:
 		year = int(d.year)
 	extra = {}      # P: keep what we don't know. ECON: "tickets" and "quarters" are old saves'
 	for k in d:     # (bank.gd migrate() folds them into the bank), never carried on
-		if not (str(k) in ["v", "year", "inventory", "tickets", "hand", "moved", "quarters"]):
+		if not (str(k) in ["v", "year", "inventory", "tickets", "hand", "moved", "quarters", "got"]):
 			extra[str(k)] = d[k]
 	changed.emit()
 	return true
