@@ -6231,7 +6231,7 @@ function openPublish(){
 }
 function b64utf8(str){var b=new TextEncoder().encode(str),out="",CH2=0x8000;for(var i=0;i<b.length;i+=CH2)out+=String.fromCharCode.apply(null,b.subarray(i,i+CH2));return btoa(out);}
 function downloadDoc(){var doc=buildDocument(),u=URL.createObjectURL(new Blob([doc],{type:"text/html"})),a=document.createElement("a");a.href=u;a.download="index.html";document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(u);a.remove();},2000);}
-function guessRepo(){var h=location.hostname,p=location.pathname.split("/").filter(Boolean);if(/\.github\.io$/i.test(h)&&p.length)return h.split(".")[0]+"/"+p[0];return "stevenboudreaux/Southland-Mall-95";}
+function guessRepo(){var h=location.hostname,p=location.pathname.split("/").filter(Boolean);if(/\.github\.io$/i.test(h)&&p.length)return h.split(".")[0]+"/"+p[0];return "stevenboudreaux/Houma-Mall-Rewind";}
 function openPublishGitHub(){
   var cfg={};try{cfg=JSON.parse(localStorage.getItem("southland-gh")||"{}")||{};}catch(e){}
   var kb=Math.round(buildDocument().length/1024);

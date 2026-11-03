@@ -11,7 +11,7 @@
 # Needs godot 4.7.2 at /home/claude/godot. Run in the background or split cameras if the
 # 10-minute tool limit is near (SwiftShader takes ~40-60 s per camera).
 set -e
-PX=$1; M=$2; R=/home/claude/southland-mall-95; P=$R/prototypes/godot-mall/project; U=/mnt/user-data/uploads/GodotProjects
+PX=$1; M=$2; R=/home/claude/houma-mall-rewind; P=$R/prototypes/godot-mall/project; U=/mnt/user-data/uploads/GodotProjects
 sleep 2
 for f in exr lmbake exr.import; do cp $U/${PX}_main_$M.$f $P/main_$M.$f; done
 md5sum $P/main_$M.exr | cut -c1-12

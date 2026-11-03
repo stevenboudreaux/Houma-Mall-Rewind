@@ -92,7 +92,7 @@ Mac bakes do flip ~206 of them, but those flips are reverted after every bake (t
 2. **Bring the bake back and check it:** `tools/qa/bakecheck.sh` (it now calls `export_web.sh`).
 3. **Commit code changes to main** as usual. There is no build or lightmap to commit.
 4. **Replace the build branch** from the project folder: `tools/publish_build.sh <builddir> "chore: Godot mall Demo N build and lightmaps"`. It takes the export and the project's six `main_*` lightmap files and force-pushes them to `godot-build` as one commit, keeping the branch's README and workflow.
-5. **Wait for the deploy:** Pages redeploys in a minute or two (Actions tab: "Deploy site to Pages"; check it with `gh run list -R stevenboudreaux/Southland-Mall-95 -L 3`).
+5. **Wait for the deploy:** Pages redeploys in a minute or two (Actions tab: "Deploy site to Pages"; check it with `gh run list -R stevenboudreaux/Houma-Mall-Rewind -L 3`).
 - **For a change that needs no rebake** (probe-lit parts only), take the lightmaps from the branch, rebuild, export and do step 4.
 
 ## Wings 4-6: the room wings' packs (workstream S, Nov 2 2026)

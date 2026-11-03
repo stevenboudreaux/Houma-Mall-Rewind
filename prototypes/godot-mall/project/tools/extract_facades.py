@@ -5,7 +5,7 @@ like "/* ---- Corn Dog 7, from a photograph of the Southland Mall shop: ... */".
 This collects those notes, matches them to map stores, and records what the
 note says it was built from (photos, one photo, memory, descriptions), which
 seeds the storefront accuracy meter.
-Run: python3 tools/extract_facades.py ../Southland-Mall-95/index.html
+Run: python3 tools/extract_facades.py ../Houma-Mall-Rewind/index.html
 Writes facade_notes.json next to layout_mall.json.
 """
 import json, os, re, sys
@@ -68,4 +68,4 @@ def main(src):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..", "..", "Southland-Mall-95", "index.html"))
+    main(sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..", "..", "Houma-Mall-Rewind", "index.html"))

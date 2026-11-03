@@ -11,7 +11,7 @@
 ## and the length of the ticket strip, so a row of four does not look cloned.
 ##
 ## Preview:
-##   tools/qa/preview.sh hoops /home/claude/southland-mall-95/.scratch/preview/hoops/a \
+##   tools/qa/preview.sh hoops /home/claude/houma-mall-rewind/.scratch/preview/hoops/a \
 ##     "0,1.6,2.6,0,-12;2.2,1.7,1.4,40,-12;3.6,1.6,-1.45,90,-6" '{"number":1}' lit
 
 const W = 1.02    # width (player's right)

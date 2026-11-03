@@ -1,6 +1,6 @@
 # Houma Mall Rewind — Claude Code Game Studios setup
 
-Working title **Houma Mall Rewind** (repo still named Southland-Mall-95; the game's
+Working title **Houma Mall Rewind** (repo `stevenboudreaux/Houma-Mall-Rewind`; the game's
 name avoids "Southland" because the real mall is still open). A walkable
 recreation of Southland Mall in Houma, Louisiana, across the years people remember
 (from its 1969 opening to roughly 2018, never stated as a hard range), with
@@ -14,12 +14,17 @@ hooks and rules, run at `modes.rigor: minimal`.
 - **Engine**: none. Hand-built browser game: vanilla JavaScript, canvas raycaster
   with 3D, side and overhead views. No build step, no framework, no npm.
 - **Hosting**: GitHub Pages, deployed by the Actions workflow `.github/workflows/pages.yml`
-  (live: https://stevenboudreaux.github.io/Southland-Mall-95/). It serves `main` plus the Godot
+  (live: https://stevenboudreaux.github.io/Houma-Mall-Rewind/). It serves `main` plus the Godot
   mall build from the single-commit `godot-build` branch (`design/godot-build-hosting.md`).
   Anything pushed to `main` is live.
 - **Backend**: Google Apps Script (`apps-script/Code.gs`), deployed by hand from
   Steven's Google account. Editing the file here does not redeploy it.
 - **Version Control**: Git, trunk-based on `main`.
+- **The old repo is gone.** Until Nov 3, 2026 the project lived at `stevenboudreaux/Southland-Mall-95`
+  (site `stevenboudreaux.github.io/Southland-Mall-95/`). Every branch except the stale
+  `claude/funny-feynman-x6im9s` was copied here with the same commit IDs, and Steven deletes the old
+  repo himself. Session handoffs under `production/` still name the old repo and folder: they are the
+  record, so leave them. Read their paths and URLs as this repo.
 - **Targets**: phone (iPhone first) and desktop browsers. Touch and keyboard/gamepad.
 
 ## Where things are (as of Oct 4, 2026)

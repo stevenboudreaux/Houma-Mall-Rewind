@@ -37,7 +37,7 @@ All Godot work is under `prototypes/godot-mall/project` ("the project" below).
 ## Fresh workspace setup (~15–25 min, mostly the import)
 
 ```bash
-cd /home/claude/southland-mall-95            # the clone; if missing: git clone https://github.com/stevenboudreaux/southland-mall-95
+cd /home/claude/houma-mall-rewind            # the clone; if missing: git clone https://github.com/stevenboudreaux/houma-mall-rewind
 # 1. Godot 4.7.2 and the web export templates
 cd /home/claude
 curl -sSLO https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
@@ -50,7 +50,7 @@ export PATH=/home/claude:$PATH
 pip install --break-system-packages mapbox_earcut fonttools
 which xvfb-run || (apt-get update -qq && apt-get install -y -qq xvfb)   # preview.sh needs it
 # 3. Lightmaps and stand-in pictures from the build branch
-cd /home/claude/southland-mall-95/prototypes/godot-mall/project
+cd /home/claude/houma-mall-rewind/prototypes/godot-mall/project
 git fetch -q --depth=1 origin +refs/heads/godot-build:refs/remotes/origin/godot-build
 git archive origin/godot-build lightmaps standin | tar -x
 mv lightmaps/* . && rmdir lightmaps && mkdir -p tex/standin && mv standin/* tex/standin/ && rmdir standin
@@ -90,7 +90,7 @@ Footage and photos from Steven's Mac (the Oct 23, 2026 site visit, new cuts for 
 pictures, analysis notes) live on the orphan branch `refs`, kept off `main` so main stays small (~440 MB):
 
 ```bash
-cd /home/claude/southland-mall-95
+cd /home/claude/houma-mall-rewind
 git fetch --depth=1 origin refs && git archive FETCH_HEAD refs | tar -x     # → ./refs/ (git-ignored)
 # or one folder: git archive FETCH_HEAD refs/new/sears | tar -x
 ```

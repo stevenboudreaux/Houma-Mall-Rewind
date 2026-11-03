@@ -9,7 +9,7 @@ Reads the 1995 map from the live game file and writes layout_mall.json:
     classified as storefront / wall / exit / entrance / restroom
   - stores: everything the builder needs per store
   - walk: the walkable grid for the player
-Run: python3 tools/convert_map.py ../Southland-Mall-95/index.html
+Run: python3 tools/convert_map.py ../Houma-Mall-Rewind/index.html
 """
 import json, re, sys, os
 
@@ -290,5 +290,5 @@ def main(src, out):
 
 
 if __name__ == "__main__":
-    src = sys.argv[1] if len(sys.argv) > 1 else "../Southland-Mall-95/index.html"
+    src = sys.argv[1] if len(sys.argv) > 1 else "../Houma-Mall-Rewind/index.html"
     main(src, os.path.join(os.path.dirname(__file__), "..", "layout_mall.json"))

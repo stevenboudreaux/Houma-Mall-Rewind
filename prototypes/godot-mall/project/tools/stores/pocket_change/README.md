@@ -101,7 +101,7 @@ static func fill_mat(m, key, b) -> bool            # fills material "pc_<m>_<key
 renders your module at the origin, facing −z (the player stands at +z). Yaw 0 looks along
 −z; yaw 90 looks along −x. It writes one PNG per camera plus `<out-prefix>-sheet.png`.
 - One run takes ~30–90 s. Other teams render at the same time.
-- Put outputs in `/home/claude/southland-mall-95/.scratch/preview/<m>/`.
+- Put outputs in `/home/claude/houma-mall-rewind/.scratch/preview/<m>/`.
 - Look at your renders with the Read tool, compare them with the references, and iterate.
 - `lit` shows the textures. `dark` (only your own emission) is how it reads in the arcade.
 
