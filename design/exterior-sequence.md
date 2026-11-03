@@ -147,7 +147,7 @@ at x −154, Woolworth's west face at x −74, the main entrance at z −6..6: a
 | Horton tank yard | x −141..−121, z −32..−9, touching JCPenney's NE corner; the pink-lane sidewalk runs from it to the docks | x −124..−96, z −18..14 | plan "WATER TANK"; 4486 f077–103 |
 | South entrance pavilion | the inside corner of JCPenney's south face and the wing's south face: a 7–9 m set-back link off JCPenney's SE corner, then the pavilion x ≈ −146..−134, front at z ≈ 118, doors turned east inside the loggia | door at z 88, porch to 92, pavilion to ~99 | 4489 f031–040; plan chamfer at site (330–345, 427–440) |
 | Dillard's | x −43..44, z 80..138 (87 × 58 m; plan 153,672 SF on 3 floors), east face flush with the facade, a lower service block on the west side x −51..−43, z 93..118 with the dock at its south end, the flagpole island at the SW corner; the lace gallery on the **east face and the south face**, wrapping the NE corner; the exterior entrance portal on the south face at x ≈ −15 | x −38..30, z 80..118 (68 × 38); gallery on the east face only; s2s door at (−15, 118) | plan; 4490 f017–056; 4492 f100–108 |
-| East facade | x 44 from the east entrance to Dillard's NE corner; main entrance z −6..6; trash bay z −54..−44; T-Mobile z ≈ 7..18; Shoe Dept box x 12..44, z 32..77 (plan 20,071 SF); east entrance recess ~10 m deep × 11 m wide at Lynn's SE corner | as built, except the recess (4 m) | plan; 4492, 4493, 4406 |
+| East facade | x 44 from the east entrance to Dillard's NE corner; main entrance z −6..6; trash bay z −54..−44; T-Mobile z ≈ 7..18; Shoe Dept box x 4..44, z 32..77 (plan 20,071 SF); east entrance recess ~10 m deep × 11 m wide at Lynn's SE corner | as built, except the recess (4 m) | plan; 4492, 4493, 4406 |
 | Roads | Armour Dr z ≈ −252; West Park Ave x ≈ 112 (curb ~96); Bayou Gardens Blvd z ≈ 216; the lot's west edge x ≈ −360, the parcel line −383; the parcel's NW corner is cut out (nothing of the mall's north of z ≈ −150 west of x ≈ −120: that is the apartments' land) | map −296..106 × −200..202; Armour at −179, Bayou Gardens at ~180, West Park at ~95 | plan |
 | Outparcels | Unitech x −85..−57, z −236..−207 by Armour Dr; Chase Bank (not a part) on West Park at x 68..84, z −73..−55, opposite the K&B / Cucos stretch; a vacant 1-acre pad at the NE corner x 32..80, z −218..−164; the 40,000 SF strip centre x −323..−283, z 100..155 and the 870 SF drive-thru bank x −359..−323, z 141..191 at the far SW; Big Lots across Armour Dr north of Sears, its gabled sign about on the side exit's axis (x ≈ −20, z ≈ −280); Ground Pat'i across the roads at the **SE** corner (West Park × Bayou Gardens) | Unitech −68..−32 × −176..−150; bank and strip at the SW inside the map; Big Lots across West Park at x ≈ 152; Ground Pat'i across Bayou Gardens at the SW | plan; 4413 f005–007; 4406 f035; 4489 f078–082 and 4492 f106–107 (Ground Pat'i and the Walgreens pylon seen from both Dillard's corners); 4493 0 s "that bank right there" |
 | Water tower | far to the game's W / SW (seen ahead-left walking from the tank to JCPenney, 4486 f066–086; ahead from JCPenney's north face, 4487 f002) | (−300, −140), NW | medium |
@@ -193,7 +193,7 @@ Miller's-row backs at x ≈ −52, the pavilion's x, the wing wall being blank, 
   and the Miller's backs (−52 vs −49) land on the plan with this mapping, so I trust it to ±5 m near
   the mall; at the lot edges ±15 m.
 - **Anchors' areas** check the plan: Dillard's 87 × 58 × 3 floors ≈ 15,100 m² (stated 14,276),
-  JCPenney 60 × 120 ≈ 7,200 (8,929), the Shoe Dept 32 × 45 (1,865 stated), Sears 115 × 50 ≈
+  JCPenney 60 × 120 ≈ 7,200 (8,929), the Shoe Dept 40 × 45 ≈ 1,800 (1,865 stated), Sears 115 × 50 ≈
   5,750 (7,092). Consistent to the 20 % one expects of an NTS plan.
 - **The H5 corridor caveat (#8).** The plan's two corridor lines at y 380/392 map to z 64..75; the
   game's H5 is z 48..60. The wing's north face maps 7 m south of the built one and the south face
@@ -223,6 +223,18 @@ Miller's-row backs at x ≈ −52, the pavilion's x, the wing wall being blank, 
 
 ## 8. Evidence
 
-Renders of wing 3 as built, both years, unbaked (`tools/exterior/exshots.gd`), in
-`production/qa/evidence/`: see the list at the end of the session report. They are for comparison only;
-nothing in the build changed.
+Renders of wing 3 as built, both years, unbaked (`tools/exterior/exshots.gd`, a plain sun and sky),
+in `production/qa/evidence/`. Comparison only; nothing in the build changed.
+
+| File | What it shows |
+|---|---|
+| `wsEXT-top-all-1995-unbaked.jpg`, `wsEXT-top-all-2026-unbaked.jpg` | the whole lot from above with the real footprint and roads drawn in red: the Sears, JCPenney and Dillard's boxes each half their size, the lot short on three sides |
+| `wsEXT-top-sears-cinema-1995-unbaked.jpg`, `…-2026-…` | the Sears / cinema corner: the exit standing alone 40 m west of Sears, the cinema box short and stepped, Unitech 60 m too close |
+| `wsEXT-top-jcp-south-1995-unbaked.jpg` | JCPenney, the tank and the south entrance against the real outline |
+| `wsEXT-street-1995-unbaked.jpg`, `wsEXT-street-2026-unbaked.jpg` | ten eye-height views on the loop: the exit from the lot (the rack stands free, nothing north of it), the exit looking toward the dock, the cinema's west side, the staff lot, JCPenney's north face, the pavilion, Dillard's south face, Sears's north face (the dock is drawn there), the east entrance (Sears 14 m behind Cucos), Sears's east face (blank) |
+
+What the renders add to the table in §5: in both years the game's only clue to Sears from the cinema
+exit is a white box 40 m away; the dock canopy is on the north face, where the real building has the
+shutter side exit looking at Big Lots; Dillard's south face is a blank wall where the gallery and the
+entrance are; the 2026 skins (Lynn's, Red Seal, gold fan, yellow stalls) are right in kind, so the
+year layer is unaffected by the layout fixes except for moving with them.
