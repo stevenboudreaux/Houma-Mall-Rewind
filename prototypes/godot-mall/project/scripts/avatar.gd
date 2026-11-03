@@ -153,7 +153,7 @@ func _dbg_report(dt: float) -> void:
 	_dbg_t = 0.0
 	var ps: float = body.ap.speed_scale if body.ap else 0.0
 	var cd := Vector2(tp_cam.global_position.x - player.position.x, tp_cam.global_position.z - player.position.z).length()
-	print("DBG gait=%s x%.2f v=%.2f cam=%.2f boom=%.2f side=%d pos=%.3f,%.3f gt=%.3f" % [body.clip, ps, _speed, cd, _boom, int(_side), player.position.x, player.position.z, _dbg_gt])
+	print("DBG gait=%s x%.2f v=%.2f cam=%.2f boom=%.2f side=%d pos=%.3f,%.3f gt=%.3f body=%s vis=%d" % [body.clip, ps, _speed, cd, _boom, int(_side), player.position.x, player.position.z, _dbg_gt, body.id, int(body.visible)])
 
 func _move_body(dt: float) -> void:
 	var p: Vector3 = player.position
