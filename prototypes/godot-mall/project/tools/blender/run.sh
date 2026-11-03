@@ -17,7 +17,7 @@ PY=${BPY:-/home/claude/bvenv/bin/python}
 cd "$P"
 LOG=.scratch/blender/$A.log; mkdir -p .scratch/blender
 set +e
-"$PY" "$HERE/build.py" -- "$A" "$@" 2>&1 | tee "$LOG" | grep -E "^(BUILD OK|OVER BUDGET|BUDGET NOT ASSESSED|HIPOLY|EXPORT CHECK|DECIMATED|SHEET|REF MISSING|Traceback|  File|[A-Za-z]*Error)"
+"$PY" "$HERE/build.py" -- "$A" "$@" 2>&1 | tee "$LOG" | grep -E "^(BUILD OK|NORMAL CLAMP|OVER BUDGET|BUDGET NOT ASSESSED|HIPOLY|EXPORT CHECK|DECIMATED|SHEET|REF MISSING|Traceback|  File|[A-Za-z]*Error)"
 RC=${PIPESTATUS[0]}
 set -e
 grep -q "^BUILD OK" "$LOG" || { echo "BUILD FAILED ($A), see $P/$LOG"; tail -5 "$LOG"; exit 1; }

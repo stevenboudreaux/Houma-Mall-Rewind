@@ -1,0 +1,21 @@
+# PLACEHOLDER grammar check (workstream Q): every condition and effect of design/godot-dialogue.md
+# once, walked by tools/qa/dialogue_walk.gd. Not story, never shown in the game.
+
+~ start
+PLACEHOLDER speaker: PLACEHOLDER line, {{name}}.
+if holding spring
+	PLACEHOLDER speaker: PLACEHOLDER line: holding.
+	set placeholder_saw_holding = true
+elif has pogs
+	PLACEHOLDER speaker: PLACEHOLDER line: has.
+	take pogs
+	set placeholder_saw_has = true
+else
+	PLACEHOLDER speaker: PLACEHOLDER line: neither.
+- PLACEHOLDER response: unlock [if not placeholder_never_set /]
+	unlock placeholder_gate
+	$> placeholder_off = false
+	=> END
+- PLACEHOLDER response: hidden unless holding [if holding dice /]
+	lock placeholder_gate
+	=> END

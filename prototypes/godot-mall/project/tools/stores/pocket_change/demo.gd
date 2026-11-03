@@ -2,7 +2,7 @@
 ## (tools/stores/pocket_change/README.md): a plain box cabinet with a lit
 ## marquee, a screen and a control panel. Not placed in the store; the real
 ## machines follow this pattern.
-##   tools/qa/preview.sh demo /home/claude/southland-mall-95/.scratch/preview/demo "0,1.5,2.5,0,-8;1.8,1.4,1.8,40,-10"
+##   tools/qa/preview.sh demo /home/claude/houma-mall-rewind/.scratch/preview/demo "0,1.5,2.5,0,-8;1.8,1.4,1.8,40,-10"
 
 const W = 0.66   # width (along the player's right)
 const D = 0.80   # depth (along f, away from the player)

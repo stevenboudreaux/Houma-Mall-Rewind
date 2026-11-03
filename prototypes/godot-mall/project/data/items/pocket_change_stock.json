@@ -1,0 +1,13 @@
+{
+ "_": "Pocket Change prizes that are stock only (workstream R, Nov 2; design/godot-prize-counter.md 'Redemption'): the prizes.json prizes that had no item yet, so the redemption counter can hand them over. Not placed anywhere. Names and prices as scripts/prizes.json. The pc_* scenes are scripts/items/prize_model.gd (the counter's own prize shapes); pc_lava is a second lava lamp with the Blender model (bl_gb_lavalamp stays at its own store).",
+ "items": [
+  {"id": "pc_chew", "name": "Chocolate chews", "class": "pocket", "scene": "res://scripts/items/pc_chew.tscn", "icon": "res://tex/items/pc_chew.png", "year": 1995, "tickets": 5, "prize": "chew"},
+  {"id": "pc_jelly_trap", "name": "Jelly finger trap", "class": "pocket", "scene": "res://scripts/items/pc_jelly_trap.tscn", "icon": "res://tex/items/pc_jelly_trap.png", "year": 1995, "tickets": 20, "prize": "jelly_trap"},
+  {"id": "pc_candy_cig", "name": "Candy cigarettes", "class": "pocket", "scene": "res://scripts/items/pc_candy_cig.tscn", "icon": "res://tex/items/pc_candy_cig.png", "year": 1995, "tickets": 25, "prize": "candy_cig"},
+  {"id": "pc_vpet", "name": "Virtual pet", "class": "pocket", "scene": "res://scripts/items/pc_vpet.tscn", "icon": "res://tex/items/pc_vpet.png", "year": 1995, "tickets": 1500, "prize": "vpet"},
+  {"id": "pc_alien", "name": "Alien plush", "class": "hand", "scene": "res://scripts/items/pc_alien.tscn", "icon": "res://tex/items/pc_alien.png", "year": 1995, "tickets": 800, "prize": "alien"},
+  {"id": "pc_big_dice", "name": "Giant fuzzy dice", "class": "hand", "scene": "res://scripts/items/pc_big_dice.tscn", "icon": "res://tex/items/pc_big_dice.png", "year": 1995, "tickets": 600, "prize": "big_dice"},
+  {"id": "pc_ball", "name": "Basketball", "class": "hand", "scene": "res://scripts/items/pc_ball.tscn", "icon": "res://tex/items/pc_ball.png", "year": 1995, "tickets": 900, "prize": "ball"},
+  {"id": "pc_lava", "name": "Lava lamp", "class": "hand", "scene": "res://models/bl_gb_lavalamp/bl_gb_lavalamp.glb", "icon": "res://models/bl_gb_lavalamp/bl_gb_lavalamp_icon.png", "year": 1995, "tickets": 2500, "prize": "lava"}
+ ]
+}

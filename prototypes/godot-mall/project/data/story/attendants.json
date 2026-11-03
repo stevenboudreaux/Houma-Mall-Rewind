@@ -1,0 +1,102 @@
+{
+ "_": "Counter attendants (workstream Q, design/godot-dialogue.md 'Attendants'). One unique person behind each counter. wing/years: where they exist (a store closed that year has none). skin: an npc/skins.json id the wing's pack ships (Ch*/Remy); Steven may swap. area: [x0, z0, x1, z1] world metres behind the counter they wander in; face: the direction they stand facing (toward the shop floor); talk_at: where the interactable stands (the shop side of the counter, so the 1.6 m reach works across it). name and dialogue are PLACEHOLDERs until Steven writes them. redemption: true = the redemption screen (session R) opens first when it exists. INT (Demo 49): \"spots\" (workstream GI) are places only; story.gd reads \"attendants\" and ignores \"spots\".",
+ "attendants": [
+  {
+   "id": "pocket_change",
+   "store": "POCKET CHANGE",
+   "wing": 2,
+   "years": [
+    1995
+   ],
+   "skin": "Ch22",
+   "sex": "f",
+   "name": "PLACEHOLDER Pocket Change attendant",
+   "dialogue": "res://data/story/placeholder/PLACEHOLDER_pocket_change.dialogue",
+   "area": [
+    -103.2,
+    65.8,
+    -102.85,
+    67.8
+   ],
+   "face": [
+    -1,
+    0
+   ],
+   "talk_at_note": "the north end of the counter: in front of the cases the prize counter's closer look (scripts/prizes.gd) owns the action button",
+   "talk_at": [
+    -104.0,
+    68.9
+   ],
+   "redemption": true
+  },
+  {
+   "id": "sound_shop",
+   "store": "SOUND SHOP",
+   "wing": 1,
+   "years": [
+    1995
+   ],
+   "skin": "Ch38",
+   "sex": "m",
+   "name": "PLACEHOLDER Sound Shop attendant",
+   "dialogue": "res://data/story/placeholder/PLACEHOLDER_sound_shop.dialogue",
+   "area": [
+    -14.1,
+    -58.9,
+    -11.7,
+    -58.65
+   ],
+   "face": [
+    0,
+    -1
+   ],
+   "talk_at": [
+    -12.9,
+    -60.35
+   ]
+  },
+  {
+   "id": "kay_bee",
+   "store": "KAY-BEE TOYS",
+   "wing": 1,
+   "years": [
+    1995
+   ],
+   "skin": "Ch41",
+   "sex": "f",
+   "name": "PLACEHOLDER Kay-Bee Toys attendant",
+   "dialogue": "res://data/story/placeholder/PLACEHOLDER_kay_bee.dialogue",
+   "area": [
+    -14.1,
+    -52.85,
+    -12.2,
+    -52.65
+   ],
+   "face": [
+    0,
+    -1
+   ],
+   "talk_at": [
+    -13.1,
+    -54.0
+   ]
+  }
+ ],
+ "_comment": "Attendant SPOTS for the integration session: where a staff figure would stand, nothing more. No NPC is placed, no dialogue or story here (workstream GI ground rule, Nov 2 2026). World coordinates of the 2026 map (layout_2026.json); yaw in degrees as in ?cam= (0 faces -z toward the Concourse, 90 faces -x, 180 faces +z into the stores).",
+ "spots": [
+  {
+   "id": "games_inc_counter",
+   "store": "s52",
+   "name": "games, inc.",
+   "year": 2026,
+   "wing": 2,
+   "pos": [
+    -111.1,
+    0.0,
+    66.3
+   ],
+   "yaw": 90.0,
+   "_comment": "Behind the GALACTIC PRIZE PORTAL counter (design/storefronts/games-inc-2026.md P5): between the black counter (u 5.75-6.35) and the prize wall (u 7.43), 6.3 m in from the hall, facing the aisle (-x). Frames f019, f027."
+  }
+ ]
+}

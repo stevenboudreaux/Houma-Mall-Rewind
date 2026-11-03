@@ -80,7 +80,24 @@ def _emit_swap(mat, socket_name):
     return (mat, em, old, out)
 
 
+def _emit_pointiness(mat):
+    """Route Cycles' pointiness (vertex curvature: < 0.5 in hollows, > 0.5 on ridges) to an Emission
+    shader on the output, for the curvature bake; returns undo info for _emit_restore."""
+    nt = mat.node_tree
+    out = next(n for n in nt.nodes if n.type == "OUTPUT_MATERIAL" and n.is_active_output)
+    old = out.inputs["Surface"].links[0].from_socket if out.inputs["Surface"].links else None
+    geo = nt.nodes.new("ShaderNodeNewGeometry")
+    em = nt.nodes.new("ShaderNodeEmission")
+    em.name = "__bake_emit"
+    nt.links.new(geo.outputs["Pointiness"], em.inputs["Color"])
+    nt.links.new(em.outputs["Emission"], out.inputs["Surface"])
+    return (mat, em, old, out, geo)
+
+
 def _emit_restore(info):
+    if len(info) == 5:
+        info[0].node_tree.nodes.remove(info[4])
+        info = info[:4]
     mat, em, old, out = info
     if old is not None:
         mat.node_tree.links.new(old, out.inputs["Surface"])
@@ -118,10 +135,16 @@ def _px(im):
     return a.reshape(im.size[1], im.size[0], 4)
 
 
-def bake_object(ob, asset, out_dir, size=1024, ao=0.0, normal=True, uv="smart", samples=16, source=None, cage=0.02, uv_shrink=None):
+def bake_object(ob, asset, out_dir, size=1024, ao=0.0, normal=True, uv="smart", samples=16, source=None, cage=0.02, uv_shrink=None,
+                curvature=False, finish=None, scratch=None):
     """Bake and swap in the final material bl_<asset>_baked. Returns the list of written PNG paths.
     source: a high-poly object whose materials and surface detail are baked onto `ob` (selected-to-active;
-    every source material is baked, none kept flat)."""
+    every source material is baked, none kept flat).
+    curvature: also bake the source's pointiness (curvature) into a map (kept in `scratch`, not shipped).
+    finish: a callable(maps) -> maps over float arrays {"albedo" (H,W,4), "rough", "metal", "ao", "curv"
+    (H,W)} run after the bakes: the asset drives its final colour/roughness/metal from the baked AO and
+    curvature (e.g. a gilded statue: dark, rough hollows, bright polished high points). With finish, the
+    plain AO fold into the albedo is skipped (finish does its own)."""
     os.makedirs(out_dir, exist_ok=True)
     if uv == "smart":
         uv_unwrap(ob, shrink=uv_shrink)
@@ -144,22 +167,56 @@ def bake_object(ob, asset, out_dir, size=1024, ao=0.0, normal=True, uv="smart", 
             _emit_restore(i)
     if normal:
         _bake(ob, "NORMAL", nrm, [ob.data.materials[0]] if source else mats, 4, source, cage)
+        if source:
+            # a hipoly bake's cage rays can hit the back of a neighbouring part (e.g. the next lock of a
+            # mane) and bake a normal pointing into the surface (z < 0: renders black on metal); a tangent-
+            # space normal never points inward, so clamp z and renormalise
+            N = _px(nrm)
+            v = N[..., :3] * 2 - 1
+            bad = v[..., 2] < 0.25
+            v[..., 2] = np.maximum(v[..., 2], 0.25)
+            v /= np.linalg.norm(v, axis=-1, keepdims=True)
+            N[..., :3] = v * 0.5 + 0.5
+            nrm.pixels.foreach_set(N.ravel())
+            print("NORMAL CLAMP %d texels (%.1f%%) pointed into the surface" % (bad.sum(), 100.0 * bad.mean()))
     aoim = None
     if ao > 0:
         aoim = _img("__ao", size, True, (1, 1, 1, 1))
         bpy.context.scene.world = bpy.context.scene.world or bpy.data.worlds.new("w")
         _bake(ob, "AO", aoim, [ob.data.materials[0]] if source else mats, max(32, samples * 4), source, cage)
+    curvim = None
+    if curvature:
+        curvim = _img("__curv", size, True, (0.5, 0.5, 0.5, 1))
+        cm = mats if source else _baked_mats(ob)
+        infos = [_emit_pointiness(m) for m in cm]
+        _bake(ob, "EMIT", curvim, [ob.data.materials[0]] if source else mats, 4, source, cage)
+        for i in infos:
+            _emit_restore(i)
+        if scratch:
+            curvim.filepath_raw = os.path.join(scratch, asset + "_curv.png")
+            curvim.file_format = "PNG"
+            curvim.save()
     # pack ORM, fold AO into albedo (stored sRGB: multiply in display space, close enough for AO)
     R = _px(rough)
     Mt = _px(metal)
     A = _px(aoim) if aoim else np.ones_like(R)
+    if finish:
+        P = _px(alb)
+        mp = finish({"albedo": P.copy(), "rough": R[..., 0].copy(), "metal": Mt[..., 0].copy(), "ao": A[..., 0].copy(),
+                     "curv": _px(curvim)[..., 0].copy() if curvim else None})
+        alb.pixels.foreach_set(mp["albedo"].astype(np.float32).ravel())
+        R = R.copy(); R[..., 0] = mp["rough"]
+        Mt = Mt.copy(); Mt[..., 0] = mp["metal"]
+        aoim_fold = False
+    else:
+        aoim_fold = bool(aoim)
     orm = np.ones_like(R)
     orm[..., 0] = A[..., 0]
     orm[..., 1] = R[..., 0]
     orm[..., 2] = Mt[..., 0]
     ormim = _img(asset + "_orm", size, True, (1, 1, 1, 1))
     ormim.pixels.foreach_set(orm.ravel())
-    if aoim:
+    if aoim_fold:
         P = _px(alb)
         P[..., :3] *= (1.0 - ao + ao * A[..., :1])
         alb.pixels.foreach_set(P.ravel())

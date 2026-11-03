@@ -5,6 +5,9 @@ All Godot work is under `prototypes/godot-mall/project` ("the project" below).
 
 ## Rules
 
+- **Steven writes the story; Claude builds the machinery.** No session invents a character, name, dialogue,
+  quest, item or fixture unless asked for that specific thing. Inferences from references are questions in the
+  report, not builds. Test content is marked PLACEHOLDER.
 - **Your own branch, code only.** Work on the branch your brief names (`ws/<letter>-<slug>`), push it, and stop.
   **Never push to `main` or `godot-build`, never run `tools/publish_build.sh`, never publish.** Pushing to main
   makes the site live. Merging, the Ultra rebake on Steven's Mac and the publish happen in one integration session.
@@ -34,7 +37,7 @@ All Godot work is under `prototypes/godot-mall/project` ("the project" below).
 ## Fresh workspace setup (~15–25 min, mostly the import)
 
 ```bash
-cd /home/claude/southland-mall-95            # the clone; if missing: git clone https://github.com/stevenboudreaux/southland-mall-95
+cd /home/claude/houma-mall-rewind            # the clone; if missing: git clone https://github.com/stevenboudreaux/houma-mall-rewind
 # 1. Godot 4.7.2 and the web export templates
 cd /home/claude
 curl -sSLO https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
@@ -47,7 +50,7 @@ export PATH=/home/claude:$PATH
 pip install --break-system-packages mapbox_earcut fonttools
 which xvfb-run || (apt-get update -qq && apt-get install -y -qq xvfb)   # preview.sh needs it
 # 3. Lightmaps and stand-in pictures from the build branch
-cd /home/claude/southland-mall-95/prototypes/godot-mall/project
+cd /home/claude/houma-mall-rewind/prototypes/godot-mall/project
 git fetch -q --depth=1 origin +refs/heads/godot-build:refs/remotes/origin/godot-build
 git archive origin/godot-build lightmaps standin | tar -x
 mv lightmaps/* . && rmdir lightmaps && mkdir -p tex/standin && mv standin/* tex/standin/ && rmdir standin
@@ -60,7 +63,8 @@ GitHub release downloads work; YouTube and most other sites are blocked from the
 
 ## Build and test
 
-- **Build a wing:** `godot --headless --path . --script res://tools/build_mall.gd -- --wing=1` (2, 3 = outside;
+- **Build a wing:** `godot --headless --path . --script res://tools/build_mall.gd -- --wing=1` (2, 3 = outside,
+  4 = Sears / Lynn's, 5 = Dillard's level 1, 6 = the cinema lobby;
   add `--year=2026` for the 2026 scenes; `design/godot-2026-year.md`), then look for `BUILD OK`.
 - **Other QA tools:** `tools/qa/README.md` (unbaked_shots.gd, doortest.py, signstest.py, packtest.py …).
 - **Fast look, no bake:** `tools/qa/preview.sh <module|store:NAME> <out-prefix> "x,y,z,yaw,pitch;..." '{}' lit|dark`
@@ -74,6 +78,11 @@ GitHub release downloads work; YouTube and most other sites are blocked from the
 - **Cameras:** `?cam=x,z,yaw,pitch` in the game URL places the player.
 - **Baking:** don't. Cloud bakes need a 12 GB swap file and ~10 min per wing; the integration session does one bake
   per wing on Steven's Mac (Ultra). Your shots are unbaked; say so in the evidence file names.
+- **The Mac's `.autobake` list** (one line of `<scene>:<mode>` jobs, `addons/autobake`): since workstream S
+  (Nov 2 2026) it also takes the room wings, **`wing4:day wing5:day wing4_2026:day wing5_2026:day`** (Sears / Lynn's, Dillard's level 1; `design/godot-wings.md` "Wings 4-6").
+  Wing 6 (the cinema lobby placeholder) is never baked. After baking 4 / 5: `tools/capture_standin.sh 4` / `5`
+  (and `... 2026`), then recapture 1 / 2, export, publish. Until their first bake, wings 4 and 5 ship unlit
+  (`publish_build.sh` warns, does not refuse).
 
 ## Reference pictures: the `refs` branch
 
@@ -81,7 +90,7 @@ Footage and photos from Steven's Mac (the Oct 23, 2026 site visit, new cuts for 
 pictures, analysis notes) live on the orphan branch `refs`, kept off `main` so main stays small (~440 MB):
 
 ```bash
-cd /home/claude/southland-mall-95
+cd /home/claude/houma-mall-rewind
 git fetch --depth=1 origin refs && git archive FETCH_HEAD refs | tar -x     # → ./refs/ (git-ignored)
 # or one folder: git archive FETCH_HEAD refs/new/sears | tar -x
 ```

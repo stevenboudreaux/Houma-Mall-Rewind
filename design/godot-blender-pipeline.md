@@ -157,9 +157,116 @@ studio light); size: workstream D's procedural lions (`wave9.gd lion()`) are 1.4
 this model is ~0.95 m on 0.32 m, so the integration session should scale the node (~1.5) or say which
 size Steven wants. Unbaked comparison beside D's lion: `wsT2-bl_ls_lion-ingame.jpg`.
 
+## The lion, third pass (workstream L, Nov 2 2026)
+
+Steven on pass two: still soft and blobby, "a smooth blob with a vague mane and face"; he wants a carved,
+polished gold statue that reads at arm's length. D's built-in lions (`wave9.gd lion()`) are being removed in
+parallel (session D48), so this model is the only lion that ships. **A restart, not an extension** of the
+pass-two script: pass two hung its locks on one big ellipsoid (the helmet silhouette in its sheet) and built
+the face from balls, and neither could be tuned out.
+
+| Asset | Class | Tris | Tex | Where | Based on | Guessed |
+|---|---|---|---|---|---|---|
+| `bl_ls_lion` third pass | large_fixture | 23,521 (sculpt ~2.1M) | 2048 (albedo, ORM, normal) | Lion's Share front, D's two spots (`P(lu, 0, -0.55)`, the left one mirrored), behind `BL_LION` in `wave9.gd` | Steven's lion picture (the only lion picture in the repo or on the `refs` branch; nothing under `refs/` is named lion), measured at 0.95 m / 300 px | depth, back, ears, tail, plinth, size (pass two's, kept) |
+
+**Method** (`tools/blender/assets_src/bl_ls_lion.py`, header has the measurements):
+1. **Big forms** (ellipsoids, tapered capsules) fused by a voxel remesh with a morphological closing, plus a
+   mane core (crown, neck, a jowl each side for the 0.40 m width at the cheeks, a bib over the chest).
+2. **Locks draped by ray casting.** ~140 hand-placed locks are paths in mane coordinates (arc metres round
+   the axis, height; above 0.80 m the rays tilt over the crown), laid on the core by casting a ray from outside
+   towards the axis, so they follow the crown, neck, shoulders and chest instead of an ellipsoid. Each lock
+   is a flat ribbon with a **corrugated top** (2-3 strand ridges) that tucks in at the root, tapers to a
+   point and lifts its tip off the surface. Tiers: the face ruff (rooted on the face's edge, raised above the
+   next tier once it leaves the face), a middle ring, the beard and chest points, four outer rows falling
+   down the sides and the back, short locks combed back over the crown. Paths and normals are smoothed along
+   each lock.
+3. **The face is a carved relief, not solids**: one surface whose depth is a sum of smooth terms over
+   (x, z) (`relief()`): dome, snout profile (bridge sloping forward to the nose, muzzle falling back), a
+   trapezoid nose leather, nostrils, whisker pads, philtrum, mouth line, chin, V brow ridges, almond
+   sockets, lower lids, cheeks and carved fur strokes radiating from the nose. Closed into a solid, fused
+   with the skull and ears at 1.4 mm, whisker dots and ear cups carved with booleans; eyeballs with a
+   drilled pupil sit in the sockets. This was the change that made the face read: solids gave a pug or a
+   teddy bear (iteration 1) however they were tuned.
+4. **Bake** (build.py hipoly path): 2.4 mm remesh of body + mane, decimated to 24k; normal, AO and a new
+   **curvature** bake (pointiness); `finish_maps()` in the asset builds the gold from them: hollows (AO,
+   concave curvature) dark and rough, crests bright and polished (roughness 0.18 / 0.34 / 0.62 high / mid /
+   hollow, metallic 0.9, a little less in the hollows), the hipoly's scratch layer (thin stretched-noise
+   streaks in patches, a little brighter and rougher) on top.
+5. **Steven's picture as texture:** projected orthographically from the front onto the hipoly (its
+   high-pass detail only, masked to front-facing surfaces, strength `REF_DETAIL` 0.35) and baked into the
+   albedo. Honest result: at 193 x 300 px it adds faint grain on the mane front; the read comes from the
+   geometry, not from it. `REF_DETAIL = 0` removes it.
+
+**Iterations** (`production/qa/evidence/wsL-lion-sheet-{1..5}.jpg`: the reference, this pass and pass two
+at the same angles):
+1. New silhouette, draped locks. Wrong: face from solids still a pug, locks thin and stringy, the mane
+   too narrow, a hole at the crown, a tube spine, gold too orange.
+2. Face rebuilt as a relief; wider, thicker, fewer locks; jowls; crown filled. Wrong: the face a round
+   plate whose rim stands 5 cm proud of the ruff; plain forehead; olive, chrome-like gold; near-black gaps.
+3. **Regression**: draping every lock onto the face too pulled locks across the eyes.
+4. Only the ruff drapes on the face, rooted on its edge and raised above the next tier; the dome runs to
+   the oval's edge (no gap), carved fur strokes; paler satin gold. Wrong: a black splotch on the chest mane.
+5. The splotch was 4.8% of the normal map pointing into the surface (cage rays hitting the back of the next
+   lock); build now clamps tangent normals (z >= 0.25) on hipoly bakes and the cage is 16 mm. Final.
+
+**What worked:** the relief face; ray-cast draping; corrugated locks; the ruff above the middle tier; the
+curvature-driven gold. **Still open / would change next:** the face reads a little like a mask in a ruff of
+petals from straight on (more fur crossing onto the cheeks and forehead would knit it in); the back of the
+mane is a curtain of hanging strips; the body is smooth (it is in the picture, too); the size (below).
+
+**Size (settled Nov 2: Steven, "don't make the lions bigger"):** kept pass two's size (0.95 m lion on a 0.32 m plinth, 1.27 m overall); D's built-in lions were 1.45 m on 0.55 m (2.0 m overall). `BL_LION_SCALE` in `wave9.gd`
+scales both (1.5 gives D's size). In the unbaked in-game shot they read small beside the 2.4 m door.
+
+**In game:** `BL_LION := true` (one line, `tools/stores/small/wave9.gd`) instances the .glb at D's two spots
+under `BlenderProps` in wing 2 (1995), the left one mirrored so both tails are on the outer side, with D's
+floor obstacle; false brings back `lion()` (until D48 removes it). The .glb imports with
+`meshes/light_baking=2` (static lightmaps, UV2 from Godot) at 0.05 m texels. Evidence (unbaked):
+`wsL-lion-ingame.jpg`. Wing 2 (1995) needs a rebake when this ships.
+
+### Steven's notes on the third pass (Nov 2, afternoon) and the changes
+Steven: the body is good; the face needs work; a little muscle on the body; **don't make the lions bigger**;
+make the plinth the same gold as the body and shrink it so the lion sits tighter on it.
+- **Face, second version** (`relief()`): the outline is the picture's (a long wedge: broad forehead and cheeks
+  narrowing to the chin, `face_hw()`), not an oval; calm heavy brow instead of the angry V; bigger, wider-set
+  eyes under a deeper upper lid; a broad bridge to a big, flat-topped, triangular nose; big whisker pads and a
+  deeper mouth line; no whisker dots (the picture shows none); fine fur strokes on the muzzle, cheeks and
+  forehead, growing into deep lock grooves at the face's edge. The edge slopes gently into the mane (it was a
+  cliff, which made the ruff kink into a lumpy "hood" rim) and the ruff grows flush out of the face, rising
+  over its first 60%.
+- **Muscle:** pectorals, deltoids, the forearm's outer muscle, the thigh over the haunch, the hamstring.
+- **Plinth:** the same gold (its own material, `bl_ls_lion_plinth`, so it keeps crisp edges and a small atlas
+  share; `finish_maps` gives it the same AO/curvature gold), 0.62 x 0.66 m (was 0.72 x 0.76), same 0.32 m
+  height; the tail pulled in to fit. The in-game floor obstacle follows (`wave9.gd bl_lion()`).
+- **Size:** unchanged (0.95 m lion), per Steven; `BL_LION_SCALE` stays 1.0.
+- Result: 23,524 tris, 2048 px. Evidence: `wsL-lion-sheet-6.jpg` (the reference, this build and the morning's),
+  `wsL-lion-ingame-2.jpg` (unbaked). Still visible up close: a faint line where the face shell meets the
+  mane on one side.
+
+### Pipeline additions (workstream L)
+- `bake.py`: `META["curvature"]` bakes the hipoly's pointiness (kept in `.scratch/blender/<id>_curv.png`,
+  not shipped); an asset's `finish_maps(maps)` gets the baked albedo, roughness, metal, AO and curvature as
+  arrays and returns the final albedo / roughness / metal; hipoly normal bakes clamp inward-pointing normals
+  and the log says `NORMAL CLAMP n texels`.
+- `compare.py`: the review sheet for a rebuild: reference | new | previous at the same angles (front framed
+  on the statue above `--zmin`, face, 3/4, side, back).
+
 ### Pipeline additions (T2)
 - `build.py`: `META["item_file"]` (which `data/items/` file), `item.copies` (more pick-ups of one model),
   `META["emissive"]`, `META["icon"]` (icon without an item entry), `lowpoly_voxel` / `hipoly_keep` /
   `uv_shrink` for sculpts, a triangulate after the hipoly decimation. `run.sh`: `EV_PREFIX=wsT2`.
 - Run one Blender build at a time: the session's memory limit killed a sculpt build running beside a
   small one.
+
+## The boom box (workstream R, Nov 2 2026)
+
+| Asset | Class | Tris | Tex | Where | Reference | Guessed |
+|---|---|---|---|---|---|---|
+| `bl_pc_boombox` "Boom box" | hand | 4,628 (budget 5,000) | 2048 (albedo, ORM, normal; 3.3 MB) | **not placed**: Pocket Change's redemption stock only, 500 tickets (Steven); no quest | **none**: the reference pack has no boom box (`refs/INDEX.md`) and Wikimedia is blocked from the cloud; the type from Steven's brief and Wikipedia's "Boombox" (CD players from the mid 90s) | everything: 0.54 × 0.15 × 0.24 m body plus handle; dark grey worn plastic, silver speaker rings, perforated grilles, a detachable-looking centre panel (dark seam, two release tabs) with the tuner LCD and the twin cassette doors (DECK A, DECK B REC/PLAY), a CD lid with a smoked round window on top, ten transport keys along the top front edge, two top knobs, a carry handle with a rubber grip, a telescoping antenna on a swivel at the back left, a battery label on the back. Brand **KREWE KR-95CD** (invented, IP rule) |
+
+- **Held by the handle:** the item's scene is `models/bl_pc_boombox/bl_pc_boombox_item.tscn` (the .glb plus a
+  `Grip` at the top edge under the handle, turned 30° and tipped 40° toward you so the front shows in
+  first person, bottom right; a carried-at-the-side pose would be off screen), set through `META["item"]["scene"]`
+  (build.py copies item keys into the entry, so the override survives a rebuild).
+- Budget: the first build was 6,292 tris; grille discs lost their bevel, rings went to 28 sides and the
+  ten keys to one bevel segment. Sheet: `production/qa/evidence/wsR-boombox-sheet.jpg` (no reference cell).
+- Review fix: the grilles read as flat black; the perforation art got lighter metal and bigger holes.

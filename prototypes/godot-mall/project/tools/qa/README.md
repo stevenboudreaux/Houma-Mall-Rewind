@@ -23,3 +23,8 @@ Run the .gd tools with `godot --headless --path . --script res://tools/qa/<tool>
 - `avatar_test.gd` (native, unbaked), `avatar_webtest.py` (web build), `avatar_sheet.gd` (every
   avatar body, own colours vs recoloured): the avatar and the first / third person view
   (workstream V, `design/godot-avatar.md` "Checks").
+- Workstream S (Nov 2 2026; design/godot-wings.md "Wings 4-6", the room wings 4 Sears / Lynn's, 5 Dillard's level 1, 6 the cinema lobby):
+  - `wsS_thresholds_test.gd [-- 2026]` (headless): the Sears and Dillard's openings both ways (wing, position, facing), the cinema gate (locked message, the stick opens it, the flag saved, wing 6 and back, a reload keeps it open), the directory's jumps into wings 4 and 5. Prints `WSS TEST OK`.
+  - `wsS_webtest.py <url-path> <out> [1995|2026] [sears,dillards,cinema,jump]`: the same on a web export, with screenshots (the opening's picture, the crossing card, inside, back; the gate down / locked / up / lobby / after a reload).
+  - `doortest.py <url-path> <out> [wing cam to-wing [2026]]` now takes any wing's door or threshold, e.g. `4 -4,-144.4,180,0 3` (Sears side exit), `5 28.4,98.2,90,0 3`, `6 -60,-84.7,180,0 1`.
+  - `movetest.py`, `packformats.py`, `frametimes.py` take the wing in the URL / the pack paths: `index.html?wing=4`, `w4.desktop.pck` etc.

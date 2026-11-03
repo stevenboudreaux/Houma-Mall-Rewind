@@ -52,6 +52,10 @@ func _aabb(n: Node, xf: Transform3D, acc: Array) -> void:
 	if n is MeshInstance3D and (n as MeshInstance3D).mesh:
 		var a: AABB = t * (n as MeshInstance3D).mesh.get_aabb()
 		acc[0] = a if acc[0] == null else acc[0].merge(a)
+	# R: the prize models (scripts/items/prize_model.gd) are MultiMeshes
+	if n is MultiMeshInstance3D and (n as MultiMeshInstance3D).multimesh:
+		var b: AABB = t * (n as MultiMeshInstance3D).multimesh.get_aabb()
+		acc[0] = b if acc[0] == null else acc[0].merge(b)
 	for c in n.get_children():
 		_aabb(c, t, acc)
 

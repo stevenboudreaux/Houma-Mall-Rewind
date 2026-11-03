@@ -12,7 +12,7 @@
 ## Livery (after the Oct 5 IP review): sunset-orange gloss upper body, charcoal lower body,
 ## chrome trim lines and door edge, purple accents; canyon art with generic dinosaurs.
 ## Textures: tools/stores/pocket_change/paint_ride.py -> tex/pc/ride_*.png.
-##   tools/qa/preview.sh ride /home/claude/southland-mall-95/.scratch/preview/ride/v "0,1.6,3.6,0,-8;-0.3,1.55,-1.0,0,-6"
+##   tools/qa/preview.sh ride /home/claude/houma-mall-rewind/.scratch/preview/ride/v "0,1.6,3.6,0,-8;-0.3,1.55,-1.0,0,-6"
 
 const W = 1.74    # overall width with the bumpers (shell 1.64)
 const D = 2.64    # overall length, step to front bumper

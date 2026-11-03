@@ -83,6 +83,38 @@ var want := 0
 var tick := 0.0
 var rng := RandomNumberGenerator.new()
 var disabled := false
+## ---- M (design/godot-menu.md): NPC density by year, npcs.json "years":
+##   {"1995": {}, "2026": {"count": 3, "ids": [], "roles": false, "layout": "res://layout_2026.json"}}
+## count: how many in the crowd; ids: which characters (empty = the first `count` of the crowd pool,
+## in npc/skins.json order); roles false: no drunk, pairs, arcade players or salon visitors; layout: the
+## year's store doors. A year not listed keeps the defaults (1995: today's numbers).
+var layout_path := LAYOUT
+var year_ids: Array = []      # only these characters (empty: anyone in the pool)
+var year_roles := true
+
+func _year_cfg() -> void:
+	var y := str(int(player.year)) if player and "year" in player else "1995"
+	var yc = cfg.get("years", {}).get(y, {}) if cfg.get("years", {}) is Dictionary else {}
+	if not (yc is Dictionary) or yc.is_empty():
+		return
+	if yc.has("count"): cfg.count = int(yc.count)
+	if yc.has("layout") and FileAccess.file_exists(str(yc.layout)): layout_path = str(yc.layout)
+	year_roles = bool(yc.get("roles", true))
+	var ids = yc.get("ids", [])
+	if ids is Array and not ids.is_empty():
+		for i in ids: year_ids.append(str(i))
+	elif yc.has("count"):
+		# the first `count` of the crowd pool (npc/skins.json order, groups with weight, minus exclude)
+		for e in NpcBody.manifest().get("skins", []):
+			if year_ids.size() >= int(cfg.count): break
+			if str(e.id) in cfg.exclude or float(cfg.groups.get(str(e.group), 0.0)) <= 0.0: continue
+			if ResourceLoader.exists(str(e.get("scn", ""))): year_ids.append(str(e.id))
+	# warm up only those (scripts/npc_warmup.gd)
+	var only: Array[String] = []
+	for e in NpcBody.manifest().get("skins", []):
+		if str(e.id) in year_ids: only.append(str(e.get("scn", "")))
+	load("res://scripts/npc_warmup.gd").only = only
+## ---- end M
 var spawn_all_now := false   # tests: fill the mall at once, in sight too
 
 class Shopper:
@@ -114,6 +146,7 @@ func _ready() -> void:
 		var j = JSON.parse_string(FileAccess.get_file_as_string(CFG))
 		if j is Dictionary:
 			for k in j: cfg[k] = j[k]
+	_year_cfg()   # M
 	if force == "0":
 		disabled = true
 		load("res://scripts/npc_warmup.gd").ready_now()   # workstream H: no warm-up, lift the card
@@ -159,9 +192,10 @@ func _ready() -> void:
 	var machines := _arcade_machines()
 	_load_skins(not machines.is_empty())
 	_place_mannequins()
-	_place_players(machines)
-	_spawn_drunk()
-	_spawn_pairs()
+	if year_roles:   # M: per-year roles (npcs.json "years")
+		_place_players(machines)
+		_spawn_drunk()
+		_spawn_pairs()
 	print("load: npcs roles spawned %d ms after _ready" % (Time.get_ticks_msec() - t_ready))   # workstream H
 	# ---- workstream H: the first crowd too, while the card is still up, then lift it
 	if warm:
@@ -300,6 +334,7 @@ func _load_skins(arcade_here: bool) -> void:
 	for e in m.get("skins", []):
 		all_skins[str(e.id)] = e
 		if str(e.id) in cfg.exclude or reserved.has(str(e.id)): continue
+		if not year_ids.is_empty() and not (str(e.id) in year_ids): continue   # M
 		var w := float(cfg.groups.get(str(e.group), 0.0))
 		if w <= 0.0: continue
 		skins.append(e); total += w; weights.append(total)
@@ -345,8 +380,8 @@ func _make_body(e: Dictionary, s: Shopper = null) -> NpcBody:
 ## Store doors from the layout: a store is "open" when cells inside its door are walkable in this
 ## wing (the 3D interiors of design/godot-wings.md); otherwise its window is a place to stop.
 func _load_places() -> void:
-	if not FileAccess.file_exists(LAYOUT): return
-	var lay = JSON.parse_string(FileAccess.get_file_as_string(LAYOUT))
+	if not FileAccess.file_exists(layout_path): return   # M: layout_path (the year's layout)
+	var lay = JSON.parse_string(FileAccess.get_file_as_string(layout_path))
 	if not (lay is Dictionary): return
 	var names: Dictionary = lay.get("stores", {})
 	for e in lay.get("edges", []):
@@ -357,7 +392,7 @@ func _load_places() -> void:
 		if not _open(door + n * 1.2): continue              # not in this wing (or walled)
 		var sid := str(e.get("store", ""))
 		var name := str(names.get(sid, {}).get("name", sid))
-		for sc in cfg.get("salons", []):
+		for sc in (cfg.get("salons", []) if year_roles else []):   # M: per-year roles
 			if name == str(sc.get("store", "")) and not _has_salon(name):
 				for k in int(sc.get("slots", 1)):
 					salons.append({"on": true, "c": sc, "door": door, "s": null, "chair": -1, "timer": rng.randf_range(4.0, 12.0) + k * rng.randf_range(20.0, 60.0), "sitting": false, "clip": ""})

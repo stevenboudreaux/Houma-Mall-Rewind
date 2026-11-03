@@ -39,6 +39,10 @@ var swatches := {}           # row name -> [[Button, value]]
 var action_btns: Array = []  # [Button, Callable]
 var act_sel := 2
 var _built_for := Vector2.ZERO
+## M (design/godot-menu.md): inside the menu's AVATAR tab the creator lays out in this rect (screen
+## pixels) instead of the whole screen, and the menu feeds it its input (embedded: no _input of its own).
+var frame := Rect2()
+var embedded := false
 
 func _ready() -> void:
 	layer = 40
@@ -114,6 +118,8 @@ func _process(dt: float) -> void:
 # ------------------------------------------------------------------ layout
 func _layout() -> void:
 	var vs := get_viewport().get_visible_rect().size
+	if frame.has_area():
+		vs = frame.size   # M: the menu's tab
 	if vs == _built_for:
 		return
 	_built_for = vs
@@ -122,6 +128,10 @@ func _layout() -> void:
 	hits = []; rows = []; swatches = {}; action_btns = []
 	root = Control.new()
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if frame.has_area():   # M
+		root.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		root.position = frame.position
+		root.size = frame.size
 	root.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(root)
 	var bg := ColorRect.new()
@@ -390,6 +400,8 @@ func _skip() -> void:
 
 # ------------------------------------------------------------------ input
 func _input(e: InputEvent) -> void:
+	if embedded and not has_meta("_fed"):
+		return     # M: the menu calls feed()
 	var used := true
 	if e is InputEventScreenTouch:
 		if e.pressed:
@@ -447,3 +459,9 @@ func _input(e: InputEvent) -> void:
 func _sel(d: int) -> void:
 	sel = posmod(sel + d, rows.size())
 	_refresh()
+
+## M: an event from the menu (scripts/menu/menu.gd), which owns the input while it is open.
+func feed(e: InputEvent) -> void:
+	set_meta("_fed", true)
+	_input(e)
+	remove_meta("_fed")

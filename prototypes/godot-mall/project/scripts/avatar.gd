@@ -292,6 +292,10 @@ func _grip() -> Node3D:
 
 # ------------------------------------------------------------------ the creator
 func open_creator() -> void:
+	# M (design/godot-menu.md): the creator lives in the menu's AVATAR tab now (scripts/menu/menu.gd)
+	if player.get("menu") != null and player.menu.has_method("request_creator"):
+		player.menu.request_creator()
+		return
 	if creator != null or player.vr_on or player.leaving:
 		return
 	if player.frozen:

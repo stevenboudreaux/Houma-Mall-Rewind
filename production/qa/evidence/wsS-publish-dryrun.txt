@@ -1,0 +1,5 @@
+warning: no wing4_day.exr: wing 4 is not baked yet and ships unlit (allowed until its first bake: add "wing4:day wing4_2026:day" to the Mac's .autobake jobs)
+warning: no wing4_2026_day.exr: wing 4 is not baked yet and ships unlit (allowed until its first bake: add "wing4:day wing4_2026:day" to the Mac's .autobake jobs)
+warning: no wing5_day.exr: wing 5 is not baked yet and ships unlit (allowed until its first bake: add "wing5:day wing5_2026:day" to the Mac's .autobake jobs)
+warning: no wing5_2026_day.exr: wing 5 is not baked yet and ships unlit (allowed until its first bake: add "wing5:day wing5_2026:day" to the Mac's .autobake jobs)
+dry run: all checks passed; nothing published (room wings in the export: 4 5 6)

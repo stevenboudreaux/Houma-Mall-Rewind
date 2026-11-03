@@ -89,6 +89,22 @@ const STORE_WING = {"GUMBALLS": 1}
 ## The seam between the wings: a line on the floor (x0, z, x1) at the east hall's floor change,
 ## running on across Gumballs' door onto the Dillard's court. Wing 2 is the +z side.
 const SEAM = [-20.0, 48.0, 2.0]
+## Workstream S (Nov 2 2026, design/godot-wings.md "Wings 4-6"): rooms that are wings of their own,
+## for pack headroom. 4 = the Sears box (Lynn's in 2026), 5 = Dillard's level 1, 6 = the Southland
+## Cinema lobby (a placeholder room). store: the layout store; box: the map rect the wing owns
+## (x0, z0, x1, z1); thr: the threshold on the mall wall (x0, z, x1), the mall opening, crossed like
+## the seam; side: +1 when the room is on the +z side of it; mall: the wing on the other side.
+const ROOM_WINGS = {
+	4: {"store": "s1", "box": [-40.0, -146.0, 30.0, -96.0], "thr": [-16.0, -96.0, 8.0], "side": -1.0, "mall": 1},
+	5: {"store": "s2", "box": [-38.0, 80.0, 30.0, 118.0], "thr": [-10.0, 80.0, 2.0], "side": 1.0, "mall": 2},
+	6: {"store": "s40", "box": [-66.0, -86.0, -54.0, -78.0], "thr": [-66.0, -86.0, -54.0], "side": 1.0, "mall": 1},
+}
+## The wing a store's room belongs to, or 0 (wing 4/5/6 by layout store id).
+func room_wing_of(sid):
+	for w in ROOM_WINGS:
+		if ROOM_WINGS[w].store == sid:
+			return w
+	return 0
 ## Stand-in storefront pictures: pixels per metre in the capture atlas (fitted at build time)
 const STANDIN_ATLAS = Vector2i(4096, 2048)
 const STANDIN_OUT = 1.25   # the capture camera stands this far out from the front, in the hall
@@ -1357,6 +1373,11 @@ func store_name_wing(nm):
 func tile_wing(tx, ty):
 	var x = (tx - float(L.origin[0]) + 0.5) * float(L.scale)
 	var z = (ty - float(L.origin[1]) + 0.5) * float(L.scale)
+	# workstream S: the rooms that are wings of their own (ROOM_WINGS) own their box
+	for rw in ROOM_WINGS:
+		var rb = ROOM_WINGS[rw].box
+		if x > rb[0] and x < rb[2] and z > rb[1] and z < rb[3]:
+			return rw
 	for zid in zones:
 		var r = zones[zid].rect
 		if x >= r[0] and x <= r[2] and z >= r[1] and z <= r[3]:
@@ -1376,7 +1397,8 @@ func wing_walk():
 		var row = L.walk[ty]
 		var s = ""
 		for tx in row.length():
-			if row[tx] == "1" and tile_wing(tx, ty) == WING:
+			# wing 6's lobby is not in the layout's walk grid: every tile of its box is open
+			if (row[tx] == "1" or WING == 6) and tile_wing(tx, ty) == WING:
 				s += "1"
 			else:
 				s += "0"
@@ -1393,18 +1415,53 @@ func standin_edge(e):
 		build_edge(e)
 		return
 	var sd = L.stores[e.store]
-	var maxlen = 30.0   # long anchor frontages go in several slots
-	var parts = max(1, int(ceil(Ln / maxlen)))
-	for k in parts:
-		var s0 = Ln * k / parts
-		var s1 = Ln * (k + 1) / parts
-		var slot = {"key": edge_key(e.a, e.b) + "#%d" % k, "a": [a.x, a.z], "t": [t.x, t.z], "n": [n.x, n.z], "s0": s0, "s1": s1, "store": sd.name}
-		standin_slots.append(slot)
+	# (wings 4-6, workstream S: the slots come from room_standin(), the lights from here)
+	if not ROOM_WINGS.has(WING):
+		standin_slots.append_array(edge_slots(e))
 	if not sd.vacant:
 		var sl = add_omni(a + t * Ln * 0.5 - n * 1.2 + Vector3(0, OPEN_H - 0.4, 0), 0.45, 6.0, Color(1.0, 0.96, 0.9))
 		tag(sl, "", 0.45, 1.2)
 		if Ln >= 2.0:
 			tag(add_spot(a + t * Ln * 0.5 - n * 0.4 + Vector3(0, OPEN_H - 0.15, 0), n * 0.9 + Vector3.DOWN * 1.0, 1.6, 7.0, 55.0, Color("#FFF1DC")), "night")
+
+## The stand-in slots of one store frontage (long anchor frontages go in several slots).
+func edge_slots(e):
+	var eb = edge_basics(e)
+	var a = eb[0]; var n = eb[2]; var t = eb[3]; var Ln = eb[4]
+	var maxlen = 30.0
+	var parts = max(1, int(ceil(Ln / maxlen)))
+	var out = []
+	for k in parts:
+		var s0 = Ln * k / parts
+		var s1 = Ln * (k + 1) / parts
+		out.append({"key": edge_key(e.a, e.b) + "#%d" % k, "a": [a.x, a.z], "t": [t.x, t.z], "n": [n.x, n.z], "s0": s0, "s1": s1, "store": L.stores[e.store].name})
+	return out
+
+## Workstream S: wings 4 and 5 (an anchor's own wing) show the mall through the opening with the
+## mall wings' own stand-in pictures: wing 1's storefronts from tex/standin/from_w1_*.png, wing 2's
+## from from_w2_*.png. The slots are packed exactly as wing 2 (for wing 1's fronts) and wing 1 (for
+## wing 2's) pack them, so those atlases fit without a capture of their own; the anchor's own
+## frontage is built for real and left out of the pictures.
+func room_standin():
+	var own = ROOM_WINGS[WING].store
+	for src in [1, 2]:
+		standin_slots = []
+		for e in L.edges:
+			if e.kind == "store" and edge_wing(e) == src:
+				standin_slots.append_array(edge_slots(e))
+		var pxm = pack_standin()
+		var keep = []
+		for s in standin_slots:
+			var built = false
+			for e in L.edges:
+				if e.kind == "store" and e.store == own and s.key.begins_with(edge_key(e.a, e.b) + "#"):
+					built = true
+			if not built:
+				keep.append(s)
+		print("stand-in from wing ", src, ": ", keep.size(), " slots at ", pxm, " px/m")
+		standin_slots = keep
+		standin_quads(src)
+	standin_slots = []
 
 ## Packs the stand-in slots into the atlas: rows of equal height (the lane height), the largest
 ## pixels-per-metre that fits. Deterministic from the layout, so the stand-in's UVs never depend on
@@ -1436,8 +1493,9 @@ func _try_pack(pxm):
 		x += w
 	return true
 
-func standin_quads():
-	var other = 3 - WING
+func standin_quads(other = 0):
+	if other == 0:
+		other = 3 - WING
 	var mname = "standin_w%d" % other
 	for s in standin_slots:
 		var a = Vector3(s.a[0], 0, s.a[1])
@@ -1888,11 +1946,25 @@ func storefront(g, e, a, b, n, t, Ln, inner_call = false):
 	var width = inner1 - inner0
 	if sd.vacant:
 		# closed grille in front of a dark space
-		quad(g, "grille", [p0, p1, p1 + Vector3(0, OPEN_H, 0), p0 + Vector3(0, OPEN_H, 0)], n, [], false, 1.0)
+		# (workstream S: the 2026 cinema unit's grille is the cinema's roll gate, scripts/cinema_gate.gd
+		# rolls it up: its own static mesh, Static/cin_gate, still in the bake)
+		var gate26 = room_wing_of(e.store) == 6
+		var gg = "cin_gate" if gate26 else g
+		quad(gg, "grille", [p0, p1, p1 + Vector3(0, OPEN_H, 0), p0 + Vector3(0, OPEN_H, 0)], n, [], false, 1.0)
 		var k = 0.0
 		while k < OPEN_H:
-			box(g, "metal_dark", (p0 + p1) * 0.5 + Vector3(0, k, 0) + n * 0.02, abs_size(t, width, 0.03, 0.03, n))
+			box(gg, "metal_dark", (p0 + p1) * 0.5 + Vector3(0, k, 0) + n * 0.02, abs_size(t, width, 0.03, 0.03, n))
 			k += 0.18
+		if gate26:
+			# a dark recess behind it, so the open gate shows a dark space, not the lot (hidden behind
+			# the grille while it is down)
+			var dd = -n * 3.0
+			var H2 = Vector3(0, OPEN_H, 0)
+			quad("cin_back26", "black", [p1 + dd, p0 + dd, p0 + dd + H2, p1 + dd + H2], n)
+			quad("cin_back26", "black", [p0, p1, p1 + dd, p0 + dd], Vector3.UP)
+			quad("cin_back26", "black", [p0 + H2, p0 + dd + H2, p1 + dd + H2, p1 + H2], Vector3.DOWN)
+			quad("cin_back26", "black", [p0 + dd, p0, p0 + H2, p0 + dd + H2], (p1 - p0).normalized())
+			quad("cin_back26", "black", [p1, p1 + dd, p1 + dd + H2, p1 + H2], (p0 - p1).normalized())
 		if YEAR == 2026 and Ln >= 3.0:
 			for_lease_card(g, a, n, t, Ln)
 		return
@@ -2311,7 +2383,15 @@ func anchor_front(g, e, a, b, n, t, Ln, sd, lk):
 	# walkable (tools/stores/sears/, tools/stores/dillards/; design/godot-sears.md, godot-dillards.md)
 	var E_MOD = {"SEARS": "sears", "LYNN'S INTERIORS": "sears", "DILLARD'S": "dillards"}
 	if E_MOD.has(sd.name):
-		load("res://tools/stores/%s/store.gd" % E_MOD[sd.name]).build(self, g, e, a, b, n, t, Ln, sd)
+		# workstream S (Nov 2): the box is its own wing (ROOM_WINGS); the mall wing shows it as a
+		# picture in the opening, captured from that wing (anchor_standin)
+		var rw = room_wing_of(e.store)
+		if WING == 0 or WING == rw or rw == 0:
+			load("res://tools/stores/%s/store.gd" % E_MOD[sd.name]).build(self, g, e, a, b, n, t, Ln, sd)
+			if WING == rw:
+				anchor_views.append(anchor_view(a, b, n, mouth_h, rw))
+		else:
+			anchor_standin(e, a, b, n, mouth_h, rw)
 		return
 	# the sales floor behind the open mouth
 	var p0 = a + t * 0.6
@@ -2354,6 +2434,25 @@ func anchor_front(g, e, a, b, n, t, Ln, sd, lk):
 	cur_color = Color.WHITE
 	for k4 in 3:
 		tag(add_omni(p0 + t * (wd * (k4 + 0.5) / 3.0) - n * deep * 0.45 + Vector3(0, mouth_h - 0.4, 0), 0.9, deep + 2.0, Color(1.0, 0.97, 0.9)), "", 0.9, 1.4)
+
+## Workstream S (Nov 2 2026): an anchor whose box is its own wing (4 Sears / Lynn's, 5 Dillard's),
+## seen from the mall: one picture filling the opening (a..b, floor to the soffit), captured from that
+## wing by tools/capture_anchor.gd with a camera standing ANCHOR_VIEW m out in the mall at eye
+## height, framed exactly on the opening, so it lines up from there and reads right from the court.
+## tex/standin/from_w<4|5>_{day,night}.png (2026: y26_), shown like the stand-in (standin_mat).
+## The spec goes to anchor_views and from there into wing.json (capture_anchor.gd reads it).
+const ANCHOR_VIEW = 8.0
+var anchor_views = []
+func anchor_standin(e, a, b, n, h, rw):
+	var p0 = a - n * 0.01
+	var p1 = b - n * 0.01
+	quad("standin", "standin_w%d" % rw, [p0, p1, p1 + Vector3(0, h, 0), p0 + Vector3(0, h, 0)], n,
+		[Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)], true)
+	anchor_views.append(anchor_view(a, b, n, h, rw))
+func anchor_view(a, b, n, h, rw):
+	var p0 = a - n * 0.01
+	var p1 = b - n * 0.01
+	return {"wing": rw, "a": [p0.x, p0.z], "b": [p1.x, p1.z], "n": [n.x, n.z], "h": h, "out": ANCHOR_VIEW}
 
 ## Glass doors to the outside (exits and the main entrance), with daylight beyond.
 func doors_out(g, e, a, b, n, t, Ln):
@@ -2660,6 +2759,11 @@ func build():
 		outside = load("res://tools/exterior/exterior.gd").build(self)
 		finish()
 		return
+	if WING == 6:
+		# workstream S: the Southland Cinema's wing, a placeholder lobby (tools/stores/cinema/lobby.gd)
+		load("res://tools/stores/cinema/lobby.gd").build(self, ROOM_WINGS[6])
+		finish()
+		return
 	for z in L.zones:
 		floor_zone(z)
 		if z.type == "hall":
@@ -2680,13 +2784,16 @@ func build():
 		tri(st("misc", "floorz_left"), fl[0], fl[1], fl[2], proj_uv(fl[0], Vector3.UP), proj_uv(fl[1], Vector3.UP), proj_uv(fl[2], Vector3.UP), Vector3.UP)
 		tri(st("misc", "lane_ceiling"), fl[0] + up3, fl[1] + up3, fl[2] + up3, proj_uv(fl[0], Vector3.DOWN), proj_uv(fl[1], Vector3.DOWN), proj_uv(fl[2], Vector3.DOWN), Vector3.DOWN)
 	for e in L.edges:
-		if in_wing(edge_wing(e)):
+		# workstream S: in an anchor's own wing (4, 5) only its frontage is built for real
+		if (in_wing(edge_wing(e)) and not ROOM_WINGS.has(WING)) or (ROOM_WINGS.has(WING) and e.get("store") == ROOM_WINGS[WING].store):
 			build_edge(e)
 		else:
 			standin_edge(e)
 	hall_mouths()
 	star_medallions()
-	if WING != 0:
+	if ROOM_WINGS.has(WING):
+		room_standin()
+	elif WING != 0:
 		print("stand-in: ", standin_slots.size(), " storefront slots at ", pack_standin(), " px/m")
 		standin_quads()
 	var avoid = kiosks() if YEAR != 2026 else []
@@ -2784,7 +2891,7 @@ func finish():
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		dyn_root.add_child(mi); mi.owner = mall
 
-	for z in (L.zones if WING != 3 else []):
+	for z in (L.zones if WING != 3 and WING != 6 else []):
 		var r = z.rect
 		var rp = ReflectionProbe.new()
 		var hgt = 10.0 if z.type == "court" else 6.6
@@ -2836,13 +2943,25 @@ func finish():
 		var wf = FileAccess.open(GEN + "wing.json", FileAccess.WRITE)
 		wf.store_string(JSON.stringify({"wing": WING, "seam": [], "spawn": outside.spawn, "walk": outside.walk, "doors": outside.doors}))
 		wf.close()
+	elif ROOM_WINGS.has(WING):
+		# workstream S: a room wing (4-6). Its one threshold leads back into the mall wing; a fresh
+		# start stands 3 m inside it, facing in. "views": the opening as the mall wing frames it, for
+		# tools/capture_anchor.gd (wings 4, 5)
+		var R = ROOM_WINGS[WING]
+		var thr = R.thr
+		var wf = FileAccess.open(GEN + "wing.json", FileAccess.WRITE)
+		wf.store_string(JSON.stringify({"wing": WING, "seam": [], "thresholds": [{"to": R.mall, "line": thr, "side": -R.side}],
+			"spawn": [(thr[0] + thr[2]) * 0.5, thr[1] + R.side * 3.0, 0.0 if R.side < 0 else 180.0, 3.0],
+			"views": anchor_views, "walk": wing_walk()}))
+		wf.close()
 	elif WING != 0:
 		# the wing's walk grid, its seam and where a fresh start stands (scripts/player.gd). The
 		# exterior doors (they lead outside, wing 3) come from exterior.json itself, so adding the
 		# outside changed nothing in gen/w1 and gen/w2 (the stand-in stamps stay valid)
 		var wf = FileAccess.open(GEN + "wing.json", FileAccess.WRITE)
 		wf.store_string(JSON.stringify({"wing": WING, "seam": SEAM, "other_side": 1.0 if WING == 1 else -1.0,
-			"spawn": [33.0, 0.0, 90.0, 3.0] if WING == 1 else [-9.0, 61.0, 90.0, 3.0], "walk": wing_walk()}))
+			"spawn": [33.0, 0.0, 90.0, 3.0] if WING == 1 else [-9.0, 61.0, 90.0, 3.0], "walk": wing_walk(),
+			"thresholds": room_thresholds()}))
 		wf.close()
 		# the stand-in's atlas slots, for tools/capture_standin.gd (it fills the other wing's pictures)
 		var jf = FileAccess.open(GEN + "standin.json", FileAccess.WRITE)
@@ -2872,6 +2991,16 @@ func finish():
 	print("saved ", sp_out)
 	var lights = light_root.get_child_count()
 	print("BUILD OK static groups=", acc.size(), " dynamic=", dyn_acc.size(), " lights=", lights, " labels=", mall.get_children().filter(func(c): return c is Label3D).size())
+
+## Workstream S: the thresholds from this mall wing into the room wings (ROOM_WINGS) it opens on,
+## for scripts/player.gd: {to, line [x0, z, x1], side (+1: the room is on the +z side)}.
+func room_thresholds():
+	var out = []
+	for rw in ROOM_WINGS:
+		var R = ROOM_WINGS[rw]
+		if R.mall == WING and L.stores.has(R.store):
+			out.append({"to": rw, "line": R.thr, "side": R.side})
+	return out
 
 func _initialize():
 	build()

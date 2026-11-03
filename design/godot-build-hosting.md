@@ -92,5 +92,69 @@ Mac bakes do flip ~206 of them, but those flips are reverted after every bake (t
 2. **Bring the bake back and check it:** `tools/qa/bakecheck.sh` (it now calls `export_web.sh`).
 3. **Commit code changes to main** as usual. There is no build or lightmap to commit.
 4. **Replace the build branch** from the project folder: `tools/publish_build.sh <builddir> "chore: Godot mall Demo N build and lightmaps"`. It takes the export and the project's six `main_*` lightmap files and force-pushes them to `godot-build` as one commit, keeping the branch's README and workflow.
-5. **Wait for the deploy:** Pages redeploys in a minute or two (Actions tab: "Deploy site to Pages"; check it with `gh run list -R stevenboudreaux/Southland-Mall-95 -L 3`).
+5. **Wait for the deploy:** Pages redeploys in a minute or two (Actions tab: "Deploy site to Pages"; check it with `gh run list -R stevenboudreaux/Houma-Mall-Rewind -L 3`).
 - **For a change that needs no rebake** (probe-lit parts only), take the lightmaps from the branch, rebuild, export and do step 4.
+
+## Wings 4-6: the room wings' packs (workstream S, Nov 2 2026)
+Sears / Lynn's (wing 4), Dillard's level 1 (wing 5) and the Southland Cinema lobby placeholder
+(wing 6) ship as their own packs, `w4`, `w5`, `w6` and `w4y26`, `w5y26`, `w6y26`, each
+`.desktop.pck` / `.mobile.pck` (`design/godot-wings.md` "Wings 4-6").
+- **Presets:** "Wing <n> Desktop" / "Wing <n> Mobile" (+ " 2026") for n = 4, 5, 6, written into
+  `export_presets.cfg` by `tools/make_presets.py` (cloned from the Wing 1 pair; never edit them by
+  hand). Custom features `wing<n>` / `w<n>y26` pick `run/main_scene.<feature>` in `project.godot`.
+  The script also adds each anchor's opening picture to the mall wing's includes and keeps the room
+  wings' data out of the other packs.
+- **What a room pack carries:** its scene and meshes, the mall wings' stand-in atlases (4, 5), the
+  scripts and data every wing loads, Martin Folse's stick (`models/bl_sr_folse_*`, it can be carried
+  in) and, in 1995, the avatar's bodies like the outside (`npc/skins/Ch*` minus Ch06/17/36, ~16 MB:
+  most of `w6`). The 2026 presets leave `npc/*` out like the other 2026 wings.
+- **Export / publish:** `tools/export_web.sh` exports wings 1-6 by default (a room wing whose scene
+  isn't built is skipped) and writes all twelve sizes into `PACK_SIZES`; the shell's cache name
+  covers them. `tools/publish_build.sh` copies the room packs and, once baked, `wing4_*` / `wing5_*`
+  lightmaps; it warns (does not refuse) while 4 / 5 have no lightmap. `DRY_RUN=1` runs every check
+  and stops before pushing.
+
+### Pack sizes (MB, desktop = mobile to the byte), measured Nov 2 2026, unbaked room wings
+| Pack | Before (Demo 48 state) | After | |
+|---|---|---|---|
+| w1 | 91.53 | 91.52 | Sears' meshes/textures out (−0.86), its picture in the opening in (+0.84) |
+| w2 | 93.52 | 91.06 | Dillard's out (−2.83), its picture in (+0.40) |
+| w1y26 | 26.27 | 25.24 | |
+| w2y26 | 70.65 | 67.80 | |
+| w4 / w4y26 | — | 35.64 / 13.66 | Sears / Lynn's, no lightmap yet |
+| w5 / w5y26 | — | 37.59 / 15.80 | Dillard's, no lightmap yet |
+| w6 / w6y26 | — | 20.57 / 3.96 | the cinema lobby; 1995 is mostly the avatar's bodies |
+| w3 / w3y26 | 30.89 / 13.81 | unchanged | |
+
+- **Why wing 1 barely moved:** E's Sears skeleton is light (0.86 MB of meshes and textures: an empty
+  box by design). Wings 1 and 2 still carry their Demo 48 lightmaps, baked with the anchors inside;
+  the next bake drops the anchors' texels (Sears was +0.37 Mpx of wing 1's 4.76, E's note) and the
+  lightmaps should shrink. The real headroom: everything Steven adds to the Sears departments and to
+  Dillard's from now on lands in wings 4 / 5 (35.6 and 37.6 MB, plus their lightmaps), not in 1 / 2.
+- The brief quoted wing 2 at 94.8 MB; this branch's export of the Demo 48 state measured 93.52.
+
+## Two sites (Nov 3 2026, after the move to Houma-Mall-Rewind)
+
+**Why.** A GitHub Pages site may hold 1 GB. Demo 49's 24 packs are 1.08 GB on their own, and the workflow
+also deployed all of main (585 MB: the project source, design notes, QA pictures). From Demo 49 on, both
+repos' deploys warned "Uploaded artifact size of 1166045103 bytes exceeds the allowed size of 1 GB.
+Deployment might fail", and on Steven's iPhone the game stopped at "Could not start: Load failed".
+
+**How.** Each device downloads only its own set (above), so the sets go to two sites on one origin:
+- `stevenboudreaux.github.io/Houma-Mall-Rewind/` (this repo, `.github/workflows/pages.yml`): the page,
+  `index.js` / `.wasm`, the phone packs (`w*.mobile.pck`), main's tracked `play/` files, the original game
+  as `classic.html` and its photo files. Nothing else from main is deployed.
+- `stevenboudreaux.github.io/Houma-Mall-Rewind-desktop/` (repo `Houma-Mall-Rewind-desktop`): only the
+  computer packs, copied from `godot-build` by that repo's workflow (source:
+  `prototypes/godot-mall/project/tools/desktop_site/pages.yml`).
+
+`web/shell.html` (`MALL_DESKTOP_SITE`, `MALL_PACK_BASE`) asks for computer packs on the second site when
+the page is on github.io, and next to the page anywhere else (local servers, `tools/qa`). One origin, so
+Cache Storage, the pack prefetch and the fetch wrapper work as before. Exports made before this change
+get the same lines at deploy time (`tools/desktop_site/patch_index.py`, a no-op on newer exports).
+
+**Publishing.** `tools/publish_build.sh` refuses when either site's set reaches 0.95 GB, then, after
+replacing `godot-build`, replaces the desktop repo's single commit (its workflow, `README.md`, and
+`build.txt` = the `godot-build` commit); that push deploys the computer packs. A cloud session that
+publishes needs `Houma-Mall-Rewind-desktop` attached with push access as well. The two deploys finish a
+minute or two apart; a computer that loads in that gap may get the previous build's pack once.

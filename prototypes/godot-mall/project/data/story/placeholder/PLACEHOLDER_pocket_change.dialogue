@@ -1,0 +1,30 @@
+# PLACEHOLDER conversation (workstream Q). Not story: Steven writes the real one.
+# The shape to copy: two levels, three responses each, one right path, a give at the end.
+# Grammar: design/godot-dialogue.md.
+
+~ start
+if placeholder_pocket_change_done
+	PLACEHOLDER Pocket Change attendant: PLACEHOLDER line: already done, {{name}}.
+	=> END
+PLACEHOLDER Pocket Change attendant: PLACEHOLDER line 1, {{name}}.
+PLACEHOLDER Pocket Change attendant: PLACEHOLDER line 2 (a question).
+- PLACEHOLDER response 1 (wrong)
+	PLACEHOLDER Pocket Change attendant: PLACEHOLDER line: wrong path 1.
+	=> END
+- PLACEHOLDER response 2 (right path)
+	PLACEHOLDER Pocket Change attendant: PLACEHOLDER line 3 (a second question).
+	- PLACEHOLDER response 2.1 (wrong)
+		PLACEHOLDER Pocket Change attendant: PLACEHOLDER line: wrong path 2.1.
+		=> END
+	- PLACEHOLDER response 2.2 (right path)
+		PLACEHOLDER Pocket Change attendant: PLACEHOLDER line 4.
+		set placeholder_pocket_change_done = true
+		give candy_neck
+		PLACEHOLDER Pocket Change attendant: PLACEHOLDER line 5 (after the give).
+		=> END
+	- PLACEHOLDER response 2.3 (wrong)
+		PLACEHOLDER Pocket Change attendant: PLACEHOLDER line: wrong path 2.3.
+		=> END
+- PLACEHOLDER response 3 (wrong)
+	PLACEHOLDER Pocket Change attendant: PLACEHOLDER line: wrong path 3.
+	=> END

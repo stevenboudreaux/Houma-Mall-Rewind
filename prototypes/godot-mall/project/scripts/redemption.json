@@ -1,0 +1,23 @@
+{
+ "_": "Pocket Change's redemption counter stock (scripts/redemption.gd; design/godot-prize-counter.md 'Redemption'). One entry per prize, shown in this order. item: the data/items/*.json id the player receives. prize: the scripts/prizes.json key it stands for: its name and ticket price come from there, so the price on the counter's card and on this screen are the same. tickets: a price for a stock item with no prizes.json price (or one that overrides it). Steven changes the numbers here (or in prizes.json).",
+ "stock": [
+  {"item": "pc_chew", "prize": "chew"},
+  {"item": "bl_pc_fingertrap", "prize": "finger_trap"},
+  {"item": "pc_jelly_trap", "prize": "jelly_trap"},
+  {"item": "candy_neck", "prize": "candy_neck"},
+  {"item": "pc_candy_cig", "prize": "candy_cig"},
+  {"item": "slap", "prize": "slap"},
+  {"item": "pogs", "prize": "pogs"},
+  {"item": "spring", "prize": "spring"},
+  {"item": "dice", "prize": "dice"},
+  {"item": "bl_pc_boombox", "prize": "boombox", "tickets": 500, "_": "Steven's number (Nov 2). The wall's boom boxes are tagged 5,000 (prizes.json 'boombox'); one of the two should change."},
+  {"item": "pc_big_dice", "prize": "big_dice"},
+  {"item": "bl_pc_plush_bear", "tickets": 700},
+  {"item": "bl_pc_plush_bunny", "tickets": 700},
+  {"item": "bl_pc_plush_dog", "tickets": 700},
+  {"item": "pc_alien", "prize": "alien"},
+  {"item": "pc_ball", "prize": "ball"},
+  {"item": "pc_vpet", "prize": "vpet"},
+  {"item": "pc_lava", "prize": "lava"}
+ ]
+}

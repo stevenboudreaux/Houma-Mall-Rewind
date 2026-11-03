@@ -14,7 +14,7 @@
 ## and mallets, so the pair does not look cloned.
 ##
 ## Preview:
-##   tools/qa/preview.sh airhockey /home/claude/southland-mall-95/.scratch/preview/airhockey/a \
+##   tools/qa/preview.sh airhockey /home/claude/houma-mall-rewind/.scratch/preview/airhockey/a \
 ##     "0,1.6,1.3,0,-25;2.4,1.7,1.0,50,-20;3.2,1.3,-1.2,90,-10" '{"number":1}' lit
 
 const W = 1.35      # width (player's right)

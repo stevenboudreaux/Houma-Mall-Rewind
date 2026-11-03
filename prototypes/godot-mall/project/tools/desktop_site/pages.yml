@@ -1,0 +1,54 @@
+# The second site of Houma Mall Rewind (design/godot-build-hosting.md "Two sites" in
+# stevenboudreaux/Houma-Mall-Rewind). A GitHub Pages site may hold 1 GB and the game is more, so this
+# site serves only the computer packs (w*.desktop.pck) of the build on Houma-Mall-Rewind's godot-build
+# branch; the main site serves the page, the phone packs and everything else. Same origin
+# (stevenboudreaux.github.io), so the game fetches and caches them as if they were next to it.
+# This repository holds one commit, replaced by tools/publish_build.sh on every publish (build.txt names
+# the godot-build commit); that push starts this workflow. The source of this file is
+# prototypes/godot-mall/project/tools/desktop_site/pages.yml in Houma-Mall-Rewind: edit it there.
+name: Deploy the computer packs to Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: stevenboudreaux/Houma-Mall-Rewind
+          ref: godot-build
+          path: build
+          filter: blob:none
+          sparse-checkout: |
+            play/*.desktop.pck
+          sparse-checkout-cone-mode: false
+      - name: The computer packs
+        run: |
+          mkdir -p site
+          cp build/play/*.desktop.pck site/
+          git -C build rev-parse HEAD > site/build.txt
+          touch site/.nojekyll
+          printf '%s\n' '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Houma Mall Rewind</title>' \
+            '<meta http-equiv="refresh" content="0; url=../Houma-Mall-Rewind/"></head>' \
+            '<body><p><a href="../Houma-Mall-Rewind/">Houma Mall Rewind</a></p></body></html>' > site/index.html
+          ls site/*.desktop.pck | wc -l
+          B=$(du -sb site | cut -f1); echo "site: $B bytes"
+          [ "$B" -lt 1000000000 ] || { echo "::error::the computer packs are $B bytes, over Pages' 1 GB"; exit 1; }
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

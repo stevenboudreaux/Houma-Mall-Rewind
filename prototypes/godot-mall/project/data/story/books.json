@@ -1,0 +1,8 @@
+{
+ "_": "Books (workstream Q, design/godot-dialogue.md 'Books'): item id -> the .dialogue file the reader runs. The three B. Dalton paperback ids are copies of the same item. PLACEHOLDER until Steven writes the book.",
+ "books": {
+  "bl_bd_paperback": "res://data/story/placeholder/PLACEHOLDER_book.dialogue",
+  "bl_bd_paperback_b": "res://data/story/placeholder/PLACEHOLDER_book.dialogue",
+  "bl_bd_paperback_c": "res://data/story/placeholder/PLACEHOLDER_book.dialogue"
+ }
+}

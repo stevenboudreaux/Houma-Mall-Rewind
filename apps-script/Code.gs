@@ -15,11 +15,11 @@
    which keeps the same URL. */
 var CONFIG={
   GITHUB_TOKEN:"PASTE_YOUR_GITHUB_TOKEN_HERE",
-  REPO:"stevenboudreaux/Southland-Mall-95",
+  REPO:"stevenboudreaux/Houma-Mall-Rewind",
   BRANCH:"main",
   ADMIN_KEY:"PICK_A_PASSPHRASE",
   NOTIFY_EMAIL:"steven_boudreaux@outlook.com",
-  SITE:"https://stevenboudreaux.github.io/Southland-Mall-95/"
+  SITE:"https://stevenboudreaux.github.io/Houma-Mall-Rewind/"
 };
 
 function doGet(e){return out({ok:true,service:"southland-photos"});}

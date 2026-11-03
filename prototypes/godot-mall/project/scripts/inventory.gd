@@ -17,6 +17,14 @@
 extends RefCounted
 
 signal changed
+# --- R (Nov 2; design/godot-prize-counter.md "The pop-up contract") -------------------------------
+## Fires for every item that enters the player's things from outside: bought, given (add), picked up
+## (take). Not for moves between the hand and the bag. scripts/received_popup.gd shows a card for it.
+signal received(id: String)
+## The redemption screen (scripts/redemption.gd) once it is made; null until then. The Pocket Change
+## attendant and the counter glass call mall.redemption.open().
+var redemption = null
+# --- end R ----------------------------------------------------------------------------------------
 
 const VERSION := 1
 
@@ -28,6 +36,57 @@ var moved := {}
 # P (COIN COMET, Nov 2026): fields other systems keep in this record, carried through a round
 # trip unchanged ("quarters": the player's stake, written by play/pusher.html)
 var extra := {}
+## Q (design/godot-quests.md): the quest flags, scripts/flags.gd; made by interact.gd. Saved apart
+## (localStorage "mall-flags-1", both years), not in this file's JSON.
+var flags = null
+## ---- M (design/godot-menu.md): the player's name and the held item, read by other workstreams.
+## mall.player_name: a plain String ("" until the player types one in the menu's AVATAR tab). One
+## name for both years, so it is kept apart from the per-year state, in localStorage
+## "mall.player_name" (Engine meta off the web; the backend Dictionary in unit tests), loaded by
+## load_saved(). Setting it saves it and emits player_name_changed(name).
+signal player_name_changed(name: String)
+const NAME_KEY := "mall.player_name"
+const NAME_MAX := 20
+var player_name := "":
+	set(v):
+		v = clean_name(v)
+		if v == player_name:
+			return
+		player_name = v
+		_save_name()
+		player_name_changed.emit(player_name)
+
+## The item in the hand ("" when nothing is held). Session Q's dialogue reads it.
+func held_id() -> String:
+	return hand
+
+## A name as typed, made safe: no control characters, trimmed, at most NAME_MAX characters.
+static func clean_name(v) -> String:
+	var out := ""
+	for ch in str(v):
+		if ch.unicode_at(0) >= 32 and ch.unicode_at(0) != 127:
+			out += ch
+	return out.strip_edges().left(NAME_MAX).strip_edges()
+
+func _save_name() -> void:
+	if backend is Dictionary:
+		backend[NAME_KEY] = player_name
+	elif OS.has_feature("web"):
+		JavaScriptBridge.eval("(function(){try{localStorage.setItem(%s,%s)}catch(e){}try{window.mall=Object.assign(window.mall||{},{player_name:%s})}catch(e){}})()" % [JSON.stringify(NAME_KEY), JSON.stringify(player_name), JSON.stringify(player_name)], true)
+	else:
+		Engine.set_meta("mall_player_name", player_name)
+
+func load_player_name() -> void:
+	var s = ""
+	if backend is Dictionary:
+		s = str(backend.get(NAME_KEY, ""))
+	elif OS.has_feature("web"):
+		s = JavaScriptBridge.eval("(function(){try{return localStorage.getItem(%s)||''}catch(e){return ''}})()" % JSON.stringify(NAME_KEY), true)
+	else:
+		s = str(Engine.get_meta("mall_player_name", ""))
+	player_name = s if s is String else ""
+## ---- end M
+
 ## Where save()/load_saved() keep the JSON. null: localStorage on the web, else Engine metadata
 ## (survives a scene change in the editor or a test). A Dictionary: kept in it (unit tests).
 var backend = null
@@ -45,10 +104,13 @@ func count(id: String) -> int:
 func has(id: String) -> bool:
 	return count(id) > 0
 
-## Put n of item id into the inventory (not the hand).
-func add(id: String, n := 1) -> void:
+## Put n of item id into the inventory (not the hand). R: shows the "You received" pop-up unless quiet
+## (quiet = a move between the hand and the bag).
+func add(id: String, n := 1, quiet := false) -> void:
 	if id == "" or n <= 0:
 		return
+	if not quiet:
+		received.emit(id)   # R
 	for e in inventory:
 		if e.id == id:
 			e.count = int(e.count) + n
@@ -80,7 +142,7 @@ func hold(id: String) -> bool:
 	if not remove(id):
 		return false
 	if hand != "":
-		add(hand)
+		add(hand, 1, true)   # R: quiet
 	hand = id
 	changed.emit()
 	return true
@@ -91,7 +153,7 @@ func put_away() -> void:
 		return
 	var id := hand
 	hand = ""
-	add(id)
+	add(id, 1, true)   # R: quiet
 
 # ------------------------------------------------------------------ the world
 ## Picked up from the world: no longer there; into the hand when to_hand and the hand is empty
@@ -100,8 +162,9 @@ func take(id: String, to_hand: bool) -> void:
 	moved[id] = {}
 	if to_hand:
 		if hand != "":
-			add(hand)
+			add(hand, 1, true)   # R: quiet
 		hand = id
+		received.emit(id)   # R
 		changed.emit()
 	else:
 		add(id)
@@ -185,6 +248,7 @@ func save() -> void:
 
 ## Load this year's saved state, if any. True when one was read.
 func load_saved() -> bool:
+	load_player_name()   # M: the name, kept apart from the per-year state
 	var s := ""
 	if backend is Dictionary:
 		s = str(backend.get(storage_key(), ""))

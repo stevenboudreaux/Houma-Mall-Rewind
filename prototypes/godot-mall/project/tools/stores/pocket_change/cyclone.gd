@@ -14,7 +14,7 @@
 ## Invented title: WHIRLWIND (owner-editable side decals). No real name, logo or art.
 ##
 ## Preview:
-##   tools/qa/preview.sh cyclone /home/claude/southland-mall-95/.scratch/preview/cyclone/final-lit \
+##   tools/qa/preview.sh cyclone /home/claude/houma-mall-rewind/.scratch/preview/cyclone/final-lit \
 ##     "0,1.6,1.9,0,-17;1.9,1.6,1.3,52,-17;2.5,1.2,-0.65,90,-6;0,1.75,0.15,0,-50" '{}' lit|dark
 ## Preview frames land at t = 2, 4, 6, 8 ... s, so repeating one camera shows the lights
 ## stepping (t = 6 falls in the whole-ring flash).

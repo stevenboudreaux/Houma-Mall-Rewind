@@ -42,12 +42,12 @@ with sync_playwright() as p:
     def touch(t, x, y):
         pts = [] if t == "touchEnd" else [{"x": x, "y": y, "id": 1}]
         cdp.send("Input.dispatchTouchEvent", {"type": t, "touchPoints": pts})
-    before = [l for l in logs if l.startswith("DBG")][-1:]
+    before = [l for l in logs if l.startswith("DBG pos=")][-1:]
     touch("touchStart", 200, 300); time.sleep(0.2)
     for i in range(1, 11):
         touch("touchMove", 200, 300 - i * 6); time.sleep(0.05)
     time.sleep(4)
-    during = [l for l in logs if l.startswith("DBG")][-1:]
+    during = [l for l in logs if l.startswith("DBG pos=")][-1:]
     touch("touchEnd", 0, 0); time.sleep(1)
     print("walk before:", before); print("walk during:", during)
     pos = lambda s: re.search(r"pos=\(([^)]*)\)", s[0]).group(1) if s else None

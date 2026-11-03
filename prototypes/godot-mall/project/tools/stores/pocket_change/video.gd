@@ -1,6 +1,6 @@
 ## Pocket Change (1995): upright video arcade cabinets, eight US form factors.
 ## Contract: tools/stores/pocket_change/README.md. Textures: paint_video.py -> tex/pc/video_*.png.
-##   tools/qa/preview.sh video /home/claude/southland-mall-95/.scratch/preview/video/s0 "0,1.5,2.2,0,-12" '{"style":0}'
+##   tools/qa/preview.sh video /home/claude/houma-mall-rewind/.scratch/preview/video/s0 "0,1.5,2.2,0,-12" '{"style":0}'
 ##
 ## opts.style:
 ##   0  2-player fighting upright (black, 6 buttons a player)        THUNDER DOJO

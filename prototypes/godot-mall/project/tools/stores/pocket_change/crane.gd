@@ -8,7 +8,7 @@
 ## opts {"style": 0..2}: 0 black PRIZE CATCHER (classic bears), 1 blue LUCKY GRAB (pastels),
 ## 2 red SKILL CRANE (brights). All titles and art are invented.
 ## Textures: tools/stores/pocket_change/paint_crane.py -> tex/pc/crane_*.png
-##   tools/qa/preview.sh crane /home/claude/southland-mall-95/.scratch/preview/crane/a "0,1.55,2.2,0,-12;1.6,1.5,1.6,45,-12" '{"style":0}' lit
+##   tools/qa/preview.sh crane /home/claude/houma-mall-rewind/.scratch/preview/crane/a "0,1.55,2.2,0,-12;1.6,1.5,1.6,45,-12" '{"style":0}' lit
 
 const W = 0.80
 const D = 0.90

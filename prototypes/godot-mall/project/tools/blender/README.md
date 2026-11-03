@@ -13,6 +13,7 @@ Scripted, headless Blender models for the Godot mall. Read `.claude/skills/blend
 | `build.py` | the driver run.sh calls: clean, budget, bake, export, re-import, turntable, icon, item JSON |
 | `budgets.json` | triangle/texture budgets per class (read by the build) |
 | `lib/` | core, parts (kitbash), mats (+ decals), labels (PIL art), bake, clean, render |
+| `compare.py` | review sheet for a rebuild: the reference, the new .glb and the previous .glb at the same angles |
 | `godot_check.gd/.sh` | puts .glb files into `tools/qa/preview.gd`'s scene (stage or `store:<NAME>`) |
 
 Outputs: `res://models/<id>/` (.glb, PNG maps, icon), `.scratch/blender/<id>-sheet.png`, `<id>-report.json`,

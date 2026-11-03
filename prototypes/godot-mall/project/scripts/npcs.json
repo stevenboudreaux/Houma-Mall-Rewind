@@ -461,5 +461,10 @@
 				-45.95
 			]
 		}
-	]
+	],
+	"years": {
+		"_": "Workstream M (design/godot-menu.md): NPCs per year. count = the crowd's size; ids = which characters (empty: the first count of the crowd pool, npc/skins.json order); roles false = no drunk, pairs, arcade players or salon visitors; layout = the year's stores. 1995 keeps the numbers above.",
+		"1995": {},
+		"2026": {"count": 3, "ids": [], "roles": false, "layout": "res://layout_2026.json"}
+	}
 }

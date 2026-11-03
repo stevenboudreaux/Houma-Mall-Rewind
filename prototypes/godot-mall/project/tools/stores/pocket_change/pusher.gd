@@ -21,7 +21,7 @@
 ## with a marquee face on each side and no backs.
 ##
 ## Preview:
-##   tools/qa/preview.sh pusher /home/claude/southland-mall-95/.scratch/preview/pusher/a \
+##   tools/qa/preview.sh pusher /home/claude/houma-mall-rewind/.scratch/preview/pusher/a \
 ##     "0,1.6,2.6,0,-12;2.4,1.7,1.9,45,-12;3.2,1.5,0.55,90,-6" '{}' lit
 
 const W = 1.65      # width (player's right)
