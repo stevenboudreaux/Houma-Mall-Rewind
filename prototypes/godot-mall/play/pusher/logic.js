@@ -18,9 +18,10 @@
     priceCents: 25,           // a drop: one quarter from the wallet (ECON, Nov 3: the price it always had)
     ticketsPerCoin: 50,       // Steven, Nov 2: quarters to play, tickets to win. A coin into the cup pays this many
                               // tickets to the year's tickets (the count the prize counter spends); it is not a quarter back
-    lipMm: 0.5,               // the lip's height over the shelf (owner setting; the house's payout control).
-                              // Tuned with sim.js GEOM.coinFriction for ~8 % of coins dropped into the cup (soak table
-                              // in design/storefronts/pocket-change.md)
+    lipMm: 0.5,               // the lip's height over the main tier (owner setting; the house's payout control).
+                              // Tuned with sim.js GEOM (the 2 degree tilt, the walled sides) so about two thirds of the
+                              // coins dropped come back and a third of the drops pay (soak table in
+                              // design/storefronts/pocket-change.md "COIN COMET plays like a pusher")
     lipRange: [0, 6],
     tiltWindowMs: 6000,       // nudges inside this window add up (6 s: at the low friction the sim needs, bumps pay) ...
     tiltTrip: 2.6,            // ... and trip the tilt when their power passes this
@@ -32,8 +33,8 @@
     slotMm: 24.5,             // a bigger coin won't go in; a smaller one goes in and is lost
     slotHalfW: 23.0,          // cm the coin mechanism slides to either side of the centre
     slotSpeed: 30,            // cm/s with the keys or a stick
-    quality: { low: 540, medium: 620, high: 760 },   // coins in a fresh machine (sim.js fresh(): both single layers full at 525, then the ridges); high
-                              // 760 is the tuned heap (Demo 48 soak); fewer coins pay less
+    quality: { low: 360, medium: 410, high: 460 },   // coins in a fresh machine (sim.js fresh(): two layers on both tiers at low, three at high,
+                              // the primed state); fewer coins store more drops before they pay, and cost a phone less
     positions: 6,             // three per side
     saveVersion: 1,
   };
@@ -98,8 +99,9 @@
   }
 
   // ------------------------------------------------------------------ accounting
-  /** A fresh ledger. in: coins dropped by the player; cup: paid to the player; side: into the
-   *  house's side holes; tilt: over the front edge while the gate was over; lost: not quarters. */
+  /** A fresh ledger. in: coins dropped by the player; cup: paid to the player; side: lost past a
+   *  side wall (walled since the PUSHER rebuild: a physics failure if ever); tilt: over the front
+   *  edge while the gate was over; lost: not quarters. */
   function ledger() { return { in: 0, cup: 0, side: 0, tilt: 0, lost: 0, nudges: 0, tilts: 0 }; }
 
   /** The ledger after a sim event ('cup' | 'side' | 'house-tilt' | 'lost'). */
