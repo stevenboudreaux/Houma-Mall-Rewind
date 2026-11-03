@@ -2,8 +2,9 @@
 ## unbaked (no lightmap). In one wing:
 ##   - the creator: opened, shot at desktop and phone sizes (portrait and landscape), Random, Done;
 ##   - for each spot: third person walking (TP_WALK m/s, the walk clip at ground speed) and running
-##     (TP_WALK x RUN, the sprint clip at ground speed, the camera pivot on the player, not trailing;
-##     WALK, Nov 3 2026) and standing (idle), the camera kept inside the walk grid and off the glass;
+##     back the way it came (TP_WALK x RUN, the sprint clip at ground speed, the camera pivot on the
+##     player, not trailing; WALK, Nov 3 2026) and standing (idle), the camera kept inside the walk
+##     grid and off the glass;
 ##     then first person at the same spot, which must be exactly the old view (player.cam current at
 ##     eye height, move_scale 1, avatar hidden);
 ##   - a held item in the avatar's right hand (wing 2: the fuzzy dice);
@@ -133,6 +134,9 @@ func _plan() -> void:
 		# WALK: running (the run action held with the stick) is TP_WALK x RUN = 6.6 m/s on the sprint clip,
 		# played at ground speed; the camera's pivot sits on the player (it used to trail at speed)
 		_do(func():
+			# back the way it came (the walk just proved that floor; 6.6 m on could be a prize counter's
+			# closer look, which freezes the player: Pocket Change)
+			player.yaw += PI; player._apply_rot()
 			if not InputMap.has_action("mall_run"): InputMap.add_action("mall_run")
 			Input.action_press("mall_run"), 1.0)
 		_do(func():
