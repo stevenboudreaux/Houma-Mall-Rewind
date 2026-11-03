@@ -49,8 +49,8 @@ Shared files, small hunks marked `B2`:
   `AvatarBody`; `_wear_body()`.
 - `scripts/menu/menu.gd` (M): `_make_creator()` makes the character editor (player mode) when the pack
   ships the bodies, else V's creator; the mouse wheel goes to it.
-- `export_presets.cfg`: the `models/characters/...` entries of each wing preset's `include_filter`
-  (written by `tools/chars/pack_list.py --write`).
+- `export_presets.cfg` (CHARS): every wing preset excludes the character models and maps; the presets
+  "Shared Desktop" / "Shared Mobile" export the character packs (`tools/make_presets.py`, `tools/shared_packs.py`).
 - `tools/blender/characters/loose.py` (B1): `apron_part` missed-ray fix.
 - `design/godot-characters.md` (B1): THE CLOTHED RULE (B-FIX) at its top.
 
@@ -145,8 +145,8 @@ Shared files, small hunks marked `B2`:
    (or hand it to a session: "commit this as data/characters/pocket_change.json").
 4. After it is committed and published, **NAME → Forget this browser's edit** (optional): his browser then
    uses the repo file like everyone else.
-5. If the preset uses a piece no other preset in that wing uses, run
-   `python3 tools/chars/pack_list.py --write` before the export so the pack ships it.
+5. Nothing to run for the packs: `tools/export_web.sh` ships every piece the committed presets wear
+   (`python3 tools/chars/pack_list.py` shows where each one lands).
 A **new** NPC preset: copy an existing file to `data/characters/<new_id>.json`, point an attendant's
 `"preset"` (or `npcs.json` `"presets"`) at it, then edit it in the game.
 
@@ -176,43 +176,47 @@ Mixamo NPCs' 0.9k–10k; baking costs **76–94 ms per body at load** (native) a
 Expectation for an iPhone (a guess until measured): baked bodies cost what any skinned 25k-tri mesh
 costs (skinning only); live blend shapes (60+) are for the editor's one preview body.
 
-## Packs (`tools/chars/pack_list.py`)
-The wing packs ship **no** character files: wing 2 (1995) is already 95.8 MB, and inlining the
-characters measured **140.9 MB (wing 1) / 145.6 MB (wing 2)**. Instead each map has its own character
-pack, `chars_<map>.<desktop|mobile>.pck`, with only that map's presets' bodies / hair / pieces and the
-player wardrobe (`data/characters/_wardrobe.json`), exported by `tools/chars/export_chars.sh` (called
-from `tools/export_web.sh`) and fetched + mounted at start by `scripts/chars/char_pack.gd`.
+## Packs (CHARS, Nov 3 2026: `tools/chars/pack_list.py`, `tools/shared_packs.py`)
+The wing packs ship **no** character models or maps (only `characters.json`). B2's plan was one
+character pack per map (`chars_<map>`, ~42–48 MB each, 12 maps × 2 kinds ≈ 1 GB on top of the build,
+more than a whole Pages site holds). Instead the character files are **shared packs**
+(`design/godot-build-hosting.md` "Shared packs"):
+- **`chars`**: what every map needs: both bodies, the clothed defaults, the player's wardrobe
+  (`data/characters/_wardrobe.json`) and every map those pieces use. Downloaded once for the whole mall.
+- **`chars_<map>`**: only the pieces that map's presets wear beyond `chars` (exported only for maps that
+  have any). Today `chars_w1` (Kay-Bee, Sound Shop: `full_storeapron_female`, `x_cap_back_male`) and
+  `chars_w2` (Pocket Change: `bot_slacks_female`, `full_storevest_female`, `x_watch_female`).
+- Nothing else from `models/characters/` ships (no unused hair, pieces or the `_hi` bodies).
+- `python3 tools/chars/pack_list.py` prints, per map, the presets and files, and the split.
+- On the web the page fetches `chars` + the map's `chars_<map>` after the loading card lifts and
+  `scripts/chars/char_pack.gd` mounts them; until then the attendants wear their Mixamo fallback (clothed)
+  and the avatar is V's body; the owner's "Edit character" button waits for the preset body.
 
-| Map | Wing pack before | Wing pack after | Character pack |
-|---|---|---|---|
-| wing 1 1995 | 92.54 MB | 92.54 MB | 48.3 MB |
-| wing 2 1995 | 95.76 MB | 95.77 MB | 49.9 MB |
-| outside 1995 | 31.89 MB | 31.89 MB | 48.0 MB |
-| wing 1 2026 | 44.01 MB | 44.02 MB | 48.0 MB |
-| wing 2 2026 | 88.40 MB | 88.40 MB | 48.0 MB |
-| outside 2026 | 14.81 MB | 14.81 MB | 48.0 MB |
-Every pack is under 100 MB.
+Sizes are measured in `design/godot-build-hosting.md` "Shared packs".
 
-**B-FIX include list (Nov 2, `tools/chars/pack_list.py`, source-file sizes; the table above is B2's
-imported sizes).** `models/characters/` is now **67.9 MB** (was 77.8 MB: the 15 base-layer pieces and the
-lace / satin fabrics are gone). Every map ships the same 35 `.glb` + 33 textures (28.2 MB, was 32.5 MB):
-both bodies (`body_female`, `body_male`), the clothed defaults and wardrobe for both bodies (`top_tee`,
-`top_polo`, `top_flannel`, `top_sweatshirt`, `bot_jeans`, `bot_khakis`, `bot_longshorts`, `bot_skirt`
-(female), `shoe_sneakers`, `x_cap_fwd`, `x_glasses`), the six wardrobe hairs (`hair_shoulder`,
-`hair_long`, `hair_crew`, `hair_sidepart`, `hair_puffs`, `hair_bowl`), the skin / eye / lash / hair maps,
-the fabric maps those pieces use and the five pattern maps. Plus, per map, the attendants' own pieces:
-
-| Map | Presets | Extra files | Source total |
-|---|---|---|---|
-| wing 1 1995 | kay_bee, sound_shop | `full_storeapron_female`, `x_cap_back_male` | 28.7 MB |
-| wing 2 1995 | pocket_change | `bot_slacks_female`, `full_storevest_female`, `x_watch_female` | 29.6 MB |
-| outside 1995 | – | – | 28.2 MB |
-| wing 1 / 2 / outside 2026 | – | – | 28.2 MB each |
-
-B2 measured 48–50 MB imported for 32.5–33.8 MB of source; scaled, a character pack is now about
-42–44 MB imported, separate from the wing packs (unchanged, ≤ 95.8 MB). The 100 MB ceiling holds.
-(Computed with B2's `attendants.json` / `npcs.json`, which come with the hooks patch.) `models/characters/` is 77.8 MB in all; a character pack is mostly the
-two bodies (9.5 + 8.9 MB imported), the skin maps and the wardrobe. The wardrobe is the size knob.
+## How to add an attendant (after CHARS; the steps round 2's store sessions follow)
+Only when Steven asks for that attendant (no session invents a character, name or line). Test data
+is marked PLACEHOLDER.
+1. **The preset:** copy an existing preset to `prototypes/godot-mall/project/data/characters/<id>.json`
+   (e.g. `sound_shop.json`), set `"id": "<id>"`, `"name": "PLACEHOLDER"` (or the name Steven gives),
+   and the body / pieces / colours Steven asks for (piece ids: `models/characters/characters.json`
+   "pieces" `base_id`). The clothed rule applies on load (a closed top and a bottom, or a full outfit).
+2. **The attendant:** add an entry to `data/story/attendants.json` "attendants": `id`, `store`, `wing`,
+   `years`, `area` `[x0, z0, x1, z1]` (behind the counter), `face`, `talk_at`, `dialogue` (a PLACEHOLDER
+   `.dialogue` file unless Steven wrote one), `name`, plus the Mixamo fallback `skin` / `sex`, and
+   **`"look": "preset", "preset": "<id>"`**. (A shopper instead: `scripts/npcs.json` `"presets"`
+   `{"<skin id>": "<id>"}`.)
+3. **Check the packs:** `python3 tools/chars/pack_list.py` (run from the project folder). The new
+   preset is listed under its wing and year; any piece it wears that is not in `chars` lands in that
+   map's `chars_<map>`. Nothing to write by hand: `tools/export_web.sh` exports what this prints.
+4. **Test natively:** `godot --headless --path . --script res://tools/qa/char_clothed_test.gd` (CHAR CLOTHED OK)
+   and `... char_editor_test.gd -- --only=unit` (CHAR EDITOR OK).
+5. **Test on the web:** `tools/export_web.sh .scratch/builds/<name>` (or `SHARED=1` with the wing you
+   changed), serve the repo root on :8765, and run
+   `node tools/qa/shared_webtest.js prototypes/godot-mall/project/.scratch/builds/<name>/index.html <out> w<n>`
+   after adding the attendant's id to `DRESSED` and a camera to `CAM` in that script: it must print
+   `<id> dressed from its preset` and SHARED WEB OK. Keep a screenshot in `production/qa/evidence/`.
+6. Attendants are probe-lit, not baked: no rebake for the attendant itself (the counter's store may need one).
 
 ## Apron (B1's known defect)
 The store apron's stray panel: at the bib's top row the outer rays pass beside the chest (the shoulder
@@ -229,6 +233,13 @@ session): the generator fix is untested until the next `garments.py` run.
   Story both added after Avatar: both kept, Menu first), `scripts/inventory.gd` (both M's name contract
   and Q's flags kept), `export_presets.cfg` (Q's include filters with M's exclude filters).
 - Merge order for the integration session: M, Q, B1, then this branch (it already contains them).
+
+## Checks (Nov 3, CHARS; evidence `production/qa/evidence/wsCHARS-packs.md`)
+- Native: CHAR CLOTHED OK (1608 checks), CHAR EDITOR OK (16 checks, `--only=unit`).
+- Web, every map (12) on both pack kinds: the character packs mount, the three PLACEHOLDER attendants are
+  dressed from their presets, the player's avatar is the preset body (third person), 0 console errors.
+- Web, B2's `char_webtest.js`: K opens the owner's editor, the menu's AVATAR tab hosts the editor,
+  phone portrait: CHAR WEB OK. movetest (wing 1): walks, 0 errors.
 
 ## Checks (Nov 2)
 - B-FIX: `tools/qa/char_clothed_test.gd` (headless): **CHAR CLOTHED OK (1608 checks)**;
@@ -247,16 +258,17 @@ session): the generator fix is untested until the next `garments.py` run.
   Mixamo skins, but **the character pack did not mount** (a page error "null function", no `char_pack`
   line): open bug, below. **movetest not run.**
 
-## Open bugs (Nov 2, for the next session)
-- **Web: the character pack doesn't mount.** The build loads and plays, attendants show their Mixamo
-  fallback, the console has one "null function" page error. Suspects: `HTTPRequest.download_file`
-  into `user://` on the web, or `ProjectSettings.load_resource_pack` on a 48 MB file in the web FS. Next
-  step: log each stage in `char_pack.gd`, try fetching through JavaScript into the FS instead.
-  Until fixed, the web game keeps V's avatar and creator and the Mixamo attendants (no regression).
-- The owner's "Edit character" button shows near an attendant whose preset body isn't loaded yet
-  (it should wait for CharPack).
+## Open bugs (updated Nov 3, CHARS)
+- **Fixed (CHARS): web: the character pack doesn't mount.** The pack is no longer fetched by Godot
+  (`HTTPRequest.download_file` into `user://`): the page fetches the shared character packs after the
+  loading card lifts and copies them into the engine's file system (`web/shell.html` `mallFetchLater`),
+  and `char_pack.gd` mounts them (`scripts/shared_packs.gd`). Every map mounts them with 0 console
+  errors (Checks). Which of the two Nov 2 suspects caused "null function" was not isolated: the old path
+  is gone.
+- **Fixed (CHARS):** the owner's "Edit character" button now waits for the preset body (an attendant
+  still on its Mixamo fallback is skipped, `char_owner.gd nearest()`).
 - V's shirt words aren't drawn on the B1 tee.
-- Perf table, wing 2 native run, the third-person shot and movetest still to do.
+- Perf table and the wing 2 native run still to do.
 
 ## Guesses (to confirm)
 - The three attendant presets' bodies, colours and clothes: placeholders from B1's shape presets
