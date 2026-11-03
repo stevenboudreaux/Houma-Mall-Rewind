@@ -864,6 +864,13 @@ const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
 // ?year=2026: the mall as it is today (same building, today's stores), its own pair of files per
 // wing: w1y26.* / w2y26.* (scripts/player.gd's 1995 / 2026 switch sets it).
 const PACK_SIZES = {"w1": {"desktop": 0, "mobile": 0}, "w2": {"desktop": 0, "mobile": 0}, "w3": {"desktop": 0, "mobile": 0}, "w1y26": {"desktop": 0, "mobile": 0}, "w2y26": {"desktop": 0, "mobile": 0}, "w3y26": {"desktop": 0, "mobile": 0}, "w4": {"desktop": 0, "mobile": 0}, "w5": {"desktop": 0, "mobile": 0}, "w6": {"desktop": 0, "mobile": 0}, "w4y26": {"desktop": 0, "mobile": 0}, "w5y26": {"desktop": 0, "mobile": 0}, "w6y26": {"desktop": 0, "mobile": 0}}; // PACK_SIZES
+// CHARS (Nov 3 2026, design/godot-build-hosting.md "Shared packs"): packs shared by every wing instead of
+// copied into each wing pack: "items" (the Blender items, downloaded with the wing pack and mounted before
+// its scene loads: at "start") and "chars" / "chars_<map>" (the character bodies and pieces, fetched once
+// the mall runs: "later"). Each is <name>.<desktop|mobile>.pck next to the wing packs, kept in the same
+// cache. maps: "all" or the map names (w1, w2y26, ...) that use it. tools/export_web.sh fills this in
+// (tools/shared_packs.py); a size of 0 = not exported, skipped.
+const SHARED_PACKS = {}; // SHARED_PACKS
 // Workstream S (Nov 2 2026, design/godot-wings.md "Wings 4-6"): rooms that are wings of their own,
 // entered through a threshold in a mall wing: 4 = Sears (Lynn's in 2026), 5 = Dillard's level 1,
 // 6 = the Southland Cinema (a placeholder lobby). MALL_ROOM: each room wing's mall wing.
@@ -912,12 +919,31 @@ if (mallSize(window.__mallWing)) { GODOT_CONFIG['fileSizes'][GODOT_CONFIG['mainP
 // years share it: until Oct 28 the cache was per year and switching years threw the other year's
 // files away, so every 1995 <-> 2026 switch downloaded its wing again (a minute on a slow line).
 const mallSizeOf = (name) => (PACK_SIZES[name] || {})[window.__mallPack] || 0;
-const MALL_CACHE = 'mall-wings-' + ['w1', 'w2', 'w3', 'w1y26', 'w2y26', 'w3y26', 'w4', 'w5', 'w6', 'w4y26', 'w5y26', 'w6y26'].map(mallSizeOf).join('-');
+const MALL_CACHE = 'mall-wings-' + ['w1', 'w2', 'w3', 'w1y26', 'w2y26', 'w3y26', 'w4', 'w5', 'w6', 'w4y26', 'w5y26', 'w6y26'].map(mallSizeOf).join('-')
+	+ Object.keys(SHARED_PACKS).map((n) => '-' + (SHARED_PACKS[n][window.__mallPack] || 0)).join('');   // CHARS: the shared packs too
+// CHARS: the shared packs this map uses (exported ones only), "start" or "later"
+const MALL_MAP = 'w' + window.__mallWing + window.__mallYear;
+const mallShared = (at) => Object.keys(SHARED_PACKS).filter((n) => {
+	const e = SHARED_PACKS[n];
+	return e.at === at && (e[window.__mallPack] || 0) > 0 && (e.maps === 'all' || (e.maps || []).indexOf(MALL_MAP) >= 0);
+}).map((n) => ({ name: n, group: n.split('_')[0], url: MALL_PACK_BASE() + n + '.' + window.__mallPack + '.pck', path: '/mall/' + n + '.pck', size: SHARED_PACKS[n][window.__mallPack] }));
+window.__mallMountNow = mallShared('start').map((s) => s.path);   // scripts/shared_packs.gd mounts these first
+mallShared('start').forEach((s) => { GODOT_CONFIG['fileSizes'][s.url] = s.size; });   // for the loading bar
+window.__mallLater = {};                                             // group -> [paths] | 'failed' (scripts/shared_packs.gd)
 const mallPackUrl = (w, year) => new URL(MALL_PACK_BASE() + 'w' + w + (year === undefined ? window.__mallYear : year) + '.' + window.__mallPack + '.pck', location.href).toString();
 if ('caches' in window) {
 	const netFetch = window.fetch.bind(window);
 	window.fetch = function (input, init) {
 		const url = typeof input === 'string' ? input : (input && input.url) || '';
+		// CHARS: a shared pack (items, chars, chars_<map>) is kept in the cache the first time it is fetched
+		const shared = /\/?([a-z0-9]+(_w[1-6](y26)?)?)\.(desktop|mobile)\.pck(\?|$)/.exec(url);
+		if (shared && SHARED_PACKS[shared[1]]) {
+			const abs = new URL(url, location.href).toString();
+			return caches.open(MALL_CACHE).then((c) => c.match(abs).then((r) => r || netFetch(input, init).then((resp) => {
+				if (resp && resp.ok) { c.put(abs, resp.clone()).catch(() => {}); }
+				return resp;
+			}))).catch(() => netFetch(input, init));
+		}
 		if (/w[1-6](y26)?\.(desktop|mobile)\.pck(\?|$)/.test(url)) {
 			const abs = new URL(url, location.href).toString();
 			return caches.open(MALL_CACHE).then((c) => c.match(abs)).then((r) => r || netFetch(input, init)).catch(() => netFetch(input, init));
@@ -1159,6 +1185,28 @@ const MALL_FACTS = [
 	}, wait);
 }());
 const engine = new Engine(GODOT_CONFIG);
+// CHARS (design/godot-build-hosting.md "Shared packs"): the "start" shared packs download with the wing pack
+// (one loading bar, the engine's own retries) and are in the file system when the engine starts.
+(function () {
+	const start = mallShared('start');
+	if (!start.length) { return; }
+	const preload = engine.preloadFile.bind(engine);
+	engine.preloadFile = function (file, path) {
+		return Promise.all([preload(file, path)].concat(start.map((s) => preload(s.url, s.path)))).then((r) => r[0]);
+	};
+}());
+// CHARS: the "later" shared packs (the characters), one after another once the mall runs, into the file
+// system; window.__mallLater[group] tells scripts/shared_packs.gd when a group is all in.
+window.mallFetchLater = function () {
+	const later = mallShared('later');
+	const groups = {};
+	later.forEach((s) => { (groups[s.group] = groups[s.group] || []).push(s); });
+	return Object.keys(groups).reduce((p, g) => p.then(() => groups[g].reduce((q, s) => q.then((paths) => window.fetch(s.url)
+		.then((r) => { if (!r.ok) { throw new Error(s.url + ': ' + r.status); } return r.arrayBuffer(); })
+		.then((buf) => { engine.copyToFS(s.path, buf); return paths.concat([s.path]); })), Promise.resolve([]))
+		.then((paths) => { window.__mallLater[g] = paths; })
+		.catch((e) => { console.warn('could not fetch the shared pack(s) ' + g + ':', e); window.__mallLater[g] = 'failed'; })), Promise.resolve());
+};
 
 (function () {
 	const statusOverlay = document.getElementById('status');
@@ -1284,8 +1332,9 @@ const engine = new Engine(GODOT_CONFIG);
 				setStatusMode('hidden');
 				if (window.mallTTLift) { window.mallTTLift(); }   // MENU2: the time-travel veil fades into the game
 				window.__mallControlAt = performance.now();
+				// CHARS: the character packs first (this map needs them), then the other wing
 				// fetch the other wing once this one is running and has settled
-				setTimeout(window.mallPrefetchOther, 6000);
+				window.mallFetchLater().then(() => setTimeout(window.mallPrefetchOther, 6000));
 			};
 			(function waitWarm() {
 				frames++;

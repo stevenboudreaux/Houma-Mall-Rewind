@@ -29,6 +29,10 @@ run/main_scene.wing6="res://wing6.tscn"
 run/main_scene.w6y26="res://wing6_2026.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
+[autoload]
+
+SharedPacks="*res://scripts/shared_packs.gd"
+
 [display]
 
 window/size/viewport_width=1280

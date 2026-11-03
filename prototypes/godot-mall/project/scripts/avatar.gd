@@ -49,7 +49,7 @@ const GAIT_MAX := 2.0         # playback cap (and 0.3 the floor)
 
 var player: Node3D
 var look := {}
-var body: AvatarBody
+var body                   # B2: an AvatarChar (a B1 body, the player's preset) or V's AvatarBody
 var tp_cam: Camera3D
 var third := false            # the saved choice
 var creator: Node = null
@@ -82,11 +82,12 @@ func _ready() -> void:
 		if Engine.has_meta("avatar_view"): third = str(Engine.get_meta("avatar_view")) == "third"
 		force_open = bool(Engine.get_meta("avatar_open", false))
 		cam_q = true
-	body = AvatarBody.new()
+	# B2 (design/godot-character-editor.md): the B1 body from the player's preset when this pack ships it
+	body = AvatarChar.new() if AvatarChar.available() else AvatarBody.new()
 	body.name = "Avatar"
 	player.get_parent().add_child.call_deferred(body)
 	body.ready.connect(func():
-		body.wear(look, player.year)
+		_wear_body()
 		body.visible = false, CONNECT_ONE_SHOT)
 	tp_cam = Camera3D.new()
 	tp_cam.name = "ThirdPersonCam"
@@ -370,7 +371,7 @@ func _creator_closed(L: Dictionary, how: String) -> void:
 			third = true            # you just made it: see it
 		look.view = "third" if third else "first"
 		Look.save_look(look)
-		body.wear(look, player.year)
+		_wear_body()
 	creator.queue_free()
 	creator = null
 	if _froze:
@@ -436,3 +437,31 @@ func _input(e: InputEvent) -> void:
 func _say(t: String) -> void:
 	if player.has_method("_say"):
 		player._say(t)
+
+## B2: the character pack is mounted (scripts/chars/char_pack.gd): V's body gives way to the player's
+## preset body (a held item moves with the hand on the next frame).
+func chars_ready() -> void:
+	if body is AvatarChar or not AvatarChar.available():
+		return
+	var was_visible: bool = body.visible
+	var old = body
+	body = AvatarChar.new()
+	body.name = "AvatarB2"
+	old.get_parent().add_child(body)
+	_wear_body()
+	body.position = old.position
+	body.rotation = old.rotation
+	body.visible = was_visible
+	var it = player.interact
+	if it and "hand_item" in it and it.hand_item and is_instance_valid(it.hand_item) and old.is_ancestor_of(it.hand_item):
+		var item: Node3D = it.hand_item
+		item.reparent(it.hand_root, false)
+		item.transform = _hand_xf.get(item.get_instance_id(), item.transform)
+	old.queue_free()
+
+## B2: dress the avatar (an AvatarChar wears the player's preset; V's body its look).
+func _wear_body() -> void:
+	if body is AvatarChar:
+		(body as AvatarChar).wear_look(look, player.year)
+	elif body is AvatarBody:
+		(body as AvatarBody).wear(look, player.year)

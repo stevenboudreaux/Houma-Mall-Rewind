@@ -158,3 +158,88 @@ replacing `godot-build`, replaces the desktop repo's single commit (its workflow
 `build.txt` = the `godot-build` commit); that push deploys the computer packs. A cloud session that
 publishes needs `Houma-Mall-Rewind-desktop` attached with push access as well. The two deploys finish a
 minute or two apart; a computer that loads in that gap may get the previous build's pack once.
+
+## Shared packs (workstream CHARS, Nov 3 2026)
+
+**Asked for (brief, Nov 3):** wing 1 was 98.6 MB and wing 2 97.1 MB against GitHub's 100 MB file limit
+(before the Demo 49b lightmaps), and round 2 adds Blender food, drinks, books, bar stock and attendants to
+these wings. New items must not count against the wing packs. Also: the web character pack did not mount,
+and `models/characters/` (~68 MB) must ship per wing and year only what the presets use.
+
+**What was built.** Files used by many maps ship once, as their own packs, instead of inside every wing pack:
+
+| Pack | Holds | When it loads | Maps |
+|---|---|---|---|
+| `items.<kind>.pck` | every `models/bl_*` folder (the Blender items and fixtures: food, drinks, books, toys, the lions, the stick) | with the wing pack, before the scene loads | all 12 |
+| `chars.<kind>.pck` | both character bodies, the player's wardrobe and the clothed defaults, their maps | once the mall is running | all 12 |
+| `chars_<map>.<kind>.pck` | only the pieces that map's presets wear on top of `chars` | with `chars` | maps whose presets need any (today `w1`, `w2`) |
+
+- **The list:** `tools/shared_packs.json` (non-character packs, by path glob) and `tools/chars/pack_list.py`
+  (the character split, worked out from `data/story/attendants.json`, `scripts/npcs.json` "presets" and
+  `data/characters/_wardrobe.json`). `python3 tools/shared_packs.py` prints the packs and their files.
+- **Export:** `tools/export_web.sh` exports the wings, then each shared pack through the presets
+  "Shared Desktop" / "Shared Mobile" (written by `tools/make_presets.py`; `tools/shared_packs.py --write=<name>`
+  points them at one pack at a time and the script restores the file afterwards), and writes their sizes
+  into `index.html`'s `SHARED_PACKS` line. `SHARED=0` skips them for a quick wing-only export.
+- **Wing presets:** every "Wing …" preset excludes `models/bl_*`, `models/characters/*.glb` and
+  `models/characters/*.png` (`make_presets.py` `SHARED_EXCLUDES`; an exclude also drops a scene's own
+  dependencies). `models/characters/characters.json` (212 KB) stays in the wing packs.
+- **The page** (`web/shell.html`): the "start" packs this map uses are added to the engine's own preload
+  (one loading bar, the engine's retries), so they are in the file system when the engine starts; the
+  "later" packs are fetched after the loading card lifts, one after another, and copied into the file
+  system with `engine.copyToFS()`; then the other-wing prefetch runs. Shared packs go into the same Cache
+  Storage as the wing packs (the cache name includes their sizes), so each downloads once for the whole mall.
+- **The game:** autoload `SharedPacks` (`scripts/shared_packs.gd`) mounts the "start" packs in its
+  `_init()`, before the main scene is loaded; `scripts/chars/char_pack.gd` waits for the character group
+  (`window.__mallLater.chars`) and mounts it, then the attendants and the avatar put their preset bodies
+  on (`chars_ready()`). Packs are mounted with `replace_files = false`, so the wing pack's copy of a file
+  always wins. Off the web (native runs, tests, the editor) nothing is mounted: the files are in `res://`.
+- **Hosting:** shared packs are named `<name>.desktop.pck` / `<name>.mobile.pck` like the wing packs, so
+  the two-site split needs no change: the desktop site's workflow copies every `*.desktop.pck`, main's
+  drops them. `tools/publish_build.sh` copies the shared packs listed in `index.html`, counts them in both
+  sites' totals, and now refuses any pack of 100 MiB or more (GitHub's file limit); `export_web.sh` warns
+  from 95 MB.
+- **The character pack bug** (Nov 2: "doesn't mount", a page error "null function"): `char_pack.gd`
+  fetched the pack with `HTTPRequest.download_file` into `user://`. The page now does the fetch (cached)
+  and hands the bytes to the engine's file system; `HTTPRequest` is no longer used for packs.
+
+### Measured (Nov 3 2026, this branch, unbaked; Demo 49 lightmaps from `godot-build`)
+"Before" is an export of this branch's merge of `main` + `ws/chars-live` without the CHARS changes (the
+Demo 49 live build measured w1 98.6, w2 97.0). Desktop and mobile packs are the same size to the byte, as
+before; the shared packs are even byte-identical between the two (all their textures are lossless WebP).
+
+| Pack | Before MB | After MB | Change |
+|---|---|---|---|
+| w1 | 98.91 | **85.21** | −13.70 |
+| w2 | 97.35 | **82.91** | −14.44 |
+| w3 | 31.98 | 31.98 | 0.00 |
+| w4 / w5 / w6 | 36.73 / 38.68 / 21.66 | 36.65 / 38.60 / 21.58 | −0.08 each (the stick) |
+| w1y26 | 43.09 | 43.09 | 0.00 |
+| w2y26 | 68.10 | 66.39 | −1.71 |
+| w3y26 | 14.85 | 17.81 | +2.96: `npc/anims.res`, so the player's preset body animates on the 2026 outside (the only pack that left the animations out) |
+| w4y26 / w5y26 / w6y26 | 31.35 / 33.48 / 21.79 | 31.27 / 33.40 / 21.71 | −0.08 each |
+| items (new, shared) | – | 22.64 | every Blender item once (was 30.3 MB spread over 9 packs) |
+| chars (new, shared) | – | 42.23 | the characters were not on the web before (the bug) |
+| chars_w1 / chars_w2 | – | 0.39 / 1.88 | the attendants' own pieces |
+| **All packs, one kind** | **538.0** | **577.7** | +39.7: +44.5 characters, +3.0 animations on the 2026 outside, −7.7 items no longer duplicated |
+
+- **Headroom under 100 MiB:** wing 1 has 19.6 MB (was 5.9), wing 2 21.9 MB (was 7.5), before the
+  Demo 49b lightmaps. Round 2's items cost the wing packs nothing: they land in `items` (22.6 MB of 104.9).
+- **Each site:** 577.7 MB of packs (+ 39.9 MB page and engine on the main site) of the 950 MB the
+  publish script allows (`DRY_RUN=1 tools/publish_build.sh`: all checks pass). Both sites carry the same shared packs, so the characters cost each site 44.5 MB once.
+- **A visitor's downloads:** the first wing now also downloads `items` (22.6 MB, once for the whole mall),
+  so a cold start in wing 1 fetches 107.8 MB at the start (was 98.9) and the characters (42.6 MB) in the
+  background; wing 2 afterwards is 82.9 MB (was 97.3). Wings 1 + 2 in 1995: 190.7 MB at start (was 196.3).
+
+### The options compared (why shared packs)
+| Option | Fixes the 100 MB file limit | Fixes the 1 GB site limit | Round 2 items | Cost / risk |
+|---|---|---|---|---|
+| **Shared packs (built)** | yes: items and characters leave the wing packs | helps: each item ships once, not per wing and year | land in `items`, never in a wing pack | an autoload and ~60 lines of page code; `items` itself must stay under 100 MiB (22.6 now): split it into `items2` etc. by glob in `tools/shared_packs.json` when it nears 90 |
+| Split packs (one wing pack cut in two files, both mounted, or a byte split joined in the page) | yes | no: same bytes, still duplicated per year | still count against the wing | more files per wing; a byte split needs the whole pack in memory twice while joining (bad on iPhone) |
+| Cloudflare R2 (or another bucket) for the packs | yes (objects up to 5 TB) | yes (no site limit; R2 egress is free, 10 GB stored free) | wherever we like | a Cloudflare account and an API token kept out of the repo (in the owner's environment only), CORS rules for `stevenboudreaux.github.io`, a second origin for Cache Storage, a publish step outside GitHub, and the game depends on two providers. Worth it when the two Pages sites together near 2 GB; not needed now. |
+| GitHub Releases as the host | yes (2 GB per file) | yes | – | not usable: release downloads don't send CORS headers, so the page can't fetch them |
+
+**Next, not done (proposal):** the Mixamo crowd skins and animations are 16.7–19.2 MB of *every* pack
+(~205 MB per site). As a shared "start" pack they would ship once; but `scripts/npcs.gd` picks each map's
+crowd by which skins exist in its pack (the room wings and the outside leave three out), so the crowd lists
+would first have to move into data (`scripts/npcs.json`). Then wing 1 would be ~66 MB and each site ~370 MB.

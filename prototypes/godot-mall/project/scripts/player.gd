@@ -210,6 +210,14 @@ func _ready() -> void:
 	var story = load("res://scripts/dialogue/story.gd").new()
 	story.name = "Story"; story.player = self
 	add_child(story)
+	# B2: the character pack (web: scripts/chars/char_pack.gd) and the owner's character editor on an
+	# NPC that wears a preset (K; design/godot-character-editor.md)
+	var char_pack = load("res://scripts/chars/char_pack.gd").new()
+	char_pack.name = "CharPack"; char_pack.player = self
+	add_child(char_pack)
+	var char_owner = load("res://scripts/chars/char_owner.gd").new()
+	char_owner.name = "CharOwner"; char_owner.player = self
+	add_child(char_owner)
 	# M: the menu, after Avatar (it hosts the creator and the inventory list)
 	menu = load("res://scripts/menu/menu.gd").new()
 	menu.name = "Menu"; menu.player = self

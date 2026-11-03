@@ -427,8 +427,14 @@ func _make_creator() -> void:
 	var av = player.avatar
 	if av == null:
 		return
-	var ps: PackedScene = load(CREATOR)
-	_creator = ps.instantiate()
+	# B2 (design/godot-character-editor.md): the character editor in its player mode replaces V's
+	# creator here when the pack ships the B1 bodies (same contract: frame, embedded, feed, sel, closed)
+	if AvatarChar.available():
+		_creator = load("res://scripts/chars/char_editor.gd").new()
+		_creator.setup("player", AvatarChar.preset_for(av.look, player.year))
+	else:
+		var ps: PackedScene = load(CREATOR)
+		_creator = ps.instantiate()
 	_creator.year = player.year
 	_creator.look = av.look.duplicate(true)
 	_creator.first_time = not bool(av.look.get("done", false))
@@ -842,6 +848,8 @@ func _menu_input(e: InputEvent) -> void:
 		elif not e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
 			if _creator:
 				_creator.feed(e)
+		elif e.pressed and tab == "avatar" and _creator and (e.button_index == MOUSE_BUTTON_WHEEL_UP or e.button_index == MOUSE_BUTTON_WHEEL_DOWN):
+			_creator.feed(e)      # B2: the editor's zoom / list scroll
 		elif e.pressed and _scroll and (e.button_index == MOUSE_BUTTON_WHEEL_UP or e.button_index == MOUSE_BUTTON_WHEEL_DOWN):
 			_scroll.scroll_vertical += -48 if e.button_index == MOUSE_BUTTON_WHEEL_UP else 48
 		return
