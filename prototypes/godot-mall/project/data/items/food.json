@@ -1,0 +1,113 @@
+{
+ "_": "Items modelled in Blender (tools/blender/, design/godot-blender-pipeline.md). Same shape as the Godot-built item list: id, name, class (hand|pocket), scene, icon, year, place (optional). Written by tools/blender/build.py from each asset's META['item'].",
+ "items": [
+  {
+   "id": "bd_adventure_book",
+   "name": "The Sunken Compass",
+   "class": "hand",
+   "scene": "res://models/bl_bd_adventure_book/bl_bd_adventure_book.glb",
+   "icon": "res://models/bl_bd_adventure_book/bl_bd_adventure_book_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "price": 2295
+  },
+  {
+   "id": "bd_chills_book",
+   "name": "Chill Hollow #4 paperback",
+   "class": "hand",
+   "scene": "res://models/bl_bd_chills_book/bl_bd_chills_book.glb",
+   "icon": "res://models/bl_bd_chills_book/bl_bd_chills_book_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "price": 399
+  },
+  {
+   "id": "bd_dark_room_book",
+   "name": "Safelight",
+   "class": "hand",
+   "scene": "res://models/bl_bd_dark_room_book/bl_bd_dark_room_book.glb",
+   "icon": "res://models/bl_bd_dark_room_book/bl_bd_dark_room_book_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "price": 2195
+  },
+  {
+   "id": "bd_mars_book",
+   "name": "Dust Over Tharsis",
+   "class": "hand",
+   "scene": "res://models/bl_bd_mars_book/bl_bd_mars_book.glb",
+   "icon": "res://models/bl_bd_mars_book/bl_bd_mars_book_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "price": 1295
+  },
+  {
+   "id": "bd_moby_dick",
+   "name": "Moby-Dick",
+   "class": "hand",
+   "scene": "res://models/bl_bd_moby_dick/bl_bd_moby_dick.glb",
+   "icon": "res://models/bl_bd_moby_dick/bl_bd_moby_dick_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "price": 1495
+  },
+  {
+   "id": "cd7_crinkle_fries",
+   "name": "Seasoned fries",
+   "class": "hand",
+   "scene": "res://models/bl_cd7_crinkle_fries/bl_cd7_crinkle_fries.glb",
+   "icon": "res://models/bl_cd7_crinkle_fries/bl_cd7_crinkle_fries_icon.png",
+   "year": "both",
+   "store": "CORN DOG 7",
+   "price": 99
+  },
+  {
+   "id": "cd7_lemonade",
+   "name": "Fresh lemonade",
+   "class": "hand",
+   "scene": "res://models/bl_cd7_lemonade/bl_cd7_lemonade.glb",
+   "icon": "res://models/bl_cd7_lemonade/bl_cd7_lemonade_icon.png",
+   "year": "both",
+   "store": "CORN DOG 7",
+   "price": 99
+  },
+  {
+   "id": "wl_coffee",
+   "name": "Cup of coffee",
+   "class": "hand",
+   "scene": "res://models/bl_wl_coffee/bl_wl_coffee.glb",
+   "icon": "res://models/bl_wl_coffee/bl_wl_coffee_icon.png",
+   "year": 1995,
+   "store": "WOOLWORTH",
+   "price": 59
+  },
+  {
+   "id": "wl_fries",
+   "name": "French fries",
+   "class": "hand",
+   "scene": "res://models/bl_wl_fries/bl_wl_fries.glb",
+   "icon": "res://models/bl_wl_fries/bl_wl_fries_icon.png",
+   "year": 1995,
+   "store": "WOOLWORTH"
+  },
+  {
+   "id": "wl_hamburger",
+   "name": "Hamburger",
+   "class": "hand",
+   "scene": "res://models/bl_wl_hamburger/bl_wl_hamburger.glb",
+   "icon": "res://models/bl_wl_hamburger/bl_wl_hamburger_icon.png",
+   "year": 1995,
+   "store": "WOOLWORTH"
+  },
+  {
+   "id": "wl_hot_dog",
+   "name": "Hot dog",
+   "class": "hand",
+   "scene": "res://models/bl_wl_hot_dog/bl_wl_hot_dog.glb",
+   "icon": "res://models/bl_wl_hot_dog/bl_wl_hot_dog_icon.png",
+   "year": 1995,
+   "store": "WOOLWORTH",
+   "price": 129
+  }
+ ]
+}
