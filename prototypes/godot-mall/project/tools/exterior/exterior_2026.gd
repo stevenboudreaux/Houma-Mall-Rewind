@@ -169,10 +169,11 @@ static func hypervelocity(b, a, t, n, Ln):
 ## Lynn's Interiors on the old Sears box (the 2026 directory, IMG_4406 f031-035: the script sign with
 ## a black awning on the east face).
 static func lynns(b):
-	b.label("Lynn's", "script", "#1c1c1e", Vector3(30.08, 6.6, -121.0), Vector3(1, 0, 0), 9.0, 1.6)
-	b.label("INTERIORS", "sans", "#1c1c1e", Vector3(30.08, 5.3, -121.0), Vector3(1, 0, 0), 5.0, 0.4)
-	b.label("Lynn's", "script", "#1c1c1e", Vector3(-5.0, 6.6, -134.08), Vector3(0, 0, -1), 9.0, 1.6)
-	b.label("Lynn's", "script", "#1c1c1e", Vector3(-40.08, 6.6, -115.0), Vector3(-1, 0, 0), 9.0, 1.6)
+	# Workstream EXT-B: on the real box's faces (east x 44, north z -146, west x -72)
+	b.label("Lynn's", "script", "#1c1c1e", Vector3(44.08, 6.6, -118.0), Vector3(1, 0, 0), 9.0, 1.6)
+	b.label("INTERIORS", "sans", "#1c1c1e", Vector3(44.08, 5.3, -118.0), Vector3(1, 0, 0), 5.0, 0.4)
+	b.label("Lynn's", "script", "#1c1c1e", Vector3(-14.0, 6.6, -146.08), Vector3(0, 0, -1), 9.0, 1.6)
+	b.label("Lynn's", "script", "#1c1c1e", Vector3(-72.08, 6.6, -132.0), Vector3(-1, 0, 0), 9.0, 1.6)
 
 ## The yellow truncated-dome mats at the curb ramps in front of every door (4492 t104, 4493 f001-004).
 static func tactile(b, doors):
@@ -180,6 +181,9 @@ static func tactile(b, doors):
 		var mid = Vector3(d.mid[0], 0, d.mid[1]); var n = Vector3(d.n[0], 0, d.n[1])
 		var t = Vector3(-n.z, 0, n.x)
 		var c = mid - n * (float(d.depth) + 1.45) + UP * 0.02
+		if d.has("view"):
+			# Workstream EXT-B: a door whose outside face moved (exterior.json "view")
+			c = Vector3(d.view[0], 0, d.view[1]) - n * 1.15 + UP * 0.02
 		b.quad("ex_paint", "ex_tactile_mat", [c - t * 1.5 - n * 0.3, c + t * 1.5 - n * 0.3, c + t * 1.5 + n * 0.3, c - t * 1.5 + n * 0.3], UP, [], true, 1.6)
 
 static func build(b, doors):

@@ -22,45 +22,68 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "ext
 import wall_fixes as WF
 
 S = 2.0
-OX, OY = 148.0, 100.0
+OX, OY = 148.0, 100.0          # the 1995 map's tile origin (layout_mall.json)
+# Workstream EXT-B (Nov 3 2026): the outside's own grid is larger than the 1995 map on three sides
+# (design/exterior-sequence.md §5 #3 / #9, Steven §9 q6: Armour Dr ~70 m further out, Bayou Gardens
+# ~35 m, the west lot ~65 m). Same 2 m tiles; the map is pasted in at an offset, so the grid's origin
+# moves (exterior.json "origin"; wing 3's wing.json carries it to player.gd).
+MAP = [-390.0, -270.0, 130.0, 240.0]
+GOX, GOY = -MAP[0] / S, -MAP[1] / S   # 195, 135
+GW, GH = int((MAP[2] - MAP[0]) / S), int((MAP[3] - MAP[1]) / S)   # 260 x 255
+DX, DY = int(GOX - OX), int(GOY - OY)  # the 1995 map's tile (x, y) is the grid's (x + DX, y + DY)
 
 
 def wx(tx):
-    return (tx - OX) * S
+    return (tx - GOX) * S
 
 
 def wz(ty):
-    return (ty - OY) * S
+    return (ty - GOY) * S
+
+
+def rect_tiles(r):
+    """The grid tiles of a world rectangle [x0, z0, x1, z1]."""
+    for ty in range(int(round(r[1] / S + GOY)), int(round(r[3] / S + GOY))):
+        for tx in range(int(round(r[0] / S + GOX)), int(round(r[2] / S + GOX))):
+            yield tx, ty
 
 
 def main(src, out_path):
     s = open(src, encoding="utf-8").read()
     d = json.loads(re.search(r'<script[^>]*id="mall-data"[^>]*>(.*?)</script>', s, re.S).group(1))
-    rows = d["floor"]
-    H, W = len(rows), len(rows[0])
+    rows0 = d["floor"]
+    H, W = GH, GW
     stores = d["stores"]
     lay = json.load(open("layout_mall.json"))
     zone_of = {}
     for z in lay["zones"]:
         r = z["rect"]
-        for ty in range(int(r[1] / S + OY), int(r[3] / S + OY)):
-            for tx in range(int(r[0] / S + OX), int(r[2] / S + OX)):
-                zone_of[(tx, ty)] = z["id"]
+        for tx, ty in rect_tiles(r):
+            zone_of[(tx, ty)] = z["id"]
     wing2 = {"C3", "H8", "H5", "C4", "H6", "H7"}
 
     # ---- the mask: floor tiles and store rects, holes filled
     owner = {}
     solid = [[0] * W for _ in range(H)]
-    for y in range(H):
-        for x in range(W):
-            if rows[y][x] == "1":
-                solid[y][x] = 1
+    for y in range(len(rows0)):
+        for x in range(len(rows0[0])):
+            if rows0[y][x] == "1":
+                solid[y + DY][x + DX] = 1
     for i, st in enumerate(stores):
-        for y in range(st["y"], st["y"] + st["h"]):
-            for x in range(st["x"], st["x"] + st["w"]):
+        for y in range(st["y"] + DY, st["y"] + st["h"] + DY):
+            for x in range(st["x"] + DX, st["x"] + st["w"] + DX):
                 if 0 <= y < H and 0 <= x < W:
                     solid[y][x] = 1
                     owner.setdefault((x, y), i)
+    # Workstream EXT-B: the map's block n2 is not a building (wall_fixes.DROP; parking there), and
+    # JCPenney's real rear block now reaches it, so it is taken out before tracing
+    for i, st in enumerate(stores):
+        if st["id"] in WF.DROP:
+            for y in range(st["y"] + DY, st["y"] + st["h"] + DY):
+                for x in range(st["x"] + DX, st["x"] + st["w"] + DX):
+                    solid[y][x] = 0
+                    if owner.get((x, y)) == i:
+                        owner.pop((x, y))
     # Workstream F: the filled notches (tools/exterior/wall_fixes.py FILLS)
     for fx in WF.FILLS:
         r = fx["rect"]
@@ -70,10 +93,14 @@ def main(src, out_path):
         else:
             stores.append(dict(id="fix_" + (fx["name"] or "wall").replace(" ", "_").lower(), name=fx["name"], x=0, y=0, w=0, h=0))
             si = len(stores) - 1
-        for ty in range(int(r[1] / S + OY), int(r[3] / S + OY)):
-            for tx in range(int(r[0] / S + OX), int(r[2] / S + OX)):
-                solid[ty][tx] = 1
-                owner.setdefault((tx, ty), si)
+        for tx, ty in rect_tiles(r):
+            solid[ty][tx] = 1
+            owner.setdefault((tx, ty), si)
+    # Workstream EXT-B: tiles taken out (the east entrance's deep recess, wall_fixes.CARVES)
+    for r in WF.CARVES:
+        for tx, ty in rect_tiles(r):
+            solid[ty][tx] = 0
+            owner.pop((tx, ty), None)
     # fill holes: anything not reachable from the map border is inside
     outside = [[0] * W for _ in range(H)]
     q = deque()
@@ -207,7 +234,7 @@ def main(src, out_path):
         out = [mid[0] - n[0] * (depth + 1.5), mid[1] - n[1] * (depth + 1.5)]
         inside = [mid[0] + n[0] * 1.5, mid[1] + n[1] * 1.5]
         # the hall tile just inside tells the wing
-        tx, ty = int(inside[0] / S + OX), int(inside[1] / S + OY)
+        tx, ty = int(inside[0] / S + GOX), int(inside[1] / S + GOY)
         zid = zone_of.get((tx, ty), "")
         w = 2 if zid in wing2 else 1
         # yaw (degrees) facing +n is the direction into the mall: yaw 90 looks -x, 180 looks +z
@@ -239,6 +266,14 @@ def main(src, out_path):
                           depth=depth, wing=w, zone="", out=out, inside=inside,
                           yaw_in=math.degrees(math.atan2(-n[0], -n[1])), yaw_out=math.degrees(math.atan2(n[0], n[1]))))
 
+    # Workstream EXT-B: the outside spots that moved with the real faces (wall_fixes.DOOR_MOVES)
+    for dr in doors:
+        mv = WF.DOOR_MOVES.get(dr["store"])
+        if mv:
+            dr["out"] = mv["out"]
+            if "view" in mv:
+                dr["view"] = mv["view"]
+
     # ---- the walk grid: every map tile outside any building
     walk = []
     for y in range(H):
@@ -251,18 +286,21 @@ def main(src, out_path):
             for (tx, ty) in tiles:
                 walk[ty][tx] = "1"
     for sa in WF.STANDALONE:
-        r = sa["rect"]
-        for ty in range(int(r[1] / S + OY), int(r[3] / S + OY)):
-            for tx in range(int(r[0] / S + OX), int(r[2] / S + OX)):
+        for tx, ty in rect_tiles(sa["rect"]):
+            walk[ty][tx] = "0"
+    # Workstream EXT-B: the apartments' land and the soccer fields past the lot's edge
+    for r in WF.WALK_BLOCK:
+        for tx, ty in rect_tiles(r):
+            if 0 <= ty < H and 0 <= tx < W:
                 walk[ty][tx] = "0"
     walk = ["".join(r) for r in walk]
     standalone = [dict(name=sa["name"], rect=sa["rect"]) for sa in WF.STANDALONE]
 
     xs = [t[0] for t in comps[main_k]]; ys = [t[1] for t in comps[main_k]]
     bounds = [wx(min(xs)), wz(min(ys)), wx(max(xs) + 1), wz(max(ys) + 1)]
-    json.dump(dict(scale=S, origin=[OX, OY], bounds=bounds, map=[wx(0), wz(0), wx(W), wz(H)], segments=segments, roofs=roofs,
+    json.dump(dict(scale=S, origin=[GOX, GOY], bounds=bounds, map=[wx(0), wz(0), wx(W), wz(H)], segments=segments, roofs=roofs,
                    doors=doors, standalone=standalone, walk=walk,
-                   bay=WF.BAY, door_spots=WF.DOOR_SPOTS), open(out_path, "w"), indent=1)
+                   bay=WF.BAY, door_spots=WF.DOOR_SPOTS, sears_dock=WF.SEARS_DOCK, carves=WF.CARVES), open(out_path, "w"), indent=1)
     print("segments", len(segments), "roofs", len(roofs), "doors", len(doors), "standalone", standalone, "bounds", bounds)
     for dr in doors:
         print(" door", dr["store"], dr["kind"], "wing", dr["wing"], dr["zone"], "out", dr["out"], "in", dr["inside"], "yaw_in", round(dr["yaw_in"]))

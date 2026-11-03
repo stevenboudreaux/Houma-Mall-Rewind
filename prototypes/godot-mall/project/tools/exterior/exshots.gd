@@ -51,7 +51,8 @@ func _initialize() -> void:
 	var sun := DirectionalLight3D.new(); sun.light_energy = 0.85 if mode == "day" else 0.0
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 250.0
-	sun.transform = Transform3D(Basis.looking_at(Vector3(0.35, -0.8, 0.45), Vector3.UP), Vector3.ZERO)
+	# Workstream EXT-B: the bake's afternoon sun from the game's NNE (build_mall.gd EXT_SUN_DIR)
+	sun.transform = Transform3D(Basis.looking_at(Vector3(-0.262, -0.643, 0.720), Vector3.UP), Vector3.ZERO)
 	scn.add_child(sun)
 	vp = SubViewport.new(); vp.size = Vector2i(1280, 720); vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	cam = Camera3D.new(); cam.fov = 70.0; cam.far = 900.0

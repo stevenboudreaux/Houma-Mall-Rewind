@@ -286,3 +286,26 @@ evidence. It changes no game file, so it merges without a rebake. From here the 
 
 The 13 cameras used for `wsEXT-*` (exshots `--cams`):
 `top:-80,-20,440:top-all;top:-50,-95,230:top-sears-cinema;top:-150,40,230:top-jcp-south;-96,1.7,-91,-90,2:exit-s41;-92,1.7,-84,-45,4:exit-north-dock;-100,1.7,-45,-25,4:cinema-west-wall;-115,1.7,-25,-50,4:staff-lot-to-cinema;-175,1.7,5,180,4:jcp-north-face;-140,1.7,118,0,4:south-entrance;-12,1.7,142,0,4:dillards-south;-4,1.7,-170,180,4:lynns-north-face;62,1.7,-91,90,4:east-entrance-s43;62,1.7,-125,90,4:lynns-east-face`
+
+## 11. Built (Workstream EXT-B, Nov 3 2026)
+Mismatches #1–#15 are built as §5 proposes and §9 decided (`design/godot-exterior.md` "Workstream EXT-B"
+has the table and the files). Where the build differs from the numbers above, and why:
+
+| # | Proposed | Built | Why |
+|---|---|---|---|
+| all | the plan's odd metres | rounded to the 2 m grid: Sears's west face −72 (−71), the white return z −100..−96, the truck well [−96, −118, −80, −100], the canopy [−80, −126, −72, −100], Unitech [−86, −236, −58, −208], JCPenney's rear block z −6..32 | the walk grid and the footprint are 2 m tiles |
+| #1 | bike-rack return at x −80 | the cinema exit's glass stays at x −80 (s41's spots unchanged); the white return (N) and the buff one (S) stand 2 m proud at x −82; the rack against the white return's lot face at z −99.7..−96.7 | 4416 f002: the glass is recessed between the two returns; keeping the glass keeps the door |
+| #2 | cinema [−80, −86, −52, −41] | [−82, −86, −52, −42] | flush with the returns |
+| #7 | Dillard's x −43..44; a lower service block x −51..−43, z 93..118 with the dock at its south end | Dillard's x −38..44 (82 × 58); no separate block: the dock (canopy, at-grade dock, trailer), the roll-off and the white base with doors are on Dillard's west face south of the wing wall (z 120..134); the service lane is the 1995 map's slot x −42..−38 (to z 100), widening to x −46..−38 down to the wing wall's line | the 1995 map has the restrooms and their corridor at x −58..−42 (s65, s66, H7), walkable in wing 2; x −38 is the walkable Dillard's box. The plan's west face is inside its own ±5 m. A GUESS for the block; ask Steven if the lane should be wider |
+| #7 | gallery on the south and West Park faces, "wrapping the NE corner" | both faces, joined at the SE corner, and a 14 m stub round the NE corner over the loading lane (x 30..44, z 80) | 4492 f100–108 |
+| #8 | pavilion x ≈ −146..−134, doors turned east inside the loggia | x −148..−136 (centred on the s55 door, as before), solid to z 112, loggia z 112..118, the doors at its back facing south | the inside door faces south; turning it would need a vestibule the inside does not have. A simplification |
+| #12 | s43 door to x 34, out spot x ≈ 36 | recess carved x 34..44, doors at x 34, out (35.5, −91); the inside wing's door pictures are still captured from x 40.3 (the inside glass's line) | so the pictures past wing 1's glass at x 40 show the recess's last 4 m and then the lot, as from there |
+| #9 | map roughly [−390, −270, 130, 240] | exactly that; Armour Dr z −252, Bayou Gardens z 216, West Park x 112; the lot's west edge (picket fence) x −362; the apartments' land (x < −120, z < −150) and past the fence not walkable | |
+| #11 / §9 q4 | a generic bank | a brown-brick box with a two-lane drive-thru canopy toward the road and "BANK" on its fascia, both years | no brand (IP rule); the lettering is a GUESS |
+| #4 / §9 q3 | Kirschman's across Armour Dr | the strip x −50..10, z −300..−272, gabled sign on x −20 facing the side exit, 3-arch loggia, hoods; "Kirschman's / FURNITURE" (1995), "BIG LOTS!" (2026) | the 1995 letters and colours a GUESS |
+| #14 | water tower ≈ (−420, 60) | (−430, 70); St. Bernadette's (−430, −60); the apartments as 8 charcoal blocks in the NW cut-out; soccer goals past the fence | positions GUESSES from the bearings |
+| — | (not in §5) | the monuments and the UA marquee (1995) move with the roads: West Park (103, −11.5), Bayou Gardens (−126, 201.5), Armour (−19, −244), marquee (−96, −244) | |
+| — | (not in §5) | the Shoe Dept. box / loading-lane notch at x 30..44, z 50..80 is kept | "Not mismatches" above; Dillard's NE corner and the gallery stub face into it |
+
+Open for Steven: the service lane's width by Dillard's (above); whether the pavilion's doors should turn
+east inside the loggia; what is on Lynn's north face besides the side exit (§9 q2 still open).

@@ -217,12 +217,48 @@ real footprint from the footage and the site plan, and the mismatch list with pr
 (Sears 115 × 50 flush with the facade and ~10 m from the exit with the dock on its west face; the
 cinema box 45 m long and flush; JCPenney 60 × 120 to z −14; Dillard's 87 × 58 with the gallery and
 entrance on the south face; Big Lots / Kirschman's across Armour Dr; the lot larger on three sides).
-Analysis only; nothing here changed yet. Evidence `production/qa/evidence/wsEXT-*.jpg`.
+Analysis only; built by Workstream EXT-B below. Evidence `production/qa/evidence/wsEXT-*.jpg`.
+
+## Workstream EXT-B (Nov 3, 2026): the real outside, built
+Built from `design/exterior-sequence.md` §4, §5 (#1–#15) and Steven's decisions in §9; the record of
+what was built and where it differs from the proposed numbers is that note's §11. In short:
+
+| What | Built (game metres) | Where |
+|---|---|---|
+| Sears / Lynn's | 116 × 50, x −72..44, z −146..−96, east face flush with the facade; white painted brick return x −82..−72, z −100..−96 with the bike rack on its lot face | `wall_fixes.py` FILLS, `exterior.gd` masses |
+| Sears dock | on the **west** face: canopy x −80..−72, z −126..−100 on pipe columns, three dock doors; truck well x −96..−80, z −118..−100 sunk 1.2 m with its ramp from x −116, yellow 2-rail guardrail on a painted curb, bumpers; the Lynn's box truck in it (2026 only). Not walkable | `wall_fixes.SEARS_DOCK`, `exterior.gd sears_dock` (the ground has a hole: `ground()`) |
+| Sears north face | plain white with the roll-shutter side exit s1x on the main aisle's axis (x −4), a zebra crosswalk; "Sears" (1995) / "Lynn's" (2026) sign a GUESS (§9 q2) | `sears_dock` |
+| Lynn's customer entrance | the s1e glass front on the east face x 44, z −121..−115 (black awning 2026); the east-face side-exit spot is gone | `sears_dock`, `DOOR_SPOTS = []` |
+| Cinema exit (s41) | the glass stays at x −80; returns 2 m proud each side (white N, buff S with the poster case facing into the recess), the fascia spans the recess | `cinema_exit` |
+| Cinema box | flush with the exit block, x −82..−52, z −84..−42 (42 m west wall: piers, 5 hooded exit doors, the ramp; one door on the south face) | FILLS, `cinema_box` |
+| JCPenney | 60 × 120, x −214..−154, z −14..106 (7.5 m), the tall rear block x −228..−214, z −6..32 (9.5 m); tree-side entrance on the west face at z 42..50, roll-up on the rear block's west face; red arcade near the SW corner of the south face; Package Pick-up and docks 1–2 on the north face; the pine island at its NW corner | FILLS, `jcpenney` |
+| Horton tank | yard x −142..−122, z −32..−10; the pink (2026) / yellow (1995) walk to the docks | `tank` |
+| South side | the link off JCPenney's SE corner to z 110, the pavilion x −148..−136 solid to z 112 with its 6 m loggia to z 118 (doors at z 112), the low blank wing wall straight on at z 118 to x −46 (§9 q1) | FILLS, `south_entrance` |
+| Dillard's | x −38..44, z 80..138 (82 × 58); gallery on the east face, the south face and a 14 m stub round the NE corner over the loading lane; the entrance portal on the south face at x −15 (s2s) with 4 door pairs; glass doors at s2e in the east gallery; the west face's dock, trailer, roll-off and white base south of the wing wall; the flagpole island at the SW corner | FILLS, `dillards`, `gallery` |
+| East entrance (s43) | the recess carved to 10 m deep (x 34..44); the doors at its back, x 34 | `wall_fixes.CARVES`, `east_entrance` |
+| The lot | grid grown on three sides to x −390..130, z −270..240 (origin moves to tile (195, 135); wing 3's `wing.json` carries `origin`, `player.gd` reads it); Armour Dr z −252, Bayou Gardens z 216, West Park x 112; the rows laid round the real footprint; the palm drive out to the new curb | `make_exterior.py`, `lot` |
+| Not walkable | the apartments' land (x < −120, z < −150, behind their wood fence) and the soccer fields past the west fence (x < −362) | `wall_fixes.WALK_BLOCK` |
+| Outparcels | Unitech x −86..−58, z −236..−208; **Kirschman's** (1995) / Big Lots (2026) across Armour Dr x −50..10, z −300..−272 facing the side exit; a generic bank (no brand, "BANK", both years) on the West Park pad x 68..84, z −73..−55; Ground Pat'i across both roads at the SE corner; the strip centre and drive-thru bank at the far SW; the water tower at (−430, 70) | `outparcels` |
+| Monuments | West Park (103, −11.5), Bayou Gardens (−126, 201.5), Armour (−19, −244); the UA marquee (1995) to (−96, −244), still a GUESS | `monuments.gd` |
+| Day sun | from the game's NNE, 40° up (the footage's ~2 pm; real SSW): `build_mall.gd EXT_SUN_DIR` for wing 3's bake, and the unbaked tools (`exshots.gd`, `capture_doors.gd`) | §9 q7 |
+
+**Doors.** Every inside spot, wing and facing is unchanged; the outside spots that moved are in
+`wall_fixes.DOOR_MOVES` (exterior.json `out`, and a new `view`: the doorway on the moved face, where
+`capture_doors.gd` stands to picture the lot): s43 out (35.5, −91); s55 out (−142, 113.5), view
+(−142, 112.3); s1e out (45.5, −118), view (44.3, −118); s2e out (45.8, 98.2), view (44.3, 98.2); s2s
+out (−15, 139.5), view (−15, 138.3). s39, s41 and s1x did not move.
+
+**At integration:** rebake `wing3:fastday` and `wing3_2026:fastday` (the old wing-3 lightmaps do not fit
+the new meshes), then `tools/capture_standin.sh 3` and `3 2026` (every inside wing's door pictures look
+out at the new lot; wings 1, 2, 4, 5 need no rebake). The lot's ground grew ~1.6× in area, so wing 3's
+lightmap and bake time grow with it at the same texel.
+Evidence: `production/qa/evidence/wsEXTB-*.jpg` (unbaked): the 13 cameras of wsEXT (top views with
+the real footprint in red, the 10 street views) and 12 more of the new faces (`wsEXTB-extra-*`).
 
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).
-- Not filmed: Dillard's north dock, JCPenney's dock face, the Armour Dr edge (plain here).
+- Not filmed: Dillard's north dock, Lynn's north face beyond the side exit, the Armour Dr edge (plain here).
 - JCPenney's red south arcade, maroon west fascia and coral Package Pick-up fascia are today's
   (2012-era) treatment but still stand in the 1995 build too (open question for Steven).
 - Lot furniture still sparse: no storm grates, stop signs or wheel stops.

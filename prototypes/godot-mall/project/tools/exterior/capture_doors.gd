@@ -69,7 +69,8 @@ func _initialize() -> void:
 		if mode == "day":
 			var sun := DirectionalLight3D.new(); sun.light_energy = 1.0; sun.shadow_enabled = true
 			sun.directional_shadow_max_distance = 200.0
-			sun.transform = Transform3D(Basis.looking_at(Vector3(0.35, -0.8, 0.45), Vector3.UP), Vector3.ZERO)
+			# Workstream EXT-B: as the bake's sun (build_mall.gd EXT_SUN_DIR)
+			sun.transform = Transform3D(Basis.looking_at(Vector3(-0.262, -0.643, 0.720), Vector3.UP), Vector3.ZERO)
 			scn.add_child(sun)
 	var env: Environment = envn.environment.duplicate()
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
@@ -88,6 +89,9 @@ func _initialize() -> void:
 		var W := Vector3(float(d.a[0]), 0, float(d.a[1])).distance_to(Vector3(float(d.b[0]), 0, float(d.b[1])))
 		# outside, the doorway is `depth` further out than the hall edge the inside wing's glass is on
 		var at := mid + out * (float(d.depth) + 0.3)
+		if d.has("view"):
+			# Workstream EXT-B: this door's outside face moved with the real footprint
+			at = Vector3(float(d.view[0]), 0, float(d.view[1]))
 		var F = DV.faces(at, out, W)
 		var eye := at + Vector3.UP * DV.EYE
 		for f in 3:

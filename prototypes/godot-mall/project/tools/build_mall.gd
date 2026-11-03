@@ -107,6 +107,9 @@ func room_wing_of(sid):
 	return 0
 ## Stand-in storefront pictures: pixels per metre in the capture atlas (fitted at build time)
 const STANDIN_ATLAS = Vector2i(4096, 2048)
+## Workstream EXT-B: the outside's (wing 3) day sun, the direction its light travels: from the game's
+## NNE (azimuth 20 deg east of -z), 40 deg up. tools/exterior/exshots.gd and capture_doors.gd use it too.
+const EXT_SUN_DIR = Vector3(-0.262, -0.643, 0.720)
 const STANDIN_OUT = 1.25   # the capture camera stands this far out from the front, in the hall
 var zone_wing = {}
 var outside = {}           # wing 3: what tools/exterior/exterior.gd returns (spawn, walk, doors)
@@ -2823,6 +2826,10 @@ func finish():
 	mall.add_child(sun); sun.owner = mall
 	# high sun (about 65 degrees) so window patches land short and close to the walls
 	sun.transform = Transform3D(Basis.looking_at(Vector3(0.30, -0.906, 0.30), Vector3.UP), Vector3.ZERO)
+	if WING == 3:
+		# Workstream EXT-B (design/exterior-sequence.md §2, §5 #13, Steven §9 q7): the outside's day is
+		# the footage's early afternoon: the sun from the game's north-north-east (real SSW), ~40 deg up
+		sun.transform = Transform3D(Basis.looking_at(EXT_SUN_DIR, Vector3.UP), Vector3.ZERO)
 
 	DirAccess.make_dir_recursive_absolute("res://gen")
 	ResourceSaver.save(make_env("day"), "res://gen/env_day.tres")
@@ -2941,7 +2948,8 @@ func finish():
 	if WING == 3:
 		# the outside: its walk grid is the lot (exterior.json), its doors lead into wings 1 and 2
 		var wf = FileAccess.open(GEN + "wing.json", FileAccess.WRITE)
-		wf.store_string(JSON.stringify({"wing": WING, "seam": [], "spawn": outside.spawn, "walk": outside.walk, "doors": outside.doors}))
+		wf.store_string(JSON.stringify({"wing": WING, "seam": [], "spawn": outside.spawn, "walk": outside.walk, "doors": outside.doors,
+			"origin": outside.get("origin", L.origin)}))   # EXT-B: the outside's own (larger) grid
 		wf.close()
 	elif ROOM_WINGS.has(WING):
 		# workstream S: a room wing (4-6). Its one threshold leads back into the mall wing; a fresh
