@@ -1,5 +1,49 @@
 # Session handoff: INT, Demo 49 (Nov 2-3, 2026)
 
+**State: published.**
+- `main` = `integration` = `30548d0` (then this handoff's own commit).
+- `godot-build` = `4ec4aef` ("Demo 49: dialogue, menu, redemption, Sears/Dillard's/cinema wings, the lion,
+  Games, Inc. 2026"). It has the harmless "push negotiation failed; proceeding anyway" warning, as in Demo 48.
+- Wings 4 and 5 ship unlit until the Mac bakes them.
+- Live: https://stevenboudreaux.github.io/Southland-Mall-95/. The Pages deploy was not checked: the cloud box
+  can't reach github.io. **Steven: please look at the live page.**
+
+## Open items (read first)
+1. **Mac bake:** the list below, then the stand-in recaptures, export, publish (Demo 49b).
+2. **The FINAL Nov 2 handoff is not in the repo.** It was written to `claude/session-handoff-2026-11-02-FINAL.md`
+   in this container but not committed. The repo is public and two parts look private:
+   - Steven's plan and credit details;
+   - the note that the deleted B1/B2 commits can still be fetched by ID, with the GitHub Support purge pending.
+
+   Steven declined the question. Waiting for his call: redacted, verbatim, or not at all. The plan and the cast
+   sheet were not attached, so they are not in the repo either.
+3. **Wing 1 is at 98.61 MB:** the next ceiling (see "Packs").
+4. **Stale test:** `tools/qa/dialogue_shots.gd` still has Q's Dillard's-locked step.
+5. **Story text Steven still owes**, all PLACEHOLDER today:
+   - the cinema locked message;
+   - the attendants' names and lines;
+   - the opening text.
+
+   The other decisions still owed (R's prices, M's guesses, the 2026 NPCs) are as in the FINAL handoff.
+6. **Next jobs:**
+   - ws/chars-live, after B-FIX v3: one squashed commit, then `design/chars-live-hooks.patch`. Not touched here.
+   - Then the move to Houma-Mall-Rewind.
+7. **Leftover file:** `models/bl_ls_lion/bl_ls_lion.glb.unwrap_cache`, an untracked import file. It was left
+   out of the commits; consider `*.unwrap_cache` in `.gitignore`.
+
+## Setup notes for the next cloud session
+- The restore from `godot-build` must run **from the repo root**, as Demo 48 noted:
+  `(cd <repo> && git archive origin/godot-build lightmaps standin) | tar -x`.
+- The import took ~20 min. The 12 builds took ~1 min in all. The stand-in captures took ~30 min (1 and 2 are
+  ~8 min each). An export takes ~10 min.
+- Python Playwright is not preinstalled. The pip version wants browser build 1248; the box has 1243. Point
+  `PLAYWRIGHT_BROWSERS_PATH` at a scratch folder of symlinks to `/opt/pw-browsers/*`, with `*-1248` names
+  linked to the 1243 builds.
+- **The worker restarted twice and killed foreground commands.** Run anything long (tests, export, publish)
+  in the background, with its own log.
+- To test the pusher in a scratch build, link `pusher.html`, `pusher/`, `lib/` and `play/*.json` into it.
+  Delete the links before `publish_build.sh`; this session did.
+
 **Merged into `integration`, in order:** ws/q-dialogue `e8c0232`, ws/m-menu `f965460`, ws/r-redemption
 `7ad868c`, ws/s-dept-wings `c93033b`, ws/l-lion `43f3cb6`, ws/gi-games-inc `9df5553` (all heads as briefed).
 ws/b1-bodies, ws/b2-editor and ws/chars-live were not touched. Commits are as Steven, with the trailers.
