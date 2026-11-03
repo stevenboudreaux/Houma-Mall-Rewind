@@ -46,7 +46,7 @@ def page(b, q, w=390, h=844, storage=None):
 
 def st(pg):
     return pg.evaluate("""() => { const P = PUSHER_PAGE, s = P.sim; let d = 0, sh = 0;
-      for (const c of s.coins.values()) { if (c.body.translation().y > 3) d++; else sh++; }
+      for (const c of s.coins.values()) { if (c.body.translation().y > P.G.deckY - 0.5) d++; else sh++; }
       return { coins: s.count(), deck: d, shelf: sh, awake: s.awake(), q: P.money(), tk: P.tickets(), plus: document.querySelectorAll('.plus').length, cup: P.cupTotal, ledger: P.ledger, gate: P.gate, t: s.t,
                frames: P.stats.frames, ms: P.stats.ms / Math.max(1, P.stats.frames), simMs: P.stats.simMs / Math.max(1, P.stats.frames), steps: P.stats.steps }; }""")
 
@@ -59,16 +59,25 @@ with sync_playwright() as p:
     ctx, pg = page(b, "fresh=1&pos=1")
     time.sleep(2)
     s0 = st(pg)
-    # the fill sheds a few coins into the side holes while it settles (sim.test.js checks the fill itself)
-    check(-45 <= s0["coins"] - 540 <= 5 or -45 <= s0["coins"] - pg.evaluate("window.PUSHER.CONFIG.quality.high") <= 5, "a fresh machine holds the low count on a phone, else high: %d coins" % s0["coins"])
+    # the fill gives back what settled over the edge (sim.test.js checks the fill itself)
+    qlo, qhi = pg.evaluate("window.PUSHER.CONFIG.quality.low"), pg.evaluate("window.PUSHER.CONFIG.quality.high")
+    check(-45 <= s0["coins"] - qlo <= 5 or -45 <= s0["coins"] - qhi <= 5, "a fresh machine holds the low count on a phone, else high: %d coins" % s0["coins"])
+    check(s0["deck"] > 50 and s0["shelf"] > 100, "both tiers are packed (%d deck, %d shelf)" % (s0["deck"], s0["shelf"]))
     check(s0["q"] == 10000, "a new player has $100.00 (%d cents)" % s0["q"])
+    # drop when the cue says the gap is open: the coin lands on the deck at the wall
+    pg.wait_for_function("PUSHER_PAGE.gapOpen", timeout=10000)
     pg.evaluate("PUSHER_PAGE.setSlider(5); PUSHER_PAGE.drop()")
     time.sleep(0.2)
     check(st(pg)["q"] == 9975, "a drop takes 25 cents (%d)" % st(pg)["q"])
-    time.sleep(3)
+    check(pg.evaluate("document.getElementById('knob').classList.contains('open')"), "the slot's knob shows the gap open")
+    time.sleep(1.2)
+    land = pg.evaluate("() => { const P = PUSHER_PAGE; let best = null; for (const c of P.sim.coins.values()) if (!best || c.id > best.id) best = c; const p = best.body.translation(); return [p.x, p.y, p.z, P.sim.wallZ, P.G.deckY]; }")
+    check(land[1] > land[4] - 0.5, "the newest coin is on the deck (y %.1f)" % land[1])
+    check(land[3] - 4.5 < land[2] < land[3], "... at the wall (z %.1f, wall %.1f)" % (land[2], land[3]))
+    time.sleep(2)
     s1 = st(pg)
-    check(s1["coins"] <= s0["coins"] + 1 and s1["coins"] > s0["coins"] - 40 and s1["deck"] >= s0["deck"] - 30, "the coin landed on the deck and stayed (%d deck, %d shelf)" % (s1["deck"], s1["shelf"]))
-    check(s1["ledger"]["in"] == 1 and s1["ledger"]["lost"] == 0, "the ledger counts it in")
+    check(s1["coins"] <= s0["coins"] + 1 and s1["coins"] > s0["coins"] - 10, "the coin stayed on the field (%d deck, %d shelf)" % (s1["deck"], s1["shelf"]))
+    check(s1["ledger"]["in"] == 1 and s1["ledger"]["lost"] == 0 and s1["ledger"]["side"] == 0, "the ledger counts it in; nothing lost at the sides")
     pg.screenshot(path=OUT + "-1-drop.png")
     ctx.close()
 
