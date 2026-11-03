@@ -253,7 +253,10 @@ the new meshes), then `tools/capture_standin.sh 3` and `3 2026` (every inside wi
 out at the new lot; wings 1, 2, 4, 5 need no rebake). The lot's ground grew ~1.6× in area, so wing 3's
 lightmap and bake time grow with it at the same texel.
 Evidence: `production/qa/evidence/wsEXTB-*.jpg` (unbaked): the 13 cameras of wsEXT (top views with
-the real footprint in red, the 10 street views) and 12 more of the new faces (`wsEXTB-extra-*`).
+the real footprint in red, the 10 street views) and 12 more of the new faces (`wsEXTB-extra-*`);
+`wsEXTB-ingame-doors-1995-unbaked.jpg`: a 1995 web export (wings 1-3), `tools/qa/doortest.py` through
+s43, s55 and s41 both ways (CROSSED, 0 errors), the arrival outside each. Wings 4 / 5 were not exported
+here; s1e, s2e, s2s and s1x's outside spots were checked standable in the built wing 3's player (headless).
 
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
