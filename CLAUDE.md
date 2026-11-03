@@ -16,7 +16,10 @@ hooks and rules, run at `modes.rigor: minimal`.
 - **Hosting**: GitHub Pages, deployed by the Actions workflow `.github/workflows/pages.yml`
   (live: https://stevenboudreaux.github.io/Houma-Mall-Rewind/). It serves `main` plus the Godot
   mall build from the single-commit `godot-build` branch (`design/godot-build-hosting.md`).
-  Anything pushed to `main` is live.
+  Anything pushed to `main` is live. Since Nov 3, 2026 the workflow serves the game at the site root
+  (the build's `play/` files move there) and the repo's `index.html`, the original game, as
+  `classic.html`; old `prototypes/godot-mall/play/*.html` addresses forward. Only the deployed copy
+  changes: the editor's Publish still writes `index.html` in the repo.
 - **Backend**: Google Apps Script (`apps-script/Code.gs`), deployed by hand from
   Steven's Google account. Editing the file here does not redeploy it.
 - **Version Control**: Git, trunk-based on `main`.

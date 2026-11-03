@@ -35,6 +35,38 @@ jobs:
           mkdir -p site/prototypes/godot-mall/play
           cp build/play/* site/prototypes/godot-mall/play/
           rm -rf site/.git
+      # The game is the front page (Steven, Nov 3 2026). Only the deployed copy changes:
+      # - the repo's index.html (the original game) is served as classic.html, next to photos.json,
+      #   photos/ and review.html, so its relative links still work. The editor's Publish reads and
+      #   writes index.html through the GitHub API, so it is unaffected;
+      # - the game's files (play/) move to the site root. They only fetch relative paths; the owner's
+      #   sign/prize/shirt/ROM publishing writes the repo paths through the API, also unaffected;
+      # - every old prototypes/godot-mall/play/*.html address forwards to its new place;
+      # - the tab title says only the working title, until the next export carries project.godot's.
+      - name: The game is the front page
+        run: |
+          mv site/index.html site/classic.html
+          P=site/prototypes/godot-mall/play
+          mv $P/* site/
+          # builds exported before project.godot's name changed: the engine sets the old name as the
+          # tab title when it starts, so strip its suffix there (no-op once a new export is published)
+          if ! grep -q '<title>Houma Mall Rewind</title>' site/index.html; then
+            cat > /tmp/title.js <<'JS'
+          <script>(function(){var d=Object.getOwnPropertyDescriptor(Document.prototype,"title");Object.defineProperty(document,"title",{configurable:true,get:function(){return d.get.call(document)},set:function(v){d.set.call(document,String(v).replace(/ - Godot Mall$/,""))}});})();</script>
+          JS
+            sed -i '/<\/title>/r /tmp/title.js' site/index.html
+          fi
+          sed -i 's#<title>[^<]*</title>#<title>Houma Mall Rewind</title>#' site/index.html
+          for f in site/*.html; do
+            b=$(basename "$f")
+            case "$b" in classic.html|review.html) continue;; esac
+            printf '%s\n' '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Houma Mall Rewind</title>' \
+              "<meta http-equiv=\"refresh\" content=\"0; url=../../../$b\">" \
+              "<script>location.replace(\"../../../$b\" + location.search + location.hash);</script></head>" \
+              "<body><p><a href=\"../../../$b\">Houma Mall Rewind</a></p></body></html>" > "$P/$b"
+          done
+          test -s site/classic.html && test -s site/index.wasm && test -s site/w1.desktop.pck && test -s $P/index.html
+          grep -q '<title>Houma Mall Rewind</title>' site/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

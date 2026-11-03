@@ -14,7 +14,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Houma Mall Rewind - Godot Mall"
+config/name="Houma Mall Rewind"
 run/main_scene="res://wing1.tscn"
 run/main_scene.wing2="res://wing2.tscn"
 run/main_scene.wing3="res://wing3.tscn"
