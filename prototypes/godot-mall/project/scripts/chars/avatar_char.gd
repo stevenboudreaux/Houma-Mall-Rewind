@@ -13,10 +13,12 @@ var info := {}
 var mats: Array = []
 var hand: Node3D
 
-## True when this pack ships the B1 bodies (else avatar.gd keeps V's body).
+## True when this pack ships the B1 bodies (else avatar.gd keeps V's body), and the animations they
+## play (CHARS, Nov 3: without npc/anims.res a body would stand in its bind pose).
 static func available() -> bool:
 	var b: Dictionary = CharBody.cman().get("bodies", {})
-	return not b.is_empty() and ResourceLoader.exists(str(b.female.glb)) and ResourceLoader.exists(str(b.male.glb))
+	return not b.is_empty() and ResourceLoader.exists(str(b.female.glb)) and ResourceLoader.exists(str(b.male.glb)) \
+		and ResourceLoader.exists("res://npc/anims.res")
 
 ## V's look -> a preset (used until the player saves one in the editor).
 static func from_look(L: Dictionary, year: int) -> Dictionary:

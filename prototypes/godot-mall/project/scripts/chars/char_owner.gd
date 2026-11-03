@@ -53,6 +53,8 @@ func nearest() -> Dictionary:
 	var pp: Vector3 = player.global_position
 	for n in get_tree().get_nodes_in_group("talker"):
 		if not n.has_method("preset_id") or n.preset_id() == "" or n.body == null: continue
+		# CHARS (Nov 3): not while it still wears its Mixamo fallback (the character pack is on its way)
+		if not (n.body is CharBody): continue
 		var d := Vector2(n.body.global_position.x - pp.x, n.body.global_position.z - pp.z).length()
 		if d < bd:
 			bd = d

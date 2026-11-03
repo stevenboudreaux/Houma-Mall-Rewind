@@ -61,7 +61,12 @@ done
 # Two sites (Nov 3 2026, design/godot-build-hosting.md "Two sites"): a Pages site may hold 1 GB. The main
 # site carries the phone packs and the rest of play/, the second site the computer packs; each must fit
 # (0.95 GB here, for main's own files and headroom).
-DESK=$(cat "$SRC"/w*.desktop.pck | wc -c); MOB=$(cat "$SRC"/w*.mobile.pck | wc -c)
+# CHARS (Nov 3 2026, "Shared packs"): the shared packs (items, chars, chars_<map>) count too, and every pack
+# must stay under GitHub's 100 MiB file limit; the shared packs listed in index.html must be in the export.
+for f in "$SRC"/*.pck; do [ "$(stat -c %s "$f")" -lt 104857600 ] || { echo "$(basename "$f") is over GitHub's 100 MiB file limit: it cannot be pushed"; exit 1; }; done
+SHARED=$(python3 -c "import re,sys,json; s=open(sys.argv[1]).read(); m=re.search(r'const SHARED_PACKS = (.*); // SHARED_PACKS', s); d=json.loads(m.group(1)) if m else {}; print(' '.join(n for n,e in d.items() if e.get('desktop')))" "$SRC/index.html")
+for n in $SHARED; do for k in desktop mobile; do [ -s "$SRC/$n.$k.pck" ] || { echo "index.html lists the shared pack $n, the export has no $n.$k.pck"; exit 1; }; done; done
+DESK=$(cat "$SRC"/*.desktop.pck | wc -c); MOB=$(cat "$SRC"/*.mobile.pck | wc -c)
 REST=$(find "$SRC" -maxdepth 1 -type f ! -name '*.pck' -exec cat {} + | wc -c)
 echo "sites: main $(( (MOB + REST) / 1000000 )) MB (phone packs + page), desktop $(( DESK / 1000000 )) MB (computer packs); each must stay under 950"
 [ $((MOB + REST)) -lt 950000000 ] || { echo "the main site would be over GitHub Pages' 1 GB: make the phone packs smaller first"; exit 1; }
@@ -89,6 +94,8 @@ if [ -s "$SRC/w3.desktop.pck" ]; then
 fi
 cp wing1_night.* wing1_day.* wing2_night.* wing2_day.* "$W/lightmaps/"
 cp wing1_2026_day.* wing2_2026_day.* "$W/lightmaps/" 2>/dev/null || true
+# CHARS: the shared packs (the desktop site's workflow copies every *.desktop.pck, main's drops them)
+for n in $SHARED; do cp "$SRC"/$n.*.pck "$W/play/"; done
 # the room wings (S): their packs, and wings 4 / 5's lightmaps once baked
 for w in $ROOMS; do
   cp "$SRC"/w$w.*.pck "$W/play/"; cp "$SRC"/w${w}y26.*.pck "$W/play/" 2>/dev/null || true

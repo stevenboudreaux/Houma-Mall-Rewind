@@ -1,46 +1,61 @@
-## B2 (design/godot-character-editor.md): the character pack. The B1 bodies, hair and pieces are not
-## in the wing packs (wing 2 alone is ~96 MB); each map has its own pack with only its presets' files
-## and the player's wardrobe (tools/chars/export_chars.sh): chars_w<n>[y26].<desktop|mobile>.pck next to
-## the game. On the web this node fetches the one for this map (through the page's cache,
-## web/shell.html), mounts it, then:
+## B2 (design/godot-character-editor.md), reworked by CHARS (Nov 3 2026, design/godot-build-hosting.md
+## "Shared packs"): the character packs. The B1 bodies, hair and pieces are not in the wing packs. They
+## ship as shared packs (tools/shared_packs.py): "chars" (both bodies, the player's wardrobe, the
+## clothed defaults: every map) and "chars_<map>" (only the pieces that map's presets add). On the web
+## the page fetches them once the mall is running (web/shell.html, through its cache) and copies them
+## into the engine's file system; this node waits for that (SharedPacks.later_paths("chars")), mounts
+## them, then:
 ##   - every counter attendant with "look": "preset" puts its preset body on (until then it shows its
 ##     Mixamo skin, the fallback),
 ##   - the avatar becomes the player's preset body (scripts/avatar.gd chars_ready()),
 ##   - the menu's AVATAR tab opens the character editor from then on.
 ## Off the web (native runs, tests) the files are in res:// already: ready at once.
 ## Made by scripts/player.gd as its child "CharPack" (before CharOwner).
+##
+## The Nov 2 bug ("the character pack doesn't mount", a page error "null function"): this node fetched
+## the pack itself with HTTPRequest.download_file into user://. The page now does the fetch (cached)
+## and copies the bytes into the engine's file system; no HTTPRequest is used for packs.
 extends Node
 
 signal ready_now
 
+const POLL_S := 0.5
+const GIVE_UP_S := 600.0
+
 var player: Node3D
 var is_ready := false
-var _http: HTTPRequest
+var _wait := 0.0
+var _waited := 0.0
 
 func _ready() -> void:
+	set_process(false)
 	if AvatarChar.available():
 		_done.call_deferred()
 		return
-	if not OS.has_feature("web"):
+	if not OS.has_feature("web") or get_node_or_null("/root/SharedPacks") == null:
 		return            # a native build without the files: everyone stays on the fallbacks
-	var name_ := str(JavaScriptBridge.eval("'chars_w' + window.__mallWing + (window.__mallYear || '') + '.' + window.__mallPack + '.pck'"))
-	var url := str(JavaScriptBridge.eval("new URL(%s, location.href).toString()" % JSON.stringify(name_)))
-	_http = HTTPRequest.new()
-	_http.download_file = "user://" + name_
-	_http.use_threads = false
-	add_child(_http)
-	_http.request_completed.connect(func(result: int, code: int, _h, _b):
-		if result != HTTPRequest.RESULT_SUCCESS or code != 200:
-			push_warning("char_pack: could not fetch %s (%d / %d): characters stay on their fallbacks" % [name_, result, code])
-			return
-		if not ProjectSettings.load_resource_pack("user://" + name_, false):
-			push_warning("char_pack: could not mount " + name_)
-			return
-		print("char_pack: mounted %s" % name_)
-		_done())
-	var err := _http.request(url)
-	if err != OK:
-		push_warning("char_pack: request failed %d" % err)
+	set_process(true)
+
+func _process(dt: float) -> void:
+	_wait -= dt
+	_waited += dt
+	if _wait > 0.0:
+		return
+	_wait = POLL_S
+	var st = get_node("/root/SharedPacks").later_paths("chars")
+	if st == null:
+		if _waited > GIVE_UP_S:
+			push_warning("char_pack: the character packs did not arrive: characters stay on their fallbacks")
+			set_process(false)
+		return
+	set_process(false)
+	if not (st is Array):
+		push_warning("char_pack: the page could not fetch the character packs: characters stay on their fallbacks")
+		return
+	for p in st:
+		get_node("/root/SharedPacks").mount(str(p))
+	print("char_pack: mounted %d character pack(s)" % st.size())
+	_done()
 
 func _done() -> void:
 	CharPreset._have.clear()

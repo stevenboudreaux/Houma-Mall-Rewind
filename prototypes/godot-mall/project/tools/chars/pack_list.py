@@ -2,8 +2,8 @@
 """B2 (design/godot-character-editor.md): which character files each wing / year pack ships.
 
 models/characters/ holds every body, hair and piece (~76 MB). The wing packs ship none of it (wing 2
-is ~96 MB already): each map gets its own character pack, chars_<map>.<desktop|mobile>.pck, fetched
-and mounted by scripts/chars/char_pack.gd at start. A character pack ships only:
+is ~96 MB already): the character files ship as shared packs (split() below), fetched and mounted by
+scripts/chars/char_pack.gd once the mall is running. A character pack ships only:
   - the presets that map uses: data/story/attendants.json (wing, years, "look": "preset") and
     scripts/npcs.json "presets" (shoppers, every interior wing, both years), their bodies and pieces;
   - the player's wardrobe, data/characters/_wardrobe.json (the avatar creator, every pack);
@@ -12,21 +12,27 @@ and mounted by scripts/chars/char_pack.gd at start. A character pack ships only:
 The game copes with a missing piece (scripts/chars/char_preset.gd offers only pieces in the pack).
 
     python3 tools/chars/pack_list.py                  # print the lists and sizes
-    python3 tools/chars/pack_list.py --preset=wing2   # point the two "Characters" export presets at
-                                                      # wing 2 (1995)'s files (tools/chars/export_chars.sh)
 
-Run from the project folder. Only the two "Characters" presets' export_files change.
+Run from the project folder. CHARS (Nov 3 2026): the packs are exported by tools/shared_packs.py
+(called from tools/export_web.sh) as "chars" (what every map needs, one pack for the whole mall)
+plus "chars_<map>" (only the pieces that map's presets add), see split().
 """
 import json
 import os
-import re
 import struct
-import sys
 
 ROOT = os.getcwd()
 MC = "models/characters"
 FEATURE = {"wing1": (1, 1995), "wing2": (2, 1995), "wing3": (3, 1995),
-           "w1y26": (1, 2026), "w2y26": (2, 2026), "w3y26": (3, 2026)}
+           "w1y26": (1, 2026), "w2y26": (2, 2026), "w3y26": (3, 2026),
+           # CHARS (Nov 3): the room wings (design/godot-wings.md "Wings 4-6") have the avatar too
+           "wing4": (4, 1995), "wing5": (5, 1995), "wing6": (6, 1995),
+           "w4y26": (4, 2026), "w5y26": (5, 2026), "w6y26": (6, 2026)}
+
+
+def map_name(feat):
+    """the pack-style map name: wing1 -> w1, w1y26 -> w1y26"""
+    return feat.replace("wing", "w")
 
 
 def load(p):
@@ -132,27 +138,31 @@ def plan():
     return out
 
 
+def split(pl=None):
+    """CHARS (Nov 3, design/godot-build-hosting.md "Shared packs"): the character files as shared packs.
+    "chars": what every map needs (both bodies, the wardrobe and clothed defaults, their maps), one
+    pack for the whole mall. "chars_<map>": only the pieces that map's presets wear on top of that
+    (exported only when there are any). Returns {name: {"files": [...], "maps": [map names]}}."""
+    pl = pl or plan()
+    common = None
+    for e in pl.values():
+        s = set(e["files"] + e["tex"])
+        common = s if common is None else common & s
+    W = wardrobe()
+    ids = {s: list(v) + CLOTHED_DEFAULT for s, v in W.items()}
+    f, t = files_for(sorted(W.keys()), ids)
+    base = set(f + t)
+    common = sorted(base | (common or set()))
+    out = {"chars": {"files": common, "maps": [map_name(k) for k in FEATURE]}}
+    for feat, e in pl.items():
+        extra = sorted(set(e["files"] + e["tex"]) - set(common))
+        if extra:
+            out["chars_" + map_name(feat)] = {"files": extra, "maps": [map_name(feat)], "presets": e["presets"]}
+    return out
+
+
 def size(paths):
     return sum(os.path.getsize(os.path.join(ROOT, p)) for p in paths)
-
-
-def write(pl, feat):
-    """put the map's character files into the "Characters Desktop" / "Characters Mobile" presets
-    (export-pack only, export_filter "resources": Godot adds each file's dependencies)."""
-    path = os.path.join(ROOT, "export_presets.cfg")
-    s = open(path).read()
-    e = pl[feat]
-    files = ",".join('"res://%s"' % f for f in e["files"] + e["tex"])
-    parts = re.split(r"(?m)^(?=\[preset\.\d+\]$)", s)
-    done = 0
-    for i, part in enumerate(parts):
-        if re.search(r'(?m)^name="Characters (Desktop|Mobile)"$', part):
-            parts[i] = re.sub(r"(?m)^export_files=PackedStringArray\([^)]*\)$", "export_files=PackedStringArray(%s)" % files, part, count=1)
-            done += 1
-    if done != 2:
-        raise SystemExit("export_presets.cfg: the two Characters presets are missing")
-    open(path, "w").write("".join(parts))
-    print("Characters presets now list %s: %d files" % (feat, len(e["files"]) + len(e["tex"])))
 
 
 if __name__ == "__main__":
@@ -162,6 +172,6 @@ if __name__ == "__main__":
     for feat, e in pl.items():
         print("%-6s presets %-34s %3d glb + %2d textures = %5.1f MB (source files)" % (
             feat, ",".join(e["presets"]) or "-", len(e["files"]), len(e["tex"]), size(e["files"] + e["tex"]) / 1e6))
-    for a in sys.argv[1:]:
-        if a.startswith("--preset="):
-            write(pl, a.split("=", 1)[1])
+    print("as shared packs (tools/shared_packs.py):")
+    for n, e in split(pl).items():
+        print("  %-12s %3d files = %5.1f MB (source files), maps %s" % (n, len(e["files"]), size(e["files"]) / 1e6, " ".join(e["maps"])))
