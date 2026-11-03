@@ -38,7 +38,9 @@ META = {
         ["refs/derived/signs/corndog_IMG_4461_f005.jpg", [0.12, 0.18, 1.0, 0.62], "IMG_4461 f005 (the stand)"],
         ["refs/derived/frames/IMG_4461/f005.jpg", None, "IMG_4461 f005"],
     ],
-    "item": {"name": "Corn dog", "year": "both", "store": "CORN DOG 7"},
+    "item": {"name": "Corn dog", "year": "both", "store": "CORN DOG 7",
+             # SHOPS (design/godot-shops.md): shown on the counter, bought from the attendant (not picked up)
+             "display": {"wing": 2, "year": "both", "pos": [-134.6, 1.03, 74.5], "yaw": 90, "runtime": True}},
 }
 
 

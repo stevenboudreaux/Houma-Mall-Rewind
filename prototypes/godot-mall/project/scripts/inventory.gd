@@ -25,6 +25,9 @@ signal received(id: String)
 ## attendant and the counter glass call mall.redemption.open().
 var redemption = null
 # --- end R ----------------------------------------------------------------------------------------
+# --- SHOPS (Nov 3; design/godot-shops.md): the counter shops (scripts/shop.gd); mall.shop.open(shop_id)
+var shop = null
+# --- end SHOPS
 
 const VERSION := 1
 

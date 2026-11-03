@@ -44,7 +44,7 @@ META = {
     "item": {"name": "Root beer float", "year": 1995, "store": "WOOLWORTH",
              # on the lunch counter's black top (woolworth/store.gd: LC_U 2.45 face, LC_DP 0.68 deep, LC_H 1.0),
              # in front of the stool at d 8.01: P(u 2.12, d 8.01) = (-10 - d, 1.0, -14 + u)
-             "place": {"wing": 1, "year": 1995, "pos": [-18.01, 1.0, -11.88], "yaw": 0}},
+             "display": {"wing": 1, "year": 1995, "pos": [-18.01, 1.0, -11.88], "yaw": 0, "runtime": True}},
 }
 
 

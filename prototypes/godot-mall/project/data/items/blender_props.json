@@ -9,7 +9,7 @@
    "icon": "res://models/bl_cd7_corndog/bl_cd7_corndog_icon.png",
    "year": "both",
    "store": "CORN DOG 7",
-   "place": {
+   "display": {
     "wing": 2,
     "year": "both",
     "pos": [
@@ -17,7 +17,8 @@
      1.03,
      74.5
     ],
-    "yaw": 90
+    "yaw": 90,
+    "runtime": true
    }
   },
   {

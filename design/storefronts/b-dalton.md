@@ -16,6 +16,8 @@
 - Red carpet, cream walls.
 - Wood bays of books to 2.3 m along both walls.
 - Three double-sided gondolas of books, a table of new titles by the door, and the counter.
+- **The counter (SHOPS, Nov 3, 2026; `design/godot-shops.md`).** It stood against the left wall's bays, with no room behind it. It now stands 1.1 m off the wall (its back; it was 0.5) and starts 2.0 m in from the front (was 2.5), so the attendant stands behind it; the clerks' aisle is an obstacle (shoppers can't walk behind it). World: x −108.78 to −108.16, z 43.6 to 46.0. Wing 2 (1995) needs a rebake.
+- **Selling (SHOPS):** books are bought from the attendant ($10 each). The three Shiverwood paperbacks on the table of new titles are stock on show now, not pick-ups.
 
 ## Files
 `tools/stores/small/store2.gd`, `make_signs.py` → `bd_letters.json`, `bd_sub_letters.json`.

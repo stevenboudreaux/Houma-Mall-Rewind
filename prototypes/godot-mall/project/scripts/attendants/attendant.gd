@@ -84,6 +84,11 @@ func interact(p: Node) -> void:
 		p.mall.redemption.open()
 		return
 	# --- end R
+	# --- SHOPS (design/godot-shops.md): a shop's attendant ("shop": id) opens its list
+	if str(entry.get("shop", "")) != "" and p.mall and "shop" in p.mall and p.mall.shop \
+			and p.mall.shop.open(str(entry.shop), self):
+		return
+	# --- end SHOPS
 	if story and dialogue != "":
 		story.talk(self, dialogue)
 

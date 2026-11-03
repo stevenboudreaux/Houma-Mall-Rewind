@@ -1,0 +1,38 @@
+{
+	"_": "PLACEHOLDER preset (workstream SHOPS, Nov 3 2026; design/godot-shops.md): no character, a body, skin, hair and clothes for the shop's attendant until Steven makes the person in the owner's character editor and commits the downloaded file here. Clothes are a guess at the store's 1995 staff look.",
+	"id": "corn_dog_7",
+	"name": "PLACEHOLDER",
+	"version": 1,
+	"body": "male",
+	"keys": {
+		"height": 0.05,
+		"weight": 0.1,
+		"age": -0.3
+	},
+	"skin": "#c48a64",
+	"iris": "#3a2a1c",
+	"hair": {
+		"id": "hair_crew",
+		"color": "#2a1e16"
+	},
+	"outfit": {
+		"top": "top_polo",
+		"bottom": "bot_slacks",
+		"shoes": "shoe_sneakers",
+		"extras": [
+			"x_cap_fwd"
+		],
+		"colors": {
+			"top_polo": {
+				"main": "#c8202c"
+			},
+			"bot_slacks": {
+				"main": "#1c1c22"
+			},
+			"x_cap_fwd": {
+				"main": "#c8202c"
+			}
+		}
+	},
+	"shape_from": "SHOPS guess: Corn Dog 7's red-shirted crew (design/storefronts/corn-dog-7.md); a cap. The sex is a guess."
+}

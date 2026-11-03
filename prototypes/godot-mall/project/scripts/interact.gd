@@ -74,6 +74,7 @@ func _ready() -> void:
 	# R (Nov 2; design/godot-prize-counter.md): the "You received" pop-up and the redemption screen
 	add_child(preload("res://scripts/redemption.gd").new().setup(player, mall, db))
 	add_child(preload("res://scripts/received_popup.gd").new().setup(player, mall, db))
+	add_child(preload("res://scripts/shop.gd").new().setup(player, mall, db))   # SHOPS (design/godot-shops.md)
 	mall.collect()   # ECON (design/godot-economy.md): what a game page won while we were away, with its card
 	_build_ui()
 	hand_root = Node3D.new()

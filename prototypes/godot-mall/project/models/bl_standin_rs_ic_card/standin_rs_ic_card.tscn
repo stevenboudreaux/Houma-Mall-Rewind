@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Texture2D" path="res://models/bl_standin_rs_ic_card/standin_rs_ic_card_front.png" id="1_tex"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.9490, 0.9490, 0.9333, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_2"]
+material = SubResource("StandardMaterial3D_1")
+size = Vector3(0.0800, 0.1200, 0.0120)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3"]
+albedo_color = Color(1.0000, 1.0000, 1.0000, 1)
+roughness = 0.75
+albedo_texture = ExtResource("1_tex")
+
+[sub_resource type="QuadMesh" id="QuadMesh_4"]
+material = SubResource("StandardMaterial3D_3")
+size = Vector2(0.0800, 0.1200)
+
+[node name="standin_rs_ic_card" type="Node3D"]
+metadata/item_id = "standin_rs_ic_card"
+metadata/item_name = "Timer chip (blister card)"
+metadata/item_class = "pocket"
+metadata/standin = true
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0600, 0.0000)
+mesh = SubResource("BoxMesh_2")
+
+[node name="Front" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0600, 0.0075)
+mesh = SubResource("QuadMesh_4")
+
+[node name="StandInTag" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1500, 0)
+billboard = 1
+no_depth_test = true
+fixed_size = false
+pixel_size = 0.0004
+modulate = Color(1, 0.85, 0.15, 1)
+outline_size = 8
+font_size = 48
+text = "STAND-IN"

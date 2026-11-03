@@ -1,5 +1,5 @@
 {
- "_": "Counter attendants (workstream Q, design/godot-dialogue.md 'Attendants'). One unique person behind each counter. wing/years: where they exist (a store closed that year has none). skin: an npc/skins.json id the wing's pack ships (Ch*/Remy); Steven may swap. area: [x0, z0, x1, z1] world metres behind the counter they wander in; face: the direction they stand facing (toward the shop floor); talk_at: where the interactable stands (the shop side of the counter, so the 1.6 m reach works across it). name and dialogue are PLACEHOLDERs until Steven writes them. redemption: true = the redemption screen (session R) opens first when it exists. INT (Demo 49): \"spots\" (workstream GI) are places only; story.gd reads \"attendants\" and ignores \"spots\". look (B2, design/godot-character-editor.md): \"preset\" = a B1 body dressed from data/characters/<preset>.json; \"legacy\" = the Mixamo skin above (the fallback when the preset is missing).",
+ "_": "Counter attendants (workstream Q, design/godot-dialogue.md 'Attendants'). One unique person behind each counter. wing/years: where they exist (a store closed that year has none). skin: an npc/skins.json id the wing's pack ships (Ch*/Remy); Steven may swap. area: [x0, z0, x1, z1] world metres behind the counter they wander in; face: the direction they stand facing (toward the shop floor); talk_at: where the interactable stands (the shop side of the counter, so the 1.6 m reach works across it). name and dialogue are PLACEHOLDERs until Steven writes them. redemption: true = the redemption screen (session R) opens first when it exists. INT (Demo 49): \"spots\" (workstream GI) are places only; story.gd reads \"attendants\" and ignores \"spots\". look (B2, design/godot-character-editor.md): \"preset\" = a B1 body dressed from data/characters/<preset>.json; \"legacy\" = the Mixamo skin above (the fallback when the preset is missing). shop (SHOPS, design/godot-shops.md): a shop id in data/story/shops.json; talking opens its list (scripts/shop.gd) instead of a dialogue.",
  "attendants": [
   {
    "id": "pocket_change",
@@ -86,6 +86,126 @@
     -13.1,
     -54.0
    ]
+  },
+  {
+   "id": "woolworth",
+   "look": "preset",
+   "preset": "woolworth",
+   "store": "WOOLWORTH",
+   "wing": 1,
+   "years": [
+    1995
+   ],
+   "skin": "Ch26",
+   "sex": "f",
+   "name": "PLACEHOLDER",
+   "dialogue": "",
+   "shop": "woolworth",
+   "area": [
+    -19.0,
+    -12.85,
+    -16.2,
+    -12.6
+   ],
+   "face": [
+    0,
+    1
+   ],
+   "talk_at": [
+    -17.5,
+    -10.75
+   ],
+   "_where": "SHOPS: the lunch counter's clerks' side (woolworth/store.gd: between the back bar, u 0.12-0.74, and the counter, u 1.77-2.45; x = -10 - d, z = -14 + u); talk across it from the stools"
+  },
+  {
+   "id": "corn_dog_7",
+   "look": "preset",
+   "preset": "corn_dog_7",
+   "store": "CORN DOG 7",
+   "wing": 2,
+   "years": [
+    1995
+   ],
+   "skin": "Ch06",
+   "sex": "m",
+   "name": "PLACEHOLDER",
+   "dialogue": "",
+   "shop": "corn_dog_7",
+   "area": [
+    -134.06,
+    74.2,
+    -134.0,
+    77.4
+   ],
+   "face": [
+    -1,
+    0
+   ],
+   "talk_at": [
+    -135.7,
+    75.6
+   ],
+   "_where": "SHOPS: right behind the counter (corn_dog_7.gd: counter d 3.0-3.8, the back worktop from d 3.85; x = -138 + d, z = 68 + u), facing the queue; the worktop below 0.9 m is behind the body and hidden by the 1.0 m counter"
+  },
+  {
+   "id": "radioshack",
+   "look": "preset",
+   "preset": "radioshack",
+   "store": "RADIO SHACK",
+   "wing": 1,
+   "years": [
+    1995
+   ],
+   "skin": "Ch13",
+   "sex": "m",
+   "name": "PLACEHOLDER",
+   "dialogue": "",
+   "shop": "radioshack",
+   "area": [
+    6.4,
+    32.75,
+    10.2,
+    33.15
+   ],
+   "face": [
+    0,
+    -1
+   ],
+   "talk_at": [
+    8.2,
+    30.9
+   ],
+   "_where": "SHOPS: the clerks' aisle between the cash wrap (z 31.6-32.3) and the phone wall (z 34.0), facing the shop"
+  },
+  {
+   "id": "b_dalton",
+   "look": "preset",
+   "preset": "b_dalton",
+   "store": "B. DALTON BOOKSELLER",
+   "wing": 2,
+   "years": [
+    1995
+   ],
+   "skin": "Ch28",
+   "sex": "f",
+   "name": "PLACEHOLDER",
+   "dialogue": "",
+   "shop": "b_dalton",
+   "area": [
+    -109.22,
+    43.9,
+    -108.98,
+    45.7
+   ],
+   "face": [
+    1,
+    0
+   ],
+   "talk_at": [
+    -107.6,
+    44.35
+   ],
+   "_where": "SHOPS: behind the counter, now 1.1 m off the left wall (store2.gd dalton(): BD_COUNTER_U/_D; x -108.78 to -108.16, z 43.6 to 46.0), facing into the store"
   }
  ],
  "_comment": "Attendant SPOTS for the integration session: where a staff figure would stand, nothing more. No NPC is placed, no dialogue or story here (workstream GI ground rule, Nov 2 2026). World coordinates of the 2026 map (layout_2026.json); yaw in degrees as in ?cam= (0 faces -z toward the Concourse, 90 faces -x, 180 faces +z into the stores).",

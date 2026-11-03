@@ -90,6 +90,8 @@ static func radio_shack(b, a, t, n, W, D, rng):
 ## A deep oxblood fascia box with the flowing white script, recessed downlights under it, cream
 ## piers banded in brown; inside, shelf on shelf of spines with a face-out row along the top
 ## (record).
+const BD_COUNTER_U = 1.1    # SHOPS: the counter's back, metres off the left wall's face (SIDE)
+const BD_COUNTER_D = 2.0    # its door end, metres in from the front
 static func dalton(b, a, t, n, W, D, rng):
 	var G = "s6b_fix"
 	var F = "s6bf_props"
@@ -115,7 +117,11 @@ static func dalton(b, a, t, n, W, D, rng):
 	b.box(G, "s6_wood_back", tc + UP * 0.38, b.abs_size(t, 1.8, 0.76, 0.9, n), Transform3D.IDENTITY, ["-y"])
 	K.stock_row(b, G, tc - t * 0.9 - n * 0.45, t, -n, 0.05, 1.75, 0.76, 0.3, 0.0, "books", rng)
 	K.ob(b, tc - Vector3(0.9, 0, 0.9), tc + Vector3(0.9, 0, 0.9), 0.1)
-	K.counter(b, G, "s6b_small", P(a, t, n, SIDE + 0.5, 0, 2.5), -n, t, 2.4, "md_bb_counter", rng)
+	# SHOPS (Nov 3, design/godot-shops.md): the counter stands 1.1 m off the left wall (was 0.5, against the
+	# wall bays, leaving no room behind it) and 0.5 m nearer the door (clear of the first gondola's end), so the
+	# attendant stands behind it; the clerks' aisle is closed to shoppers
+	K.counter(b, G, "s6b_small", P(a, t, n, SIDE + BD_COUNTER_U, 0, BD_COUNTER_D), -n, t, 2.4, "md_bb_counter", rng)
+	K.ob(b, P(a, t, n, SIDE, 0, BD_COUNTER_D), P(a, t, n, SIDE + BD_COUNTER_U, 0, BD_COUNTER_D + 2.4), 0.0)
 
 # ------------------------------------------------------------------ Karmelkorn
 ## A cream bulkhead (the mall's own cream: Steven, Oct 8; it was golden yellow) wrapping the corner with the red neon logotype on both fronts (the
