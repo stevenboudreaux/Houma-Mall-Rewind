@@ -16,8 +16,10 @@
   Apache-2.0), real quarters, 120 Hz. Textures: the mall cabinet's own (paint_pusher_game.py).
   The mall page shows this in a full-window frame and listens for "emu-close".
   Kept in this browser (localStorage): each position's machine ("pusher.machine.<pos>": every
-  coin's pose, the ledger, the lip), the sound and quality settings, and the player's quarters in
-  the mall state B+C keeps ("mall-state-<year>".quarters; design/godot-interaction.md).
+  coin's pose, the ledger, the lip) and the sound and quality settings. Money and tickets
+  (ECON, Nov 3; design/godot-economy.md): each drop takes 25 cents (CONFIG.priceCents) from the
+  wallet shared by both years ("mall.money"), each coin into the cup pays 50 tickets to this year's
+  tickets ("mall.tickets-<year>"), both through lib/mallbank.js at the moment it happens.
   Test hooks: window.PUSHER_PAGE (the sim, drop/nudge, stats) for tests/unit/pusher/page_test.py.
 -->
 <style>
@@ -45,9 +47,6 @@
           font-weight: 900; font-size: 26px; color: #ffd23c; text-shadow: 0 0 12px rgba(255, 210, 60, .7), 2px 2px 0 #000; animation: plusup 1s ease-out forwards; }
   @keyframes plusup { from { opacity: 1; transform: translate(-50%, 0); } to { opacity: 0; transform: translate(-50%, -60px); } }
   @media (prefers-reduced-motion: reduce) { .plus { animation: plusfade 1s steps(1) forwards; } @keyframes plusfade { to { opacity: 0; } } }
-  #getq { position: absolute; right: 14px; bottom: calc(132px + env(safe-area-inset-bottom)); z-index: 7; display: none; padding: 10px 16px; border-radius: 999px;
-          border: 2px solid #ffd23c; background: #2a1d05; color: #ffd23c; font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; }
-  #getq.on { display: block; }
   #meter { left: 10px; display: flex; align-items: center; gap: 8px; }
   #meter i { display: block; width: 70px; height: 8px; border-radius: 4px; background: #2a2236; overflow: hidden; }
   #meter i b { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ffd23c, #ff3a1e); transition: width .15s; }
@@ -110,9 +109,8 @@
   <canvas id="gl"></canvas>
   <div id="slot"><i id="knob"></i></div>
   <div class="chip" id="meter">TILT <i><b id="meterbar"></b></i></div>
-  <div class="chip" id="qtr"><span id="qn">0</span><small>QUARTERS</small></div>
+  <div class="chip" id="qtr"><span id="qn">$0.00</span><small>MONEY</small></div>
   <div class="chip" id="tkt"><span id="tn">0</span><small>TICKETS</small></div>
-  <button id="getq">Get quarters</button>
   <div id="cup">CUP &middot; 0</div>
   <button id="bump">NUDGE</button>
   <button id="drop">DROP</button>
@@ -129,6 +127,7 @@
   <div class="track"><div class="bar" id="lbar"></div></div><div class="err" id="lerr"></div></div>
 <script src="lib/three.min.js"></script>
 <script src="pusher/logic.js"></script>
+<script src="lib/mallbank.js"></script>
 <script type="module">
 import RAPIER from './lib/rapier3d-compat.mjs';
 import { createSim, GEOM } from './pusher/sim.js';
@@ -152,10 +151,12 @@ const isOwner = (function () { try { return localStorage.getItem('southland-edit
 const mobile = /iPhone|iPad|Android|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) < 900);
 let quality = load('pusher.quality', null);
 if (!CFG.quality[quality]) quality = mobile ? 'low' : 'high';      // measured: 4 / 6 / 7 ms a physics step in wasm (design note)
-const STATE_KEY = 'mall-state-' + YEAR;
-function mallState() { const s = load(STATE_KEY, null); return (s && typeof s === 'object') ? s : null; }
-function quarters() { return PL.balance(mallState()); }
-function setMall(s) { save(STATE_KEY, s); try { if (window.parent && window.parent.mall) Object.assign(window.parent.mall, { quarters: s.quarters, tickets: s.tickets }); } catch (e) {} }
+// ECON (Nov 3): the wallet (both years) and this year's tickets, read and written at the moment of use
+const BANK = window.MALLBANK.make(localStorage), SESSION = window.MALLBANK.session();
+let cupSeq = 0, cupSaved = true;   // a cup credit saves the machine after its step, so the coin can't fall twice
+function money() { return BANK.money(); }
+function tickets() { return BANK.tickets(YEAR); }
+function mirror() { try { if (window.parent && window.parent.mall) Object.assign(window.parent.mall, { money: money(), tickets: tickets() }); } catch (e) {} }
 const MKEY = PL.machineKey(POS);
 function now() { return performance.now(); }
 
@@ -503,9 +504,8 @@ function applyLip(mm) { lipMm = mm; sim.setLip(mm); lipMesh.scale.y = Math.max(0
 // a drop: pays a quarter in, the coin slides down to the chute's foot, then it is the sim's
 function drop() {
   if (!ready || paused) return;
-  const st = PL.payIn(mallState());
-  if (!st) { showFlash('NO QUARTERS', 'tap Get quarters'); ui(); setTimeout(hideFlash, 1400); SFX.reject(); return; }
-  setMall(st); ui();
+  if (!BANK.spend(CFG.priceCents, NAME + ' drop')) { showFlash('NO MONEY', 'a drop is ' + window.MALLBANK.fmt(CFG.priceCents) + '; you have ' + window.MALLBANK.fmt(money())); ui(); setTimeout(hideFlash, 1800); SFX.reject(); return; }
+  mirror(); ui();
   ledger.in++;
   slides.push({ x: sliderX, t0: now() });
   SFX.clink(0.06, true);
@@ -540,7 +540,9 @@ function onEvent(e) {
   ledger = PL.book(ledger, e.type);
   if (e.type === 'cup') {
     cupCount++; cupTotal++;
-    setTimeout(() => { setMall(PL.payOut(mallState(), 1)); ui(); SFX.cup(); plus(); const c = document.getElementById('cup'); c.classList.add('pop'); setTimeout(() => c.classList.remove('pop'), 200); }, 350);
+    // credited now (the picture follows); the machine is saved after this step so the coin can't fall twice
+    BANK.credit(YEAR, CFG.ticketsPerCoin, NAME + ' cup', 'pusher:' + POS + ':' + SESSION + ':' + (++cupSeq)); mirror(); cupSaved = false;
+    setTimeout(() => { ui(); SFX.cup(); plus(); const c = document.getElementById('cup'); c.classList.add('pop'); setTimeout(() => c.classList.remove('pop'), 200); }, 350);
   } else if (e.type === 'side') SFX.house();
   else if (e.type === 'house-tilt') { setTimeout(() => SFX.house(), 200); }
   dirty = true;
@@ -557,6 +559,7 @@ function frame() {
     const ev = sim.step(dt);
     stats.simMs += now() - s0; stats.steps += sim.steps - n0;
     for (const e of ev) onEvent(e);
+    if (!cupSaved) { saveMachine(); cupSaved = true; }
     // a clink when a dropped coin lands (its first second), and the motor's clunk at the crank's dead points
     const ph = (sim.t % GEOM.period) / GEOM.period;
     if ((lastPhase < 0.5 && ph >= 0.5) || (lastPhase > ph)) SFX.motorClunk();
@@ -660,22 +663,17 @@ const flashEl = document.getElementById('flash');
 function showFlash(a, b, tilt) { flashEl.innerHTML = a + (b ? '<small style="display:block;font-size:.4em;letter-spacing:.1em">' + b + '</small>' : ''); flashEl.style.opacity = 1; flashEl.classList.toggle('tilt', !!tilt); }
 function hideFlash() { flashEl.style.opacity = 0; flashEl.classList.remove('tilt'); }
 function ui() {
-  const q = quarters();
-  document.getElementById('qn').textContent = q;
-  document.getElementById('tn').textContent = PL.tickets(mallState());
-  document.getElementById('getq').classList.toggle('on', q < 1);
+  document.getElementById('qn').textContent = window.MALLBANK.fmt(money());
+  document.getElementById('tn').textContent = tickets();
   document.getElementById('cup').textContent = 'CUP · ' + cupTotal + (cupTotal ? ' coins · ' + cupTotal * CFG.ticketsPerCoin + ' tickets' : '');
   document.getElementById('hint').textContent = mobile ? 'Drag to aim · tap to drop · shake or NUDGE to bump' : 'Drag or ← → to aim · Space/E/click to drop · N or Shift to nudge' + (padSeen ? ' · pad: stick, A, shoulders' : '');
 }
 // a coin into the cup: "+50" (tickets) rises from the cup
 function plus() { const d = document.createElement('div'); d.className = 'plus'; d.textContent = '+' + CFG.ticketsPerCoin; document.getElementById('stage').appendChild(d); setTimeout(() => d.remove(), 1100); }
-// "Get quarters": back to $5.00, free (a placeholder for a change machine; design note)
-document.getElementById('getq').addEventListener('pointerdown', (e) => e.stopPropagation());
-document.getElementById('getq').addEventListener('click', (e) => { e.stopPropagation(); setMall(PL.refill(mallState())); ui(); SFX.clink(0.05, true); });
 function title() {
   const m = document.getElementById('msg');
   m.innerHTML = '<div class="card"><h2>' + esc(NAME) + '</h2><p>Slide the coin slot left and right and drop your quarters onto the top deck. The pusher shoves the heap toward the edge; every coin that falls over the front pays <b>' + CFG.ticketsPerCoin + ' tickets</b>. ' +
-    'The side holes are the house\'s. Bump the machine if you must, but too much trips the <b>TILT</b>.</p><p>You have <b>' + quarters() + '</b> quarters and <b>' + PL.tickets(mallState()) + '</b> tickets.</p><button class="big" id="go">PLAY</button></div>';
+    'The side holes are the house\'s. Bump the machine if you must, but too much trips the <b>TILT</b>.</p><p>Each drop is <b>' + window.MALLBANK.fmt(CFG.priceCents) + '</b>. You have <b>' + window.MALLBANK.fmt(money()) + '</b> and <b>' + tickets() + '</b> tickets.</p><button class="big" id="go">PLAY</button></div>';
   m.querySelector('#go').addEventListener('pointerdown', (e) => { e.stopPropagation(); });
   m.querySelector('#go').addEventListener('click', (e) => { e.stopPropagation(); m.innerHTML = ''; unlock(); motionPermission(); paused = false; });
   paused = true;
@@ -732,7 +730,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) saveM
         return { deckCoinMin: [dmin.x, dmin.y, dmin.z, pr(S2W(dmin.x, dmin.y, dmin.z))], deckCoinMax: [dmax.z, pr(S2W(dmax.x, dmax.y, dmax.z))], riserTop: pr(V(0, G.Y_PT, G.Z_DROP + sim.deckZ() / 100)), wallFoot: pr(V(0, G.Y_PT, G.Z_DROP + 0.66)), stageTop: stage.getBoundingClientRect().top,
           lip: pr(V(0, G.Y_SH, G.Z_DROP)), shelfBack: pr(S2W(szc.x, szc.y, szc.z)), riser: pr(V(0, G.Y_SH, G.Z_DROP + sim.deckZ() / 100)), deckMeshZ: dm.z, riserExpected: -(G.Z_DROP + sim.deckZ() / 100), coin0: coinMesh.count, firstCoin: (() => { const m = new T3.Matrix4(); coinMesh.getMatrixAt(0, m); return new T3.Vector3().setFromMatrixPosition(m).toArray(); })(), firstSim: sim.coins.values().next().value.body.translation() };
       }, sim, drop, nudge, trip, stats, onEvent, get ledger() { return ledger; }, get gate() { return gateNow; }, get tiltAt() { return tiltAt; },
-      quarters, setSlider, saveMachine, restored, get cupTotal() { return cupTotal; }, mallState, applyLip, newMachine, get paused() { return paused; }, set paused(v) { paused = v; } };
+      money, tickets, BANK, setSlider, saveMachine, restored, get cupTotal() { return cupTotal; }, applyLip, newMachine, get paused() { return paused; }, set paused(v) { paused = v; } };
   } catch (e) {
     document.getElementById('lerr').textContent = e && e.message ? e.message : String(e);
     console.error(e);

@@ -23,6 +23,7 @@
     bonusStart: 100,       // the bonus after it is won
     bonusStep: 1,          // added for every game that does not win it
     plays: 4,              // $1.00 in quarters
+    priceCents: 100,       // ECON (Nov 3): START takes $1.00 from the wallet for the four plays (the price it had)
     lockoutMs: 350,        // presses this soon after a game starts are ignored
     celebrateBonusMs: 11500,
     celebrateWinMs: 1500,

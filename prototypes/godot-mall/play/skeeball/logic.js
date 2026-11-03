@@ -22,6 +22,7 @@
 
   var CONFIG = {
     balls: 9,              // balls per game (video)
+    priceCents: 25,        // ECON (Nov 3): 1 token a game = 25 cents from the wallet (the coin door: 1 TOKEN)
     // ---- the roll: hold to fill the meter, let go to roll (Steven, Oct 11)
     meterUpMs: 950,        // the meter fills from empty to full in this long ...
     meterPingPong: true,   // ... then falls back and rises again while held

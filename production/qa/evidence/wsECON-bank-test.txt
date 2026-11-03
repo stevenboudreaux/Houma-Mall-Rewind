@@ -1,0 +1,14 @@
+ok case: a new player has $100.00 and no tickets in either year
+ok case: spend takes the price; no money, no play, nothing changes
+ok case: earn puts money back; zero or negative is refused
+ok case: tickets stay in their own year
+ok case: a payout with an id counts once
+ok case: migration: the pusher's free quarters become money (25 cents each), old tickets stay in their year, the claw's count goes to 1995
+ok case: migration adds to what a game page already wrote (either side may run first)
+ok case: migration of junk: bad numbers are dropped, nothing breaks
+ok case: after migration, a stray old field is not counted again
+ok fmt: cents as the player reads them
+ok a storage that throws (private mode) does not break a page
+ok the ledger keeps the last 40 changes and 200 ids
+ok the game prices are data: pusher 25, claw 25, Skee-Ball 25, WHIRLWIND 100 for 4 plays
+ECON BANK OK (13 tests)

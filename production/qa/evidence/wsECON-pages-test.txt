@@ -1,0 +1,23 @@
+ok   WHIRLWIND: a new player has $100.00
+ok   WHIRLWIND: START takes $1.00 and play 1 runs
+ok   WHIRLWIND: the light stops and wins 5
+ok   WHIRLWIND: the 5 tickets are in the 1995 bank before any is fed out (5)
+ok   WHIRLWIND: a reload during the payout keeps them, once (5)
+ok   WHIRLWIND: the 3 plays left are still on the machine; no second dollar taken
+ok   WHIRLWIND: with 10 cents START is refused, nothing taken
+ok   WHIRLWIND: the card says 'You need $1.00 ... You have $0.10' and START is greyed
+ok   WHIRLWIND ?year=2026 pays 2026 (3), not 1995
+ok   SKEE-BALL: a game takes 25 cents
+ok   SKEE-BALL: after 4 balls (70 points) the bank holds what they earned (2 = 2)
+ok   SKEE-BALL: leaving mid-game keeps them (2), nothing more taken
+ok   SKEE-BALL: a full game of 9 balls, 180 points, pays exactly 6 (6)
+ok   SKEE-BALL: the ticket strip at the end adds nothing more
+ok   SKEE-BALL: with 10 cents no game, and the card says it costs $0.25
+ok   SKEE-BALL ?year=2026 pays 2026 (7), not 1995; the last quarter spent
+ok   CLAW: the old save is folded in once: 100 + 35 tickets, $100.00 + 4 quarters ($101.00)
+ok   CLAW: a play takes 25 cents
+ok   CLAW: the capsule is won and its 200 tickets are in the 1995 bank (200, 335)
+ok   CLAW: a reload counts it once; the chip shows the year's 335
+ok   CLAW: with 10 cents no play, and the card says why
+ok   0 page errors (0) []
+ECON PAGES OK

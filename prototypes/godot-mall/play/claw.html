@@ -14,8 +14,11 @@
   The mall page shows this in a full-window frame and listens for "emu-close".
   Kept in this browser (localStorage): each machine's pile ("claw.pile.<n>", so prizes you moved
   stay moved and ones you won stay gone until the attendant refills it), the plays count, and
-  the player's prizes ("mall.inventory": every prize won, with its tickets and POGs; "mall.tickets":
-  the ticket total). The inventory is for the future: things to do with prizes later.
+  the player's prizes ("mall.inventory": every prize won, with its tickets and POGs). The inventory
+  is for the future: things to do with prizes later. Money and tickets (ECON, Nov 3;
+  design/godot-economy.md, lib/mallbank.js): a play takes 25 cents (1 token) from the wallet; a
+  ticket capsule's tickets go to the year's tickets ("mall.tickets-<year>", ?year=, default 1995)
+  when it drops in the chute. The old "mall.tickets" count is folded into 1995 once.
 -->
 <style>
   :root { --bg: #07060a; --fg: #f4f0e8; --dim: #a49eb2; --accent: #ffd23c; --red: #ff3a1e; --line: #2a2634; }
@@ -26,6 +29,8 @@
          padding-top: env(safe-area-inset-top); background: #000; border-bottom: 1px solid var(--line); z-index: 20; }
   #bar b { flex: 1; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: italic; color: var(--accent); }
   button { font: inherit; color: #1a0a20; background: var(--accent); border: 0; border-radius: 10px; padding: 9px 14px; font-weight: 800; cursor: pointer; }
+  button:disabled { opacity: .45; cursor: default; }
+  .broke { color: #ff9a8a; }
   button.ghost { background: transparent; color: var(--fg); border: 1px solid #3a3446; font-weight: 600; }
   #stage { position: fixed; top: calc(48px + env(safe-area-inset-top)); left: 0; right: 0; bottom: 0; }
   #gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -86,7 +91,7 @@
 <div id="stage">
   <canvas id="gl"></canvas>
   <div class="chip" id="clock">&nbsp;</div>
-  <div class="chip" id="tix">TICKETS <span id="tk">0</span><small><span id="pc">0</span> PRIZES</small></div>
+  <div class="chip" id="tix">TICKETS <span id="tk">0</span><small><span id="pc">0</span> PRIZES &middot; <span id="cash">$0.00</span></small></div>
   <div id="pad"><i id="knob"></i></div>
   <button id="drop">DROP</button>
   <div id="flash"></div>
@@ -97,6 +102,7 @@
   <div class="track"><div class="bar" id="lbar"></div></div><div class="err" id="lerr"></div></div>
 <script src="lib/three.min.js"></script>
 <script src="claw/logic.js"></script>
+<script src="lib/mallbank.js"></script>
 <script>
 (function () {
 'use strict';
@@ -116,7 +122,9 @@ function load(k, d) { try { var v = localStorage.getItem(k); return v === null ?
 function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 var soundOn = load('claw.sound', true) !== false;
 var inventory = load('mall.inventory', []); if (!Array.isArray(inventory)) inventory = [];
-var tickets = load('mall.tickets', 0); if (typeof tickets !== 'number' || tickets < 0) tickets = 0;
+// ECON: the wallet (both years) and this year's tickets
+var YEAR = /^\d{4}$/.test(Q.get('year') || '') ? parseInt(Q.get('year'), 10) : 1995;
+var BANK = window.MALLBANK.make(localStorage), SESSION = window.MALLBANK.session(), FMT = window.MALLBANK.fmt;
 var pileKey = 'claw.pile.' + M;
 var pile = load(pileKey, null);
 function newFill() { var seed = (Date.now() ^ (M * 7919)) >>> 0; return { seed: seed, plays: 0, items: CL.fill(seed) }; }
@@ -571,7 +579,9 @@ function syncPile() {
   for (var id in meshes) if (!ids[id] && meshes[id] !== ST.carried) { live.prizes.remove(meshes[id]); delete meshes[id]; }
 }
 function insertToken() {
-  unlock(); SFX.coin();
+  unlock();
+  if (!BANK.spend(CFG.priceCents, NAME + ' play')) { lastMsg = ''; ui(); return; }   // ui() says why
+  SFX.coin();
   pile.plays++; ST.playNo = pile.plays; save(pileKey, pile);
   ST.mode = 'play'; ST.t0 = now(); ST.won = null; ST.tgt = null; ST.res = null; errorMode = false;
   ST.grip = CL.grip(pile.plays, Math.random);
@@ -593,7 +603,7 @@ function finishPlay() {
     if (out.won) {
       var rec = CL.record(out.won, M, Date.now());
       inventory.push(rec); save('mall.inventory', inventory);
-      if (rec.tickets) { tickets += rec.tickets; save('mall.tickets', tickets); }
+      if (rec.tickets) BANK.credit(YEAR, rec.tickets, NAME + ' capsule', 'claw:' + M + ':' + SESSION + ':' + ST.playNo);
       ST.won = rec;
     }
   }
@@ -720,7 +730,7 @@ function showInv() {
     h += '<li class="' + (r.rare ? 'rare' : '') + '"><div class="ic">' + (ICON[r.kind] || '⭐') + '</div><div class="nm">' + esc(r.name) + '<small>' + esc(sub) + ' · ' + esc(r.from || '') + '</small></div></li>';
   });
   list.innerHTML = h || '<div class="empty">Nothing yet. Win something.</div>';
-  document.getElementById('invsub').textContent = inventory.length + ' prize' + (inventory.length === 1 ? '' : 's') + ' · ' + tickets + ' tickets in capsules';
+  document.getElementById('invsub').textContent = inventory.length + ' prize' + (inventory.length === 1 ? '' : 's') + ' · ' + inventory.reduce(function (n, r) { return n + (r.tickets || 0); }, 0) + ' tickets in capsules';
   document.getElementById('inv').style.display = 'block';
 }
 function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
@@ -733,18 +743,22 @@ function showFlash(a, b) { flashEl.innerHTML = a + (b ? '<small>' + esc(b) + '</
 function hideFlash() { flashEl.style.opacity = 0; }
 var lastMsg = '';
 function ui() {
-  document.getElementById('tk').textContent = tickets;
+  var cash = BANK.money(), broke = cash < CFG.priceCents;
+  document.getElementById('tk').textContent = BANK.tickets(YEAR);
+  document.getElementById('cash').textContent = FMT(cash);
+  var need = broke ? '<p class="broke">You need <b>' + FMT(CFG.priceCents) + '</b> to play. You have <b>' + FMT(cash) + '</b>.</p>' : '';
+  var dis = broke ? ' disabled' : '';
   document.getElementById('pc').textContent = inventory.length;
   var touch = matchMedia('(pointer: coarse)').matches, m = '';
   if (ST.mode === 'title') {
-    m = '<div class="card"><h2>' + esc(NAME) + '</h2><p>1 token per play. Move the claw over a prize and press DROP before the clock runs out. ' +
-        'The claw closes when it touches down, winds up and carries what it holds to the chute.</p><button class="big" id="go">INSERT TOKEN</button>' +
+    m = '<div class="card"><h2>' + esc(NAME) + '</h2><p>1 token (' + FMT(CFG.priceCents) + ') per play. You have <b>' + FMT(cash) + '</b>. Move the claw over a prize and press DROP before the clock runs out. ' +
+        'The claw closes when it touches down, winds up and carries what it holds to the chute.</p>' + need + '<button class="big" id="go"' + dis + '>INSERT TOKEN</button>' +
         '<p style="margin:10px 0 0;font-size:13px;color:#a49eb2">' + (touch ? 'The red stick moves the claw; the big button drops it.' : 'Arrows or WASD move the claw; Space drops it' + (padSeen ? ' (or the stick and Ⓐ)' : '') + '.') + '</p></div>';
   } else if (ST.mode === 'play') {
     m = '';
   } else if (ST.mode === 'over') {
     m = '<div class="card"><h2>' + (ST.won ? 'YOU WON' : 'NO PRIZE') + '</h2><p>' + (ST.won ? esc(ST.won.name) + (ST.won.tickets ? ' (' + ST.won.tickets + ' tickets, in your prizes)' : ', in your prizes') : 'The claw let go. Try again.') +
-        '</p><button class="big" id="go">PLAY AGAIN</button></div>';
+         ' You have <b>' + FMT(cash) + '</b>.</p>' + need + '<button class="big" id="go"' + dis + '>PLAY AGAIN &middot; ' + FMT(CFG.priceCents) + '</button></div>';
   }
   if (m !== lastMsg) { lastMsg = m; document.getElementById('msg').innerHTML = m; var go = document.getElementById('go'); if (go) go.addEventListener('click', function (e) { e.stopPropagation(); insertToken(); }); }
   var playing = ST.mode === 'play';
@@ -819,7 +833,7 @@ loadAll(function () {
   layout(); ui();
   document.getElementById('load').style.display = 'none';
   frame();
-  window.__claw = { ST: ST, CL: CL, pile: function () { return pile; }, start: insertToken, drop: startDrop, setPos: function (x, z) { ST.pos = [x, z]; },
+  window.__claw = { ST: ST, CL: CL, BANK: BANK, YEAR: YEAR, pile: function () { return pile; }, start: insertToken, drop: startDrop, setPos: function (x, z) { ST.pos = [x, z]; },
                     setGrip: function (g) { ST.grip = g; }, inventory: function () { return inventory; }, error: function () { errorMode = true; } };
 });
 })();
