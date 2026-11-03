@@ -105,9 +105,9 @@ func _process(_dt: float) -> bool:
 			elif t == 102:
 				_check(m.is_open and m.tab == "controls", "tab change to CONTROLS")
 				_check(m.controls != null and m.controls.by_id.has("tilt"), "CONTROLS lists the tilt row")
-				m.open_tab("year")
+				m.open_tab("main")
 			elif t == 108:
-				_check(m.tab == "year", "tab change to YEAR")
+				_check(m.tab == "main", "tab change to MAIN (MENU2: no YEAR tab)")
 				m.close()
 			elif t == 114:
 				_check(not m.is_open and not p.frozen, "the menu closes, walking again")

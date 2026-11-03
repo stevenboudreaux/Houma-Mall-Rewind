@@ -221,6 +221,8 @@ func _ready() -> void:
 	vr.name = "VR"
 	vr.set_script(load("res://scripts/vr.gd"))
 	add_child(vr)
+	# MENU2: a time-travel trip from a mall directory lands here (scripts/timetravel_trip.gd)
+	load("res://scripts/timetravel_trip.gd").arrive(self)
 
 ## The Runner, the shoppers, the shirt words, the Stockrooms and the prize counter: 1995 only (2026
 ## is the building as it is today).
@@ -795,7 +797,7 @@ func _update_prompt() -> void:
 func _wing_scene(w: int) -> String:
 	return ("res://wing%d_2026.tscn" if year == 2026 else "res://wing%d.tscn") % w
 
-## The 1995 / 2026 switch (top right, under Jump to; key Y): the same spot in the other year. The
+## The 1995 / 2026 switch (was top right, under Jump to; key Y; hidden since MENU2): the same spot in the other year. The
 ## building is the same, the stores change. On the web it reloads the page with ?year= (each year's
 ## wing is its own pair of game files, web/shell.html), keeping the place you stand and the view.
 func _build_year_ui() -> void:
@@ -806,19 +808,12 @@ func _build_year_ui() -> void:
 	year_btn.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	year_btn.offset_left = -200; year_btn.offset_right = -10
 	year_btn.offset_top = 168; year_btn.offset_bottom = 200
-	year_btn.pressed.connect(_year_pressed)   # M: opens the menu's YEAR tab
-	# Workstream F (Nov 1 2026): the outside has a 2026 build too (wing3_2026.tscn), so the button
-	# shows there as everywhere else (design/godot-exterior.md "The 2026 outside")
-	year_btn.visible = true
+	# MENU2 (Nov 3 2026, design/godot-menu.md): the year changes only at a mall directory's toggle
+	# (scripts/timetravel_trip.gd). The button is kept, never shown, as other HUD code lays out
+	# round it.
+	year_btn.visible = false
 	_cl.add_child(year_btn)
 
-## M: the year button and Y open the menu on its YEAR tab (scripts/menu/menu.gd), whose buttons
-## call _switch_year(); without the menu, the switch happens at once as before.
-func _year_pressed() -> void:
-	if menu and menu.has_method("open_tab"):
-		menu.open_tab("year")
-	else:
-		_switch_year()
 
 ## M: the time-travel transition (scripts/timetravel.tscn) before a year change; returns when it
 ## has finished (at once in VR, where a flat overlay isn't seen).
@@ -830,6 +825,8 @@ func _time_travel(to_year: int) -> void:
 	tt.play(year, to_year)
 	await tt.finished
 
+## MENU2: no player control reaches this any more (the directory's toggle travels instead); kept for
+## tools and tests.
 func _switch_year() -> void:
 	if leaving:
 		return
@@ -1016,9 +1013,6 @@ func _jump_input(e: InputEvent) -> bool:
 	var open := jump_panel.visible
 	if e is InputEventKey and e.pressed and not e.echo:
 		var k: int = e.physical_keycode
-		if k == KEY_Y and not open:
-			_year_pressed()   # M: the menu's YEAR tab
-			return true
 		if k == KEY_J:
 			_jump_show(not open)
 			return true

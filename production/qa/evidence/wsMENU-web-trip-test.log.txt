@@ -1,0 +1,27 @@
+1995 ready_s 32.753
+ok   1995-2026: the trip arrives (97 s)
+1995-2026: watcher {"frames":34,"loadShown":0,"veil":19,"tt":19}
+ok   1995-2026: the load screen never shows (0 of 34 sampled frames)
+ok   1995-2026: the vortex veil covered the reload (19 frames)
+ok   1995-2026: the trip began in 1995
+ok   1995-2026: in 2026 (got 2026)
+ok   1995-2026: landed within 1 m of the twin spot (0.00 m; at -2.75,-83.70, twin spot -2.75,-83.70)
+ok   1995-2026: the same facing (180.0 vs 180.0)
+ok   1995-2026: the page is the 2026 file (wing=1&cam=-2.75%2C-83.70%2C180.0%2C-4.0&year=2026&time=day)
+ok   1995-2026: no console errors ()
+ok   1995-2026: no screencast frame looks like the load screen (0 of 292; darkest 0.019 near-black)
+1995-2026: 292 frames over 97.2 s
+ok   2026-1995: the trip arrives (122 s)
+2026-1995: watcher {"frames":32,"loadShown":0,"veil":19,"tt":19}
+ok   2026-1995: the load screen never shows (0 of 32 sampled frames)
+ok   2026-1995: the vortex veil covered the reload (19 frames)
+ok   2026-1995: the trip began in 2026
+ok   2026-1995: in 1995 (got 1995)
+ok   2026-1995: landed within 1 m of the twin spot (0.00 m; at -2.75,-83.70, twin spot -2.75,-83.70)
+ok   2026-1995: the same facing (180.0 vs 180.0)
+ok   2026-1995: the page is the 1995 file (wing=1&cam=-2.75%2C-83.70%2C180.0%2C-4.0&time=day)
+ok   2026-1995: no console errors ()
+ok   2026-1995: no screencast frame looks like the load screen (0 of 430; darkest 0.070 near-black)
+2026-1995: 430 frames over 122.1 s
+checks ok: 20
+MENU TRIP WEB OK (20 checks)

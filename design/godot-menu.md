@@ -1,5 +1,19 @@
 # The menu, the time-travel transition, the opening and the player's name (Godot mall, workstream M, Nov 2 2026)
 
+> **MENU2, Nov 3 2026 (branch `ws/menu2`): this note is updated for Steven's Nov 3 decisions.**
+> 1. Tabs, left to right: **MAIN, INVENTORY, CONTROLS** (L2 / R2 = LB / RB as before, and now the
+>    triggers too). YEAR and the separate AVATAR tab are gone. Room is left for a later JOURNAL tab
+>    (last); it is neither built nor shown.
+> 2. **MAIN** shows the current character, their name, money and tickets. **Edit** opens the avatar
+>    editing (NAME + the creator) inside MAIN.
+> 3. Each mall directory, in both years, shows the current year at the top with a **toggle** beside it.
+>    Pressing it starts time travel; **it is the only way to change year.** Y no longer does anything,
+>    and there is no year button, YEAR tab or CONTROLS row.
+> 4. The trip: the directory closes, you stand at it in your own view, the effect starts and loops
+>    through the whole load with **no load screen**, and you reappear at the same directory in the
+>    other year, facing the same way. Sections "MAIN" and "Time travel at the directory" below.
+> The earlier text is kept where it still holds; superseded parts are struck or marked.
+
 **Asked for (Steven, Nov 2):** one full-screen menu (tabs, left to right: **INVENTORY, AVATAR, CONTROLS,
 YEAR**; Steven, later Nov 2: "the first thing that shows up [is] the inventory on the far left, then the
 avatar builder") on a key, a
@@ -22,6 +36,9 @@ Built on `main` at 326ed7c (Demo 47). Branch `ws/m-menu`.
 | `scripts/timetravel.tscn`, `.gd`, `.gdshader` | The time-travel transition (a CanvasLayer at 60; the look is the shader). |
 | `tools/qa/menu_test.gd` | Native, unbaked: opening, name, every tab at 3 sizes, keys, remap, HELD / PUT AWAY in both views, the transition, 2026's shoppers. |
 | `tools/qa/menu_webtest.py` | The web build: opening, typed name, tabs, remap by keyboard and a reload, phone portrait / landscape by touch. |
+| `scripts/menu/portrait.gd` | MENU2: MAIN's turning character. |
+| `scripts/timetravel_trip.gd`, `data/directory_twins.json` | MENU2: the trip from a directory's year toggle, and each kiosk's twin. |
+| `tools/qa/menu_trip_webtest.js` | MENU2: the trip on the web, both ways, the load screen never shown, the landing. |
 
 Shared files, small hunks marked `M`:
 - `scripts/player.gd`: `var menu`, making `Menu`; walking / running read the InputMap (`_mkey`, falls back
@@ -39,16 +56,20 @@ Shared files, small hunks marked `M`:
   `data/eras_2026.json`, as before in effect), so `data/story/opening.json` ships in every pack.
 
 ## The menu
-Tabs, left to right: **INVENTORY · AVATAR · CONTROLS · YEAR**. Opening it shows INVENTORY.
+Tabs, left to right: **MAIN · INVENTORY · CONTROLS** (MENU2; was INVENTORY · AVATAR · CONTROLS · YEAR).
+Opening it shows MAIN, the far-left tab (guess, following Steven's Nov 2 rule "the far left opens
+first"). `TABS` in `menu.gd`; a JOURNAL tab would be appended after CONTROLS.
 | | Keyboard / mouse | Gamepad | Touch |
 |---|---|---|---|
 | Open / close | **Tab** (Esc closes too), the **Menu (Tab)** button top left | **Start** (B closes too) | **Menu** button, ✕ |
-| Tabs | **Q / E**, a click on the tab | **LB / RB** | a sideways swipe, a tap on the tab |
+| Tabs | **Q / E**, a click on the tab | **LB / RB** (L1 / R1), and **LT / RT** (L2 / R2) | a sideways swipe, a tap on the tab |
 | Inside a tab | ↑↓←→ (W S A D) + Enter / Space | d-pad + A | taps; drag to scroll |
 Tab is Steven's call; Tab is the default and it is remappable (CONTROLS). The old ways in open their tab:
-**I** / Bag → INVENTORY, **C** / Avatar → AVATAR, **Y** / the year button → YEAR. (A gamepad's Start used
-to open the creator; it opens the menu now.) **Tab, Start and the Menu button always open on INVENTORY**,
-the far-left tab (Steven). The player is frozen while it is open
+**I** / Bag → INVENTORY, **C** / Avatar → MAIN with Edit open. ~~**Y** / the year button → YEAR~~
+(removed, MENU2). (A gamepad's Start used to open the creator; it opens the menu now.) **Tab, Start and
+the Menu button always open on the far-left tab**, MAIN since MENU2. "L2 / R2 as now" (Steven): the tab
+keys were and are the shoulder buttons (LB / RB, pad buttons 9 / 10; L1 / R1 on a PlayStation pad); the
+triggers (LT / RT, L2 / R2) now switch tabs as well, once per pull, so either reading works. The player is frozen while it is open
 (`player.frozen`), so nothing behind it reacts. The menu doesn't open while something else has the screen
 (the prize counter's closer look, the directory), while leaving, or in VR. The Menu button sits top left
 (under the owner's fps line); the owner-only HUD rules (design/godot-interaction.md) are unchanged.
@@ -62,8 +83,21 @@ layer (CONTROLS) and opens the menu.
 **iPhone width:** checked at 390×844 and 844×390 (and 1280×720): every control on screen; long lists
 scroll by dragging.
 
-### AVATAR
-The existing creator (workstream V), laid out inside the tab under a **NAME** field. Its own rows and
+### MAIN (MENU2)
+The current character turning slowly on the lit stage the creator uses (`scripts/menu/portrait.gd`;
+on the left, on top on a tall phone), and beside it **NAME**, **MONEY** and **TICKETS**, then **Edit**.
+Edit shows the avatar editing below (the next section) inside MAIN; the creator's Done / Skip goes back to
+MAIN with the menu still open (it used to close the menu). Closing the menu any other way keeps what was
+made, as before. The first visit's START opens MAIN with Edit open and the NAME field focused.
+
+**Contract with workstream ECON:** MAIN reads `mall.money` and `mall.tickets`, the current year's
+balances (`mall` is per year). ECON is not merged on this branch: `mall.money` doesn't exist yet, so
+`menu.gd money()` is the one accessor (returns `{value, stub}`; stub = true and $0.00 until the field
+exists) and `tickets()` reads `mall.tickets`. Money is shown as `$%.2f` (guess: dollars as a number;
+change `money_text()` if ECON keeps cents). MAIN redraws on `mall.changed`.
+
+### Avatar editing (MAIN → Edit; was the AVATAR tab)
+The existing creator (workstream V), laid out inside MAIN under a **NAME** field. Its own rows and
 buttons work as before (Random · Skip/Back · Done). Done saves and closes the menu; closing the menu
 another way also keeps what was made (the creator's Done). On the keyboard the NAME row is above the
 creator's rows (↑ from its first row).
@@ -98,9 +132,8 @@ every start.
 | Menu | Tab (Esc closes) | Start (B closes) | Menu button | keys, pad |
 | Menu: previous / next tab | Q / E | LB / RB | swipe, tap | keys, pad (menu only) |
 | First / third person | V | right-stick click | View button | keys, pad |
-| Avatar → AVATAR tab | C | — | Avatar button | keys, pad |
+| Avatar → MAIN, Edit | C | — | Avatar button | keys, pad |
 | Inventory → INVENTORY tab | I | Back / Select | Bag button | keys, pad |
-| Year → YEAR tab | Y | — | year button | keys, pad |
 | Jump to | J | Y | Jump to button | keys, pad |
 | Put the held item away / Drop it | R / G | — | INVENTORY tab | keys, pad |
 | Coin pusher: nudge (tilts if overdone) | N, B, Shift (fixed, in `play/pusher.html`) | LB / RB | NUDGE button, shake | row `tilt`, kind `fixed` (INT, Demo 49) |
@@ -108,7 +141,7 @@ every start.
 **How a remap reaches code written for fixed keys** (so nothing else had to be rewritten, and other
 workstreams' new keys can join by adding a row):
 - `kind: "poll"` (walking, running): `player.gd` reads `Input.get_action_strength("mall_<id>")`.
-- `kind: "event"` (E V C I Y J R G and their pad buttons): the catcher re-sends a key now bound to an
+- `kind: "event"` (E V C I J R G and their pad buttons; Y left with MENU2): the catcher re-sends a key now bound to an
   action as that action's **default** key (`Input.parse_input_event`, deferred, the copy tagged
   `mall_synth`) and swallows the original; a default key moved off its action is swallowed, so it does
   nothing. E.g. Action on F: F does everything E did (pick up, swing, the seam prompt), E does nothing.
@@ -129,12 +162,88 @@ with its icon and name (×n), **HELD / PUT AWAY** (the lit one is the state) and
 
 **Contract: `mall.held_id() -> String`**, the held item's id, `""` when nothing is held (session Q).
 
-### YEAR
-The year on show, large, and **1995 / 2026** buttons (the current one lit). The other runs the
-time-travel transition, then the existing switch (`player._switch_year()`: the same spot, the fade, the
-wing reload). The directory's cross-year jump plays it too.
+### ~~YEAR~~ (removed, MENU2)
+~~The year on show and 1995 / 2026 buttons.~~ The year changes only at a mall directory (below).
+`player._switch_year()` stays in the code for tools; nothing the player presses reaches it. The year
+button is still made (other HUD code lays out round it) but never shown.
+
+## Time travel at the directory (MENU2, Nov 3)
+Steven: "you press the toggle, the directory view closes, you are in normal walking view … standing at
+that directory, and the existing time-travel effect starts. It keeps looping for the whole load, with
+no load screen in between, then you reappear at the same directory in the other year, same facing.
+It's like I've been in this vortex."
+
+**The toggle** (`scripts/directory_ui.gd`): on the sign's frame, top right, the year on show in a box,
+and beside it a switch with both years on it, the knob on the year you are in, and the other year (with
+"Y" on a keyboard or pad) on the free side. A click / tap on it, **Y** or a gamepad's **Y** travels. The
+sign now shows only the year you are in (the old 1995 / 2026 buttons previewed the other year's sign;
+Tab and LB / RB no longer switch anything there). Store jumps are always within your year.
+
+**The trip** (`scripts/timetravel_trip.gd`, a node on the root so it outlives the scene):
+1. The sign closes; the player is frozen and `leaving` (no prompts, no menu) in their own view, first or
+   third person (the view is saved with the look, so it is the same after the load).
+2. Two frames later a 480 px JPEG of the screen is taken (web only), then the effect starts in its loop
+   mode (`timetravel.gd start_loop`): the original ramp and its three flashes (0.2 / 0.5 / 0.9 s), then
+   the **vortex**, a tunnel of spiralling bands in the effect's three tints with the world still
+   glimpsed through its eye, a soft light beat every 1.6 s. It never goes to black.
+3. After 1.75 s the other year loads at the twin spot (`?wing=&cam=&year=`, the same lighting and
+   toggles as every other crossing). Native (editor, tests): the scene changes under the running loop.
+4. The new year's player calls `arrive()`; the vortex is picked up at the same moment of its loop and
+   unwinds (1.1 s, a bright flash first): you are at the directory in the other year, facing the same way.
+
+**Where you land:** `data/directory_twins.json` lists each kiosk in both years with its wing. Your place
+relative to the kiosk (and your facing) is carried to its twin, turned if the twin faces another way
+(`landing()`). Today both twins stand where they stand in the other year, facing the same way, so you
+land exactly where you stood. **Open question:** kiosks 3 (H3, the main entrance) and 4 (C3, the Dillard's
+court) exist only in 1995 (guesses in design/godot-directory.md); 2026 has no directory there. Their
+toggle still travels, to the same spot in 2026 with no kiosk (guess, marked in the data); Steven to say
+whether those two should travel, hide the toggle, or whether 2026 should get kiosks there.
+
+### What stops the swap being seamless, and the design round it
+- **The page reload.** Each wing in each year is its own game file (`w1.pck`, `w1y26.pck` …, design/
+  godot-wings.md, 2026-year): the engine boots with one main pack, and the shell picks it from `?wing=` /
+  `?year=`. Changing year means another main pack, so the page reloads (`window.mallGoWing`). A true
+  no-reload swap would need either (a) `ProjectSettings.load_resource_pack()` of the other year's pack
+  into the running engine, or (b) restarting the engine in the same page. (a) doubles the memory (two
+  ~100-200 MB packs in the browser's file system plus their textures), which is exactly what the iPhone
+  can't afford, and the two years' packs overlap in paths (scripts, shared textures) with no guarantee
+  they match across exports. (b) Godot's web engine is not built to be started twice in one page
+  (Emscripten module state), and it frees nothing a reload doesn't. **So the reload stays and is hidden.**
+- **The web shell's load screen.** Every reload showed the Houma Mall Rewind / Southland card (with the
+  wing name on a crossing). For a trip it doesn't: `sessionStorage "mall-tt"` (written just before the
+  reload: `{start, from, to, snap}`) makes the shell, from its very first paint (a `<head>` script sets
+  `html.tt`), hide the card and run **#tt-veil**: the same shader in WebGL (`TT_FRAG`, a line-for-line copy
+  of `scripts/timetravel.gdshader`) on the snapshot, with the same envelope (`ttEnv` = `timetravel.gd
+  env()`). Every value is a function of wall-clock time since the trip began (`start`), so the old page's
+  effect, the veil and the new page's effect are all at the same moment of the loop at each hand-over.
+- **The hand-back.** The veil stays up by the load screen's own rule (until the game is running and the
+  shoppers are warmed up, `lift()`), then fades over 0.35 s into the game's own vortex, which is already
+  running underneath at the same phase, and the game then unwinds it. A stale trip (> 120 s) is ignored,
+  and a manual refresh shows the normal load screen (the key is removed when read).
+- The other year's file is usually already in the cache (`mallPrefetchOther` fetches this wing's other
+  year second); on a cold cache the vortex simply loops for as long as the download takes.
+- **The page's main thread is blocked for seconds at a time while the engine starts** (compiling the
+  wasm, opening the pack: under swiftshader the veil drew 10 frames in 17 s). WebGL only draws between
+  those stalls, so the veil also has `#tt-spin`, a disc of the vortex's tints turned by a CSS animation,
+  which runs on the compositor and keeps turning while the main thread is busy. The WebGL veil is drawn
+  at most 360 px wide (scaled up; the vortex is soft) about 20 times a second, to leave the GPU to the
+  starting game.
+- **The snapshot** (`get_image()` of the frame) is a GPU read-back: a few ms on a real GPU, ~15 s under
+  swiftshader in the cloud tests. It happens before the effect starts, so a slow device shows a brief
+  hitch there, not a break in the vortex.
+- **Reduced motion:** no ripple, flashes or vortex on either side: a dark veil that lifts. **VR:** the
+  directory isn't used in the headset; a trip refuses to start in VR.
+
+**Static geometry:** none touched. The toggle is drawn by the directory UI (a dynamic overlay); the kiosks
+and panels are unchanged, so **no wing needs a rebake** for this.
 
 ## The time-travel transition
+MENU2: the shader now takes envelope values (`amt`, `ph`, `flash`, `vort`, `dark`) computed in
+`timetravel.gd env(t, u)` from the seconds since the trip began (`t`) and into the outro (`u`); the old
+one-shot `play()` (below) is the same look with `vort` 0 and the fade to black, kept for any other caller.
+Re-dressing it means changing `timetravel.gdshader` and `TT_FRAG` in `web/shell.html` together (and
+`env()` with `ttEnv`). Below, the Nov 2 description of the one-shot.
+
 `scripts/timetravel.tscn`: a CanvasLayer (60) with one full-screen ColorRect and a shader over the
 screen texture, driven by `progress` 0 → 1 over **`duration` (the one config value, 1.5 s, an export on
 the scene's root)**: a ripple and a twist out from the middle, a chromatic split, colour washes cycling
@@ -169,6 +278,37 @@ opened by itself); START leads to the creator.
 - `layout`: 2026's store doors, so the 2026 shoppers walk into 2026's open stores and windows.
 - Only those characters are warmed up behind the loading card (`npc_warmup.gd` `only`).
 - 1995 is untouched (17, all roles). The outside (wing 3) 2026 has none. No new NPCs.
+
+## Checks (MENU2, Nov 3, on `ws/menu2`; unbaked)
+- `tools/qa/menu_unit_test.gd` (headless): **MENU UNIT OK (64 checks)**, adding: no year action and no Y
+  default anywhere, an old saved year remap dropped, the kiosk twins (both filmed kiosks have one, the
+  1995-only ones don't), `landing()` (same-facing twin, and a twin turned 90°), the loop never black and
+  smooth frame to frame, the outro ends clear.
+- `tools/qa/menu_test.gd` (native, wing 2): **MENU TEST OK (89 checks)**: tabs MAIN / INVENTORY /
+  CONTROLS; MAIN's portrait, name, money (stub), tickets; Edit inside MAIN and Done back to MAIN; every tab
+  and Edit at 1280×720 / 390×844 / 844×390; Q / E, LB / RB, LT / RT; Tab opens on MAIN; Esc and B close;
+  I, C; **Y does nothing**, no year row, no year button; then the JCPenney court directory: the sign shows
+  1995 with the toggle, Y closes it and starts the trip, a frame every 0.15 s, the scene changes under the
+  loop (no reload natively), lands in 2026 0.00 m from the twin spot, same facing, the vortex unwinds and
+  the player is free; 2026's 3 shoppers as before. (Test fix: workstream R's "You received" cards hold the
+  player after `take()`, so the test dismisses them before opening INVENTORY.)
+- `tools/qa/menu_trip_webtest.js` (web build, Node Playwright, wing 1's H2 kiosk): **MENU TRIP WEB OK (20
+  checks)**: 1995 → 2026 and back, each: the trip begins, the load screen never visible (0 of ~33 frames the
+  page could sample, and 0 of 292 / 430 screencast frames look like it), the veil covers the reload, lands
+  0.00 m from the twin spot with the same facing, the right year's file, 0 console errors.
+  `node tools/qa/menu_trip_webtest.js "<build>/index.html" <out>` (server on :8765 at the repo root).
+- `tools/qa/menu_webtest.py` (web, wing 2): **MENU WEB OK (8 checks), 0 console errors**, with MAIN first.
+- Found and fixed on the way (web only): the arriving trip was added to the root while it was still
+  setting up the first scene, so it never entered the tree, and in a release build the wait loop then
+  spun forever on a null `get_tree()`, freezing the page; it is now added deferred and lands from `_ready`.
+
+## Evidence (MENU2: `production/qa/evidence/wsMENU-*`, unbaked)
+MAIN at 1280×720 / 390×844 / 844×390, Edit inside MAIN, INVENTORY, CONTROLS, the opening, the directory
+with its year and toggle (and a close-up), the native trip as frames
+(`wsMENU-trip-native-1995-2026-frames-unbaked.jpg`), the web trips both ways as screencast frame sheets
+through the reload (`wsMENU-web-trip-<dir>-frames-unbaked.jpg`) with the directory before and the arrival
+after, the web menu (desktop, phone), and the test logs (`wsMENU-*-test.log.txt`). The swiftshader
+timeline is slow (the snapshot ~15 s, the engine start ~60 s); on a phone's GPU both are far shorter.
 
 ## Checks (Nov 2, on `ws/m-menu`)
 - `tools/qa/menu_unit_test.gd` (headless): **MENU UNIT OK (35 checks)**: the name contract, held_id(), rebinds,
@@ -207,7 +347,11 @@ shoppers, the web build (desktop and phone), the movetest.
 - Guess: Esc and a pad's B close the menu as well as Tab / Start.
 - Guess: a pocket-class item can't be HELD.
 - Guess: START without a name shows the opening again next time; Skip doesn't.
-- Guess: Y now opens the YEAR tab rather than switching at once (the brief: the old buttons open their tab).
+- ~~Guess: Y now opens the YEAR tab~~ (MENU2: Y does nothing; the directory's toggle is the only year switch).
+- MENU2 guesses: the menu opens on MAIN (the far-left rule); Edit's Done / Skip returns to MAIN rather than
+  closing the menu; money shows as `$0.00` (dollars) until ECON's `mall.money` lands; the toggle at the two
+  1995-only kiosks travels to the same spot (above). **Kept from M, checked against MENU2, no conflict:**
+  Esc and B close the menu; START without a name shows the opening again next time.
 - Guess: 2026's three walk as ordinary shoppers (no roles), at 2026's store doors.
 - The contract says "the mall autoload"; there isn't one (above). An autoload could be added if Steven
   wants `mall` reachable without the player; it would be a project.godot change for every wing.

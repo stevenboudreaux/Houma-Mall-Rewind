@@ -78,6 +78,35 @@ func _initialize() -> void:
 	c3.backend = bad
 	c3.setup()
 	_check(c3.is_default(), "a tampered save can't bind fixed rows or the stick")
+	# ---- MENU2: no year on the player's controls; the directory trip's maths
+	_check(not c.by_id.has("year"), "no year action in CONTROLS")
+	for e in c.list:
+		_check(not (KEY_Y in c.keys(str(e.id))), "Y is not a default key of %s" % e.id)
+	var c4 = Controls.new()
+	c4.backend = {Controls.STORE_KEY: "{\"year\": {\"keys\": [89]}}"}
+	c4.setup()
+	_check(c4.is_default(), "an old saved remap of the year action is dropped")
+	var Trip = load("res://scripts/timetravel_trip.gd")
+	var tw: Dictionary = Trip.twin(1995, -142.0, 71.5)
+	_check(tw.found and tw.known and int(tw.wing) == 2 and is_equal_approx(tw.x, -142.0), "the JCPenney court kiosk's twin in 2026, wing 2")
+	tw = Trip.twin(2026, -3.0, -82.5)
+	_check(tw.found and tw.known and int(tw.wing) == 1, "the H2 kiosk's twin in 1995, wing 1")
+	tw = Trip.twin(1995, 26.5, 3.2)
+	_check(tw.found and not tw.known, "the main entrance kiosk (1995 only) has no twin: the same spot, a guess")
+	var ld: Dictionary = Trip.landing(Trip.twin(1995, -142.0, 71.5), -142.0, 71.5, -141.7, 73.1, 0.3)
+	_check(is_equal_approx(ld.x, -141.7) and is_equal_approx(ld.z, 73.1) and is_equal_approx(ld.yaw, 0.3), "a twin facing the same way: the same spot and facing")
+	var turned := {"known": true, "x": 10.0, "z": 0.0, "face": Vector2(1, 0), "here_face": Vector2(0, 1)}
+	var l2: Dictionary = Trip.landing(turned, 0.0, 0.0, 0.0, 2.0, 0.0)   # 2 m out from a south-facing kiosk, looking at it
+	_check(Vector2(l2.x, l2.z).distance_to(Vector2(12.0, 0.0)) < 0.001, "a twin turned 90°: 2 m out from its face (%.2f, %.2f)" % [l2.x, l2.z])
+	var fwd := Vector2(-sin(l2.yaw), -cos(l2.yaw))
+	_check(fwd.distance_to(Vector2(-1, 0)) < 0.001, "and looking at it")
+	var TT = load("res://scripts/timetravel.gd")
+	var e0: Dictionary = TT.env(3.0, -1.0, false)
+	var e1: Dictionary = TT.env(3.0 + 1.0 / 60.0, -1.0, false)
+	_check(e0.vort > 0.8 and e0.amt > 0.99 and e0.dark == 0.0, "the loop: the vortex up, never black")
+	_check(absf(e1.ph - e0.ph) < 0.02 and absf(e1.flash - e0.flash) < 0.1, "the loop is smooth frame to frame")
+	var eo: Dictionary = TT.env(30.0, 1.2, false)
+	_check(eo.vort < 0.001 and eo.amt < 0.001 and eo.flash < 0.01, "the outro ends clear")
 	if errors.is_empty():
 		print("MENU UNIT OK (%d checks)" % oks)
 	else:

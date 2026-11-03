@@ -7,11 +7,15 @@
 ## The click areas come with the panel (tex/dir/hotspots.json, tools/stores/directory/paint_dir.py);
 ## where each store's jump puts you comes from the wing build (gen/<wing>/directory.json, from the
 ## layout files), so a jump always lands in front of the store as the wing was built.
-## The only things added to the sign: a 1995 / 2026 toggle and a close button on the frame.
+## The only things added to the sign: the year on show with a toggle beside it, and a close button
+## on the frame. MENU2 (Nov 3 2026, design/godot-menu.md "Time travel at the directory"): the toggle
+## is the only way to change year. Pressing it closes the sign and travels in time from where you
+## stand (scripts/timetravel_trip.gd) to this directory's twin in the other year. The sign shows only
+## the year you are in.
 ##
 ## Controls: mouse or touch (tap a name or a block; drag to pan and pinch or the wheel to zoom once
 ## zoomed in); arrow keys / d-pad / stick move from store to store, Enter / A asks, Enter / A again
-## jumps, Esc / B backs out; Tab, Y, LB / RB switch the year; +/- zoom.
+## jumps, Esc / B backs out; Y (key or a gamepad's Y) or the toggle travels in time; +/- zoom.
 extends CanvasLayer
 
 const LAYER := 25
@@ -172,15 +176,17 @@ func _zoom_by(f: float, about := Vector2(-1, -1)) -> void:
 	_clamp_pan()
 	view.queue_redraw()
 
-## The buttons on the frame: [rect, what].
+## The buttons on the frame: [rect, what]. MENU2: the year on show ("year", a label) with the time
+## travel toggle ("travel") beside it, and close.
 func _buttons() -> Array:
 	var vp := _vp()
 	var pr := _panel_rect() if zoom <= 1.01 else Rect2(Vector2(_fw() + 26, 26), vp - Vector2(2 * _fw() + 52, 52))
 	var h := 34.0
-	var w := 62.0
 	var y: float = 6.0 if _narrow() else max(6.0, pr.position.y - _fw() - h * 0.5)
 	var xr: float = min(vp.x - 8.0, pr.end.x + _fw()) - 44.0
-	return [[Rect2(xr, y, 44, h), "close"], [Rect2(xr - 10 - w, y, w, h), "2026"], [Rect2(xr - 10 - 2 * w, y, w, h), "1995"]]
+	var tw := 112.0
+	var yw := 70.0
+	return [[Rect2(xr, y, 44, h), "close"], [Rect2(xr - 10 - tw, y, tw, h), "travel"], [Rect2(xr - 10 - tw - 6 - yw, y, yw, h), "year"]]
 
 func _panel_rect() -> Rect2:
 	var a := _p2s(Vector2.ZERO)
@@ -238,16 +244,57 @@ func _draw_view() -> void:
 			tr.position.y = max(tr.position.y, 4)
 			c.draw_rect(tr, Color(0.08, 0.08, 0.1, 0.88))
 			c.draw_string(f_sans, tr.position + Vector2(8, 17), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color.WHITE)
-	# the frame's buttons: year toggle and close
+	# the frame's buttons: the year with the time-travel toggle beside it, and close
 	for b in _buttons():
 		var r: Rect2 = b[0]
 		var what: String = b[1]
-		var on := what == map_year
-		c.draw_rect(r, Color("#2f93c3") if on else Color(0.12, 0.13, 0.15, 0.85))
-		c.draw_rect(r, Color(1, 1, 1, 0.8), false, 1.5)
-		_text_c(c, "X" if what == "close" else what, r.get_center(), 15, Color.WHITE)
+		match what:
+			"year":
+				c.draw_rect(r, Color(0.12, 0.13, 0.15, 0.85))
+				c.draw_rect(r, Color(1, 1, 1, 0.8), false, 1.5)
+				_text_c(c, map_year, r.get_center(), 19, Color.WHITE)
+			"travel":
+				_draw_toggle(c, r)
+			_:
+				c.draw_rect(r, Color(0.12, 0.13, 0.15, 0.85))
+				c.draw_rect(r, Color(1, 1, 1, 0.8), false, 1.5)
+				_text_c(c, "X", r.get_center(), 15, Color.WHITE)
 	if confirm:
 		_draw_confirm(c)
+
+## MENU2: the toggle, a switch with both years on it, the knob on the year you are in. A keyboard or
+## gamepad gets its key (Y) on the knob's far side.
+func _draw_toggle(c: Control, r: Rect2) -> void:
+	var on_right := map_year == "2026"
+	var rad := r.size.y * 0.5
+	var track := Color(0.12, 0.13, 0.15, 0.9)
+	c.draw_rect(Rect2(r.position + Vector2(rad, 0), r.size - Vector2(2 * rad, 0)), track)
+	c.draw_circle(r.position + Vector2(rad, rad), rad, track)
+	c.draw_circle(r.position + Vector2(r.size.x - rad, rad), rad, track)
+	var kw := r.size.x * 0.5
+	var kr := Rect2(r.position + Vector2(r.size.x - kw if on_right else 0.0, 0), Vector2(kw, r.size.y)).grow(-3)
+	var knob := Color("#2f93c3")
+	var kh := kr.size.y * 0.5
+	c.draw_rect(Rect2(kr.position + Vector2(kh, 0), kr.size - Vector2(2 * kh, 0)), knob)
+	c.draw_circle(kr.position + Vector2(kh, kh), kh, knob)
+	c.draw_circle(kr.position + Vector2(kr.size.x - kh, kh), kh, knob)
+	_text_c(c, map_year, kr.get_center(), 14, Color.WHITE)
+	var other := "1995" if on_right else "2026"
+	var oc := r.position + Vector2(kw * 0.5 if on_right else r.size.x - kw * 0.5, rad)
+	var kind: String = str(player.get("input_kind")) if player else "kb"
+	_text_c(c, other + (" Y" if kind != "touch" else ""), oc, 13, Color(1, 1, 1, 0.75))
+
+## MENU2: the toggle. The sign closes and the trip begins from this kiosk.
+func _travel() -> void:
+	if player == null or confirm:
+		return
+	var p := player
+	var k: Node3D = kiosk if kiosk is Node3D else null
+	close()
+	if k == null:
+		k = Node3D.new()
+		k.position = p.position
+	load("res://scripts/timetravel_trip.gd").begin(p, k)
 
 func _hrect(h: Dictionary) -> Rect2:
 	var a := _p2s(Vector2(h.rect[0], h.rect[1]))
@@ -418,8 +465,9 @@ func _key(e: InputEventKey) -> void:
 			_step(Vector2(0, 1))
 		KEY_ENTER, KEY_KP_ENTER, KEY_SPACE:
 			_ask()
-		KEY_TAB, KEY_Y:
-			_toggle_year()
+		KEY_Y:
+			_travel()
+			return
 		KEY_EQUAL, KEY_KP_ADD:
 			_zoom_on_sel(1.4)
 		KEY_MINUS, KEY_KP_SUBTRACT:
@@ -450,8 +498,9 @@ func _pad(b: int) -> void:
 			_step(Vector2(0, 1))
 		JOY_BUTTON_A:
 			_ask()
-		JOY_BUTTON_Y, JOY_BUTTON_LEFT_SHOULDER, JOY_BUTTON_RIGHT_SHOULDER:
-			_toggle_year()
+		JOY_BUTTON_Y:
+			_travel()
+			return
 		JOY_BUTTON_X:
 			if zoom < 5.0:
 				_zoom_on_sel(1.5)
@@ -540,15 +589,6 @@ func _zoom_on_sel(f: float) -> void:
 	else:
 		_zoom_by(f)
 
-func _toggle_year() -> void:
-	var keep := sel
-	map_year = "2026" if map_year == "1995" else "1995"
-	confirm = false
-	sel = keep if _stall(keep) != null and keep in _ids() else ""
-	hover = ""
-	_fit()
-	view.queue_redraw()
-
 func _ask() -> void:
 	if sel != "" and _stall(sel) != null:
 		confirm = true
@@ -600,8 +640,8 @@ func _release(p: Vector2) -> void:
 		if (b[0] as Rect2).has_point(p):
 			if b[1] == "close":
 				close()
-			elif b[1] != map_year:
-				_toggle_year()
+			elif b[1] == "travel":
+				_travel()
 			return
 	if zoom <= 1.01 and not _panel_rect().grow(_fw()).has_point(p):
 		close()
