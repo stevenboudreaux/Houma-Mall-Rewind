@@ -99,10 +99,10 @@ print("stages:", " > ".join(k for k in ("deck", "falling", "main", "lip", "slot"
 # the contact sheet: every stage's first frame plus a few in between, labelled
 try:
     from PIL import Image, ImageDraw
-    keep = set(seen.values())
+    keep = set(seen.values())                      # every stage's first frame is always on the sheet
     rest = [i for i in range(len(frames)) if i not in keep]
-    step = max(1, len(rest) // max(1, 12 - len(keep)))
-    pick = sorted(keep | set(rest[::step]))[:12]
+    k = max(1, 12 - len(keep))
+    pick = sorted(keep | set(rest[round(j * (len(rest) - 1) / max(1, k - 1))] for j in range(min(k, len(rest)))))
     cols = 4
     rows = (len(pick) + cols - 1) // cols
     tw, th = 400, 500
