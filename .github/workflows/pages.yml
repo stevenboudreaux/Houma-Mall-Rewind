@@ -8,6 +8,9 @@
 # stevenboudreaux/Houma-Mall-Rewind-desktop's site, which tools/publish_build.sh refreshes; the game asks
 # for them there (web/shell.html MALL_DESKTOP_SITE). Only what the site serves is deployed: the repo's
 # source, design notes and QA pictures are not.
+# Since Nov 4 2026 ("Packs on R2"): builds published by tools/publish_build.sh carry no packs at all; the
+# page fetches every pack from the Cloudflare R2 bucket (web/shell.html MALL_R2), so this site is the page,
+# the engine and main's play/ files. The two-site lines above stay for older builds and R2=0 rollbacks.
 name: Deploy site to Pages
 on:
   push:
@@ -71,7 +74,10 @@ jobs:
               "<script>location.replace(\"../../../$b\" + location.search + location.hash);</script></head>" \
               "<body><p><a href=\"../../../$b\">Houma Mall Rewind</a></p></body></html>" > "$P/$b"
           done
-          test -s site/classic.html && test -s site/index.wasm && test -s site/w1.mobile.pck && test -s $P/index.html
+          # Packs on R2 (Nov 4 2026, design/godot-build-hosting.md "Packs on R2"): a build whose page names its
+          # R2 folder carries no packs; an older one carries the phone packs here
+          test -s site/classic.html && test -s site/index.wasm && test -s $P/index.html
+          test -s site/w1.mobile.pck || grep -q "const set = '[a-z0-9][a-z0-9._-]*'; // MALL_R2_BUILD" site/index.html
           grep -q '<title>Houma Mall Rewind</title>' site/index.html
           grep -q 'MALL_DESKTOP_SITE' site/index.html
           B=$(du -sb site | cut -f1); echo "site: $B bytes"

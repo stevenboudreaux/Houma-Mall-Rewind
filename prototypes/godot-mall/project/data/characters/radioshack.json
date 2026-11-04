@@ -1,0 +1,35 @@
+{
+	"_": "PLACEHOLDER preset (workstream SHOPS, Nov 3 2026; design/godot-shops.md): no character, a body, skin, hair and clothes for the shop's attendant until Steven makes the person in the owner's character editor and commits the downloaded file here. Clothes are a guess at the store's 1995 staff look.",
+	"id": "radioshack",
+	"name": "PLACEHOLDER",
+	"version": 1,
+	"body": "male",
+	"keys": {
+		"height": 0.1,
+		"weight": -0.1,
+		"age": 0.1
+	},
+	"skin": "#8a5a3c",
+	"iris": "#2a1c12",
+	"hair": {
+		"id": "hair_fade",
+		"color": "#1b1714"
+	},
+	"outfit": {
+		"top": "top_buttondown",
+		"bottom": "bot_slacks",
+		"shoes": "shoe_dressshoes",
+		"extras": [
+			"x_watch"
+		],
+		"colors": {
+			"top_buttondown": {
+				"main": "#f2f2f0"
+			},
+			"bot_slacks": {
+				"main": "#2a2a30"
+			}
+		}
+	},
+	"shape_from": "SHOPS guess: A white button-down and dark slacks (the 1999 video's clerks, seen from behind). The sex is a guess."
+}

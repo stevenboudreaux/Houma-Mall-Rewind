@@ -9,7 +9,7 @@ META = {
     "tex": 512,
     "ao": 0.45,
     "refs": [],
-    "item": {"name": "Plush dog", "year": 1995, "store": "POCKET CHANGE", "prize": "claw", "tickets": 700,
+    "item": {"name": "Plush dog", "year": "both", "store": "POCKET CHANGE", "prize": "claw", "tickets": 700,
              "tint": ["#b5824a", "#5a3820", "#e8e0cc", "#c21f2a", "#ea88ae", "#72a6e0", "#9e82d4", "#7ccfa6", "#f2cc34"]},
 }
 

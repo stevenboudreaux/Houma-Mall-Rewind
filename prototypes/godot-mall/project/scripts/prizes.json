@@ -1,5 +1,5 @@
 {
- "_": "Pocket Change's ticket prizes (scripts/prizes.gd). The catalogue an inventory and redemption system will read later. tickets = the price. case slots: counter A (the long case, bays 0-3 from the customer's left) or B (the short case by the door), level 0 deck / 1 lower shelf / 2 upper shelf, side full|left|right.",
+ "_": "Pocket Change's ticket prizes (scripts/prizes.gd), 1995. The catalogue the redemption screen reads (scripts/redemption.json 'stock'). tickets = the price (guesses except the boom box 5,000 and the plush 700: see redemption.json 'guess'). case slots: counter A (the long case, bays 0-3 from the customer's left) or B (the short case by the door), level 0 deck / 1 lower shelf / 2 upper shelf, side full | left | right, or a third: left3 | mid | right3 (PRIZES, Nov 3: Option B of design/research/redemption-counters.md). Price rises left to right by bay and upward by level; case B is candy. The prize wall's layout is 'wall'.",
  "items": {
   "finger_trap": {
    "name": "Chinese finger trap",
@@ -60,76 +60,406 @@
   "ball": {
    "name": "Basketball",
    "tickets": 900
+  },
+  "lollipop": {
+   "name": "Lollipop",
+   "tickets": 5
+  },
+  "candy_roll": {
+   "name": "Candy roll",
+   "tickets": 5
+  },
+  "taffy": {
+   "name": "Taffy bar",
+   "tickets": 5
+  },
+  "powder_straw": {
+   "name": "Powder candy straw",
+   "tickets": 3
+  },
+  "sour_candy": {
+   "name": "Sour candy",
+   "tickets": 5
+  },
+  "candy_ring": {
+   "name": "Candy ring",
+   "tickets": 20
+  },
+  "spider_ring": {
+   "name": "Spider ring",
+   "tickets": 5
+  },
+  "bounce_ball": {
+   "name": "Bouncy ball",
+   "tickets": 10
+  },
+  "pencil": {
+   "name": "Pencil",
+   "tickets": 10
+  },
+  "eraser": {
+   "name": "Novelty eraser",
+   "tickets": 10
+  },
+  "stickers": {
+   "name": "Sticker sheet",
+   "tickets": 5
+  },
+  "sticky_hand": {
+   "name": "Sticky hand",
+   "tickets": 15
+  },
+  "jelly_bracelet": {
+   "name": "Jelly bracelet",
+   "tickets": 30
+  },
+  "glow_bracelet": {
+   "name": "Glow bracelet",
+   "tickets": 25
+  },
+  "army_men": {
+   "name": "Army men",
+   "tickets": 50
+  },
+  "rubber_snake": {
+   "name": "Rubber snake",
+   "tickets": 25
+  },
+  "slammer": {
+   "name": "Slammer",
+   "tickets": 60
+  },
+  "troll": {
+   "name": "Troll doll",
+   "tickets": 100
+  },
+  "paddle_ball": {
+   "name": "Paddle ball",
+   "tickets": 125
+  },
+  "yoyo": {
+   "name": "Yo-yo",
+   "tickets": 150
+  },
+  "water_pistol": {
+   "name": "Squirt pistol",
+   "tickets": 150
+  },
+  "sunglasses": {
+   "name": "Neon sunglasses",
+   "tickets": 200
+  },
+  "mood_ring": {
+   "name": "Mood ring",
+   "tickets": 200
+  },
+  "koosh": {
+   "name": "Rubber-strand ball",
+   "tickets": 250
+  },
+  "toy_car": {
+   "name": "Toy car",
+   "tickets": 250
+  },
+  "harmonica": {
+   "name": "Harmonica",
+   "tickets": 200
+  },
+  "blaster": {
+   "name": "Water blaster",
+   "tickets": 450
+  },
+  "lcd_game": {
+   "name": "Handheld game",
+   "tickets": 1200
+  },
+  "walkie": {
+   "name": "Walkie-talkies",
+   "tickets": 1800
+  },
+  "plasma": {
+   "name": "Plasma ball",
+   "tickets": 2000
+  },
+  "cassette": {
+   "name": "Cassette player",
+   "tickets": 4000
+  },
+  "rc_car": {
+   "name": "Radio-control car",
+   "tickets": 4500
+  },
+  "skateboard": {
+   "name": "Skateboard",
+   "tickets": 6000
+  },
+  "big_bear": {
+   "name": "Giant plush bear",
+   "tickets": 4000
+  },
+  "plush_bear": {
+   "name": "Plush bear",
+   "tickets": 700
+  },
+  "plush_bunny": {
+   "name": "Plush bunny",
+   "tickets": 700
+  },
+  "plush_dog": {
+   "name": "Plush dog",
+   "tickets": 700
   }
  },
  "case": [
   [
-   "A",
+   "B",
    0,
    2,
-   "left",
+   "left3",
+   "chew"
+  ],
+  [
+   "B",
+   0,
+   2,
+   "mid",
+   "candy_neck"
+  ],
+  [
+   "B",
+   0,
+   2,
+   "right3",
+   "powder_straw"
+  ],
+  [
+   "B",
+   0,
+   1,
+   "left3",
+   "candy_cig"
+  ],
+  [
+   "B",
+   0,
+   1,
+   "mid",
+   "taffy"
+  ],
+  [
+   "B",
+   0,
+   1,
+   "right3",
+   "sour_candy"
+  ],
+  [
+   "B",
+   0,
+   0,
+   "left3",
+   "lollipop"
+  ],
+  [
+   "B",
+   0,
+   0,
+   "mid",
+   "candy_roll"
+  ],
+  [
+   "B",
+   0,
+   0,
+   "right3",
+   "candy_ring"
+  ],
+  [
+   "A",
+   0,
+   0,
+   "left3",
    "finger_trap"
   ],
   [
    "A",
    0,
-   2,
-   "right",
+   0,
+   "mid",
    "jelly_trap"
   ],
   [
    "A",
-   1,
-   2,
-   "full",
-   "pogs"
+   0,
+   0,
+   "right3",
+   "spider_ring"
   ],
   [
    "A",
+   0,
+   1,
+   "left3",
+   "pencil"
+  ],
+  [
+   "A",
+   0,
+   1,
+   "mid",
+   "eraser"
+  ],
+  [
+   "A",
+   0,
+   1,
+   "right3",
+   "stickers"
+  ],
+  [
+   "A",
+   0,
    2,
+   "left3",
+   "sticky_hand"
+  ],
+  [
+   "A",
+   0,
    2,
-   "left",
+   "mid",
+   "bounce_ball"
+  ],
+  [
+   "A",
+   0,
+   2,
+   "right3",
+   "glow_bracelet"
+  ],
+  [
+   "A",
+   1,
+   0,
+   "left3",
+   "rubber_snake"
+  ],
+  [
+   "A",
+   1,
+   0,
+   "mid",
+   "jelly_bracelet"
+  ],
+  [
+   "A",
+   1,
+   0,
+   "right3",
+   "army_men"
+  ],
+  [
+   "A",
+   1,
+   1,
+   "left3",
    "slap"
   ],
   [
    "A",
-   2,
-   2,
-   "right",
-   "candy_neck"
-  ],
-  [
-   "A",
-   3,
-   2,
-   "full",
-   "vpet"
-  ],
-  [
-   "A",
-   0,
    1,
+   1,
+   "mid",
+   "slammer"
+  ],
+  [
+   "A",
+   1,
+   1,
+   "right3",
+   "pogs"
+  ],
+  [
+   "A",
+   1,
+   2,
    "left",
-   "candy_cig"
+   "pogs"
   ],
   [
    "A",
-   0,
    1,
+   2,
    "right",
-   "chew"
+   "troll"
   ],
   [
    "A",
-   1,
-   1,
-   "full",
+   2,
+   0,
+   "left3",
    "spring"
   ],
   [
    "A",
    2,
+   0,
+   "mid",
+   "paddle_ball"
+  ],
+  [
+   "A",
+   2,
+   0,
+   "right3",
+   "water_pistol"
+  ],
+  [
+   "A",
+   2,
    1,
+   "left3",
+   "yoyo"
+  ],
+  [
+   "A",
+   2,
+   1,
+   "mid",
+   "harmonica"
+  ],
+  [
+   "A",
+   2,
+   1,
+   "right3",
+   "sunglasses"
+  ],
+  [
+   "A",
+   2,
+   2,
+   "left3",
+   "mood_ring"
+  ],
+  [
+   "A",
+   2,
+   2,
+   "mid",
+   "toy_car"
+  ],
+  [
+   "A",
+   2,
+   2,
+   "right3",
+   "koosh"
+  ],
+  [
+   "A",
+   3,
+   0,
    "full",
    "dice"
   ],
@@ -138,98 +468,21 @@
    3,
    1,
    "left",
-   "finger_trap"
+   "lcd_game"
   ],
   [
    "A",
    3,
    1,
    "right",
-   "jelly_trap"
-  ],
-  [
-   "A",
-   0,
-   0,
-   "full",
-   "spring"
-  ],
-  [
-   "A",
-   1,
-   0,
-   "left",
-   "candy_cig"
-  ],
-  [
-   "A",
-   1,
-   0,
-   "right",
-   "chew"
-  ],
-  [
-   "A",
-   2,
-   0,
-   "left",
-   "pogs"
-  ],
-  [
-   "A",
-   2,
-   0,
-   "right",
-   "slap"
+   "walkie"
   ],
   [
    "A",
    3,
-   0,
-   "left",
-   "candy_neck"
-  ],
-  [
-   "A",
-   3,
-   0,
-   "right",
-   "dice"
-  ],
-  [
-   "B",
-   0,
    2,
    "full",
    "vpet"
-  ],
-  [
-   "B",
-   0,
-   1,
-   "left",
-   "pogs"
-  ],
-  [
-   "B",
-   0,
-   1,
-   "right",
-   "finger_trap"
-  ],
-  [
-   "B",
-   0,
-   0,
-   "left",
-   "chew"
-  ],
-  [
-   "B",
-   0,
-   0,
-   "right",
-   "candy_cig"
   ]
  ],
  "_text": "Every word on the prizes. Each entry: text, font (sans, sans_italic, serif, script), size (pixels on its picture), fill and outline (#rrggbb, outline '' for none). card.* style every price card; <item>.name is the name under the number (default: the item's name), <item>.tickets the number (default: its tickets). The owner's published edits (play/prize_text.json, made in the game's closer look: Edit words) override these.",
@@ -286,6 +539,34 @@
    "font": "sans",
    "size": 40,
    "fill": "#d21e28",
+   "outline": ""
+  },
+  "lcd_game.box": {
+   "text": "HANDHELD GAME",
+   "font": "sans",
+   "size": 24,
+   "fill": "#14181f",
+   "outline": ""
+  },
+  "walkie.box": {
+   "text": "WALKIE-TALKIES",
+   "font": "sans",
+   "size": 24,
+   "fill": "#ffffff",
+   "outline": ""
+  },
+  "cassette.box": {
+   "text": "STEREO CASSETTE",
+   "font": "sans",
+   "size": 22,
+   "fill": "#ffffff",
+   "outline": ""
+  },
+  "rc_car.box": {
+   "text": "RADIO CONTROL",
+   "font": "sans",
+   "size": 24,
+   "fill": "#14181f",
    "outline": ""
   }
  },
@@ -386,6 +667,78 @@
       142,
       180,
       70
+     ]
+    ]
+   ]
+  },
+  "box_lcd": {
+   "bg": "box_lcd",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "lcd_game.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_walkie": {
+   "bg": "box_walkie",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "walkie.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_cassette": {
+   "bg": "box_cassette",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "cassette.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_rc": {
+   "bg": "box_rc",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "rc_car.box",
+     [
+      8,
+      6,
+      176,
+      40
      ]
     ]
    ]

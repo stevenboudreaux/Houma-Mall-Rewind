@@ -250,8 +250,14 @@ static func build(b, g, o, f, opts = {}):
 		for r0 in b.signs:
 			if r0.kind == "pc_cyclone":
 				k += 1
-		b.sign_add("pc.cyclone.%d" % (k + 1), "pc_cyclone", "WHIRLWIND", 0, sign_faces,
-			{"tex": "res://tex/pc/cyclone_decal_blank.png", "look": {"font": "sans_italic", "fill": "#ffe23c", "outline": "#3a2a90"}})
+		# PRIZES (Nov 3): in 2026 it is games, inc.'s machine: its own id (scripts/signs.gd plays it at
+		# $2 for four plays into 2026's tickets), the faded decal, the same words in faded colours
+		if int(b.YEAR) == 2026:
+			b.sign_add("gi.cyclone.%d" % (k + 1), "pc_cyclone", "WHIRLWIND", 0, sign_faces,
+				{"tex": "res://tex/gi/ww_decal_blank.png", "look": {"font": "sans_italic", "fill": "#e8d77a", "outline": "#4f4790"}})
+		else:
+			b.sign_add("pc.cyclone.%d" % (k + 1), "pc_cyclone", "WHIRLWIND", 0, sign_faces,
+				{"tex": "res://tex/pc/cyclone_decal_blank.png", "look": {"font": "sans_italic", "fill": "#ffe23c", "outline": "#3a2a90"}})
 
 	# ---- corner posts: rounded, yellow
 	var cs = [[Vector2(HW - RC, RC), -90.0], [Vector2(HW - RC, D - RC), 0.0], [Vector2(-(HW - RC), D - RC), 90.0], [Vector2(-(HW - RC), RC), 180.0]]
@@ -495,6 +501,8 @@ static func build(b, g, o, f, opts = {}):
 		lam.append({"pos": mz.call(l.pos), "n": mz.call(l.n), "role": l.role})
 	ln.set_meta("layout", {"centre": mz.call(C), "field_y": FY, "dish_y": DISH_Y, "post": mz.call(Vector3(0, DISH_Y, BOX_Z + 0.01)), "lamps": lam})
 	ln.transform = Transform3D(Basis(f.cross(Vector3.UP), Vector3.UP, -f), o)
+	if int(b.YEAR) == 2026:
+		ln.set_meta("dim", 0.8)      # PRIZES: games, inc.'s tired bulbs and neon
 	b.light_root.add_child(ln)
 
 	# walk obstacle
@@ -503,29 +511,35 @@ static func build(b, g, o, f, opts = {}):
 	b.obst(["rect", min(c0.x, c1.x), min(c0.z, c1.z), max(c0.x, c1.x), max(c0.z, c1.z)])
 
 ## Material "pc_cyclone_<key>".
+## PRIZES (Nov 3): the 2026 build's WHIRLWIND is games, inc.'s, the same machine thirty years on (Steven:
+## "literally the same machine", slightly duller and faded): its pictures are the faded copies,
+## tex/gi/ww_*.png (tools/stores/games_inc/paint_whirlwind_faded.py).
+static func _t(b, name):
+	return b.tex(("gi/ww_%s.png" if int(b.YEAR) == 2026 else "pc/cyclone_%s.png") % name)
+
 static func fill_mat(m, key, b):
 	match key:
 		"side":
-			m.albedo_texture = b.tex("pc/cyclone_side.png"); m.metallic = 0.55; m.roughness = 0.38
+			m.albedo_texture = _t(b, "side"); m.metallic = 0.55; m.roughness = 0.38
 		"decal":
-			m.albedo_texture = b.tex("pc/cyclone_decal.png"); m.roughness = 0.35
+			m.albedo_texture = _t(b, "decal"); m.roughness = 0.35
 			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR; m.alpha_scissor_threshold = 0.5
 		"front":
-			m.albedo_texture = b.tex("pc/cyclone_front.png"); m.roughness = 0.42
+			m.albedo_texture = _t(b, "front"); m.roughness = 0.42
 		"console":
-			m.albedo_texture = b.tex("pc/cyclone_console.png"); m.roughness = 0.3
+			m.albedo_texture = _t(b, "console"); m.roughness = 0.3
 		"deck":
-			m.albedo_texture = b.tex("pc/cyclone_deck.png"); m.roughness = 0.4
+			m.albedo_texture = _t(b, "deck"); m.roughness = 0.4
 		"field":
 			# a little self light: the neon and lamps spill on the playfield all the time,
 			# but they are run-time parts the lightmap bake never sees
-			m.albedo_texture = b.tex("pc/cyclone_field.png"); m.roughness = 0.35
-			m.emission_enabled = true; m.emission_texture = b.tex("pc/cyclone_field.png")
+			m.albedo_texture = _t(b, "field"); m.roughness = 0.35
+			m.emission_enabled = true; m.emission_texture = _t(b, "field")
 			m.emission = Color(1.0, 0.92, 0.95); m.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
 			m.emission_energy_multiplier = 0.3
 			m.set_meta("e_day", 0.3); m.set_meta("e_night", 0.3)
 		"yellow":
-			m.albedo_texture = b.tex("pc/cyclone_yellow.png"); m.roughness = 0.4
+			m.albedo_texture = _t(b, "yellow"); m.roughness = 0.4
 		"chrome":
 			m.albedo_color = Color("#c8c8cc"); m.metallic = 0.85; m.roughness = 0.22
 		"plinth":
@@ -535,22 +549,22 @@ static func fill_mat(m, key, b):
 			m.emission_enabled = true; m.emission = Color("#8a7a9a"); m.emission_energy_multiplier = 0.25
 			m.set_meta("e_day", 0.25); m.set_meta("e_night", 0.25)
 		"bonus":
-			m.albedo_texture = b.tex("pc/cyclone_bonus.png"); m.roughness = 0.4
+			m.albedo_texture = _t(b, "bonus"); m.roughness = 0.4
 			# the readout's face is lit from within a little
-			m.emission_enabled = true; m.emission_texture = b.tex("pc/cyclone_bonus.png")
+			m.emission_enabled = true; m.emission_texture = _t(b, "bonus")
 			m.emission = Color.WHITE; m.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
 			m.emission_energy_multiplier = 0.35
 			m.set_meta("e_day", 0.35); m.set_meta("e_night", 0.35)
 		"box":
 			m.albedo_color = Color("#8e1430"); m.roughness = 0.45
 		"led":
-			m.albedo_texture = b.tex("pc/cyclone_led.png"); m.roughness = 0.15
-			m.emission_enabled = true; m.emission_texture = b.tex("pc/cyclone_led.png")
+			m.albedo_texture = _t(b, "led"); m.roughness = 0.15
+			m.emission_enabled = true; m.emission_texture = _t(b, "led")
 			m.emission = Color.WHITE; m.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
 			m.emission_energy_multiplier = 1.8
 			m.set_meta("e_day", 1.8); m.set_meta("e_night", 1.8)
 		"tower":
-			m.albedo_texture = b.tex("pc/cyclone_tower.png"); m.roughness = 0.45
+			m.albedo_texture = _t(b, "tower"); m.roughness = 0.45
 		"copper":
 			m.albedo_color = Color("#b8642a"); m.metallic = 0.7; m.roughness = 0.35
 		"neck_l":
@@ -564,19 +578,19 @@ static func fill_mat(m, key, b):
 		"slotbox":
 			m.albedo_color = Color("#34307e"); m.roughness = 0.4
 		"slot":
-			m.albedo_texture = b.tex("pc/cyclone_slot.png"); m.roughness = 0.4
+			m.albedo_texture = _t(b, "slot"); m.roughness = 0.4
 		"button":
-			m.albedo_texture = b.tex("pc/cyclone_button.png"); m.roughness = 0.25
-			m.emission_enabled = true; m.emission_texture = b.tex("pc/cyclone_button.png")
+			m.albedo_texture = _t(b, "button"); m.roughness = 0.25
+			m.emission_enabled = true; m.emission_texture = _t(b, "button")
 			m.emission = Color.WHITE; m.emission_operator = BaseMaterial3D.EMISSION_OP_MULTIPLY
 			m.emission_energy_multiplier = 1.2
 			m.set_meta("e_day", 1.2); m.set_meta("e_night", 1.2)
 		"bezel":
 			m.albedo_color = Color("#141418"); m.roughness = 0.4
 		"coin":
-			m.albedo_texture = b.tex("pc/cyclone_coin.png"); m.roughness = 0.45; m.metallic = 0.2
+			m.albedo_texture = _t(b, "coin"); m.roughness = 0.45; m.metallic = 0.2
 		"ticket":
-			m.albedo_texture = b.tex("pc/cyclone_ticket.png"); m.roughness = 0.8
+			m.albedo_texture = _t(b, "ticket"); m.roughness = 0.8
 			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR; m.alpha_scissor_threshold = 0.5
 			m.cull_mode = BaseMaterial3D.CULL_DISABLED
 		"glass":
@@ -584,14 +598,14 @@ static func fill_mat(m, key, b):
 			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			m.cull_mode = BaseMaterial3D.CULL_DISABLED
 		"dome":
-			m.albedo_texture = b.tex("pc/cyclone_dome.png"); m.roughness = 0.05; m.metallic_specular = 0.9
+			m.albedo_texture = _t(b, "dome"); m.roughness = 0.05; m.metallic_specular = 0.9
 			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			m.cull_mode = BaseMaterial3D.CULL_DISABLED
 			# The dome is probe-lit (dynamic, transparent), and in the dark arcade the probes see
 			# almost nothing, so it vanished at night (Steven, Oct 6). The ring lamps' glow on the
 			# acrylic stands in: the texture's streaks and lip glow faintly, more at night.
 			m.emission_enabled = true; m.emission = Color(0.82, 0.9, 1.0)
-			m.emission_texture = b.tex("pc/cyclone_dome.png")
+			m.emission_texture = _t(b, "dome")
 			m.emission_energy_multiplier = 0.9
 			m.set_meta("e_day", 0.6); m.set_meta("e_night", 0.9)
 		_:

@@ -1,0 +1,858 @@
+{
+ "_": "games, inc.'s ticket prizes, 2026 (scripts/prizes_gi.gd, workstream PRIZES Nov 3 2026; design/godot-prize-counter.md 'games, inc.'). Keys start with g_ so their words and prices never mix with Pocket Change's (scripts/prizes.json): a g_ prize whose rest of the key is a Pocket Change prize is drawn the same way (the shared prizes). tickets = the price; all are guesses from the research's 2026 tiers (design/research/redemption-items.md section 4), marked in scripts/redemption.json 'stock_2026'. case slots: [case, bay, level, side, item]; cases C0 pink (front), C1 blue, C2 white (far end), each 2 bays x 3 levels (0 deck, 1 lower glass shelf, 2 upper); wall: [shelf 0-5 from the floor (6: the top, over the shelving), u from, u to (m from the wall's middle, the customer's left negative), item]. desk: [u along the register counter, item] for things standing on it (the lava lamps: too tall for the wall's shelves).",
+ "items": {
+  "g_lollipop": {
+   "name": "Lollipop",
+   "tickets": 10
+  },
+  "g_bounce_ball": {
+   "name": "Bouncy ball",
+   "tickets": 25
+  },
+  "g_candy_ring": {
+   "name": "Candy ring",
+   "tickets": 40
+  },
+  "g_sour_candy": {
+   "name": "Sour candy",
+   "tickets": 10
+  },
+  "g_finger_trap": {
+   "name": "Chinese finger trap",
+   "tickets": 30
+  },
+  "g_sticky_hand": {
+   "name": "Sticky hand",
+   "tickets": 30
+  },
+  "g_stickers": {
+   "name": "Sticker sheet",
+   "tickets": 15
+  },
+  "g_slap": {
+   "name": "Slap bracelet",
+   "tickets": 100
+  },
+  "g_plush_bear": {
+   "name": "Plush bear",
+   "tickets": 1500
+  },
+  "g_plush_bunny": {
+   "name": "Plush bunny",
+   "tickets": 1500
+  },
+  "g_plush_dog": {
+   "name": "Plush dog",
+   "tickets": 1500
+  },
+  "g_lava": {
+   "name": "Lava lamp",
+   "tickets": 6000
+  },
+  "g_eraser": {
+   "name": "Mini eraser",
+   "tickets": 20
+  },
+  "g_popper_key": {
+   "name": "Popper keychain",
+   "tickets": 75
+  },
+  "g_squishy": {
+   "name": "Mini squishy",
+   "tickets": 75
+  },
+  "g_light_ring": {
+   "name": "Light-up ring",
+   "tickets": 50
+  },
+  "g_fidget": {
+   "name": "Fidget spinner",
+   "tickets": 100
+  },
+  "g_slime": {
+   "name": "Slime tub",
+   "tickets": 250
+  },
+  "g_dough_ball": {
+   "name": "Squishy dough ball",
+   "tickets": 300
+  },
+  "g_blind_bag": {
+   "name": "Mystery figure",
+   "tickets": 350
+  },
+  "g_emoji_key": {
+   "name": "Emoji keychain",
+   "tickets": 250
+  },
+  "g_popper_board": {
+   "name": "Popper board",
+   "tickets": 400
+  },
+  "g_led_wand": {
+   "name": "Light-up wand",
+   "tickets": 600
+  },
+  "g_play_ball": {
+   "name": "Play ball",
+   "tickets": 300
+  },
+  "g_bubbles": {
+   "name": "Bubble wand",
+   "tickets": 150
+  },
+  "g_squish": {
+   "name": "Round plush",
+   "tickets": 1200
+  },
+  "g_capybara": {
+   "name": "Capybara plush",
+   "tickets": 2000
+  },
+  "g_squish_big": {
+   "name": "Big round plush",
+   "tickets": 8000
+  },
+  "g_jumbo": {
+   "name": "Jumbo plush",
+   "tickets": 30000
+  },
+  "g_phone_stand": {
+   "name": "Phone stand",
+   "tickets": 1500
+  },
+  "g_cable": {
+   "name": "Charging cable",
+   "tickets": 1200
+  },
+  "g_earbuds": {
+   "name": "Wireless earbuds",
+   "tickets": 8000
+  },
+  "g_speaker": {
+   "name": "Bluetooth speaker",
+   "tickets": 6000
+  },
+  "g_projector": {
+   "name": "Star projector",
+   "tickets": 5000
+  },
+  "g_ledstrip": {
+   "name": "LED strip lights",
+   "tickets": 4000
+  },
+  "g_headphones": {
+   "name": "Headphones",
+   "tickets": 25000
+  },
+  "g_giftcard": {
+   "name": "Gift card",
+   "tickets": 15000
+  },
+  "g_arcade": {
+   "name": "Mini arcade",
+   "tickets": 25000
+  },
+  "g_handheld": {
+   "name": "Handheld console",
+   "tickets": 120000
+  },
+  "g_console": {
+   "name": "Game console",
+   "tickets": 150000
+  }
+ },
+ "case": [
+  [
+   "C0",
+   0,
+   0,
+   "left3",
+   "g_lollipop"
+  ],
+  [
+   "C0",
+   0,
+   0,
+   "mid",
+   "g_sour_candy"
+  ],
+  [
+   "C0",
+   0,
+   0,
+   "right3",
+   "g_candy_ring"
+  ],
+  [
+   "C0",
+   1,
+   0,
+   "left",
+   "g_bounce_ball"
+  ],
+  [
+   "C0",
+   1,
+   0,
+   "right",
+   "g_eraser"
+  ],
+  [
+   "C0",
+   0,
+   1,
+   "left",
+   "g_finger_trap"
+  ],
+  [
+   "C0",
+   0,
+   1,
+   "right",
+   "g_sticky_hand"
+  ],
+  [
+   "C0",
+   1,
+   1,
+   "left",
+   "g_stickers"
+  ],
+  [
+   "C0",
+   1,
+   1,
+   "right",
+   "g_light_ring"
+  ],
+  [
+   "C0",
+   0,
+   2,
+   "left",
+   "g_popper_key"
+  ],
+  [
+   "C0",
+   0,
+   2,
+   "right",
+   "g_squishy"
+  ],
+  [
+   "C0",
+   1,
+   2,
+   "left",
+   "g_slap"
+  ],
+  [
+   "C0",
+   1,
+   2,
+   "right",
+   "g_fidget"
+  ],
+  [
+   "C1",
+   0,
+   0,
+   "left",
+   "g_dough_ball"
+  ],
+  [
+   "C1",
+   0,
+   0,
+   "right",
+   "g_slime"
+  ],
+  [
+   "C1",
+   1,
+   0,
+   "full",
+   "g_popper_board"
+  ],
+  [
+   "C1",
+   0,
+   1,
+   "full",
+   "g_blind_bag"
+  ],
+  [
+   "C1",
+   1,
+   1,
+   "left",
+   "g_emoji_key"
+  ],
+  [
+   "C1",
+   1,
+   1,
+   "right",
+   "g_fidget"
+  ],
+  [
+   "C1",
+   0,
+   2,
+   "full",
+   "g_led_wand"
+  ],
+  [
+   "C1",
+   1,
+   2,
+   "full",
+   "g_emoji_key"
+  ],
+  [
+   "C2",
+   0,
+   0,
+   "full",
+   "g_cable"
+  ],
+  [
+   "C2",
+   1,
+   0,
+   "full",
+   "g_phone_stand"
+  ],
+  [
+   "C2",
+   0,
+   1,
+   "full",
+   "g_speaker"
+  ],
+  [
+   "C2",
+   1,
+   1,
+   "full",
+   "g_earbuds"
+  ],
+  [
+   "C2",
+   0,
+   2,
+   "full",
+   "g_giftcard"
+  ],
+  [
+   "C2",
+   1,
+   2,
+   "full",
+   "g_arcade"
+  ]
+ ],
+ "wall": [
+  [
+   0,
+   -4.1,
+   -2.1,
+   "g_play_ball"
+  ],
+  [
+   0,
+   -2.05,
+   -0.75,
+   "g_bubbles"
+  ],
+  [
+   0,
+   -0.7,
+   0.6,
+   "g_popper_board"
+  ],
+  [
+   0,
+   0.65,
+   2.6,
+   "g_play_ball"
+  ],
+  [
+   0,
+   2.65,
+   4.1,
+   "g_bubbles"
+  ],
+  [
+   1,
+   -4.1,
+   -2.6,
+   "g_slime"
+  ],
+  [
+   1,
+   -2.55,
+   -0.9,
+   "g_squishy"
+  ],
+  [
+   1,
+   -0.85,
+   0.85,
+   "g_fidget"
+  ],
+  [
+   1,
+   0.9,
+   2.45,
+   "g_dough_ball"
+  ],
+  [
+   1,
+   2.5,
+   4.1,
+   "g_slime"
+  ],
+  [
+   2,
+   -4.1,
+   -1.5,
+   "g_squish"
+  ],
+  [
+   2,
+   -1.45,
+   0.2,
+   "g_led_wand"
+  ],
+  [
+   2,
+   0.25,
+   4.1,
+   "g_squish"
+  ],
+  [
+   3,
+   -4.1,
+   -1.9,
+   "g_capybara"
+  ],
+  [
+   3,
+   -1.85,
+   -0.55,
+   "g_blind_bag"
+  ],
+  [
+   3,
+   -0.5,
+   1.2,
+   "g_projector"
+  ],
+  [
+   3,
+   1.25,
+   2.6,
+   "g_speaker"
+  ],
+  [
+   3,
+   2.65,
+   4.1,
+   "g_capybara"
+  ],
+  [
+   4,
+   -4.1,
+   -2.5,
+   "g_headphones"
+  ],
+  [
+   4,
+   -2.45,
+   -1.0,
+   "g_ledstrip"
+  ],
+  [
+   4,
+   -0.95,
+   0.95,
+   "g_handheld"
+  ],
+  [
+   4,
+   1.0,
+   2.6,
+   "g_console"
+  ],
+  [
+   4,
+   2.65,
+   4.1,
+   "g_earbuds"
+  ],
+  [
+   5,
+   -4.1,
+   -2.7,
+   "g_squish_big"
+  ],
+  [
+   5,
+   -2.65,
+   -1.35,
+   "g_plush_bear"
+  ],
+  [
+   5,
+   -1.3,
+   0.0,
+   "g_plush_bunny"
+  ],
+  [
+   5,
+   0.05,
+   1.35,
+   "g_plush_dog"
+  ],
+  [
+   5,
+   1.4,
+   2.6,
+   "g_plush_bear"
+  ],
+  [
+   5,
+   2.65,
+   4.1,
+   "g_squish_big"
+  ],
+  [
+   6,
+   -4.1,
+   4.1,
+   "g_jumbo"
+  ]
+ ],
+ "_text": "As scripts/prizes.json '_text'; gtag.* style every green shelf tag, <item>.box the words on a boxed prize.",
+ "text": {
+  "gtag.number": {
+   "font": "sans",
+   "size": 86,
+   "fill": "#111111",
+   "outline": ""
+  },
+  "gtag.name": {
+   "font": "sans",
+   "size": 36,
+   "fill": "#1e1a18",
+   "outline": ""
+  },
+  "gtag.band": {
+   "text": "TICKETS",
+   "font": "sans",
+   "size": 28,
+   "fill": "#ffffff",
+   "outline": ""
+  },
+  "g_earbuds.box": {
+   "text": "WIRELESS EARBUDS",
+   "font": "sans",
+   "size": 22,
+   "fill": "#ffffff",
+   "outline": ""
+  },
+  "g_speaker.box": {
+   "text": "PORTABLE SPEAKER",
+   "font": "sans",
+   "size": 22,
+   "fill": "#14181f",
+   "outline": ""
+  },
+  "g_projector.box": {
+   "text": "STAR PROJECTOR",
+   "font": "sans",
+   "size": 24,
+   "fill": "#ffffff",
+   "outline": ""
+  },
+  "g_headphones.box": {
+   "text": "OVER-EAR HEADPHONES",
+   "font": "sans",
+   "size": 20,
+   "fill": "#ffffff",
+   "outline": ""
+  },
+  "g_handheld.box": {
+   "text": "HANDHELD CONSOLE",
+   "font": "sans",
+   "size": 22,
+   "fill": "#c81e28",
+   "outline": ""
+  },
+  "g_console.box": {
+   "text": "GAME CONSOLE",
+   "font": "sans",
+   "size": 26,
+   "fill": "#0e1e5a",
+   "outline": ""
+  },
+  "g_phone_stand.box": {
+   "text": "PHONE STAND",
+   "font": "sans",
+   "size": 26,
+   "fill": "#ffffff",
+   "outline": ""
+  },
+  "g_arcade.box": {
+   "text": "MINI ARCADE",
+   "font": "sans",
+   "size": 28,
+   "fill": "#ffd228",
+   "outline": ""
+  },
+  "g_ledstrip.box": {
+   "text": "LED STRIP LIGHTS",
+   "font": "sans",
+   "size": 22,
+   "fill": "#14181f",
+   "outline": ""
+  },
+  "g_cable.box": {
+   "text": "CHARGING CABLE",
+   "font": "sans",
+   "size": 24,
+   "fill": "#ffffff",
+   "outline": ""
+  }
+ },
+ "art": {
+  "gtag": {
+   "bg": "gtag",
+   "size": [
+    256,
+    160
+   ],
+   "fields": [
+    [
+     "{item}.tickets",
+     [
+      10,
+      2,
+      236,
+      72
+     ]
+    ],
+    [
+     "{item}.name",
+     [
+      12,
+      70,
+      232,
+      52
+     ]
+    ],
+    [
+     "gtag.band",
+     [
+      8,
+      124,
+      240,
+      32
+     ]
+    ]
+   ]
+  },
+  "box_earbuds": {
+   "bg": "box_earbuds",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "g_earbuds.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_speaker": {
+   "bg": "box_speaker",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "g_speaker.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_projector": {
+   "bg": "box_projector",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "g_projector.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_headphones": {
+   "bg": "box_headphones",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "g_headphones.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_handheld": {
+   "bg": "box_handheld",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "g_handheld.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_console": {
+   "bg": "box_console",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "g_console.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_phonestand": {
+   "bg": "box_phonestand",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "g_phone_stand.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_arcade": {
+   "bg": "box_arcade",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "g_arcade.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_ledstrip": {
+   "bg": "box_ledstrip",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "g_ledstrip.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  },
+  "box_cable": {
+   "bg": "box_phonestand",
+   "size": [
+    192,
+    256
+   ],
+   "fields": [
+    [
+     "g_cable.box",
+     [
+      8,
+      6,
+      176,
+      40
+     ]
+    ]
+   ]
+  }
+ },
+ "desk": [
+  [
+   -1.12,
+   "g_lava"
+  ],
+  [
+   1.12,
+   "g_lava"
+  ]
+ ]
+}

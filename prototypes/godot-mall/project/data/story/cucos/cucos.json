@@ -1,0 +1,80 @@
+{
+ "_": "Workstream CUCOS (Nov 3 2026; design/godot-cucos.md): the football lady, the Cuco's bar. Made by scripts/story/cucos.gd. 1995 only. Positions are world metres (Cuco's, s42, wing 1: the bar runs along the west wall, x 22.1 to 24.4, z -79.4 to -71.2; the stools at x 24.45).",
+ "years": [
+  1995
+ ],
+ "lady": {
+  "skin": "Ch02",
+  "dialogue": "res://data/story/cucos/football_lady.dialogue",
+  "_": "the crowd shopper wearing this skin (the purple sweatshirt, shirt words scripts/npc_shirt.json / play/shirt_text.json). scripts/npcs.json 'always' keeps her in the crowd."
+ },
+ "bartender": {
+  "id": "cucos_bartender",
+  "store": "CUCOS BORDER CAFE",
+  "wing": 1,
+  "years": [
+   1995
+  ],
+  "look": "legacy",
+  "skin": "Ch28",
+  "sex": "m",
+  "name": "PLACEHOLDER Cuco's bartender",
+  "dialogue": "res://data/story/cucos/bartender.dialogue",
+  "shop": "cucos",
+  "area": [
+   22.78,
+   -78.4,
+   22.9,
+   -72.4
+  ],
+  "face": [
+   1,
+   0
+  ],
+  "talk_at": [
+   24.85,
+   -75.35
+  ],
+  "_": "skin Ch28 is a PLACEHOLDER pick (a male Mixamo skin free in wing 1). area: behind the counter, in front of the back bar. talk_at: the customer side, between two stools."
+ },
+ "patrons": [
+  {
+   "id": "cu_patron_beer",
+   "skin": "Ch08",
+   "seat": [
+    24.45,
+    -77.6
+   ],
+   "face": [
+    -1,
+    0
+   ],
+   "y": 0.36,
+   "clip": "sit_idle_3",
+   "drink": "beer",
+   "_": "PLACEHOLDER: no name, no dialogue"
+  },
+  {
+   "id": "cu_patron_margarita",
+   "skin": "Ch37",
+   "seat": [
+    24.45,
+    -73.1
+   ],
+   "face": [
+    -1,
+    0
+   ],
+   "y": 0.36,
+   "clip": "sit_idle_2",
+   "drink": "margarita",
+   "_": "PLACEHOLDER: no name, no dialogue"
+  }
+ ],
+ "drinks_y": 1.1,
+ "drinks_x": 23.55,
+ "travels": {
+  "cu_doubloon": "cu_doubloon_given"
+ },
+ "travels_": "items that stay with the player across years (Steven: the doubloon 'stays in the inventory across years'), each with the flag that says it was received. The bag is per year (mall-state-<year>); scripts/story/cucos.gd puts one in this year's bag when the flag is set and this year has none carried or lying on its floor."
+}

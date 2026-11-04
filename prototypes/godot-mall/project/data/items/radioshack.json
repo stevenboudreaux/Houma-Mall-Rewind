@@ -6,7 +6,7 @@
   "scene": "res://models/bl_rs_scanner/bl_rs_scanner.glb",
   "icon": "res://models/bl_rs_scanner/bl_rs_scanner_icon.png",
   "year": 1995,
-  "place": {
+  "display": {
    "wing": 1,
    "year": 1995,
    "pos": [
@@ -25,7 +25,7 @@
   "scene": "res://models/bl_rs_walkie/bl_rs_walkie.glb",
   "icon": "res://models/bl_rs_walkie/bl_rs_walkie_icon.png",
   "year": 1995,
-  "place": {
+  "display": {
    "wing": 1,
    "year": 1995,
    "pos": [
@@ -44,7 +44,7 @@
   "scene": "res://models/bl_rs_rcbox/bl_rs_rcbox.glb",
   "icon": "res://models/bl_rs_rcbox/bl_rs_rcbox_icon.png",
   "year": 1995,
-  "place": {
+  "display": {
    "wing": 1,
    "year": 1995,
    "pos": [
@@ -63,7 +63,7 @@
   "scene": "res://models/bl_rs_cordless/bl_rs_cordless.glb",
   "icon": "res://models/bl_rs_cordless/bl_rs_cordless_icon.png",
   "year": 1995,
-  "place": {
+  "display": {
    "wing": 1,
    "year": 1995,
    "pos": [
@@ -82,7 +82,7 @@
   "scene": "res://models/bl_rs_battcard/bl_rs_battcard.glb",
   "icon": "res://models/bl_rs_battcard/bl_rs_battcard_icon.png",
   "year": 1995,
-  "place": {
+  "display": {
    "wing": 1,
    "year": 1995,
    "pos": [
@@ -101,7 +101,7 @@
   "scene": "res://models/bl_rs_pager/bl_rs_pager.glb",
   "icon": "res://models/bl_rs_pager/bl_rs_pager_icon.png",
   "year": 1995,
-  "place": {
+  "display": {
    "wing": 1,
    "year": 1995,
    "pos": [
@@ -120,7 +120,7 @@
   "scene": "res://items/radioshack/cb_radio.tscn",
   "icon": "res://items/radioshack/icons/cb_radio.png",
   "year": 1995,
-  "place": {
+  "display": {
    "wing": 1,
    "year": 1995,
    "pos": [
@@ -138,7 +138,7 @@
   "scene": "res://items/radioshack/microcassette.tscn",
   "icon": "res://items/radioshack/icons/microcassette.png",
   "year": 1995,
-  "place": {
+  "display": {
    "wing": 1,
    "year": 1995,
    "pos": [

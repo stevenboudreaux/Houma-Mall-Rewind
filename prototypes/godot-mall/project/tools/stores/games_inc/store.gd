@@ -30,6 +30,8 @@ const GLASS_TOP = 2.95
 const SHELF_Y = 2.42        # F8 the wall shelf; the red-orange band above, a mustard band below it
 const MUST_Y0 = 2.27
 const PC = "res://tools/stores/pocket_change/%s.gd"
+const WW_U = 3.5            # PRIZES: the WHIRLWIND's console (front edge) centre, a guess (see machines())
+const WW_D = 5.4
 const MK = "res://tools/stores/games_inc/machines/"
 
 static func P(a, t, n, u, y, d):
@@ -372,6 +374,18 @@ static func machines(b, a, t, n):
 	on_back(b, a, t, n, "merch", 4.6, {"style": "purple"})
 	on_back(b, a, t, n, "alley", 5.55, {"style": "alley"})
 	on_back(b, a, t, n, "alley", 6.5, {"style": "alley"})
+	# --- PRIZES (Nov 3; Steven: "put a clone of the 1995 Whirlwind in the store... literally the same
+	# machine", slightly duller and faded): Pocket Change's own cyclone module, built with the 2026 year's
+	# faded pictures (cyclone.gd _t) and its own sign id "gi.cyclone.1" (scripts/signs.gd: $2 for four
+	# plays, 2026 tickets). Where it stands is a guess (not in the Oct 23 footage): the open floor in the
+	# middle front, behind the party tables, its console to the door, across the aisle from the showcases.
+	var cyc = load(PC % "cyclone")
+	var k0 = b.obstacles.size()
+	cyc.build(b, "gi0_mach", P(a, t, n, WW_U, 0, WW_D), -n, {})
+	for oi in range(k0, b.obstacles.size()):
+		var ob = b.obstacles[oi]
+		if ob[0] is String and ob[0] == "rect":
+			b.obstacles[oi] = ["rect", ob[1] - 0.2, ob[2] - 0.2, ob[3] + 0.2, ob[4] + 0.2]
 	# --- the middle, front to back (M5, M18, M17, M19, M21, M20, M22, M23, M24)
 	put(b, a, t, n, "dice", 4.6, 11.55, "+d")
 	put(b, a, t, n, "upright", 4.6, 15.8, "+d", {"style": "mascot"})

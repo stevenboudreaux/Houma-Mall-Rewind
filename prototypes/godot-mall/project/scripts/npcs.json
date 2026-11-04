@@ -227,6 +227,10 @@
 	],
 	"arcade_yield_m": 0.9,
 	"unique": true,
+	"always": [
+		"Ch02"
+	],
+	"always_": "CUCOS (design/godot-cucos.md): skins the crowd picks first, so they are always somewhere in the mall: Ch02 is the football lady.",
 	"arcade_max": 5,
 	"day_tint": [
 		1.0,

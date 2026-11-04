@@ -270,3 +270,162 @@ make the plinth the same gold as the body and shrink it so the lion sits tighter
 - Budget: the first build was 6,292 tris; grille discs lost their bevel, rings went to 28 sides and the
   ten keys to one bevel segment. Sheet: `production/qa/evidence/wsR-boombox-sheet.jpg` (no reference cell).
 - Review fix: the grilles read as flat black; the perforation art got lighter metal and bigger holes.
+
+## Food, drinks and books (workstream FOOD, Nov 3 2026)
+
+**Asked for (brief):** very detailed hand items, because you hold them up close: Corn Dog 7's crinkle fries and
+lemonade in its own packaging style; Woolworth's 1995 lunch counter hot dog, hamburger, fries and coffee;
+B. Dalton books (Moby Dick with its real title; four invented titles and covers, more detailed than T2's
+paperback, one book model reused); Cuco's beer, margarita, a visibly fancier top-shelf margarita, a Mardi
+Gras doubloon stamped with the neon-sign logo, a coupon for one free top-shelf margarita; and Cuco's back bar
+as a kit of fixtures (no prepared drinks) with a placement note for workstream CUCOS.
+
+**Ids.** The model ids follow the pipeline's `bl_<store>_<thing>` (so they land in the shared `items` pack,
+`tools/shared_packs.json` `models/bl_*`); the **item ids are the brief's**, set with `META["item"]["id"]`
+(build.py copies item keys over the default). Items are in their own file, `data/items/food.json`
+(`META["item_file"]`), with no `place`: the store workstreams (SHOPS, CUCOS) put them on counters.
+
+| Item id | Model | Class | Notes |
+|---|---|---|---|
+| `cd7_crinkle_fries` | `bl_cd7_crinkle_fries` | hand | 18 crinkle-cut fries as geometry (the crinkle is in the cross-section), paprika specks, a printed fry cup |
+| `cd7_lemonade` | `bl_cd7_lemonade` | hand | printed cup, clear lid (its own transparent material), cloudy lemonade, ice, a lemon wheel, navy-striped straw |
+| `wl_hot_dog` | `bl_wl_hot_dog` | hand | grill-striped frank in a split bun (crumb on the cut faces), mustard, relish, pickle spear, chips, white plate with a thin red line |
+| `wl_hamburger` | `bl_wl_hamburger` | hand | heel, patty, melting American cheese, pickle chips, tomato, leaf lettuce, sesame crown (seeds as geometry and texture), pickle spear |
+| `wl_fries` | `bl_wl_fries` | hand | straight-cut fries criss-crossed in three layers, salt, a pleated soufflé cup of ketchup |
+| `wl_coffee` | `bl_wl_coffee` | hand | thick diner mug of black coffee on a saucer, teaspoon, a generic SUGAR packet |
+| `bd_moby_dick` | `bl_bd_moby_dick` | hand | navy book cloth (weave in the normal map), gold-foil stamping (metallic through a mask), blind-stamped back, red ribbon, B. Dalton price sticker |
+| `bd_adventure_book` | `bl_bd_adventure_book` | hand | invented: THE SUNKEN COMPASS, J. R. Thibodeaux; dust-jacketed hardcover |
+| `bd_chills_book` | `bl_bd_chills_book` | hand | invented: CHILL HOLLOW #4 *The Thing in the Cane Field*, Marguerite Breaux; mass-market paperback |
+| `bd_mars_book` | `bl_bd_mars_book` | hand | invented: DUST OVER THARSIS, Dana Okonkwo-Hale; trade paperback |
+| `bd_dark_room_book` | `bl_bd_dark_room_book` | hand | invented: SAFELIGHT, Claire Lanoux (a darkroom thriller; "The Dark Room" itself is a real 1995 title, so avoided); jacketed hardcover |
+| `cu_beer` | `bl_cu_beer` | hand | glass mug of draft lager, head, condensation beads, Cuco's coaster |
+| `cu_margarita` | `bl_cu_margarita` | hand | the house drink: stepped margarita glass, frozen lime, salt rim, lime wheel, green straw, coaster |
+| `cu_top_shelf_margarita` | `bl_cu_top_shelf_margarita` | hand | fancier: hand-blown glass with a cobalt rim and a green saguaro stem, on the rocks (amber), coarse salt, lime and orange wheels, two black straws, coaster |
+| `cu_doubloon` | `bl_cu_doubloon` | hand | 39 mm anodized-gold aluminium doubloon (`design/research/mardi-gras-doubloons.md`): the sign's cans as raised walls with tube runs inside, the MEXICAN CAFE pill with sunk letters, bead borders; reverse MARDI GRAS / 1995 and a chili pepper |
+| `cu_coupon` | `bl_cu_coupon` | hand | card-stock leaf: the sign, FREE / TOP SHELF MARGARITA, papel picado, a drawn cactus-stem glass, torn perforation; no other words (CUCOS writes those) |
+
+Back-bar fixtures (no item entries): `bl_cu_bb_bottles_a`, `bl_cu_bb_bottles_b`, `bl_cu_bb_taps`,
+`bl_cu_bb_stemrack`, `bl_cu_bb_glasses`, `bl_cu_bb_service` (all small_fixture). Placement:
+`design/storefronts/cucos-back-bar-kit.md`. Their `.glb.import` is set to static lightmaps (`light_baking=2`,
+0.05 m texel) like the lion.
+
+**Sources and guesses.** No photo of any of this food, drink, book or bar exists in the repo or on `refs`
+(`refs/INDEX.md`); every item is a period type and says so in its script header.
+- *Corn Dog 7's packaging style* comes from the store itself: the awning's taxi yellow and navy and its
+  pinstripe (`paint_corn_dog_7.py`), and **the store's own traced lettering** (`tools/stores/cd7_letters.json`:
+  CORN DOG 7, "seasoned fries", "fresh lemonade", with the two hand strokes the awning adds), rendered with
+  cairosvg (`_food.svg_letters`). Guessed: that the stand used printed cups at all, their shapes and sizes.
+  Prices from the stand's menu box (fries and lemonade .99, themselves guesses).
+- *Woolworth*: white china as in the shop's own food photos (`woolworth/paint.py food()`); prices from the
+  back bar's menu strip (`paint_lunch.py`: HOT DOG $1.29, COFFEE 59¢; no burger or fries price, so none).
+  Guessed: the plate's thin red line, everything on the plates.
+- *B. Dalton*: Moby-Dick's title and author are real (public domain); its edition, cover design and publisher
+  ("BAYOU CLASSICS") are invented. The four other titles, authors, blurbs, quotes and publisher marks are
+  invented and are **proposals for Steven** (constants at the top of each script). The price stickers carry
+  B. Dalton's own name (the tenant's mark). Prices are guesses for 1995.
+- *Cuco's*: the coaster, coupon and doubloon use the restaurant's own neon sign as traced in
+  `tools/stores/signs/cu_sign.json` (cans, tube runs, MEXICAN CAFE letters, the cabinet), drawn by
+  `_cucos.py`. The doubloon follows the research note's proposals; a Cuco's doubloon is a plausible
+  invention (no restaurant doubloon was found). Its reverse words (MARDI GRAS / 1995) are a placeholder.
+
+**Shared code** (`tools/blender/assets_src/`): `_food.py` (cd7 lettering, cylindrical wraps, china, paper,
+crusts, the fry generator with straight or crinkle sections, plane cuts that fill the cut face with a second
+material, oval plates), `_book.py` (the book model, cover helpers, B. Dalton's sticker), `_cucos.py` (the sign
+as print and as a height map, coaster, salt rims, citrus wheels), `_bar.py` (bottles with invented labels,
+glass profiles).
+
+**The book model** (`_book.py build_book`): one swept cross-section for the whole case (front board, a
+hinge groove, the rounded spine, back board, the boards' insides), extruded along the book and capped, with an
+angle-limited bevel; the page block is its own sweep with a concave fore-edge; "hard" adds 2.6 mm boards,
+3 mm squares, headbands and an optional ribbon; "paper" a 0.55 mm wrap flush with the pages and scored hinges.
+Covers are painted per book (front, back, spine) and mapped by position; gold foil is a mask driving metallic
+and roughness and a small inward bump. 850–1,650 tris a book (T2's paperback: 256).
+
+**Pipeline addition:** `META["icon_view"] = (yaw, elevation)` for the 256 px icon (books, the coin and the
+coupon lie flat and read from above).
+
+**Review fixes** (each found on a sheet or the Godot shot, fixed and rebuilt):
+- The printed cups' wraps faced sideways (the angle mapping's seam): `_food.wrap_mat` now centres the image on
+  the front, wrapped with FRACT; the lettering was too big to read round a cup and was halved.
+- The fries read as pale wooden sticks: deeper golden ramp, less fanned out.
+- Hot dog: the bun closed over the frank and read as skin; the pickle crossed the plate's rim. Halves opened
+  further, the frank raised, a browner crust, a bigger plate well.
+- Hamburger: a 30 mm bottom bun and an oversized lettuce hid the patty; thinner heel, bigger darker patty,
+  smaller lettuce, subtler veins. Over budget twice (6,030): fewer bun segments and seeds.
+- The Woolworth fries' heap core showed under the plate: cut at the plate surface.
+- Moby-Dick's first whale read as a banana: redrawn as a sperm whale (square head, jaw, flukes, spout).
+  Page edges looked stained: the dirt layer is much fainter.
+- The tap tower's frost band was a flat white sleeve: now a mottled, partly metallic frost.
+- Blender's turntable shows liquids under transparent glass as washed-out pink; the baked albedo and the Godot
+  shots are correct (golden beer, amber top-shelf), so this is the preview, not the asset.
+
+**Built (full quality; tris = the exported mesh, tex = per map, 3 maps):**
+
+| Model | Class | Tris (budget) | Tex | Files in repo |
+|---|---|---|---|---|
+| `bl_cd7_crinkle_fries` | hand | 4,860 (5,000) | 2048 | 5.8 MB |
+| `bl_cd7_lemonade` | hand | 2,032 (5,000) | 2048 | 4.0 MB |
+| `bl_wl_hot_dog` | hand | 3,904 (5,000) | 2048 | 7.5 MB |
+| `bl_wl_hamburger` | hand | 4,924 (5,000) | 2048 | 7.5 MB |
+| `bl_wl_fries` | hand | 4,830 (5,000) | 2048 | 6.2 MB |
+| `bl_wl_coffee` | hand | 2,762 (5,000) | 1024 | 1.7 MB |
+| `bl_bd_moby_dick` | hand | 1,636 (5,000) | 2048 | 7.2 MB |
+| `bl_bd_adventure_book` | hand | 1,592 (5,000) | 2048 | 2.7 MB |
+| `bl_bd_chills_book` | hand | 848 (5,000) | 2048 | 2.2 MB |
+| `bl_bd_mars_book` | hand | 880 (5,000) | 2048 | 2.2 MB |
+| `bl_bd_dark_room_book` | hand | 1,592 (5,000) | 2048 | 2.5 MB |
+| `bl_cu_beer` | hand | 3,272 (5,000) | 1024 | 1.2 MB |
+| `bl_cu_margarita` | hand | 4,060 (5,000) | 1024 | 2.4 MB |
+| `bl_cu_top_shelf_margarita` | hand | 4,952 (5,000) | 1024 | 1.9 MB |
+| `bl_cu_doubloon` | hand | 1,024 (5,000) | 1024 | 1.1 MB |
+| `bl_cu_coupon` | hand | 1,096 (5,000) | 2048 | 1.1 MB |
+| `bl_cu_bb_bottles_a` | small_fixture | 7,104 (10,000) | 2048 | 4.0 MB |
+| `bl_cu_bb_bottles_b` | small_fixture | 6,340 (10,000) | 2048 | 3.9 MB |
+| `bl_cu_bb_taps` | small_fixture | 4,792 (10,000) | 1024 | 2.2 MB |
+| `bl_cu_bb_stemrack` | small_fixture | 8,780 (10,000) | 1024 | 1.4 MB |
+| `bl_cu_bb_glasses` | small_fixture | 6,756 (10,000) | 1024 | 0.6 MB |
+| `bl_cu_bb_service` | small_fixture | 9,396 (10,000) | 2048 | 5.6 MB |
+| **22 models** | | | | **74.9 MB** |
+
+**The items pack, measured** (`python3 tools/shared_packs.py --write=items`, then `godot --export-pack "Shared
+Desktop"` / `"Shared Mobile"`; "before" = the same branch with FOOD's 22 model folders moved out):
+
+| items pack | Before | After | Change |
+|---|---|---|---|
+| `items.desktop.pck` | 22.64 MB | **68.34 MB** | +45.70 MB |
+| `items.mobile.pck` | 22.64 MB | **68.34 MB** | +45.70 MB (byte-identical to desktop, as before) |
+
+The pack stays under GitHub's 100 MiB file limit (104.9 MB) and under the ~90 MB point where
+`design/godot-build-hosting.md` says to split it (`items2` by glob in `tools/shared_packs.json`). It is a
+"start" pack, so a visitor's first wing now downloads 45.7 MB more before the mall opens (once for the whole
+mall; cached afterwards). Each site's total grows by the same 45.7 MB (twice: desktop and mobile copies are
+separate files). The cost is mostly the 2048 px maps of the food with printed paper and of the books; if the
+start download matters more than close-up print, the books and the plates can drop to 1024 px (Steven's call:
+CLAUDE-CLOUD.md asks for his yes before lowering picture quality).
+
+**Evidence:** `production/qa/evidence/wsFOOD-<model id>-sheet.jpg` (turntables, full quality) and the unbaked
+Godot shots `wsFOOD-godot-food.jpg` (Corn Dog 7 and Woolworth), `wsFOOD-godot-books.jpg`,
+`wsFOOD-godot-cucos.jpg`, `wsFOOD-godot-backbar.jpg` (the kit arranged as a back bar).
+
+## The prize counters' heroes (workstream PRIZES, Nov 3 2026)
+
+Steven: "use Blender for prizes you can win where you can; simple bin filler for the rest"
+(`design/godot-prize-counter.md` "PRIZES"). Not placed: redemption stock only; the counters show the models
+themselves, batched (`scripts/prize_units.gd` BLENDER). No reference pictures in the pack for any of them: the
+types from `design/research/redemption-items.md`; generic, no brand, no words.
+
+| Asset | Class | Tris | Tex | Year, price | Guessed |
+|---|---|---|---|---|---|
+| `bl_pc_troll` "Troll doll" | pocket | 1,820 | 512 | 1995, 100 | everything: a 9.4 cm vending troll, pear body, big ears, blue eyes, a green belly gem, a hot pink tuft |
+| `bl_pc_yoyo` "Yo-yo" | pocket | 1,780 | 512 | 1995, 150 | 5.6 cm imperial shape, red halves with white caps, a looped string |
+| `bl_pc_koosh` "Rubber-strand ball" | hand | 2,820 | 512 | 1995, 250 | 7 cm, 900 three-sided strands in four colour sectors |
+| `bl_pc_blaster` "Water blaster" | hand | 1,672 | 512 | 1995, 450 | a small pump blaster (36 cm): green body, orange tank, yellow pump |
+| `bl_pc_skateboard` "Skateboard" | hand | 2,324 | 1024 | 1995, 6,000 | 7.5 x 30 in deck with 18° kicktails, black grip, red underside with a generic flame-and-star graphic, chrome trucks, white wheels |
+| `bl_pc_plasma` "Plasma ball" | hand | 2,284 | 512 | 1995, 2,000 | a 15 cm globe (unbaked clear glass), violet filaments (unbaked flat), black base |
+| `bl_gi_squish` "Round plush" | hand | 1,304 | 512 | 2026, 1,200 (x1.6 "Big round plush" 8,000, x3.6 "Jumbo plush" 30,000) | a 20 cm stuffed ball-animal; near-white velour, tinted by the counter; stitched happy eyes, cheeks |
+| `bl_gi_capybara` "Capybara plush" | hand | 1,648 | 512 | 2026, 2,000 | 28 cm long, a blunt box head, dark muzzle, round ears, stubby legs |
+| `bl_gi_doughball` "Squishy dough ball" | pocket | 336 | 512 | 2026, 300 | 6.5 cm pastel pink, sagging, a dimpled skin |
+
+Also: the three claw plush and the finger trap are `"year": "both"` now (shared with games, inc.); the counter
+tints the plush's near-white fur (instance colour through `vertex_color_use_as_albedo` on the baked material).
+Evidence: `production/qa/evidence/wsPRIZES-<id>-sheet.jpg`.

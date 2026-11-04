@@ -119,3 +119,25 @@ func lock(flag: String) -> void:
 var item_names := {}         # id -> name, filled by the story node from the item files
 func _item_name(id: String) -> String:
 	return str(item_names.get(id, id))
+
+# --- CUCOS (design/godot-cucos.md): a gesture, and buying (the shop stub, scripts/story/shop_stub.gd)
+##   act("thinking")      the NPC talking plays a one-shot clip (stage directions: "she looks confused")
+##   can_afford(200)      the wallet holds at least 200 cents
+##   buy("cu_beer", 200)  200 cents out of the wallet, then give("cu_beer"); false (nothing changes)
+##                        when the wallet doesn't cover it
+var act_cb: Callable
+func act(clip: String) -> void:
+	log.append(["act", clip])
+	if act_cb.is_valid():
+		act_cb.call(clip)
+
+func can_afford(cents: int) -> bool:
+	return mall != null and mall.has_method("can_afford") and mall.can_afford(cents)
+
+func buy(id: String, cents: int) -> bool:
+	log.append(["buy", id, cents])
+	if mall == null or not mall.has_method("spend") or not mall.spend(cents, "Shop: " + id):
+		return false
+	give(id)
+	return true
+# --- end CUCOS

@@ -1,0 +1,115 @@
+{
+ "_": "Labelled STAND-IN items for the shops (workstream SHOPS, design/godot-shops.md), made by tools/shops/make_standins.py: primitive shapes with a STAND-IN tag and a STAND-IN icon until workstream FOOD's (or a later) model lands. Sold at the counters (data/story/shops.json); never placed in the world. Book titles other than Moby-Dick are invented.",
+ "items": [
+  {
+   "id": "standin_rs_corded_phone",
+   "name": "Corded telephone",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_corded_phone/standin_rs_corded_phone.tscn",
+   "icon": "res://models/bl_standin_rs_corded_phone/standin_rs_corded_phone_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack shelf: corded phone)"
+  },
+  {
+   "id": "standin_rs_answering_machine",
+   "name": "Answering machine",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_answering_machine/standin_rs_answering_machine.tscn",
+   "icon": "res://models/bl_standin_rs_answering_machine/standin_rs_answering_machine_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack shelf: answering machine)"
+  },
+  {
+   "id": "standin_rs_clock_radio",
+   "name": "Clock radio",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_clock_radio/standin_rs_clock_radio.tscn",
+   "icon": "res://models/bl_standin_rs_clock_radio/standin_rs_clock_radio_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack shelf: clock radio)"
+  },
+  {
+   "id": "standin_rs_cell_phone",
+   "name": "Cellular phone",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_cell_phone/standin_rs_cell_phone.tscn",
+   "icon": "res://models/bl_standin_rs_cell_phone/standin_rs_cell_phone_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack shelf: cellular phone)"
+  },
+  {
+   "id": "standin_rs_9v_battery",
+   "name": "9-volt battery",
+   "class": "pocket",
+   "scene": "res://models/bl_standin_rs_9v_battery/standin_rs_9v_battery.tscn",
+   "icon": "res://models/bl_standin_rs_9v_battery/standin_rs_9v_battery_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack: 9V alkaline)"
+  },
+  {
+   "id": "standin_rs_c_batteries",
+   "name": "C batteries, 2-pack",
+   "class": "pocket",
+   "scene": "res://models/bl_standin_rs_c_batteries/standin_rs_c_batteries.tscn",
+   "icon": "res://models/bl_standin_rs_c_batteries/standin_rs_c_batteries_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack: C/D alkaline 2-pack)"
+  },
+  {
+   "id": "standin_rs_ic_card",
+   "name": "Timer chip (blister card)",
+   "class": "pocket",
+   "scene": "res://models/bl_standin_rs_ic_card/standin_rs_ic_card.tscn",
+   "icon": "res://models/bl_standin_rs_ic_card/standin_rs_ic_card_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack pegboard parts: ICs)"
+  },
+  {
+   "id": "standin_rs_plug_adapter",
+   "name": "Plug adapter",
+   "class": "pocket",
+   "scene": "res://models/bl_standin_rs_plug_adapter/standin_rs_plug_adapter.tscn",
+   "icon": "res://models/bl_standin_rs_plug_adapter/standin_rs_plug_adapter_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack pegboard parts: plugs and adapters)"
+  },
+  {
+   "id": "standin_rs_ac_adapter",
+   "name": "AC adapter",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_ac_adapter/standin_rs_ac_adapter.tscn",
+   "icon": "res://models/bl_standin_rs_ac_adapter/standin_rs_ac_adapter_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack: AC adapter, boxed)"
+  },
+  {
+   "id": "standin_rs_speaker_wire",
+   "name": "Speaker wire (spool)",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_speaker_wire/standin_rs_speaker_wire.tscn",
+   "icon": "res://models/bl_standin_rs_speaker_wire/standin_rs_speaker_wire_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack wire wall: a spool)"
+  }
+ ]
+}

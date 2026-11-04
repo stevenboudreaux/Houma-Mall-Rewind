@@ -63,7 +63,9 @@ func _initialize() -> void:
 		_check(by_id.has(k), "the Blender prize %s is in the stock" % k)
 	_check(by_id.has("bl_pc_boombox") and int(by_id.bl_pc_boombox.tickets) == 5000, "the boom box costs 5,000 tickets (ECON, Nov 3: the wall tags)")
 	_check(by_id.has("pogs") and int(by_id.pogs.tickets) == int(pj.items.pogs.tickets), "prices come from prizes.json (Pog pack %d)" % int(pj.items.pogs.tickets))
-	_check(Redemption.read_stock(db, 2026).is_empty(), "no 1995 prize in the 2026 stock")
+	# PRIZES (Nov 3): 2026 has its own counter (games, inc.); none of its stock is a 1995-only item
+	var y95 := Redemption.read_stock(db, 2026).filter(func(s): return str(db.get_item(s.item).get("year", "")) == "1995")
+	_check(y95.is_empty(), "no 1995-only prize in the 2026 stock %s" % str(y95.map(func(s): return s.item)))
 	# ---- buying
 	var store := {}
 	var m = Inventory.new()

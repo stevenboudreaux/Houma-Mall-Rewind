@@ -39,10 +39,10 @@ META = {
     "item": {"name": "Shiverwood #7 paperback", "year": 1995, "store": "B. DALTON BOOKSELLER",
              # three copies face-up on the front half of the table of new titles (store2.gd dalton():
              # tc = P(W/2, 0, 2.2) = (-106, 0, 45.8), 1.8 x 0.9 m, top 0.76; the spines along its back edge)
-             "place": {"wing": 2, "year": 1995, "pos": [-105.42, 0.76, 45.98], "yaw": 6},
+             "display": {"wing": 2, "year": 1995, "pos": [-105.42, 0.76, 45.98], "yaw": 6, "runtime": True},
              "copies": [
-                 {"id": "bl_bd_paperback_b", "place": {"wing": 2, "year": 1995, "pos": [-105.62, 0.76, 45.95], "yaw": -4}},
-                 {"id": "bl_bd_paperback_c", "place": {"wing": 2, "year": 1995, "pos": [-105.82, 0.76, 45.99], "yaw": 3}},
+                 {"id": "bl_bd_paperback_b", "display": {"wing": 2, "year": 1995, "pos": [-105.62, 0.76, 45.95], "yaw": -4, "runtime": True}},
+                 {"id": "bl_bd_paperback_c", "display": {"wing": 2, "year": 1995, "pos": [-105.82, 0.76, 45.99], "yaw": 3, "runtime": True}},
              ]},
 }
 

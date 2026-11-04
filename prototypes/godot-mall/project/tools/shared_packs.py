@@ -4,7 +4,9 @@
 
 Why: a wing pack must stay under GitHub's 100 MB file limit (wing 1 was 98.6 MB at Demo 49) and every
 wing pack and its 2026 twin carried its own copy of the Blender items. Now:
-  - "items"          every models/bl_* folder (food, drinks, books, toys, fixtures from Blender):
+  - "items"          every models/bl_* folder (food, drinks, books, toys, fixtures from Blender), and since
+                     PRIZES (Nov 3) the prize counters' pictures prizes/* (both years' counters and the
+                     prize items use them):
                      downloaded with the wing pack, mounted before the wing's scene loads;
   - "chars"          the character bodies, wardrobe and clothed defaults (tools/chars/pack_list.py):
                      fetched once the mall is running, then the attendants and the avatar put them on;
@@ -37,7 +39,7 @@ ALL_MAPS = [pack_list.map_name(f) for f in pack_list.FEATURE]
 SKIP_EXT = (".import", ".uid", ".md", ".py", ".blend", ".blend1")
 # the patterns the wing presets exclude, so these files are only in the shared packs. characters.json
 # stays in the wing packs (small; the game reads it before the character pack arrives).
-WING_EXCLUDES = ["models/bl_*", "models/characters/*.glb", "models/characters/*.png"]
+WING_EXCLUDES = ["models/bl_*", "models/characters/*.glb", "models/characters/*.png", "prizes/*"]   # prizes/*: PRIZES (Nov 3)
 
 
 def project_files():
