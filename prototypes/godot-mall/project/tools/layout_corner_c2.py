@@ -1,6 +1,7 @@
-"""PROPOSAL (ws/corner-2026, Nov 4 2026; design/corner-2026-c2.md): the Shoe Dept. court's
-south-east corner, the same shell in both years. NOT applied on the branch: run it only after
-Steven's yes, then rebuild layout_2026.json and the wings.
+"""ws/corner-2026, Nov 4 2026 (design/corner-2026-c2.md): the Shoe Dept. court's south-east
+corner, the same shell in both years. APPLIED Nov 4 after Steven's yes (layout_mall.json,
+data/eras_2026.json, posters.gd as committed); safe to run again. After it: rebuild
+layout_2026.json and the wings.
 
   python3 tools/layout_corner_c2.py            (from the project folder; idempotent)
   python3 tools/make_layout_2026.py
@@ -46,7 +47,8 @@ def main():
             continue
         out.append(e)
     out.append({"a": [2.0, 10.0], "b": [2.0, 16.0], "n": [-1, 0], "kind": "wall"})
-    out.append({"a": [12.0, 6.0], "b": [12.0, 10.0], "n": [-1, 0], "kind": "wall"})
+    # OJ's court side: walkable floor on both sides in 1995 (OJ's walk-up front), so a collider
+    out.append({"a": [12.0, 6.0], "b": [12.0, 10.0], "n": [-1, 0], "kind": "wall", "solid": True})
     L["edges"] = out
     lo = [r for r in L["leftovers"] if [float(v) for v in r] != [2.0, 6.0, 12.0, 10.0]]
     lo.append([2.0, 6.0, 12.0, 10.0])

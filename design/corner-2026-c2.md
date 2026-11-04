@@ -1,7 +1,16 @@
 # The C2 / main-entrance corner (Zales; 1995 Franks and Orange Julius): analysis and proposal
 
-Workstream `ws/corner-2026`, Nov 4 2026. **Status: PROPOSAL, not applied.** The script and the builder
-code are on the branch, inert until Steven says yes (see "To apply").
+Workstream `ws/corner-2026`, Nov 4 2026. **Status: APPROVED and APPLIED (Steven, Nov 4 ~12:55, via the
+coordinator)**, on `ws/corner-2026`. His answers to the questions in section 5:
+1. Restore the step in **both years**: court floor x 2..12, z 6..10; Franks fronts the court at z = 10;
+   Orange Julius the corner unit with a court side.
+2. The 2026 Zales is **open**, cases lit (IMG_4492).
+3. 1995 Orange Julius' court side is a **plain wall**.
+4. The narrow scroll-top unit by T-Mobile is **T.J.'s** (s38), so the blue-chair glass unit is **Tee Tai's**
+   (s35); `data/eras_2026.json` notes corrected (s35, s36, s38).
+5. The end-of-1994 directory was not resent; proceeding without it.
+
+The rest of this note is the analysis as proposed; section 4 is what is now built.
 
 **Asked (Steven, voice note, Nov 4):** "We need to get the corner right in 2026, with Zales by the mall
 entrance and then Frank's and Orange Julius. It's still not right. Re-look at the dimensions in 2026; they
@@ -132,7 +141,7 @@ Orange Julius keeps its 4 m H3 front; the two Courier ads on Franks' H4 side mov
    and width on the Courier map)? And the glass unit with blue chairs next to Zales would then be Tee Tai's.
 5. Can you send the end-of-1994 directory image again? It is not in the refs pack.
 
-## To apply (after Steven's yes)
+## How it was applied (Nov 4)
 
 ```bash
 cd prototypes/godot-mall/project

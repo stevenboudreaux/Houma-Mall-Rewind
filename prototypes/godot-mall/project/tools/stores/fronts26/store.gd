@@ -722,8 +722,8 @@ static func zales(sd, e):
 	front_q(G, "f26_posters", 5.0, 6.0, 1.3, 2.6, 7.95, 0.75, 0.0, 1.0, 1.0)
 	ob_room(8.0)
 
-## Zales over Franks + Orange Julius (ws/corner-2026 PROPOSAL, design/corner-2026-c2.md; used only
-## when tools/layout_corner_c2.py has been applied, which gives Zales three fronts and "bays": 3):
+## Zales over Franks + Orange Julius (ws/corner-2026, Steven's yes Nov 4, design/corner-2026-c2.md;
+## tools/layout_corner_c2.py gives Zales three fronts and "bays": 3):
 ## one roll-grille bay per front, as filmed (IMG_4437 f001-f002, IMG_4435-4436, IMG_4432,
 ## refs/new/woolworth_corner IMG_4492 t026_001-005). Cream stack-bond wall, a chocolate-brown
 ## wainscot 1.2 m on the piers, a ZALES over each opening, half-dome sconces either side.
