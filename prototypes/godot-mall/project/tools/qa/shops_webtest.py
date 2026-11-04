@@ -1,6 +1,6 @@
 """Web check of the four shops (workstream SHOPS, Steven Nov 3 2026; design/godot-shops.md).
 
-Usage: python3 tools/qa/shops_webtest.py <url-path of the build's index.html> <out-prefix> [w1|w2|both] [phone]
+Usage: CHROMIUM=/opt/pw-browsers/chromium python3 tools/qa/shops_webtest.py <url-path of the build's index.html> <out-prefix> [w1|w2|both] [phone]
 (a server on :8765 serving the repo root). 1995, desktop 1280 x 720 (or 390 x 844 with "phone"), a new player:
 for each counter: stand at its talk spot (?cam=), press E (the attendant's TALK): the shop's list opens beside the
 attendant's face (screenshot -open); Enter buys the first thing (the "You received" card: screenshot -bought);
@@ -80,7 +80,7 @@ def shot(pg, name):
 
 errors = []
 with sync_playwright() as p:
-    b = p.chromium.launch(args=ARGS)
+    b = p.chromium.launch(args=ARGS, executable_path=os.environ.get("CHROMIUM") or None)
     vp = {"width": 390, "height": 844} if phone else {"width": 1280, "height": 720}
     ctx = b.new_context(viewport=vp, device_scale_factor=1)
     pg = ctx.new_page()
