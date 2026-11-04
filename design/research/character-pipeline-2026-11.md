@@ -139,3 +139,27 @@ Until that rebuild, `scripts/chars/char_fit.gd` keeps every hair clear of the bo
 - Not verified this session (stated from general knowledge, check before relying on them): MetaHuman's
   cross-engine licence change (2025), Meshy's current prices, Hunyuan3D's licence territory exclusions,
   Auto-Rig Pro's price.
+
+## Addendum (director, Nov 4 evening): ready-made hair and body assets to import
+
+Steven asked for options to import better hair and body assets for Blender and Godot. Ranked by how well
+they fit our pipeline (MakeHuman hm08 body, Mixamo-named rig, proxy fitting planned in the rebuild):
+
+| Option | What | Licence / cost | Fit with our bodies |
+|---|---|---|---|
+| **MakeHuman community asset packs** | Hair 01 (mostly low-poly, stylized, **CC0**), Hair 02 (high-poly, CC-BY), Hair 03 (CC-BY); skins, eyebrows, eyelashes, shirts, pants, shoes, hats, glasses, beards (CC0 and CC-BY packs) | free; CC0 packs need nothing, CC-BY packs need a credit line | **Best**: made for the hm08 base mesh we already use, fitted by MakeHuman's proxy method, so they follow every slider once the rebuild's proxy binding is in. Loads through MPFB 2 (needs the "system assets" pack) |
+| **Quaternius Universal Base Characters** | 6 bodies (regular, teen, superhero; m/f), 20 hairstyles, humanoid rig, ~13k tris; Source version has .blend + a Godot 4.3 project | **CC0**; Standard free, Source via Patreon credits ($10+/mo) | Good as a hair/NPC source: stylized, game-ready, tested in Godot. Different body, so hair needs refitting onto hm08 (or use its bodies for background NPCs) |
+| **Stylized Hair Asset Library** (Superhive) | 200 static hair meshes (100 m / 100 f), 3.5–10k faces each, .blend + .fbx | $99.99 standard / $199 commercial licence | Medium: anime/stylized look, no UVs, materials or rig; fitting heads vary, so each needs placing, UVs and a strand texture |
+| **Human Generator Ultimate** (Blender add-on) | realistic humans, hairstyles, clothing, expressions, rig | $128 commercial ($68 personal); add-on is GPL, check its asset terms | Low: realistic and heavy for iPhone web; hair likely particle hair needing conversion to cards; second body system |
+| **Blender Studio Human Base Meshes** | 17 meshes (realistic + stylised bodies, heads, hands), clean quads, UDIM UVs | **CC0**, free | Low for now: sculpting bases, no rig or hair |
+| **Hair Tool** (Bartosz Styperek) | tool, not assets: make our own hair cards and bake strand atlases | $52 | Only if scripted cards stall (see recommendation 2b) |
+
+**Suggested path:** start the rebuild with the MakeHuman CC0 hair, eyebrow, eyelash and skin packs (zero licence
+work, already fit our body), add Quaternius hair as a stylized second source, and use CC-BY packs only with an
+in-game credits line. Every imported piece still goes through the hair/clothing grid check by looking.
+
+Sources: [MakeHuman asset packs](https://static.makehumancommunity.org/assets/assetpacks.html),
+[Quaternius Universal Base Characters](https://quaternius.com/packs/universalbasecharacters.html),
+[Stylized Hair Asset Library](https://superhivemarket.com/products/stylized-hair-asset-library--100-male--100-female--200-bundle),
+[Human Generator Ultimate](https://superhivemarket.com/products/humgen3d),
+[Blender Studio Human Base Meshes (CG Channel)](https://www.cgchannel.com/2023/06/download-blender-studios-free-human-base-meshes)
