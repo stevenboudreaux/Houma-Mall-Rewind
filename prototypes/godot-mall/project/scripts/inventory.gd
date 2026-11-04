@@ -20,7 +20,7 @@ signal changed
 # --- R (Nov 2; design/godot-prize-counter.md "The pop-up contract") -------------------------------
 ## Fires for every item that enters the player's things from outside: bought, given (add), picked up
 ## (take). Not for moves between the hand and the bag. scripts/received_popup.gd shows a card for it.
-signal received(id: String)
+signal received(id: String)   # ITEMS: emitted by receive(), after the thing is in the hand or the bag
 ## The redemption screen (scripts/redemption.gd) once it is made; null until then. The Pocket Change
 ## attendant and the counter glass call mall.redemption.open().
 var redemption = null
@@ -82,8 +82,8 @@ func spend_tickets(n: int, reason: String) -> bool:
 ## The ids of the inbox entries already in the bag (the last 200; saved in this year's record as "got"), so a
 ## thing won in a game page arrives once even if the mall stops between the bag's save and the inbox's.
 var got: Array = []
-## Things won in a game page (the claw's plush, figure and POGs; Steven Nov 3) into the bag: each arrives once,
-## with the "You received" card (mall.add). Called by load_saved() and when a game's frame closes
+## Things won in a game page (the claw's plush, figure and POGs; Steven Nov 3): each arrives once, with the
+## "You received" card, through receive() (ITEMS, Nov 4: a holdable one into the hand, the rest into the bag). Called by load_saved() and when a game's frame closes
 ## (interact.gd). Returns how many arrived.
 func collect() -> int:
 	var b = bank()
@@ -92,7 +92,7 @@ func collect() -> int:
 	for e in b.inbox(year):
 		var pid := str(e.id)
 		if not got.has(pid):
-			add(str(e.item), maxi(1, int(e.get("n", 1))))
+			receive(str(e.item), maxi(1, int(e.get("n", 1))), "game")   # ITEMS: into the hand when holdable
 			got.append(pid)
 			n += 1
 		done.append(pid)
@@ -181,20 +181,67 @@ func count(id: String) -> int:
 func has(id: String) -> bool:
 	return count(id) > 0
 
-## Put n of item id into the inventory (not the hand). R: shows the "You received" pop-up unless quiet
-## (quiet = a move between the hand and the bag).
+# --- ITEMS (ws/items, Nov 4 2026; design/godot-items.md "Hand by default") -------------------------
+## The item list (scripts/items/item_db.gd) this state asks whether a thing can be held. null: the
+## shared one (ItemDb.shared()); interact.gd and the tests may set their own.
+var db = null
+func _db():
+	if db == null:
+		db = load("res://scripts/items/item_db.gd").shared()
+	return db
+
+## Can item id be held? ("hand" class; an unknown id can't.)
+func holdable(id: String) -> bool:
+	return load("res://scripts/items/item_db.gd").holdable(_db().get_item(id))
+
+## THE ONE WAY a thing comes to the player: bought (shop.gd, a dialogue's buy), won (redemption.gd, a
+## game page's inbox through collect()), given (a dialogue's give) or picked up (take). A holdable thing
+## goes INTO THE HAND (what was held goes into the bag, quietly); the player puts it away into the bag
+## (put_away, R, the menu's PUT AWAY). A "pocket" thing goes into the bag. n > 1: one in the hand, the
+## rest in the bag. Fires received(id) once, after the thing is where it lands, so the "You received"
+## card can say where (mall.hand == id: "In your hand"). source: a word for the log ("shop", "prize",
+## "claw", "give", "pickup"). Returns "hand", "bag" or "" (nothing received).
+signal received_to(id: String, where: String, source: String)
+func receive(id: String, n := 1, source := "") -> String:
+	if id == "" or n <= 0:
+		return ""
+	var where := "bag"
+	if holdable(id) and hand != id:    # already holding one: the held one stays, the new one is bagged
+		if hand != "":
+			_bag_add(hand, 1, false)   # what was held goes into the bag (quiet)
+		hand = id
+		n -= 1
+		where = "hand"
+	if n > 0:
+		_bag_add(id, n, false)
+	received.emit(id)       # R: the "You received" card
+	received_to.emit(id, where, source)
+	changed.emit()
+	return where
+# --- end ITEMS
+
+## Received from outside (old name, kept for callers): the same as receive(id, n). quiet: a plain move
+## into the bag (the hand's thing put away, Cuco's doubloon travelling between years), no card.
 func add(id: String, n := 1, quiet := false) -> void:
+	if not quiet:
+		receive(id, n)
+		return
+	_bag_add(id, n)
+
+## Put n of item id into the bag, nothing else (no card, not the hand). emit: fire changed (receive()
+## fires it once itself).
+func _bag_add(id: String, n := 1, emit := true) -> void:
 	if id == "" or n <= 0:
 		return
-	if not quiet:
-		received.emit(id)   # R
 	for e in inventory:
 		if e.id == id:
 			e.count = int(e.count) + n
-			changed.emit()
+			if emit:
+				changed.emit()
 			return
 	inventory.append({"id": id, "count": n})
-	changed.emit()
+	if emit:
+		changed.emit()
 
 ## Take n of item id out of the inventory (not the hand). False, and nothing changes, when fewer
 ## than n are there.
@@ -219,7 +266,7 @@ func hold(id: String) -> bool:
 	if not remove(id):
 		return false
 	if hand != "":
-		add(hand, 1, true)   # R: quiet
+		_bag_add(hand, 1)   # R: quiet
 	hand = id
 	changed.emit()
 	return true
@@ -230,21 +277,21 @@ func put_away() -> void:
 		return
 	var id := hand
 	hand = ""
-	add(id, 1, true)   # R: quiet
+	_bag_add(id, 1)   # R: quiet
 
 # ------------------------------------------------------------------ the world
-## Picked up from the world: no longer there; into the hand when to_hand and the hand is empty
-## (else into the inventory).
-func take(id: String, to_hand: bool) -> void:
+## Picked up from the world: no longer there; then received like anything else (receive(): a holdable
+## thing into the hand, the held one into the bag). to_hand is kept for old callers: false puts a
+## holdable thing in the bag instead.
+func take(id: String, to_hand := true) -> void:
 	moved[id] = {}
 	if to_hand:
-		if hand != "":
-			add(hand, 1, true)   # R: quiet
-		hand = id
-		received.emit(id)   # R
-		changed.emit()
+		receive(id, 1, "pickup")
 	else:
-		add(id)
+		_bag_add(id, 1, false)
+		received.emit(id)   # R
+		received_to.emit(id, "bag", "pickup")
+		changed.emit()
 
 ## Dropped: out of the hand (or one out of the inventory) onto the floor at pos.
 func drop(id: String, wing: int, pos: Vector3, yaw_deg: float) -> bool:

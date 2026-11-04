@@ -9,7 +9,7 @@
 ##       conversation and the list sits beside it.
 ##   mall.shop.buy(i) -> bool     buys entry i once: false, and nothing changes, when the wallet doesn't
 ##       cover it (mall.can_afford / mall.spend, design/godot-economy.md). Else the money comes off, the item
-##       goes into the bag (mall.add: the "You received" card) and the state is saved; the attendant says the
+##       is received (mall.receive, design/godot-items.md: a holdable thing into the hand; the "You received" card) and the state is saved; the attendant says the
 ##       entry's ready_line.
 ##   mall.shop.close()
 ##
@@ -130,7 +130,7 @@ func buy(i: int) -> bool:
 	var it: Dictionary = stock[i]
 	if not mall.spend(price(i), "Shop %s: %s" % [shop_id, it.item]):
 		return false
-	mall.add(str(it.item))
+	mall.receive(str(it.item), 1, "shop")   # ITEMS (design/godot-items.md): a holdable thing into the hand
 	mall.save()
 	bought += 1
 	line = str(it.line)

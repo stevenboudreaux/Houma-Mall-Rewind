@@ -1,6 +1,6 @@
 """Radio Shack's standalone items (workstream D, Nov 1 2026; design/storefronts/radio-shack.md):
 eight period-correct, generic 1995 electronics that sit on the store's counter as separate nodes
-and become inventory items (workstream B+C picks them up; data/items/radioshack.json).
+and become inventory items (workstream B+C picks them up; data/items/radio_shack.json).
 
 This script paints one hi-res texture atlas per item (items/radioshack/tex/<id>.png, 1024 or
 2048 px) and writes tools/stores/radioshack_items/spec.json: the parts of each item (boxes and cylinders in

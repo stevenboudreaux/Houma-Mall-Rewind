@@ -84,7 +84,9 @@ func give(id: String) -> void:
 	if mall == null:
 		return
 	# R owns the "You received …" pop-up; until it lands a plain notice
-	if mall.has_method("add"):
+	if mall.has_method("receive"):       # ITEMS (design/godot-items.md): into the hand when holdable
+		mall.receive(id, 1, "give")
+	elif mall.has_method("add"):
 		mall.add(id)
 	if mall.has_method("save"):
 		mall.save()

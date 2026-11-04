@@ -15,7 +15,9 @@ from playwright.sync_api import sync_playwright
 
 path, out = sys.argv[1], sys.argv[2]
 HERE = os.path.dirname(os.path.abspath(__file__))
-ITEMS = json.load(open(os.path.join(HERE, "../../data/items/pocket_change.json")))["items"]
+sys.path.insert(0, os.path.join(HERE, "..", "items"))
+import items_io  # ws/items: every data/items file (design/godot-items.md)
+ITEMS = list(items_io.load().values())
 SPRING = next(i for i in ITEMS if i["id"] == "spring")["place"]["pos"]
 POGS = next(i for i in ITEMS if i["id"] == "pogs")["place"]["pos"]
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]

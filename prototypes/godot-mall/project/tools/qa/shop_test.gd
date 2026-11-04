@@ -42,6 +42,10 @@ func _initialize() -> void:
 	printerr("SHOP TEST OK (%d checks)" % oks if errors.is_empty() else "SHOP TEST FAILED: " + str(errors))
 	quit(0 if errors.is_empty() else 1)
 
+## Radio Shack's standalone items (the rs_ ones of data/items/radio_shack.json; ws/items: one file per store).
+func _rs_items(db) -> Array:
+	return db.order.filter(func(id): return str(id).begins_with("rs_")).map(func(id): return db.get_item(id))
+
 func _json(p: String):
 	return JSON.parse_string(FileAccess.get_file_as_string(p))
 
@@ -104,7 +108,7 @@ func _test_data(db) -> void:
 	var rs_ids := []
 	for x in shops.get("radioshack", {}).get("items", []):
 		rs_ids.append(str(x.item))
-	for e in _json("res://data/items/radioshack.json"):
+	for e in _rs_items(db):
 		_check(rs_ids.has(str(e.id)), "RadioShack sells %s" % e.id)
 
 func _years(d: Dictionary) -> Array:
@@ -137,7 +141,7 @@ func _test_buy(db) -> void:
 	var i := _idx(sh, "bl_wl_rootbeer_float")
 	_check(sh.buy(i), "buy a root beer float")
 	_check(m.money == 9800, "the money comes off once: $98.00 (is %s)" % m.money_text(m.money))
-	_check(m.count("bl_wl_rootbeer_float") == 1 and m.hand == "", "one float in the bag, not in the hand")
+	_check(m.count("bl_wl_rootbeer_float") == 1 and m.hand == "bl_wl_rootbeer_float" and m.inventory.is_empty(), "one float, in the hand (ws/items, Nov 4: hand by default; design/godot-items.md)")
 	_check(cards[0] == 1, "one \"You received\" card")
 	_check(sh.line == "One root beer float coming right up.", "the attendant says the ready line")
 	var log: Array = JSON.parse_string(str(store.get("mall.ledger", "{}"))).get("log", [])
@@ -189,7 +193,7 @@ func _test_cant_afford(db) -> void:
 func _test_shelves(db) -> void:
 	var stores := ["WOOLWORTH", "CORN DOG 7", "RADIO SHACK", "B. DALTON BOOKSELLER"]
 	var rs := []
-	for e in _json("res://data/items/radioshack.json"):
+	for e in _rs_items(db):
 		rs.append(str(e.id))
 	var placed := []
 	var shown := 0

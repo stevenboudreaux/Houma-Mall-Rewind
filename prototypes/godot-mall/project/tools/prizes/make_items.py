@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """PRIZES (Nov 3 2026; design/godot-prize-counter.md "PRIZES"): writes the redemption items, their scenes and both years' stock lists.
 Run from the project folder. Kept as tools/prizes/make_items.py."""
-import json, os, collections
+import json, os, sys, collections
 O = collections.OrderedDict
 
 P95 = json.load(open("scripts/prizes.json"), object_pairs_hook=O)["items"]
@@ -60,24 +60,16 @@ def entries(rows, cat, year, store):
 
 e95 = entries(ITEMS_95, P95, 1995, "POCKET CHANGE")
 e26 = entries(ITEMS_26, P26, 2026, "GAMES, INC.")
-json.dump(O([("_", "Pocket Change's added prizes (workstream PRIZES, Steven Nov 3 2026; design/godot-prize-counter.md 'PRIZES'): stock only, "
-              "never placed; redeemed at the counter (scripts/redemption.json 'stock'). The models are the counter's own shapes "
-              "(scripts/items/prize_model.gd -> scripts/prize_units.gd). year 'both': also sold at games, inc. in 2026 (one model in both arcades). "
-              "Names and prices as scripts/prizes.json. Written by tools/prizes/make_items.py."), ("items", e95)]),
-          open("data/items/pocket_change_more.json", "w"), indent=1, ensure_ascii=False)
-json.dump(O([("_", "games, inc.'s prizes, 2026 (workstream PRIZES, Steven Nov 3 2026; design/godot-prize-counter.md 'games, inc.'): stock "
-              "only, redeemed at its counter (scripts/redemption.json 'stock_2026'). Models: scripts/items/prize_model.gd -> "
-              "scripts/prize_units.gd. Names and prices as scripts/prizes_2026.json. Written by tools/prizes/make_items.py."), ("items", e26)]),
-          open("data/items/games_inc_stock.json", "w"), indent=1, ensure_ascii=False)
+# ws/items (Nov 4 2026; design/godot-items.md): the entries go into the store files (data/items/pocket_change.json,
+# games_inc.json) through tools/items/items_io.py, updated where they are, their category kept
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "items"))
+import items_io
+items_io.upsert(e95)
+items_io.upsert(e26)
 
 # --- the prizes shared with 2026: their existing items become year "both"
-def set_both(path, ids):
-    J = json.load(open(path), object_pairs_hook=O)
-    for e in J["items"] if isinstance(J, dict) else J:
-        if e["id"] in ids:
-            e["year"] = "both"
-    txt = json.dumps(J, indent=1, ensure_ascii=False)
-    open(path, "w").write(txt + "\n")
+def set_both(ids):
+    items_io.set_field(ids, "year", "both")
 
 # --- the stock lists (redemption.json)
 id95 = {k: i for i, k, _ in ITEMS_95}
@@ -114,7 +106,7 @@ R = O()
 R["_"] = ("The redemption counters' stock (scripts/redemption.gd; design/godot-prize-counter.md 'Redemption' and 'PRIZES'). "
           "'stock' is Pocket Change's, 1995 (prices from scripts/prizes.json), 'stock_2026' games, inc.'s (prices from scripts/prizes_2026.json); "
           "each year's counter spends only that year's tickets (mall.spend_tickets). One entry per prize, shown in this order (by price). "
-          "item: the data/items/*.json id the player receives; prize: the catalogue key it stands for (its name and ticket price come from "
+          "item: the data/items/*.json id the player receives (design/godot-items.md); prize: the catalogue key it stands for (its name and ticket price come from "
           "there, so the tag in the case and this screen agree); tickets: a price that overrides it. guess: true = a price Steven has not "
           "given (a guess from design/research/redemption-items.md; only the boom box 5,000 and the plush 700 are his). "
           "Written by tools/prizes/make_items.py; Steven changes the numbers in prizes.json / prizes_2026.json.")
@@ -123,5 +115,5 @@ R["stock_2026"] = stock(P26, id26, {})
 open("scripts/redemption.json", "w").write(json.dumps(R, indent=1, ensure_ascii=False) + "\n")
 print("items", len(e95), len(e26), "stock", len(R["stock"]), len(R["stock_2026"]))
 
-set_both("data/items/blender_props.json", {"bl_pc_fingertrap", "bl_pc_plush_bear", "bl_pc_plush_bunny", "bl_pc_plush_dog"})
+set_both({"bl_pc_fingertrap", "bl_pc_plush_bear", "bl_pc_plush_bunny", "bl_pc_plush_dog"})
 # (slap and pc_lava were set to "both" by hand in their files, keeping their layout)

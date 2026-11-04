@@ -103,6 +103,10 @@ money, "You need $10.00. You have $5.00." (the economy's wording) and nothing ch
 talk. SHOPS: delete the stub and its fallback branch in `bartender.gd` when `mall.shop` lands.
 
 ## Items (FOOD's ids; stand-ins until ws/food lands)
+**ws/items (Nov 4 2026, `design/godot-items.md`):** the `cu_*` items are in `data/items/cucos.json` (drinks `drink`
+/ `alcohol`, the coupon and the doubloon `token`). A drink bought or given at the bar, and the coupon, go **into the
+hand** (`mall.receive`); the doubloon (pocket) into the bag; the doubloon travelling to 2026 is still a quiet move
+into the bag.
 `data/items/cucos_standin.json`: `cu_coupon` (hand), `cu_beer`, `cu_margarita`, `cu_topshelf` (hand),
 `cu_doubloon` (pocket, **year "both"**). Models are primitive meshes (`scripts/items/cucos/`), icons say
 STAND-IN. When FOOD lands, delete that file, `scripts/items/cucos/` and `tex/items/cu_*.png`; FOOD's entries

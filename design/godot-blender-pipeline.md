@@ -69,6 +69,9 @@ the dense sculpt is decimated to the target and its detail baked back as maps (l
    `wsT-<id>-godot.jpg`. Commit the script, `.glb`, PNGs, `.import` files, item JSON. No `.blend`.
 
 ## Inventory entries
+**ws/items (Nov 4 2026, `design/godot-items.md`):** `build.py` writes through `tools/items/items_io.py` into the
+item's store file (`data/items/<store>.json`), updating an existing id where it is and keeping its `category` /
+`subcategory`; a new item's `META["item"]` needs both. `META["item_file"]` is ignored now.
 
 `data/items/blender_props.json`: `{"id","name","class","scene","icon","year", …}` written from each
 asset's `META["item"]`, the same shape as workstream D's Godot-built list, plus `store` and, where it

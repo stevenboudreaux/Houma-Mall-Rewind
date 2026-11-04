@@ -86,7 +86,7 @@ static func inside(b, a, t, n, W, D, rng):
 	# was opened
 	spools(b, G2, P(a, t, n, 2.75, 0, 12.2), -n, t, 1.6, rng)
 	cartons(b, G, P(a, t, n, 4.2, 0, 9.5), -n, t, rng)
-	# --- the standalone items (data/items/radioshack.json): separate scenes on the counter, shown
+	# --- the standalone items (data/items/radio_shack.json, the rs_ ones): separate scenes on the counter, shown
 	# there; since SHOPS (Nov 3) they are bought from the attendant (scripts/shop.gd), not picked up
 	items(b)
 
@@ -329,12 +329,18 @@ static func cartons(b, G, o, r, f, rng):
 	K.ob_local(b, o, r, f, -0.25, -0.05, 1.1, 1.35)
 
 ## Radio Shack's standalone items (workstream D; tools/stores/radioshack_items/, design/storefronts/
-## radio-shack.md): each entry of data/items/radioshack.json is instanced from its scene at its
+## radio-shack.md): each Radio Shack entry of the item list (data/items/radio_shack.json, read through
+## scripts/items/item_db.gd since ws/items) that has a "display" spot is instanced from its scene at its
 ## "display" spot, as its own node under "Items" (named by its id): stock on show (SHOPS, Nov 3: bought
 ## at the counter, design/godot-shops.md; it was a pick-up spot, "place", before).
 static func items(b):
-	var J = JSON.parse_string(FileAccess.get_file_as_string("res://data/items/radioshack.json"))
-	if J == null or b.mall == null:
+	var db = load("res://scripts/items/item_db.gd").shared()
+	var J: Array = []
+	for id in db.order:
+		var e: Dictionary = db.get_item(id)
+		if str(e.get("store", "")) == "RADIO SHACK" and str(id).begins_with("rs_"):
+			J.append(e)
+	if J.is_empty() or b.mall == null:
 		return
 	var holder = b.mall.get_node_or_null("Items")
 	if holder == null:

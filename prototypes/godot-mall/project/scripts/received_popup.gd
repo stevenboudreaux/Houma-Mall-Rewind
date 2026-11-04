@@ -2,11 +2,13 @@
 ## contract"). Made by scripts/interact.gd in every wing and year.
 ##
 ## THE CONTRACT: scripts/inventory.gd emits mall.received(id) for every item that enters the player's
-## things from outside: bought at the counter (scripts/redemption.gd), given in a dialogue (call
-## mall.add(id)), picked up (mall.take). Moving a thing between the hand and the bag (hold, put away)
-## doesn't. Each one shows a card here: the item's icon (data/items "icon"; the Blender items' are 256 px
-## renders), its name, and "You received <name>". After a short minimum (MIN_TIME) any key, button, click
-## or tap dismisses it. Several in a row queue up and show one after another.
+## things from outside, all through mall.receive() (ITEMS, Nov 4 2026; design/godot-items.md): bought (a
+## shop, a dialogue's buy), won (the redemption counter, a game page), given (a dialogue's give), picked
+## up (mall.take). Moving a thing between the hand and the bag (hold, put away) doesn't. Each one shows a
+## card here: the item's icon (data/items "icon"; the Blender items' are 256 px renders), its name, "You
+## received <name>" and where it went: "In your hand" (a holdable thing; how to put it in the bag) or
+## "In your bag". After a short minimum (MIN_TIME) any key, button, click or tap dismisses it. Several in
+## a row queue up and show one after another.
 ## While a card shows, the player is held (player.frozen) and mall meta "popup_open" is true, so the
 ## screen under it (the redemption screen) leaves the input alone.
 extends Node
@@ -16,7 +18,7 @@ const MIN_TIME := 0.6        # seconds before a press can dismiss the card
 var player: Node3D
 var mall                     # scripts/inventory.gd
 var db                       # scripts/items/item_db.gd
-var queue: Array = []        # item ids waiting
+var queue: Array = []        # [item id, "hand" | "bag"] waiting
 var current := ""
 var shown_for := 0.0
 var _froze := false
@@ -37,17 +39,24 @@ func setup(p: Node3D, m, item_db):
 	mall.received.connect(show_item)
 	return self
 
+## Where id went, read when it is received (mall.receive emits after placing it): "hand" or "bag".
+func _where(id: String) -> String:
+	return "hand" if mall != null and "hand" in mall and str(mall.hand) == id else "bag"
+
 func is_showing() -> bool:
 	return current != ""
 
 ## Show (or queue) the card for item id.
 func show_item(id: String) -> void:
+	var where := _where(id)
 	if current != "":
-		queue.append(id)
+		queue.append([id, where])
 		return
-	_show(id)
+	_show(id, where)
 
-func _show(id: String) -> void:
+var where_l: Label
+var current_where := ""
+func _show(id: String, where := "bag") -> void:
 	if ui == null:
 		_build_ui()
 	current = id
@@ -56,6 +65,8 @@ func _show(id: String) -> void:
 	var nm := str(e.get("name", id))
 	name_l.text = nm
 	line_l.text = "You received %s" % nm
+	current_where = where
+	where_l.text = "In your hand" if where == "hand" else "In your bag"
 	var ic := str(e.get("icon", ""))
 	icon_r.texture = load(ic) if ic != "" and ResourceLoader.exists(ic) else null
 	hint_l.text = ""
@@ -78,7 +89,8 @@ func dismiss() -> void:
 		return
 	current = ""
 	if not queue.is_empty():
-		_show(str(queue.pop_front()))
+		var q: Array = queue.pop_front()
+		_show(str(q[0]), str(q[1]))
 		return
 	ui.visible = false
 	mall.set_meta("popup_open", false)
@@ -92,6 +104,8 @@ func _process(dt: float) -> void:
 	shown_for += dt
 	if shown_for >= MIN_TIME and hint_l.text == "":
 		hint_l.text = {"pad": "Press any button", "touch": "Tap to continue"}.get(input_kind, "Press any key")
+		if current_where == "hand":   # ITEMS: how to put it away (actions.json put_away: R; the menu's INVENTORY)
+			where_l.text = "In your hand" + ("  ·  R puts it in the bag" if input_kind == "kb" else "  ·  put it away from the Bag")
 
 func _input(e: InputEvent) -> void:
 	if e is InputEventJoypadButton:
@@ -164,6 +178,12 @@ func _build_ui() -> void:
 	line_l.add_theme_font_size_override("font_size", 15)
 	line_l.add_theme_color_override("font_color", Color(0.3, 0.24, 0.2))
 	v.add_child(line_l)
+	where_l = Label.new()       # ITEMS: where it went
+	where_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	where_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	where_l.add_theme_font_size_override("font_size", 14)
+	where_l.add_theme_color_override("font_color", Color(0.75, 0.05, 0.08))
+	v.add_child(where_l)
 	hint_l = Label.new()
 	hint_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint_l.custom_minimum_size = Vector2(0, 18)

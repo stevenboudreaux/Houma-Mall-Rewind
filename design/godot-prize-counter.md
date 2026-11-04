@@ -264,7 +264,9 @@ Still built at run time: **no static change, no 1995 rebake.**
 ### The redemption list (`scripts/redemption.json`)
 "stock" (1995, 52 prizes) and "stock_2026" (40), by price; each entry's `prize` names the catalogue key its name
 and price come from; **`"guess": true` on every price Steven hasn't given** (all but the boom box 5,000 and the
-plush 700). Written by `tools/prizes/make_items.py`. Every prize is an item (`data/items/pocket_change_more.json`,
+plush 700). Written by `tools/prizes/make_items.py`. (ws/items, Nov 4: the item entries are now in
+`data/items/pocket_change.json` / `games_inc.json`, one schema, `design/godot-items.md`; a prize won goes into the
+hand when it can be held.) Every prize is an item (`data/items/pocket_change_more.json`,
 `data/items/games_inc_stock.json`, the Blender ones in `blender_props*.json`): the bin-filler ones are one unit of
 what the counter shows (`scripts/items/prize_model.gd` → `prize_units.gd`), icons `tex/items/<id>.png`.
 
