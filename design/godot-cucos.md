@@ -45,6 +45,10 @@ Shared files touched, in small hunks marked `CUCOS`: `scripts/dialogue/story.gd`
   TALK her shopper is held (state `"talk"`, which `npcs.gd` leaves alone), she stops, turns to you and
   idles; the talk camera fixes on her face (`dialogue_ui.gd`). At the end she stands 2–4 s and goes on.
   Not talkable while she's sitting in a salon chair (she isn't walking or browsing then).
+- **Where another prompt owns the button** (a door: the cinema's "Enter Southland Cinema", a seam or outside
+  door, Pocket Change's closer look, an arcade cabinet), that prompt wins and E goes to it, as for every
+  interactable (`design/godot-interaction.md`): you can't talk to her until she walks on. Seen in the web run
+  (she was browsing at the cinema doors). Steven: fine, or should she win when she's the nearer one?
 - **"She looks confused"** (answer C) is the one-shot `thinking` gesture (`$> act("thinking")`): the rig has
   no "confused" clip. Steven: another clip?
 - **No speaker name** shows over her lines: Steven gave none.
