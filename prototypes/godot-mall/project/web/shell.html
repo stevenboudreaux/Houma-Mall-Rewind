@@ -909,7 +909,19 @@ window.__mallYear = (function () {
 // is one origin, so fetching and Cache Storage work as before. Anywhere else (a local server,
 // tools/qa) every pack is next to this page.
 const MALL_DESKTOP_SITE = '/Houma-Mall-Rewind-desktop/';
-const MALL_PACK_BASE = () => (window.__mallPack === 'desktop' && /\.github\.io$/i.test(location.hostname)) ? MALL_DESKTOP_SITE : '';
+// Packs on R2 (Nov 4 2026, design/godot-build-hosting.md "Packs on R2"): a published build's packs, both
+// kinds, live in its own folder of the Cloudflare R2 bucket, builds/<id>/. tools/publish_build.sh writes the
+// id below. ?packs=<id> loads another build's packs (to try one before publishing it). It takes an id only,
+// never an address: a pack runs as code on this page, so a link must not be able to point it elsewhere.
+// No id (a local export, tools/qa): every pack next to this page, or the two sites above.
+const MALL_R2 = 'https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/';
+const MALL_R2_BUILD = (function () {
+	const set = ''; // MALL_R2_BUILD
+	try { const q = new URLSearchParams(location.search).get('packs'); if (q && /^[a-z0-9][a-z0-9._-]{0,63}$/i.test(q)) { return q; } } catch (e) { /* ignore */ }
+	return set;
+}());
+const MALL_PACK_BASE = () => MALL_R2_BUILD ? MALL_R2 + MALL_R2_BUILD + '/'
+	: ((window.__mallPack === 'desktop' && /\.github\.io$/i.test(location.hostname)) ? MALL_DESKTOP_SITE : '');
 const MALL_PACK = (w) => MALL_PACK_BASE() + 'w' + w + window.__mallYear + '.' + window.__mallPack + '.pck';
 GODOT_CONFIG['mainPack'] = MALL_PACK(window.__mallWing);
 GODOT_CONFIG['fileSizes'] = GODOT_CONFIG['fileSizes'] || {};

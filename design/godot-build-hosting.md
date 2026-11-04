@@ -159,6 +159,62 @@ replacing `godot-build`, replaces the desktop repo's single commit (its workflow
 publishes needs `Houma-Mall-Rewind-desktop` attached with push access as well. The two deploys finish a
 minute or two apart; a computer that loads in that gap may get the previous build's pack once.
 
+**Superseded on Nov 4 2026 by "Packs on R2"** (below). The two-site code stays for older builds and for
+`R2=0` rollbacks; the desktop repo is no longer pushed and can be deleted once an R2 build is live.
+
+## Packs on R2 (Nov 4 2026)
+
+**Why.** The two sites only bought time: Demo 50 was 1.2 GB of packs, and round 2, the exterior and the
+store rooms make it bigger. Pages has no paid tier past 1 GB. Steven chose Cloudflare R2: storage is
+$0.015/GB-month past a free 10 GB, downloads are free and unmetered, and a file may be up to 5 TB, so the
+100 MiB pack ceiling and the 10-minute deploy timeout go too.
+
+**Where.** Bucket `houma-mall-rewind` on Steven's Cloudflare account (account id
+`c5bce683f9f04dba760f624d1558a984`), public at `https://pub-848b5102ea0e4d78999797a799545451.r2.dev`. Each
+published build is a folder `builds/<id>/` with every pack (both kinds) and the page files (`index.*`), so
+a folder also plays on its own at `…/builds/<id>/index.html` (without main's `play/` extras). The id is
+`<UTC yyyymmdd-hhmm>-<short commit>`, so the folders sort by date. The bucket's CORS policy allows `GET`/`HEAD`
+from `https://stevenboudreaux.github.io`, `http://localhost:8765` and `http://127.0.0.1:8765`.
+Steven's setup steps are the doc "Moving the game packs to Cloudflare R2" (Southland Mall project).
+
+**The page.** `web/shell.html`: `MALL_R2` is the bucket's `builds/` address; `MALL_R2_BUILD` is the id
+`publish_build.sh` writes into the published page (`const set = '<id>'; // MALL_R2_BUILD`). When it is set,
+`MALL_PACK_BASE()` sends every pack there; empty (local exports, `tools/qa`) means next to the page, or the
+two sites. `?packs=<id>` plays another build's packs with the live page, to try a build before publishing
+it. It takes an **id only**, never an address: a pack runs as code on the page's origin, where the owner's
+GitHub token lives, so no link may point the game at someone else's file (`tests/unit/hosting/`). Wing
+crossings, the year switch and time travel all rebuild their URL from the current one, so `packs=` carries
+through. Cache Storage keeps the cross-origin packs as before (absolute URLs; CORS responses).
+
+**Publishing.** `tools/publish_build.sh` (R2 is the default; `R2=0` is the old two sites):
+1. the usual checks (stand-in stamps, packs present, shared packs); the page files alone must stay under
+   0.95 GB; the export must carry the `MALL_R2_BUILD` line (exports from before Nov 4 are refused);
+2. `rclone copy` of the packs and `index.*` to `r2:houma-mall-rewind/builds/<id>/`, then every file's size on
+   the bucket is compared with the export, and byte 0 of `w1.mobile.pck` is fetched from the public URL
+   with the page's `Origin`, which must answer 200/206 with an `Access-Control-Allow-Origin`. Any failure
+   stops the publish before GitHub changes;
+3. `UPLOAD_ONLY=1` stops here and prints where to play the build;
+4. otherwise `godot-build` is replaced as before, minus the packs, with the id written into
+   `play/index.html` and `play/r2-build.txt` (155 MB instead of 1.2 GB), pushed in pieces and read back;
+5. builds older than the newest `KEEP` (3) are deleted from the bucket. Rolling back = publishing an older
+   export again, or setting the id in `play/index.html` on godot-build to a kept folder.
+
+main's `.github/workflows/pages.yml` accepts a build with no packs when its page names an R2 build.
+
+**Who can upload.** rclone with an `r2` remote (`rclone config`, as on Steven's Air) or
+`R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` / `R2_ENDPOINT` in the environment (a cloud session's secrets),
+and a network that reaches `*.r2.cloudflarestorage.com` and `*.r2.dev`. On Nov 4 Claude's cloud box and the
+Air's shell both got a 403 from their proxy for both hosts; Steven is adding them to the allowed domains.
+Until then the upload runs in Steven's own Terminal (`UPLOAD_ONLY=1`, then a publish with the same
+`BUILD_ID` once the folder is there).
+
+**Tested (Nov 4, in the cloud, against stand-ins):** rclone's local backend as the bucket, a CORS file server
+on another port as the public URL, a bare repo as GitHub. Dry runs: an R2 pass, an old export refused,
+`R2=0` still passing, a missing bucket and a dead public URL each stopping with their message. An upload-only
+run left the remote untouched; four publishes each pushed a pack-free godot-build naming its id, and pruning
+kept the newest three. In Chromium (swiftshader) the page from one origin loaded every pack from the other,
+across a door crossing and a reload (results in `production/session-handoff-2026-11-04-r2.md`).
+
 ## Shared packs (workstream CHARS, Nov 3 2026)
 
 **Asked for (brief, Nov 3):** wing 1 was 98.6 MB and wing 2 97.1 MB against GitHub's 100 MB file limit

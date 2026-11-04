@@ -63,16 +63,73 @@ done
 # (0.95 GB here, for main's own files and headroom).
 # CHARS (Nov 3 2026, "Shared packs"): the shared packs (items, chars, chars_<map>) count too, and every pack
 # must stay under GitHub's 100 MiB file limit; the shared packs listed in index.html must be in the export.
-for f in "$SRC"/*.pck; do [ "$(stat -c %s "$f")" -lt 104857600 ] || { echo "$(basename "$f") is over GitHub's 100 MiB file limit: it cannot be pushed"; exit 1; }; done
 SHARED=$(python3 -c "import re,sys,json; s=open(sys.argv[1]).read(); m=re.search(r'const SHARED_PACKS = (.*); // SHARED_PACKS', s); d=json.loads(m.group(1)) if m else {}; print(' '.join(n for n,e in d.items() if e.get('desktop')))" "$SRC/index.html")
 for n in $SHARED; do for k in desktop mobile; do [ -s "$SRC/$n.$k.pck" ] || { echo "index.html lists the shared pack $n, the export has no $n.$k.pck"; exit 1; }; done; done
-DESK=$(cat "$SRC"/*.desktop.pck | wc -c); MOB=$(cat "$SRC"/*.mobile.pck | wc -c)
+# Packs on R2 (Nov 4 2026, design/godot-build-hosting.md "Packs on R2"), the default: every pack (both kinds)
+# and the page go to the Cloudflare R2 bucket under builds/<id>/; godot-build keeps the page (with that id
+# written in), the lightmaps and the stand-ins, no packs. No Pages size limit applies to the packs any more.
+# R2=0: the old two sites (the computer packs on the desktop repo's site), for a rollback.
+# R2 needs rclone and either an "r2" remote (rclone config, as on the Air) or R2_ACCESS_KEY_ID,
+# R2_SECRET_ACCESS_KEY and R2_ENDPOINT in the environment (a cloud session's secrets), and the network must
+# reach *.r2.cloudflarestorage.com and *.r2.dev.
+# UPLOAD_ONLY=1: upload and check this build, print where to play it, and stop: nothing on GitHub changes.
+# BUILD_ID=<id> names the folder (default <UTC date-time>-<short commit>); KEEP=<n> builds are kept (3).
+R2=${R2:-1}; R2_BUCKET=${R2_BUCKET:-houma-mall-rewind}
+R2_PUBLIC=${R2_PUBLIC_TEST:-https://pub-848b5102ea0e4d78999797a799545451.r2.dev}   # must match web/shell.html MALL_R2 (R2_PUBLIC_TEST: tests only)
+PAGE_ORIGIN=${PAGE_ORIGIN_TEST:-https://stevenboudreaux.github.io}
 REST=$(find "$SRC" -maxdepth 1 -type f ! -name '*.pck' -exec cat {} + | wc -c)
-echo "sites: main $(( (MOB + REST) / 1000000 )) MB (phone packs + page), desktop $(( DESK / 1000000 )) MB (computer packs); each must stay under 950"
-[ $((MOB + REST)) -lt 950000000 ] || { echo "the main site would be over GitHub Pages' 1 GB: make the phone packs smaller first"; exit 1; }
-[ "$DESK" -lt 950000000 ] || { echo "the desktop site would be over GitHub Pages' 1 GB: make the computer packs smaller first"; exit 1; }
+if [ "$R2" = "1" ]; then
+  echo "R2: packs $(( $(cat "$SRC"/*.pck | wc -c) / 1000000 )) MB to the bucket; the site keeps $(( REST / 1000000 )) MB of page"
+  [ "$REST" -lt 950000000 ] || { echo "the page files alone would be over GitHub Pages' 1 GB"; exit 1; }
+  grep -q "const set = ''; // MALL_R2_BUILD" "$SRC/index.html" || { echo "index.html has no MALL_R2_BUILD line (export again from a web/shell.html with Packs on R2)"; exit 1; }
+  command -v rclone >/dev/null || { echo "R2: rclone is not installed (curl https://rclone.org/install.sh | sudo bash)"; exit 1; }
+  if [ -n "${R2_ACCESS_KEY_ID:-}" ]; then
+    export RCLONE_CONFIG_R2_TYPE=s3 RCLONE_CONFIG_R2_PROVIDER=Cloudflare RCLONE_CONFIG_R2_ACL=private RCLONE_CONFIG_R2_NO_CHECK_BUCKET=true \
+      RCLONE_CONFIG_R2_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID" RCLONE_CONFIG_R2_SECRET_ACCESS_KEY="${R2_SECRET_ACCESS_KEY:?}" RCLONE_CONFIG_R2_ENDPOINT="${R2_ENDPOINT:?}"
+  fi
+  rclone lsf "r2:$R2_BUCKET/" --max-depth 1 >/dev/null 2>&1 || { echo "R2: cannot reach r2:$R2_BUCKET (no 'r2' rclone remote, no R2_* secrets, or the network blocks *.r2.cloudflarestorage.com)"; exit 1; }
+  CODE=$(curl -sS -m 30 -o /dev/null -w '%{http_code}' "$R2_PUBLIC/" 2>/dev/null || true)
+  [ "$CODE" = "404" ] || [ "$CODE" = "200" ] || { echo "R2: the public URL $R2_PUBLIC does not answer (got '${CODE:-nothing}'; the network may block *.r2.dev)"; exit 1; }
+else
+  # Two sites (Nov 3 2026, design/godot-build-hosting.md "Two sites"): a Pages site may hold 1 GB. The main
+  # site carries the phone packs and the rest of play/, the second site the computer packs; each must fit
+  # (0.95 GB here, for main's own files and headroom). Every pack must stay under GitHub's 100 MiB file limit.
+  for f in "$SRC"/*.pck; do [ "$(stat -c %s "$f")" -lt 104857600 ] || { echo "$(basename "$f") is over GitHub's 100 MiB file limit: it cannot be pushed"; exit 1; }; done
+  DESK=$(cat "$SRC"/*.desktop.pck | wc -c); MOB=$(cat "$SRC"/*.mobile.pck | wc -c)
+  echo "sites: main $(( (MOB + REST) / 1000000 )) MB (phone packs + page), desktop $(( DESK / 1000000 )) MB (computer packs); each must stay under 950"
+  [ $((MOB + REST)) -lt 950000000 ] || { echo "the main site would be over GitHub Pages' 1 GB: make the phone packs smaller first"; exit 1; }
+  [ "$DESK" -lt 950000000 ] || { echo "the desktop site would be over GitHub Pages' 1 GB: make the computer packs smaller first"; exit 1; }
+fi
 if [ "${DRY_RUN:-0}" = "1" ]; then echo "dry run: all checks passed; nothing published (room wings in the export:${ROOMS:- none})"; exit 0; fi
 REPO=$(git rev-parse --show-toplevel)
+if [ "$R2" = "1" ]; then
+  ID=${BUILD_ID:-$(date -u +%Y%m%d-%H%M)-$(git -C "$REPO" rev-parse --short HEAD)}
+  echo "$ID" | grep -Eq '^[a-z0-9][a-z0-9._-]{0,63}$' || { echo "R2: build id '$ID' is not [a-z0-9._-] (web/shell.html refuses others)"; exit 1; }
+  # the packs, then the page files (so the folder plays on its own: $R2_PUBLIC/builds/<id>/index.html)
+  rclone copy "$SRC" "r2:$R2_BUCKET/builds/$ID/" --include "*.pck" --include "index.*" --transfers 4 --stats 60s --stats-one-line -v 2>&1 \
+    | grep -E "ERROR|Transferred:.*%|Failed" || true
+  # every file is there at its size (a failed or cut-off upload stops the publish here)
+  rclone lsjson "r2:$R2_BUCKET/builds/$ID/" > "$SRC/.r2-listing.json" || { echo "R2: cannot list builds/$ID"; exit 1; }
+  python3 - "$SRC" "$SRC/.r2-listing.json" <<'PY' || { echo "R2: the bucket does not hold this build whole: not published"; exit 1; }
+import json, os, sys
+src, listing = sys.argv[1], sys.argv[2]
+remote = {e["Name"]: e["Size"] for e in json.load(open(listing))}
+bad = [f for f in sorted(os.listdir(src)) if (f.endswith(".pck") or f.startswith("index.")) and os.path.isfile(os.path.join(src, f))
+       and remote.get(f) != os.path.getsize(os.path.join(src, f))]
+for f in bad: print("  ", f, "local", os.path.getsize(os.path.join(src, f)), "bucket", remote.get(f))
+sys.exit(1 if bad else 0)
+PY
+  rm -f "$SRC/.r2-listing.json"
+  # the public URL serves it to the game's page (CORS), byte 0 of the first wing's phone pack
+  H=$(curl -sS -m 60 -D - -o /dev/null -r 0-0 -H "Origin: $PAGE_ORIGIN" "$R2_PUBLIC/builds/$ID/w1.mobile.pck" 2>&1 | tr -d '\r')
+  echo "$H" | grep -Eq '^HTTP/[0-9.]+ 20[06]' || { echo "R2: $R2_PUBLIC/builds/$ID/w1.mobile.pck is not served:"; echo "$H" | head -3; exit 1; }
+  echo "$H" | grep -iq "^access-control-allow-origin: \(\*\|$PAGE_ORIGIN\)" || { echo "R2: no CORS for $PAGE_ORIGIN (the bucket's CORS policy, design/godot-build-hosting.md \"Packs on R2\")"; exit 1; }
+  echo "R2: builds/$ID uploaded and served"
+  if [ "${UPLOAD_ONLY:-0}" = "1" ]; then
+    echo "upload only: play it at $R2_PUBLIC/builds/$ID/index.html, or with the live page at $PAGE_ORIGIN/Houma-Mall-Rewind/?packs=$ID (the live page's own code). Nothing on GitHub changed."
+    exit 0
+  fi
+fi
 W=$(mktemp -d)
 git -C "$REPO" fetch -q origin godot-build
 git -C "$REPO" archive origin/godot-build README.md .github | tar -x -C "$W"
@@ -102,6 +159,13 @@ for w in $ROOMS; do
   cp wing${w}_day.* wing${w}_2026_day.* "$W/lightmaps/" 2>/dev/null || true
 done
 cp tex/standin/*.png tex/standin/*.stamp "$W/standin/"
+if [ "$R2" = "1" ]; then
+  # Packs on R2: the packs are in the bucket, not here; the page names their folder
+  rm -f "$W"/play/*.pck
+  sed -i "s#const set = ''; // MALL_R2_BUILD#const set = '$ID'; // MALL_R2_BUILD#" "$W/play/index.html"
+  [ "$(grep -c "const set = '$ID'; // MALL_R2_BUILD" "$W/play/index.html")" = "1" ] || { echo "R2: could not write the build id into play/index.html"; exit 1; }
+  echo "$ID" > "$W/play/r2-build.txt"
+fi
 cd "$W"
 git init -q -b godot-build
 git add -A
@@ -113,7 +177,7 @@ B=$(git rev-parse HEAD)
 # temporary branch, tmp/publish (each push carries only the new files), then godot-build is forced, which
 # sends only the commit, and the remote ref is read back before anything is called published.
 # GitHub redirects the old mixed-case URL ("moved"): the lowercase one is used.
-ORIGIN=$(git -C "$REPO" remote get-url origin | tr 'A-Z' 'a-z' | sed 's/\.git$//')
+ORIGIN=${PUBLISH_ORIGIN_TEST:-$(git -C "$REPO" remote get-url origin | tr 'A-Z' 'a-z' | sed 's/\.git$//')}   # PUBLISH_ORIGIN_TEST: tests only
 PIECE=$(( ${PIECE_MB:-120} * 1000000 ))
 push_ref() { # <commit> <branch>: force-push, then confirm the remote has it
   local out; out=$(git push -q --force "$ORIGIN" "$1:refs/heads/$2" 2>&1) || { echo "$out" | grep -iv "moved\|new location\|^remote: *$\|GH001\|gh.io\|lfs\|recommended maximum"; echo "push of $2 failed"; return 1; }
@@ -135,6 +199,13 @@ push_ref "$B" godot-build || exit 1
 git push -q "$ORIGIN" --delete tmp/publish 2>/dev/null || echo "note: could not delete tmp/publish on GitHub (Steven can)"
 echo "published $(git rev-parse --short HEAD)"
 cd / && rm -rf "$W"
+if [ "$R2" = "1" ]; then
+  echo "packs: $R2_PUBLIC/builds/$ID/ (main's Pages workflow deploys the page; the desktop repo is no longer used)"
+  # keep the newest KEEP builds (the folders sort by date), never the one just published
+  OLD=$(rclone lsf --dirs-only "r2:$R2_BUCKET/builds/" | sed 's#/$##' | sort | head -n -"${KEEP:-3}")
+  for d in $OLD; do [ "$d" = "$ID" ] || { rclone purge "r2:$R2_BUCKET/builds/$d" && echo "R2: removed the old build $d"; }; done
+  exit 0
+fi
 # the second site: one commit (its workflow and the build's name) replaces the desktop repo's main; the push
 # starts its Pages workflow, which copies the computer packs from godot-build ("Two sites")
 D=$(echo "${DESKTOP_REPO:-https://github.com/stevenboudreaux/houma-mall-rewind-desktop}" | tr 'A-Z' 'a-z')
