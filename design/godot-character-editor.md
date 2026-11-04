@@ -70,8 +70,14 @@ presets + heavy-set 52 + skinny 74; male: the four + the same two extremes), fro
 Cost: one hair against ~10k obstacle vertices, tens of ms per change (not measured on a phone).
 **Grids:** `production/qa/evidence/chars-hair-before-<sex>-<front|34>.jpg` and
 `chars-hair-after-<sex>-<front|34>.jpg` (rows: balding, bowl, braids, crew, elderly, fade, long, perm,
-puffs, shoulder, sidepart; columns: the bodies listed above). Close-ups (front, 3/4, side, back):
-`chars-hair-closeup-before.jpg`, `chars-hair-closeup-after.jpg`.
+puffs, shoulder, sidepart; columns: the bodies listed above). Close-ups (front, 3/4, side, back; rows
+braids, long, puffs, shoulder): `chars-hair-closeup-<before|after>-<straight-missy|curvy-plus|heavy-set-52>.jpg`.
+A rough number beside the pictures (`char_hair_grid.gd` prints it per cell): the share of hair vertices
+within 1 mm of, or behind, the skin or clothes under them in the bind pose, all bodies, before → after:
+braids 26 → 13 % (female) / 27 → 13 % (male), long 15 → 12 / 12 → 9, shoulder 14 → 12 / 12 → 9,
+puffs 12 → 8 / 12 → 7, the short shells unchanged (2-18 %: their hems touch the scalp by design, which
+this number counts too). The pictures, not this number, are the check: it is measured in the bind pose
+and the flaps, holes and see-through backs were pose and draw problems.
 **Still visible:** on the heaviest body the back of the upper arms shows through the sides of a long
 curtain in the idle pose (arms are not obstacles: a curtain can't follow an arm swing); shells still read
 as helmets (perm most); braids are tubes. Those are generator work: proxy binding and hair cards
@@ -117,6 +123,17 @@ The machinery is already shared: `CharPreset.body_for(preset, bake=true)` makes 
 preset body (empty today). The hair fit and skinning above run inside `CharBody.apply`, so NPCs get them
 at bake time with no extra work. What NPCs need before the crowd moves over: a per-NPC cost check on a
 phone (`tools/qa/char_perf.gd`, still not run), a few dozen presets (Steven's casting), and LODs.
+
+### Checks (Nov 4, CHAR-EDITOR; native, unbaked, opengl3 under xvfb)
+- `tools/qa/char_avatar_test.gd`: **CHAR AVATAR OK (40 checks)**; `--late=1`: **CHAR AVATAR OK (41)**.
+- `tools/qa/char_editor_test.gd -- --only=unit`: **CHAR EDITOR OK (28 checks)**.
+- `tools/qa/char_clothed_test.gd`: **CHAR CLOTHED OK (1632 checks)** (the clothed and child rules hold
+  with the new editor rows and the hair fit).
+- `tools/qa/char_hair_grid.gd` (before `--fit=0`, after `--fit=1`) and `tools/qa/char_first_five.gd`: looked at.
+- Not run: the web build (export + Playwright) and `char_editor_test.gd`'s full in-mall run: the cloud box
+  was shared by four sessions and the memory cgroup killed every wing 1 scene load (hence wing 6 in the
+  avatar test). The integration session should run `tools/qa/char_webtest.js` and the full
+  `char_editor_test.gd` on wing 1 once.
 
 ### Shared files touched (CHAR-EDITOR)
 `scripts/char_body.gd` (2 hooks: `CharFit.fit_hair`; hair double-sided), `scripts/avatar.gd`
