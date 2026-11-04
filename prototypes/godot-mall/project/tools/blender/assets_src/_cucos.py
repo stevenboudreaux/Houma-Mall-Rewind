@@ -144,3 +144,61 @@ def coaster_art(px=1400, rng_seed=3):
         if (x - px / 2) ** 2 + (y - px / 2) ** 2 < (px * 0.47) ** 2:
             d.point((x, y), fill=(200, 190, 170, 255))
     return im
+
+
+def coaster(build_parts=True, loc=(0, 0, 0), r=0.050, t=0.0025):
+    """The round Cuco's bar coaster (pulp board, the sign printed on it), as a part. Returns its top height."""
+    from lib import parts, mats
+    im = coaster_art()
+    p = labels.save(im, "cu_coaster")
+    m = mats.M("coaster", "#f4ecd6", 0.85)
+    mats.decal(m, p, (loc[0], loc[1], loc[2] + t), (2 * r, 2 * r), "XY", facing="+Z")
+    m.bump(m.noise(900.0, 3.0).outputs["Fac"], 0.25, 0.0003)
+    parts.cylinder("coaster", r, t, verts=32, loc=(loc[0], loc[1], loc[2] + t / 2), mat=m.mat, bev=0.0006)
+    return loc[2] + t
+
+
+def salt_rim(name, r, z, mat, seg=40, tube=0.0028, coarse=False):
+    """A ring of salt crystals on a glass rim: a lumpy torus (the crystals are in its normal map)."""
+    from lib import parts
+    import math as _m
+    pts = [(r * _m.cos(_m.tau * i / 14), r * _m.sin(_m.tau * i / 14), z) for i in range(14)]
+    ob = parts.tube_path(name, pts, tube, seg=6, mat=mat, closed=True)
+    return ob
+
+
+def salt_mat(name="salt", coarse=False):
+    from lib import mats
+    m = mats.M(name, "#f6f4ee", 0.55)
+    v = m.voronoi(900.0 if coarse else 2200.0)
+    m.link(m.ramp(v.outputs["Distance"], [(0.0, "#ffffff"), (0.4, "#dcdad4")]), m.bsdf.inputs["Base Color"])
+    m.bump(m.math("SUBTRACT", 1.0, v.outputs["Distance"]), 1.0, 0.0010 if coarse else 0.0006)
+    return m.mat
+
+
+def lime_wheel_mat(name, cx, cy, R, rind="#3e8a1e", flesh=("#b6d84a", "#dcef8c")):
+    """A citrus wheel face-on (lime by default; orange with other colours)."""
+    from lib import mats
+    import _food as F
+    m = mats.M(name, flesh[0], 0.35, frozen=True)   # built flat at the origin, frozen, then placed
+    r, ang = F.disc_mat_radial(m, cx, cy)
+    memb = m.math("GREATER_THAN", m.math("ABSOLUTE", m.math("SINE", m.math("MULTIPLY", ang, 5.0))), 0.93)
+    pulp = m.noise(900.0, 3.0)
+    col = m.ramp(pulp.outputs["Fac"], [(0.35, flesh[0]), (0.65, flesh[1])])
+    col = m.mix(memb, col, "#f2f6dc")
+    col = m.mix(m.math("GREATER_THAN", r, R * 0.82), col, "#eef4d6")
+    col = m.mix(m.math("GREATER_THAN", r, R * 0.92), col, rind)
+    m.link(col, m.bsdf.inputs["Base Color"])
+    m.bump(pulp.outputs["Fac"], 0.4, 0.0005)
+    return m.mat
+
+
+def citrus_wheel(name, R, t, mat_fn_args, loc, rot):
+    """A citrus wheel built flat (radial pattern about its own centre), frozen, then stood on a rim."""
+    from lib import parts, core
+    m = lime_wheel_mat(name, 0.0, 0.0, R, *mat_fn_args)
+    ob = parts.cylinder(name, R, t, verts=28, mat=m, bev=0.0008)
+    core.freeze([ob])
+    ob.location = loc
+    ob.rotation_euler = rot
+    return ob

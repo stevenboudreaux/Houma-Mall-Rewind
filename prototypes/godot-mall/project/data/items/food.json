@@ -72,6 +72,51 @@
    "price": 99
   },
   {
+   "id": "cu_beer",
+   "name": "Draft beer",
+   "class": "hand",
+   "scene": "res://models/bl_cu_beer/bl_cu_beer.glb",
+   "icon": "res://models/bl_cu_beer/bl_cu_beer_icon.png",
+   "year": 1995,
+   "store": "CUCOS"
+  },
+  {
+   "id": "cu_coupon",
+   "name": "Coupon: free top shelf margarita",
+   "class": "hand",
+   "scene": "res://models/bl_cu_coupon/bl_cu_coupon.glb",
+   "icon": "res://models/bl_cu_coupon/bl_cu_coupon_icon.png",
+   "year": 1995,
+   "store": "CUCOS"
+  },
+  {
+   "id": "cu_doubloon",
+   "name": "Cuco's doubloon",
+   "class": "hand",
+   "scene": "res://models/bl_cu_doubloon/bl_cu_doubloon.glb",
+   "icon": "res://models/bl_cu_doubloon/bl_cu_doubloon_icon.png",
+   "year": 1995,
+   "store": "CUCOS"
+  },
+  {
+   "id": "cu_margarita",
+   "name": "Margarita",
+   "class": "hand",
+   "scene": "res://models/bl_cu_margarita/bl_cu_margarita.glb",
+   "icon": "res://models/bl_cu_margarita/bl_cu_margarita_icon.png",
+   "year": 1995,
+   "store": "CUCOS"
+  },
+  {
+   "id": "cu_top_shelf_margarita",
+   "name": "Top-shelf margarita",
+   "class": "hand",
+   "scene": "res://models/bl_cu_top_shelf_margarita/bl_cu_top_shelf_margarita.glb",
+   "icon": "res://models/bl_cu_top_shelf_margarita/bl_cu_top_shelf_margarita_icon.png",
+   "year": 1995,
+   "store": "CUCOS"
+  },
+  {
    "id": "wl_coffee",
    "name": "Cup of coffee",
    "class": "hand",
