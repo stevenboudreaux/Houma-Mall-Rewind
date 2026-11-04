@@ -285,9 +285,9 @@ No texture was made smaller.
 - Every ticket price but the boom box and the plush (marked in redemption.json).
 - Which prizes sit where, the shelf heights at games, inc. and its three-level showcases (the footage shows
   shelves of small prizes, not which).
-- The prize names on the cards are generic descriptions ("Troll doll", "Rubber-strand ball", "Popper keychain",
-  "Mystery figure"), no brand names; the boxes carry descriptive words only ("HANDHELD GAME", "RADIO CONTROL"),
-  all editable in the closer look.
+- Settled (Steven, Nov 4: "generic names are fine"): the prize names on the cards stay generic descriptions
+  ("Troll doll", "Rubber-strand ball", "Popper keychain", "Mystery figure"), no brand names; the boxes carry
+  descriptive words only ("HANDHELD GAME", "RADIO CONTROL"), all editable in the closer look.
 
 ### WHIRLWIND at games, inc. (2026)
 - **The cabinet:** Pocket Change's own `cyclone` module, placed by `tools/stores/games_inc/store.gd` (WW_U 3.5,
@@ -303,8 +303,8 @@ No texture was made smaller.
   own plays left, bonus and best (`whirlwind.gi.*`) and payout ids (`whirlwind-gi:`); the 3D view is the faded
   copy (a CSS filter on the canvas). It pays into **2026's tickets** (the mall's `?year=`), which games, inc.'s
   counter spends. Pocket Change's machine is unchanged ($1.00, `whirlwind.*`).
-- The "25¢" sticker on the coin door and "INSERT TOKEN(S)" on the card are the 1995 machine's; left as they are
-  (the same machine). Question for Steven: should games, inc.'s show a card reader or a new price sticker?
+- The "25¢" sticker on the coin door and "INSERT TOKEN(S)" on the card are the 1995 machine's, kept as they are
+  (Steven, Nov 4: "Keep the 25¢ sticker"); the game itself charges $2.00 for four plays.
 
 ### Checks (PRIZES)
 - `node tests/unit/whirlwind/logic.test.js`: 12 passed (2 new: the cabinets).
