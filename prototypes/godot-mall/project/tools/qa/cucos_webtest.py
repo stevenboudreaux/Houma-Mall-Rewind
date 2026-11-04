@@ -86,10 +86,10 @@ def talk_to_lady(pg, tag, answers):
     check(where != "", f"{tag}: the lady is in the crowd (at {where})")
     time.sleep(0.6)
     shot(pg, f"{tag}-approach")
-    key(pg, "e", 5.0)
-    shot(pg, f"{tag}-face")
+    key(pg, "e", 20.0)             # swiftshader runs ~1 fps: let each line finish typing (a digit
+    shot(pg, f"{tag}-face")        # pressed while it types is ignored; Enter would pick answer 1)
     for i, a in enumerate(answers):
-        key(pg, a, 6.0)
+        key(pg, a, 20.0)
         shot(pg, f"{tag}-after-{i + 1}")
 
 with sync_playwright() as p:
@@ -169,12 +169,16 @@ with sync_playwright() as p:
     pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped'); localStorage.setItem('mall-avatar-1', JSON.stringify({v: 1, done: true, view: 'first'}))")
     pg.reload()
     check(ready(pg), "phone: loaded")
-    where = find_lady(pg)
+    for attempt in range(4):       # she walks on between frames at ~1 fps: try again until E reaches her
+        where = find_lady(pg)
+        key(pg, "e", 20.0)
+        shot(pg, "phone-lady-face")
+        key(pg, "3", 20.0)         # C: "No, I don't watch football."
+        shot(pg, "phone-lady-cold")
+        if flags(pg).get("cu_lady_cold") is True:
+            break
     check(where != "", f"phone: the lady is in the crowd (at {where})")
-    time.sleep(0.6)
-    key(pg, "e", 5.0)
-    shot(pg, "phone-lady-face")
-    check(True, "phone: talked (see the shot)")
+    check(flags(pg).get("cu_lady_cold") is True, "phone: talked at 390 x 844, answer C saved cu_lady_cold")
     e = errors(logs); print("phone errors", len(e), e[:5]); check(not e, "phone: 0 console errors")
     ctx.close()
     b.close()
