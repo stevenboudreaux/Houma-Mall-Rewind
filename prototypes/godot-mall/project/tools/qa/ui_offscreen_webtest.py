@@ -15,7 +15,7 @@ from playwright.sync_api import sync_playwright
 path, out = sys.argv[1], sys.argv[2]
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
 BASE = "http://127.0.0.1:8765/" + path
-CAM = "cam=-20,54,90,-8"
+CAM = "npcs=0&warm=0&cam=-20,54,90,-8"   # no shoppers: the UI is the subject, and the shared box is short of memory
 fails, oks, errors = [], 0, []
 # MAIN's buttons (centres, from tools/qa/ui_offscreen_test.gd's RECT lines) and the tabs
 MAIN_VIEW = {"390x844": (201, 596), "844x390": (476, 287), "1280x720": (645, 525)}
