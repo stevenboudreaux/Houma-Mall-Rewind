@@ -38,6 +38,44 @@ FILLS = [
     dict(rect=[-58, 96, -42, 100], owner="", name=""),
 ]
 
+# ---- Workstream EXT-B (Nov 4 2026; design/exterior-sequence.md §5 and Steven's decisions §9, "you
+# nailed it" on the red-box plan): the real footprint read from the Oct 23 footage and the Morguard
+# site plan. Numbers are §5's proposals; where one was changed here the reason is next to it.
+FILLS += [
+    # #1 Sears / Lynn's: 115 x 50 m, flush with the east facade, its west face ~10 m east of the
+    # cinema-side exit (4486 f002-010, 4406 f031-035, site plan 76,335 SF). Workstream E's walkable
+    # Sears (wing 4, to z -146) now sits inside its own shell.
+    dict(rect=[-71, -146, 44, -96], owner="s1", name="SEARS"),
+    # the white painted-brick return north of the cinema-side exit's glass, where the 3-loop bike
+    # rack stands (4416 f009-011, 4486 f002-003)
+    dict(rect=[-80, -99, -71, -96], owner="", name="SEARS RETURN"),
+    # #2 the cinema box: one straight 45 m salmon-brick wall south from the exit, then the south face
+    # (4486 f014-037, "overall elevation about 60 m")
+    dict(rect=[-80, -86, -52, -41], owner="s40", name="SOUTHLAND CINEMA"),
+    # #5 JCPenney: 60 x 120 m to z -14 (docks 1-2 and the Package Pick-up on the north face, 4486
+    # f103-116, 4487), the tall rear block on the west (4487 f011-054), the south face at z 106
+    dict(rect=[-214, -14, -154, 32], owner="s6", name="JCPENNEY"),
+    dict(rect=[-214, 32, -202, 106], owner="s6", name="JCPENNEY"),
+    dict(rect=[-202, 92, -154, 106], owner="s6", name="JCPENNEY"),
+    dict(rect=[-228, -6, -214, 32], owner="s6", name="JCPENNEY"),
+    # #8 the south side (Steven: "the pavilion wall needs to be from JCPenney to the Dillard's side,
+    # at least 3/4 of that length"): the set-back link off JCPenney's SE corner to z 110, the
+    # pavilion's solid part to its loggia (z 112; the loggia to z 118 is built by exterior.gd), the
+    # blank wing wall in line with the pavilion's front from the pavilion to the service lane
+    dict(rect=[-154, 92, -146, 110], owner="", name="LINK"),
+    dict(rect=[-146, 92, -134, 112], owner="", name="PAVILION"),
+    dict(rect=[-134, 100, -42, 118], owner="", name=""),
+    # #7 Dillard's: 87 x 58 m, flush with the facade, the south face (the gallery and the portal) at
+    # z 138. CHANGED from §5: its west face stays at x -38 north of z 118 so the 4 m service lane
+    # between the wing's back (x -42) and Dillard's (4490 f006-028: doors 3026-3029, the lane to the
+    # dock) stays open to the south; §5's x -43 would close it (the built wing reaches x -42).
+    dict(rect=[30, 80, 44, 118], owner="s2", name="DILLARD'S"),
+    dict(rect=[-38, 118, 44, 138], owner="s2", name="DILLARD'S"),
+    # the east facade between the Shoe Dept box and Dillard's (the plan's flush block, 4492 f081-108:
+    # the blank ACM wall and the loading lane run straight on to Dillard's NE corner)
+    dict(rect=[30, 50, 44, 80], owner="", name="EAST FACADE"),
+]
+
 # The trash / transformer bay left open in F1: roofed at 4.6 m, louvers and steel doors inside.
 BAY = [38, -50, 44, -42]
 
@@ -46,15 +84,35 @@ BAY = [38, -50, 44, -42]
 # directory map show only parking and the soccer fields. Unitech is NORTH of Lynn's (old Sears), by
 # Armour Dr (site plan "UNITECH 15,600 SF"; directory map "UNITECH" north-west of Lynn's; 4486 f010:
 # "that building back there", looking north from the cinema-side exit).
-STANDALONE = [dict(name="UNITECH", rect=[-68.0, -176.0, -32.0, -150.0])]
+STANDALONE = [dict(name="UNITECH", rect=[-85.0, -236.0, -57.0, -207.0])]   # EXT-B #3: by Armour Dr
+
+# EXT-B: map blocks left out of the building altogether (n2 would join JCPenney's rear block)
+DROP = ["n2"]
+
+# EXT-B #3 / #9: the map grows on three sides (Steven, Nov 3: "yes"): Armour Dr to z -252, Bayou
+# Gardens Blvd to z 216, West Park Ave to x 112, the west lot to x -360. Tiles (2 m) added to the
+# 1995 map's 201 x 201 grid on each side; tools/make_exterior.py writes the grown walk grid and its
+# origin, player.gd reads the origin from wing 3's wing.json.
+GROW = dict(west=47, north=35, east=12, south=19)
+
+# EXT-B: the outside face of the doors whose wall moved. The inside spot, the wing and the facing
+# stay (the inside wings do not change); `a`, `b` and `out` are where the door is outside now, depth
+# the step from the door plane to the walk (capture_doors.gd stands there).
+DOOR_MOVES = {
+    # the south entrance: the doors at the back of the loggia (front z 118)
+    "s55": dict(a=[-144.0, 112.0], b=[-136.0, 112.0], depth=0.3),
+    # Lynn's / Sears customer entrance on the east face, now flush with the facade (x 44)
+    "s1e": dict(a=[44.0, -121.0], b=[44.0, -115.0], depth=0.3),
+    # Dillard's gallery entrance on the east face (x 44) and the portal on the south face (z 138)
+    "s2e": dict(a=[44.0, 95.0], b=[44.0, 101.4], depth=0.3),
+    "s2s": dict(a=[-17.4, 138.0], b=[-12.6, 138.0], depth=0.3),
+}
 
 # Where Workstream E (the walkable old Sears) can put Sears's own exterior doors: the east face, by
 # the Lynn's script sign and black awning (4406 f031-035) and the side exit with Big Lots across the
 # drive (4413 f001-f008, f033). Not doors yet: player.gd only reads "doors". E: move a spot into
 # "doors" (fill wing / inside / yaw_in) once the inside is walkable.
-DOOR_SPOTS = [
-    dict(store="s1", kind="sears_entrance", a=[30.0, -124.0], b=[30.0, -118.0], n=[-1, 0], wing=1,
-         note="Workstream E: Sears / Lynn's customer entrance, east face (4413 f033, 4406 f031-035)"),
-    dict(store="s1", kind="sears_side_exit", a=[30.0, -106.0], b=[30.0, -103.0], n=[-1, 0], wing=1,
-         note="Workstream E: Sears side exit with the roll shutter (4413 f001-f008)"),
-]
+# EXT-B: both are real doors now (s1e on the east face at x 44, s1x on the north face, make_exterior.py
+# and DOOR_MOVES); the side exit is on the north face (4413 f004: the afternoon sun shines in), not
+# the east one. Nothing left here.
+DOOR_SPOTS = []

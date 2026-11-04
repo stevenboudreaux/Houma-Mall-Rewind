@@ -101,12 +101,13 @@ static func drive(b, x0: float, x1: float, z0: float, z1: float):
 static func build(b, year: int):
 	var face = "ex_mon_2026" if year == 2026 else "ex_mon_1995"
 	# West Park Ave: the palm drive's north corner, square to the road
-	monument(b, Vector3(90.0, 0, -11.5), Vector3(0, 0, 1), face)
+	# EXT-B (Nov 4 2026): at the roads' real places (design/exterior-sequence.md §5 #3, #9)
+	monument(b, Vector3(100.0, 0, -11.5), Vector3(0, 0, 1), face)
 	# Bayou Gardens Blvd: the drive in front of the south entrance (exterior.gd cuts the palm island
 	# there, BAYOU_DRIVE), on its east side, square to the road
-	monument(b, Vector3(-126.0, 0, 175.5), Vector3(1, 0, 0), face)
+	monument(b, Vector3(-127.0, 0, 205.5), Vector3(1, 0, 0), face)
 	# Armour Dr: the back lot's drive, west side, square to the road
-	monument(b, Vector3(-20.0, 0, -179.0), Vector3(1, 0, 0), face)
+	monument(b, Vector3(-33.0, 0, -243.0), Vector3(1, 0, 0), face)
 	if year != 2026:
-		ua_marquee(b, Vector3(-84.0, 0, -179.0), Vector3(1, 0, 0))
+		ua_marquee(b, Vector3(-90.0, 0, -243.0), Vector3(1, 0, 0))
 	print("monuments: 3 signs", "" if year == 2026 else " + the UA marquee")

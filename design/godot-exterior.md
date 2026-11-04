@@ -1,5 +1,9 @@
 # Godot mall: the outside (wing 3, "Outside") — Demo 44, Oct 24, 2026
 
+> **Since Nov 4, 2026 (Workstream EXT-B, branch `ws/exterior`) the footprint, the roads, the lot and the
+> outparcels are at their real places** (design/exterior-sequence.md §5 with Steven's §9 decisions).
+> Where the older sections below give other numbers, the "Workstream EXT-B" section near the end wins.
+
 **Asked for (Steven, Oct 23–24):** the exterior phase — the parking lot and the building as seen
 from it, built from the Oct 23 site visit (the report's shared exterior table), with the Cucos
 neon on the east entrance's outside fascia ("add the neon that you have on the inside entrance up
@@ -26,7 +30,8 @@ there").
   the building's outline as wall runs with the store behind each and the side it faces
   (`segments`), the footprint rectangles (`roofs`), the standalone block n2 west of the back lot
   (Steven, 4486 @112 s: the original 1969 standalone Sears, Unitech today), the doors, and the
-  lot's walk grid (every map tile outside a building).
+  lot's walk grid (every map tile outside a building). Since EXT-B the grid is grown past the map on
+  three sides and carries its own `origin` (wing 3's `wing.json`; `player.gd` reads it).
 - `tools/exterior/exterior.gd` builds the scene from it; `tools/exterior/paint_exterior.py` paints
   the textures in `tex/ex/` (brick, block, stucco, the 6 m concrete lot panel with its tar joint,
   asphalt, mulch, grass, chain-link).
@@ -192,7 +197,7 @@ bay's tie-rod canopy; JCPenney's magenta letters; pink fire lanes, LED poles, ye
 mats; the navy monument faces; no United Artists marquee. The 1995 outside is unchanged apart from
 the fixes above.
 
-### Door spots for Workstream E (old Sears)
+### Door spots for Workstream E (old Sears) — superseded by EXT-B: `door_spots` is empty, s1e / s1x are real doors
 `exterior.json` `door_spots` (from `wall_fixes.DOOR_SPOTS`) holds two places on Sears's east face
 (x = 30): the customer entrance at z −124..−118 (the Lynn's script sign and black awning, 4413
 f033, 4406 f031-035) and the side exit with its roll shutter at z −106..−103 (4413 f001-008). The
@@ -218,6 +223,89 @@ real footprint from the footage and the site plan, and the mismatch list with pr
 cinema box 45 m long and flush; JCPenney 60 × 120 to z −14; Dillard's 87 × 58 with the gallery and
 entrance on the south face; Big Lots / Kirschman's across Armour Dr; the lot larger on three sides).
 Analysis only; nothing here changed yet. Evidence `production/qa/evidence/wsEXT-*.jpg`.
+
+## Workstream EXT-B (Nov 4, 2026): the real outside, both years
+
+Branch `ws/exterior` from `int-51`. Brief: the outside at the level of the interior, from the earlier
+attempts. **What earlier attempts left:** `demo44-exterior` (Oct 24) and `ws/f-outside` (Nov 1) are merged
+in `int-51` (the shell, the skins, the monuments, the 2026 layer); `ws/ext-sequence` (Nov 3) is the
+analysis only (`design/exterior-sequence.md`, merged) with Steven's decisions (§9) and a draft brief for a
+build session. No build branch was ever pushed. This is that build: §5's mismatches #1–#15 as decided.
+
+### Footprint (`tools/exterior/wall_fixes.py` FILLS, DROP, STANDALONE, DOOR_MOVES; `make_exterior.py`)
+| # | What | Now (x0, z0, x1, z1) | Note |
+|---|---|---|---|
+| 1 | Sears / Lynn's | −72, −146, 44, −96 (115 × 50, flush with the facade) | the dock moved to the **west** face, x −80..−72, z −126..−100: white canopy on pipe columns, raised dock, 4 dock doors with seals, the truck well with the yellow 2-rail on red curbs, a box truck (Lynn's lettering in 2026); the white painted-brick return −80..−72, −100..−96 with the 3-loop bike rack along it |
+| 2 | Cinema box | −80, −86, −52, −42 | one straight 44 m salmon-brick west wall from the exit, 6 pilasters, 5 hooded exit doors, the FDC, the ramp with knee wall and rail, the poster case beside the doors |
+| 3 | Back lot, Unitech | Armour Dr at z −252; Unitech −85, −236, −57, −207 | the Armour monument at (−33, −243), the UA marquee (1995) at (−90, −243), the Armour drive x −26..−14 |
+| 4 | Kirschman's / Big Lots | the strip across Armour Dr, centre (−20, −288), 60 × 28, facing the mall | gable sign on the side exit's axis, 3-arch loggia, white hoods; 1995 **"Kirschman's" FURNITURE** (spelling Steven's; letters and colours a GUESS), 2026 BIG LOTS! |
+| 5 | JCPenney | −214, −14, −154, 106 + the rear block −228, −6, −214, 32 | north face: docks 1–2 (red canopy, seals, numbers, rail), the compactor, the Package Pick-up recess with the coral ribbed fascia, the wordmark; west: the roll-up on the rear block, the tree-side entrance (maroon fascia) at z 42–50, the wordmark, podocarpus; south: the red arcade near the SW corner, the hedge, the wordmark; the pine island with the hydrant at the NW corner. The map's block n2 is dropped (it would have joined the rear block) |
+| 6 | Horton tank | yard −141, −32, −121, −9 | the utility building, the conduit pole and the walk to the docks with it |
+| 7 | Dillard's | −38, 80, 44, 138 | the gallery on the **east and south** faces; the entrance portal (two peach piers, cream entablature, "Dillard's", 4 door pairs) on the south face at x −15 = s2s; the s2e gallery doors on the east face; the flagpole island (3 poles) at the SW corner; the covered dock with a trailer and the roll-off on the west side. **Changed from §5:** the west face stays at x −38 north of z 118 (not −43), so the 4 m service lane between the wing's back (x −42) and Dillard's stays open to the south, as filmed (4490 f006-028); §5's −43 would have closed it (the built wing reaches −42) |
+| 8 | Wing wall, pavilion | the wing wall z 118 from x −134 to −42; the pavilion −146..−134 solid to z 112, the loggia to z 118; the link off JCPenney −154..−146 to z 110 | Steven: "from JCPenney to the Dillard's side, at least 3/4" — 92 m of ~108 m. The doors at the loggia's back (z 112); the bike rack on the link; the drop-off bulb moved out to z 127–131 |
+| — | East facade between the Shoe Dept box and Dillard's | 30, 50, 44, 80 filled flush | the plan's flush block; 2026 the blank white ACM wall (4492 f081-108) with the yellow-hatched loading lane in front; 1995 the facade's panels (a GUESS) |
+| 9 | The map | −390..130 × −270..240 (was −296..106 × −200..202) | West Park Ave x 112 (4 lanes, curb ~106), Bayou Gardens z 216, Armour z −252, the west lot to x −360; the apartments' land north-west (x < −120, z < −150) is lawn behind a wood fence with 6 charcoal blocks; the soccer fields and St. Bernadette's beyond the west edge |
+| 10 | Ground Pat'i | (146, 244), across both roads at the SE corner | the cube pole sign faces the intersection |
+| 11 | Bank pad | 64, −78, 98, −50 on West Park opposite K&B / Cucos | both years, brick, a 3-lane drive-thru canopy, **no name** (Steven: "a bank in 1995, not Chase") |
+| 12 | East entrance recess | not changed (4 m) | the Sears box is flush now, so the recess reads; a 10 m recess would cut into wing 1's vestibule (question below) |
+| 13 | Sun | wing 3's sun from the game's N / NE, ~40° up (`build_mall.gd`, `exshots.gd`) | Steven: switch to the afternoon. Only wing 3; the inside wings keep theirs |
+| 14 | Water tower | (−440, 60), W of JCPenney | a far landmark |
+| — | SW outparcels | the drive-thru bank and cell tower at (−346, 166), the strip centre x −321..−303, z 100..155 facing east | no tenant names (none legible) |
+
+### Doors (`DOOR_MOVES`; the inside spots, wings and facings unchanged)
+| Door | Outside face | Out spot | Facing |
+|---|---|---|---|
+| s55 south entrance | z 112 (loggia back), x −144..−136 | (−140, 114.5) | south |
+| s1e Lynn's / Sears customer entrance | x 44, z −121..−115 | (46.5, −118) | east |
+| s2e Dillard's gallery doors | x 44, z 95..101.4 | (46.5, 98.2) | east |
+| s2s Dillard's portal | z 138, x −17.4..−12.6 | (−15, 140.5) | south |
+s39, s43, s41 and s1x are where they were. `player.gd`'s door code needs no change (it reads `out` / `inside`).
+
+### The lot (`exterior.gd` `lot_field`)
+Stalls are laid by fields instead of hand-placed rows: the front lot (x 52..104), the back lot behind Sears
+(to Armour Dr), the staff lot (between JCPenney, the tank and the cinema), the NW lot, the west lot behind
+JCPenney and the south lot, each in 18 m double rows (2.7 × 5.5 m stalls), cut wherever a keep-out
+(the building + 8 m, the tank yard, the drives, the pads, the dock well, the drop-off, the apartments'
+land) is in the way. Every run ends in a curbed island; every other row's islands carry a lot pole
+(1995 shoebox, 2026 LED), the others a live oak or a shrub; a storm grate in each aisle every ~30 m.
+Stop signs at the Bayou Gardens and Armour drives; trash cans at every entrance; ADA symbols near each
+door. Wing 3 now: 64 wall runs, 107 trees, 170 lights (1995) / 173 (2026), +45 % mesh data
+(gen/w3 3.0 → 4.4 MB, gen/w3y26 2.4 → 3.8 MB before compression).
+
+### Shared files touched (small, separate hunks)
+- `tools/build_mall.gd`: wing 3's `wing.json` carries `origin`; wing 3's sun direction.
+- `scripts/player.gd`: reads `origin` from `wing.json` when present (only wing 3 writes it).
+- `exterior.json`, `gen/w3/*`, `gen/w3y26/*`, `wing3.tscn`, `wing3_2026.tscn` regenerated.
+
+### Verification (all unbaked, cloud)
+- `--wing=3` and `--wing=3 --year=2026`: BUILD OK.
+- `tools/qa/ext_door_test.gd` (new, headless): every door's outside spot is on the grown grid and clear,
+  2 m further out walkable, the inside spot walkable in its wing, standing outside finds the door; then
+  the walk wing → "Go outside" → E → wing 3 at the out spot → "Enter the mall" → E → back at the inside
+  spot. PASS for s39, s41, s43, s55, s1x, s2s (1995) and s39, s55 (2026).
+- Existing: `wsS_thresholds_test.gd` (1995, 2026) WSS TEST OK, `interact_test.gd`, `int_d49_test.gd`,
+  `flags_test.gd`, `menu_unit_test.gd` OK.
+- Evidence: `production/qa/evidence/exterior-{1995,2026}-*-unbaked.jpg` (17 views a year: the main
+  entrance, the east facade both ways, the s43 recess, Lynn's / Sears east face, the north face and the
+  view across Armour Dr, the cinema exit and dock, the cinema wall, JCPenney north with the tank and west,
+  the pavilion, Dillard's portal and east gallery, the front and west lots, the whole lot from above).
+
+### For the Mac (integration)
+1. Bake `wing3:fastday` and `wing3_2026:fastday` (the old wing 3 lightmaps no longer fit: every face
+   moved). The day sun now comes from the game's N / NE.
+2. `tools/capture_standin.sh 3` and `tools/capture_standin.sh 3 2026` after the bakes: the door pictures
+   of wings 1, 2, 4, 5 look out on the new lot (s55, s1e, s2e, s2s moved).
+3. Wings 1, 2, 4, 5 need no rebake (their static meshes did not change).
+
+### Guesses and questions for Steven
+- Sears's north face (not filmed): plain white block, the side exit with its shutter hood, a "Sears"
+  sign (GUESS) toward Armour Dr.
+- Kirschman's sign letters and colours, the 1995 bank's look, the strip centre's tenants: unknown.
+- The east entrance recess stays 4 m deep (real ~10 m): deepening it moves the s43 glass into wing 1's
+  vestibule. Worth doing?
+- Dillard's west face at x −38 instead of −43 to keep the service lane open: OK?
+- The Shoe Dept → Dillard's stretch (z 50..80) is now flush wall: in 1995 was that the facade's panels
+  or another storefront?
 
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
