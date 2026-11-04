@@ -132,12 +132,14 @@ func _patron(crowd, pe: Dictionary) -> void:
 # ------------------------------------------------------------------ the owner's debug helper
 var _js_cb      # keeps the JavaScript callback alive
 ## Owner mode on the web only (as mallFlags, design/godot-quests.md): `mallLady()` in the browser
-## console puts the player next to the football lady, facing her, and returns where she is
-## ("" when she isn't in this wing's crowd). Used by tools/qa/cucos_webtest.py.
+## console puts the player next to the football lady, facing her, and leaves where she is in
+## window.mallLadyAt ("x,z"; "" when she isn't in this wing's crowd: a Godot callback can't return a
+## value to JavaScript). Used by tools/qa/cucos_webtest.py.
 func _owner_debug() -> void:
 	if not OS.has_feature("web") or not (player.has_method("is_owner") and player.is_owner()):
 		return
-	_js_cb = JavaScriptBridge.create_callback(func(_args): return to_lady())
+	_js_cb = JavaScriptBridge.create_callback(func(_args):
+		JavaScriptBridge.eval("window.mallLadyAt=%s" % JSON.stringify(to_lady()), true))
 	var w = JavaScriptBridge.get_interface("window")
 	w.mallLady = _js_cb
 

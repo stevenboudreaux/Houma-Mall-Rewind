@@ -72,8 +72,9 @@ red stools. World metres: counter x 23.15–23.75, z −79.0 to −71.6, top at 
   Behind the counter (x 22.78–22.9, z −78.4 to −72.4, between the back bar and the counter), wanders a
   little, faces the player within 3 m. Talk spot: **24.85, −75.35**, between two stools.
 - **The patrons (PLACEHOLDER, no dialogue):** Ch08 on the stool at z −77.6 with a beer, Ch37 at z −73.1
-  with a regular margarita, sitting (`sit_idle_2`, `sit_f`), their drinks on the counter in front of them.
-  Runtime nodes: not baked. No drink is made on screen.
+  with a regular margarita, sitting (`sit_idle_3`, `sit_idle_2`: of the rig's sitting clips these face the
+  counter squarely on a stool; `sit_f` hunches over, `sit_2` leans back), their drinks on the counter in front
+  of them (the stand-in drink models). Runtime nodes: not baked. No drink is made on screen.
 
 ### What the action does at the bar
 | You | He |
@@ -125,10 +126,27 @@ later).
 - The coupon's second-time answer (PLACEHOLDER 3) instead of giving another coupon.
 - Drinks bought or given go to the bag (hand items); nothing happens when you hold one yet.
 
-## Checks
-- `godot --headless --path . --script res://tools/qa/cucos_test.gd` → CUCOS TEST OK.
-- Native unbaked shots: `tools/qa/cucos_shots.gd` (see the report); web: `tools/qa/cucos_webtest.py`.
-- Evidence: `production/qa/evidence/wsCUCOS-*`.
+## The owner's helper
+Owner mode on the web (`?owner=1`): `mallLady()` in the browser console puts the player next to the lady,
+facing her, and leaves where she is in `window.mallLadyAt` (a Godot callback can't return a value). The web
+test uses it; visitors don't get it.
+
+## Checks (Nov 4, this branch)
+- `godot --headless --path . --script res://tools/qa/cucos_test.gd` → **CUCOS TEST OK (89 checks)**: the 7
+  paths of her tree with Steven's exact lines and answers, the repeat visits (mad x3, cold alternating x4, a
+  friendly ending starts over), the flag's save round trip, the coupon once only (also after it's used), the
+  bartender's coupon path (two items, no charge, flags) and the doubloon once only, the coupon in the bag (no
+  coupon lines), the shop stub (greeting, the list, each item bought with money, Back, $5 can't buy $10 with
+  the "You need" line, a $2 beer can), the bartender choosing the coupon or the shop, the doubloon in 2026
+  (once, saved, not when dropped there, not before it was given), the data files.
+- Unchanged and still OK: DIALOGUE WALK 67, FLAGS TEST 31, INVENTORY TEST 45, ECON TEST 52.
+- Native, unbaked, wing 1 rebuilt with the taps (`tools/qa/cucos_shots.gd`): **CUCOS SHOTS OK (26)** at
+  1280 x 720 and at 390 x 844 (`--phone`).
+- Web, unbaked (`tools/qa/cucos_webtest.py`, wings 1+2 both years exported with this branch): see the report.
+- Evidence: `production/qa/evidence/wsCUCOS-unbaked-*.jpg` (native; `-phone-` at 390 x 844) and
+  `wsCUCOS-web-unbaked-*.jpg`.
+- Natively the shirt reads HOUMA (the shipped words; `play/shirt_text.json` isn't fetched natively); on the
+  web it reads LSU.
 
 ## Rebake
 **Wing 1 (1995), day**: the taps are in the bar's geometry. Then `tools/capture_standin.sh 1` (and 2,

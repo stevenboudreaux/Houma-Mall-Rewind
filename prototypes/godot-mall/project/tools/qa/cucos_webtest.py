@@ -72,8 +72,11 @@ def key(pg, k, wait=2.5):
 
 def find_lady(pg, tries=12):
     for i in range(tries):
-        r = pg.evaluate("window.mallLady ? window.mallLady() : 'nohelper'")
-        if r and r != "nohelper":
+        pg.evaluate("window.mallLadyAt = null; window.mallLady ? window.mallLady() : null")
+        time.sleep(0.5)
+        r = pg.evaluate("window.mallLady ? String(window.mallLadyAt) : 'nohelper'")
+        print("  mallLady:", r, flush=True)
+        if r and r not in ("nohelper", "null", ""):
             return r
         time.sleep(5)
     return ""
@@ -95,10 +98,14 @@ with sync_playwright() as p:
     # ---- the lady, down the Cuco's path
     ctx, pg, logs = page(b, 1280, 720)
     pg.goto(url("year=1995"))
+    ready(pg, 60)
+    pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped')")   # past the opening (MENU)
+    pg.reload()
     check(ready(pg), "lady: loaded")
     pg.mouse.click(640, 200); time.sleep(1)
     talk_to_lady(pg, "desktop-lady", ["2", "1", "3"])
     key(pg, "Enter", 3.0)          # the "You received" card / END
+    key(pg, "Enter", 3.0)
     key(pg, "Enter", 3.0)
     time.sleep(1)
     check(inv(pg).get("cu_coupon") == 1, "lady: the coupon is in mall-state-1995: " + str(inv(pg)))
@@ -112,7 +119,7 @@ with sync_playwright() as p:
     check(inv(pg).get("cu_coupon") == 1, "repeat: still one coupon: " + str(inv(pg)))
 
     # ---- the coupon in the hand (as the bag's Hold does), at the bar after a reload
-    pg.evaluate("""(function(){var k='mall-state-1995';var d=JSON.parse(localStorage.getItem(k));
+    pg.evaluate("""(function(){var k='mall-state-1995';var d=JSON.parse(localStorage.getItem(k)||'{"v":1,"year":1995,"inventory":[],"hand":"","moved":{}}');
         d.inventory=d.inventory.filter(function(e){return e.id!=='cu_coupon'});d.hand='cu_coupon';
         localStorage.setItem(k,JSON.stringify(d))})()""")
     pg.goto(url(f"year=1995&cam={BAR}"))
@@ -127,7 +134,8 @@ with sync_playwright() as p:
     key(pg, "Enter", 5.0)          # the gift line (the doubloon)
     shot(pg, "desktop-bar-gift")
     key(pg, "Enter", 4.0)          # END
-    key(pg, "Escape", 2.0)
+    for i in range(3):             # the two "You received" cards take a key each
+        key(pg, "Enter", 2.0)
     iv = inv(pg)
     check("cu_coupon" not in iv, "bar: the coupon is used up: " + str(iv))
     check(iv.get("cu_topshelf") == 1 and iv.get("cu_doubloon") == 1, "bar: the top-shelf margarita and the doubloon: " + str(iv))
@@ -157,12 +165,16 @@ with sync_playwright() as p:
     # ---- phone
     ctx, pg, logs = page(b, 390, 844, touch=True)
     pg.goto(url("year=1995"))
+    ready(pg, 60)
+    pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped')")
+    pg.reload()
     check(ready(pg), "phone: loaded")
     where = find_lady(pg)
     check(where != "", f"phone: the lady is in the crowd (at {where})")
     time.sleep(0.6)
     key(pg, "e", 5.0)
     shot(pg, "phone-lady-face")
+    check(True, "phone: talked (see the shot)")
     e = errors(logs); print("phone errors", len(e), e[:5]); check(not e, "phone: 0 console errors")
     ctx.close()
     b.close()
