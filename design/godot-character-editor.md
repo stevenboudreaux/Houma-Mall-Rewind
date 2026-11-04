@@ -404,3 +404,9 @@ session): the generator fix is untested until the next `garments.py` run.
   apron, glasses.
 - The owner key K and the left-stick click; Esc / B close; Q / E switch tabs only outside the menu.
 - The player wardrobe (`_wardrobe.json`): a lean set to keep packs small.
+
+## Steven's decisions (Nov 4, 2026, evening)
+- The five looks to perfect first: approved (Pocket Change, Sound Shop and Kay-Bee attendant presets; female and male player defaults).
+- Next character session does the rebuild: proxy binding, hair cards, curtain skinning (research note, recommendation 2a–c), plus **a face pass** on the neutral male face (reads young / androgynous).
+- Closing the menu keeps changes (as before); Save and Back stay as built.
+- He wants to explore importing better hair and body assets: options in `design/research/character-pipeline-2026-11.md`, "Addendum".
