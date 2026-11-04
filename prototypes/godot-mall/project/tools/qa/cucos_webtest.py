@@ -102,12 +102,19 @@ with sync_playwright() as p:
     pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped'); localStorage.setItem('mall-avatar-1', JSON.stringify({v: 1, done: true, view: 'first'}))")   # past the opening (MENU)
     pg.reload()
     check(ready(pg), "lady: loaded")
-    pg.mouse.click(640, 200); time.sleep(1)
-    talk_to_lady(pg, "desktop-lady", ["2", "1", "3"])
-    key(pg, "Enter", 3.0)          # the "You received" card / END
-    key(pg, "Enter", 3.0)
-    key(pg, "Enter", 3.0)
-    time.sleep(1)
+    # she wanders: where another prompt owns the action button (the cinema doors, a seam door) E can't
+    # reach her, so a failed try starts over from a clean story and bag
+    for attempt in range(4):
+        pg.mouse.click(640, 200); time.sleep(1)
+        talk_to_lady(pg, "desktop-lady", ["2", "1", "3"])
+        for i in range(4):         # the "You received" card, END
+            key(pg, "Enter", 3.0)
+        time.sleep(1)
+        if inv(pg).get("cu_coupon") == 1:
+            break
+        print("  try %d: no coupon, again" % (attempt + 1), flush=True)
+        pg.evaluate("localStorage.removeItem('mall-flags-1'); localStorage.removeItem('mall-state-1995')")
+        pg.reload(); ready(pg)
     check(inv(pg).get("cu_coupon") == 1, "lady: the coupon is in mall-state-1995: " + str(inv(pg)))
     check(flags(pg).get("cu_coupon_given") is True, "lady: cu_coupon_given in mall-flags-1")
     shot(pg, "desktop-lady-after")
