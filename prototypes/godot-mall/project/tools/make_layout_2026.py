@@ -149,6 +149,16 @@ for sid in OPEN_2026:
         for x in range(st["x"], st["x"] + st["w"]):
             walk[y][x] = "1"
 
+# ws/interiors (Nov 4 2026): Spencer's (n35, the 1995 Gadzooks unit) is walk-in in 2026 as Gadzooks was in
+# 1995: the sales floor x 117-122, y 112-123 (d 0..24 m); the stock room behind stays shut
+# (tools/stores/spencers/store.gd, design/storefronts/spencers.md)
+OPEN_2026_RECTS = {"n35": [(117, 122, 112, 123)]}
+for sid, rects in OPEN_2026_RECTS.items():
+    for (x0, x1, y0, y1) in rects:
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                walk[y][x] = "1"
+
 out = dict(L)
 out["edges"] = merged
 out["stores"] = stores

@@ -239,7 +239,10 @@ static func ob_room(D):
 ## machine at the entry. Inside: black walls of printed tees, black ceiling, dark floor
 ## (IMG_4440 f001-f002, IMG_4439 f034-f036).
 static func spencers(sd, e):
-	room(9.0, "#141416", "#2a2626", "black", 3.4, 0.7)
+	# ws/interiors (Nov 4): the walk-in store from the video Steven chose (tools/stores/spencers/store.gd,
+	# design/storefronts/spencers.md): its room here, the inside at the end; the front is unchanged
+	var SP = load("res://tools/stores/spencers/store.gd")
+	SP.room(load("res://tools/stores/fronts26/store.gd"))
 	var LH = bb.LANE_H
 	# the cream mall wall above the brick
 	col("#e6dcc6")
@@ -284,20 +287,8 @@ static func spencers(sd, e):
 	# the lit vending machine just inside the entry
 	cbx("#141414", 3.2, 0.0, 0.15, 0.7, 1.75, 0.55)
 	front_q(GD, "f26_posters_lit", 3.25, 3.85, 0.7, 1.65, 0.14, 0.0, 0.0, 0.25, 1.0, true)
-	# inside: tee walls on both sides and the back, two gondolas of novelties, hanging tees
-	var rng = RandomNumberGenerator.new()
-	rng.seed = 35
-	side_merch("f26_tees_dark", 0.02, 1.0, 1.0, 9.0, 0.3, 2.9, 3.6, 0.9)
-	side_merch("f26_tees_dark", LN - 0.02, -1.0, 1.0, 9.0, 0.3, 2.9, 3.6, 0.9)
-	back_merch("f26_tees_dark", 0.3, LN - 0.3, 9.0, 0.3, 2.9, 3.6, 0.9)
-	for g2 in [[4.5, 4.5], [7.5, 6.0]]:
-		cbx("#1c1c1e", g2[0] - 0.9, 0.0, g2[1] - 0.4, 1.8, 1.4, 0.8)
-		goods(g2[0], g2[1], 1.7, 0.7, 1.4, ["#e8302a", "#f2c81e", "#30c8e8", "#a040e0", "#f0f0f0", "#202020"], rng, 0.18, 0.3)
-		goods(g2[0], g2[1] - 0.41, 1.7, 0.02, 0.4, ["#e8302a", "#f2c81e", "#30c8e8", "#a040e0"], rng, 0.2, 0.9)
-	for k in 3:
-		var l = bb.add_omni(P(2.0 + k * 4.0, 2.6, 4.0), 0.3, 4.0, [Color(0.9, 0.3, 0.6), Color(0.4, 0.4, 1.0), Color(0.9, 0.2, 0.3)][k])
-		bb.tag(l, "", 0.25, 0.3)
-	ob_room(9.0)
+	SP.front_obstacles(LN)
+	SP.inside(load("res://tools/stores/fronts26/store.gd"))
 
 ## Great American Cookies (6 m, open front): the cookie case module (tools/stores/gac/case.gd),
 ## the same case in both years; 2026: the red soffit band with downlights, the white wave wall
@@ -624,21 +615,9 @@ static func tuscan(x, d):
 ## (Demo 43 spec), an open counter front: a wood-look counter with the pretzel warmer on it, white
 ## and orange inside, a menu board, an oven and the rolling table behind (IMG_4439 f024-f025).
 static func auntie(sd, e):
-	room(4.0, "#f4f2ec", "#c8bca8", "white", 3.0, 1.2)
-	band(sd, "#1f2c6a", 3.0, 0.16)
-	cbx("#1f2c6a", 0.0, 0.0, -0.16, 0.2, 3.0, 0.16)
-	cbx("#1f2c6a", LN - 0.2, 0.0, -0.16, 0.2, 3.0, 0.16)
-	cbx("#c89a5a", 0.2, 0.0, 0.3, LN - 0.4, 1.0, 0.6)
-	cbx("#f0ece4", 0.15, 1.0, 0.25, LN - 0.3, 0.04, 0.7)
-	cbx("#e88a2a", 0.2, 0.85, 0.28, LN - 0.4, 0.06, 0.02)
-	# the warmer: a lit glass box of pretzels on the counter
-	cbx("#c8c8c8", 0.5, 1.04, 0.35, 1.3, 0.05, 0.5, GS)
-	front_q(GD, "f26_pretzels_lit", 0.52, 1.78, 1.1, 1.6, 0.34, 0.0, 0.0, 1.0, 1.0, true)
-	bx(GD, "f26_glass", 0.5, 1.09, 0.35, 1.3, 0.55, 0.5, ["-y"], true)
-	front_q(G, "f26_menus", 0.6, LN - 0.6, 1.8, 2.6, 3.95, 0.25, 0.0, 0.5, 1.0)
-	cbx("#b8babc", 0.5, 0.0, 3.2, 1.2, 1.6, 0.7, "", "wl_steel")
-	cbx("#e8e6e0", 2.0, 0.0, 2.0, 1.4, 0.9, 0.7)
-	ob_room(4.0)
+	# ws/interiors (Nov 4): rebuilt in its own module from IMG_4439 f024-f025 and the pretzel clip
+	# (tools/stores/auntie_annes/store.gd, design/storefronts/auntie-annes.md)
+	load("res://tools/stores/auntie_annes/store.gd").build(load("res://tools/stores/fronts26/store.gd"), sd)
 
 ## AT&T (s48, 8 m): the black graphite fascia with the globe sign (Demo 45 spec), slate-grey tile
 ## pilasters, a glass front with the entry on the left; inside grey carpet tile, white wall bays of
@@ -748,29 +727,9 @@ static func footlocker_inside_95():
 ## a yellow header stripe, a grey vinyl floor (the chain's look of the period: guessed, no photo of
 ## the Southland inside).
 static func payless_inside():
-	var D = 9.0
-	room(D, "#f4f2ec", "#b8b4ac", "white", 3.2, 1.1)
-	var lk = {"kinds": ["casual", "pump", "trainer", "loafer", "boot"], "cols": ["#1c1c20", "#5a3218", "#f4f4f2", "#8a1e2a", "#1f3f8f", "#c8a070"],
-		"trim": ["#f2c81e"], "seed": 4}
-	var rng = RandomNumberGenerator.new()
-	rng.seed = 4
-	for side in [["L", 0.04, 1.0], ["R", LN - 0.04, -1.0]]:
-		side_merch("f26_boxes", side[1], side[2], 1.0, D - 0.3, 0.05, 1.6, 1.2, 0.4)
-	back_merch("f26_boxes", 0.3, LN - 0.3, D, 0.05, 1.6, 1.2, 0.4)
-	# the sample shelf and the yellow stripe over the box walls
-	for side in [[0.04, 1.0], [LN - 0.04, -1.0]]:
-		side_q(G, "f26_ref_y", side[0] + 0.035 * side[1], 1.0, D, 2.2, 2.45, side[1], 0.0, 0.0, 1.0, 1.0)
-	var x = 1.6
-	while x < LN - 1.4:
-		for d in [2.4, 5.2]:
-			cbx("#e8e6e0", x - 1.0, 0.0, d - 0.45, 2.0, 0.9, 0.9)
-			goods(x, d, 1.9, 0.85, 0.9, ["#f08a2a", "#f4f4f2", "#2a4a8a", "#8a5a30", "#c8202c"], rng, 0.3, 0.12)
-			for k in 3:
-				SH.shoe(bb, P(x - 0.6 + k * 0.6, 1.02, d), (P(1, 0, 0) - P(0, 0, 0)), nn, lk, rng, 0.0)
-		x += 3.2
-	for k in 2:
-		SH.bench(bb, G, P(LN * 0.3 + k * LN * 0.4, 0, 7.4), (P(1, 0, 0) - P(0, 0, 0)), -nn, 1.6, Color("#c8202c"))
-	ob_room(D)
+	# ws/interiors (Nov 4): the walk-in store from the 2019 video Steven chose, without the sale signs
+	# (tools/stores/payless/store.gd, design/storefronts/payless.md)
+	load("res://tools/stores/payless/store.gd").build(load("res://tools/stores/fronts26/store.gd"))
 
 ## Blockbuster Music, 1995: a CD store in the chain's blue and purple (and FYE's later look, which
 ## Steven asked for): long rows of CD browser bins down the floor, wall racks of CDs and tapes to

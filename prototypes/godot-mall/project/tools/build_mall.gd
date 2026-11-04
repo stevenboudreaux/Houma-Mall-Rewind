@@ -372,6 +372,13 @@ func mat(name):
 				# ws/g: the 2026 "through the glass" fronts: tools/stores/fronts26/store.gd's fill_mat
 				if not load("res://tools/stores/fronts26/store.gd").fill_mat(m, name.substr(4), self):
 					push_error("unknown material " + name)
+			elif name.begins_with("in_"):
+				# ws/interiors (Nov 4): "in_<store>_<key>" for the interiors built from Steven's videos:
+				# aa = tools/stores/auntie_annes, pay = payless, sp = spencers (each store.gd's fill_mat)
+				var ip = name.substr(3).split("_", true, 1)
+				var mi = {"aa": "auntie_annes", "pay": "payless", "sp": "spencers"}.get(ip[0], "")
+				if ip.size() < 2 or mi == "" or not load("res://tools/stores/%s/store.gd" % mi).fill_mat(m, ip[1], self):
+					push_error("unknown material " + name)
 			elif name.begins_with("gac_"):
 				# ws/g: Great American Cookies' case (both years): tools/stores/gac/case.gd's fill_mat
 				if not load("res://tools/stores/gac/case.gd").fill_mat(m, name.substr(4), self):

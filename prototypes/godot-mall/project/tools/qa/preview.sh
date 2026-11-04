@@ -12,7 +12,7 @@ G=$(command -v godot || echo /home/claude/godot)
 TMP=$(mktemp -d)
 mkdir -p "$(dirname "$OUT")"
 cd "$P"
-timeout 300 xvfb-run -a -s "-screen 0 1280x720x24" "$G" --path . --rendering-driver opengl3 --resolution 1280x720 \
+timeout ${PREVIEW_TIMEOUT:-300} xvfb-run -a -s "-screen 0 1280x720x24" "$G" --path . --rendering-driver opengl3 --resolution 1280x720 \
   --write-movie "$TMP/f.png" --fixed-fps 1 --script "${PREVIEW_SCRIPT:-res://tools/qa/preview.gd}" -- "$T" "$CAMS" "$OPTS" "$LIGHT" > "$TMP/log.txt" 2>&1 || true
 grep -E "ERROR|SCRIPT ERROR|Parse Error|error\(" "$TMP/log.txt" | grep -v "Condition \"!windows.has" | head -20 || true
 python3 - "$TMP" "$OUT" <<'EOF'

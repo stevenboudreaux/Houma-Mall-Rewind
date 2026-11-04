@@ -85,6 +85,9 @@ OPEN = {
     # rect s1 (x 128-162, y 33-51) plus 6 rows deeper to y 27 (50 m, design/godot-sears.md), and
     # Dillard's level 1 (s2, x 129-162, y 140-158, design/godot-dillards.md)
     "s1": [(128, 162, 27, 51)],
+    # ws/interiors (Nov 4, tools/stores/payless/store.gd): Payless ShoeSource (s4, x 149-162, y 125-132,
+    # faces west): the sales floor to 26 m (x 149-161); the stock room behind (x 162) stays shut
+    "s4": [(149, 161, 125, 132)],
     "s2": [(129, 162, 140, 158)],
 }
 
