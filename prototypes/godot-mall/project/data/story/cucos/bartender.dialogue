@@ -11,11 +11,11 @@ if holding cu_coupon
 	PLACEHOLDER Bartender: Oh, wow, you have a top-shelf margarita coupon. That's great. Let me get that for you.
 	take cu_coupon
 	set cu_coupon_used = true
-	PLACEHOLDER Bartender: Here you go.
 	give cu_topshelf
+	PLACEHOLDER Bartender: Here you go.
 	if not cu_doubloon_given
 		set cu_doubloon_given = true
-		PLACEHOLDER Bartender: PLACEHOLDER (he gives you a Cuco's Mardi Gras doubloon too, as a gift; Steven to write the line)
 		give cu_doubloon
+		PLACEHOLDER Bartender: PLACEHOLDER (he gives you a Cuco's Mardi Gras doubloon too, as a gift; Steven to write the line)
 	=> END
 => END

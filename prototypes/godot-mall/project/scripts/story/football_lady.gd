@@ -58,7 +58,7 @@ func _process(dt: float) -> void:
 func _to_player() -> Vector3:
 	if player == null or s == null:
 		return Vector3.FORWARD
-	var d := player.global_position - s.body.global_position
+	var d: Vector3 = player.global_position - s.body.global_position
 	d.y = 0.0
 	return d if d.length() > 0.05 else Vector3.FORWARD
 

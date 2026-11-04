@@ -63,6 +63,7 @@ func _spawn() -> void:
 		lady = Lady.new()
 		add_child(lady)
 		lady.setup(player, story, le)
+		_owner_debug()
 	# the bar: wing 1 only
 	var be: Dictionary = cfg.get("bartender", {})
 	if be.is_empty() or (int(be.get("wing", 1)) != int(player.wing) and int(player.wing) != 0):
@@ -127,3 +128,34 @@ func _patron(crowd, pe: Dictionary) -> void:
 		add_child(d)
 		d.global_position = Vector3(float(cfg.get("drinks_x", 23.42)), float(cfg.get("drinks_y", 1.1)), float(st[1]) + 0.1)
 		drinks.append(d)
+
+# ------------------------------------------------------------------ the owner's debug helper
+var _js_cb      # keeps the JavaScript callback alive
+## Owner mode on the web only (as mallFlags, design/godot-quests.md): `mallLady()` in the browser
+## console puts the player next to the football lady, facing her, and returns where she is
+## ("" when she isn't in this wing's crowd). Used by tools/qa/cucos_webtest.py.
+func _owner_debug() -> void:
+	if not OS.has_feature("web") or not (player.has_method("is_owner") and player.is_owner()):
+		return
+	_js_cb = JavaScriptBridge.create_callback(func(_args): return to_lady())
+	var w = JavaScriptBridge.get_interface("window")
+	w.mallLady = _js_cb
+
+## Put the player ~1.1 m from the lady on open floor, facing her. Returns "x,z" of her, or "".
+func to_lady() -> String:
+	var s = lady.find() if lady else null
+	if s == null:
+		return ""
+	var crowd = lady.crowd
+	for k in 16:
+		var a := TAU * k / 16.0
+		var dir := Vector3(sin(a), 0, cos(a))
+		var p: Vector3 = s.pos + dir * 1.1
+		if crowd.has_method("_open") and not (crowd._open(p) and crowd._open(s.pos + dir * 0.55)):
+			continue
+		player.position = Vector3(p.x, player.position.y, p.z)
+		player.yaw = atan2(dir.x, dir.z)
+		player.pitch = deg_to_rad(-4.0)
+		player._apply_rot()
+		return "%.2f,%.2f" % [s.pos.x, s.pos.z]
+	return ""

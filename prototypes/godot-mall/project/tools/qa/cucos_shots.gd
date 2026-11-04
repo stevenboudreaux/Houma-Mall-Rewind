@@ -114,8 +114,10 @@ func _plan() -> Array:
 			_check(s != null, "the football lady (Ch02) is in the crowd")
 			if s: printerr("lady at ", s.pos, " state ", s.state)
 			_check(_to_lady(), "found open floor next to her")],
-		[0.05, func():
+		[0.3, func():
+			_to_lady()
 			var r: Array = player.interact.find_target()
+			printerr("lady node ", cu.lady.global_position, " vis ", cu.lady.is_visible_in_tree(), " prompt '", cu.lady.interact_prompt(), "' player ", player.position, " target ", r[0])
 			_check(r[0] == cu.lady and r[1] == "TALK", "next to her: TALK (%s)" % str(r[1]))
 			if not phone: _shot("wsCUCOS-unbaked-lady-approach")
 			player.interact.action()],
@@ -124,7 +126,7 @@ func _plan() -> Array:
 			_check(_line() == "Oh, hey, did you watch the game last night?", "her first line: " + _line())
 			_check(ui.name_l.text == "" or not ui.name_l.visible, "no speaker name over her line")
 			_shot("wsCUCOS-unbaked-lady-face")
-			_cont()],
+			if ui.typing: ui._typed()],
 		[1.2, func():
 			_check(ui.resp_btns.size() == 3, "three answers")
 			ui.sel = 1; ui._paint()
@@ -134,16 +136,14 @@ func _plan() -> Array:
 			if ui.typing: ui._typed()],
 		[0.3, func():
 			_check(_line().begins_with("I know, right?"), "B: " + _line())
-			if not phone: _shot("wsCUCOS-unbaked-lady-q2")
-			_cont()],
+			if not phone: _shot("wsCUCOS-unbaked-lady-q2")],
 		[0.8, func():
 			ui.sel = 0; ui._paint()
 			ui._choose(0)],
 		[1.8, func():
 			if ui.typing: ui._typed()],
 		[0.3, func():
-			_check(_line().begins_with("Ain't that the truth?"), "A: " + _line())
-			_cont()],
+			_check(_line().begins_with("Ain't that the truth?"), "A: " + _line())],
 		[0.8, func():
 			ui.sel = 2; ui._paint()
 			_shot("wsCUCOS-unbaked-lady-q3")
@@ -188,8 +188,7 @@ func _plan() -> Array:
 		[1.6, func():
 			if ui.typing: ui._typed()],
 		[0.4, func():
-			_check(_line() == "Welcome to Cuco's. What can I get for you today?", "the shop's greeting: " + _line())
-			_cont()],
+			_check(_line() == "Welcome to Cuco's. What can I get for you today?", "the shop's greeting: " + _line())],
 		[0.6, func():
 			_check(ui.resp_btns.size() == 4, "beer, margarita, top-shelf, Back (%d)" % ui.resp_btns.size())
 			_shot("wsCUCOS-unbaked-shop-list")

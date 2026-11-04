@@ -50,7 +50,7 @@
     0
    ],
    "y": 0.36,
-   "clip": "sit_idle_2",
+   "clip": "sit_idle_3",
    "drink": "beer",
    "_": "PLACEHOLDER: no name, no dialogue"
   },
@@ -66,7 +66,7 @@
     0
    ],
    "y": 0.36,
-   "clip": "sit_f",
+   "clip": "sit_idle_2",
    "drink": "margarita",
    "_": "PLACEHOLDER: no name, no dialogue"
   }

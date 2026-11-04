@@ -56,7 +56,7 @@ Ain't that the truth? Another chance for our team to let us down. AGAIN. Ha ha h
 	if cu_coupon_given
 		PLACEHOLDER (she already gave you the coupon; Steven to write what she says the second time)
 		=> END
-	Hey, well, you're in Cuco's, huh? Well, you're actually in luck. I have a coupon for a free top-shelf margarita at Cuco's. They normally charge $10 for it. It's free.
 	set cu_coupon_given = true
 	give cu_coupon
+	Hey, well, you're in Cuco's, huh? Well, you're actually in luck. I have a coupon for a free top-shelf margarita at Cuco's. They normally charge $10 for it. It's free.
 	=> END
