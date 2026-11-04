@@ -31,7 +31,9 @@ static func build(b, g, e, a, bb, n, t, Ln, sd):
 	var c = CFG[sd.name]
 	var rng = RandomNumberGenerator.new()
 	rng.seed = c.seed
-	var W = c.W
+	# ws/interiors (Nov 4): never wider than the front; Wicks' front was narrowed to 5 m (27f5c378)
+	# but CFG kept 6 m, and its right wall shelves stood 1 m inside Great American Cookie Co.
+	var W = minf(c.W, a.distance_to(bb))
 	var D = c.D
 	match sd.name:
 		"COACH HOUSE GIFTS": coach_house(b, a, t, n, W, D, rng)

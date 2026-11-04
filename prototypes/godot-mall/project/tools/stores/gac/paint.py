@@ -94,21 +94,28 @@ def rgb():
 
 # ------------------------------------------------------------------ ws/interiors (Nov 4): the work-area kit
 def tile_sq():
-    """The video's wall (refs/new/cookie_co gacc_t000_011-015, 134, 146): white 15 cm glazed tile, grey
-    grout, scattered single squares of maroon, black, yellow and green. One tile = 1.2 x 1.2 m."""
-    N = 8
+    """The video's wall (refs/new/cookie_co gacc_t000_005, 011-015, 134, 146): white 15 cm glazed tile,
+    grey grout, scattered single squares, mostly black, then maroon, a few green and yellow, never
+    touching. One tile = 2.4 x 2.4 m (16 x 16 tiles), so the scatter does not read as a repeat."""
+    N = 16
     T = 64
     W = N * T
     im = Image.new("RGB", (W, W), (206, 206, 202))
     d = ImageDraw.Draw(im)
     rr = random.Random(415)
-    cols = [(122, 24, 44), (122, 24, 44), (30, 28, 34), (236, 196, 40), (32, 86, 58)]
-    picks = set()
-    while len(picks) < 4:
-        picks.add((rr.randrange(N), rr.randrange(N)))
+    cols = [(30, 28, 34)] * 4 + [(122, 24, 44)] * 3 + [(32, 86, 58), (236, 196, 40)]
+    picks = {}
+    tries = 0
+    while len(picks) < 14 and tries < 5000:
+        tries += 1
+        c = (rr.randrange(N), rr.randrange(N))
+        # no two squares touch, edge or corner (wrapping, as the tile repeats)
+        if any(((c[0] + dx) % N, (c[1] + dy) % N) in picks for dx in (-1, 0, 1) for dy in (-1, 0, 1)):
+            continue
+        picks[c] = cols[len(picks) % len(cols)]
     for j in range(N):
         for i in range(N):
-            c = rr.choice(cols) if (i, j) in picks else (246, 246, 242)
+            c = picks.get((i, j), (246, 246, 242))
             c = tuple(max(0, min(255, v + rr.randint(-4, 4))) for v in c)
             d.rectangle([i * T + 2, j * T + 2, i * T + T - 2, j * T + T - 2], fill=c)
             d.line([(i * T + 6, j * T + 8), (i * T + T - 10, j * T + 6)], fill=tuple(min(255, v + 8) for v in c), width=2)

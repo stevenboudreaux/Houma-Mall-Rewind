@@ -22,17 +22,17 @@ static func box(b, g, m, o, r, f, x, y, z, w, h, d, c = "", dyn = false):
 	K.lbox(b, g, m, o, r, f, x, y, z, w, h, d, [], dyn)
 	b.cur_color = Color.WHITE
 
-## The white tile with scattered coloured squares (gac/tile_sq.png: 1.2 x 1.2 m, 8 x 8 tiles), on a
+## The white tile with scattered coloured squares (gac/tile_sq.png: 2.4 x 2.4 m, 16 x 16 tiles), on a
 ## wall from x0 to x1 (local), y0..y1, facing -f (towards the customer side of the frame).
 static func tile_wall(b, g, o, r, f, x0, x1, y0, y1, z = 0.0):
 	var nrm = -f
 	var p = [L(o, r, f, x0, y0, z), L(o, r, f, x1, y0, z), L(o, r, f, x1, y1, z), L(o, r, f, x0, y1, z)]
 	var flip = r.dot(nrm.cross(UP)) > 0.0
-	var ua = x0 / 1.2
-	var ub = x1 / 1.2
+	var ua = x0 / 2.4
+	var ub = x1 / 2.4
 	if flip:
 		ua = -ua; ub = -ub
-	b.quad(g, "gac_tile_sq", p, nrm, [Vector2(ua, -y0 / 1.2), Vector2(ub, -y0 / 1.2), Vector2(ub, -y1 / 1.2), Vector2(ua, -y1 / 1.2)])
+	b.quad(g, "gac_tile_sq", p, nrm, [Vector2(ua, -y0 / 2.4), Vector2(ub, -y0 / 2.4), Vector2(ub, -y1 / 2.4), Vector2(ua, -y1 / 2.4)])
 
 ## The row of lit menu pictures on a white valance with downlights (gacc 011-015, 146): `n` panels
 ## 1.15 x 0.62 m from x0, bottom at y, standing `z` out from the wall (they face -f).
@@ -222,10 +222,10 @@ static func build_2026(b, G, GS, a0, tt, nn, LN, flip):
 static func fill_mat(m, key, b):
 	match key:
 		"tile_sq":
-			# world triplanar, so every wall it is on lines up (1.2 m repeat)
+			# world triplanar, so every wall it is on lines up (2.4 m repeat)
 			m.albedo_texture = b.tex("gac/tile_sq.png"); m.roughness = 0.35
 			m.uv1_triplanar = true; m.uv1_world_triplanar = true
-			m.uv1_scale = Vector3.ONE / 1.2
+			m.uv1_scale = Vector3.ONE / 2.4
 		"pics":
 			m.albedo_texture = b.tex("gac/pics.png"); m.roughness = 0.4
 			K.emit_tex(m, 0.7)

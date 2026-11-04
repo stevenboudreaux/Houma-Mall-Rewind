@@ -71,8 +71,19 @@ it is not changed, and it is still the same in both years.
 (not in the Southland frames), every picture, word and cookie. No drink brands (the video shows them:
 not copied).
 
-**Evidence (unbaked):** `production/qa/evidence/interiors-gac-1995-*.jpg`, `interiors-gac-2026-*.jpg`.
-**Rebake:** wing 2, both years (`wing2`, `wing2_2026`).
+**Tile (checked against the video, Nov 4):** the scattered squares are single, never touching, mostly
+black, then maroon, a few green and yellow (gacc 005, 146), 14 per 16 x 16 tiles on a 2.4 m repeat so the
+scatter does not read as a pattern (`gac/paint.py tile_sq`; first pass had 4 per 8 x 8 on 1.2 m and read
+as repeating maroon pairs).
+
+**Neighbour fix (shared file, one line):** Wicks 'N' Sticks (s44) was still built 6 m wide
+(`tools/stores/small/store.gd` CFG) after its front was narrowed to 5 m (27f5c378), so its right wall's
+shelves stood 1 m inside this shop (seen from the case and the kitchen). `small/store.gd build()` now
+clamps the width to the front's length. Wicks checked: `interiors-gac-1995-wicks-neighbour-unbaked.jpg`.
+
+**Evidence (unbaked):** `production/qa/evidence/interiors-gac-1995-{doorway,case,menuwall,kitchen,prep}-unbaked.jpg`,
+`interiors-gac-2026-{doorway,workarea,backcounter}-unbaked.jpg`.
+**Rebake:** wing 2, both years (`wing2`, `wing2_2026`); the 1995 one also carries the Wicks fix.
 
 **Shoppable (a proposal for ws/items; nothing added here):** a counter shop (`design/godot-shops.md`) in both
 years, the attendant behind the case: a chocolate-chip cookie (a new Blender item; `bl_gac_sugarcookie`
