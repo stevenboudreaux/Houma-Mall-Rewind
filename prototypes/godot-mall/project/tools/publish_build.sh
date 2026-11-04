@@ -61,7 +61,12 @@ done
 # Two sites (Nov 3 2026, design/godot-build-hosting.md "Two sites"): a Pages site may hold 1 GB. The main
 # site carries the phone packs and the rest of play/, the second site the computer packs; each must fit
 # (0.95 GB here, for main's own files and headroom).
-DESK=$(cat "$SRC"/w*.desktop.pck | wc -c); MOB=$(cat "$SRC"/w*.mobile.pck | wc -c)
+# CHARS (Nov 3 2026, "Shared packs"): the shared packs (items, chars, chars_<map>) count too, and every pack
+# must stay under GitHub's 100 MiB file limit; the shared packs listed in index.html must be in the export.
+for f in "$SRC"/*.pck; do [ "$(stat -c %s "$f")" -lt 104857600 ] || { echo "$(basename "$f") is over GitHub's 100 MiB file limit: it cannot be pushed"; exit 1; }; done
+SHARED=$(python3 -c "import re,sys,json; s=open(sys.argv[1]).read(); m=re.search(r'const SHARED_PACKS = (.*); // SHARED_PACKS', s); d=json.loads(m.group(1)) if m else {}; print(' '.join(n for n,e in d.items() if e.get('desktop')))" "$SRC/index.html")
+for n in $SHARED; do for k in desktop mobile; do [ -s "$SRC/$n.$k.pck" ] || { echo "index.html lists the shared pack $n, the export has no $n.$k.pck"; exit 1; }; done; done
+DESK=$(cat "$SRC"/*.desktop.pck | wc -c); MOB=$(cat "$SRC"/*.mobile.pck | wc -c)
 REST=$(find "$SRC" -maxdepth 1 -type f ! -name '*.pck' -exec cat {} + | wc -c)
 echo "sites: main $(( (MOB + REST) / 1000000 )) MB (phone packs + page), desktop $(( DESK / 1000000 )) MB (computer packs); each must stay under 950"
 [ $((MOB + REST)) -lt 950000000 ] || { echo "the main site would be over GitHub Pages' 1 GB: make the phone packs smaller first"; exit 1; }
@@ -89,6 +94,8 @@ if [ -s "$SRC/w3.desktop.pck" ]; then
 fi
 cp wing1_night.* wing1_day.* wing2_night.* wing2_day.* "$W/lightmaps/"
 cp wing1_2026_day.* wing2_2026_day.* "$W/lightmaps/" 2>/dev/null || true
+# CHARS: the shared packs (the desktop site's workflow copies every *.desktop.pck, main's drops them)
+for n in $SHARED; do cp "$SRC"/$n.*.pck "$W/play/"; done
 # the room wings (S): their packs, and wings 4 / 5's lightmaps once baked
 for w in $ROOMS; do
   cp "$SRC"/w$w.*.pck "$W/play/"; cp "$SRC"/w${w}y26.*.pck "$W/play/" 2>/dev/null || true
@@ -98,14 +105,39 @@ cp tex/standin/*.png tex/standin/*.stamp "$W/standin/"
 cd "$W"
 git init -q -b godot-build
 git add -A
-git -c user.name="Steven Boudreaux" -c user.email="steven_boudreaux@outlook.com" commit -q -m "$MSG"
-git push -q --force "$(git -C "$REPO" remote get-url origin)" godot-build 2>&1 | grep -iv "moved\|new location\|github.com/stevenboudreaux\|^remote: *$\|GH001\|gh.io\|lfs\|recommended maximum" || true
+export GIT_AUTHOR_NAME="Steven Boudreaux" GIT_AUTHOR_EMAIL="steven_boudreaux@outlook.com" GIT_COMMITTER_NAME="Steven Boudreaux" GIT_COMMITTER_EMAIL="steven_boudreaux@outlook.com"
+git commit -q -m "$MSG"
 B=$(git rev-parse HEAD)
+# Demo 49b (Nov 3 2026): a 1 GB push fails with a 502, and the old `| grep ... || true` hid that and
+# printed "published" anyway. Now the build goes up in pieces of about PIECE_MB (120) through one
+# temporary branch, tmp/publish (each push carries only the new files), then godot-build is forced, which
+# sends only the commit, and the remote ref is read back before anything is called published.
+# GitHub redirects the old mixed-case URL ("moved"): the lowercase one is used.
+ORIGIN=$(git -C "$REPO" remote get-url origin | tr 'A-Z' 'a-z' | sed 's/\.git$//')
+PIECE=$(( ${PIECE_MB:-120} * 1000000 ))
+push_ref() { # <commit> <branch>: force-push, then confirm the remote has it
+  local out; out=$(git push -q --force "$ORIGIN" "$1:refs/heads/$2" 2>&1) || { echo "$out" | grep -iv "moved\|new location\|^remote: *$\|GH001\|gh.io\|lfs\|recommended maximum"; echo "push of $2 failed"; return 1; }
+  local r; r=$(git ls-remote "$ORIGIN" "refs/heads/$2" | cut -f1)
+  [ "$r" = "$1" ] || { echo "after the push, $2 on GitHub is ${r:-missing}, not $1"; return 1; }
+}
+export GIT_INDEX_FILE="$W/.git/piece-index"
+rm -f "$GIT_INDEX_FILE"; SUM=0; N=0
+while IFS= read -r -d '' f; do
+  git update-index --add "$f"
+  SUM=$(( SUM + $(stat -c %s "$f") ))
+  if [ $SUM -ge $PIECE ]; then
+    N=$((N + 1)); C=$(git commit-tree "$(git write-tree)" -m "piece $N of $MSG")
+    echo "piece $N: $(( SUM / 1000000 )) MB"; push_ref "$C" tmp/publish || exit 1; SUM=0
+  fi
+done < <(find . -path ./.git -prune -o -type f -print0 | sort -z)
+unset GIT_INDEX_FILE
+push_ref "$B" godot-build || exit 1
+git push -q "$ORIGIN" --delete tmp/publish 2>/dev/null || echo "note: could not delete tmp/publish on GitHub (Steven can)"
 echo "published $(git rev-parse --short HEAD)"
 cd / && rm -rf "$W"
 # the second site: one commit (its workflow and the build's name) replaces the desktop repo's main; the push
 # starts its Pages workflow, which copies the computer packs from godot-build ("Two sites")
-D=${DESKTOP_REPO:-https://github.com/stevenboudreaux/Houma-Mall-Rewind-desktop}
+D=$(echo "${DESKTOP_REPO:-https://github.com/stevenboudreaux/houma-mall-rewind-desktop}" | tr 'A-Z' 'a-z')
 W=$(mktemp -d); mkdir -p "$W/.github/workflows"
 cp "$REPO/prototypes/godot-mall/project/tools/desktop_site/pages.yml" "$W/.github/workflows/pages.yml"
 cp "$REPO/prototypes/godot-mall/project/tools/desktop_site/README.md" "$W/README.md"
@@ -113,7 +145,7 @@ echo "$B" > "$W/build.txt"
 cd "$W"
 git init -q -b main
 git add -A
-git -c user.name="Steven Boudreaux" -c user.email="steven_boudreaux@outlook.com" commit -q -m "computer packs of $MSG"
-git push -q --force "$D" main 2>&1 | grep -iv "moved\|new location\|^remote: *$" || true
+git commit -q -m "computer packs of $MSG"
+ORIGIN=$D; push_ref "$(git rev-parse HEAD)" main || { echo "the desktop repo was NOT updated: godot-build is $B, push build.txt there by hand"; exit 1; }
 echo "desktop site: asked to deploy the computer packs of $(echo $B | cut -c1-7)"
 cd / && rm -rf "$W"

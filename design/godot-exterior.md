@@ -210,6 +210,15 @@ To wire one up, E moves it into `doors` with its inside spot, wing and facings (
 - The bake is the same kind of job as before (one day bake per year); it still needs the 12 GB swap
   in the cloud, so bake on the Mac.
 
+## Workstream EXT (Nov 3, 2026): the outside in walking order
+`design/exterior-sequence.md`: the Oct 23 videos sliced and joined into one loop from the cinema exit,
+the compass (the game's north is real south; the footage is afternoon sun from the game's N/NE), the
+real footprint from the footage and the site plan, and the mismatch list with proposed numbers
+(Sears 115 × 50 flush with the facade and ~10 m from the exit with the dock on its west face; the
+cinema box 45 m long and flush; JCPenney 60 × 120 to z −14; Dillard's 87 × 58 with the gallery and
+entrance on the south face; Big Lots / Kirschman's across Armour Dr; the lot larger on three sides).
+Analysis only; nothing here changed yet. Evidence `production/qa/evidence/wsEXT-*.jpg`.
+
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).

@@ -1,0 +1,24 @@
+# tests/unit/econ/pages_test.py run against main (e5edb1a) pages, before ECON: the bug reproduced
+FAIL WHIRLWIND: a new player has $100.00
+FAIL WHIRLWIND: START takes $1.00 and play 1 runs
+ok   WHIRLWIND: the light stops and wins 4
+FAIL WHIRLWIND: the 4 tickets are in the 1995 bank before any is fed out (0)
+FAIL WHIRLWIND: a reload during the payout keeps them, once (0)
+FAIL WHIRLWIND: the 3 plays left are still on the machine; no second dollar taken
+FAIL WHIRLWIND: with 10 cents START is refused, nothing taken
+FAIL WHIRLWIND: the card says 'You need $1.00 ... You have $0.10' and START is greyed
+FAIL WHIRLWIND ?year=2026 pays 2026 (4), not 1995
+FAIL SKEE-BALL: a game takes 25 cents
+FAIL SKEE-BALL: after 4 balls (70 points) the bank holds what they earned (0 = 2)
+FAIL SKEE-BALL: leaving mid-game keeps them (2), nothing more taken
+FAIL SKEE-BALL: a full game of 9 balls, 160 points, pays exactly 5 (0)
+FAIL SKEE-BALL: the ticket strip at the end adds nothing more
+FAIL SKEE-BALL: with 10 cents no game, and the card says it costs $0.25
+FAIL SKEE-BALL ?year=2026 pays 2026 (4), not 1995; the last quarter spent
+FAIL CLAW: the old save is folded in once: 100 + 35 tickets, $100.00 + 4 quarters ($101.00)
+FAIL CLAW: a play takes 25 cents
+FAIL CLAW: the capsule is won and its 200 tickets are in the 1995 bank (200, 0)
+FAIL CLAW: a reload counts it once; the chip shows the year's 335
+FAIL CLAW: with 10 cents no play, and the card says why
+FAIL 0 page errors (5) ['404 http://localhost:8767/lib/mallbank.js', '404 http://localhost:8767/lib/mallbank.js', '404 http://localhost:8767/lib/mallbank.js']
+FAILED: 21

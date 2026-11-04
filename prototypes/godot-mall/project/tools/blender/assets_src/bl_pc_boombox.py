@@ -1,5 +1,5 @@
 """A mid-1990s portable stereo ("boom box"), a Pocket Change ticket prize (1995 map). Hand item, stock only:
-redeemed at the counter for 500 tickets (Steven, Nov 2 2026; design/godot-prize-counter.md), never placed.
+redeemed at the counter for 5,000 tickets (Steven, Nov 3 2026, the wall tags' number; was 500 on Nov 2; design/godot-prize-counter.md), never placed.
 
 Reference: none in the reference pack (refs/INDEX.md lists no boom box) and Wikimedia is not reachable from
 the cloud sessions, so the shape is the period type from Steven's brief (Nov 2): twin cassette decks, a CD lid
@@ -35,7 +35,7 @@ META = {
     "tex": 2048,
     "ao": 0.4,
     "refs": [],
-    "item": {"name": "Boom box", "year": 1995, "store": "POCKET CHANGE", "prize": "boombox", "tickets": 500,
+    "item": {"name": "Boom box", "year": 1995, "store": "POCKET CHANGE", "prize": "boombox", "tickets": 5000,
              "scene": "res://models/bl_pc_boombox/bl_pc_boombox_item.tscn"},
 }
 

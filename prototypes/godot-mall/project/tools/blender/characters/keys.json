@@ -1,0 +1,766 @@
+{
+ "_": "Body shape sliders for the B1 character bodies (design/godot-characters.md). Each slider is made of one or two blend shapes: '<name>+' (slider > 0) and '<name>-' (slider < 0); a 0..1 slider has only '<name>+'. A side is either a MakeHuman macro change ('macro': parameters set relative to the body's defaults; the blend shape is the exact difference) or plain targets ('targets': [[path, weight]]). 'scale' multiplies the side. 'sex' limits a slider to one body. Correctives ('correct') are exact MakeHuman interaction terms between macro sliders, weighted at runtime by the product of the named sides (e.g. weight+ x muscle+). Skeleton-only sliders (posture) have 'bones' instead of shapes: rest rotations (degrees, about the bone's own X) times the slider.",
+ "bodies": {
+  "female": {
+   "macro": {
+    "gender": 0.0
+   },
+   "label": "Female base"
+  },
+  "male": {
+   "macro": {
+    "gender": 1.0
+   },
+   "label": "Male base"
+  }
+ },
+ "sliders": [
+  {
+   "name": "height",
+   "group": "body",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "macro": {
+     "height": 1.0
+    },
+    "scale": 0.3463
+   },
+   "-": {
+    "macro": {
+     "height": 0.0
+    },
+    "scale": 0.545
+   },
+   "note": "MakeHuman's max-height target is +72 cm; scaled so +1 = +25 cm, -1 = -20 cm (1.39-1.84 m female, 1.53-1.98 m male)"
+  },
+  {
+   "name": "weight",
+   "group": "body",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "macro": {
+     "weight": 1.0
+    }
+   },
+   "-": {
+    "macro": {
+     "weight": 0.0
+    }
+   }
+  },
+  {
+   "name": "muscle",
+   "group": "body",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "macro": {
+     "muscle": 1.0
+    }
+   },
+   "-": {
+    "macro": {
+     "muscle": 0.0
+    }
+   }
+  },
+  {
+   "name": "age",
+   "group": "body",
+   "range": [
+    0,
+    1
+   ],
+   "years": [
+    25,
+    90
+   ],
+   "+": {
+    "macro": {
+     "age": 1.0
+    }
+   }
+  },
+  {
+   "name": "youth",
+   "group": "body",
+   "range": [
+    0,
+    1
+   ],
+   "years": [
+    25,
+    11
+   ],
+   "+": {
+    "macro": {
+     "age": 0.1875
+    }
+   }
+  },
+  {
+   "name": "youth_small",
+   "group": "body",
+   "range": [
+    0,
+    1
+   ],
+   "note": "with youth = 1 only: 11 y -> 1 y (a 7-year-old is youth 1, youth_small 0.4)",
+   "+": {
+    "macro": {
+     "age": 0.0
+    }
+   },
+   "from_macro": {
+    "age": 0.1875
+   }
+  },
+  {
+   "name": "proportions",
+   "group": "body",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "macro": {
+     "proportions": 1.0
+    }
+   },
+   "-": {
+    "macro": {
+     "proportions": 0.0
+    }
+   }
+  },
+  {
+   "name": "shoulders",
+   "group": "torso",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "torso/measure-shoulder-dist-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "torso/measure-shoulder-dist-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "chest",
+   "group": "torso",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "torso/measure-bust-circ-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "torso/measure-bust-circ-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "bust",
+   "group": "torso",
+   "sex": "female",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "macro": {
+     "cupsize": 1.0
+    }
+   },
+   "-": {
+    "macro": {
+     "cupsize": 0.0
+    }
+   }
+  },
+  {
+   "name": "bust_lift",
+   "group": "torso",
+   "sex": "female",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "macro": {
+     "firmness": 1.0
+    }
+   },
+   "-": {
+    "macro": {
+     "firmness": 0.0
+    }
+   }
+  },
+  {
+   "name": "waist",
+   "group": "torso",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "torso/measure-waist-circ-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "torso/measure-waist-circ-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "belly",
+   "group": "torso",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "stomach/stomach-pregnant-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "stomach/stomach-pregnant-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "hips",
+   "group": "legs",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "torso/measure-hips-circ-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "torso/measure-hips-circ-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "butt",
+   "group": "legs",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "buttocks/buttocks-volume-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "buttocks/buttocks-volume-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "thigh",
+   "group": "legs",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "legs/measure-thigh-circ-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "legs/measure-thigh-circ-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "calf",
+   "group": "legs",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "legs/measure-calf-circ-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "legs/measure-calf-circ-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "arms",
+   "group": "arms",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "arms/measure-upperarm-circ-incr",
+      1
+     ],
+     [
+      "arms/l-lowerarm-fat-incr",
+      1
+     ],
+     [
+      "arms/r-lowerarm-fat-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "arms/measure-upperarm-circ-decr",
+      1
+     ],
+     [
+      "arms/l-lowerarm-fat-decr",
+      1
+     ],
+     [
+      "arms/r-lowerarm-fat-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "neck_length",
+   "group": "head",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "neck/measure-neck-height-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "neck/measure-neck-height-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "head_size",
+   "group": "head",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "head/head-scale-vert-incr",
+      1
+     ],
+     [
+      "head/head-scale-horiz-incr",
+      1
+     ],
+     [
+      "head/head-scale-depth-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "head/head-scale-vert-decr",
+      1
+     ],
+     [
+      "head/head-scale-horiz-decr",
+      1
+     ],
+     [
+      "head/head-scale-depth-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "jaw",
+   "group": "face",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "chin/chin-bones-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "chin/chin-bones-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "chin",
+   "group": "face",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "chin/chin-prominent-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "chin/chin-prominent-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "cheeks",
+   "group": "face",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "cheek/l-cheek-volume-incr",
+      1
+     ],
+     [
+      "cheek/r-cheek-volume-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "cheek/l-cheek-volume-decr",
+      1
+     ],
+     [
+      "cheek/r-cheek-volume-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "nose",
+   "group": "face",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "nose/nose-scale-vert-incr",
+      1
+     ],
+     [
+      "nose/nose-scale-horiz-incr",
+      1
+     ],
+     [
+      "nose/nose-scale-depth-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "nose/nose-scale-vert-decr",
+      1
+     ],
+     [
+      "nose/nose-scale-horiz-decr",
+      1
+     ],
+     [
+      "nose/nose-scale-depth-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "eye_size",
+   "group": "face",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "eyes/l-eye-scale-incr",
+      1
+     ],
+     [
+      "eyes/r-eye-scale-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "eyes/l-eye-scale-decr",
+      1
+     ],
+     [
+      "eyes/r-eye-scale-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "eye_spacing",
+   "group": "face",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "eyes/l-eye-trans-out",
+      1
+     ],
+     [
+      "eyes/r-eye-trans-out",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "eyes/l-eye-trans-in",
+      1
+     ],
+     [
+      "eyes/r-eye-trans-in",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "lips",
+   "group": "face",
+   "range": [
+    -1,
+    1
+   ],
+   "+": {
+    "targets": [
+     [
+      "mouth/mouth-upperlip-volume-incr",
+      1
+     ],
+     [
+      "mouth/mouth-lowerlip-volume-incr",
+      1
+     ]
+    ]
+   },
+   "-": {
+    "targets": [
+     [
+      "mouth/mouth-upperlip-volume-decr",
+      1
+     ],
+     [
+      "mouth/mouth-lowerlip-volume-decr",
+      1
+     ]
+    ]
+   }
+  },
+  {
+   "name": "posture",
+   "group": "body",
+   "range": [
+    0,
+    1
+   ],
+   "note": "stoop: skeleton only (rest rotations), so every clip plays stooped",
+   "bones": {
+    "mixamorig_Spine1": 7,
+    "mixamorig_Spine2": 12,
+    "mixamorig_Neck": 14,
+    "mixamorig_Head": -22,
+    "mixamorig_LeftShoulder": 0,
+    "mixamorig_RightShoulder": 0
+   }
+  }
+ ],
+ "correct": [
+  [
+   "weight+",
+   "muscle+"
+  ],
+  [
+   "weight+",
+   "muscle-"
+  ],
+  [
+   "weight-",
+   "muscle+"
+  ],
+  [
+   "weight-",
+   "muscle-"
+  ],
+  [
+   "age+",
+   "weight+"
+  ],
+  [
+   "age+",
+   "weight-"
+  ],
+  [
+   "age+",
+   "muscle+"
+  ],
+  [
+   "age+",
+   "muscle-"
+  ],
+  [
+   "age+",
+   "weight+",
+   "muscle+"
+  ],
+  [
+   "age+",
+   "weight+",
+   "muscle-"
+  ],
+  [
+   "age+",
+   "weight-",
+   "muscle+"
+  ],
+  [
+   "age+",
+   "weight-",
+   "muscle-"
+  ]
+ ]
+}

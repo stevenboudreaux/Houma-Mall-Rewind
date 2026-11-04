@@ -303,14 +303,16 @@ func _near_crane(cam: Camera3D, fwd: Vector3) -> String:
 	return best
 
 func _play(id: String) -> void:
+	# ECON (design/godot-economy.md): the ticket games are told the year, so they pay into its tickets
+	var yq := "year=%d&" % int(get_parent().get_meta("year", 1995) if get_parent() else 1995)
 	if id.begins_with("pc.crane."):
-		JavaScriptBridge.eval("window.mallRoms && window.mallRoms.open('claw.html?machine=" + id.get_slice(".", 2) + "&name=' + encodeURIComponent(" + JSON.stringify(text_of(id)) + "))")
+		JavaScriptBridge.eval("window.mallRoms && window.mallRoms.open('claw.html?" + yq + "machine=" + id.get_slice(".", 2) + "&name=' + encodeURIComponent(" + JSON.stringify(text_of(id)) + "))")
 		return
 	if id.begins_with("pc.skee."):
-		JavaScriptBridge.eval("window.mallRoms && window.mallRoms.open('skeeball.html?lane=" + id.get_slice(".", 2) + "')")
+		JavaScriptBridge.eval("window.mallRoms && window.mallRoms.open('skeeball.html?" + yq + "lane=" + id.get_slice(".", 2) + "')")
 		return
 	if id.begins_with("pc.cyclone"):
-		JavaScriptBridge.eval("window.mallRoms && window.mallRoms.open('whirlwind.html?name=' + encodeURIComponent(" + JSON.stringify(text_of(id)) + "))")
+		JavaScriptBridge.eval("window.mallRoms && window.mallRoms.open('whirlwind.html?" + yq + "name=' + encodeURIComponent(" + JSON.stringify(text_of(id)) + "))")
 		return
 	JavaScriptBridge.eval("window.mallRoms && window.mallRoms.open('emu.html?id=' + encodeURIComponent(" + JSON.stringify(id) + "))")
 

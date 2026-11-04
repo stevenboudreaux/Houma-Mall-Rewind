@@ -78,6 +78,10 @@ and must stay current as facades change.
   - Each preset exports its scene and the files it depends on, plus include filters for what the
     scripts load by path.
   - The `wing2` custom feature selects `run/main_scene.wing2`.
+  - **Since CHARS (Nov 3 2026) no wing pack carries the Blender items (`models/bl_*`) or the character
+    models:** they ship once in the shared packs `items.*.pck` and `chars*.pck`, mounted at runtime
+    (`design/godot-build-hosting.md` "Shared packs"). A new item under `models/bl_<store>_<item>/` costs
+    the wing packs nothing; a wing scene may still place it (the items pack is mounted before the scene loads).
 - **Baking:** the Mac bake plugin (`addons/autobake`) takes several jobs in one launch:
   `echo "wing1:night wing1:day wing2:night wing2:day" > .autobake`. It writes `.autobake_done`.
   About 7 minutes per bake on the MacBook Air.

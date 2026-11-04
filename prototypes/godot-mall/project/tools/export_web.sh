@@ -54,6 +54,34 @@ for nm in w1 w2 w3 w1y26 w2y26 w3y26 w4 w5 w6 w4y26 w5y26 w6y26; do
 done
 sed -i "s|^const PACK_SIZES = {.*}; // PACK_SIZES|const PACK_SIZES = {$PS}; // PACK_SIZES|" "$OUT/index.html"
 grep -q "\"desktop\": $S1D" "$OUT/index.html" || { echo "could not write pack sizes into index.html"; exit 1; }
+# CHARS (Nov 3 2026, design/godot-build-hosting.md "Shared packs"): the packs every wing shares instead of
+# carrying its own copy (tools/shared_packs.py: "items", the Blender items; "chars" / "chars_<map>", the
+# characters), each <name>.desktop.pck / .mobile.pck, through the presets "Shared Desktop" / "Shared Mobile";
+# their sizes go into index.html's SHARED_PACKS line. SHARED=0 skips them (a quick wing-only export keeps
+# the shared packs already in <outdir>).
+if [ "${SHARED:-1}" = "1" ]; then
+  cp export_presets.cfg "$T/export_presets.keep"
+  for n in $(python3 tools/shared_packs.py --names); do
+    python3 tools/shared_packs.py --write=$n > /dev/null
+    for k in desktop mobile; do
+      K=$(echo $k | sed 's/./\U&/')
+      timeout 600 godot --headless --path . --export-pack "Shared $K" "$OUT/$n.$k.pck" > "$T/shared-$n-$k.log" 2>&1 || true
+      [ -s "$OUT/$n.$k.pck" ] || { cp "$T/export_presets.keep" export_presets.cfg; echo "shared pack export failed ($n $k), see $T/shared-$n-$k.log"; exit 1; }
+    done
+    echo "shared $n: desktop $(stat -c %s "$OUT/$n.desktop.pck") mobile $(stat -c %s "$OUT/$n.mobile.pck")"
+  done
+  cp "$T/export_presets.keep" export_presets.cfg
+fi
+SP=$(python3 tools/shared_packs.py --shell="$OUT")
+python3 - "$OUT/index.html" "$SP" <<'PY'
+import sys
+p, line = sys.argv[1], sys.argv[2]
+s = open(p).read()
+i = s.index("const SHARED_PACKS = "); j = s.index("// SHARED_PACKS", i) + len("// SHARED_PACKS")
+open(p, "w").write(s[:i] + line + s[j:])
+PY
+# GitHub refuses a file over 100 MiB (design/godot-build-hosting.md): warn from 95 MB, tools/publish_build.sh refuses
+for f in "$OUT"/*.pck; do [ "$(stat -c %s "$f")" -lt 95000000 ] || echo "WARNING: $(basename "$f") is $(stat -c %s "$f") bytes, near GitHub's 100 MiB file limit"; done
 rm -rf "$T"
 echo "wing1 desktop $S1D mobile $S1M  wing2 desktop $S2D mobile $S2M  outside $S3D/$S3M  2026: wing1 $Y1D/$Y1M wing2 $Y2D/$Y2M outside $Y3D/$Y3M"
 echo "room wings (desktop/mobile): sears $(sz w4 desktop)/$(sz w4 mobile) dillards $(sz w5 desktop)/$(sz w5 mobile) cinema $(sz w6 desktop)/$(sz w6 mobile)  2026: $(sz w4y26 desktop)/$(sz w4y26 mobile) $(sz w5y26 desktop)/$(sz w5y26 mobile) $(sz w6y26 desktop)/$(sz w6y26 mobile)"

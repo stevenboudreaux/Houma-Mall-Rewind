@@ -21,6 +21,7 @@
   'use strict';
 
   var CONFIG = {
+    priceCents: 25,        // ECON (Nov 3): 1 token a play = 25 cents from the wallet (the cabinet: 1 TOKEN PER PLAY; $1 = 4 tokens)
     playMs: 30000,         // the play clock: at zero the claw drops where it is (standard)
     speed: 0.14,           // gantry m/s (guess; a 1990s crane crawls)
     dropSpeed: 0.28,       // claw descent m/s

@@ -19,7 +19,8 @@ var jump_locked := false   # inside the Stockrooms on a visitor's browser: no Ju
 var mall = null
 var interact: Node = null
 ## V (design/godot-avatar.md): the avatar and the first / third person switch (scripts/avatar.gd);
-## move_scale slows walking in third person to a walking pace (1.0 in first person, as before).
+## move_scale slows walking in third person to a walking pace (1.0 in first person, as before);
+## WALK (Nov 3 2026) raised that pace to 3.0 m/s (run 6.6) and sub-steps every move (MOVE_SUB).
 var avatar: Node = null
 var move_scale := 1.0
 ## M (design/godot-menu.md): the full-screen menu (scripts/menu/menu.gd: AVATAR, CONTROLS, INVENTORY,
@@ -33,6 +34,7 @@ var menu: Node = null
 const EYE := 1.62
 const SPEED := 4.0
 const RUN := 2.2      # holding X (or Shift) runs: Steven, Oct 6, "add back the ability to run by hitting x"
+const MOVE_SUB := 0.08   # WALK: the longest step tested against the walls and glass at once, m (see _process)
 const RADIUS := 0.3
 var yaw := PI * 0.5   # looking west (-x) from the entrance
 var pitch := 0.06
@@ -208,6 +210,14 @@ func _ready() -> void:
 	var story = load("res://scripts/dialogue/story.gd").new()
 	story.name = "Story"; story.player = self
 	add_child(story)
+	# B2: the character pack (web: scripts/chars/char_pack.gd) and the owner's character editor on an
+	# NPC that wears a preset (K; design/godot-character-editor.md)
+	var char_pack = load("res://scripts/chars/char_pack.gd").new()
+	char_pack.name = "CharPack"; char_pack.player = self
+	add_child(char_pack)
+	var char_owner = load("res://scripts/chars/char_owner.gd").new()
+	char_owner.name = "CharOwner"; char_owner.player = self
+	add_child(char_owner)
 	# M: the menu, after Avatar (it hosts the creator and the inventory list)
 	menu = load("res://scripts/menu/menu.gd").new()
 	menu.name = "Menu"; menu.player = self
@@ -221,6 +231,8 @@ func _ready() -> void:
 	vr.name = "VR"
 	vr.set_script(load("res://scripts/vr.gd"))
 	add_child(vr)
+	# MENU2: a time-travel trip from a mall directory lands here (scripts/timetravel_trip.gd)
+	load("res://scripts/timetravel_trip.gd").arrive(self)
 
 ## The Runner, the shoppers, the shirt words, the Stockrooms and the prize counter: 1995 only (2026
 ## is the building as it is today).
@@ -613,8 +625,14 @@ func _process(dt: float) -> void:
 		var right := transform.basis.x
 		var run := RUN if (rmb_run or _mkey("mall_run", KEY_X) > 0.0 or (not InputMap.has_action("mall_run") and Input.is_physical_key_pressed(KEY_SHIFT))) else 1.0   # M: _mkey
 		var step := (right * iv.x - fwd * iv.y) * SPEED * run * dt * move_scale   # V: move_scale (third person)
-		_try_move(Vector3(step.x, 0, 0))
-		_try_move(Vector3(0, 0, step.z))
+		# WALK (Nov 3 2026): in sub-steps no longer than MOVE_SUB, so a long frame at speed (6.6 m/s in
+		# third person is 0.33 m at 20 fps, 8.8 m/s in first person more) can't jump a 0.10 m glass rect
+		# (the thinnest in wing 2) or a 0.2 m store front: the rect test has no margin. Same speed, same
+		# x-then-z sliding, per sub-step.
+		var n := maxi(1, int(ceil(Vector2(step.x, step.z).length() / MOVE_SUB)))
+		for i in n:
+			_try_move(Vector3(step.x / n, 0, 0))
+			_try_move(Vector3(0, 0, step.z / n))
 	_update_prompt()
 	_light_poll(dt)
 	fps_t += dt
@@ -795,7 +813,7 @@ func _update_prompt() -> void:
 func _wing_scene(w: int) -> String:
 	return ("res://wing%d_2026.tscn" if year == 2026 else "res://wing%d.tscn") % w
 
-## The 1995 / 2026 switch (top right, under Jump to; key Y): the same spot in the other year. The
+## The 1995 / 2026 switch (was top right, under Jump to; key Y; hidden since MENU2): the same spot in the other year. The
 ## building is the same, the stores change. On the web it reloads the page with ?year= (each year's
 ## wing is its own pair of game files, web/shell.html), keeping the place you stand and the view.
 func _build_year_ui() -> void:
@@ -806,19 +824,12 @@ func _build_year_ui() -> void:
 	year_btn.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	year_btn.offset_left = -200; year_btn.offset_right = -10
 	year_btn.offset_top = 168; year_btn.offset_bottom = 200
-	year_btn.pressed.connect(_year_pressed)   # M: opens the menu's YEAR tab
-	# Workstream F (Nov 1 2026): the outside has a 2026 build too (wing3_2026.tscn), so the button
-	# shows there as everywhere else (design/godot-exterior.md "The 2026 outside")
-	year_btn.visible = true
+	# MENU2 (Nov 3 2026, design/godot-menu.md): the year changes only at a mall directory's toggle
+	# (scripts/timetravel_trip.gd). The button is kept, never shown, as other HUD code lays out
+	# round it.
+	year_btn.visible = false
 	_cl.add_child(year_btn)
 
-## M: the year button and Y open the menu on its YEAR tab (scripts/menu/menu.gd), whose buttons
-## call _switch_year(); without the menu, the switch happens at once as before.
-func _year_pressed() -> void:
-	if menu and menu.has_method("open_tab"):
-		menu.open_tab("year")
-	else:
-		_switch_year()
 
 ## M: the time-travel transition (scripts/timetravel.tscn) before a year change; returns when it
 ## has finished (at once in VR, where a flat overlay isn't seen).
@@ -830,6 +841,8 @@ func _time_travel(to_year: int) -> void:
 	tt.play(year, to_year)
 	await tt.finished
 
+## MENU2: no player control reaches this any more (the directory's toggle travels instead); kept for
+## tools and tests.
 func _switch_year() -> void:
 	if leaving:
 		return
@@ -1016,9 +1029,6 @@ func _jump_input(e: InputEvent) -> bool:
 	var open := jump_panel.visible
 	if e is InputEventKey and e.pressed and not e.echo:
 		var k: int = e.physical_keycode
-		if k == KEY_Y and not open:
-			_year_pressed()   # M: the menu's YEAR tab
-			return true
 		if k == KEY_J:
 			_jump_show(not open)
 			return true

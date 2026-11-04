@@ -1,5 +1,8 @@
 ## Workstream M (design/godot-menu.md): the menu, the opening, the remap layer, HELD / PUT AWAY, the
 ## time-travel transition and 2026's shoppers, natively and unbaked (no lightmap).
+## MENU2 (Nov 3): tabs MAIN / INVENTORY / CONTROLS, Edit inside MAIN, no Y / YEAR, and the trip from
+## a mall directory's year toggle (scripts/timetravel_trip.gd) to its twin in 2026 (wing 2's kiosk
+## at the JCPenney court, or wing 1's on H2).
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 \
 ##     --script res://tools/qa/menu_test.gd -- --wing=2 --out=/tmp/m/w2
 ## Prints MENU TEST OK (n checks) or the failures; writes <out>-<name>.png.
@@ -18,6 +21,10 @@ var qi := 0
 var wait := 0.0
 var sizes := [Vector2i(1280, 720), Vector2i(390, 844), Vector2i(844, 390)]
 var only := ""      # --only=2026: just 2026's shoppers (loads wing<n>_2026 directly)
+var kiosk: Node3D = null
+var kiosk_pos := Vector3.ZERO
+var start_pos := Vector3.ZERO
+var start_yaw := 0.0
 
 func _initialize() -> void:
 	for a in OS.get_cmdline_user_args():
@@ -79,6 +86,26 @@ func _tap(p: Vector2) -> void:
 		t.index = 0; t.position = p; t.pressed = d
 		Input.parse_input_event(t)
 
+func _pad(b: JoyButton) -> void:
+	for d in [true, false]:
+		var e := InputEventJoypadButton.new()
+		e.button_index = b; e.pressed = d
+		Input.parse_input_event(e)
+
+func _trigger(a: JoyAxis) -> void:
+	for v in [1.0, 0.0]:
+		var e := InputEventJoypadMotion.new()
+		e.axis = a; e.axis_value = v
+		Input.parse_input_event(e)
+
+func _find(n: Node, cls: String) -> Node:
+	if n == null: return null
+	for c in n.get_children():
+		if c.is_class(cls): return c
+		var f := _find(c, cls)
+		if f: return f
+	return null
+
 func _do(c: Callable, w := 0.0) -> void:
 	q.append([c, w])
 
@@ -111,48 +138,89 @@ func _plan() -> void:
 	_do(func(): _size(Vector2i(1280, 720)), 0.6)
 	_do(func(): _key(KEY_ENTER); _key(KEY_ENTER, false), 0.6)
 	_do(func():
-		_check(menu.opening == null and menu.is_open and menu.tab == "avatar", "START opens the menu on AVATAR")
+		_check(menu.opening == null and menu.is_open and menu.tab == "main" and menu.editing, "START opens MAIN with the avatar editing")
 		_check(menu._typing, "the NAME field is focused")
 		_check(menu._creator != null and menu._creator.visible, "the creator is inside the tab"), 0.1)
 	_do(func():
 		for ch in "TESTER":
 			_key(OS.find_keycode_from_string(ch), true, ch.unicode_at(0)); _key(OS.find_keycode_from_string(ch), false)
 		, 0.3)
-	_do(func(): _shot("avatar-typing-1280x720"); _key(KEY_ENTER); _key(KEY_ENTER, false), 0.3)
+	_do(func(): _shot("main-edit-typing-1280x720"); _key(KEY_ENTER); _key(KEY_ENTER, false), 0.3)
 	_do(func():
 		_check(player.mall.player_name == "TESTER", "the name is mall.player_name (%s)" % player.mall.player_name)
 		_check(str(Engine.get_meta("mall_player_name", "")) == "TESTER", "the name is saved"), 0.1)
+	# ---- MAIN: the character, money, tickets, Edit inside MAIN
+	_do(func():
+		menu.close()
+		player.mall.tickets = 140; player.mall.save()
+		menu.open_tab("main"), 0.6)
+	_do(func():
+		_check(menu.TABS == ["main", "inventory", "controls"], "tabs: MAIN, INVENTORY, CONTROLS (%s)" % [menu.TABS])
+		_check(menu.is_open and menu.tab == "main" and not menu.editing, "MAIN shows the character (not editing)")
+		var por := _find(menu._root, "SubViewportContainer")
+		_check(por != null, "MAIN has the character's portrait")
+		var mn: Label = menu._root.find_child("MainName", true, false)
+		var mm: Label = menu._root.find_child("MainMoney", true, false)
+		var mt: Label = menu._root.find_child("MainTickets", true, false)
+		_check(mn != null and mn.text == "TESTER", "MAIN: the name (%s)" % (mn.text if mn else "-"))
+		var mo: Dictionary = menu.money()
+		_check(mm != null and mm.text == "$%.2f" % float(mo.value), "MAIN: the money, mall.money%s (%s)" % [" (stub: ECON not merged)" if mo.stub else "", mm.text if mm else "-"])
+		_check(mt != null and mt.text == "140", "MAIN: the tickets, mall.tickets (%s)" % (mt.text if mt else "-"))
+		_shot("main-1280x720")
+		menu._nav[0][0][1].call(), 0.6)      # Edit
+	_do(func():
+		_check(menu.tab == "main" and menu.editing and menu._creator != null and menu._creator.visible, "Edit opens the avatar editing inside MAIN")
+		_check(menu._name_box != null, "the NAME field is in MAIN's editing")
+		_shot("main-edit-1280x720")
+		menu._creator._done(), 0.6)
+	_do(func():
+		_check(menu.is_open and menu.tab == "main" and not menu.editing, "Done goes back to MAIN, the menu still open"); menu.close(), 0.2)
 	# ---- every tab at three sizes
 	for s in sizes:
 		var sz: Vector2i = s
-		for t in ["inventory", "avatar", "controls", "year"]:
+		for t in ["main", "edit", "inventory", "controls"]:
 			var tt: String = t
-			_do(func(): _size(sz); menu.open_tab(tt), 0.7)
+			var want := "main" if tt == "edit" else tt
+			_do(func(): _size(sz); menu.close(); menu.open_tab("avatar" if tt == "edit" else tt), 0.7)
 			_do(func():
-				_check(menu.is_open and menu.tab == tt, "tab %s open at %dx%d" % [tt, sz.x, sz.y])
+				_check(menu.is_open and menu.tab == want and menu.editing == (tt == "edit"), "tab %s open at %dx%d" % [tt, sz.x, sz.y])
 				_check(_on_screen(sz), "every %s control on screen at %dx%d" % [tt, sz.x, sz.y])
-				if tt == "avatar" and menu._creator:
+				if tt == "edit" and menu._creator:
 					var over := false
 					for h in menu._creator.hits:
 						var r: Rect2 = (h[0] as Control).get_global_rect()
 						if r.end.x > sz.x + 1 or r.end.y > sz.y + 1: over = true
 					_check(not over, "the creator fits the tab at %dx%d" % [sz.x, sz.y])
 				_shot("%s-%dx%d" % [tt, sz.x, sz.y]), 0.1)
-	_do(func(): _size(Vector2i(1280, 720)); menu.open_tab("avatar"), 0.5)
-	# ---- tab switching keys
+	_do(func(): _size(Vector2i(1280, 720)); menu.close(); menu.open_tab("main"), 0.5)
+	# ---- tab switching keys, buttons and triggers
 	_do(func(): _key(KEY_E); _key(KEY_E, false), 0.3)
-	_do(func(): _check(menu.tab == "controls", "E: next tab (AVATAR -> CONTROLS)"); _key(KEY_Q); _key(KEY_Q, false), 0.3)
-	_do(func(): _check(menu.tab == "avatar", "Q: previous tab"); _key(KEY_TAB); _key(KEY_TAB, false), 0.4)
+	_do(func(): _check(menu.tab == "inventory", "E: next tab (MAIN -> INVENTORY)"); _key(KEY_Q); _key(KEY_Q, false), 0.3)
+	_do(func(): _check(menu.tab == "main", "Q: previous tab"); _pad(JOY_BUTTON_RIGHT_SHOULDER), 0.3)
+	_do(func(): _check(menu.tab == "inventory", "RB: next tab"); _pad(JOY_BUTTON_LEFT_SHOULDER), 0.3)
+	_do(func(): _check(menu.tab == "main", "LB: previous tab"); _trigger(JOY_AXIS_TRIGGER_RIGHT), 0.3)
+	_do(func(): _check(menu.tab == "inventory", "RT: next tab"); _trigger(JOY_AXIS_TRIGGER_LEFT), 0.3)
+	_do(func(): _check(menu.tab == "main", "LT: previous tab"); _key(KEY_TAB); _key(KEY_TAB, false), 0.4)
 	_do(func(): _check(not menu.is_open and not player.frozen, "Tab closes the menu, the player free"); _key(KEY_TAB); _key(KEY_TAB, false), 0.4)
-	_do(func(): _check(menu.is_open and menu.tab == "inventory" and menu.TABS[0] == "inventory", "Tab opens on INVENTORY, the far-left tab"); menu.close(), 0.2)
-	_do(func(): _key(KEY_I); _key(KEY_I, false), 0.4)
+	_do(func(): _check(menu.is_open and menu.tab == "main" and menu.TABS[0] == "main", "Tab opens on MAIN, the far-left tab"); _key(KEY_ESCAPE); _key(KEY_ESCAPE, false), 0.4)
+	_do(func(): _check(not menu.is_open, "Esc closes the menu"); menu.open_tab("controls"), 0.4)
+	_do(func(): _pad(JOY_BUTTON_B), 0.4)
+	_do(func(): _check(not menu.is_open, "B closes the menu"); _key(KEY_I); _key(KEY_I, false), 0.4)
 	_do(func(): _check(menu.is_open and menu.tab == "inventory", "I opens the INVENTORY tab"); menu.close(), 0.2)
 	_do(func(): _key(KEY_C); _key(KEY_C, false), 0.4)
-	_do(func(): _check(menu.is_open and menu.tab == "avatar", "C opens the AVATAR tab"); menu.close(), 0.2)
+	_do(func(): _check(menu.is_open and menu.tab == "main" and menu.editing, "C opens MAIN's avatar editing"); menu.close(), 0.2)
 	_do(func(): _key(KEY_Y); _key(KEY_Y, false), 0.4)
-	_do(func(): _check(menu.is_open and menu.tab == "year", "Y opens the YEAR tab"); menu.close(), 0.2)
+	_do(func():
+		_check(not menu.is_open and player.year == 1995 and root.get_node_or_null("TimeTravelTrip") == null, "Y does nothing (no year switch on the player's keys)")
+		var has_year := false
+		for e in menu.controls.list:
+			if str(e.id) == "year": has_year = true
+		_check(not has_year, "CONTROLS lists no year action")
+		_check(not player.year_btn.visible, "no year button on the HUD"), 0.2)
 	# ---- remap: Action (E) to F, then F works as E and E does nothing
 	_do(func():
+		# away from the Dillard's court directory and the seam, so E (and F as E) reaches nothing
+		player.position = Vector3(-20, 0, 54); player.yaw = deg_to_rad(90); player._apply_rot()
 		menu.open_tab("controls")
 		menu._start_capture("interact", "key"), 0.3)
 	_do(func(): _shot("controls-capture-1280x720"); _key(KEY_F); _key(KEY_F, false), 0.3)
@@ -179,8 +247,11 @@ func _plan() -> void:
 	# ---- inventory: HELD / PUT AWAY
 	_do(func():
 		var m = player.mall
-		m.take("dice", true); m.add("pogs"); m.tickets = 140; m.save()
-		menu.open_tab("inventory"), 0.6)
+		m.take("dice", true); m.add("pogs"); m.tickets = 140; m.save(), 0.8)
+	# workstream R's "You received" cards (one per item) hold the player: dismiss them first
+	for i in 2:
+		_do(func(): _key(KEY_ENTER); _key(KEY_ENTER, false), 0.8)
+	_do(func(): menu.open_tab("inventory"), 0.6)
 	_do(func():
 		_check(player.mall.held_id() == "dice", "held_id() is the dice")
 		_shot("inventory-held-1280x720")
@@ -224,22 +295,60 @@ func _plan() -> void:
 		menu._owner_opening(), 0.4)
 	_do(func(): _check(menu.opening != null, "the opening again"); _key(KEY_ESCAPE); _key(KEY_ESCAPE, false), 0.4)
 	_do(func(): _check(menu.opening == null and not player.frozen, "Esc skips it"); Engine.set_meta("mall_owner", false), 0.2)
-	# ---- the year: the transition mid-flash, then 2026
-	_do(func(): menu.open_tab("year"), 0.5)
-	_do(func(): _shot("year-1280x720"); menu._go_year(2026), 0.75)
+	# ---- MENU2: the year toggle on a mall directory: the trip to its twin in 2026
 	_do(func():
-		var tt = player.get_node_or_null("TimeTravel")
-		_check(tt != null, "the time-travel transition plays")
-		if tt: tt.hold(0.36)
-		, 0.15)
-	_do(func(): _shot("timetravel-flash"); var tt = player.get_node_or_null("TimeTravel"); if tt: tt.hold(0.5), 0.15)
-	_do(func(): _shot("timetravel-mid"); var tt = player.get_node_or_null("TimeTravel"); if tt: tt._playing = true; tt._t = tt.duration * 0.5, 3.0)
+		# a kiosk with a twin in 2026 (wing 1: H2 north; wing 2: the JCPenney court)
+		kiosk = null
+		var Trip = load("res://scripts/timetravel_trip.gd")
+		for k in get_nodes_in_group("directory_kiosk"):
+			if Trip.twin(1995, k.position.x, k.position.z).known:
+				kiosk = k
+		_check(kiosk != null, "a directory kiosk in wing %d" % wing)
+		var f: Vector2 = kiosk.get_meta("face", Vector2(0, 1))
+		# stand 1.6 m out from its lit face, a little to one side, looking at it
+		var at := Vector2(kiosk.position.x, kiosk.position.z) + f * 1.6 + Vector2(-f.y, f.x) * 0.3
+		player.position = Vector3(at.x, 0, at.y)
+		player.yaw = atan2(f.x, f.y); player.pitch = deg_to_rad(-4); player._apply_rot()
+		start_pos = player.position; start_yaw = player.yaw
+		kiosk_pos = kiosk.position
+		kiosk.interact(player), 1.0)
+	_do(func():
+		var ui = kiosk._ui()
+		_check(ui.is_open, "the directory is open")
+		var has_toggle := false
+		for b in ui._buttons():
+			if b[1] == "travel": has_toggle = true
+		_check(has_toggle and ui.map_year == "1995", "the directory shows 1995 with the toggle beside it")
+		_shot("directory-1995-toggle")
+		_key(KEY_Y); _key(KEY_Y, false), 0.05)
+	_do(func():
+		var ui = kiosk._ui()
+		_check(not ui.is_open, "the toggle closes the directory")
+		_check(root.get_node_or_null("TimeTravelTrip") != null, "the trip starts"), 0.0)
+	# a frame sequence of the trip (native: the scene changes under the loop, no reload)
+	for i in 14:
+		var k: int = i
+		_do(func(): _shot("trip-1995-2026-%02d" % k), 0.15)
+	_do(func(): pass, 2.0)
 	_do(func():
 		scn = current_scene
-		_check(scn != null and int(scn.get_meta("year", 0)) == 2026, "after the transition: 2026 (%s)" % (scn.scene_file_path if scn else "-"))
+		_check(scn != null and int(scn.get_meta("year", 0)) == 2026, "the trip lands in 2026 (%s)" % (scn.scene_file_path if scn else "-"))
 		_unbake(scn)
 		player = scn.get_node("Player")
-		menu = player.get_node("Menu"), 25.0)
+		menu = player.get_node("Menu")
+		var tw = load("res://scripts/timetravel_trip.gd").twin(1995, kiosk_pos.x, kiosk_pos.z)
+		_check(tw.known, "the kiosk has a twin in 2026")
+		var ld: Dictionary = load("res://scripts/timetravel_trip.gd").landing(tw, kiosk_pos.x, kiosk_pos.z, start_pos.x, start_pos.z, start_yaw)
+		var d := Vector2(player.position.x - ld.x, player.position.z - ld.z).length()
+		_check(d < 1.0, "landed within 1 m of the twin spot (%.2f m)" % d)
+		_check(absf(angle_difference(player.yaw, ld.yaw)) < 0.02, "same facing"), 0.0)
+	for i in 10:
+		var k: int = i
+		_do(func(): _shot("trip-1995-2026-%02d" % (14 + k)), 0.15)
+	_do(func(): pass, 1.0)
+	_do(func():
+		_check(root.get_node_or_null("TimeTravelTrip") == null and not player.frozen, "the vortex unwinds, the player free in 2026")
+		_shot("trip-1995-2026-arrived"), 25.0)
 	_do(func():
 		var sh = scn.get_node_or_null("Shoppers")
 		var n := 0

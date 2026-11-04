@@ -1,0 +1,61 @@
+{
+ "_": "Money and tickets (design/godot-economy.md). Run by tests/unit/econ/bank.test.js (play/lib/mallbank.js) and by prototypes/godot-mall/project/tools/qa/econ_test.gd (scripts/bank.gd), so the pages and the mall keep the same rules. Each case: start = localStorage before (strings), ops = [name, args..., expected result], end = keys after (a string, a JSON object compared as parsed, or null for 'not there').",
+ "cases": [
+  {"name": "a new player has $100.00 and no tickets in either year",
+   "start": {},
+   "ops": [["money", 10000], ["tickets", 1995, 0], ["tickets", 2026, 0], ["can_afford", 10000, true], ["can_afford", 10001, false]],
+   "end": {"mall.money": "10000", "mall.econ": "1"}},
+
+  {"name": "spend takes the price; no money, no play, nothing changes",
+   "start": {"mall.econ": "1", "mall.money": "60"},
+   "ops": [["spend", 25, "COIN COMET drop", true], ["spend", 25, "COIN COMET drop", true], ["money", 10],
+           ["spend", 25, "COIN COMET drop", false], ["money", 10], ["spend", -5, "bad", false], ["spend", 10, "last dime", true], ["money", 0]],
+   "end": {"mall.money": "0"}},
+
+  {"name": "earn puts money back; zero or negative is refused",
+   "start": {"mall.econ": "1", "mall.money": "100"},
+   "ops": [["earn", 150, "change", true], ["earn", 0, "nothing", false], ["earn", -3, "bad", false], ["money", 250]],
+   "end": {"mall.money": "250"}},
+
+  {"name": "tickets stay in their own year",
+   "start": {"mall.econ": "1", "mall.money": "10000"},
+   "ops": [["credit", 1995, 50, "COIN COMET cup", "", true], ["credit", 2026, 7, "Games, Inc.", "", true],
+           ["tickets", 1995, 50], ["tickets", 2026, 7],
+           ["spend_tickets", 2026, 50, "redeem", false], ["spend_tickets", 1995, 20, "redeem", true],
+           ["tickets", 1995, 30], ["tickets", 2026, 7], ["credit", 1990, 5, "no such year", "", false], ["money", 10000]],
+   "end": {"mall.tickets-1995": "30", "mall.tickets-2026": "7"}},
+
+  {"name": "a payout with an id counts once",
+   "start": {"mall.econ": "1", "mall.money": "10000"},
+   "ops": [["credit", 1995, 12, "WHIRLWIND", "whirlwind:s1:1", true], ["credit", 1995, 12, "WHIRLWIND", "whirlwind:s1:1", false],
+           ["credit", 1995, 3, "WHIRLWIND", "whirlwind:s1:2", true], ["credit", 1995, 0, "nothing", "x", false], ["tickets", 1995, 15]],
+   "end": {"mall.tickets-1995": "15"}},
+
+  {"name": "migration: the pusher's free quarters become money (25 cents each), old tickets stay in their year, the claw's count goes to 1995",
+   "start": {"mall-state-1995": "{\"v\":1,\"year\":1995,\"inventory\":[{\"id\":\"pogs\",\"count\":1}],\"tickets\":600,\"hand\":\"\",\"moved\":{},\"quarters\":18}",
+             "mall-state-2026": "{\"v\":1,\"year\":2026,\"inventory\":[],\"tickets\":40,\"hand\":\"\",\"moved\":{},\"quarters\":20}",
+             "mall.tickets": "35"},
+   "ops": [["money", 10950], ["tickets", 1995, 635], ["tickets", 2026, 40], ["migrate", false], ["money", 10950], ["tickets", 1995, 635]],
+   "end": {"mall-state-1995": {"v": 1, "year": 1995, "inventory": [{"id": "pogs", "count": 1}], "hand": "", "moved": {}},
+           "mall-state-2026": {"v": 1, "year": 2026, "inventory": [], "hand": "", "moved": {}},
+           "mall.tickets": null, "mall.econ": "1", "mall.money": "10950", "mall.tickets-1995": "635", "mall.tickets-2026": "40"}},
+
+  {"name": "migration adds to what a game page already wrote (either side may run first)",
+   "start": {"mall.money": "9975", "mall.tickets-1995": "50",
+             "mall-state-1995": "{\"v\":1,\"year\":1995,\"inventory\":[],\"tickets\":100,\"hand\":\"\",\"moved\":{}}"},
+   "ops": [["tickets", 1995, 150], ["money", 9975]],
+   "end": {"mall.tickets-1995": "150", "mall.money": "9975", "mall-state-1995": {"v": 1, "year": 1995, "inventory": [], "hand": "", "moved": {}}}},
+
+  {"name": "migration of junk: bad numbers are dropped, nothing breaks",
+   "start": {"mall.money": "lots", "mall.tickets": "x",
+             "mall-state-1995": "{\"v\":1,\"tickets\":-4,\"quarters\":\"many\"}", "mall-state-2026": "not json"},
+   "ops": [["money", 10000], ["tickets", 1995, 0], ["tickets", 2026, 0]],
+   "end": {"mall.tickets": null, "mall-state-1995": {"v": 1}, "mall-state-2026": "not json", "mall.econ": "1"}},
+
+  {"name": "after migration, a stray old field is not counted again",
+   "start": {"mall.econ": "1", "mall.money": "500",
+             "mall-state-1995": "{\"v\":1,\"tickets\":999,\"quarters\":20}"},
+   "ops": [["money", 500], ["tickets", 1995, 0]],
+   "end": {"mall.money": "500"}}
+ ]
+}

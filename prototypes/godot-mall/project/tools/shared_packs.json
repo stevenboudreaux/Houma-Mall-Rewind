@@ -1,0 +1,6 @@
+{
+ "_": "Shared packs (workstream CHARS, Nov 3 2026, design/godot-build-hosting.md 'Shared packs'). Files listed here are NOT in any wing pack: each is its own pack, <name>.desktop.pck / <name>.mobile.pck, downloaded once into the browser's cache and mounted at runtime by scripts/shared_packs.gd. include: project paths (globs, as export filters) of the files it holds; Godot adds their dependencies. at: 'start' = downloaded with the wing pack, mounted before the wing's scene loads (anything a scene or the item list refers to); 'later' = fetched after the mall is running (the game copes until it arrives). The character packs (chars, chars_<map>) are not listed here: tools/chars/pack_list.py works them out from the presets. A new Blender item under models/bl_<store>_<item>/ lands in 'items' with no change here.",
+ "packs": [
+  {"name": "items", "include": ["models/bl_*"], "at": "start"}
+ ]
+}

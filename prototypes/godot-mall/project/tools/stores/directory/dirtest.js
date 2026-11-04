@@ -9,7 +9,7 @@ const [base, out] = process.argv.slice(2);
 const URL = 'http://127.0.0.1:8765/' + base.replace(/^\/|\/$/g, '') + '/index.html';
 const ARGS = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
 // kiosk 1 (-3,-82.5) faces north; kiosk 2 (-142,71.5) faces south (tools/stores/directory/directory_data.json)
-const K1 = '-3.0,-84.7,180,-6', K2 = '-142.0,73.7,0,-6';
+const K1 = '-3.0,-83.9,180,-6', K2 = '-142.0,72.9,0,-6';   // within scripts/interact.gd's 1.6 m REACH (Demo 50)
 const sleep = (s) => new Promise((r) => setTimeout(r, s * 1000));
 // where a store's click area is on screen (scripts/directory_ui.gd's fit: frame + margin round the sign)
 const HOT = JSON.parse(require('fs').readFileSync(__dirname + '/../../../tex/dir/hotspots.json', 'utf8'));

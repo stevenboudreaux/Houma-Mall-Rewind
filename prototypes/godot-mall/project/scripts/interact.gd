@@ -74,6 +74,7 @@ func _ready() -> void:
 	# R (Nov 2; design/godot-prize-counter.md): the "You received" pop-up and the redemption screen
 	add_child(preload("res://scripts/redemption.gd").new().setup(player, mall, db))
 	add_child(preload("res://scripts/received_popup.gd").new().setup(player, mall, db))
+	mall.collect()   # ECON (design/godot-economy.md): what a game page won while we were away, with its card
 	_build_ui()
 	hand_root = Node3D.new()
 	hand_root.name = "Hand"
@@ -85,6 +86,23 @@ func _ready() -> void:
 	_whoosh.volume_db = -8.0
 	add_child(_whoosh)
 	_spawn_world.call_deferred()
+
+# --- ECON (design/godot-economy.md): when a game's frame (web/shell.html mallRoms) closes, take into the bag what
+# it won (the claw's plush and POGs, mall.inbox-<year>), each with the "You received" card.
+var _econ_t := 0.0
+var _econ_open := false
+func _econ_frame_watch(dt: float) -> void:
+	if not OS.has_feature("web"):
+		return
+	_econ_t += dt
+	if _econ_t < 0.5:
+		return
+	_econ_t = 0.0
+	var o := str(JavaScriptBridge.eval("window.mallRoms ? window.mallRoms.isOpen() : '0'")) == "1"
+	if _econ_open and not o:
+		mall.collect()
+	_econ_open = o
+# --- end ECON
 
 # ------------------------------------------------------------------ the world's items
 func _spawn_world() -> void:
@@ -286,6 +304,7 @@ func find_target() -> Array:
 func _process(dt: float) -> void:
 	if player == null:
 		return
+	_econ_frame_watch(dt)
 	var blocked := _blocked()
 	var txt := ""
 	target = null

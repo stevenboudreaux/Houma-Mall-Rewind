@@ -8,16 +8,21 @@
   The playable coin pusher in Pocket Change (workstream P, Nov 2026): COIN COMET, the three-player
   pusher played from both sides. Walk up to any of its six positions in the mall and press Play
   (scripts/pusher_play.gd), or open this page directly: pusher.html?pos=<1..6>&name=<title>&year=1995.
-  The mechanics are the Silver Falls quarter pusher of Steven's teardown video (refs/coin_pusher):
-  a coin mechanism that slides along the top slot, two tiers (a crank-driven deck under a fixed
-  back wall, a fixed shelf with the drop edge), the adjustable lip, the side holes to the house,
-  the payout chute into the cup, and the tilt (3 s alarm, the flipper gate to the house).
+  The mechanics are Steven's two-tier machine (Nov 3, 2026; design/research/coin-pusher-mechanics.md),
+  with the Silver Falls teardown video (refs/coin_pusher) for the parts: a coin mechanism that
+  slides along the top slot; a motorised top shelf (the deck) that slides out toward the glass and
+  back in under a fixed back wall, with a gap at the wall to aim for while it is out; the main
+  tier an inch lower, whose heap the deck's face pushes to the drop edge; the adjustable lip; the
+  payout chute into the cup; the tilt (3 s alarm, the flipper gate to the house). The sides are
+  walled with the blue guides: nothing is lost there (the Nov 1 build's side holes are gone).
   Rules: pusher/logic.js (tested with Node). Physics: pusher/sim.js on Rapier (lib/rapier3d-compat.mjs,
   Apache-2.0), real quarters, 120 Hz. Textures: the mall cabinet's own (paint_pusher_game.py).
   The mall page shows this in a full-window frame and listens for "emu-close".
   Kept in this browser (localStorage): each position's machine ("pusher.machine.<pos>": every
-  coin's pose, the ledger, the lip), the sound and quality settings, and the player's quarters in
-  the mall state B+C keeps ("mall-state-<year>".quarters; design/godot-interaction.md).
+  coin's pose, the ledger, the lip) and the sound and quality settings. Money and tickets
+  (ECON, Nov 3; design/godot-economy.md): each drop takes 25 cents (CONFIG.priceCents) from the
+  wallet shared by both years ("mall.money"), each coin into the cup pays 50 tickets to this year's
+  tickets ("mall.tickets-<year>"), both through lib/mallbank.js at the moment it happens.
   Test hooks: window.PUSHER_PAGE (the sim, drop/nudge, stats) for tests/unit/pusher/page_test.py.
 -->
 <style>
@@ -45,9 +50,6 @@
           font-weight: 900; font-size: 26px; color: #ffd23c; text-shadow: 0 0 12px rgba(255, 210, 60, .7), 2px 2px 0 #000; animation: plusup 1s ease-out forwards; }
   @keyframes plusup { from { opacity: 1; transform: translate(-50%, 0); } to { opacity: 0; transform: translate(-50%, -60px); } }
   @media (prefers-reduced-motion: reduce) { .plus { animation: plusfade 1s steps(1) forwards; } @keyframes plusfade { to { opacity: 0; } } }
-  #getq { position: absolute; right: 14px; bottom: calc(132px + env(safe-area-inset-bottom)); z-index: 7; display: none; padding: 10px 16px; border-radius: 999px;
-          border: 2px solid #ffd23c; background: #2a1d05; color: #ffd23c; font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; }
-  #getq.on { display: block; }
   #meter { left: 10px; display: flex; align-items: center; gap: 8px; }
   #meter i { display: block; width: 70px; height: 8px; border-radius: 4px; background: #2a2236; overflow: hidden; }
   #meter i b { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ffd23c, #ff3a1e); transition: width .15s; }
@@ -70,6 +72,11 @@
   #slot i { position: absolute; top: 2px; width: 44px; height: 20px; margin-left: -22px; border-radius: 6px; left: 50%;
             background: linear-gradient(180deg, #f2f4f8, #9aa0ac 60%, #d8dce4); box-shadow: 0 2px 6px rgba(0,0,0,.6); }
   #slot i::after { content: ""; position: absolute; left: 12px; right: 12px; top: 8px; height: 4px; border-radius: 2px; background: #22262e; }
+  #slot i.open { background: linear-gradient(180deg, #fff2b0, #ffd23c 60%, #ffe680); box-shadow: 0 2px 6px rgba(0,0,0,.6), 0 0 10px rgba(255, 210, 60, .8); }
+  #drop.open { border-color: #ffd23c; box-shadow: 0 5px 14px rgba(0,0,0,.6), 0 0 18px rgba(255, 210, 60, .75); }
+  #gap { position: absolute; left: 50%; top: 46px; transform: translateX(-50%); z-index: 5; pointer-events: none; font-size: 12px; font-weight: 800;
+         letter-spacing: .12em; color: #ffd23c; opacity: 0; transition: opacity .15s; text-shadow: 0 0 8px rgba(255, 210, 60, .6), 1px 1px 0 #000; }
+  #gap.open { opacity: 1; }
   #msg { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 7; width: min(420px, calc(100% - 24px)); text-align: center; pointer-events: none; }
   #msg .card { background: rgba(10, 6, 18, .92); border: 1px solid rgba(255, 210, 60, .35); border-radius: 16px; padding: 14px 16px 16px;
                box-shadow: 0 8px 30px rgba(0, 0, 0, .5); pointer-events: auto; }
@@ -109,10 +116,10 @@
 <div id="stage">
   <canvas id="gl"></canvas>
   <div id="slot"><i id="knob"></i></div>
+  <div id="gap">GAP OPEN</div>
   <div class="chip" id="meter">TILT <i><b id="meterbar"></b></i></div>
-  <div class="chip" id="qtr"><span id="qn">0</span><small>QUARTERS</small></div>
+  <div class="chip" id="qtr"><span id="qn">$0.00</span><small>MONEY</small></div>
   <div class="chip" id="tkt"><span id="tn">0</span><small>TICKETS</small></div>
-  <button id="getq">Get quarters</button>
   <div id="cup">CUP &middot; 0</div>
   <button id="bump">NUDGE</button>
   <button id="drop">DROP</button>
@@ -121,17 +128,18 @@
   <div id="msg"></div>
 </div>
 <div id="set"><button class="ghost close" id="setclose">Close</button><div class="wrap"><h2>MACHINE SETTINGS</h2>
-  <div class="row"><label>Lip height<small id="lipv">2.5 mm over the shelf (the house's payout control)</small></label><input type="range" id="lip" min="0" max="6" step="0.5"></div>
-  <div class="row"><label>Coins<small>how full the machine is: fewer on a slow phone</small></label><select id="quality"><option value="low">Low (540)</option><option value="medium">Medium (620)</option><option value="high">High (760)</option></select></div>
+  <div class="row"><label>Lip height<small id="lipv">0.5 mm over the main tier (the house's payout control)</small></label><input type="range" id="lip" min="0" max="6" step="0.5"></div>
+  <div class="row"><label>Coins<small>how full the machine is: fewer on a slow phone (low also runs the physics at 90 Hz; takes effect on reload)</small></label><select id="quality"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div>
   <div class="row"><label>Refill<small>empty this position and start it fresh</small></label><button id="reset">Refill</button></div>
   <div class="stat" id="stat"></div></div></div>
 <div id="load"><h1 id="ltitle">COIN COMET</h1><div class="sub" id="lsub">Pocket Change &middot; coin pusher</div>
   <div class="track"><div class="bar" id="lbar"></div></div><div class="err" id="lerr"></div></div>
 <script src="lib/three.min.js"></script>
 <script src="pusher/logic.js"></script>
+<script src="lib/mallbank.js"></script>
 <script type="module">
 import RAPIER from './lib/rapier3d-compat.mjs';
-import { createSim, GEOM } from './pusher/sim.js';
+import { createSim, GEOM, wallZ, deckOutness } from './pusher/sim.js';
 const PL = window.PUSHER, CFG = PL.CONFIG, T3 = window.THREE;
 const Q = new URLSearchParams(location.search);
 const POS = Math.max(1, Math.min(CFG.positions, parseInt(Q.get('pos'), 10) || 1));
@@ -151,11 +159,14 @@ let soundOn = load('pusher.sound', true) !== false;
 const isOwner = (function () { try { return localStorage.getItem('southland-editor') === '1' || Q.get('owner') === '1'; } catch (e) { return false; } })();
 const mobile = /iPhone|iPad|Android|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) < 900);
 let quality = load('pusher.quality', null);
-if (!CFG.quality[quality]) quality = mobile ? 'low' : 'high';      // measured: 4 / 6 / 7 ms a physics step in wasm (design note)
-const STATE_KEY = 'mall-state-' + YEAR;
-function mallState() { const s = load(STATE_KEY, null); return (s && typeof s === 'object') ? s : null; }
-function quarters() { return PL.balance(mallState()); }
-function setMall(s) { save(STATE_KEY, s); try { if (window.parent && window.parent.mall) Object.assign(window.parent.mall, { quarters: s.quarters, tickets: s.tickets }); } catch (e) {} }
+if (!CFG.quality[quality]) quality = mobile ? 'low' : 'high';      // the coin count; low also steps the physics at 90 Hz instead of 120 (design note, Performance)
+const SIM_HZ = quality === 'low' ? 90 : 120;
+// ECON (Nov 3): the wallet (both years) and this year's tickets, read and written at the moment of use
+const BANK = window.MALLBANK.make(localStorage), SESSION = window.MALLBANK.session();
+let cupSeq = 0, cupSaved = true;   // a cup credit saves the machine after its step, so the coin can't fall twice
+function money() { return BANK.money(); }
+function tickets() { return BANK.tickets(YEAR); }
+function mirror() { try { if (window.parent && window.parent.mall) Object.assign(window.parent.mall, { money: money(), tickets: tickets() }); } catch (e) {} }
 const MKEY = PL.machineKey(POS);
 function now() { return performance.now(); }
 
@@ -175,8 +186,8 @@ const camera = new T3.PerspectiveCamera(52, 1, 0.02, 12);
 // The cabinet frame (tools/stores/pocket_change/pusher.gd): x to the player's right, y up, z
 // into the machine from its front face. three.js looks down -z, so world z = -z_in.
 function V(x, y, zin) { return new T3.Vector3(x, y, -zin); }
-const G = { PH: 0.2635, Y_SH: 0.82, Z_DROP: 0.12, Y_PT: 0.895, Z_BACK: 0.80, Y_CEIL: 1.47, Z_BAND: 0.30, Y_BAND: 1.48, Y_TOP: 1.79,
-            Y_M0: 1.83, Y_M1: 2.18, Z_M: 0.29, G0: [0.06, 0.78], G1: [0.30, 1.48] };
+const G = { PH: 0.2635, Y_SH: 0.82, Z_DROP: 0.12, Y_PT: 0.82 + GEOM.deckY / 100, Z_BACK: 0.12 + wallZ(GEOM) / 100 + 0.015, Y_CEIL: 1.47, Z_BAND: 0.30, Y_BAND: 1.48, Y_TOP: 1.79,
+            Y_M0: 1.83, Y_M1: 2.18, Z_M: 0.29, G0: [0.06, 0.78], G1: [0.30, 1.48], Z_WALL: 0.12 + wallZ(GEOM) / 100, Y_WALL: 1.02 };
 // sim (cm, shelf-top origin at the drop edge) -> cabinet metres
 const S2W = (x, y, z) => V(x / 100, G.Y_SH + y / 100, G.Z_DROP + z / 100);
 
@@ -247,19 +258,20 @@ let deckMesh, mechMesh, gateMesh, lipMesh, slideMesh;
 function buildCabinet() {
   const PH = G.PH, W = GEOM.halfW / 100, third = (POS - 1) % 3;
   // translite (this position's third of the back art), the fins beside it
-  quad('back', [V(-PH, G.Y_PT - 0.004, G.Z_BACK), V(PH, G.Y_PT - 0.004, G.Z_BACK), V(PH, G.Y_CEIL, G.Z_BACK), V(-PH, G.Y_CEIL, G.Z_BACK)],
+  quad('back', [V(-PH, G.Y_WALL, G.Z_BACK), V(PH, G.Y_WALL, G.Z_BACK), V(PH, G.Y_CEIL, G.Z_BACK), V(-PH, G.Y_CEIL, G.Z_BACK)],
     [[third / 3, 1], [(third + 1) / 3, 1], [(third + 1) / 3, 0], [third / 3, 0]]);
   for (const s of [-1, 1]) {
     // partition fin (pusher.gd FIN) as a thin box set, and the inner side wall below the glass
     const x = s * (PH - 0.004);
-    box('steeldk', x, (G.Y_PT + G.Y_CEIL) / 2, (0.71 + G.Z_BACK) / 2, 0.008, G.Y_CEIL - G.Y_PT, G.Z_BACK - 0.71);
-    const fin = quad('steeldk', [V(x, G.Y_PT, 0.50), V(x, G.Y_PT, 0.71), V(x, G.Y_CEIL, 0.71), V(x, 1.06 - 0.0, 0.71)]);
+    const zf0 = G.Z_WALL - 0.16, zf1 = G.Z_BACK - 0.004;
+    const fin = quad('steeldk', [V(x, G.Y_PT, zf0), V(x, G.Y_PT, zf1), V(x, G.Y_CEIL, zf1), V(x, G.Y_WALL, zf1)]);
     fin.material = mat('steeldk');
-    const fin2 = quad('steeldk', [V(x, G.Y_PT, 0.50), V(x, 1.06, 0.71), V(x, 0.94, 0.50), V(x, G.Y_PT, 0.50)]);
+    const fin2 = quad('steeldk', [V(x, G.Y_PT, zf0), V(x, G.Y_WALL, zf1), V(x, G.Y_WALL - 0.12, zf0), V(x, G.Y_PT, zf0)]);
     // the blue art ramp along the position's edge over the shelf, and the side wall of the sim beside it
-    const zf = G.Z_DROP + 0.012, yr0 = G.Y_SH + 0.034, yr1 = G.Y_SH + 0.072, xr = s * PH;
-    quad('ramp', [V(xr - s * 0.056, G.Y_SH, zf), V(xr, yr0, zf), V(xr, yr1, 0.50), V(xr - s * 0.056, G.Y_SH, 0.50)], [[0, 1], [1, 1], [1, 0], [0, 0]]);
-    box('chrome', xr, (yr0 + yr1) / 2 + 0.004, (zf + 0.5) / 2, 0.012, 0.01, 0.5 - zf);
+    // the side guides (the sim's tilted slabs): the blue art ramps from the tier up to the fins
+    const zf = G.Z_DROP - 0.002, zb = G.Z_DROP + GEOM.guideLen / 100, yr = G.Y_SH + GEOM.guideTop / 100, xr = s * W, xf = s * GEOM.guideFoot / 100;
+    quad('ramp', [V(xf, G.Y_SH, zf), V(xr, yr, zf), V(xr, yr, zb), V(xf, G.Y_SH, zb)], [[0, 1], [1, 1], [1, 0], [0, 0]]);
+    box('chrome', xr, yr + 0.004, (zf + zb) / 2, 0.012, 0.01, zb - zf);
     // dark wall of the position above the ramp, up to the band
     box('dark', s * (PH + 0.003), (G.Y_SH + 1.48) / 2, 0.45, 0.006, 1.48 - G.Y_SH, 0.8);
   }
@@ -267,15 +279,8 @@ function buildCabinet() {
   quad('ceil', [V(-PH, G.Y_CEIL, G.Z_BACK), V(PH, G.Y_CEIL, G.Z_BACK), V(PH, G.Y_CEIL, G.Z_BAND), V(-PH, G.Y_CEIL, G.Z_BAND)]).material.side = T3.DoubleSide;
   const tube = new T3.Mesh(new T3.CylinderGeometry(0.013, 0.013, 2 * PH, 10), mat('tube')); tube.rotation.z = Math.PI / 2; tube.position.copy(V(0, 1.437, 0.37)); scene.add(tube);
   box('alu', 0, 1.4325, 0.327, 2 * PH, 0.075, 0.006);
-  // the shelf (steel), the trough below the drop edge, the drop edge's front face
-  const hz0 = GEOM.holeZ0 / 100, hz1 = GEOM.holeZ1 / 100, hw = GEOM.holeW / 100;
-  box('steel', 0, G.Y_SH - 0.0062, G.Z_DROP + 0.38, 2 * (W - hw), 0.01, 0.76);     // 1.2 mm under the sim's shelf: no z-fight with the coins
-  for (const s of [-1, 1]) {
-    const xc = s * (W - hw / 2);
-    box('steel', xc, G.Y_SH - 0.0062, G.Z_DROP + hz0 / 2, hw, 0.01, hz0);
-    box('steel', xc, G.Y_SH - 0.0062, G.Z_DROP + (hz1 + 0.76) / 2, hw, 0.01, 0.76 - hz1);
-    box('black', xc, G.Y_SH - 0.06, G.Z_DROP + (hz0 + hz1) / 2, hw, 0.001, hz1 - hz0);     // the hole: the house's bucket below
-  }
+  // the main tier (steel, one slab wall to wall), the trough below the drop edge, the drop edge's front face
+  box('steel', 0, G.Y_SH - 0.0062, G.Z_DROP + 0.30, 2 * W, 0.01, 0.60);     // 1.2 mm under the sim's tier: no z-fight with the coins
   box('dark', 0, 0.72, (0.065 + G.Z_DROP) / 2, 2 * PH, 0.002, G.Z_DROP - 0.065);
   box('dark', 0, (0.72 + G.G0[1]) / 2, 0.066, 2 * PH, G.G0[1] - 0.72, 0.002);
   box('dark', 0, (0.72 + G.Y_SH - 0.016) / 2, G.Z_DROP, 2 * W, G.Y_SH - 0.016 - 0.72, 0.004);
@@ -289,10 +294,13 @@ function buildCabinet() {
   const riser = new T3.Mesh(new T3.PlaneGeometry(2 * W, dy), mat('steeldk')); riser.position.set(0, dy / 2, 0.0003); deckMesh.add(riser);
   scene.add(deckMesh);
   // the fixed back wall: a dark panel standing just over the deck, in front of the translite
-  box('dark', 0, (G.Y_PT + 0.0012 + 1.06) / 2, G.Z_DROP + GEOM.wallZ / 100 + 0.005, 2 * W, 1.06 - G.Y_PT - 0.0012, 0.01);
-  box('chrome', 0, G.Y_PT + 0.004, G.Z_DROP + GEOM.wallZ / 100 - 0.001, 2 * W, 0.006, 0.004);
+  // (the hood: from just over the deck up to the translite's foot, with a chrome edge; the deck's
+  // heap slides under it, and the coins on the deck pile against its face)
+  box('dark', 0, (G.Y_PT + 0.0012 + G.Y_WALL) / 2, G.Z_WALL + 0.005, 2 * W, G.Y_WALL - G.Y_PT - 0.0012, 0.01);
+  box('chrome', 0, G.Y_PT + 0.004, G.Z_WALL - 0.001, 2 * W, 0.006, 0.004);
+  box('chrome', 0, G.Y_WALL, G.Z_WALL + 0.005, 2 * W, 0.008, 0.016);   // the hood's top edge, the translite rising behind it
   // the coin slide: a clear ramp from the slot in the band down to the chute's foot at the wall
-  const foot = S2W(0, GEOM.deckY + GEOM.chuteY, GEOM.chuteZ);
+  const foot = S2W(0, GEOM.deckY + GEOM.chuteY, wallZ(GEOM) - GEOM.chuteBack);
   slideMesh = quad('slide', [V(-PH + 0.02, G.Y_BAND + 0.02, G.Z_BAND + 0.02), V(PH - 0.02, G.Y_BAND + 0.02, G.Z_BAND + 0.02), V(PH - 0.02, foot.y + 0.012, -foot.z), V(-PH + 0.02, foot.y + 0.012, -foot.z)]);
   for (const s of [-1, 1]) {
     const e = quad('slide', [V(s * (PH - 0.02), G.Y_BAND + 0.02, G.Z_BAND + 0.02), V(s * (PH - 0.02), G.Y_BAND + 0.05, G.Z_BAND + 0.02), V(s * (PH - 0.02), foot.y + 0.042, -foot.z), V(s * (PH - 0.02), foot.y + 0.012, -foot.z)]);
@@ -356,8 +364,10 @@ function buildCoins() {
   coinMesh.frustumCulled = false;
   scene.add(coinMesh);
 }
+let trackId = 0, trackMesh = null, trackEvent = null;
 function syncCoins() {
   let i = 0;
+  if (trackMesh) trackMesh.visible = false;
   const sh = G.Y_SH, zd = G.Z_DROP;
   for (const c of sim.coins.values()) {
     if (i >= MAXC) break;
@@ -366,12 +376,13 @@ function syncCoins() {
     dummy.quaternion.set(-q.x, -q.y, q.z, q.w);     // the sim's z is into the machine: in the z-mirrored frame a rotation (x,y,z,w) is (-x,-y,z,w)
     dummy.updateMatrix();
     coinMesh.setMatrixAt(i++, dummy.matrix);
+    if (trackMesh && c.id === trackId) { trackMesh.position.copy(dummy.position); trackMesh.position.y += 0.004; trackMesh.visible = true; }
   }
   // the coin sliding down the slide (not yet in the sim)
   for (const s of slides) {
     if (i >= MAXC) break;
     const k = Math.min(1, (now() - s.t0) / SLIDE_MS);
-    const a = V(s.x / 100, G.Y_BAND + 0.035, G.Z_BAND + 0.03), b = S2W(s.x, GEOM.deckY + GEOM.chuteY + 0.5, GEOM.chuteZ);
+    const a = V(s.x / 100, G.Y_BAND + 0.035, G.Z_BAND + 0.03), b = S2W(s.x, GEOM.deckY + GEOM.chuteY + 0.5, wallZ(GEOM) - GEOM.chuteBack);
     dummy.position.lerpVectors(a, b, k);
     dummy.quaternion.setFromEuler(new T3.Euler(-Math.atan2(a.y - b.y, b.z - a.z) * 0 + 0.3, 0, 1.5));
     dummy.updateMatrix();
@@ -385,7 +396,7 @@ function syncCoins() {
 function buildLight() {
   scene.add(new T3.HemisphereLight(0x9aa6c8, 0x14121a, 0.55));
   const tube = new T3.PointLight(0xf0f6ff, 2.2, 2.5, 2); tube.position.copy(V(0, 1.42, 0.40)); scene.add(tube);
-  const back = new T3.PointLight(0xc0a0ff, 0.6, 1.8, 2); back.position.copy(V(0, 1.2, 0.72)); scene.add(back);
+  const back = new T3.PointLight(0xc0a0ff, 0.6, 1.8, 2); back.position.copy(V(0, 1.2, G.Z_BACK - 0.1)); scene.add(back);
   const key = new T3.DirectionalLight(0xffffff, 0.9); key.position.copy(V(0.3, 2.2, -0.6)); key.target.position.copy(V(0, 0.85, 0.3)); scene.add(key); scene.add(key.target);
   // a small painted environment (the lit top, dark walls) so the metal has something to reflect
   const size = 32, faces = [];
@@ -483,6 +494,9 @@ let sim = null, ledger = PL.ledger(), lipMm = CFG.lipMm, dirty = false, lastSave
 let tiltLog = null, tiltAt = null, gateNow = 'player', cupCount = 0, cupTotal = 0;
 let sliderX = 0, axis = 0, slides = [], ready = false, paused = false;
 const SLIDE_MS = 420;
+const GAP_LEAD = (SLIDE_MS + 170) / 1000;     // s from a drop to the coin landing on the deck
+let gapOpen = false;
+const dropBtn = document.getElementById('drop'), gapEl = document.getElementById('gap');
 const stats = { frames: 0, ms: 0, worst: 0, hist: [], simMs: 0, steps: 0 };
 function newMachine() {
   sim.fresh((Date.now() ^ (POS * 7919)) >>> 0, CFG.quality[quality], 2.5);
@@ -503,9 +517,8 @@ function applyLip(mm) { lipMm = mm; sim.setLip(mm); lipMesh.scale.y = Math.max(0
 // a drop: pays a quarter in, the coin slides down to the chute's foot, then it is the sim's
 function drop() {
   if (!ready || paused) return;
-  const st = PL.payIn(mallState());
-  if (!st) { showFlash('NO QUARTERS', 'tap Get quarters'); ui(); setTimeout(hideFlash, 1400); SFX.reject(); return; }
-  setMall(st); ui();
+  if (!BANK.spend(CFG.priceCents, NAME + ' drop')) { showFlash('NO MONEY', 'a drop is ' + window.MALLBANK.fmt(CFG.priceCents) + '; you have ' + window.MALLBANK.fmt(money())); ui(); setTimeout(hideFlash, 1800); SFX.reject(); return; }
+  mirror(); ui();
   ledger.in++;
   slides.push({ x: sliderX, t0: now() });
   SFX.clink(0.06, true);
@@ -538,9 +551,12 @@ function tiltTick() {
 function meter(p) { document.getElementById('meterbar').style.width = Math.min(100, 100 * p / CFG.tiltTrip) + '%'; }
 function onEvent(e) {
   ledger = PL.book(ledger, e.type);
+  if (trackId && e.id === trackId) trackEvent = e.type;
   if (e.type === 'cup') {
     cupCount++; cupTotal++;
-    setTimeout(() => { setMall(PL.payOut(mallState(), 1)); ui(); SFX.cup(); plus(); const c = document.getElementById('cup'); c.classList.add('pop'); setTimeout(() => c.classList.remove('pop'), 200); }, 350);
+    // credited now (the picture follows); the machine is saved after this step so the coin can't fall twice
+    BANK.credit(YEAR, CFG.ticketsPerCoin, NAME + ' cup', 'pusher:' + POS + ':' + SESSION + ':' + (++cupSeq)); mirror(); cupSaved = false;
+    setTimeout(() => { ui(); SFX.cup(); plus(); const c = document.getElementById('cup'); c.classList.add('pop'); setTimeout(() => c.classList.remove('pop'), 200); }, 350);
   } else if (e.type === 'side') SFX.house();
   else if (e.type === 'house-tilt') { setTimeout(() => SFX.house(), 200); }
   dirty = true;
@@ -557,6 +573,7 @@ function frame() {
     const ev = sim.step(dt);
     stats.simMs += now() - s0; stats.steps += sim.steps - n0;
     for (const e of ev) onEvent(e);
+    if (!cupSaved) { saveMachine(); cupSaved = true; }
     // a clink when a dropped coin lands (its first second), and the motor's clunk at the crank's dead points
     const ph = (sim.t % GEOM.period) / GEOM.period;
     if ((lastPhase < 0.5 && ph >= 0.5) || (lastPhase > ph)) SFX.motorClunk();
@@ -568,6 +585,9 @@ function frame() {
     if (dirty && t0 - lastSave > 4000) saveMachine();
   }
   if (sim) {
+    // the cue: a coin dropped now reaches the deck in SLIDE_MS plus its fall; is the gap at the wall open then?
+    const open = deckOutness(sim.t + GAP_LEAD, GEOM) > 0.6;
+    if (open !== gapOpen) { gapOpen = open; knob.classList.toggle('open', open); dropBtn.classList.toggle('open', open); gapEl.classList.toggle('open', open); }
     deckMesh.position.z = -(G.Z_DROP + sim.deckZ() / 100);
     mechMesh.position.x = sliderX / 100;
     syncCoins();
@@ -660,22 +680,18 @@ const flashEl = document.getElementById('flash');
 function showFlash(a, b, tilt) { flashEl.innerHTML = a + (b ? '<small style="display:block;font-size:.4em;letter-spacing:.1em">' + b + '</small>' : ''); flashEl.style.opacity = 1; flashEl.classList.toggle('tilt', !!tilt); }
 function hideFlash() { flashEl.style.opacity = 0; flashEl.classList.remove('tilt'); }
 function ui() {
-  const q = quarters();
-  document.getElementById('qn').textContent = q;
-  document.getElementById('tn').textContent = PL.tickets(mallState());
-  document.getElementById('getq').classList.toggle('on', q < 1);
+  document.getElementById('qn').textContent = window.MALLBANK.fmt(money());
+  document.getElementById('tn').textContent = tickets();
   document.getElementById('cup').textContent = 'CUP · ' + cupTotal + (cupTotal ? ' coins · ' + cupTotal * CFG.ticketsPerCoin + ' tickets' : '');
   document.getElementById('hint').textContent = mobile ? 'Drag to aim · tap to drop · shake or NUDGE to bump' : 'Drag or ← → to aim · Space/E/click to drop · N or Shift to nudge' + (padSeen ? ' · pad: stick, A, shoulders' : '');
 }
 // a coin into the cup: "+50" (tickets) rises from the cup
 function plus() { const d = document.createElement('div'); d.className = 'plus'; d.textContent = '+' + CFG.ticketsPerCoin; document.getElementById('stage').appendChild(d); setTimeout(() => d.remove(), 1100); }
-// "Get quarters": back to $5.00, free (a placeholder for a change machine; design note)
-document.getElementById('getq').addEventListener('pointerdown', (e) => e.stopPropagation());
-document.getElementById('getq').addEventListener('click', (e) => { e.stopPropagation(); setMall(PL.refill(mallState())); ui(); SFX.clink(0.05, true); });
 function title() {
   const m = document.getElementById('msg');
-  m.innerHTML = '<div class="card"><h2>' + esc(NAME) + '</h2><p>Slide the coin slot left and right and drop your quarters onto the top deck. The pusher shoves the heap toward the edge; every coin that falls over the front pays <b>' + CFG.ticketsPerCoin + ' tickets</b>. ' +
-    'The side holes are the house\'s. Bump the machine if you must, but too much trips the <b>TILT</b>.</p><p>You have <b>' + quarters() + '</b> quarters and <b>' + PL.tickets(mallState()) + '</b> tickets.</p><button class="big" id="go">PLAY</button></div>';
+  m.innerHTML = '<div class="card"><h2>' + esc(NAME) + '</h2><p>Slide the coin slot and drop your quarters onto the top shelf <b>while it is out</b>: the gap at the back wall is where a coin does its work. ' +
+    'The shelf shoves its coins down onto the main tier, and pushes that heap over the front edge: every coin that falls pays <b>' + CFG.ticketsPerCoin + ' tickets</b>. ' +
+    'Bump the machine if you must, but too much trips the <b>TILT</b>.</p><p>Each drop is <b>' + window.MALLBANK.fmt(CFG.priceCents) + '</b>. You have <b>' + window.MALLBANK.fmt(money()) + '</b> and <b>' + tickets() + '</b> tickets.</p><button class="big" id="go">PLAY</button></div>';
   m.querySelector('#go').addEventListener('pointerdown', (e) => { e.stopPropagation(); });
   m.querySelector('#go').addEventListener('click', (e) => { e.stopPropagation(); m.innerHTML = ''; unlock(); motionPermission(); paused = false; });
   paused = true;
@@ -695,10 +711,11 @@ document.getElementById('setclose').addEventListener('click', () => { setEl.styl
 const lipIn = document.getElementById('lip'), qIn = document.getElementById('quality');
 function settingsUi() {
   lipIn.value = lipMm; qIn.value = quality;
-  document.getElementById('lipv').textContent = lipMm.toFixed(1) + ' mm over the shelf (the house\'s payout control; 0 = off)';
+  for (const o of qIn.options) o.textContent = o.value[0].toUpperCase() + o.value.slice(1) + ' (' + CFG.quality[o.value] + ')';
+  document.getElementById('lipv').textContent = lipMm.toFixed(1) + ' mm over the main tier (the house\'s payout control; 0 = off)';
   const avg = stats.frames ? stats.ms / stats.frames : 0;
   document.getElementById('stat').textContent = 'Position ' + POS + ' · ' + sim.count() + ' coins (' + sim.awake() + ' awake) · ' + avg.toFixed(1) + ' ms a frame (worst ' + stats.worst.toFixed(0) + ')\n' +
-    'Ledger: in ' + ledger.in + ' · cup ' + ledger.cup + ' · side holes ' + ledger.side + ' · tilt ' + ledger.tilt + ' · nudges ' + ledger.nudges + ' · tilts ' + ledger.tilts + ' · RTP ' + (100 * PL.rtp(ledger)).toFixed(0) + '%';
+    'Ledger: in ' + ledger.in + ' · cup ' + ledger.cup + ' · lost at the sides ' + ledger.side + ' · tilt ' + ledger.tilt + ' · nudges ' + ledger.nudges + ' · tilts ' + ledger.tilts + ' · RTP ' + (100 * PL.rtp(ledger)).toFixed(0) + '%';
 }
 lipIn.addEventListener('input', () => { applyLip(parseFloat(lipIn.value)); settingsUi(); });
 qIn.addEventListener('change', () => { quality = qIn.value; save('pusher.quality', quality); if (confirm('Refill this position with ' + CFG.quality[quality] + ' coins?')) { newMachine(); saveMachine(); } settingsUi(); });
@@ -713,7 +730,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) saveM
     await RAPIER.init({});
     document.getElementById('lbar').style.width = '95%';
     buildLight(); buildCabinet(); buildCoins(); resize();
-    sim = createSim(RAPIER, { lipMm: CFG.lipMm });
+    sim = createSim(RAPIER, { lipMm: CFG.lipMm, hz: SIM_HZ });
     const restored = TESTING && Q.get('fresh') === '1' ? (newMachine(), false) : restoreMachine();
     applyLip(lipMm);
     saveMachine();
@@ -729,10 +746,15 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) saveM
         let sz = -9, szc = null; for (const c of sim.coins.values()) { const q = c.body.translation(); if (q.y < 3 && q.z > sz) { sz = q.z; szc = q; } }
         const dm = new T3.Vector3(); deckMesh.getWorldPosition(dm);
         let dmin = null, dmax = null; for (const c of sim.coins.values()) { const q = c.body.translation(); if (q.y > 3) { if (!dmin || q.z < dmin.z) dmin = q; if (!dmax || q.z > dmax.z) dmax = q; } }
-        return { deckCoinMin: [dmin.x, dmin.y, dmin.z, pr(S2W(dmin.x, dmin.y, dmin.z))], deckCoinMax: [dmax.z, pr(S2W(dmax.x, dmax.y, dmax.z))], riserTop: pr(V(0, G.Y_PT, G.Z_DROP + sim.deckZ() / 100)), wallFoot: pr(V(0, G.Y_PT, G.Z_DROP + 0.66)), stageTop: stage.getBoundingClientRect().top,
+        return { deckCoinMin: [dmin.x, dmin.y, dmin.z, pr(S2W(dmin.x, dmin.y, dmin.z))], deckCoinMax: [dmax.z, pr(S2W(dmax.x, dmax.y, dmax.z))], riserTop: pr(V(0, G.Y_PT, G.Z_DROP + sim.deckZ() / 100)), wallFoot: pr(V(0, G.Y_PT, G.Z_WALL)), stageTop: stage.getBoundingClientRect().top,
           lip: pr(V(0, G.Y_SH, G.Z_DROP)), shelfBack: pr(S2W(szc.x, szc.y, szc.z)), riser: pr(V(0, G.Y_SH, G.Z_DROP + sim.deckZ() / 100)), deckMeshZ: dm.z, riserExpected: -(G.Z_DROP + sim.deckZ() / 100), coin0: coinMesh.count, firstCoin: (() => { const m = new T3.Matrix4(); coinMesh.getMatrixAt(0, m); return new T3.Vector3().setFromMatrixPosition(m).toArray(); })(), firstSim: sim.coins.values().next().value.body.translation() };
       }, sim, drop, nudge, trip, stats, onEvent, get ledger() { return ledger; }, get gate() { return gateNow; }, get tiltAt() { return tiltAt; },
-      quarters, setSlider, saveMachine, restored, get cupTotal() { return cupTotal; }, mallState, applyLip, newMachine, get paused() { return paused; }, set paused(v) { paused = v; } };
+      money, tickets, BANK, setSlider, saveMachine, restored, G: GEOM, get gapOpen() { return gapOpen; },
+      // the coin-path recording (tests/unit/pusher/coin_path.py): ring one coin, report where it is, draw a frame on demand
+      track(id) { trackId = id; trackEvent = null; if (!trackMesh) { trackMesh = new T3.Mesh(new T3.TorusGeometry(0.0175, 0.0028, 8, 24), new S({ color: 0xff3a1e, emissive: 0xff3a1e, emissiveIntensity: 1.5 })); trackMesh.rotation.x = Math.PI / 2; scene.add(trackMesh); } },
+      tracked() { for (const c of sim.coins.values()) if (c.id === trackId) { const p = c.body.translation(); return { x: p.x, y: p.y, z: p.z, t: sim.t, G: GEOM, deckZ: sim.deckZ() }; } for (const e of sim.lastEvents || []) if (e.id === trackId) trackEvent = e.type; return null; },
+      get trackedEvent() { return trackEvent; },
+      draw() { deckMesh.position.z = -(G.Z_DROP + sim.deckZ() / 100); syncCoins(); placeCamera(); renderer.render(scene, camera); }, get cupTotal() { return cupTotal; }, applyLip, newMachine, get paused() { return paused; }, set paused(v) { paused = v; } };
   } catch (e) {
     document.getElementById('lerr').textContent = e && e.message ? e.message : String(e);
     console.error(e);

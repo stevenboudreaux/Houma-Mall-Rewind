@@ -15,12 +15,13 @@
   'use strict';
 
   var CONFIG = {
-    startQuarters: 20,        // $5.00 to a new player; also what "Get quarters" refills to (a placeholder for a change machine)
+    priceCents: 25,           // a drop: one quarter from the wallet (ECON, Nov 3: the price it always had)
     ticketsPerCoin: 50,       // Steven, Nov 2: quarters to play, tickets to win. A coin into the cup pays this many
-                              // tickets to mall.tickets (the count B+C's prize counter uses); it is not a quarter back
-    lipMm: 0.5,               // the lip's height over the shelf (owner setting; the house's payout control).
-                              // Tuned with sim.js GEOM.coinFriction for ~8 % of coins dropped into the cup (soak table
-                              // in design/storefronts/pocket-change.md)
+                              // tickets to the year's tickets (the count the prize counter spends); it is not a quarter back
+    lipMm: 0.5,               // the lip's height over the main tier (owner setting; the house's payout control).
+                              // Tuned with sim.js GEOM (the 2 degree tilt, the walled sides) so about two thirds of the
+                              // coins dropped come back and a third of the drops pay (soak table in
+                              // design/storefronts/pocket-change.md "COIN COMET plays like a pusher")
     lipRange: [0, 6],
     tiltWindowMs: 6000,       // nudges inside this window add up (6 s: at the low friction the sim needs, bumps pay) ...
     tiltTrip: 2.6,            // ... and trip the tilt when their power passes this
@@ -32,8 +33,8 @@
     slotMm: 24.5,             // a bigger coin won't go in; a smaller one goes in and is lost
     slotHalfW: 23.0,          // cm the coin mechanism slides to either side of the centre
     slotSpeed: 30,            // cm/s with the keys or a stick
-    quality: { low: 540, medium: 620, high: 760 },   // coins in a fresh machine (sim.js fresh(): both single layers full at 525, then the ridges); high
-                              // 760 is the tuned heap (Demo 48 soak); fewer coins pay less
+    quality: { low: 360, medium: 410, high: 460 },   // coins in a fresh machine (sim.js fresh(): two layers on both tiers at low, three at high,
+                              // the primed state); fewer coins store more drops before they pay, and cost a phone less
     positions: 6,             // three per side
     saveVersion: 1,
   };
@@ -58,44 +59,9 @@
   }
 
   // ------------------------------------------------------------------ the wallet
-  /** Quarters to play, tickets to win (Steven, Nov 2). The player's quarters in the mall state
-   *  (design/godot-interaction.md "mall"); a state with no quarters gets the starting stake. */
-  function balance(state, cfg) {
-    cfg = cfg || CONFIG;
-    if (!state || typeof state.quarters !== 'number' || !(state.quarters >= 0)) return cfg.startQuarters;
-    return Math.floor(state.quarters);
-  }
-
-  /** The player's tickets (mall.tickets, B+C's count). */
-  function tickets(state) {
-    return Math.max(0, Math.floor((state && +state.tickets) || 0));
-  }
-
-  /** The state after the player pays one quarter in (null when they have none). */
-  function payIn(state, cfg) {
-    cfg = cfg || CONFIG;
-    var b = balance(state, cfg);
-    if (b < 1) return null;
-    var s = Object.assign({}, state || {});
-    s.quarters = b - 1;
-    return s;
-  }
-
-  /** The state after n coins fall into the cup: cfg.ticketsPerCoin tickets each; quarters untouched. */
-  function payOut(state, n, cfg) {
-    cfg = cfg || CONFIG;
-    var s = Object.assign({}, state || {});
-    s.tickets = tickets(state) + n * cfg.ticketsPerCoin;
-    return s;
-  }
-
-  /** "Get quarters": the stake back to cfg.startQuarters (free for now; a change machine later). */
-  function refill(state, cfg) {
-    cfg = cfg || CONFIG;
-    var s = Object.assign({}, state || {});
-    s.quarters = cfg.startQuarters;
-    return s;
-  }
+  // ECON (Steven, Nov 3 2026; design/godot-economy.md): the free "quarters" stake and "Get quarters" are
+  // gone. A drop takes CONFIG.priceCents from the wallet shared by both years, a coin into the cup pays
+  // CONFIG.ticketsPerCoin to the year's tickets; play/lib/mallbank.js keeps both.
 
   // ------------------------------------------------------------------ the tilt
   /** A nudge log: {hits: [{t, p}], last}. A nudge of power p at time t (ms) is added when the
@@ -133,8 +99,9 @@
   }
 
   // ------------------------------------------------------------------ accounting
-  /** A fresh ledger. in: coins dropped by the player; cup: paid to the player; side: into the
-   *  house's side holes; tilt: over the front edge while the gate was over; lost: not quarters. */
+  /** A fresh ledger. in: coins dropped by the player; cup: paid to the player; side: lost past a
+   *  side wall (walled since the PUSHER rebuild: a physics failure if ever); tilt: over the front
+   *  edge while the gate was over; lost: not quarters. */
   function ledger() { return { in: 0, cup: 0, side: 0, tilt: 0, lost: 0, nudges: 0, tilts: 0 }; }
 
   /** The ledger after a sim event ('cup' | 'side' | 'house-tilt' | 'lost'). */
@@ -171,7 +138,7 @@
     return { t: +s.t || 0, coins: s.coins, ledger: l, lipMm: lip };
   }
 
-  var api = { CONFIG: CONFIG, accept: accept, slide: slide, balance: balance, payIn: payIn, payOut: payOut, tickets: tickets, refill: refill,
+  var api = { CONFIG: CONFIG, accept: accept, slide: slide,
               nudge: nudge, tiltPower: tiltPower, tiltState: tiltState, ledger: ledger, book: book, rtp: rtp,
               machineKey: machineKey, packMachine: packMachine, unpackMachine: unpackMachine };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

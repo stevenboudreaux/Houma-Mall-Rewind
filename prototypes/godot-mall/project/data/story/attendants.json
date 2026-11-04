@@ -1,8 +1,10 @@
 {
- "_": "Counter attendants (workstream Q, design/godot-dialogue.md 'Attendants'). One unique person behind each counter. wing/years: where they exist (a store closed that year has none). skin: an npc/skins.json id the wing's pack ships (Ch*/Remy); Steven may swap. area: [x0, z0, x1, z1] world metres behind the counter they wander in; face: the direction they stand facing (toward the shop floor); talk_at: where the interactable stands (the shop side of the counter, so the 1.6 m reach works across it). name and dialogue are PLACEHOLDERs until Steven writes them. redemption: true = the redemption screen (session R) opens first when it exists. INT (Demo 49): \"spots\" (workstream GI) are places only; story.gd reads \"attendants\" and ignores \"spots\".",
+ "_": "Counter attendants (workstream Q, design/godot-dialogue.md 'Attendants'). One unique person behind each counter. wing/years: where they exist (a store closed that year has none). skin: an npc/skins.json id the wing's pack ships (Ch*/Remy); Steven may swap. area: [x0, z0, x1, z1] world metres behind the counter they wander in; face: the direction they stand facing (toward the shop floor); talk_at: where the interactable stands (the shop side of the counter, so the 1.6 m reach works across it). name and dialogue are PLACEHOLDERs until Steven writes them. redemption: true = the redemption screen (session R) opens first when it exists. INT (Demo 49): \"spots\" (workstream GI) are places only; story.gd reads \"attendants\" and ignores \"spots\". look (B2, design/godot-character-editor.md): \"preset\" = a B1 body dressed from data/characters/<preset>.json; \"legacy\" = the Mixamo skin above (the fallback when the preset is missing).",
  "attendants": [
   {
    "id": "pocket_change",
+   "look": "preset",
+   "preset": "pocket_change",
    "store": "POCKET CHANGE",
    "wing": 2,
    "years": [
@@ -31,6 +33,8 @@
   },
   {
    "id": "sound_shop",
+   "look": "preset",
+   "preset": "sound_shop",
    "store": "SOUND SHOP",
    "wing": 1,
    "years": [
@@ -57,6 +61,8 @@
   },
   {
    "id": "kay_bee",
+   "look": "preset",
+   "preset": "kay_bee",
    "store": "KAY-BEE TOYS",
    "wing": 1,
    "years": [

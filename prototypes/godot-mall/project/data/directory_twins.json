@@ -1,0 +1,9 @@
+{
+	"_": "MENU2 (design/godot-menu.md \"Time travel at the directory\"): each mall directory kiosk and its twin in the other year, for the year toggle on the directory (scripts/timetravel_trip.gd). Positions and faces copy tools/stores/directory/directory_data.json (which is not exported); wing = the wing whose floor it stands on. A null year = no kiosk there that year: kiosks 3 and 4 stand only in 1995 (guesses, design/godot-directory.md), so the trip from them lands on the same spot in 2026, a GUESS waiting on Steven.",
+	"kiosks": [
+		{"id": "h2_north", "wing": 1, "1995": {"x": -3.0, "z": -82.5, "face": [0, -1]}, "2026": {"x": -3.0, "z": -82.5, "face": [0, -1]}},
+		{"id": "h6_jcpenney", "wing": 2, "1995": {"x": -142.0, "z": 71.5, "face": [0, 1]}, "2026": {"x": -142.0, "z": 71.5, "face": [0, 1]}},
+		{"id": "h3_entrance", "wing": 1, "1995": {"x": 26.5, "z": 3.2, "face": [1, 0]}, "2026": null},
+		{"id": "c3_dillards", "wing": 2, "1995": {"x": -15.0, "z": 69.5, "face": [0, -1]}, "2026": null}
+	]
+}
