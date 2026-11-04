@@ -62,12 +62,12 @@ func _test_data(db) -> void:
 		_check(str(a.get("name", "")) == "PLACEHOLDER", "%s: the attendant is named PLACEHOLDER" % id)
 		_check(str(a.get("look", "")) == "preset" and FileAccess.file_exists("res://data/characters/%s.json" % a.get("preset", "?")),
 			"%s: the attendant wears a preset (%s)" % [id, a.get("preset", "?")])
-		_check(str(a.get("store", "")) == want_store[id] and int(a.get("wing", 0)) == want_wing[id] and Array(a.get("years", [])) == [1995],
+		_check(str(a.get("store", "")) == want_store[id] and int(a.get("wing", 0)) == want_wing[id] and _years(a) == [1995],
 			"%s: %s, wing %d, 1995 only" % [id, want_store[id], want_wing[id]])
 		var pr = _json("res://data/characters/%s.json" % a.get("preset", "?"))
 		_check(pr is Dictionary and str(pr.get("name", "")) == "PLACEHOLDER" and (pr.outfit.has("full") or (pr.outfit.has("bottom") and (pr.outfit.has("top") or pr.outfit.has("outer")))),
 			"%s: the preset is PLACEHOLDER and clothed" % id)
-		_check(Array(s.get("years", [])) == [1995] and str(s.get("greeting", "")) != "", "%s: 1995, a greeting" % id)
+		_check(_years(s) == [1995] and str(s.get("greeting", "")) != "", "%s: 1995, a greeting" % id)
 		var st := Shop.read_stock(s, db, 1995)
 		_check(st.size() == s.items.size() and st.size() > 0, "%s: every entry is an item of 1995 (%d of %d)" % [id, st.size(), s.items.size()])
 		for x in s.items:
@@ -105,6 +105,9 @@ func _test_data(db) -> void:
 		rs_ids.append(str(x.item))
 	for e in _json("res://data/items/radioshack.json"):
 		_check(rs_ids.has(str(e.id)), "RadioShack sells %s" % e.id)
+
+func _years(d: Dictionary) -> Array:
+	return Array(d.get("years", [])).map(func(y): return int(y))
 
 func _line(s: Dictionary, item: String) -> String:
 	for x in s.get("items", []):
@@ -206,6 +209,7 @@ func _test_screen(db) -> void:
 	var m = _mall({})
 	var sh = Shop.new()
 	root.add_child(sh)
+	await process_frame
 	sh.setup(null, m, db)
 	_check(not sh.open("nowhere"), "an unknown shop doesn't open")
 	_check(sh.open("radioshack") and sh.is_open and sh.stock.size() == 18, "RadioShack opens with 18 things")
@@ -226,6 +230,7 @@ func _test_screen(db) -> void:
 	var m26 = _mall({}, 2026)
 	var s26 = Shop.new()
 	root.add_child(s26)
+	await process_frame
 	s26.setup(null, m26, db)
 	_check(not s26.open("woolworth") and not s26.open("corn_dog_7"), "2026: no shop opens (1995 only)")
 	sh.queue_free()

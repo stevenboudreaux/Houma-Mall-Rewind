@@ -387,14 +387,15 @@ func _build_ui() -> void:
 	sb_card.set_content_margin_all(6)
 	sb_card_sel = _box(Color(0.24, 0.19, 0.14, 0.98), Color(1, 0.84, 0.4), 8, 3)
 	sb_card_sel.set_content_margin_all(4)
-	get_viewport().size_changed.connect(_layout)
+	if get_viewport():
+		get_viewport().size_changed.connect(_layout)
 
 ## Wide screen: the list on the right, the attendant's face free on the left. Tall (a phone): the list
 ## on the lower part, the face above it.
 func _layout() -> void:
 	if panel == null:
 		return
-	var vp := get_viewport().get_visible_rect().size
+	var vp := get_viewport().get_visible_rect().size if get_viewport() else Vector2(1280, 720)
 	var w: float
 	var h: float
 	var at: Vector2
