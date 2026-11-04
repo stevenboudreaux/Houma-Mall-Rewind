@@ -315,10 +315,9 @@ func _plan() -> void:
 	_do(func():
 		var ui = kiosk._ui()
 		_check(ui.is_open, "the directory is open")
-		var has_toggle := false
-		for b in ui._buttons():
-			if b[1] == "travel": has_toggle = true
-		_check(has_toggle and ui.map_year == "1995", "the directory shows 1995 with the toggle beside it")
+		# ws/directory (Nov 4 2026): the year switch is on the kiosk itself (1990s / 2026 keys)
+		var has_toggle: bool = kiosk.get("switch_node") != null and kiosk.switch_node.get_node_or_null("Key1990s") != null
+		_check(has_toggle and ui.year == "1995", "the directory shows 1995 with the year switch on the kiosk")
 		_shot("directory-1995-toggle")
 		_key(KEY_Y); _key(KEY_Y, false), 0.05)
 	_do(func():

@@ -1,458 +1,823 @@
-## The mall directory, read up close (design/godot-directory.md). Opened from a directory kiosk
-## (scripts/directory_kiosk.gd). There is no separate menu: what you see is the kiosk's own lit
-## panel (tex/dir/panel_<year>.png, the same picture as on the 3D sign; 2026 is the real directory
-## redrawn from IMG_4455), in its aluminium frame. Click or tap a store's name in the list, or its
-## place on the map, and it asks "Jump to this store?".
+## The mall directory, read at the kiosk (design/godot-directory.md "Reading the directory";
+## Steven chose option B on Nov 4 2026, design/godot-directory-legibility.md). Opened from a
+## directory kiosk (scripts/directory_kiosk.gd).
 ##
-## The click areas come with the panel (tex/dir/hotspots.json, tools/stores/directory/paint_dir.py);
-## where each store's jump puts you comes from the wing build (gen/<wing>/directory.json, from the
-## layout files), so a jump always lands in front of the store as the wing was built.
-## The only things added to the sign: the year on show with a toggle beside it, and a close button
-## on the frame. MENU2 (Nov 3 2026, design/godot-menu.md "Time travel at the directory"): the toggle
-## is the only way to change year. Pressing it closes the sign and travels in time from where you
-## stand (scripts/timetravel_trip.gd) to this directory's twin in the other year. The sign shows only
-## the year you are in.
+## The camera leaves the player and glides to the kiosk, like the talk camera
+## (design/godot-dialogue.md), and frames the whole lit sign with the year switch on its frame.
+## Then it moves in to the store list at reading size: one column at a time on a phone; the list,
+## the legend and the map's edge on a computer. Swipe or the arrows turn the page.
+## Picking a name lights it on the sign itself (every list line and map block it has) and the camera
+## glides across the sign to the store's block on the map, also lit. Picking the lit store again asks
+## "Jump to this store?" in the game menu's style, then jumps (player.jump_to).
 ##
-## Controls: mouse or touch (tap a name or a block; drag to pan and pinch or the wheel to zoom once
-## zoomed in); arrow keys / d-pad / stick move from store to store, Enter / A asks, Enter / A again
-## jumps, Esc / B backs out; Y (key or a gamepad's Y) or the toggle travels in time; +/- zoom.
-extends CanvasLayer
+## No words are added on screen while you read: the sign is the text. The only things drawn over the
+## view are an X box (close) and a < box (back), and the jump question. The sign is drawn from a 4x
+## picture (tex/dir/hi/panel_<year>.png, tools/stores/directory/paint_dir.py DIR_K=4) on a quad just
+## in front of the kiosk's panel, only while reading.
+##
+## The year switch (MENU2's time travel, scripts/timetravel_trip.gd) is on the kiosk itself: two lit
+## keys, 1990s and 2026, on the frame's bottom rail (built by directory_kiosk.gd). Tap a key on the
+## whole-sign view, or press Y (keyboard or gamepad) at any time: the sign closes and the trip
+## begins from this kiosk.
+##
+## Controls:
+##   touch / mouse: tap a name (or a block on the map); tap the lit store again to ask; swipe left /
+##     right to turn the page; < goes back (map -> list -> whole sign); X closes.
+##   keys / gamepad: up / down (W S, d-pad, stick) move from store to store down the list, turning the
+##     pages; left / right turn the page; Enter / Space / A picks, then asks; Esc / Backspace / B go
+##     back, then close; Y travels in time.
+##
+## Sharpness: on a hidpi screen (scripts/hidpi.gd) the 3D world is drawn at a lower scale; while the
+## camera is on the sign it is drawn at full device resolution (the view is then one unshaded quad).
+extends Node
 
-const LAYER := 25
-const FRAME := Color("#b3babc")      # the kiosk's aluminium (sampled from the footage)
-const FRAME_D := Color("#7d8487")
-const PINK := Color("#b5676d")
+const ART_W := 1.02          # tools/stores/directory/kiosk.gd: the lit art
+const ART_H := 1.14
+const ART_Y := 1.15          # the art's centre above the floor (PLINTH_H + frame + ART_H / 2)
+const FACE_Z := 0.153        # the art's face in front of the kiosk's centre (CAB_D / 2 + 0.003)
+const CAM_T := 0.6
+const FOV := 40.0
+const READ_SCALE := 0.72     # screen px per panel px (2048-wide panel) on the list: capitals ~10 px
+const MAP_SCALE := 0.54      # the store's block on the map, with its neighbours
+const SWITCH_LOW := 0.46     # m: the year switch's lower edge (directory_kiosk.gd), kept in the whole view
+const HOLD := 0.8            # s on the whole sign before moving in to the list
 const HILITE := Color("#ff2d6f")
+# the game menu's colours (scripts/menu/menu.gd)
+const M_BG := Color(0.07, 0.055, 0.045, 0.97)
+const M_INK := Color(1, 0.97, 0.9)
+const M_GOLD := Color(0.93, 0.85, 0.66)
+const M_AMBER := Color(0.85, 0.62, 0.22)
+const M_BTN := Color(0.2, 0.16, 0.12)
+const M_DARK := Color(0.1, 0.07, 0.04)
 
-var data := {}                 # gen/<wing>/directory.json: {"years": {"1995": {stalls...}, ...}}
-var spots := {}                # tex/dir/hotspots.json: {"size": [w, h], "1995": [...], "2026": [...]}
-var stall_by_id := {}          # year -> {unit id: stall}
 var player: Node = null
-var kiosk: Node = null
+var kiosk: Node3D = null
 var is_open := false
-var map_year := "2026"
-var sel := ""                  # the selected store's unit id
-var hover := ""
+var year := "1995"
+var spots := {}
+var data := {}
+var stall_by_id := {}
+var psize := Vector2(2048, 2290)
+
+var cam: Camera3D
+var from_cam: Camera3D
+var from_xf := Transform3D()
+var from_fov := 70.0
+var quad: MeshInstance3D
+var mat: ShaderMaterial
+var hidden: Array = []
+var layer: CanvasLayer
+var hud: Control
+var s3d := 1.0
+
+# the view: the panel rectangle (panel px) the camera frames, smoothed toward `want`
+var view := Rect2()
+var want := Rect2()
+var settled := false
+var state := "whole"         # "whole", "list", "map"
+var sel := ""                # the lit store's unit id
+var page := 0
+var pages: Array = []        # the list's pages (Rect2, panel px)
+var hold_t := 0.0
+
+# the jump question
 var confirm := false
 var confirm_yes := true
-var zoom := 1.0
-var pan := Vector2.ZERO        # panel pixel at the view's centre
-
-var root: Control
-var view: Control
-var f_sans: Font
+var dlg: Panel
+var dlg_title: Label
+var dlg_name: Label
+var dlg_note: Label
+var dlg_yes: Button
+var dlg_no: Button
 
 var touches := {}
 var drag_from := Vector2.ZERO
 var drag_moved := false
-var look_rect := Rect2()       # PROTOTYPE ws/directory (dirlook=c): the 3D panel's place on screen
-var look_owner: Node = null    # ... and the camera reader to hand back to on close
-var pressed_in := false        # the press began while the sign was open (the tap that opened it does not count)
-var pinch_d := 0.0
+var pressed_in := false
 var last_touch_ms := -100000
-
-# the fallback prompt (remove when interact.gd lands: workstream B+C's shared interaction system)
-var fallback := true
-var near_kiosk: Node = null
-var prompt_rect := Rect2()
+var _stick_held := false
 
 func _ready() -> void:
-	layer = LAYER
-	fallback = not ResourceLoader.exists("res://scripts/interact.gd")
-	f_sans = load("res://fonts/sans.otf")
 	var scn := get_parent()
 	var gen: String = scn.get_meta("gen", "res://gen/") if scn else "res://gen/"
 	if FileAccess.file_exists(gen + "directory.json"):
 		data = JSON.parse_string(FileAccess.get_file_as_string(gen + "directory.json"))
 	if FileAccess.file_exists("res://tex/dir/hotspots.json"):
 		spots = JSON.parse_string(FileAccess.get_file_as_string("res://tex/dir/hotspots.json"))
+		psize = Vector2(spots.size[0], spots.size[1])
 	for y in data.get("years", {}):
 		var m := {}
 		for st in data.years[y].stalls:
 			m[st.id] = st
 		stall_by_id[y] = m
-	root = Control.new()
-	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(root)
-	view = Control.new()
-	view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	view.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	view.draw.connect(_draw_view)
-	root.add_child(view)
+	layer = CanvasLayer.new()
+	layer.layer = 25
+	add_child(layer)
+	hud = Control.new()
+	hud.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud.draw.connect(_draw_hud)
+	layer.add_child(hud)
+	_build_dialog()
+
+# ------------------------------------------------------------------ geometry
+func _face() -> Vector3:
+	var f: Vector2 = kiosk.get_meta("face", Vector2(0, 1))
+	return Vector3(f.x, 0, f.y).normalized()
+
+func _right() -> Vector3:
+	return (-_face()).cross(Vector3.UP).normalized()
+
+## A panel pixel (may be outside the panel) to its point on the 3D sign's plane.
+func _p2w(p: Vector2) -> Vector3:
+	var c := kiosk.global_position + _face() * FACE_Z + Vector3.UP * ART_Y
+	return c + _right() * (p.x / psize.x - 0.5) * ART_W + Vector3.UP * (0.5 - p.y / psize.y) * ART_H
+
+func _vp() -> Vector2:
+	return get_viewport().get_visible_rect().size
+
+## The camera that frames panel rect r (centred, all of it visible).
+func _frame(r: Rect2) -> Transform3D:
+	var vp := _vp()
+	var tv := tan(deg_to_rad(FOV) * 0.5)
+	var th := tv * vp.x / vp.y
+	var w := r.size.x / psize.x * ART_W
+	var h := r.size.y / psize.y * ART_H
+	var d: float = max(h * 0.5 / tv, w * 0.5 / th)
+	return Transform3D(Basis.looking_at(-_face(), Vector3.UP), _p2w(r.get_center()) + _face() * d)
+
+## A rect of the viewport's shape, centred at c, s screen px per panel px.
+func _rect_at(c: Vector2, s: float) -> Rect2:
+	var sz := _vp() / s
+	return Rect2(c - sz * 0.5, sz)
+
+## The smallest view of the viewport's shape holding r, with a margin.
+func _fit(r: Rect2, margin := 1.08) -> Rect2:
+	var vp := _vp()
+	var s: float = min(vp.x / (r.size.x * margin), vp.y / (r.size.y * margin))
+	return _rect_at(r.get_center(), s)
+
+## The whole sign with the year switch below it (directory_kiosk.gd SWITCH_Y: 0.06 m under the art).
+func _whole() -> Rect2:
+	var below := (ART_Y - ART_H * 0.5 - SWITCH_LOW) / ART_H * psize.y
+	return _fit(Rect2(Vector2(0, 0), Vector2(psize.x, psize.y + below)), 1.1)
+
+func _scale() -> float:
+	return _vp().x / view.size.x
+
+func _p2s(p: Vector2) -> Vector2:
+	return (p - view.position) * _scale()
 
 # ------------------------------------------------------------------ open / close
-func open(p: Node, k: Node) -> void:
-	if data.is_empty() or spots.is_empty() or is_open:
+func open(p: Node, k: Node3D) -> void:
+	if is_open or spots.is_empty() or data.is_empty():
+		return
+	if p and p.get("vr_on"):
 		return
 	player = p
 	kiosk = k
 	is_open = true
-	confirm = false
 	sel = ""
-	hover = ""
-	map_year = str(p.get("year")) if p and p.get("year") != null else "1995"
-	if not stall_by_id.has(map_year):
-		map_year = "1995"
-	if p:
-		p.set("frozen", true)
+	confirm = false
+	dlg.visible = false
+	state = "whole"
+	page = 0
+	year = str(p.get("year")) if p and p.get("year") != null else "1995"
+	if not stall_by_id.has(year):
+		year = "1995"
+	_freeze(true)
+	_sharp(true)
+	_make_quad()
+	from_cam = get_viewport().get_camera_3d()
+	if from_cam == null and p:
+		from_cam = p.get("cam")
+	from_xf = from_cam.global_transform
+	from_fov = from_cam.fov
+	if cam == null:
+		cam = Camera3D.new()
+		cam.name = "DirectoryCam"
+		cam.near = 0.02
+		cam.far = 200.0
+		get_parent().add_child(cam)
+	cam.global_transform = from_xf
+	cam.fov = from_fov
+	cam.current = true
+	_make_pages()
+	view = _whole()
+	want = view
+	settled = false
+	hold_t = HOLD
 	pressed_in = false
 	touches.clear()
-	_fit()
-	view.queue_redraw()
+	var tw := create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_method(_intro_step, 0.0, 1.0, CAM_T)
+	tw.tween_callback(func(): settled = true; hud.queue_redraw())
+	hud.queue_redraw()
 
+func _intro_step(t: float) -> void:
+	cam.global_transform = from_xf.interpolate_with(_frame(view), t)
+	cam.fov = lerp(from_fov, FOV, t)
+
+## Close: the camera glides back to the player.
 func close() -> void:
-	is_open = false
-	confirm = false
-	if look_owner:
-		# PROTOTYPE ws/directory: the camera reader takes the camera back to the player
-		var lo := look_owner
-		look_owner = null
-		look_rect = Rect2()
-		view.queue_redraw()
-		lo.flat_closed()
+	if not is_open:
 		return
-	if player:
+	is_open = false
+	settled = false
+	confirm = false
+	dlg.visible = false
+	hud.queue_redraw()
+	var from := cam.global_transform
+	var back := from_cam.global_transform if is_instance_valid(from_cam) else from_xf
+	var tw := create_tween().set_parallel(true).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_method(func(t: float): cam.global_transform = from.interpolate_with(back, t), 0.0, 1.0, CAM_T * 0.8)
+	tw.tween_property(cam, "fov", from_fov, CAM_T * 0.8)
+	await tw.finished
+	if is_open:
+		return
+	_restore()
+
+## Back to the player's own view at once (a jump or a trip takes over).
+func _restore() -> void:
+	is_open = false
+	settled = false
+	if is_instance_valid(from_cam):
+		from_cam.current = true
+	if quad:
+		quad.visible = false
+	_sharp(false)
+	_freeze(false)
+	hud.queue_redraw()
+
+func _freeze(on: bool) -> void:
+	if on:
+		player.set("frozen", true)
+		player.set("move_vec", Vector2.ZERO)
+		player.set("move_touch", -1)
+		player.set("look_touch", -1)
+		player.set("dragging", false)
+		var st = player.get("stick")
+		if st:
+			st.visible = false
+		hidden.clear()
+		for n in get_tree().root.find_children("*", "CanvasLayer", true, false):
+			if n != layer and n.visible and n.layer < 100:
+				n.visible = false
+				hidden.append(n)
+	else:
+		for n in hidden:
+			if is_instance_valid(n):
+				n.visible = true
+		hidden.clear()
 		player.set("frozen", false)
-	view.queue_redraw()
 
-## Both years' panels. Every wing's export carries both (export_presets.cfg includes tex/dir/*):
-## a wing's own kiosks only reference their year's panel, and the toggle shows the other.
-var tex := {}
-func _panel() -> Texture2D:
-	if not tex.has(map_year):
-		var p := "res://tex/dir/panel_%s.png" % map_year
-		tex[map_year] = load(p) if ResourceLoader.exists(p) else null
-	return tex[map_year]
+func _sharp(on: bool) -> void:
+	var vpt := get_viewport()
+	if on:
+		add_to_group("hidpi_full")       # scripts/hidpi.gd leaves the scale alone meanwhile
+		s3d = vpt.scaling_3d_scale
+		vpt.scaling_3d_scale = 1.0
+	else:
+		remove_from_group("hidpi_full")
+		vpt.scaling_3d_scale = s3d
 
-func _psize() -> Vector2:
-	var s: Array = spots.get("size", [2048, 2290])
-	return Vector2(s[0], s[1])
+# ------------------------------------------------------------------ the sign, sharper and lit
+const SHADER := """
+shader_type spatial;
+render_mode unshaded, cull_back;
+uniform sampler2D tex : source_color, filter_linear_mipmap_anisotropic;
+uniform vec4 rects[16];
+uniform int n = 0;
+uniform vec4 hi : source_color = vec4(1.0, 0.176, 0.435, 1.0);
+void fragment() {
+	vec3 c = texture(tex, UV).rgb * vec3(0.93, 0.95, 0.97);
+	vec2 px = fwidth(UV);
+	for (int i = 0; i < 16; i++) {
+		if (i >= n) { break; }
+		vec4 r = rects[i];
+		if (UV.x >= r.x && UV.x <= r.z && UV.y >= r.y && UV.y <= r.w) {
+			c = mix(c, hi.rgb, 0.16);
+			float e = min(min(UV.x - r.x, r.z - UV.x) / px.x, min(UV.y - r.y, r.w - UV.y) / px.y);
+			if (e < 2.5) { c = hi.rgb; }
+		}
+	}
+	ALBEDO = c;
+}
+"""
+
+func _make_quad() -> void:
+	if quad == null:
+		quad = MeshInstance3D.new()
+		var qm := QuadMesh.new()
+		qm.size = Vector2(ART_W, ART_H)
+		quad.mesh = qm
+		mat = ShaderMaterial.new()
+		var sh := Shader.new()
+		sh.code = SHADER
+		mat.shader = sh
+		quad.material_override = mat
+		quad.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		get_parent().add_child(quad)
+	var f := _face()
+	quad.global_transform = Transform3D(Basis(_right(), Vector3.UP, f), kiosk.global_position + f * (FACE_Z + 0.003) + Vector3.UP * ART_Y)
+	var path := "res://tex/dir/hi/panel_%s.png" % year
+	if not ResourceLoader.exists(path):
+		path = "res://tex/dir/panel_%s.png" % year
+	mat.set_shader_parameter("tex", load(path))
+	quad.visible = true
+	_light()
+
+func _light() -> void:
+	var rs: Array = []
+	if sel != "":
+		for h in _hot():
+			if h.id == sel and rs.size() < 16:
+				var g := 4.0
+				rs.append(Vector4((h.rect[0] - g) / psize.x, (h.rect[1] - g) / psize.y, (h.rect[2] + g) / psize.x, (h.rect[3] + g) / psize.y))
+	var n := rs.size()
+	while rs.size() < 16:
+		rs.append(Vector4.ZERO)
+	mat.set_shader_parameter("rects", rs)
+	mat.set_shader_parameter("n", n)
 
 func _hot() -> Array:
-	return spots.get(map_year, [])
+	return spots.get(year, [])
 
 func _stall(id: String):
-	return stall_by_id.get(map_year, {}).get(id, null)
+	return stall_by_id.get(year, {}).get(id, null)
 
-# ------------------------------------------------------------------ layout: the panel on screen
-func _vp() -> Vector2:
-	return get_viewport().get_visible_rect().size
+# ------------------------------------------------------------------ the pages and the map
+## The list's columns (its lines clustered by x), with room for the headings and the title.
+func _columns() -> Array:
+	var xs := []
+	for h in _hot():
+		if h.kind == "list":
+			xs.append(h)
+	xs.sort_custom(func(a, b): return a.rect[0] < b.rect[0])
+	var cols := []
+	for h in xs:
+		var hr := Rect2(h.rect[0], h.rect[1], h.rect[2] - h.rect[0], h.rect[3] - h.rect[1])
+		if cols.is_empty() or h.rect[0] - cols[-1].position.x > 150:
+			cols.append(hr)
+		else:
+			cols[-1] = cols[-1].merge(hr)
+	var out := []
+	for c in cols:
+		out.append(c.grow_individual(40, 150, 20, 30))   # 150: the STORES BY CATEGORY title above
+	return out
 
-func _narrow() -> bool:
-	return _vp().x < 760.0
-
-## The frame's width round the panel, in screen pixels.
-func _fw() -> float:
-	return 10.0 if _narrow() else 18.0
-
-func _fit_scale() -> float:
-	if look_rect.size.x > 0:
-		return look_rect.size.x / _psize().x
-	var vp := _vp()
-	var m := _fw() + (6.0 if _narrow() else 20.0)
-	var top := 44.0 if _narrow() else 0.0     # phones: the toggle sits above the sign
-	return min((vp.x - 2 * m) / _psize().x, (vp.y - 2 * m - top) / _psize().y)
-
-func _fit() -> void:
-	zoom = 1.0
-	pan = _psize() * 0.5
-
-func _scale() -> float:
-	return _fit_scale() * zoom
-
-func _centre() -> Vector2:
-	if look_rect.size.x > 0:
-		return look_rect.get_center()
-	var c := _vp() * 0.5
-	if _narrow():
-		c.y += 22.0
-	return c
-
-func _p2s(p: Vector2) -> Vector2:
-	return _centre() + (p - pan) * _scale()
-
-func _s2p(s: Vector2) -> Vector2:
-	return pan + (s - _centre()) / _scale()
-
-func _clamp_pan() -> void:
-	var half := _vp() * 0.5 / _scale()
-	var ps := _psize()
-	pan.x = ps.x * 0.5 if half.x * 2 >= ps.x else clamp(pan.x, half.x, ps.x - half.x)
-	pan.y = ps.y * 0.5 if half.y * 2 >= ps.y else clamp(pan.y, half.y, ps.y - half.y)
-
-func _zoom_by(f: float, about := Vector2(-1, -1)) -> void:
-	if about.x < 0:
-		about = _centre()
-	var pp := _s2p(about)
-	zoom = clamp(zoom * f, 1.0, 6.0)
-	pan = pp - (about - _centre()) / _scale()
-	_clamp_pan()
-	view.queue_redraw()
-
-## The buttons on the frame: [rect, what]. MENU2: the year on show ("year", a label) with the time
-## travel toggle ("travel") beside it, and close.
-func _buttons() -> Array:
-	var vp := _vp()
-	var pr := _panel_rect() if zoom <= 1.01 else Rect2(Vector2(_fw() + 26, 26), vp - Vector2(2 * _fw() + 52, 52))
-	var h := 34.0
-	var y: float = 6.0 if _narrow() else max(6.0, pr.position.y - _fw() - h * 0.5)
-	var xr: float = min(vp.x - 8.0, pr.end.x + _fw()) - 44.0
-	var tw := 112.0
-	var yw := 70.0
-	return [[Rect2(xr, y, 44, h), "close"], [Rect2(xr - 10 - tw, y, tw, h), "travel"], [Rect2(xr - 10 - tw - 6 - yw, y, yw, h), "year"]]
-
-func _panel_rect() -> Rect2:
-	var a := _p2s(Vector2.ZERO)
-	return Rect2(a, _psize() * _scale())
-
-# ------------------------------------------------------------------ drawing
-func _draw_view() -> void:
-	var c := view
-	if not is_open:
-		_draw_prompt(c)
-		return
-	var vp := _vp()
-	var pr := _panel_rect()
-	var fw := _fw()
-	if look_rect.size.x > 0:
-		pass   # PROTOTYPE ws/directory: the 3D kiosk is the frame; no dimming, no drawn frame
-	else:
-		_draw_frame(c, pr, fw, vp)
-	var ptex := _panel()
-	if ptex:
-		c.draw_texture_rect(ptex, pr, false)
-	_draw_marks(c, vp)
-
-func _draw_frame(c: Control, pr: Rect2, fw: float, vp: Vector2) -> void:
-	c.draw_rect(Rect2(Vector2.ZERO, vp), Color(0, 0, 0, 0.62))
-	# the kiosk's frame round the lit panel: grey cabinet edge, the red pinstripe on top, the
-	# aluminium frame with a lighter inner lip, and the dark gasket
-	var outer := pr.grow(fw)
-	c.draw_rect(outer.grow(4), Color("#a7b1b3"))
-	c.draw_rect(Rect2(outer.position.x - 4, outer.position.y - 9, outer.size.x + 8, 5), PINK)
-	c.draw_rect(outer, FRAME)
-	c.draw_rect(outer, FRAME_D, false, 1.5)
-	c.draw_rect(pr.grow(3), Color("#d5dadb"))
-	c.draw_rect(pr.grow(1.5), Color("#1c1d20"))
-
-func _draw_marks(c: Control, vp: Vector2) -> void:
-	# the selected / hovered store: every place it appears on the sign
-	for pass_id in [hover, sel]:
-		if pass_id == "":
-			continue
-		var col := HILITE if pass_id == sel else Color(HILITE, 0.55)
-		for h in _hot():
-			if h.id == pass_id:
-				var r := _hrect(h)
-				c.draw_rect(r.grow(2), Color(HILITE, 0.18 if pass_id == sel else 0.10))
-				c.draw_rect(r.grow(2), col, false, 2.5 if pass_id == sel else 1.5)
-	# the store's name, on a small tag over its place on the map
-	var shown := sel if sel != "" else hover
-	if shown != "":
-		var st = _stall(shown)
-		var mr := Rect2()
-		for h in _hot():
-			if h.id == shown and h.kind == "map":
-				mr = _hrect(h)
+## Reading-size views over the list, in reading order: as many columns side by side as fit the
+## screen at READ_SCALE, then down those columns a screen at a time.
+func _make_pages() -> void:
+	pages.clear()
+	var vsz := _vp() / READ_SCALE
+	var cols := _columns()
+	var i := 0
+	while i < cols.size():
+		var grp: Rect2 = cols[i]
+		var j := i + 1
+		while j < cols.size() and grp.merge(cols[j]).size.x <= vsz.x:
+			grp = grp.merge(cols[j])
+			j += 1
+		var x := grp.get_center().x - vsz.x * 0.5
+		var y := grp.position.y
+		if vsz.y >= grp.size.y:
+			y = grp.get_center().y - vsz.y * 0.5
+		while true:
+			if y + vsz.y > grp.end.y and y > grp.position.y:
+				y = max(grp.position.y, grp.end.y - vsz.y)   # the last page ends with the list
+			pages.append(Rect2(Vector2(x, y), vsz))
+			if y + vsz.y >= grp.end.y:
 				break
-		if st and mr.size.x > 0:
-			var txt := String(st.name)
-			if map_year == "1995" and int(st.num) > 0:
-				txt = "%d  %s" % [int(st.num), st.name]
-			var fs := 15
-			var tw := f_sans.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
-			var tr := Rect2(mr.get_center().x - tw * 0.5 - 8, mr.position.y - 30, tw + 16, 24)
-			tr.position.x = clamp(tr.position.x, 4, vp.x - tr.size.x - 4)
-			tr.position.y = max(tr.position.y, 4)
-			c.draw_rect(tr, Color(0.08, 0.08, 0.1, 0.88))
-			c.draw_string(f_sans, tr.position + Vector2(8, 17), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color.WHITE)
-	# the frame's buttons: the year with the time-travel toggle beside it, and close
-	for b in _buttons():
-		var r: Rect2 = b[0]
-		var what: String = b[1]
-		match what:
-			"year":
-				c.draw_rect(r, Color(0.12, 0.13, 0.15, 0.85))
-				c.draw_rect(r, Color(1, 1, 1, 0.8), false, 1.5)
-				_text_c(c, map_year, r.get_center(), 19, Color.WHITE)
-			"travel":
-				_draw_toggle(c, r)
-			_:
-				c.draw_rect(r, Color(0.12, 0.13, 0.15, 0.85))
-				c.draw_rect(r, Color(1, 1, 1, 0.8), false, 1.5)
-				_text_c(c, "X", r.get_center(), 15, Color.WHITE)
-	if confirm:
-		_draw_confirm(c)
+			y += vsz.y * 0.88
+		i = j
 
-## MENU2: the toggle, a switch with both years on it, the knob on the year you are in. A keyboard or
-## gamepad gets its key (Y) on the knob's far side.
-func _draw_toggle(c: Control, r: Rect2) -> void:
-	var on_right := map_year == "2026"
-	var rad := r.size.y * 0.5
-	var track := Color(0.12, 0.13, 0.15, 0.9)
-	c.draw_rect(Rect2(r.position + Vector2(rad, 0), r.size - Vector2(2 * rad, 0)), track)
-	c.draw_circle(r.position + Vector2(rad, rad), rad, track)
-	c.draw_circle(r.position + Vector2(r.size.x - rad, rad), rad, track)
-	var kw := r.size.x * 0.5
-	var kr := Rect2(r.position + Vector2(r.size.x - kw if on_right else 0.0, 0), Vector2(kw, r.size.y)).grow(-3)
-	var knob := Color("#2f93c3")
-	var kh := kr.size.y * 0.5
-	c.draw_rect(Rect2(kr.position + Vector2(kh, 0), kr.size - Vector2(2 * kh, 0)), knob)
-	c.draw_circle(kr.position + Vector2(kh, kh), kh, knob)
-	c.draw_circle(kr.position + Vector2(kr.size.x - kh, kh), kh, knob)
-	_text_c(c, map_year, kr.get_center(), 14, Color.WHITE)
-	var other := "1995" if on_right else "2026"
-	var oc := r.position + Vector2(kw * 0.5 if on_right else r.size.x - kw * 0.5, rad)
-	var kind: String = str(player.get("input_kind")) if player else "kb"
-	_text_c(c, other + (" Y" if kind != "touch" else ""), oc, 13, Color(1, 1, 1, 0.75))
+func _show_whole() -> void:
+	state = "whole"
+	want = _whole()
+	hud.queue_redraw()
 
-## MENU2: the toggle. The sign closes and the trip begins from this kiosk.
-func _travel() -> void:
-	if player == null or confirm:
+func _show_page(i: int) -> void:
+	if pages.is_empty():
 		return
-	var p := player
-	var k: Node3D = kiosk if kiosk is Node3D else null
-	close()
-	if k == null:
-		k = Node3D.new()
-		k.position = p.position
-	load("res://scripts/timetravel_trip.gd").begin(p, k)
+	if i < 0:
+		_show_whole()
+		return
+	page = clampi(i, 0, pages.size() - 1)
+	state = "list"
+	hold_t = 0.0
+	want = pages[page]
+	hud.queue_redraw()
 
-func _hrect(h: Dictionary) -> Rect2:
-	var a := _p2s(Vector2(h.rect[0], h.rect[1]))
-	var b := _p2s(Vector2(h.rect[2], h.rect[3]))
-	return Rect2(a, b - a)
+## The page holding the selected store's first list line.
+func _page_of(id: String) -> int:
+	for h in _hot():
+		if h.id == id and h.kind == "list":
+			var c := Vector2((h.rect[0] + h.rect[2]) * 0.5, (h.rect[1] + h.rect[3]) * 0.5)
+			for i in pages.size():
+				if pages[i].grow(-10).has_point(c):
+					return i
+	return page
 
-func _text_c(c: CanvasItem, t: String, p: Vector2, size: int, col: Color) -> void:
-	var sz := f_sans.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, size)
-	c.draw_string(f_sans, p + Vector2(-sz.x * 0.5, size * 0.36), t, HORIZONTAL_ALIGNMENT_LEFT, -1, size, col)
+## The selected store's block on the map. When its lit list line fits in the same view at a readable
+## size (a computer, a phone held sideways), the camera keeps both; otherwise the block and its
+## neighbours (the line stays lit on the page it came from).
+func _show_map() -> void:
+	var blk := Rect2()
+	var line := Rect2()
+	for h in _hot():
+		if h.id != sel:
+			continue
+		var r := Rect2(h.rect[0], h.rect[1], h.rect[2] - h.rect[0], h.rect[3] - h.rect[1])
+		if h.kind == "map" and blk.size == Vector2.ZERO:
+			blk = r
+		elif h.kind == "list" and line.size == Vector2.ZERO:
+			line = r
+	if blk.size == Vector2.ZERO:
+		return
+	state = "map"
+	hold_t = 0.0
+	var both := _fit(blk.merge(line).grow(60), 1.0)
+	if line.size != Vector2.ZERO and _vp().x / both.size.x >= 0.5:
+		want = both
+	else:
+		want = _rect_at(blk.get_center(), MAP_SCALE)
+	hud.queue_redraw()
 
-var r_yes := Rect2()
-var r_no := Rect2()
-func _draw_confirm(c: Control) -> void:
+# ------------------------------------------------------------------ every frame
+func _process(dt: float) -> void:
+	if not is_open or not settled:
+		return
+	if state == "whole" and hold_t > 0.0:
+		hold_t -= dt
+		if hold_t <= 0.0:
+			_show_page(0)
+	var k := 1.0 - exp(-dt * 7.0)
+	view = Rect2(view.position.lerp(want.position, k), view.size.lerp(want.size, k))
+	cam.global_transform = _frame(view)
+
+# ------------------------------------------------------------------ the boxes and the question
+func _btns() -> Array:
+	if confirm:
+		return []
 	var vp := _vp()
+	var out := [[Rect2(vp.x - 52, 8, 44, 36), "X"]]
+	if state != "whole":
+		out.append([Rect2(8, 8, 44, 36), "<"])
+	return out
+
+func _draw_hud() -> void:
+	if not is_open or not settled:
+		return
+	var f: Font = load("res://fonts/sans.otf")
+	for b in _btns():
+		var r: Rect2 = b[0]
+		hud.draw_rect(r, Color(0.12, 0.13, 0.15, 0.85))
+		hud.draw_rect(r, Color(1, 1, 1, 0.8), false, 1.5)
+		var sz := f.get_string_size(b[1], HORIZONTAL_ALIGNMENT_LEFT, -1, 16)
+		hud.draw_string(f, r.get_center() + Vector2(-sz.x * 0.5, 6), b[1], HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color.WHITE)
+
+## The jump question, in the game menu's look (scripts/menu/menu.gd: its brown ground, cream and
+## gold type, amber for the chosen button, rounded corners). Its buttons are hit by hand in _input.
+func _build_dialog() -> void:
+	dlg = Panel.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = M_BG
+	sb.set_border_width_all(2)
+	sb.border_color = Color(M_GOLD, 0.5)
+	sb.set_corner_radius_all(10)
+	dlg.add_theme_stylebox_override("panel", sb)
+	dlg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dlg.visible = false
+	layer.add_child(dlg)
+	dlg_title = _label("Jump to this store?", 21, M_INK)
+	dlg_name = _label("", 19, M_GOLD)
+	dlg_note = _label("", 13, Color(M_INK, 0.6))
+	dlg_yes = _button("Yes, go there")
+	dlg_no = _button("Cancel")
+
+func _label(t: String, fs: int, col: Color) -> Label:
+	var l := Label.new()
+	l.text = t
+	l.add_theme_font_size_override("font_size", fs)
+	l.add_theme_color_override("font_color", col)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dlg.add_child(l)
+	return l
+
+func _button(t: String) -> Button:
+	var b := Button.new()
+	b.text = t
+	b.focus_mode = Control.FOCUS_NONE
+	b.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	b.add_theme_font_size_override("font_size", 17)
+	dlg.add_child(b)
+	return b
+
+func _paint(b: Button, on: bool) -> void:
+	var bg := M_AMBER if on else M_BTN
+	var fg := M_DARK if on else M_INK
+	for st in ["normal", "hover", "pressed", "disabled", "focus"]:
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = bg
+		sb.set_corner_radius_all(8)
+		b.add_theme_stylebox_override(st, sb)
+	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		b.add_theme_color_override(c, fg)
+
+func _ask() -> void:
 	var st = _stall(sel)
 	if st == null:
 		return
-	c.draw_rect(Rect2(Vector2.ZERO, vp), Color(0, 0, 0, 0.4))
-	var dw: float = min(400.0, vp.x - 24)
-	var dlg := Rect2((vp.x - dw) * 0.5, vp.y * 0.5 - 90, dw, 176)
-	c.draw_rect(dlg, Color("#f3f6f7"))
-	c.draw_rect(Rect2(dlg.position, Vector2(dlg.size.x, 8)), Color("#2f93c3") if map_year == "2026" else Color("#1f5c66"))
-	c.draw_rect(dlg, FRAME_D, false, 2.0)
-	_text_c(c, "Jump to this store?", dlg.position + Vector2(dw * 0.5, 40), 21, Color("#262626"))
+	confirm = true
+	confirm_yes = true
 	var nm := String(st.name)
-	if map_year == "1995" and int(st.num) > 0:
+	if year == "1995" and int(st.num) > 0:
 		nm = "%d  %s" % [int(st.num), st.name]
-	_text_c(c, nm, dlg.position + Vector2(dw * 0.5, 70), 17, HILITE.darkened(0.25))
+	dlg_name.text = nm
 	var j: Array = st.jump
-	if player and (int(j[0]) != int(player.get("wing")) or map_year != str(player.get("year"))):
-		_text_c(c, "Loads Wing %d, %s" % [int(j[0]), map_year], dlg.position + Vector2(dw * 0.5, 92), 12, Color("#666666"))
-	r_yes = Rect2(dlg.position.x + 16, dlg.end.y - 58, dw * 0.5 - 24, 44)
-	r_no = Rect2(dlg.position.x + dw * 0.5 + 8, dlg.end.y - 58, dw * 0.5 - 24, 44)
-	for b in [[r_yes, "Yes, go there", confirm_yes], [r_no, "Cancel", not confirm_yes]]:
-		var rr: Rect2 = b[0]
-		c.draw_rect(rr, Color("#262a30") if b[2] else Color.WHITE)
-		c.draw_rect(rr, Color("#262a30"), false, 2.0)
-		_text_c(c, b[1], rr.get_center(), 16, Color.WHITE if b[2] else Color("#262a30"))
+	var other := player and (int(j[0]) != int(player.get("wing")) or year != str(player.get("year")))
+	dlg_note.text = ("Loads Wing %d" % int(j[0])) if other else ""
+	_layout_dialog()
+	dlg.visible = true
+	hud.queue_redraw()
 
-# ------------------------------------------------------------------ the fallback prompt
-## Remove when interact.gd lands (workstream B+C): their action button calls interact() on us.
-func _draw_prompt(c: Control) -> void:
-	prompt_rect = Rect2()
-	if near_kiosk == null:
-		return
+func _layout_dialog() -> void:
 	var vp := _vp()
-	var kind: String = str(player.get("input_kind")) if player else "kb"
-	var key: String = {"pad": "X", "touch": "Tap", "kb": "E"}.get(kind, "E")
-	var w := 280.0
-	# where the seam's prompt goes (scripts/player.gd); the two never show together
-	prompt_rect = Rect2((vp.x - w) * 0.5, vp.y - 132, w, 54)
-	c.draw_rect(prompt_rect, Color(0.08, 0.06, 0.05, 0.78))
-	c.draw_rect(prompt_rect, Color(0.93, 0.85, 0.66, 0.85), false, 2.0)
-	var kr := Rect2(prompt_rect.position + Vector2(14, 10), Vector2(50 if key == "Tap" else 36, 34))
-	c.draw_rect(kr, Color(0.95, 0.89, 0.74))
-	_text_c(c, key, kr.get_center(), 16, Color(0.1, 0.08, 0.06))
-	c.draw_string(f_sans, Vector2(kr.end.x + 12, prompt_rect.position.y + 33), "Read the Mall Directory", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color(1, 0.97, 0.9))
+	var w: float = min(420.0, vp.x - 32.0)
+	var h := 196.0
+	dlg.position = Vector2((vp.x - w) * 0.5, vp.y * 0.5 - h * 0.5)
+	dlg.size = Vector2(w, h)
+	dlg_title.position = Vector2(0, 18); dlg_title.size = Vector2(w, 30)
+	dlg_name.position = Vector2(0, 54); dlg_name.size = Vector2(w, 28)
+	dlg_note.position = Vector2(0, 84); dlg_note.size = Vector2(w, 20)
+	var bw := (w - 48.0) * 0.5
+	dlg_yes.position = Vector2(16, h - 66); dlg_yes.size = Vector2(bw, 48)
+	dlg_no.position = Vector2(32 + bw, h - 66); dlg_no.size = Vector2(bw, 48)
+	_paint(dlg_yes, confirm_yes)
+	_paint(dlg_no, not confirm_yes)
 
-func _process(_dt: float) -> void:
-	if is_open or not fallback:
+func _answer(yes: bool) -> void:
+	confirm = false
+	dlg.visible = false
+	hud.queue_redraw()
+	if yes:
+		_jump()
+
+func _jump() -> void:
+	var st = _stall(sel)
+	if st == null:
 		return
-	if player == null:
-		player = get_parent().get_node_or_null("Player")
-	var nk: Node = null
-	if player and not player.get("frozen") and not player.get("leaving"):
-		var seam_prompt = player.get("prompt")
-		if not (seam_prompt and seam_prompt.visible):
-			for k in get_tree().get_nodes_in_group("directory_kiosk"):
-				if k.in_reach(player.position):
-					nk = k
-					break
-	if nk != near_kiosk or nk != null:
-		near_kiosk = nk
-		view.queue_redraw()   # every frame while near: the key cap follows the input (E, X, Tap)
+	var j: Array = st.jump
+	print("directory jump: ", st.name, " (", year, ") -> wing ", j[0], " at ", j[1], ",", j[2], " yaw ", j[3])
+	var p := player
+	_restore()
+	if p and p.has_method("jump_to"):
+		p.jump_to(int(j[0]), int(year), float(j[1]), float(j[2]), float(j[3]))
+
+## The year switch: the sign closes and the trip to this kiosk's twin in the other year begins
+## (scripts/timetravel_trip.gd, MENU2).
+func travel() -> void:
+	if player == null or confirm or not is_open:
+		return
+	var p := player
+	var k := kiosk
+	print("directory: year switch -> trip from ", year)
+	_restore()
+	load("res://scripts/timetravel_trip.gd").begin(p, k)
 
 # ------------------------------------------------------------------ input
 func _input(e: InputEvent) -> void:
 	if not is_open:
-		_fallback_input(e)
 		return
 	get_viewport().set_input_as_handled()
-	if e is InputEventKey and e.pressed:
-		_key(e)
+	if not settled:
+		return
+	if e is InputEventKey and e.pressed and not e.echo:
+		_key(e.physical_keycode)
 	elif e is InputEventJoypadButton and e.pressed:
 		_pad(e.button_index)
 	elif e is InputEventJoypadMotion:
 		_stick(e)
 	elif e is InputEventScreenTouch:
 		last_touch_ms = Time.get_ticks_msec()
-		_touch(e)
+		if e.pressed:
+			touches[e.index] = e.position
+			if touches.size() == 1:
+				_press(e.position)
+		else:
+			touches.erase(e.index)
+			if touches.is_empty():
+				_release(e.position)
 	elif e is InputEventScreenDrag:
 		last_touch_ms = Time.get_ticks_msec()
-		_touch_drag(e)
+		touches[e.index] = e.position
+		_move(e.position)
 	elif e is InputEventMouseButton:
-		if Time.get_ticks_msec() - last_touch_ms < 600:
+		if Time.get_ticks_msec() - last_touch_ms < 600 or e.button_index != MOUSE_BUTTON_LEFT:
 			return
-		if e.button_index == MOUSE_BUTTON_WHEEL_UP and e.pressed:
-			_zoom_by(1.2, e.position)
-		elif e.button_index == MOUSE_BUTTON_WHEEL_DOWN and e.pressed:
-			_zoom_by(1.0 / 1.2, e.position)
-		elif e.button_index == MOUSE_BUTTON_LEFT:
-			if e.pressed:
-				_press(e.position)
-			else:
-				_release(e.position)
-	elif e is InputEventMouseMotion:
-		if Time.get_ticks_msec() - last_touch_ms < 600:
-			return
-		if e.button_mask & MOUSE_BUTTON_MASK_LEFT:
-			_move(e.position, e.relative)
+		if e.pressed:
+			_press(e.position)
 		else:
-			var h := _hit(e.position)
-			if h != hover:
-				hover = h
-				view.queue_redraw()
+			_release(e.position)
+	elif e is InputEventMouseMotion and e.button_mask & MOUSE_BUTTON_MASK_LEFT:
+		if Time.get_ticks_msec() - last_touch_ms < 600:
+			return
+		_move(e.position)
 
-func _fallback_input(e: InputEvent) -> void:
-	if not fallback or near_kiosk == null or player == null:
+func _key(k: int) -> void:
+	if confirm:
+		match k:
+			KEY_LEFT, KEY_RIGHT, KEY_A, KEY_D, KEY_TAB:
+				confirm_yes = not confirm_yes
+				_layout_dialog()
+			KEY_ENTER, KEY_KP_ENTER, KEY_SPACE, KEY_E:
+				_answer(confirm_yes)
+			KEY_ESCAPE, KEY_BACKSPACE:
+				_answer(false)
 		return
-	var go := false
-	if e is InputEventKey and e.pressed and not e.echo and e.physical_keycode == KEY_E:
-		go = true
-	elif e is InputEventJoypadButton and e.pressed and e.button_index == JOY_BUTTON_X:
-		go = true
-	elif e is InputEventScreenTouch and e.pressed and prompt_rect.has_point(e.position):
-		go = true
-	elif e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT and prompt_rect.has_point(e.position):
-		go = true
-	if go:
-		get_viewport().set_input_as_handled()
-		near_kiosk.interact(player)
+	match k:
+		KEY_ESCAPE, KEY_BACKSPACE:
+			_back()
+		KEY_UP, KEY_W:
+			_step(-1)
+		KEY_DOWN, KEY_S:
+			_step(1)
+		KEY_LEFT, KEY_A:
+			_turn(-1)
+		KEY_RIGHT, KEY_D:
+			_turn(1)
+		KEY_ENTER, KEY_KP_ENTER, KEY_SPACE, KEY_E:
+			_enter()
+		KEY_Y:
+			travel()
 
-## The store under a screen point: a list line before a map place, the smallest place first.
+func _pad(b: int) -> void:
+	if confirm:
+		match b:
+			JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_RIGHT:
+				confirm_yes = not confirm_yes
+				_layout_dialog()
+			JOY_BUTTON_A:
+				_answer(confirm_yes)
+			JOY_BUTTON_B:
+				_answer(false)
+		return
+	match b:
+		JOY_BUTTON_B, JOY_BUTTON_BACK:
+			_back()
+		JOY_BUTTON_DPAD_UP:
+			_step(-1)
+		JOY_BUTTON_DPAD_DOWN:
+			_step(1)
+		JOY_BUTTON_DPAD_LEFT:
+			_turn(-1)
+		JOY_BUTTON_DPAD_RIGHT:
+			_turn(1)
+		JOY_BUTTON_A:
+			_enter()
+		JOY_BUTTON_Y:
+			travel()
+
+func _stick(e: InputEventJoypadMotion) -> void:
+	if e.axis != JOY_AXIS_LEFT_X and e.axis != JOY_AXIS_LEFT_Y:
+		return
+	if abs(e.axis_value) < 0.3:
+		_stick_held = false
+		return
+	if _stick_held or abs(e.axis_value) < 0.6:
+		return
+	_stick_held = true
+	var d := int(signf(e.axis_value))
+	if confirm:
+		if e.axis == JOY_AXIS_LEFT_X:
+			confirm_yes = not confirm_yes
+			_layout_dialog()
+	elif e.axis == JOY_AXIS_LEFT_Y:
+		_step(d)
+	else:
+		_turn(d)
+
+## Back: the map to the list, the list to the whole sign, the whole sign closes.
+func _back() -> void:
+	match state:
+		"map":
+			_show_page(page)
+		"list":
+			_show_whole()
+		_:
+			close()
+
+## Enter / A: the whole sign moves in to the list; a store lit on the list goes to its block; on the
+## map it asks.
+func _enter() -> void:
+	if state == "whole":
+		_show_page(0)
+	elif state == "map" and sel != "":
+		_ask()
+	elif sel != "":
+		_show_map()
+	else:
+		_step(1)
+
+## Turn the page (on the map: back to the list first).
+func _turn(d: int) -> void:
+	if state == "map":
+		_show_page(page)
+	elif state == "whole":
+		if d > 0:
+			_show_page(0)
+	else:
+		_show_page(page + d)
+
+## The next / previous store down the list (the sign's own order), turning the pages with it.
+func _step(d: int) -> void:
+	var ids := []
+	for h in _hot():
+		if h.kind == "list" and not (h.id in ids) and _stall(h.id) != null:
+			ids.append(h.id)
+	if ids.is_empty():
+		return
+	var i := ids.find(sel)
+	sel = ids[(i + d + ids.size()) % ids.size()] if i >= 0 else ids[0]
+	_light()
+	_show_page(_page_of(sel))
+
+func _press(p: Vector2) -> void:
+	drag_from = p
+	drag_moved = false
+	pressed_in = true
+
+func _move(p: Vector2) -> void:
+	if (p - drag_from).length() > 12.0:
+		drag_moved = true
+
+func _release(p: Vector2) -> void:
+	if not pressed_in:
+		return
+	pressed_in = false
+	if confirm:
+		if Rect2(dlg.position + dlg_yes.position, dlg_yes.size).has_point(p):
+			_answer(true)
+		elif Rect2(dlg.position + dlg_no.position, dlg_no.size).has_point(p):
+			_answer(false)
+		elif not Rect2(dlg.position, dlg.size).has_point(p):
+			_answer(false)
+		return
+	if drag_moved:
+		drag_moved = false
+		# a sideways swipe turns the page
+		var dx := p.x - drag_from.x
+		if absf(dx) > 50.0 and absf(dx) > absf(p.y - drag_from.y):
+			_turn(1 if dx < 0 else -1)
+		return
+	for b in _btns():
+		if (b[0] as Rect2).has_point(p):
+			if b[1] == "X":
+				close()
+			else:
+				_back()
+			return
+	if kiosk.has_method("switch_key_at"):
+		var y: String = kiosk.switch_key_at(cam.project_ray_origin(p), cam.project_ray_normal(p))
+		if y != "":
+			if y != year:
+				travel()
+			return
+	var id := _hit(p)
+	if id == "":
+		if state == "map":
+			_show_page(page)
+		elif state == "whole":
+			_show_page(0)
+		return
+	_pick(id)
+
+## A tap on a store: on the list it lights and the camera goes to its block; on the map a tap on the
+## lit store asks, a tap on another block lights that one.
+func _pick(id: String) -> void:
+	if id == sel and state == "map":
+		_ask()
+		return
+	sel = id
+	_light()
+	if state != "map":
+		page = _page_of(id)
+	_show_map()
+
+## The store under a screen point: the ray from the camera onto the sign's plane, then the click
+## areas (a list line before a map block, the smallest block first).
 func _hit(s: Vector2) -> String:
-	var p := _s2p(s)
+	var o := cam.project_ray_origin(s)
+	var d := cam.project_ray_normal(s)
+	var f := _face()
+	var c := kiosk.global_position + f * FACE_Z + Vector3.UP * ART_Y
+	var den := d.dot(f)
+	if absf(den) < 1e-5:
+		return ""
+	var w := o + d * ((c - o).dot(f) / den) - c
+	var p := Vector2((w.dot(_right()) / ART_W + 0.5) * psize.x, (0.5 - w.y / ART_H) * psize.y)
 	var best := ""
 	var best_a := 1e12
 	for h in _hot():
@@ -464,239 +829,17 @@ func _hit(s: Vector2) -> String:
 				best = h.id
 	return best
 
-func _key(e: InputEventKey) -> void:
-	var k := e.physical_keycode
-	if confirm:
-		if k in [KEY_LEFT, KEY_RIGHT, KEY_A, KEY_D, KEY_TAB]:
-			confirm_yes = not confirm_yes
-		elif k in [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]:
-			_choose(confirm_yes)
-		elif k in [KEY_ESCAPE, KEY_BACKSPACE]:
-			confirm = false
-		view.queue_redraw()
-		return
-	match k:
-		KEY_ESCAPE, KEY_BACKSPACE:
-			close()
-		KEY_LEFT:
-			_step(Vector2(-1, 0))
-		KEY_RIGHT:
-			_step(Vector2(1, 0))
-		KEY_UP:
-			_step(Vector2(0, -1))
-		KEY_DOWN:
-			_step(Vector2(0, 1))
-		KEY_ENTER, KEY_KP_ENTER, KEY_SPACE:
-			_ask()
-		KEY_Y:
-			_travel()
-			return
-		KEY_EQUAL, KEY_KP_ADD:
-			_zoom_on_sel(1.4)
-		KEY_MINUS, KEY_KP_SUBTRACT:
-			_zoom_by(1.0 / 1.4)
-	view.queue_redraw()
-
-func _pad(b: int) -> void:
-	if confirm:
-		match b:
-			JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_RIGHT:
-				confirm_yes = not confirm_yes
-			JOY_BUTTON_A:
-				_choose(confirm_yes)
-			JOY_BUTTON_B:
-				confirm = false
-		view.queue_redraw()
-		return
-	match b:
-		JOY_BUTTON_B, JOY_BUTTON_BACK:
-			close()
-		JOY_BUTTON_DPAD_LEFT:
-			_step(Vector2(-1, 0))
-		JOY_BUTTON_DPAD_RIGHT:
-			_step(Vector2(1, 0))
-		JOY_BUTTON_DPAD_UP:
-			_step(Vector2(0, -1))
-		JOY_BUTTON_DPAD_DOWN:
-			_step(Vector2(0, 1))
-		JOY_BUTTON_A:
-			_ask()
-		JOY_BUTTON_Y:
-			_travel()
-			return
-		JOY_BUTTON_X:
-			if zoom < 5.0:
-				_zoom_on_sel(1.5)
-			else:
-				_fit()
-	view.queue_redraw()
-
-var _stick_held := false
-func _stick(e: InputEventJoypadMotion) -> void:
-	if e.axis != JOY_AXIS_LEFT_X and e.axis != JOY_AXIS_LEFT_Y:
-		return
-	if abs(e.axis_value) < 0.3:
-		_stick_held = false
-		return
-	if _stick_held or abs(e.axis_value) < 0.6:
-		return
-	_stick_held = true
-	var d := Vector2(signf(e.axis_value), 0) if e.axis == JOY_AXIS_LEFT_X else Vector2(0, signf(e.axis_value))
-	if confirm:
-		if d.x != 0:
-			confirm_yes = not confirm_yes
-	else:
-		_step(d)
-	view.queue_redraw()
-
-## A store's point on the sign for moving between stores: its place on the map, else its first
-## list line.
-func _anchor(id: String) -> Vector2:
-	var lst := Vector2(-1, -1)
+## Where a store's click area is on screen now (tests).
+func screen_of(id: String, kind: String) -> Vector2:
 	for h in _hot():
-		if h.id == id:
-			var c := Vector2((h.rect[0] + h.rect[2]) * 0.5, (h.rect[1] + h.rect[3]) * 0.5)
-			if h.kind == "map":
-				return c
-			if lst.x < 0:
-				lst = c
-	return lst
+		if h.id == id and h.kind == kind:
+			return cam.unproject_position(_p2w(Vector2((h.rect[0] + h.rect[2]) * 0.5, (h.rect[1] + h.rect[3]) * 0.5)))
+	return Vector2(-1, -1)
 
-func _ids() -> Array:
-	var out := []
+## A store's unit id by its name on the sign (tests).
+func id_of(name: String) -> String:
 	for h in _hot():
-		if not (h.id in out) and _stall(h.id) != null:
-			out.append(h.id)
-	return out
-
-## Move the selection to the nearest store in direction d on the sign.
-func _step(d: Vector2) -> void:
-	var ids := _ids()
-	if ids.is_empty():
-		return
-	if sel == "":
-		sel = ids[0]
-		if kiosk:
-			# start at the store nearest the kiosk
-			var bd := 1e12
-			for id in ids:
-				var st = _stall(id)
-				var dd := Vector2(st.label[0], st.label[1]).distance_to(Vector2(kiosk.position.x, kiosk.position.z))
-				if dd < bd:
-					bd = dd
-					sel = id
-		return
-	var p0 := _anchor(sel)
-	var best := ""
-	var best_cost := 1e12
-	for id in ids:
-		if id == sel:
-			continue
-		var v := _anchor(id) - p0
-		var along := v.dot(d)
-		if along <= 1.0:
-			continue
-		var off := absf(v.dot(Vector2(-d.y, d.x)))
-		if off > along * 2.5:
-			continue
-		var cost := along + off * 2.0
-		if cost < best_cost:
-			best_cost = cost
-			best = id
-	if best != "":
-		sel = best
-
-func _zoom_on_sel(f: float) -> void:
-	if sel != "":
-		_zoom_by(f, _p2s(_anchor(sel)))
-	else:
-		_zoom_by(f)
-
-func _ask() -> void:
-	if sel != "" and _stall(sel) != null:
-		confirm = true
-		confirm_yes = true
-		view.queue_redraw()
-
-func _choose(yes: bool) -> void:
-	confirm = false
-	if not yes:
-		view.queue_redraw()
-		return
-	var st = _stall(sel)
-	var j: Array = st.jump
-	print("directory jump: ", st.name, " (", map_year, ") -> wing ", j[0], " at ", j[1], ",", j[2], " yaw ", j[3])
-	var p := player
-	close()
-	if p and p.has_method("jump_to"):
-		p.jump_to(int(j[0]), int(map_year), float(j[1]), float(j[2]), float(j[3]))
-
-# pointer (mouse and touch)
-func _press(p: Vector2) -> void:
-	drag_from = p
-	drag_moved = false
-	pressed_in = true
-
-func _move(p: Vector2, rel: Vector2) -> void:
-	if (p - drag_from).length() > 8.0:
-		drag_moved = true
-	if drag_moved and zoom > 1.01 and not confirm:
-		pan -= rel / _scale()
-		_clamp_pan()
-		view.queue_redraw()
-
-func _release(p: Vector2) -> void:
-	if not pressed_in:
-		return
-	pressed_in = false
-	if drag_moved:
-		drag_moved = false
-		return
-	if confirm:
-		if r_yes.has_point(p):
-			_choose(true)
-		elif r_no.has_point(p):
-			_choose(false)
-		view.queue_redraw()
-		return
-	for b in _buttons():
-		if (b[0] as Rect2).has_point(p):
-			if b[1] == "close":
-				close()
-			elif b[1] == "travel":
-				_travel()
-			return
-	if zoom <= 1.01 and not _panel_rect().grow(_fw()).has_point(p):
-		close()
-		return
-	var id := _hit(p)
-	if id != "":
-		sel = id
-		_ask()
-	view.queue_redraw()
-
-func _touch(e: InputEventScreenTouch) -> void:
-	if e.pressed:
-		touches[e.index] = e.position
-		if touches.size() == 1:
-			_press(e.position)
-		elif touches.size() == 2:
-			var ps := touches.values()
-			pinch_d = (ps[0] as Vector2).distance_to(ps[1])
-			drag_moved = true
-	else:
-		touches.erase(e.index)
-		if touches.is_empty():
-			_release(e.position)
-
-func _touch_drag(e: InputEventScreenDrag) -> void:
-	var prev: Vector2 = touches.get(e.index, e.position)
-	touches[e.index] = e.position
-	if touches.size() >= 2:
-		var ps := touches.values()
-		var d := (ps[0] as Vector2).distance_to(ps[1])
-		if pinch_d > 0.0 and d > 0.0:
-			_zoom_by(d / pinch_d, ((ps[0] as Vector2) + (ps[1] as Vector2)) * 0.5)
-		pinch_d = d
-		return
-	_move(e.position, e.position - prev)
+		var st = _stall(h.id)
+		if st and String(st.name) == name:
+			return h.id
+	return ""
