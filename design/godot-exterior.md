@@ -241,13 +241,13 @@ build session. No build branch was ever pushed. This is that build: §5's mismat
 | 4 | Kirschman's / Big Lots | the strip across Armour Dr, centre (−20, −288), 60 × 28, facing the mall | gable sign on the side exit's axis, 3-arch loggia, white hoods; 1995 **"Kirschman's" FURNITURE** (spelling Steven's; letters and colours a GUESS), 2026 BIG LOTS! |
 | 5 | JCPenney | −214, −14, −154, 106 + the rear block −228, −6, −214, 32 | north face: docks 1–2 (red canopy, seals, numbers, rail), the compactor, the Package Pick-up recess with the coral ribbed fascia, the wordmark; west: the roll-up on the rear block, the tree-side entrance (maroon fascia) at z 42–50, the wordmark, podocarpus; south: the red arcade near the SW corner, the hedge, the wordmark; the pine island with the hydrant at the NW corner. The map's block n2 is dropped (it would have joined the rear block) |
 | 6 | Horton tank | yard −141, −32, −121, −9 | the utility building, the conduit pole and the walk to the docks with it |
-| 7 | Dillard's | −38, 80, 44, 138 | the gallery on the **east and south** faces; the entrance portal (two peach piers, cream entablature, "Dillard's", 4 door pairs) on the south face at x −15 = s2s; the s2e gallery doors on the east face; the flagpole island (3 poles) at the SW corner; the covered dock with a trailer and the roll-off on the west side. **Changed from §5:** the west face stays at x −38 north of z 118 (not −43), so the 4 m service lane between the wing's back (x −42) and Dillard's stays open to the south, as filmed (4490 f006-028); §5's −43 would have closed it (the built wing reaches −42) |
+| 7 | Dillard's | −38, 80, 44, 138 | the gallery on the **east and south** faces; the entrance portal (two peach piers, cream entablature, "Dillard's", 4 door pairs) on the south face at x −15 = s2s; the s2e gallery doors on the east face; the flagpole island (3 poles) at the SW corner; the covered dock with a trailer and the roll-off on the west side. **Changed from §5:** the west face stays at x −38 north of z 118 (not −43), so the 4 m service lane between the wing's back (x −42) and Dillard's stays open to the south, as filmed (4490 f006-028); §5's −43 would have closed it (the built wing reaches −42). **Decided** (Steven, Nov 4) |
 | 8 | Wing wall, pavilion | the wing wall z 118 from x −134 to −42; the pavilion −146..−134 solid to z 112, the loggia to z 118; the link off JCPenney −154..−146 to z 110 | Steven: "from JCPenney to the Dillard's side, at least 3/4" — 92 m of ~108 m. The doors at the loggia's back (z 112); the bike rack on the link; the drop-off bulb moved out to z 127–131 |
-| — | East facade between the Shoe Dept box and Dillard's | 30, 50, 44, 80 filled flush | the plan's flush block; 2026 the blank white ACM wall (4492 f081-108) with the yellow-hatched loading lane in front; 1995 the facade's panels (a GUESS) |
+| — | East facade between the Shoe Dept box and Dillard's | 30, 50, 44, 80 filled flush | the plan's flush block; 2026 the blank white ACM wall (4492 f081-108) with the yellow-hatched loading lane in front; 1995 the facade's panels (**decided**, Steven, Nov 4) |
 | 9 | The map | −390..130 × −270..240 (was −296..106 × −200..202) | West Park Ave x 112 (4 lanes, curb ~106), Bayou Gardens z 216, Armour z −252, the west lot to x −360; the apartments' land north-west (x < −120, z < −150) is lawn behind a wood fence with 6 charcoal blocks; the soccer fields and St. Bernadette's beyond the west edge |
 | 10 | Ground Pat'i | (146, 244), across both roads at the SE corner | the cube pole sign faces the intersection |
 | 11 | Bank pad | 64, −78, 98, −50 on West Park opposite K&B / Cucos | both years, brick, a 3-lane drive-thru canopy, **no name** (Steven: "a bank in 1995, not Chase") |
-| 12 | East entrance recess | not changed (4 m) | the Sears box is flush now, so the recess reads; a 10 m recess would cut into wing 1's vestibule (question below) |
+| 12 | East entrance recess | not changed (4 m) | the Sears box is flush now, so the recess reads; a 10 m recess would cut into wing 1's vestibule. **Decided** (Steven, Nov 4): stays 4 m |
 | 13 | Sun | wing 3's sun from the game's N / NE, ~40° up (`build_mall.gd`, `exshots.gd`) | Steven: switch to the afternoon. Only wing 3; the inside wings keep theirs |
 | 14 | Water tower | (−440, 60), W of JCPenney | a far landmark |
 | — | SW outparcels | the drive-thru bank and cell tower at (−346, 166), the strip centre x −321..−303, z 100..155 facing east | no tenant names (none legible) |
@@ -297,15 +297,15 @@ door. Wing 3 now: 64 wall runs, 107 trees, 170 lights (1995) / 173 (2026), +45 %
    of wings 1, 2, 4, 5 look out on the new lot (s55, s1e, s2e, s2s moved).
 3. Wings 1, 2, 4, 5 need no rebake (their static meshes did not change).
 
-### Guesses and questions for Steven
+### Decided (Steven, Nov 4, 2026)
 - Sears's north face (not filmed): plain white block, the side exit with its shutter hood, a "Sears"
-  sign (GUESS) toward Armour Dr.
-- Kirschman's sign letters and colours, the 1995 bank's look, the strip centre's tenants: unknown.
-- The east entrance recess stays 4 m deep (real ~10 m): deepening it moves the s43 glass into wing 1's
-  vestibule. Worth doing?
-- Dillard's west face at x −38 instead of −43 to keep the service lane open: OK?
-- The Shoe Dept → Dillard's stretch (z 50..80) is now flush wall: in 1995 was that the facade's panels
-  or another storefront?
+  sign toward Armour Dr: right as built.
+- The east entrance recess stays 4 m deep.
+- The 1995 wall between the Shoe Dept box and Dillard's (z 50..80) is the facade's panels.
+- Dillard's west face stays at x −38 north of z 118, keeping the service lane open.
+
+### Still guesses
+- Kirschman's sign letters and colours, the 1995 bank's look, the strip centre's tenants (none named).
 
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
