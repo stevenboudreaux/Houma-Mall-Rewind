@@ -38,6 +38,11 @@ func _ready() -> void:
 	add_child(book)
 	_spawn_gates()
 	_spawn_attendants.call_deferred()
+	# --- CUCOS (design/godot-cucos.md): the football lady, the Cuco's bar, the items that travel
+	var cu = load("res://scripts/story/cucos.gd").new()
+	cu.name = "Cucos"; cu.player = player; cu.story = self
+	add_child(cu)
+	# --- end CUCOS
 
 static func _json(path: String):
 	if not FileAccess.file_exists(path):
@@ -110,11 +115,17 @@ func make_state(res: Resource):
 	var s = State.new(player.mall)
 	s.known = res.get_meta("flag_names", []) if res else []
 	s.say = _notice
+	s.act_cb = _act   # CUCOS
 	var it = player.interact
 	if it and it.get("db"):
 		for id in it.db.ids_for_year(int(player.year)):
 			s.item_names[id] = str(it.db.get_item(id).get("name", id))
 	return s
+
+## CUCOS: a dialogue's act("clip"): the NPC in the conversation plays it, when it can.
+func _act(clip: String) -> void:
+	if ui and ui.npc and ui.npc.has_method("act"):
+		ui.npc.act(clip)
 
 ## A notice from a dialogue effect: on the talk screen while it is up (the HUD is hidden), else the
 ## usual bottom-middle line.

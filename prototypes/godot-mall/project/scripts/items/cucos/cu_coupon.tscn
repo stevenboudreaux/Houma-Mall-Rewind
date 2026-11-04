@@ -1,0 +1,30 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="m0"]
+albedo_color = Color(0.98, 0.94, 0.82, 1)
+roughness = 0.95
+metallic = 0.0
+
+[sub_resource type="StandardMaterial3D" id="m1"]
+albedo_color = Color(0.78, 0.13, 0.17, 1)
+roughness = 0.9
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="c0"]
+material = SubResource("m0")
+size = Vector3(0.15, 0.002, 0.07)
+
+[sub_resource type="BoxMesh" id="c1"]
+material = SubResource("m1")
+size = Vector3(0.13, 0.0025, 0.012)
+
+[node name="cu_coupon" type="Node3D"]
+
+[node name="Slip" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.001, 0)
+mesh = SubResource("c0")
+
+[node name="Band" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0012, 0)
+mesh = SubResource("c1")
+
