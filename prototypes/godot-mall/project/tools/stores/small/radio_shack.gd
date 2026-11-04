@@ -86,8 +86,8 @@ static func inside(b, a, t, n, W, D, rng):
 	# was opened
 	spools(b, G2, P(a, t, n, 2.75, 0, 12.2), -n, t, 1.6, rng)
 	cartons(b, G, P(a, t, n, 4.2, 0, 9.5), -n, t, rng)
-	# --- the standalone items (data/items/radioshack.json): separate scenes on the counter,
-	# for workstream B+C to pick up
+	# --- the standalone items (data/items/radioshack.json): separate scenes on the counter, shown
+	# there; since SHOPS (Nov 3) they are bought from the attendant (scripts/shop.gd), not picked up
 	items(b)
 
 ## One wall unit, `w` wide along r from o, facing f: a white back, grey shelves at three
@@ -330,7 +330,8 @@ static func cartons(b, G, o, r, f, rng):
 
 ## Radio Shack's standalone items (workstream D; tools/stores/radioshack_items/, design/storefronts/
 ## radio-shack.md): each entry of data/items/radioshack.json is instanced from its scene at its
-## place, as its own node under "Items" (named by its id), so workstream B+C can pick it up.
+## "display" spot, as its own node under "Items" (named by its id): stock on show (SHOPS, Nov 3: bought
+## at the counter, design/godot-shops.md; it was a pick-up spot, "place", before).
 static func items(b):
 	var J = JSON.parse_string(FileAccess.get_file_as_string("res://data/items/radioshack.json"))
 	if J == null or b.mall == null:
@@ -342,11 +343,14 @@ static func items(b):
 		b.mall.add_child(holder)
 		holder.owner = b.mall
 	for it in J:
-		if int(it.place.year) != 1995 or not ResourceLoader.exists(it.scene):
+		# SHOPS (design/godot-shops.md): "display" (shown on the counter, bought from the attendant);
+		# "place" was the pick-up spot before Nov 3. Same position, so the built scene doesn't change.
+		var pl = it.get("display", it.get("place", null))
+		if pl == null or int(pl.year) != 1995 or not ResourceLoader.exists(it.scene):
 			continue
 		var inst = load(it.scene).instantiate()
 		inst.name = it.id
-		inst.position = Vector3(it.place.pos[0], it.place.pos[1], it.place.pos[2])
-		inst.rotation.y = deg_to_rad(float(it.place.yaw))
+		inst.position = Vector3(pl.pos[0], pl.pos[1], pl.pos[2])
+		inst.rotation.y = deg_to_rad(float(pl.yaw))
 		holder.add_child(inst)
 		inst.owner = b.mall

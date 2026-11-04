@@ -9,9 +9,20 @@
    "icon": "res://models/bl_cd7_corndog/bl_cd7_corndog_icon.png",
    "year": "both",
    "store": "CORN DOG 7",
+   "display": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -134.6,
+     1.03,
+     74.5
+    ],
+    "yaw": 90,
+    "runtime": true
+   },
    "place": {
     "wing": 2,
-    "year": "both",
+    "year": 2026,
     "pos": [
      -134.6,
      1.03,

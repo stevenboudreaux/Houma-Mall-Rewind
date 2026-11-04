@@ -1,0 +1,66 @@
+[gd_scene load_steps=7 format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.9569, 0.9412, 0.9020, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2"]
+material = SubResource("StandardMaterial3D_1")
+top_radius = 0.0700
+bottom_radius = 0.0700
+height = 0.0100
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3"]
+albedo_color = Color(0.9569, 0.9412, 0.9020, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4"]
+material = SubResource("StandardMaterial3D_3")
+top_radius = 0.0400
+bottom_radius = 0.0400
+height = 0.0850
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5"]
+albedo_color = Color(0.2275, 0.1412, 0.0863, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6"]
+material = SubResource("StandardMaterial3D_5")
+top_radius = 0.0360
+bottom_radius = 0.0360
+height = 0.0030
+radial_segments = 20
+rings = 1
+
+[node name="standin_wl_coffee" type="Node3D"]
+metadata/item_id = "standin_wl_coffee"
+metadata/item_name = "Coffee"
+metadata/item_class = "hand"
+metadata/standin = true
+
+[node name="Part0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0050, 0.0000)
+mesh = SubResource("CylinderMesh_2")
+
+[node name="Part1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0525, 0.0000)
+mesh = SubResource("CylinderMesh_4")
+
+[node name="Part2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0945, 0.0000)
+mesh = SubResource("CylinderMesh_6")
+
+[node name="StandInTag" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1260, 0)
+billboard = 1
+no_depth_test = true
+fixed_size = false
+pixel_size = 0.0004
+modulate = Color(1, 0.85, 0.15, 1)
+outline_size = 8
+font_size = 48
+text = "STAND-IN"

@@ -1,14 +1,327 @@
 {
- "_": "Shops: what each counter sells (the format agreed between workstreams SHOPS and CUCOS, Nov 3 2026; design/godot-cucos.md 'The shop contract'). id: what mall.shop.open(id) is called with. attendant: the attendant id behind the counter. greeting: the attendant's first line. items: [{item: a data/items id, price_cents: whole cents, ready_line: what the attendant says handing it over}]. Prices are Steven's. ready_line: PLACEHOLDER until Steven writes them.",
+ "_": "Shops (workstream SHOPS, design/godot-shops.md). One entry per shop: id, store (the layout's name), title (the screen's heading), attendant (an id in attendants.json), years, greeting (said when the list opens), items [{item (an id in data/items/*.json), price_cents (whole cents), price_note (where the price comes from: Steven, guess, estimate), ready_line (said when it is bought), ready_line_by (Steven, or PLACEHOLDER when it follows his pattern for an item he gave no line for), standin (true: a labelled stand-in model until the real one lands; swap the item id here)}]. Opened by mall.shop.open(shop_id) (scripts/shop.gd). Money: mall.can_afford / mall.spend (design/godot-economy.md). No basket, no leaving check (later). Cuco's (workstream CUCOS, design/godot-cucos.md) joined at int-51; its bartender opens it through scripts/story/bartender.gd.",
  "shops": [
   {
-   "id": "cucos",
-   "attendant": "cucos_bartender",
-   "greeting": "Welcome to Cuco's. What can I get for you today?",
+   "id": "woolworth",
+   "store": "WOOLWORTH",
+   "title": "Woolworth",
+   "attendant": "woolworth",
+   "years": [
+    1995
+   ],
+   "greeting": "Welcome to Woolworth, sha! What can I get for you?",
+   "greeting_by": "Steven (brief, Nov 3)",
    "items": [
-    {"item": "cu_beer", "price_cents": 200, "ready_line": "PLACEHOLDER Here's your beer."},
-    {"item": "cu_margarita", "price_cents": 300, "ready_line": "PLACEHOLDER Here's your margarita."},
-    {"item": "cu_topshelf", "price_cents": 1000, "ready_line": "PLACEHOLDER Here's your top-shelf margarita."}
+    {
+     "item": "bl_wl_rootbeer_float",
+     "price_cents": 200,
+     "price_note": "Steven (brief, Nov 3)",
+     "ready_line": "One root beer float coming right up.",
+     "ready_line_by": "Steven (brief, Nov 3)"
+    },
+    {
+     "item": "standin_wl_hotdog",
+     "price_cents": 129,
+     "price_note": "guess, matching the in-game menu board (itself invented, tools/stores/woolworth/paint_lunch.py) ($1.29 on the board)",
+     "ready_line": "One hot dog coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_wl_hamburger",
+     "price_cents": 199,
+     "price_note": "guess (1995-feeling; not from a source); not on the menu board",
+     "ready_line": "One hamburger coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_wl_fries",
+     "price_cents": 99,
+     "price_note": "guess (1995-feeling; not from a source); not on the menu board",
+     "ready_line": "Order of fries coming up.",
+     "ready_line_by": "Steven (brief, Nov 3)",
+     "standin": true
+    },
+    {
+     "item": "standin_wl_coffee",
+     "price_cents": 59,
+     "price_note": "guess, matching the in-game menu board (itself invented, tools/stores/woolworth/paint_lunch.py) (59 cents on the board)",
+     "ready_line": "One coffee coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    }
+   ]
+  },
+  {
+   "id": "corn_dog_7",
+   "store": "CORN DOG 7",
+   "title": "Corn Dog 7",
+   "attendant": "corn_dog_7",
+   "years": [
+    1995
+   ],
+   "greeting": "Hi, welcome to Corn Dog 7. What can I get for you?",
+   "greeting_by": "Steven (brief, Nov 3)",
+   "items": [
+    {
+     "item": "bl_cd7_corndog",
+     "price_cents": 200,
+     "price_note": "Steven (brief, Nov 3)",
+     "ready_line": "One corn dog coming right up.",
+     "ready_line_by": "Steven (brief, Nov 3)"
+    },
+    {
+     "item": "standin_cd7_fries",
+     "price_cents": 99,
+     "price_note": "guess, matching the in-game menu board (itself invented, tools/stores/paint_corn_dog_7.py) (Seasoned Fries .99)",
+     "ready_line": "Order of fries coming up.",
+     "ready_line_by": "PLACEHOLDER (Woolworth's fries line, Steven's)",
+     "standin": true
+    },
+    {
+     "item": "standin_cd7_lemonade",
+     "price_cents": 99,
+     "price_note": "guess, matching the in-game menu board (itself invented, tools/stores/paint_corn_dog_7.py) (Fresh Lemonade .99)",
+     "ready_line": "One lemonade coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    }
+   ]
+  },
+  {
+   "id": "radioshack",
+   "store": "RADIO SHACK",
+   "title": "RadioShack",
+   "attendant": "radioshack",
+   "years": [
+    1995
+   ],
+   "greeting": "Welcome to RadioShack. What can I get for you?",
+   "greeting_by": "Steven (brief, Nov 3)",
+   "items": [
+    {
+     "item": "rs_scanner",
+     "price_cents": 19999,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: lead Pro-24 $179.99; the note suggests $199.99)",
+     "ready_line": "One scanner radio coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)"
+    },
+    {
+     "item": "rs_walkie_talkies",
+     "price_cents": 4999,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, $49.99 a pair)",
+     "ready_line": "One pair of walkie-talkies coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)"
+    },
+    {
+     "item": "rs_rc_car_box",
+     "price_cents": 8999,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, $79.99 to $99.99; middle taken)",
+     "ready_line": "One R/C truck coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)"
+    },
+    {
+     "item": "rs_cordless_phone",
+     "price_cents": 14999,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, 900 MHz $149.99 to $199.99; the note suggests $149.99)",
+     "ready_line": "One cordless phone coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)"
+    },
+    {
+     "item": "rs_battery_card",
+     "price_cents": 349,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, AA 4-pack $3.49)",
+     "ready_line": "One pack of batteries coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)"
+    },
+    {
+     "item": "rs_pager",
+     "price_cents": 7999,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: local Radiofone ad, $79.99 (read directly))",
+     "ready_line": "One pager coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)"
+    },
+    {
+     "item": "rs_cb_radio",
+     "price_cents": 9999,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: lead TRC-483, $99.99)",
+     "ready_line": "One CB radio coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)"
+    },
+    {
+     "item": "rs_microcassette",
+     "price_cents": 4999,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, basic $39.99 to $59.99; middle taken)",
+     "ready_line": "One micro-cassette recorder coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)"
+    },
+    {
+     "item": "standin_rs_corded_phone",
+     "price_cents": 1999,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, $14.99 to $39.99; a basic phone)",
+     "ready_line": "One telephone coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_rs_answering_machine",
+     "price_cents": 5999,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, $39.99 to $99.99)",
+     "ready_line": "One answering machine coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_rs_clock_radio",
+     "price_cents": 2999,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, $19.99 to $39.99)",
+     "ready_line": "One clock radio coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_rs_cell_phone",
+     "price_cents": 19999,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, $199.99 to $299.99 without activation; the low end taken (no contract in the game))",
+     "ready_line": "One cellular phone coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_rs_9v_battery",
+     "price_cents": 279,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, $2.49 to $2.99)",
+     "ready_line": "One 9-volt battery coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_rs_c_batteries",
+     "price_cents": 329,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, C/D 2-pack $2.99 to $3.49)",
+     "ready_line": "One pack of batteries coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_rs_ic_card",
+     "price_cents": 129,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, a 555 or 741 IC $0.99 to $1.49)",
+     "ready_line": "One chip coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_rs_plug_adapter",
+     "price_cents": 299,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, plugs and adapters $1.99 to $3.99)",
+     "ready_line": "One adapter coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_rs_ac_adapter",
+     "price_cents": 1499,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, $9.99 to $19.99)",
+     "ready_line": "One AC adapter coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_rs_speaker_wire",
+     "price_cents": 399,
+     "price_note": "estimate (design/research/radioshack-1995-prices.md: guess, a spool $2.99 to $4.99)",
+     "ready_line": "One spool of wire coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    }
+   ]
+  },
+  {
+   "id": "b_dalton",
+   "store": "B. DALTON BOOKSELLER",
+   "title": "B. Dalton Bookseller",
+   "attendant": "b_dalton",
+   "years": [
+    1995
+   ],
+   "greeting": "Welcome to B. Dalton. What can I get for you?",
+   "greeting_by": "PLACEHOLDER (Steven: the same flow, a greeting in the same pattern)",
+   "items": [
+    {
+     "item": "standin_bd_moby_dick",
+     "price_cents": 1000,
+     "price_note": "Steven (brief, Nov 3): books $10 each",
+     "ready_line": "One copy of Moby-Dick coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_bd_which_way",
+     "price_cents": 1000,
+     "price_note": "Steven (brief, Nov 3): books $10 each",
+     "ready_line": "One copy of Which Way Now? coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "bl_bd_paperback",
+     "price_cents": 1000,
+     "price_note": "Steven (brief, Nov 3): books $10 each (the cover's own sticker says $3.99)",
+     "ready_line": "One copy of Shiverwood coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)"
+    },
+    {
+     "item": "standin_bd_jupiter",
+     "price_cents": 1000,
+     "price_note": "Steven (brief, Nov 3): books $10 each",
+     "ready_line": "One copy of Husbands Are from Jupiter coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_bd_long_hall",
+     "price_cents": 1000,
+     "price_note": "Steven (brief, Nov 3): books $10 each",
+     "ready_line": "One copy of Down a Long, Long Hall coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    }
+   ]
+  },
+  {
+   "id": "cucos",
+   "store": "CUCOS BORDER CAFE",
+   "title": "Cuco's",
+   "attendant": "cucos_bartender",
+   "years": [
+    1995
+   ],
+   "greeting": "Welcome to Cuco's. What can I get for you today?",
+   "greeting_by": "CUCOS session (int-51: not confirmed by Steven)",
+   "items": [
+    {
+     "item": "cu_beer",
+     "price_cents": 200,
+     "price_note": "Steven (brief, Nov 3)",
+     "ready_line": "PLACEHOLDER Here's your beer.",
+     "ready_line_by": "PLACEHOLDER"
+    },
+    {
+     "item": "cu_margarita",
+     "price_cents": 300,
+     "price_note": "Steven (brief, Nov 3)",
+     "ready_line": "PLACEHOLDER Here's your margarita.",
+     "ready_line_by": "PLACEHOLDER"
+    },
+    {
+     "item": "cu_topshelf",
+     "price_cents": 1000,
+     "price_note": "Steven (brief, Nov 3)",
+     "ready_line": "PLACEHOLDER Here's your top-shelf margarita.",
+     "ready_line_by": "PLACEHOLDER"
+    }
    ]
   }
  ]

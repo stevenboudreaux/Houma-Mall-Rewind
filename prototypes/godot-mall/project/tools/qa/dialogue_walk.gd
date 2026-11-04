@@ -34,6 +34,8 @@ func _run() -> void:
 	_test_preprocess()
 	var att = JSON.parse_string(FileAccess.get_file_as_string("res://data/story/attendants.json"))
 	for e in att.attendants:
+		if str(e.get("dialogue", "")) == "" and str(e.get("shop", "")) != "":
+			continue   # SHOPS: a shop's attendant opens its list (tools/qa/shop_test.gd), no dialogue
 		await _test_attendant(str(e.dialogue), str(e.name))
 	await _test_book()
 	await _test_grammar()

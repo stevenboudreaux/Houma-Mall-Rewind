@@ -68,3 +68,7 @@
 - **Data:** `data/items/radioshack.json`, a list of `{"id", "name", "class", "scene", "icon", "year": 1995, "place": {"wing": 1, "year": 1995, "pos": [x, y, z], "yaw": deg}}`. Positions are world metres in the wing scene; yaw turns the item's front (+z) about y (180 = facing the shoppers in front of the counter).
 - **Guessed:** which items, their placement on the counter top (the video's counter shows phones inside the showcase; the glass top is used so the items can be reached), the brand.
 - Evidence: `production/qa/evidence/wsD-radioshack-preview-unbaked.jpg`, `wsD-radioshack-items-unbaked.jpg` (close-ups and the eight icons).
+
+## Selling (workstream SHOPS, Nov 3, 2026; `design/godot-shops.md`)
+- The eight standalone items are no longer picked up: they stay on the counter as stock on show (`data/items/radioshack.json` "display", built by `radio_shack.gd items()` into the wing as before, same spots: no rebake) and are bought from a PLACEHOLDER attendant in the clerks' aisle (x 6.4 to 10.2, z 32.75 to 33.15, facing the shop; TALK spot 8.2, 30.9).
+- The shop also sells ten shelf kinds the walls show (corded phone, answering machine, clock radio, cellular phone, 9 V, C 2-pack, an IC card, a plug adapter, an AC adapter, a spool of speaker wire) as labelled STAND-INs. Prices are the research note's estimates (`design/research/radioshack-1995-prices.md`), marked so in `data/story/shops.json`. Not sold: the DSS dish, the computers header and the display monster truck (the note's open questions).
