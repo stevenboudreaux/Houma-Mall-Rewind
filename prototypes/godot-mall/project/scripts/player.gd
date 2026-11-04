@@ -31,6 +31,7 @@ var menu: Node = null
 @export var walk_rows: PackedStringArray = []
 @export var map_origin := Vector2(148, 100)
 @export var map_scale := 2.0
+const Years = preload("res://scripts/years.gd")   # ITEMS: the years as the player reads them
 const EYE := 1.62
 const SPEED := 4.0
 const RUN := 2.2      # holding X (or Shift) runs: Steven, Oct 6, "add back the ability to run by hitting x"
@@ -644,7 +645,7 @@ func _process(dt: float) -> void:
 	if fps_t > 0.5:
 		fps_t = 0.0
 		if hud.visible:   # B+C: the fps readout is the owner's (owner_hud_sync)
-			hud.text = "Houma Mall Rewind · Godot mall (%d)   %d fps" % [year, Engine.get_frames_per_second()]
+			hud.text = "Houma Mall Rewind · Godot mall (%s)   %d fps" % [Years.label(year), Engine.get_frames_per_second()]
 		if debug:
 			print("DBG pos=", position, " touch=", move_touch, " vec=", move_vec, " iv=", iv, " free_here=", _free(position.x, position.z), " rows=", walk_rows.size())
 
@@ -823,7 +824,7 @@ func _wing_scene(w: int) -> String:
 ## wing is its own pair of game files, web/shell.html), keeping the place you stand and the view.
 func _build_year_ui() -> void:
 	year_btn = Button.new()
-	year_btn.text = "Visit 2026 (Y)" if year == 1995 else "Back to 1995 (Y)"
+	year_btn.text = ("Visit %s (Y)" if year == 1995 else "Back to the %s (Y)") % Years.label(Years.other(year))   # ITEMS: the years' names
 	year_btn.focus_mode = Control.FOCUS_NONE
 	year_btn.add_theme_font_size_override("font_size", 14)
 	year_btn.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)

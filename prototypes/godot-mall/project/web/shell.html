@@ -994,7 +994,7 @@ try { mallXfer = sessionStorage.getItem('mall-xfer') || ''; } catch (e) { /* ign
 if (mallXfer) {
 	document.body.classList.add('xfer');
 	const roomName = MALL_ROOM_NAME[window.__mallWing];
-	document.getElementById('load-title').textContent = (roomName ? roomName[window.__mallYear ? 1 : 0] : (window.__mallWing === 3 ? 'Outside' : (window.__mallWing === 2 ? 'Wing 2' : 'Wing 1'))) + (window.__mallYear ? ' \u00b7 2026' : '');
+	document.getElementById('load-title').textContent = (roomName ? roomName[window.__mallYear ? 1 : 0] : (window.__mallWing === 3 ? 'Outside' : (window.__mallWing === 2 ? 'Wing 2' : 'Wing 1'))) + (window.__mallYear ? ' \u00b7 2026' : ' \u00b7 1990s');   // ws/items: the years as the player reads them, 1990s / 2026 (scripts/years.gd)
 	document.getElementById('load-sub').textContent = roomName ? '' : (window.__mallWing === 3 ? 'The parking lot' : (window.__mallWing === 2 ? "Dillard's & JCPenney" : 'Sears & the main entrance'));
 }
 // Fun facts on the load screen (first open and every wing crossing): one at random, then a
