@@ -85,7 +85,7 @@ func _test_data(db) -> void:
 	var w: Dictionary = shops.get("woolworth", {})
 	_check(w.get("greeting") == "Welcome to Woolworth, sha! What can I get for you?", "Woolworth's greeting, word for word")
 	_check(_line(w, "bl_wl_rootbeer_float") == "One root beer float coming right up.", "Woolworth: the float line")
-	_check(_line(w, "standin_wl_fries") == "Order of fries coming up.", "Woolworth: the fries line")
+	_check(_line(w, "wl_fries") == "Order of fries coming up.", "Woolworth: the fries line")
 	_check(_price(w, "bl_wl_rootbeer_float") == 200, "Woolworth: root beer float $2")
 	var c: Dictionary = shops.get("corn_dog_7", {})
 	_check(c.get("greeting") == "Hi, welcome to Corn Dog 7. What can I get for you?", "Corn Dog 7's greeting, word for word")
@@ -98,7 +98,7 @@ func _test_data(db) -> void:
 	for x in b.get("items", []):
 		books += 1 if int(x.price_cents) == 1000 else 0
 	_check(books == 5, "B. Dalton: five books at $10")
-	_check(db.get_item("standin_bd_moby_dick").get("name") == "Moby-Dick", "Moby-Dick keeps its title")
+	_check(db.get_item("bd_moby_dick").get("name") == "Moby-Dick", "Moby-Dick keeps its title")
 	# RadioShack: every standalone item kind in the store is sold
 	var rs_ids := []
 	for x in shops.get("radioshack", {}).get("items", []):
@@ -172,11 +172,11 @@ func _test_cant_afford(db) -> void:
 	sh.shop_id = "corn_dog_7"
 	sh.stock = Shop.read_stock(sh.shops.corn_dog_7, db, 1995)
 	var dog := _idx(sh, "bl_cd7_corndog")
-	var fries := _idx(sh, "standin_cd7_fries")
+	var fries := _idx(sh, "cd7_crinkle_fries")
 	_check(not sh.can_buy(dog) and not sh.buy(dog), "$1.50: a $2.00 corn dog can't be bought")
 	_check(m.money == 150 and m.count("bl_cd7_corndog") == 0, "nothing changed: $1.50, no corn dog")
 	_check(sh.can_buy(fries) and sh.buy(fries) and m.money == 51, "the 99-cent fries can: $0.51 left")
-	_check(not sh.buy(fries) and m.money == 51 and m.count("standin_cd7_fries") == 1, "a second order can't: still $0.51, one order")
+	_check(not sh.buy(fries) and m.money == 51 and m.count("cd7_crinkle_fries") == 1, "a second order can't: still $0.51, one order")
 	var exact := {"mall.money": "200", "mall.econ": "1"}
 	var me = _mall(exact)
 	var she = Shop.new()

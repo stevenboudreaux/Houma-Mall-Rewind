@@ -33,7 +33,7 @@ META = {
     "ao": 0.35,
     "refs": [],
     "item_file": "food.json",
-    "item": {"id": "cu_top_shelf_margarita", "name": "Top-shelf margarita", "year": 1995, "store": "CUCOS"},
+    "item": {"id": "cu_topshelf", "name": "Top-shelf margarita", "year": 1995, "store": "CUCOS"},
 }
 
 

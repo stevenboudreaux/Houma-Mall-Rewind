@@ -114,7 +114,7 @@ func _patron(crowd, pe: Dictionary) -> void:
 	b.face(Vector3(float(f[0]), 0, float(f[1])))
 	b.play(str(pe.get("clip", "sit")) if NpcBody.has_clip(str(pe.get("clip", "sit"))) else "sit")
 	patrons.append(b)
-	# the drink on the counter in front of them (the stand-in item scene: FOOD's cu_* replace it)
+	# the drink on the counter in front of them: the item's own scene (FOOD's models, int-51); the old stand-in path is a fallback that no longer exists
 	var scn := "res://scripts/items/cucos/cu_%s.tscn" % str(pe.get("drink", "beer"))
 	var it = player.interact
 	if it and it.get("db"):

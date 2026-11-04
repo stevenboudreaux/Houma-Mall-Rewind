@@ -92,10 +92,10 @@
   {
    "id": "cu_doubloon",
    "name": "Cuco's doubloon",
-   "class": "hand",
+   "class": "pocket",
    "scene": "res://models/bl_cu_doubloon/bl_cu_doubloon.glb",
    "icon": "res://models/bl_cu_doubloon/bl_cu_doubloon_icon.png",
-   "year": 1995,
+   "year": "both",
    "store": "CUCOS"
   },
   {
@@ -108,7 +108,7 @@
    "store": "CUCOS"
   },
   {
-   "id": "cu_top_shelf_margarita",
+   "id": "cu_topshelf",
    "name": "Top-shelf margarita",
    "class": "hand",
    "scene": "res://models/bl_cu_top_shelf_margarita/bl_cu_top_shelf_margarita.glb",

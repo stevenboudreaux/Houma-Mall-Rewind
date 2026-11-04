@@ -35,7 +35,7 @@ META = {
     "refs": [["prototypes/godot-mall/project/tools/stores/signs/src/cucos_front.jpg", None, "Cuco's neon sign (traced)"]],
     "icon_view": (10, 68),
     "item_file": "food.json",
-    "item": {"id": "cu_doubloon", "name": "Cuco's doubloon", "year": 1995, "store": "CUCOS"},
+    "item": {"id": "cu_doubloon", "name": "Cuco's doubloon", "class": "pocket", "year": "both", "store": "CUCOS"},   # int-51: CUCOS's rules, it travels (design/godot-cucos.md)
 }
 
 
