@@ -92,7 +92,6 @@ with sync_playwright() as p:
         if which != "both" and which != "w%d" % wing:
             continue
         shop = [s for s in SHOPS if s["id"] == sid][0]
-        item, price = shop["items"][0]["item"], int(shop["items"][0]["price_cents"])
         url = "http://localhost:8765/%s?wing=%d&year=1995&cam=%s&time=day" % (path, wing, cam)
         if first:
             pg.goto(url)
@@ -104,12 +103,22 @@ with sync_playwright() as p:
         time.sleep(12)    # the attendants are placed deferred; the character pack mounts after the card lifts
         s0 = state(pg)
         m0 = int(s0["money"]) if s0["money"] else 10000
-        n0 = count(s0["st"], item)
         shot(pg, "%s-approach" % sid)
         pg.mouse.click(vp["width"] // 2, vp["height"] // 3) if not phone else None
         time.sleep(0.5)
         key(pg, "e", 2.5)
         shot(pg, "%s-open" % sid)
+        # the first thing on the list this wallet covers; anything before it is greyed out and Enter on it does nothing
+        k = next(i for i, x in enumerate(shop["items"]) if int(x["price_cents"]) <= m0)
+        item, price = shop["items"][k]["item"], int(shop["items"][k]["price_cents"])
+        n0 = count(s0["st"], item)
+        if k > 0:
+            key(pg, "Enter", 2.0)
+            sx = state(pg)
+            check((int(sx["money"]) if sx["money"] else 10000) == m0 and count(sx["st"], shop["items"][0]["item"]) == count(s0["st"], shop["items"][0]["item"]),
+                  "%s: can't afford %s (%d): Enter takes nothing, gives nothing" % (sid, shop["items"][0]["item"], int(shop["items"][0]["price_cents"])))
+            for _ in range(k):
+                key(pg, "ArrowRight", 0.4)
         key(pg, "Enter", 2.5)
         s1 = state(pg)
         m1 = int(s1["money"]) if s1["money"] else -1
@@ -127,7 +136,9 @@ with sync_playwright() as p:
         s3 = state(pg)
         check(int(s3["money"]) == m1 and count(s3["st"], item) == n0 + 1, "%s: after a reload the wallet and the bag hold" % sid)
     b.close()
-real = [e for e in errors if "favicon" not in e]
+# a scratch build has no site files (roms.json, signs.json, shirt_text.json beside the live index.html): their 404s are not the shops'
+real = [e for e in errors if "favicon" not in e and "404" not in e]
+print("404s (site files a scratch build lacks): %d" % sum(1 for e in errors if "404" in e))
 print("console errors: %d" % len(real))
 for e in real[:20]:
     print("  " + e[:300])
