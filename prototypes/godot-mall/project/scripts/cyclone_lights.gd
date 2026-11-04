@@ -200,6 +200,10 @@ void fragment() {
 var _common_uniforms := {}
 
 ## Builds the bulbs, neon, collars and lamps from the "layout" meta (see the file header).
+## PRIZES (Nov 3): games, inc.'s 2026 copy is a little dimmer (meta "dim", set by cyclone.gd's build).
+func _dim() -> float:
+	return float(get_meta("dim", 1.0))
+
 func _ready() -> void:
 	if not has_meta("layout"):
 		push_warning("CycloneLights: no layout meta")
@@ -252,7 +256,7 @@ func _build_bulbs(centre: Vector3, fy: float) -> void:
 	mi.name = "Bulbs"
 	mi.multimesh = mm
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	mi.material_override = _material(_shader(LAMP_SHADER), {"u_mode": 0, "u_on": BULB_ON, "u_off": BULB_OFF, "u_energy": BULB_ENERGY})
+	mi.material_override = _material(_shader(LAMP_SHADER), {"u_mode": 0, "u_on": BULB_ON, "u_off": BULB_OFF, "u_energy": _dim() * BULB_ENERGY})
 	add_child(mi)
 
 ## Neon arches, the back post and the centre coils (one mesh, one material), and the
@@ -311,7 +315,7 @@ func _build_neon(centre: Vector3, fy: float, dish_y: float, post: Vector3) -> vo
 	mi.name = "Neon"
 	mi.mesh = st.commit()
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	mi.material_override = _material(_shader(NEON_SHADER), {"u_step": NEON_STEP_S, "u_idle": ARCH_IDLE, "u_energy": NEON_ENERGY})
+	mi.material_override = _material(_shader(NEON_SHADER), {"u_step": NEON_STEP_S, "u_idle": ARCH_IDLE, "u_energy": _dim() * NEON_ENERGY})
 	add_child(mi)
 	# white moulded collars under the arch feet
 	var cm := low_collar(0.019, 0.016, 0.016, 8)
@@ -412,7 +416,7 @@ func _build_lamp(l: Dictionary) -> void:
 	dome.is_hemisphere = true
 	dome.radial_segments = 14
 	dome.rings = 4
-	var extra := {"u_on": LAMP_ORANGE, "u_off": Color(0.32, 0.10, 0.03), "u_energy": LAMP_ENERGY}
+	var extra := {"u_on": LAMP_ORANGE, "u_off": Color(0.32, 0.10, 0.03), "u_energy": _dim() * LAMP_ENERGY}
 	if role == "bonus":
 		dome.radius = 0.022
 		dome.height = 0.044

@@ -103,8 +103,27 @@
     return out;
   }
 
+  /** PRIZES (Nov 3 2026): the cabinets that run this page. "pc" is Pocket Change's (1995, $1.00 for four);
+   *  "gi" is games, inc.'s 2026 copy, "literally the same machine" (Steven), slightly faded, at $2 for
+   *  four plays. Each keeps its own plays left, bonus and best in the browser (key), and names its own
+   *  payouts (pay), so a play paid at one machine never shows on the other. */
+  var CABINETS = {
+    pc: { priceCents: 100, key: 'whirlwind', pay: 'whirlwind', faded: false },
+    gi: { priceCents: 200, key: 'whirlwind.gi', pay: 'whirlwind-gi', faded: true }
+  };
+
+  /** The cabinet called `name` (?cab=, default "pc"): {name, cfg (CONFIG with its price), key, pay, faded}. */
+  function cabinet(name) {
+    var id = Object.prototype.hasOwnProperty.call(CABINETS, name) ? name : 'pc';
+    var c = CABINETS[id], cfg = {};
+    for (var k in CONFIG) cfg[k] = CONFIG[k];
+    cfg.priceCents = c.priceCents;
+    return { name: id, cfg: cfg, key: c.key, pay: c.pay, faded: c.faded };
+  }
+
   var api = { CONFIG: CONFIG, ringValues: ringValues, position: position, judge: judge,
-              payout: payout, nextBonus: nextBonus, rng: rng, feedTimes: feedTimes, lampMs: lampMs };
+              payout: payout, nextBonus: nextBonus, rng: rng, feedTimes: feedTimes, lampMs: lampMs,
+              CABINETS: CABINETS, cabinet: cabinet };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.WW = api;
 })(this);

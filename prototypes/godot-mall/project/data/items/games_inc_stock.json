@@ -1,0 +1,269 @@
+{
+ "_": "games, inc.'s prizes, 2026 (workstream PRIZES, Steven Nov 3 2026; design/godot-prize-counter.md 'games, inc.'): stock only, redeemed at its counter (scripts/redemption.json 'stock_2026'). Models: scripts/items/prize_model.gd -> scripts/prize_units.gd. Names and prices as scripts/prizes_2026.json. Written by tools/prizes/make_items.py.",
+ "items": [
+  {
+   "id": "gi_popper_key",
+   "name": "Popper keychain",
+   "class": "pocket",
+   "scene": "res://scripts/items/gi_popper_key.tscn",
+   "icon": "res://tex/items/gi_popper_key.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 75,
+   "prize": "g_popper_key"
+  },
+  {
+   "id": "gi_squishy",
+   "name": "Mini squishy",
+   "class": "pocket",
+   "scene": "res://scripts/items/gi_squishy.tscn",
+   "icon": "res://tex/items/gi_squishy.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 75,
+   "prize": "g_squishy"
+  },
+  {
+   "id": "gi_light_ring",
+   "name": "Light-up ring",
+   "class": "pocket",
+   "scene": "res://scripts/items/gi_light_ring.tscn",
+   "icon": "res://tex/items/gi_light_ring.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 50,
+   "prize": "g_light_ring"
+  },
+  {
+   "id": "gi_fidget",
+   "name": "Fidget spinner",
+   "class": "pocket",
+   "scene": "res://scripts/items/gi_fidget.tscn",
+   "icon": "res://tex/items/gi_fidget.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 100,
+   "prize": "g_fidget"
+  },
+  {
+   "id": "gi_slime",
+   "name": "Slime tub",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_slime.tscn",
+   "icon": "res://tex/items/gi_slime.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 250,
+   "prize": "g_slime"
+  },
+  {
+   "id": "gi_blind_bag",
+   "name": "Mystery figure",
+   "class": "pocket",
+   "scene": "res://scripts/items/gi_blind_bag.tscn",
+   "icon": "res://tex/items/gi_blind_bag.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 350,
+   "prize": "g_blind_bag"
+  },
+  {
+   "id": "gi_emoji_key",
+   "name": "Emoji keychain",
+   "class": "pocket",
+   "scene": "res://scripts/items/gi_emoji_key.tscn",
+   "icon": "res://tex/items/gi_emoji_key.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 250,
+   "prize": "g_emoji_key"
+  },
+  {
+   "id": "gi_popper_board",
+   "name": "Popper board",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_popper_board.tscn",
+   "icon": "res://tex/items/gi_popper_board.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 400,
+   "prize": "g_popper_board"
+  },
+  {
+   "id": "gi_led_wand",
+   "name": "Light-up wand",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_led_wand.tscn",
+   "icon": "res://tex/items/gi_led_wand.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 600,
+   "prize": "g_led_wand"
+  },
+  {
+   "id": "gi_play_ball",
+   "name": "Play ball",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_play_ball.tscn",
+   "icon": "res://tex/items/gi_play_ball.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 300,
+   "prize": "g_play_ball"
+  },
+  {
+   "id": "gi_bubbles",
+   "name": "Bubble wand",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_bubbles.tscn",
+   "icon": "res://tex/items/gi_bubbles.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 150,
+   "prize": "g_bubbles"
+  },
+  {
+   "id": "gi_squish_big",
+   "name": "Big round plush",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_squish_big.tscn",
+   "icon": "res://tex/items/gi_squish_big.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 8000,
+   "prize": "g_squish_big"
+  },
+  {
+   "id": "gi_jumbo",
+   "name": "Jumbo plush",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_jumbo.tscn",
+   "icon": "res://tex/items/gi_jumbo.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 30000,
+   "prize": "g_jumbo"
+  },
+  {
+   "id": "gi_phone_stand",
+   "name": "Phone stand",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_phone_stand.tscn",
+   "icon": "res://tex/items/gi_phone_stand.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 1500,
+   "prize": "g_phone_stand"
+  },
+  {
+   "id": "gi_cable",
+   "name": "Charging cable",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_cable.tscn",
+   "icon": "res://tex/items/gi_cable.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 1200,
+   "prize": "g_cable"
+  },
+  {
+   "id": "gi_earbuds",
+   "name": "Wireless earbuds",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_earbuds.tscn",
+   "icon": "res://tex/items/gi_earbuds.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 8000,
+   "prize": "g_earbuds"
+  },
+  {
+   "id": "gi_speaker",
+   "name": "Bluetooth speaker",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_speaker.tscn",
+   "icon": "res://tex/items/gi_speaker.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 6000,
+   "prize": "g_speaker"
+  },
+  {
+   "id": "gi_projector",
+   "name": "Star projector",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_projector.tscn",
+   "icon": "res://tex/items/gi_projector.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 5000,
+   "prize": "g_projector"
+  },
+  {
+   "id": "gi_ledstrip",
+   "name": "LED strip lights",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_ledstrip.tscn",
+   "icon": "res://tex/items/gi_ledstrip.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 4000,
+   "prize": "g_ledstrip"
+  },
+  {
+   "id": "gi_headphones",
+   "name": "Headphones",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_headphones.tscn",
+   "icon": "res://tex/items/gi_headphones.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 25000,
+   "prize": "g_headphones"
+  },
+  {
+   "id": "gi_giftcard",
+   "name": "Gift card",
+   "class": "pocket",
+   "scene": "res://scripts/items/gi_giftcard.tscn",
+   "icon": "res://tex/items/gi_giftcard.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 15000,
+   "prize": "g_giftcard"
+  },
+  {
+   "id": "gi_arcade",
+   "name": "Mini arcade",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_arcade.tscn",
+   "icon": "res://tex/items/gi_arcade.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 25000,
+   "prize": "g_arcade"
+  },
+  {
+   "id": "gi_handheld",
+   "name": "Handheld console",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_handheld.tscn",
+   "icon": "res://tex/items/gi_handheld.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 120000,
+   "prize": "g_handheld"
+  },
+  {
+   "id": "gi_console",
+   "name": "Game console",
+   "class": "hand",
+   "scene": "res://scripts/items/gi_console.tscn",
+   "icon": "res://tex/items/gi_console.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 150000,
+   "prize": "g_console"
+  }
+ ]
+}

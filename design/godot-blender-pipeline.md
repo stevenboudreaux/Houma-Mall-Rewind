@@ -270,3 +270,26 @@ make the plinth the same gold as the body and shrink it so the lion sits tighter
 - Budget: the first build was 6,292 tris; grille discs lost their bevel, rings went to 28 sides and the
   ten keys to one bevel segment. Sheet: `production/qa/evidence/wsR-boombox-sheet.jpg` (no reference cell).
 - Review fix: the grilles read as flat black; the perforation art got lighter metal and bigger holes.
+
+## The prize counters' heroes (workstream PRIZES, Nov 3 2026)
+
+Steven: "use Blender for prizes you can win where you can; simple bin filler for the rest"
+(`design/godot-prize-counter.md` "PRIZES"). Not placed: redemption stock only; the counters show the models
+themselves, batched (`scripts/prize_units.gd` BLENDER). No reference pictures in the pack for any of them: the
+types from `design/research/redemption-items.md`; generic, no brand, no words.
+
+| Asset | Class | Tris | Tex | Year, price | Guessed |
+|---|---|---|---|---|---|
+| `bl_pc_troll` "Troll doll" | pocket | 1,820 | 512 | 1995, 100 | everything: a 9.4 cm vending troll, pear body, big ears, blue eyes, a green belly gem, a hot pink tuft |
+| `bl_pc_yoyo` "Yo-yo" | pocket | 1,780 | 512 | 1995, 150 | 5.6 cm imperial shape, red halves with white caps, a looped string |
+| `bl_pc_koosh` "Rubber-strand ball" | hand | 2,820 | 512 | 1995, 250 | 7 cm, 900 three-sided strands in four colour sectors |
+| `bl_pc_blaster` "Water blaster" | hand | 1,672 | 512 | 1995, 450 | a small pump blaster (36 cm): green body, orange tank, yellow pump |
+| `bl_pc_skateboard` "Skateboard" | hand | 2,324 | 1024 | 1995, 6,000 | 7.5 x 30 in deck with 18° kicktails, black grip, red underside with a generic flame-and-star graphic, chrome trucks, white wheels |
+| `bl_pc_plasma` "Plasma ball" | hand | 2,284 | 512 | 1995, 2,000 | a 15 cm globe (unbaked clear glass), violet filaments (unbaked flat), black base |
+| `bl_gi_squish` "Round plush" | hand | 1,304 | 512 | 2026, 1,200 (x1.6 "Big round plush" 8,000, x3.6 "Jumbo plush" 30,000) | a 20 cm stuffed ball-animal; near-white velour, tinted by the counter; stitched happy eyes, cheeks |
+| `bl_gi_capybara` "Capybara plush" | hand | 1,648 | 512 | 2026, 2,000 | 28 cm long, a blunt box head, dark muzzle, round ears, stubby legs |
+| `bl_gi_doughball` "Squishy dough ball" | pocket | 336 | 512 | 2026, 300 | 6.5 cm pastel pink, sagging, a dimpled skin |
+
+Also: the three claw plush and the finger trap are `"year": "both"` now (shared with games, inc.); the counter
+tints the plush's near-white fur (instance colour through `vertex_color_use_as_albedo` on the baked material).
+Evidence: `production/qa/evidence/wsPRIZES-<id>-sheet.jpg`.

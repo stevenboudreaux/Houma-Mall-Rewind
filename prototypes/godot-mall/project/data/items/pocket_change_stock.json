@@ -8,6 +8,6 @@
   {"id": "pc_alien", "name": "Alien plush", "class": "hand", "scene": "res://scripts/items/pc_alien.tscn", "icon": "res://tex/items/pc_alien.png", "year": 1995, "tickets": 800, "prize": "alien"},
   {"id": "pc_big_dice", "name": "Giant fuzzy dice", "class": "hand", "scene": "res://scripts/items/pc_big_dice.tscn", "icon": "res://tex/items/pc_big_dice.png", "year": 1995, "tickets": 600, "prize": "big_dice"},
   {"id": "pc_ball", "name": "Basketball", "class": "hand", "scene": "res://scripts/items/pc_ball.tscn", "icon": "res://tex/items/pc_ball.png", "year": 1995, "tickets": 900, "prize": "ball"},
-  {"id": "pc_lava", "name": "Lava lamp", "class": "hand", "scene": "res://models/bl_gb_lavalamp/bl_gb_lavalamp.glb", "icon": "res://models/bl_gb_lavalamp/bl_gb_lavalamp_icon.png", "year": 1995, "tickets": 2500, "prize": "lava"}
+  {"id": "pc_lava", "name": "Lava lamp", "class": "hand", "scene": "res://models/bl_gb_lavalamp/bl_gb_lavalamp.glb", "icon": "res://models/bl_gb_lavalamp/bl_gb_lavalamp_icon.png", "year": "both", "tickets": 2500, "prize": "lava"}
  ]
 }

@@ -35,7 +35,7 @@ META = {
     "tex": 1024,
     "ao": 0.3,
     "refs": [],
-    "item": {"name": "Chinese finger trap", "year": 1995, "store": "POCKET CHANGE", "tickets": 15, "prize": "finger_trap"},
+    "item": {"name": "Chinese finger trap", "year": "both", "store": "POCKET CHANGE", "tickets": 15, "prize": "finger_trap"},
 }
 
 

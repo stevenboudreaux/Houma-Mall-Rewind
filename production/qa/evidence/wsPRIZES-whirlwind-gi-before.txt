@@ -1,0 +1,13 @@
+FAIL the games, inc. page is the faded copy
+FAIL the card asks $2.00 for four plays
+FAIL START takes $2.00 and play 1 runs ($99 left)
+ok   four plays for the $2.00 (3 left after the first)
+ok   the win (2) is in 2026's tickets at once (2)
+ok   1995's tickets don't move (40)
+FAIL the plays left are games, inc.'s own (whirlwind.gi.credits 3)
+FAIL the payout is named for this machine (whirlwind-gi:...)
+FAIL Pocket Change's machine (no cab) is still $1.00, not faded, with no plays carried over
+FAIL with $1.50 START is refused, nothing taken
+FAIL the card says 'You need $2.00' and START is greyed
+ok   0 page errors []
+WHIRLWIND GI FAILED (8)

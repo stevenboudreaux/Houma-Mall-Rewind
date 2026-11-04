@@ -214,3 +214,23 @@ z 57 through the opening to z 65.
 **Open questions for Steven.** Which machines to make playable first (report); whether the prize wall
 should get the old prize-closer-look; the names of M12, M22, M25, M26; whether the white claw by the
 party corner is a claw or a prize merchandiser.
+
+## Nov 3, 2026 (workstream PRIZES): the prize counter in 3D, and the WHIRLWIND
+
+Steven (Nov 3): games, inc. gets a prize counter and redemption stock (some prizes shared with Pocket Change,
+some its own, at the research's 2026 tiers), the wall as repeated primitives with a few hero pieces, and a clone
+of Pocket Change's 1995 WHIRLWIND ("literally the same machine", slightly duller and faded) at $2 for four plays.
+No attendant in this job. Full notes: `design/godot-prize-counter.md` "PRIZES".
+
+- **P1, P4 (changed):** the showcases' and the prize wall's painted prize pictures are replaced by 3D prizes
+  built at run time (`scripts/prizes_gi.gd`, `scripts/prizes_2026.json`): each showcase gets a white back panel
+  and two glass shelves; the wall is black slatwall with six shelves; green shelf tags. The top plush row and the
+  GALACTIC PRIZE PORTAL panel, TVs and kiosks are as they were. `machines/counter.gd` leaves markers for the
+  run-time prizes. "Redeem tickets" at the showcases and the register opens the redemption screen with 2026's
+  stock, spending 2026's tickets.
+- **WHIRLWIND (new, guessed position):** `store.gd` WW_U 3.5, WW_D 5.4 (console front edge), facing the door:
+  the open floor behind the party tables, about 1.6 m from the showcases and 1 m from the pusher's stools. Not in
+  the Oct 23 footage; Steven saw it at the real mall. The cabinet is Pocket Change's module with faded pictures
+  (`tex/gi/ww_*.png`), sign id `gi.cyclone.1`.
+- **Rebuild and rebake:** wing 2, 2026 (`wing2_2026`), then its stand-in per the usual rule
+  (`tools/capture_standin.sh 2 2026`). No 1995 wing changes (Pocket Change's prizes are built at run time).

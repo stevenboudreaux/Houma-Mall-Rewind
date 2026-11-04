@@ -277,6 +277,11 @@ func _spawn_1995_life() -> void:
 func _spawn_2026_shoppers() -> void:
 	if wing == 3:
 		return
+	# PRIZES (Nov 3): games, inc.'s prize counter (scripts/prizes_gi.gd; design/godot-prize-counter.md)
+	if wing == 2 or wing == 0:
+		var pg = load("res://scripts/prizes_gi.gd").new()
+		pg.name = "Prizes"; pg.player = self
+		get_parent().add_child.call_deferred(pg)
 	var np = load("res://scripts/npcs.gd").new()
 	np.name = "Shoppers"; np.player = self
 	if OS.has_feature("web"):

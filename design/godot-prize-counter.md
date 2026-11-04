@@ -187,3 +187,135 @@ agree; Steven changes them there (or with a `tickets` in `redemption.json`).
   returns to walking (checked by `tools/qa/econ_back_test.gd`); every ticket game now pays into the year's
   tickets, and the counter spends only 1995's (`mall.spend_tickets`).
 - No sound; VR has no prompt.
+
+## PRIZES (workstream PRIZES, Steven Nov 3 2026): fuller counters in both years, the Whirlwind at games, inc.
+
+**Steven's decisions** (the brief): (1) Pocket Change used to look fuller and more vibrant: neat, organized bins
+under the glass, not strewn; the back wall full; keep one or two of the aliens and lava lamps, fill the rest
+with other common prizes; the research's shelf-by-shelf proposal, **Option B** (more prizes, a third bin width),
+plus the **hook grid of carded toys**. (2) Blender for the prizes you can win where we can; simple bin filler for
+the rest; everything on the redemption list exists as an item. (3) Keep the virtual pets (a known anachronism).
+(4) games, inc. gets a clone of the 1995 WHIRLWIND, "literally the same machine", slightly duller and faded, $2 for
+four plays, paying 2026 tickets. (5) games, inc. gets a prize counter and stock, some prizes shared with Pocket
+Change, some its own, at the research's 2026 tiers; the wall as repeated primitives with a few hero pieces.
+(6) No attendant at games, inc. in this job. Boom box 5,000, plush 700; every other price is a guess, marked.
+Sources: `design/research/redemption-counters.md`, `design/research/redemption-items.md`.
+
+### Pocket Change, 1995 (`scripts/prizes.gd`, `scripts/prizes.json`, `scripts/prize_units.gd`)
+Still built at run time: **no static change, no 1995 rebake.**
+- **Neat bins.** Every fill is a grid now: one orientation, rows and brick-stacked layers, colours in stripes by
+  column. The four fills that were random heaps (finger traps, chews, candy necklaces, fuzzy dice) were rewritten
+  the same way. Boxed and carded prizes stand in rows; upright ones (lollipops, rings, trolls, yo-yos) stand on
+  clear stepped risers so every face shows.
+- **Option B layout** (`prizes.json` "case"): a third bin width (`left3 | mid | right3`) where two bins looked
+  sparse; price rises left to right by bay and upward by level; case B by the gate is candy.
+
+| Case / bay | Deck | Lower shelf | Upper shelf |
+|---|---|---|---|
+| B (gate, candy) | lollipops (5) · candy rolls (5) · candy rings (20) | candy cigarettes (25) · taffy (5) · sour candy (5) | chews (5) · candy necklaces (20) · powder straws (3) |
+| A bay 0 (1-25) | finger traps (15) · jelly traps (20) · spider rings (5) | pencils (10) · erasers (10) · sticker sheets (5) | sticky hands (15) · bouncy balls (10) · glow bracelets (25) |
+| A bay 1 (25-100) | rubber snakes (25) · jelly bracelets (30) · army men (50) | slap bracelets (75) · slammers (60) · Pog packs (100) | Pog packs (100) · troll dolls (100) |
+| A bay 2 (100-300) | coil springs (150) · paddle balls (125) · squirt pistols (150) | yo-yos (150) · harmonicas (200) · neon sunglasses (200) | mood rings (200) · toy cars (250) · rubber-strand balls (250) |
+| A bay 3 (300-1,800) | fuzzy dice (300) | handheld games (1,200) · walkie-talkies (1,800), boxed | virtual pets (1,500) |
+
+- **The wall** (`prizes.gd` WALL_CAB, WALL_MID, WALL_GRID, the hooks), bottom to top, price rising with height:
+  the base cabinet top end to end (boom boxes 5,000, radio-control cars 4,500, cassette players 4,000, basketballs
+  900, walkie-talkies, a handheld game, a plush dog and bunny, **one sitting alien**); the middle shelf shoulder to
+  shoulder with plush bears, bunnies and dogs (700, tinted from the claw's fur colours) and giant fuzzy dice (600);
+  the upper shelf with **two lava lamps** (2,500) at the ends and two plasma balls (2,000); two skateboards
+  (6,000) on wall brackets above them; between them the **hook grid**: two rows of hooks, carded squirt pistols,
+  paddle balls, toy cars, yo-yos, sunglasses and harmonicas hanging two deep; along the top, **one hanging alien**
+  (800), giant fuzzy dice, the 3 ft plush bear (4,000) and a water blaster (450). Two aliens and two lava lamps in
+  all (there were nine aliens and four lamps).
+- **Kept: the virtual pets** (bay 3 upper, 1,500). **Known anachronism:** the type reached the US in May 1997
+  (`design/research/redemption-items.md` §2); Steven: keep them for now.
+
+### games, inc., 2026 (`scripts/prizes_gi.gd`, `scripts/prizes_2026.json`)
+- **Static change** (`tools/stores/games_inc/machines/counter.gd`): the painted prize pictures in the three LED
+  showcases and on the prize wall are gone. Each showcase has a white back panel and two glass shelves (0.59,
+  0.78 m over the 0.40 m deck); the wall is black slatwall (`tex/gi/slatwall.png`) with six shelves (0.10, 0.42,
+  0.76, 1.10, 1.44, 1.78 m), its top plush row as before. The build leaves markers (`GIPrizeCase0..2`,
+  `GIPrizeDesk0`, `GIPrizeWall0`) where the run-time prizes go. **Wing 2 2026 needs a rebuild and a rebake.**
+- **The prizes** are built at run time like Pocket Change's (prizes_gi.gd extends prizes.gd), from
+  `prizes_2026.json` (keys `g_*`, so the words and prices never mix with 1995's): green shelf tags
+  (`prizes/gtag.png`, words drawn at load time and owner-editable like the white cards).
+
+| Showcase | Deck | Lower glass shelf | Upper glass shelf |
+|---|---|---|---|
+| Pink, by the door (1-100) | lollipops 10 · sour candy 10 · candy rings 40 · bouncy balls 25 · mini erasers 20 | finger traps 30 · sticky hands 30 · sticker sheets 15 · light-up rings 50 | popper keychains 75 · mini squishies 75 · slap bracelets 100 · fidget spinners 100 |
+| Blue (100-800) | dough balls 300 · slime tubs 250 · popper boards 400 | mystery figures (blind bags) 350 · emoji keychains 250 · fidget spinners | light-up wands 600 · emoji keychains |
+| White, the big prizes (1,000+) | charging cables 1,200 · phone stands 1,500 | Bluetooth speakers 6,000 · wireless earbuds 8,000 | gift cards 15,000 · mini arcades 25,000 |
+
+- **The wall**, floor to top (`prizes_2026.json` "wall"): play balls 300, bubble wands 150, popper boards; slime,
+  mini squishies, fidget spinners, dough balls; round plush 1,200 and light-up wands; capybara plush 2,000, blind
+  bags, star projectors 5,000, speakers; boxed electronics: headphones 25,000, LED strip lights 4,000, handheld
+  consoles 120,000, game consoles 150,000, earbuds; big round plush 8,000 and plush bears, bunnies and dogs
+  (1,500); the build's top plush row tagged as jumbo plush 30,000. Two lava lamps (6,000) stand on the register
+  counter (too tall for the 34 cm shelves). Repeated primitives throughout; Blender hero pieces: the round plush
+  (all three sizes), the capybara, the dough ball, and the shared plush and lava lamps.
+- **Shared prizes** (one item, `"year": "both"`, each year's own price): finger trap, slap bracelet, sticky hand,
+  bouncy ball, lollipop, sour candy, candy ring, sticker sheet, eraser, plush bear / bunny / dog, lava lamp.
+  The rest are each counter's own (no Pog packs, candy cigarettes or virtual pets in 2026; no consoles,
+  poppers or squishies in 1995).
+- **Redeem:** "Redeem tickets" at any showcase or the register opens the same screen (`scripts/redemption.gd`)
+  with 2026's stock (`redemption.json` "stock_2026"), spending 2026's tickets only (ECON keeps them apart). The
+  closer look has the three showcases and the wall in four parts.
+
+### The redemption list (`scripts/redemption.json`)
+"stock" (1995, 52 prizes) and "stock_2026" (40), by price; each entry's `prize` names the catalogue key its name
+and price come from; **`"guess": true` on every price Steven hasn't given** (all but the boom box 5,000 and the
+plush 700). Written by `tools/prizes/make_items.py`. Every prize is an item (`data/items/pocket_change_more.json`,
+`data/items/games_inc_stock.json`, the Blender ones in `blender_props*.json`): the bin-filler ones are one unit of
+what the counter shows (`scripts/items/prize_model.gd` → `prize_units.gd`), icons `tex/items/<id>.png`.
+
+### Blender prizes (`tools/blender/assets_src/`, `models/<id>/`, the shared "items" pack)
+1995: `bl_pc_troll`, `bl_pc_yoyo`, `bl_pc_koosh` (rubber-strand ball), `bl_pc_blaster` (water blaster),
+`bl_pc_skateboard`, `bl_pc_plasma`. 2026: `bl_gi_squish` (round plush; the big and jumbo sizes are it scaled),
+`bl_gi_capybara`, `bl_gi_doughball`. Reused: `bl_pc_boombox`, `bl_pc_fingertrap` and the three claw plush
+(now `"year": "both"`), Gumballs' lava lamp. The counters show the models themselves (batched), so the bin and the
+bag match. Bin fillers stay primitives: candy, rings, pencils, bracelets, cards, boxes.
+
+### Packs
+`prizes/*` (the counters' pictures, 0.3 MB) moved from the 1995 wing packs into the shared **items** pack
+(`tools/shared_packs.json`, `tools/make_presets.py`, `export_presets.cfg` regenerated), because both years'
+counters and the prize items use them. New models are under `models/bl_*`, so they are in the items pack too.
+No texture was made smaller.
+
+### Guessed (say if wrong)
+- Every ticket price but the boom box and the plush (marked in redemption.json).
+- Which prizes sit where, the shelf heights at games, inc. and its three-level showcases (the footage shows
+  shelves of small prizes, not which).
+- The prize names on the cards are generic descriptions ("Troll doll", "Rubber-strand ball", "Popper keychain",
+  "Mystery figure"), no brand names; the boxes carry descriptive words only ("HANDHELD GAME", "RADIO CONTROL"),
+  all editable in the closer look.
+
+### WHIRLWIND at games, inc. (2026)
+- **The cabinet:** Pocket Change's own `cyclone` module, placed by `tools/stores/games_inc/store.gd` (WW_U 3.5,
+  WW_D 5.4: the open floor in the middle front, behind the party tables, console to the door, across the aisle
+  from the showcases; **where it stands is a guess**, it is not in the Oct 23 footage). In a 2026 build every
+  picture is the faded copy, `tex/gi/ww_*.png` (`tools/stores/games_inc/paint_whirlwind_faded.py`: two thirds of
+  the saturation, lifted and warmed toward dusty cream, lower contrast, faint scuffs on the big panels; same
+  sizes), its sign is `gi.cyclone.1` with the faded decal and the same WHIRLWIND words in faded colours, and its
+  lamps and neon run at 0.8 (`scripts/cyclone_lights.gd` meta "dim"). Static: **wing 2 2026 needs a rebuild
+  and a rebake.**
+- **The game:** the same page, `play/whirlwind.html?year=2026&cab=gi` (`scripts/signs.gd` opens it at the
+  console). `play/whirlwind/logic.js` CABINETS: "gi" is the same CONFIG at **$2.00 for four plays**, with its
+  own plays left, bonus and best (`whirlwind.gi.*`) and payout ids (`whirlwind-gi:`); the 3D view is the faded
+  copy (a CSS filter on the canvas). It pays into **2026's tickets** (the mall's `?year=`), which games, inc.'s
+  counter spends. Pocket Change's machine is unchanged ($1.00, `whirlwind.*`).
+- The "25¢" sticker on the coin door and "INSERT TOKEN(S)" on the card are the 1995 machine's; left as they are
+  (the same machine). Question for Steven: should games, inc.'s show a card reader or a new price sticker?
+
+### Checks (PRIZES)
+- `node tests/unit/whirlwind/logic.test.js`: 12 passed (2 new: the cabinets).
+- `node tests/unit/whirlwind/gi_page_test.js` (Chromium on the page, play/ served on 8766): WHIRLWIND GI OK (12):
+  $2.00 taken, four plays, the win in 2026's tickets at once, 1995's untouched, its own plays left and payout id,
+  the 1995 machine still $1.00, refused at $1.50 with "You need $2.00", 0 page errors. Against the page before
+  this change it fails 8 of 12 (`production/qa/evidence/wsPRIZES-whirlwind-gi-before.txt`).
+- `godot --headless --path . --script res://tools/qa/prizes_years_test.gd`: PRIZES YEARS TEST (redemption in both
+  years, year separation, every prize an item with a model and an icon, shared vs own, guesses marked).
+- `tools/qa/prizes_redeem_shots.gd --year=1995|2026` (native, unbaked): the prompt, the screen, a buy spending
+  only that year's tickets, the card, the closer look.
+- `tools/qa/redemption_test.gd`: its "no 1995 prize in the 2026 stock" check now reads "no 1995-only prize".
+- Evidence `production/qa/evidence/wsPRIZES-*` (unbaked): before/after of both counters, the Whirlwind, the
+  redemption screens.
