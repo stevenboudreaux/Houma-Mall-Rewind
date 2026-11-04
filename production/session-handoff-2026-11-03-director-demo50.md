@@ -1,6 +1,6 @@
 # Handoff: director session, Demo 50 (Nov 3, 2026)
 
-**State: publishing (ids filled in by the next commit).** `godot-build` = pending, desktop repo `main` = pending, `main` = `int-50`
+**State: published.** `godot-build` = `29173a3`, desktop repo `main` = `26384e2`, `main` = `af7a498` (int-50
 `ba3de3e` plus this handoff. Live: https://stevenboudreaux.github.io/Houma-Mall-Rewind/. The cloud box can't reach
 github.io, so the live page was not checked: **Steven, please look at the live page** (Demo 49b was never
 confirmed either).
@@ -59,7 +59,7 @@ tonight: bucket `houma-mall-rewind`, public URL `https://pub-848b5102ea0e4d78999
 remote `r2` on the Air, upload and public read tested. The project doc "Moving the game packs to Cloudflare R2"
 (Steven's Southland Mall project) has the steps. **Next director job, before merging round 2:** `PACK_BASE` /
 `?packs=` in `web/shell.html`, `publish_build.sh` uploads packs to `r2:houma-mall-rewind/builds/<id>/` with rclone and
-pushes a small godot-build, `pages.yml` stops copying packs, the desktop repo retires, `design/godot-build-hosting.md`
+pushes a small godot-build, `pages.yml` stops copying packs, the desktop repo retires. Note: the desktop repo must be attached to the cloud session (`add_repo … houma-mall-rewind-desktop`, push) or its push is refused with a 403; publish_build.sh now stops and says so, `design/godot-build-hosting.md`
 rewritten. Steven should rotate the `mall-publish` API token (its secret was shown on screen once).
 
 ## Round 2 (not merged)
