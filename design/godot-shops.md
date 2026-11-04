@@ -135,8 +135,30 @@ not baked; placed at run time.
 - Woolworth, RadioShack, Corn Dog 7: no geometry change, no rebake. (Corn Dog 7's back worktop meets the attendant's
   back below 0.9 m; the 1.0 m counter hides it from the shop.)
 
-## Checks
-(see the report; filled in below)
+## Checks (Nov 4, this branch; unbaked)
+- `godot --headless --path . --script res://tools/qa/shop_test.gd`: **SHOP TEST OK (210 checks)**: the data (four shops,
+  attendants with PLACEHOLDER clothed presets, wing and year, whole-cent prices, models and icons load, stand-ins and
+  RadioShack estimates marked, Steven's lines word for word, five books at $10, RadioShack sells all eight standalone
+  items); a buy ($100.00 to $98.00 once, one ledger entry, one card, in the bag not the hand, the ready line, saved:
+  a fresh load has the float and $98.00; 2026 shares the wallet, not the bag); can't afford ($1.50 can't buy a $2.00
+  corn dog, nothing changes; exactly $2.00 can); nothing in the four stores has a pick-up "place" any more (13 on
+  display); the screen (greyed-out cards, BUY, the line and the money update, Back; no shop opens in 2026).
+- Unchanged and still OK: DIALOGUE WALK 67, ECON TEST 52, INVENTORY 45, REDEMPTION 32, FLAGS 31, CHAR CLOTHED 1632
+  (the new presets included), CHAR EDITOR 28 (`--only=unit`).
+- Wing 2 rebuilt (`build_mall.gd --wing=2`, BUILD OK): the only collision change is B. Dalton's counter rect moved and
+  the clerks' aisle added.
+- Web (`tools/export_web.sh`, wings 1 and 2, 1995; w1 85.45 MB, w2 83.19 MB, items 22.6 MB + the stand-ins):
+  `CHROMIUM=/opt/pw-browsers/chromium python3 tools/qa/shops_webtest.py <build>/index.html <out> both` → **SHOPS WEB OK**,
+  0 console errors (12 404s for site files a scratch build doesn't have: `roms.json`, `signs.json`, `shirt_text.json`).
+  At each counter, a new player: E opens the list beside the attendant's face; Enter buys the first thing the wallet
+  covers (RadioShack: Enter on the $199.99 scanner at $98.00 takes and gives nothing, then the $49.99 walkie-talkies);
+  the wallet drops by exactly the price once; the item is in `mall-state-1995`; closing takes nothing more; after a
+  reload both hold. Run: float $2.00, walkie-talkies $49.99, corn dog $2.00, Moby-Dick $10.00 ($100.00 → $36.01).
+- Evidence (`production/qa/evidence/`): `wsSHOPS-web-unbaked-<shop>-approach / -open / -bought / -line.jpg` for the four
+  counters, `wsSHOPS-standin-icons.jpg`, `wsSHOPS-menu-boards-before-after.jpg`. On the web the attendant wears the
+  Mixamo fallback until the character pack mounts (the approach shots); from then on, the preset (the open shots).
+- Not run: a phone-width web pass (`shops_webtest.py … both phone` exists; the layout puts the list on the lower part)
+  and native shots.
 
 ## Open (for Steven)
 - Corn Dog 7's COMBO line (2.99 for a corn dog, fries and lemonade, which are $3.98 apart): sell the combo, change it, or leave it?
