@@ -254,3 +254,12 @@ Steven (Nov 3): the build did not play like his machine, and coins kept falling 
 ## Sign pass (Oct 7, 2026)
 See photos/ (Steven's photos for this store) and tools/stores/signs/ (make_logos.py batch3, channel.gd sg_* materials).
 Steven: "make the pocket change facade a little bigger, more similar to heights of nearby stores." Opening head 2.4 → 2.9 m, fascia top 3.45 → 4.3 m, the stepped tile two rows taller, letters 5 % bigger. (The photo's proportions were the source for the old sizes.)
+
+## The prize counter, fuller (workstream PRIZES, Nov 3, 2026)
+Steven: it used to look fuller and more vibrant; neat, organized bins under the glass, not strewn; a full back
+wall with one or two aliens and lava lamps among other common prizes (Option B of
+`design/research/redemption-counters.md`, plus a hook grid of carded toys). Built at run time in
+`scripts/prizes.gd` / `scripts/prize_units.gd` from `scripts/prizes.json`: 52 prizes now (was 18), six new Blender
+models (troll doll, yo-yo, rubber-strand ball, water blaster, skateboard, plasma ball). No static change: no 1995
+rebake. The virtual pets stay (a known anachronism: 1997). Details and the shelf-by-shelf table:
+`design/godot-prize-counter.md` "PRIZES". Its WHIRLWIND now has a faded 2026 twin at games, inc.

@@ -12,7 +12,7 @@
    "year": 1995, "tickets": 100},
   {"id": "slap", "name": "Slap bracelet", "class": "pocket",
    "scene": "res://scripts/items/slap.tscn", "icon": "res://tex/items/slap.png",
-   "year": 1995, "tickets": 75},
+   "year": "both", "tickets": 75},
   {"id": "candy_neck", "name": "Candy necklace", "class": "pocket",
    "scene": "res://scripts/items/candy_neck.tscn", "icon": "res://tex/items/candy_neck.png",
    "year": 1995, "tickets": 20}

@@ -61,4 +61,24 @@ t('random presses win about 3/1620 of the time', () => {
   const p = w / N;
   assert.ok(Math.abs(p - 3 / 1620) < 0.0006, 'p ' + p);
 });
+t('PRIZES: Pocket Change\'s cabinet is $1.00 for four plays (the default)', () => {
+  for (const name of [undefined, null, 'pc', 'nope', 'constructor']) {
+    const c = WW.cabinet(name);
+    assert.strictEqual(c.name, 'pc');
+    assert.strictEqual(c.cfg.priceCents, 100);
+    assert.strictEqual(c.cfg.plays, 4);
+    assert.strictEqual(c.key, 'whirlwind');
+    assert.strictEqual(c.faded, false);
+  }
+});
+t('PRIZES: games, inc.\'s copy is the same game at $2.00 for four plays, with its own keys', () => {
+  const g = WW.cabinet('gi'), p = WW.cabinet('pc');
+  assert.strictEqual(g.cfg.priceCents, 200);
+  assert.strictEqual(g.cfg.plays, 4);
+  assert.strictEqual(g.faded, true);
+  assert.notStrictEqual(g.key, p.key);
+  assert.notStrictEqual(g.pay, p.pay);
+  for (const k of Object.keys(C)) if (k !== 'priceCents') assert.strictEqual(g.cfg[k], C[k], k);
+  assert.strictEqual(C.priceCents, 100, 'CONFIG itself is untouched');
+});
 console.log(n + ' passed');

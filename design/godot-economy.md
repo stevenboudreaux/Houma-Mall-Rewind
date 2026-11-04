@@ -175,3 +175,14 @@ change was needed. (If Back should go back to the screen instead, it is one line
 - Is the **Bayou Bruiser** figure meant to come to the bag too (it does now)?
 - **Games, Inc. 2026 prices:** unknown (card kiosks); nothing there is playable yet.
 - **Earning money:** TBD (future).
+
+## PRIZES (Nov 3): 2026 tickets have a game and a counter
+- games, inc.'s WHIRLWIND (`play/whirlwind.html?year=2026&cab=gi`) is the first 2026 ticket game: **$2.00 for
+  four plays** (`play/whirlwind/logic.js` CABINETS "gi"), taken from the one wallet at START, each play's win
+  paid into `mall.tickets-2026` the moment the light stops (payout ids `whirlwind-gi:<visit>:<play>`), its plays
+  left kept on that machine (`whirlwind.gi.credits`). Pocket Change's is unchanged ($1.00, 1995 tickets).
+- games, inc.'s counter (`scripts/prizes_gi.gd`) opens the same redemption screen with 2026's stock
+  (`scripts/redemption.json` "stock_2026"), which spends `mall.tickets-2026` only. Checked:
+  `tools/qa/prizes_years_test.gd`, `tests/unit/whirlwind/gi_page_test.js` (`design/godot-prize-counter.md` "PRIZES").
+- The "Games, Inc. 2026 prices" open question above: the WHIRLWIND is $2 (Steven); the rest of games, inc.'s
+  machines are still not playable.

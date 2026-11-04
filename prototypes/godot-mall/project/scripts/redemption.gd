@@ -61,14 +61,18 @@ func setup(p: Node3D, m, item_db):
 ## The stock for a year: redemption.json's entries whose item exists in that year, each
 ## {item, name, tickets, icon}. Name and price: prizes.json's when the entry names a "prize", the
 ## entry's own "tickets" when it has one (it wins), else the item file's "tickets".
+## PRIZES (Nov 3): each year has its own counter and stock: redemption.json "stock" is Pocket Change's
+## (1995, prices from prizes.json), "stock_<year>" another year's (2026: games, inc., prices from
+## prizes_2026.json). A year with no list of its own has nothing to redeem.
 static func read_stock(item_db, year: int) -> Array:
 	var out: Array = []
 	var sj = JSON.parse_string(FileAccess.get_file_as_string(STOCK_FILE)) if FileAccess.file_exists(STOCK_FILE) else null
-	var pj = JSON.parse_string(FileAccess.get_file_as_string(PRIZES_FILE)) if FileAccess.file_exists(PRIZES_FILE) else null
+	var pf := PRIZES_FILE if year == 1995 else "res://scripts/prizes_%d.json" % year
+	var pj = JSON.parse_string(FileAccess.get_file_as_string(pf)) if FileAccess.file_exists(pf) else null
 	var prizes: Dictionary = pj.get("items", {}) if pj is Dictionary else {}
 	if not (sj is Dictionary):
 		return out
-	for s in sj.get("stock", []):
+	for s in sj.get("stock" if year == 1995 else "stock_%d" % year, []):
 		if not (s is Dictionary):
 			continue
 		var id := str(s.get("item", ""))

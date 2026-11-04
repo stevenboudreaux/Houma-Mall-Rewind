@@ -61,6 +61,50 @@
    }
   },
   {
+   "id": "bl_gi_capybara",
+   "name": "Capybara plush",
+   "class": "hand",
+   "scene": "res://models/bl_gi_capybara/bl_gi_capybara.glb",
+   "icon": "res://models/bl_gi_capybara/bl_gi_capybara_icon.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 2000,
+   "prize": "g_capybara"
+  },
+  {
+   "id": "bl_gi_doughball",
+   "name": "Squishy dough ball",
+   "class": "pocket",
+   "scene": "res://models/bl_gi_doughball/bl_gi_doughball.glb",
+   "icon": "res://models/bl_gi_doughball/bl_gi_doughball_icon.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 300,
+   "prize": "g_dough_ball"
+  },
+  {
+   "id": "bl_gi_squish",
+   "name": "Round plush",
+   "class": "hand",
+   "scene": "res://models/bl_gi_squish/bl_gi_squish.glb",
+   "icon": "res://models/bl_gi_squish/bl_gi_squish_icon.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 1200,
+   "prize": "g_squish"
+  },
+  {
+   "id": "bl_pc_blaster",
+   "name": "Water blaster",
+   "class": "hand",
+   "scene": "res://models/bl_pc_blaster/bl_pc_blaster.glb",
+   "icon": "res://models/bl_pc_blaster/bl_pc_blaster_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "tickets": 450,
+   "prize": "blaster"
+  },
+  {
    "id": "bl_pc_boombox",
    "name": "Boom box",
    "class": "hand",
@@ -77,10 +121,32 @@
    "class": "pocket",
    "scene": "res://models/bl_pc_fingertrap/bl_pc_fingertrap.glb",
    "icon": "res://models/bl_pc_fingertrap/bl_pc_fingertrap_icon.png",
-   "year": 1995,
+   "year": "both",
    "store": "POCKET CHANGE",
    "tickets": 15,
    "prize": "finger_trap"
+  },
+  {
+   "id": "bl_pc_koosh",
+   "name": "Rubber-strand ball",
+   "class": "hand",
+   "scene": "res://models/bl_pc_koosh/bl_pc_koosh.glb",
+   "icon": "res://models/bl_pc_koosh/bl_pc_koosh_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "tickets": 250,
+   "prize": "koosh"
+  },
+  {
+   "id": "bl_pc_plasma",
+   "name": "Plasma ball",
+   "class": "hand",
+   "scene": "res://models/bl_pc_plasma/bl_pc_plasma.glb",
+   "icon": "res://models/bl_pc_plasma/bl_pc_plasma_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "tickets": 2000,
+   "prize": "plasma"
   },
   {
    "id": "bl_pc_plush_bear",
@@ -88,7 +154,7 @@
    "class": "hand",
    "scene": "res://models/bl_pc_plush_bear/bl_pc_plush_bear.glb",
    "icon": "res://models/bl_pc_plush_bear/bl_pc_plush_bear_icon.png",
-   "year": 1995,
+   "year": "both",
    "store": "POCKET CHANGE",
    "prize": "claw",
    "tint": [
@@ -110,7 +176,7 @@
    "class": "hand",
    "scene": "res://models/bl_pc_plush_bunny/bl_pc_plush_bunny.glb",
    "icon": "res://models/bl_pc_plush_bunny/bl_pc_plush_bunny_icon.png",
-   "year": 1995,
+   "year": "both",
    "store": "POCKET CHANGE",
    "prize": "claw",
    "tint": [
@@ -132,7 +198,7 @@
    "class": "hand",
    "scene": "res://models/bl_pc_plush_dog/bl_pc_plush_dog.glb",
    "icon": "res://models/bl_pc_plush_dog/bl_pc_plush_dog_icon.png",
-   "year": 1995,
+   "year": "both",
    "store": "POCKET CHANGE",
    "prize": "claw",
    "tint": [
@@ -147,6 +213,39 @@
     "#f2cc34"
    ],
    "tickets": 700
+  },
+  {
+   "id": "bl_pc_skateboard",
+   "name": "Skateboard",
+   "class": "hand",
+   "scene": "res://models/bl_pc_skateboard/bl_pc_skateboard.glb",
+   "icon": "res://models/bl_pc_skateboard/bl_pc_skateboard_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "tickets": 6000,
+   "prize": "skateboard"
+  },
+  {
+   "id": "bl_pc_troll",
+   "name": "Troll doll",
+   "class": "pocket",
+   "scene": "res://models/bl_pc_troll/bl_pc_troll.glb",
+   "icon": "res://models/bl_pc_troll/bl_pc_troll_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "tickets": 100,
+   "prize": "troll"
+  },
+  {
+   "id": "bl_pc_yoyo",
+   "name": "Yo-yo",
+   "class": "pocket",
+   "scene": "res://models/bl_pc_yoyo/bl_pc_yoyo.glb",
+   "icon": "res://models/bl_pc_yoyo/bl_pc_yoyo_icon.png",
+   "year": 1995,
+   "store": "POCKET CHANGE",
+   "tickets": 150,
+   "prize": "yoyo"
   }
  ]
 }

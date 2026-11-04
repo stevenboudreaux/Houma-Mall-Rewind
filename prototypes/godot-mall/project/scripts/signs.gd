@@ -221,7 +221,7 @@ func _near_check() -> void:
 	b_play.visible = found != ""
 	if found != "":
 		var t = ""
-		if found.begins_with("pc.cyclone"):
+		if found.begins_with("pc.cyclone") or found.begins_with("gi.cyclone"):
 			t = text_of(found)
 		elif found.begins_with("pc.skee"):
 			t = "SKEE-BALL"
@@ -242,7 +242,8 @@ func _near_check() -> void:
 func _near_whirlwind(cam: Camera3D, fwd: Vector3) -> String:
 	var me = Vector3(cam.global_position.x, 0.0, cam.global_position.z)
 	for id in order:
-		if not str(id).begins_with("pc.cyclone") or not recs.has(id):
+		# PRIZES (Nov 3): games, inc.'s 2026 copy ("gi.cyclone.1") stands the same way
+		if not (str(id).begins_with("pc.cyclone") or str(id).begins_with("gi.cyclone")) or not recs.has(id):
 			continue
 		var faces = recs[id].faces
 		if faces.size() < 3:
@@ -311,8 +312,11 @@ func _play(id: String) -> void:
 	if id.begins_with("pc.skee."):
 		JavaScriptBridge.eval("window.mallRoms && window.mallRoms.open('skeeball.html?" + yq + "lane=" + id.get_slice(".", 2) + "')")
 		return
-	if id.begins_with("pc.cyclone"):
-		JavaScriptBridge.eval("window.mallRoms && window.mallRoms.open('whirlwind.html?" + yq + "name=' + encodeURIComponent(" + JSON.stringify(text_of(id)) + "))")
+	if id.begins_with("pc.cyclone") or id.begins_with("gi.cyclone"):
+		# PRIZES (Nov 3): games, inc.'s machine is "cab=gi": $2 for four plays, its own plays left and bonus
+		# (play/whirlwind/logic.js CABINETS); it pays into the year's tickets like every game (yq)
+		var cab := "cab=gi&" if id.begins_with("gi.") else ""
+		JavaScriptBridge.eval("window.mallRoms && window.mallRoms.open('whirlwind.html?" + yq + cab + "name=' + encodeURIComponent(" + JSON.stringify(text_of(id)) + "))")
 		return
 	JavaScriptBridge.eval("window.mallRoms && window.mallRoms.open('emu.html?id=' + encodeURIComponent(" + JSON.stringify(id) + "))")
 

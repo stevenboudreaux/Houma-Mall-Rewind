@@ -24,12 +24,16 @@ var player: Node3D
 var J: Dictionary = {}
 const UP := Vector3.UP
 const CNT_D := 0.6
-const LY := [0.135, 0.41, 0.67]      # deck, lower shelf, upper shelf (top surfaces)
-const CLEAR := [0.25, 0.24, 0.2]     # head room above each level
-const D0 := 0.06                     # bins: front and back, measured into the case
-const D1 := 0.47
+var LY := [0.135, 0.41, 0.67]        # deck, lower shelf, upper shelf (top surfaces)
+var CLEAR := [0.25, 0.24, 0.2]       # head room above each level
+var D0 := 0.06                       # bins: front and back, measured into the case
+var D1 := 0.47
+## PRIZES (Nov 3): the frames, levels and depths are vars so games, inc.'s counter (scripts/prizes_gi.gd,
+## which extends this) can set its own; look_frames are the cases whose front offers the prompt.
+var look_frames := ["A", "B"]
+const PU = preload("res://scripts/prize_units.gd")
 ## Frames: origin, and f, the way a customer faces it. A = f x UP is the customer's right.
-const FR := {
+var FR := {
 	"A": [Vector3(-104.1, 0, 65.6), Vector3(1, 0, 0), 5.0, 4],     # the long case
 	"B": [Vector3(-103.3, 0, 62.5), Vector3(0, 0, 1), 1.6, 1],     # the short case by the door
 	"W": [Vector3(-102.6, 0, 65.6), Vector3(1, 0, 0), 5.0, 1],     # the prize wall
@@ -93,9 +97,9 @@ var btn_pub: Button
 var status_l: Label
 
 func _ready() -> void:
-	var p = "res://scripts/prizes.json"
-	if FileAccess.file_exists(p):
-		J = JSON.parse_string(FileAccess.get_file_as_string(p))
+	if not _setup():
+		queue_free()
+		return
 	font = load("res://fonts/sans.otf")
 	_shaders()
 	_hide_generic()
@@ -116,6 +120,13 @@ func _ready() -> void:
 		_fetch_published()
 	_owner_ui()
 	paint_words()
+
+## The catalogue (and, in a subclass, the frames). False: nothing to build here.
+func _setup() -> bool:
+	var p = "res://scripts/prizes.json"
+	if FileAccess.file_exists(p):
+		J = JSON.parse_string(FileAccess.get_file_as_string(p))
+	return J is Dictionary and not J.is_empty()
 
 # ------------------------------------------------------------------ frames
 func W(fr: String, u: float, y: float, d: float) -> Vector3:
@@ -139,9 +150,15 @@ func slot_span(fr: String, bay: int, side: String) -> Vector2:
 	var a := -L * 0.5 + bay * uw + 0.0125 + 0.02
 	var c := -L * 0.5 + (bay + 1) * uw - 0.0125 - 0.02
 	var mid := (a + c) * 0.5
+	var t1 := a + (c - a) / 3.0
+	var t2 := a + (c - a) * 2.0 / 3.0
 	match side:
 		"left": return Vector2(a, mid - 0.008)
 		"right": return Vector2(mid + 0.008, c)
+		# PRIZES (Nov 3, Option B): a third bin width, three bins to a level
+		"left3": return Vector2(a, t1 - 0.006)
+		"mid": return Vector2(t1 + 0.006, t2 - 0.006)
+		"right3": return Vector2(t2 + 0.006, c)
 	return Vector2(a, c)
 
 # ------------------------------------------------------------------ materials
@@ -321,7 +338,7 @@ func _build() -> void:
 		_bin(bins, fr, span, y)
 		var tk := int(cat.get(it, {}).get("tickets", 0))
 		_card(fr, (span.x + span.y) * 0.5, y, it)
-		match it:
+		match PU.base_of(it):     # games, inc.'s "g_" prizes draw like Pocket Change's
 			"finger_trap": _traps(rng, fr, span, y, false)
 			"jelly_trap": _traps(rng, fr, span, y, true)
 			"chew": _chews(rng, fr, span, y)
@@ -332,6 +349,10 @@ func _build() -> void:
 			"spring": _springs(rng, fr, span, y, lv)
 			"dice": _dice(rng, fr, span, y)
 			"vpet": _vpets(rng, fr, span, y, bins)
+			_:
+				# PRIZES (Nov 3): the added prizes, neat in their bins (scripts/prize_units.gd)
+				if not PU.fill(self, rng, fr, span, y, PU.base_of(it), bins):
+					push_warning("prizes: no way to show '%s'" % it)
 		items.append({"pos": W(fr, (span.x + span.y) * 0.5, y + 0.05, (D0 + D1) * 0.5),
 			"name": str(cat.get(it, {}).get("name", it)), "tickets": tk, "key": it})
 	_wall(rng, cat)
@@ -441,10 +462,17 @@ func _card(fr: String, u: float, y: float, it: String) -> void:
 	var lean := Basis(Vector3(1, 0, 0), -0.28)
 	_card_at(XF(fr, u, y + 0.055, D0 - 0.006, lean), it, 1.0)
 
+## PRIZES (Nov 3): the price card's art: Pocket Change's white "card" (prizes.json "art"), or games,
+## inc.'s green "gtag" (prizes_gi.gd sets card_art; its size from that art's picture).
+var card_art := "card"
+
 func _card_at(c: Transform3D, it: String, size: float) -> void:
-	var key := "card_" + it
+	var key := card_art + "_" + it
 	if not acc.has(key):
-		kind(key, quad(Vector2(0.07, 0.0558)), _art_mat("card:" + it, "tag", 0.6, 0.6))
+		var a: Dictionary = J.get("art", {}).get(card_art, {})
+		var bg := str(a.get("bg", "tag"))
+		var px: Array = a.get("size", [256, 204])
+		kind(key, quad(Vector2(0.07, 0.07 * float(px[1]) / float(px[0]))), _art_mat(card_art + ":" + it, bg, 0.6, 0.6))
 	add(key, c * Transform3D(Basis().scaled(Vector3.ONE * size), Vector3.ZERO))
 
 # ---- the case prizes. Each fills the bin [span] x [D0, D1] at height y.
@@ -452,27 +480,42 @@ func _rand_in(rng: RandomNumberGenerator, span: Vector2, m: float) -> Vector2:
 	return Vector2(rng.randf_range(span.x + m, span.y - m), rng.randf_range(D0 + m, D1 - m))
 
 func _traps(rng: RandomNumberGenerator, fr: String, span: Vector2, y: float, jelly: bool) -> void:
-	var area := (span.y - span.x) * (D1 - D0)
-	var n := int(area * 260.0)
+	# PRIZES (Nov 3, Steven: "neat, organized bins, not strewn"): rows lying side by side, one colour
+	# to a column, two brick-stacked layers
 	var cols := [Color("#ff3c96"), Color("#3cdcff"), Color("#9cff3c"), Color("#ffdc28"), Color("#b45aff"), Color("#ff7a1e")] if jelly \
 		else [Color("#d8c08a"), Color("#c8343c"), Color("#2f7fd0"), Color("#3aa04a"), Color("#e8c020"), Color("#e070b0"), Color("#f2efe4")]
-	for i in n:
-		var p := _rand_in(rng, span, 0.07)
-		var layer := float(i) / n * 2.2
-		var b := Basis(UP, rng.randf() * TAU) * Basis(Vector3(0, 0, 1), PI * 0.5 + rng.randf_range(-0.25, 0.25))
-		var c: Color = cols[rng.randi() % cols.size()]
-		if jelly:
-			c.a = 0.78
-		add("jelly" if jelly else "trap", XF(fr, p.x, y + 0.01 + layer * 0.014 + rng.randf() * 0.004, p.y, b), c)
+	var L := 0.115 if jelly else 0.13
+	var r := 0.0085 if jelly else 0.008
+	var pu := r * 2.0 + 0.002
+	var nu := int((span.y - span.x - 0.02) / pu)
+	var nd := int((D1 - D0 - 0.02) / (L + 0.01))
+	var u0 := (span.x + span.y) * 0.5 - (nu - 1) * pu * 0.5
+	var d00 := (D0 + D1) * 0.5 - (nd - 1) * (L + 0.01) * 0.5
+	var lie := Basis(Vector3(1, 0, 0), PI * 0.5)       # along d, toward the customer
+	for layer in 2:
+		var off := 0.5 if layer == 1 else 0.0
+		for i in nu - layer:
+			for j in nd:
+				var c: Color = cols[(i / 2) % cols.size()]
+				if jelly:
+					c.a = 0.78
+				var b := Basis(UP, rng.randf_range(-0.02, 0.02)) * lie
+				add("jelly" if jelly else "trap", XF(fr, u0 + (i + off) * pu, y + r + 0.002 + layer * r * 1.7, d00 + j * (L + 0.01), b), c)
 
 func _chews(rng: RandomNumberGenerator, fr: String, span: Vector2, y: float) -> void:
-	var area := (span.y - span.x) * (D1 - D0)
-	var n := int(area * 900.0)
-	for i in n:
-		var p := _rand_in(rng, span, 0.025)
-		var layer := float(i) / n * 2.6
-		var b := Basis(UP, rng.randf() * TAU) * Basis(Vector3(0, 0, 1), PI * 0.5 + rng.randf_range(-0.3, 0.3))
-		add("chew", XF(fr, p.x, y + 0.009 + layer * 0.013 + rng.randf() * 0.003, p.y, b))
+	# PRIZES (Nov 3): neat rows of chews lying along u, three brick-stacked layers
+	var pu := 0.04
+	var pd := 0.0165
+	var nu := int((span.y - span.x - 0.02) / pu)
+	var nd := int((D1 - D0 - 0.02) / pd)
+	var u0 := (span.x + span.y) * 0.5 - (nu - 1) * pu * 0.5
+	var d00 := (D0 + D1) * 0.5 - (nd - 1) * pd * 0.5
+	for layer in 3:
+		var off := 0.5 if layer % 2 == 1 else 0.0
+		for i in nu - (1 if off > 0.0 else 0):
+			for j in nd - (1 if off > 0.0 else 0):
+				var b := Basis(UP, rng.randf_range(-0.03, 0.03)) * Basis(Vector3(0, 0, 1), PI * 0.5)
+				add("chew", XF(fr, u0 + (i + off) * pu, y + 0.0095 + layer * 0.0135, d00 + (j + off) * pd, b))
 
 func _candy_boxes(rng: RandomNumberGenerator, fr: String, span: Vector2, y: float) -> void:
 	var w := 0.056
@@ -489,13 +532,16 @@ func _candy_boxes(rng: RandomNumberGenerator, fr: String, span: Vector2, y: floa
 		d += 0.075
 
 func _necklaces(rng: RandomNumberGenerator, fr: String, span: Vector2, y: float) -> void:
-	var area := (span.y - span.x) * (D1 - D0)
-	var n := int(area * 90.0)
-	for i in n:
-		var p := _rand_in(rng, span, 0.055)
-		var b := Basis(UP, rng.randf() * TAU) * Basis(Vector3(1, 0, 0), rng.randf_range(-0.25, 0.25)) \
-			* Basis(Vector3(0, 0, 1), rng.randf_range(-0.25, 0.25))
-		add("neck", XF(fr, p.x, y + 0.004 + float(i) / n * 0.03, p.y, b.scaled(Vector3.ONE * rng.randf_range(0.9, 1.08))))
+	# PRIZES (Nov 3): laid flat in neat overlapping rows, like shingles
+	var pu := 0.1
+	var pd := 0.06
+	var nu := maxi(1, int((span.y - span.x - 0.01) / pu))
+	var nd := int((D1 - D0 - 0.05) / pd)
+	var u0 := (span.x + span.y) * 0.5 - (nu - 1) * pu * 0.5
+	for j in nd:
+		for i in nu:
+			var b := Basis(UP, rng.randf_range(-0.05, 0.05)) * Basis(Vector3(1, 0, 0), -0.2)
+			add("neck", XF(fr, u0 + i * pu, y + 0.004 + (nd - 1 - j) * 0.004, D1 - 0.06 - j * pd, b))
 
 func _slaps(rng: RandomNumberGenerator, fr: String, span: Vector2, y: float) -> void:
 	var w := span.y - span.x
@@ -553,33 +599,27 @@ func _springs(rng: RandomNumberGenerator, fr: String, span: Vector2, y: float, l
 				add("ring", c * Transform3D(Basis(), Vector3(0, -0.029, 0)), Color("#8232be"))
 
 func _dice(rng: RandomNumberGenerator, fr: String, span: Vector2, y: float) -> void:
+	# PRIZES (Nov 3): pairs in a neat grid, cords to the back, one colour to a column
 	var cols := [Color.WHITE, Color("#ffb4d2"), Color("#ff6464"), Color("#a8d8ff"), Color("#fff08a")]
-	var area := (span.y - span.x) * (D1 - D0)
-	var n := int(area * 42.0)
-	var placed := []
-	var tries := 0
-	while placed.size() < n and tries < 400:
-		tries += 1
-		var p := _rand_in(rng, span, 0.075)
-		var ok := true
-		for q in placed:
-			if p.distance_to(q) < 0.13:
-				ok = false
-		if not ok:
-			continue
-		placed.append(p)
-		var c: Color = cols[rng.randi() % cols.size()]
-		var yaw := rng.randf() * TAU
-		var ax := Vector2(cos(yaw), sin(yaw)) * 0.032
-		var top := []
-		for sgn in [-1.0, 1.0]:
-			var b := Basis(UP, yaw + rng.randf_range(-0.4, 0.4)) * Basis(Vector3(1, 0, 0), [0.0, PI * 0.5, PI][rng.randi() % 3])
-			var q := XF(fr, p.x + ax.x * sgn, y + 0.027, p.y + ax.y * sgn, b)
-			add("die", q, c)
-			top.append(q.origin + UP * 0.026)
-		var mid: Vector3 = (top[0] + top[1]) * 0.5 + UP * 0.02
-		for e in [top[0], top[1]]:
-			add("cord", _rod(e, mid, 1.0))
+	var pu := 0.135
+	var pd := 0.09
+	var nu := maxi(1, int((span.y - span.x - 0.01) / pu))
+	var nd := int((D1 - D0 - 0.02) / pd)
+	var u0 := (span.x + span.y) * 0.5 - (nu - 1) * pu * 0.5
+	var d00 := (D0 + D1) * 0.5 - (nd - 1) * pd * 0.5
+	for i in nu:
+		for j in nd:
+			var c: Color = cols[i % cols.size()]
+			var p := Vector2(u0 + i * pu, d00 + j * pd)
+			var top := []
+			for sgn in [-1.0, 1.0]:
+				var b := Basis(UP, rng.randf_range(-0.05, 0.05))
+				var q := XF(fr, p.x + sgn * 0.032, y + 0.027, p.y, b)
+				add("die", q, c)
+				top.append(q.origin + UP * 0.026)
+			var mid: Vector3 = (top[0] + top[1]) * 0.5 + UP * 0.02
+			for e in [top[0], top[1]]:
+				add("cord", _rod(e, mid, 1.0))
 
 ## A unit cylinder (height 1, along y) stretched from a to b, radius scaled by rs.
 func _rod(a: Vector3, b: Vector3, rs: float) -> Transform3D:
@@ -616,30 +656,116 @@ func _vpets(rng: RandomNumberGenerator, fr: String, span: Vector2, y: float, bin
 			add("loop", c * Transform3D(Basis(Vector3(1, 0, 0), PI * 0.5), Vector3(0, 0.034, 0)), Color("#c8c8cc"))
 
 # ---- the prize wall
+## PRIZES (Nov 3; Steven: "the back wall must be full. Keep one or two of the aliens and lava lamps, then
+## fill it with other common prizes", plus the hook grid of carded toys). Bottom to top, price rising with
+## height (design/research/redemption-counters.md "Prize wall"):
+##   the base cabinet top (0.83 m): boxed electronics, boom boxes, balls, plush, one sitting alien,
+##     shoulder to shoulder;
+##   the middle shelf (1.30 m): plush bears, bunnies and dogs in a row, eyes forward, and giant fuzzy dice;
+##   the upper shelf (1.74 m) and the slatwall above it: two lava lamps and two plasma balls on the shelf,
+##     two skateboards mounted on the wall, and between them a hook grid of carded toys, two deep;
+##   the hooks along the top (2.34 m): one hanging alien, giant fuzzy dice, the giant bear, a water blaster.
+## Positions are u from the wall's middle (the customer's left negative), metres.
+const WALL_CAB := [["boombox", 0.46], ["rc_car", 0.34], ["ball", 0.24], ["cassette", 0.2], ["plush_dog", 0.2],
+	["alien", 0.3], ["boombox", 0.46], ["walkie", 0.11], ["lcd_game", 0.1], ["cassette", 0.2], ["rc_car", 0.34],
+	["ball", 0.24], ["plush_bunny", 0.2], ["boombox", 0.46]]
+const WALL_MID := ["plush_bear", "plush_bunny", "plush_dog", "big_dice", "plush_bear", "plush_dog", "plush_bunny", "big_dice",
+	"plush_bear", "plush_bunny", "plush_dog", "big_dice", "plush_bear", "plush_dog"]
+## The hook grid: [u from, u to, the carded prizes cycled along it]
+const WALL_GRID := [[-2.0, -1.06, ["water_pistol", "paddle_ball", "toy_car", "yoyo"]],
+	[1.06, 2.0, ["sunglasses", "toy_car", "water_pistol", "harmonica"]]]
+
 func _wall(rng: RandomNumberGenerator, cat: Dictionary) -> void:
 	var yh := 2.34
-	# base cabinet top (y 0.83): boom boxes, basketballs, big sitting aliens
-	for e in [[-2.05, "boombox"], [-1.45, "ball"], [-0.85, "alien"], [-0.2, "boombox"], [0.45, "ball"], [1.05, "alien"], [1.75, "boombox"]]:
-		_wall_item(rng, cat, e[1], e[0], 0.83, 0.03, 0.43, 0.42)
-	# shelf a (y 1.30, from 0.14 to 0.43 deep)
-	for e in [[-2.0, "big_dice"], [-1.3, "alien"], [-0.6, "big_dice"], [0.1, "alien"], [0.8, "big_dice"], [1.5, "alien"], [2.12, "ball"]]:
-		_wall_item(rng, cat, e[1], e[0], 1.30, 0.14, 0.43, 0.32)
-	# shelf b (y 1.74, from 0.23 deep): lava lamps, behind the hanging things
-	for u in [-1.9, -0.65, 0.65, 1.9]:
-		_wall_item(rng, cat, "lava", u, 1.74, 0.23, 0.43, 0.42)
-	# hooks along the top: aliens and giant fuzzy dice
-	var hangs := [[-2.35, "alien"], [-1.28, "big_dice"], [0.0, "alien"], [1.28, "big_dice"], [2.35, "alien"]]
+	PU.kinds(self)
+	# --- the base cabinet top (y 0.83, 0.03 to 0.43 deep), packed end to end
+	var used := 0.0
+	var row := WALL_CAB
+	for e in row:
+		used += float(e[1])
+	var gap := (4.9 - used) / (row.size() - 1)
+	var u := -2.45
+	var k := 0
+	for e in row:
+		var w: float = e[1]
+		var it: String = e[0]
+		var uc := u + w * 0.5
+		match it:
+			"boombox", "ball", "alien":
+				_wall_item(rng, cat, it, uc, 0.83, 0.03, 0.43, 0.42)
+			_:
+				var c := XF("W", uc, 0.83, 0.25, Basis(UP, rng.randf_range(-0.05, 0.05)))
+				if it in ["rc_car", "cassette"]:
+					PU.box_unit(self, it, c)
+				else:
+					PU.unit(self, it, c, k, rng)
+				_wall_tag(XF("W", uc, 0.83 - 0.036, 0.022), cat, it, W("W", uc, 0.98, 0.25))
+		u += w + gap
+		k += 1
+	# --- the middle shelf (y 1.30, 0.14 to 0.43 deep): plush shoulder to shoulder, eyes forward
+	var mu := -2.3
+	for i in WALL_MID.size():
+		var it2: String = WALL_MID[i]
+		if it2 == "big_dice":
+			_wall_item(rng, cat, it2, mu + 0.08, 1.30, 0.14, 0.43, 0.32)
+			mu += 0.36
+		else:
+			var c2 := XF("W", mu + 0.08, 1.30, 0.3, Basis(UP, rng.randf_range(-0.12, 0.12)))
+			PU.unit(self, it2, c2, i, rng)
+			_wall_tag(XF("W", mu + 0.08, 1.30 - 0.036, 0.132), cat, it2, W("W", mu + 0.08, 1.42, 0.3))
+			mu += 0.33
+	# --- the upper shelf (y 1.74, 0.23 to 0.43 deep) and the wall above it
+	for e in [[-2.27, "lava"], [2.27, "lava"]]:
+		_wall_item(rng, cat, e[1], e[0], 1.74, 0.23, 0.43, 0.42)
+	for pu_ in [-0.7, 0.7]:
+		PU.unit(self, "plasma", XF("W", pu_, 1.74, 0.33), 0, rng)
+		_wall_tag(XF("W", pu_, 1.74 - 0.036, 0.222), cat, "plasma", W("W", pu_, 1.9, 0.33))
+	# two skateboards on wall brackets over the plasma balls, lengthwise, wheels and graphic to the customer
+	for su in [-0.7, 0.7]:
+		var b := Basis(Vector3(0, 0, 1), PI * 0.5) * Basis(Vector3(1, 0, 0), -PI * 0.5)
+		PU.unit(self, "skateboard", XF("W", su, 2.12, 0.31, b), 0, rng)
+		for bx in [-0.2, 0.2]:
+			add("hook", _rod(W("W", su + bx, 2.12, 0.43), W("W", su + bx, 2.12, 0.33), 1.6))
+		_wall_tag(XF("W", su + 0.3, 2.04, 0.3), cat, "skateboard", W("W", su, 2.16, 0.36))
+	# the hook grid: two rows of hooks, carded toys hanging two deep on each
+	for g in WALL_GRID:
+		var g0: float = g[0]
+		var g1: float = g[1]
+		var kinds_: Array = g[2]
+		var n := int((g1 - g0) / 0.15)
+		var step := (g1 - g0) / n
+		for r in 2:
+			var hy: float = [2.22, 1.98][r]
+			for i in n:
+				var hu := g0 + (i + 0.5) * step
+				var it3: String = kinds_[(i + r) % kinds_.size()]
+				add("hook", _rod(W("W", hu, hy, 0.43), W("W", hu, hy, 0.24), 1.0))
+				for deep in 2:
+					var cd := 0.38 - deep * 0.035
+					_carded(XF("W", hu, hy - 0.012, cd), it3, i + r, rng)
+				_wall_tag(XF("W", hu, hy + 0.004, 0.236, Basis(Vector3(1, 0, 0), -0.2)), cat, it3, W("W", hu, hy - 0.1, 0.34))
+	# --- the hooks along the top: one alien, giant fuzzy dice, the giant bear, a water blaster
+	var hangs := [[-2.35, "big_dice"], [-1.28, "alien"], [0.0, "big_bear"], [1.28, "blaster"], [2.35, "big_dice"]]
 	for e in hangs:
-		var u: float = e[0]
-		add("hook", _rod(W("W", u, yh, 0.43), W("W", u, yh, 0.09), 1.0))
-		add("hook", _rod(W("W", u, yh, 0.09), W("W", u, yh + 0.03, 0.075), 1.0))
-		var hp := W("W", u, yh - 0.004, 0.1)
+		var hu2: float = e[0]
+		add("hook", _rod(W("W", hu2, yh, 0.43), W("W", hu2, yh, 0.09), 1.0))
+		add("hook", _rod(W("W", hu2, yh, 0.09), W("W", hu2, yh + 0.03, 0.075), 1.0))
+		var hp := W("W", hu2, yh - 0.004, 0.1)
 		var nm: String = e[1]
 		if nm == "alien":
 			var h := rng.randf_range(0.44, 0.5)
 			add("loop", Transform3D(IB("W"), hp + Vector3(0, -0.012, 0)), Color("#e8e8e8"))
 			_alien(Transform3D(IB("W"), hp + Vector3(0, -0.024 - h, 0)), h, true, rng)
-			_wall_tag(Transform3D(IB("W"), W("W", u + 0.14, yh - 0.12, 0.07)), cat, "alien", hp + Vector3(0, -0.25, 0))
+			_wall_tag(Transform3D(IB("W"), W("W", hu2 + 0.14, yh - 0.12, 0.07)), cat, "alien", hp + Vector3(0, -0.25, 0))
+		elif nm == "big_bear":
+			# the 3 ft plush, hung by its tag
+			PU.unit(self, "big_bear", Transform3D(IB("W"), hp + Vector3(0, -0.66, 0.06)), 0, rng)
+			_wall_tag(Transform3D(IB("W"), W("W", hu2 + 0.2, yh - 0.12, 0.07)), cat, "big_bear", hp + Vector3(0, -0.35, 0))
+		elif nm == "blaster":
+			# hung by its trigger guard, muzzle down, side to the customer
+			var bb := Basis(Vector3(0, 0, 1), Vector3(1, 0, 0), Vector3(0, 1, 0))
+			PU.unit(self, "blaster", Transform3D(IB("W") * bb, hp + Vector3(0, -0.15, 0) + IB("W").x * -0.1), int(hu2 > 0.0), rng)
+			_wall_tag(Transform3D(IB("W"), W("W", hu2 + 0.16, yh - 0.12, 0.07)), cat, "blaster", hp + Vector3(0, -0.2, 0))
 		else:
 			var col: Color = [Color.WHITE, Color("#ffb4d2")][rng.randi() % 2]
 			var p1 := hp + Vector3(0, -0.13, 0) + IB("W").x * -0.05
@@ -647,8 +773,29 @@ func _wall(rng: RandomNumberGenerator, cat: Dictionary) -> void:
 			for p in [p1, p2]:
 				add("cord", _rod(hp, p + Vector3(0, 0.07, 0), 1.0))
 				add("bigdie", Transform3D(IB("W") * Basis(UP, rng.randf_range(-0.5, 0.5)) * Basis(Vector3(1, 0, 0), rng.randf_range(-0.2, 0.2)), p), col)
-			_wall_tag(Transform3D(IB("W"), W("W", u + 0.15, yh - 0.12, 0.07)), cat, "big_dice", hp + Vector3(0, -0.17, 0))
+			_wall_tag(Transform3D(IB("W"), W("W", hu2 + 0.15 * (-1.0 if hu2 > 0.0 else 1.0), yh - 0.12, 0.07)), cat, "big_dice", hp + Vector3(0, -0.17, 0))
 
+## A carded toy hanging from a hook: c at the card's hang hole (+z toward the customer). Cards that are
+## their own packaging (paddle ball, toy car) hang as they are; the rest get a blister card behind them.
+func _carded(c: Transform3D, it: String, k: int, rng: RandomNumberGenerator) -> void:
+	match it:
+		"paddle_ball":
+			PU.unit(self, it, c * Transform3D(Basis(), Vector3(0, -0.22, 0)), k, rng)
+		"toy_car":
+			PU.unit(self, it, c * Transform3D(Basis(), Vector3(0, -0.135, 0)), k, rng)
+		_:
+			add("u_blister", c * Transform3D(Basis().scaled(Vector3(0.11, 0.17, 1)), Vector3(0, -0.085, 0)), PU.col(it, k).lerp(Color.WHITE, 0.55))
+			var face := Basis(Vector3(1, 0, 0), -PI * 0.5)     # lying items stand up against the card
+			match it:
+				"water_pistol":
+					PU.unit(self, it, c * Transform3D(Basis(Vector3(0, 0, 1), PI * 0.5) * face, Vector3(0.0, -0.11, 0.003)), k, rng)
+				"sunglasses":
+					PU.unit(self, it, c * Transform3D(face, Vector3(0, -0.1, 0.004)), k, rng)
+				"harmonica":
+					PU.unit(self, it, c * Transform3D(Basis(), Vector3(0, -0.12, 0.004)), k, rng)
+				_:
+					PU.unit(self, it, c * Transform3D(Basis(), Vector3(0, -0.15, 0.004)), k, rng)
+			add("u_bubble", c * Transform3D(Basis().scaled(Vector3(0.09, 0.11, 0.02)), Vector3(0, -0.1, 0.012)))
 ## One wall prize standing at (u, y), between depths zf and zb, with its tag on the shelf edge.
 func _wall_item(rng: RandomNumberGenerator, cat: Dictionary, it: String, u: float, y: float, zf: float, zb: float, maxh: float) -> void:
 	var mid := (zf + zb) * 0.5
@@ -801,7 +948,7 @@ func _zone_view() -> int:
 	var p: Vector3 = player.position
 	var fwd: Vector3 = -player.cam.global_transform.basis.z
 	var inside := false
-	for fr in ["A", "B"]:
+	for fr in look_frames:
 		var o: Vector3 = FR[fr][0]
 		var f: Vector3 = FR[fr][1]
 		var a := f.cross(UP)
@@ -1191,7 +1338,7 @@ func tget(id: String) -> Dictionary:
 	var d := {}
 	var items_j: Dictionary = J.get("items", {})
 	if parts.size() == 2 and parts[1] in ["name", "tickets"] and items_j.has(parts[0]):
-		d = tget("card." + ("number" if parts[1] == "tickets" else "name")).duplicate()
+		d = tget(card_art + "." + ("number" if parts[1] == "tickets" else "name")).duplicate()
 		d["text"] = str(items_j[parts[0]].get("name", parts[0])) if parts[1] == "name" else str(int(items_j[parts[0]].get("tickets", 0)))
 	else:
 		d = J.get("text", {}).get(id, {}).duplicate()
@@ -1240,9 +1387,9 @@ func _art_spec(key: String) -> Array:
 	var art: Dictionary = J.get("art", {})
 	var it := ""
 	var name := key
-	if key.begins_with("card:"):
-		it = key.substr(5)
-		name = "card"
+	if ":" in key:      # "<art>:<item>": a price card (Pocket Change's "card", games, inc.'s "gtag")
+		it = key.get_slice(":", 1)
+		name = key.get_slice(":", 0)
 	var a: Dictionary = art.get(name, {})
 	var fields := []
 	for f in a.get("fields", []):
@@ -1423,9 +1570,9 @@ func _ids_for(it: String) -> Array:
 	for key in J.get("text", {}):
 		if str(key).begins_with(it + ".") or (it == "pogs" and str(key).begins_with("pogs.")):
 			out.append([key, "Packaging: " + str(key).get_slice(".", 1), true, true])
-	out.append(["card.number", "Every card: the number", false, true])
-	out.append(["card.name", "Every card: the name", false, true])
-	out.append(["card.band", "Every card: the band", true, true])
+	out.append([card_art + ".number", "Every card: the number", false, true])
+	out.append([card_art + ".name", "Every card: the name", false, true])
+	out.append([card_art + ".band", "Every card: the band", true, true])
 	return out
 
 func _open_dialog(it: String) -> void:

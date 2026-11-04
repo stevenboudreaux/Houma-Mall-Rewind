@@ -50,7 +50,12 @@ func _ready() -> void:
 		"ball":
 			P.add("ball", Transform3D(Basis(), Vector3(0, 0.12, 0)))
 		_:
-			push_warning("prize_model: unknown kind '%s'" % kind)
+			# PRIZES (Nov 3): the added prizes, one unit as the counter shows it (scripts/prize_units.gd)
+			var PU = load("res://scripts/prize_units.gd")
+			if PU.SPEC.has(kind) or PU.BOX_ART.has(kind) or PU.BLENDER.has(kind) or kind in ["play_ball", "bubbles"]:
+				PU.unit(P, kind, Transform3D(), 0, rng)
+			else:
+				push_warning("prize_model: unknown kind '%s'" % kind)
 	P._flush()
 	for c in P.get_children():
 		P.remove_child(c)
