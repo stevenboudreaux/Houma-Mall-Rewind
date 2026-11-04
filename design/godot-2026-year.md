@@ -90,6 +90,12 @@ Cell Xpert (-44..-40), the elevator alcove at x -44 (`ELEV_X`, `build_mall.gd`),
 `production/qa/evidence/wsG-elevator-restroom-order.jpg` (frames | game 2026 and 1995). The ATM pier
 between Cinnamonster and the black vacant is not built (a free-standing ATM in the footage).
 
+## The C2 / main-entrance corner (Nov 4, ws/corner-2026): PROPOSAL
+Zales holds both 1995 stalls (Franks + Orange Julius) with three bays, and the footage shows the
+court stepping 4 m south in front of Franks (a return wall, Zales' middle bay faces west), which the
+Oct 8 re-cut flattened. Analysis, mismatches, the proposed rects and Steven's questions:
+`design/corner-2026-c2.md`. Not applied: `tools/layout_corner_c2.py` applies it after his yes.
+
 ## Next
 - Build the 2026 storefronts from the footage, one by one (frame references are in the report's
   "Reference frames" table and the per-clip notes). The signs are done (Demo 43).
