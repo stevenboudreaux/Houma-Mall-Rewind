@@ -1,4 +1,5 @@
-## Workstream M (design/godot-menu.md): the menu, the opening, the remap layer, HELD / PUT AWAY, the
+## Workstream M (design/godot-menu.md): the menu, a first start straight into the mall (ws/items, Nov 4: no
+## opening), the remap layer, HELD / PUT AWAY, the
 ## time-travel transition and 2026's shoppers, natively and unbaked (no lightmap).
 ## MENU2 (Nov 3): tabs MAIN / INVENTORY / CONTROLS, Edit inside MAIN, no Y / YEAR, and the trip from
 ## a mall directory's year toggle (scripts/timetravel_trip.gd) to its twin in 2026 (wing 2's kiosk
@@ -36,7 +37,7 @@ func _initialize() -> void:
 	Engine.set_meta("mall_state_2026", "")
 	Engine.set_meta("mall_player_name", "")
 	Engine.set_meta("mall_controls", "")
-	Engine.set_meta("menu_opening", true)       # a first start
+	Engine.set_meta("menu_opening", true)       # a first start (ws/items: ignored now; no opening)
 	var L := Look.default_look()
 	L.done = true; L.body = "Ch21"; L.view = "first"
 	Engine.set_meta("mall_avatar", JSON.stringify(L))
@@ -125,20 +126,15 @@ func _on_screen(s: Vector2i) -> bool:
 
 func _plan() -> void:
 	_do(func(): pass, 2.0)
-	# ---- the opening
+	# ---- a first start: straight into the mall (ws/items, Steven Nov 4: the opening is gone)
 	_do(func():
 		menu = player.get_node_or_null("Menu")
 		_check(menu != null, "player has its Menu node")
-		_check(menu.opening != null and player.frozen, "a first start shows the opening, the player frozen")
-		var t: String = menu.opening.words.text
-		_check(t.begins_with("PLACEHOLDER"), "the opening's words come from data/story/opening.json (%s)" % t.left(30))
-		_shot("opening-1280x720"), 0.3)
-	_do(func(): _size(Vector2i(390, 844)), 0.6)
-	_do(func(): _shot("opening-390x844"), 0.1)
-	_do(func(): _size(Vector2i(1280, 720)), 0.6)
-	_do(func(): _key(KEY_ENTER); _key(KEY_ENTER, false), 0.6)
+		_check(not ("opening" in menu) and not menu.is_open and not player.frozen, "a first start is in the mall: no opening, no menu, the player free")
+		_shot("first-start-1280x720"), 0.3)
+	_do(func(): menu.open_tab("avatar"); menu._sel = Vector2i.ZERO; menu._paint_sel(); menu.start_typing(), 0.6)   # what START did
 	_do(func():
-		_check(menu.opening == null and menu.is_open and menu.tab == "main" and menu.editing, "START opens MAIN with the avatar editing")
+		_check(menu.is_open and menu.tab == "main" and menu.editing, "MAIN's Edit opens the avatar editing")
 		_check(menu._typing, "the NAME field is focused")
 		_check(menu._creator != null and menu._creator.visible, "the creator is inside the tab"), 0.1)
 	_do(func():
@@ -283,7 +279,7 @@ func _plan() -> void:
 		var hi: Node3D = player.interact.hand_item
 		_check(hi.is_visible_in_tree() and hi.get_parent() != player.interact.hand_root, "third person: the dice in the avatar's hand")
 		_shot("hand-third-person"); player.avatar.third = false, 0.5)
-	# ---- the opening again (owner) and its skip
+	# ---- the owner's CONTROLS: no "Show the opening again" any more (ws/items)
 	_do(func():
 		Engine.set_meta("mall_owner", true)
 		menu.open_tab("controls"), 0.4)
@@ -291,10 +287,8 @@ func _plan() -> void:
 		var found := false
 		for h in menu._hits:
 			if h[0] is Button and h[0].text == "Show the opening again": found = true
-		_check(found, "the owner's Show the opening again")
-		menu._owner_opening(), 0.4)
-	_do(func(): _check(menu.opening != null, "the opening again"); _key(KEY_ESCAPE); _key(KEY_ESCAPE, false), 0.4)
-	_do(func(): _check(menu.opening == null and not player.frozen, "Esc skips it"); Engine.set_meta("mall_owner", false), 0.2)
+		_check(not found, "no Show the opening again")
+		menu.close(); Engine.set_meta("mall_owner", false), 0.4)
 	# ---- MENU2: the year toggle on a mall directory: the trip to its twin in 2026
 	_do(func():
 		# a kiosk with a twin in 2026 (wing 1: H2 north; wing 2: the JCPenney court)
@@ -358,7 +352,7 @@ func _plan() -> void:
 				if s.role == "": n += 1; ids.append(s.body.id if s.body else "?")
 		_check(sh != null and n == 3, "2026: 3 shoppers (%d: %s)" % [n, ids])
 		_check(player.mall.player_name == "TESTER", "the name crosses into 2026")
-		_check(menu.opening == null, "no opening once named")
+		_check(not menu.is_open and not player.frozen, "2026 starts in the mall too")
 		player.position = Vector3(-60, 0, 54); player.yaw = deg_to_rad(90); player.pitch = deg_to_rad(-6); player._apply_rot(), 1.0)
 	_do(func(): _shot("2026-hall"), 0.1)
 	_plan_2026()

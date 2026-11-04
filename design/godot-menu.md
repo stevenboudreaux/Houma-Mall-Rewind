@@ -31,8 +31,7 @@ Built on `main` at 326ed7c (Demo 47). Branch `ws/m-menu`.
 | `scripts/menu/menu.gd` | The menu (a CanvasLayer at 45), its tabs, the Menu button, the input catcher, the opening's flow. Made by `player.gd` as its child `Menu`, after `Avatar`. |
 | `scripts/menu/controls.gd` | The InputMap actions `mall_<id>`, remapping, `localStorage "mall-controls-1"`, the translation layer. |
 | `scripts/menu/actions.json` | Every action the CONTROLS tab lists, with its **default** keys and pad buttons (data). |
-| `scripts/menu/opening.gd` | The opening screen (a CanvasLayer at 50). |
-| `data/story/opening.json` | The opening's words: `title`, `text`, `start`, `skip`. Ships with PLACEHOLDERs. |
+| ~~`scripts/menu/opening.gd`, `data/story/opening.json`~~ | The opening: removed Nov 4 2026 (ws/items; "The opening" below). |
 | `scripts/timetravel.tscn`, `.gd`, `.gdshader` | The time-travel transition (a CanvasLayer at 60; the look is the shader). |
 | `tools/qa/menu_test.gd` | Native, unbaked: opening, name, every tab at 3 sizes, keys, remap, HELD / PUT AWAY in both views, the transition, 2026's shoppers. |
 | `tools/qa/menu_webtest.py` | The web build: opening, typed name, tabs, remap by keyboard and a reload, phone portrait / landscape by touch. |
@@ -254,6 +253,12 @@ turn the other way. Re-dress it by editing the scene / shader; the script only s
 Reduced motion (`prefers-reduced-motion`): no flashes, only the fade. In VR it is skipped.
 
 ## The opening
+**Removed Nov 4 2026 (ws/items, Steven: "remove the opening; the game just starts in the mall").**
+`scripts/menu/opening.gd` and `data/story/opening.json` are gone, with the owner's "Show the opening again" and
+`?opening=1`. A first visit now starts in the mall with the default body in first person: the creator no longer
+opens by itself either (`scripts/avatar.gd`; MAIN's Edit, C, the Avatar button and `?avatar=1` open it). The text
+below is the record.
+
 At a first start a one-screen panel: the title and text from **`data/story/opening.json`**, then
 **START** and **Skip**. START opens the menu on AVATAR with the NAME field focused (on a phone the field
 is lit and a tap types). Shown when: no `mall.player_name` yet, not skipped before

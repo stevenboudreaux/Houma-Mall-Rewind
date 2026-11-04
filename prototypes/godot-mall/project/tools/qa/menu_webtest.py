@@ -5,13 +5,14 @@ Usage: CHROMIUM=/opt/pw-browsers/chromium python3 tools/qa/menu_webtest.py <url-
    prototypes/godot-mall/project/.scratch/builds/wsm/index.html?wing=2)
 Checks, each in a fresh browser profile:
   MENU2 (Nov 3): the tabs are MAIN (the character, money, tickets; Edit inside), INVENTORY, CONTROLS.
-  1. desktop 1280x720, first visit: the opening; Enter = START opens MAIN's editing with NAME focused;
+  ws/items (Nov 4 2026): no opening; a first visit starts in the mall.
+  1. desktop 1280x720, first visit: in the mall; C opens MAIN's editing, Enter on NAME types;
      typing a name saves localStorage "mall.player_name"; Tab closes; Tab opens MAIN; E walks the tabs
      (a shot of each); CONTROLS: Action remapped to F with the keyboard (saved in "mall-controls-1");
-     a reload keeps F and doesn't show the opening again (a name is set).
-  2. phone portrait 390x844 (touch), first visit: the opening; tap START; MAIN's editing; swipes
-     through the tabs (a shot of each); the Menu button opens it after closing.
-  3. phone landscape 844x390 (touch): the opening's Skip; the Menu button; each tab.
+     a reload keeps F.
+  2. phone portrait 390x844 (touch), first visit: in the mall; the Menu button opens MAIN; swipes
+     through the tabs (a shot of each); the close button.
+  3. phone landscape 844x390 (touch): a first start.
 Prints MENU WEB OK, or the failures; 0 console errors expected.
 """
 import json, os, sys, time
@@ -76,8 +77,9 @@ with sync_playwright() as p:
     pg.goto(url())
     print("desktop ready_s", ready(pg, logs)); time.sleep(15)
     pg.mouse.click(640, 700); time.sleep(1)     # focus the canvas (a click on empty background)
-    shot(pg, "web-opening-desktop")
-    key(pg, "Enter", 3)
+    shot(pg, "web-first-start-desktop")    # ws/items (Nov 4): no opening; the game starts in the mall
+    key(pg, "c", 3)                         # C: MAIN's avatar editing (what START used to open)
+    key(pg, "Enter", 2)                     # the NAME row: start typing
     shot(pg, "web-main-edit-name-focused-desktop")
     pg.keyboard.type("TESTER", delay=120); time.sleep(1)
     key(pg, "Enter", 2)
@@ -109,7 +111,7 @@ with sync_playwright() as p:
     shot(pg, "web-controls-after-reload-desktop")
     check(json.loads(ls(pg, "mall-controls-1") or "{}").get("interact", {}).get("keys") == [70], "desktop: a reload keeps F")
     pg.goto(url()); ready(pg, logs); time.sleep(12)
-    shot(pg, "web-no-opening-once-named")
+    shot(pg, "web-start-once-named")
     errs(logs, "desktop reload")
     ctx.close()
 
@@ -119,12 +121,9 @@ with sync_playwright() as p:
     pg.on("console", lambda m: logs.append(m.text))
     cdp = ctx.new_cdp_session(pg)
     pg.goto(url()); print("portrait ready_s", ready(pg, logs)); time.sleep(15)
-    shot(pg, "web-opening-phone-portrait")
-    # START is the right-hand button of the pair under the text (centre + ~70 px)
-    tap(pg, 195 + 70, 422 + 250, 3)
-    shot(pg, "web-start-phone-portrait")
-    tap(pg, 195 + 70, 422 + 230, 1)
-    shot(pg, "web-main-edit-phone-portrait")
+    shot(pg, "web-first-start-phone-portrait")   # ws/items: no opening
+    tap(pg, 65, 24, 3)                             # the Menu button (top left): MAIN
+    shot(pg, "web-main-phone-portrait")
     for t in ["inventory", "controls"]:
         swipe(pg, cdp, 300, 30, 120, 30, 3)
         shot(pg, f"web-{t}-phone-portrait")
@@ -139,7 +138,7 @@ with sync_playwright() as p:
     pg.on("console", lambda m: logs.append(m.text))
     cdp = ctx.new_cdp_session(pg)
     pg.goto(url()); print("landscape ready_s", ready(pg, logs)); time.sleep(15)
-    shot(pg, "web-opening-phone-landscape")
+    shot(pg, "web-first-start-phone-landscape")
     errs(logs, "landscape")
     ctx.close()
     b.close()

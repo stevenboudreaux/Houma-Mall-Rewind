@@ -15,17 +15,15 @@
 ## player is frozen while it is open. Not in VR (a flat overlay isn't seen in the headset).
 ##
 ## Input: one catcher node sits last under the root, so it sees every event before anything else;
-## while the menu (or the opening) is open it takes them all and taps / clicks its own buttons by hand
+## while the menu is open it takes them all and taps / clicks its own buttons by hand
 ## (the project turns touch-to-mouse emulation off); while closed it lets the controls' translation
 ## layer re-send remapped keys (controls.gd filter()).
 ##
-## The opening (scripts/menu/opening.gd, words from data/story/opening.json) shows on a first start.
+## No opening (ws/items, Steven Nov 4 2026: the placeholder intro is gone; the game just starts in the mall).
 extends Node
 
 const Controls = preload("res://scripts/menu/controls.gd")
-const Opening = preload("res://scripts/menu/opening.gd")
 const CREATOR := "res://scripts/avatar_creator.tscn"
-const OPENING_KEY := "mall-opening-1"     # localStorage: "skipped" once the opening was skipped
 ## MENU2 (Steven, Nov 3): MAIN, INVENTORY, CONTROLS. A later "journal" (JOURNAL) goes last; not built.
 const TABS := ["main", "inventory", "controls"]
 const TAB_NAMES := {"main": "MAIN", "controls": "CONTROLS", "inventory": "INVENTORY"}
@@ -41,7 +39,6 @@ var is_open := false
 var tab := "main"
 var editing := false             # MAIN: the avatar editing (NAME + the creator) is shown
 var _trig := {}                  # trigger axis -> held (LT / RT change tabs once per pull)
-var opening: CanvasLayer = null
 
 var _layer: CanvasLayer
 var _root: Control
@@ -90,8 +87,6 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(func():
 		if is_open:
 			_build())
-	# now, before avatar.gd's deferred first-visit creator asks (request_creator waits for START)
-	_maybe_opening()
 
 func _mall():
 	return player.mall if player and "mall" in player else null
@@ -133,8 +128,6 @@ func open_tab(t: String) -> void:
 
 ## The avatar's "open the creator" (avatar.gd open_creator: C, the Avatar button, a first visit).
 func request_creator() -> void:
-	if opening != null:
-		return       # the opening's START opens the AVATAR tab
 	open_tab("avatar")
 
 func _editing() -> bool:
@@ -180,15 +173,12 @@ func _build_menu_button() -> void:
 	player._cl.add_child(_menu_btn)
 
 func _process(dt: float) -> void:
-	# entering VR: the flat menu and opening can't be seen in the headset, so they close (the opening
-	# comes back next time, as it wasn't skipped)
+	# entering VR: the flat menu can't be seen in the headset, so it closes
 	if player and player.vr_on:
-		if opening != null:
-			_opening_done("later")
 		if is_open:
 			close()
 	if _menu_btn:
-		_menu_btn.visible = not is_open and opening == null and not player.vr_on and not (player.frozen and not _froze)
+		_menu_btn.visible = not is_open and not player.vr_on and not (player.frozen and not _froze)
 		# the owner's fps readout is top left: go under it
 		_menu_btn.position.y = 34.0 if (player.hud and player.hud.visible) else 8.0
 	if _typing and _name_lbl:
@@ -587,11 +577,6 @@ func _build_controls(narrow: bool) -> void:
 	rb.custom_minimum_size = Vector2(170, 38)
 	rb.disabled = controls.is_default()
 	var nav_last: Array = [[rb, _reset_controls]]
-	# the owner's setting: the opening screen again (design/godot-menu.md)
-	if player.has_method("is_owner") and player.is_owner():
-		var ob := _button(foot, "Show the opening again", Rect2(), fs + 1, _owner_opening)
-		ob.custom_minimum_size = Vector2(200, 38)
-		nav_last.append([ob, _owner_opening])
 	_nav.append(nav_last)
 
 func _start_capture(id: String, kind: String) -> void:
@@ -620,11 +605,6 @@ func _reset_controls() -> void:
 	_menu_btn.text = "Menu (%s)" % _first_key("menu", "Tab")
 	_build()
 	_say("Back to the defaults.")
-
-func _owner_opening() -> void:
-	_store_set(OPENING_KEY, "")
-	close()
-	show_opening()
 
 # ------------------------------------------------------------------ INVENTORY
 func _build_inventory(narrow: bool) -> void:
@@ -739,10 +719,6 @@ func _catch(e: InputEvent) -> void:
 		_input_kind = "kb"
 	elif e is InputEventScreenTouch:
 		_input_kind = "touch"
-	if opening != null:
-		get_viewport().set_input_as_handled()
-		opening.handle(e)
-		return
 	if is_open:
 		get_viewport().set_input_as_handled()
 		_menu_input(e)
@@ -936,70 +912,3 @@ func _creator_click(e: InputEventMouseButton) -> void:
 			(_creator.hits[i][1] as Callable).call()
 			return
 	_creator.feed(e)
-
-# ------------------------------------------------------------------ the opening
-func _maybe_opening() -> void:
-	if player == null or player.vr_on:
-		return
-	var force := false
-	var cam_q := false
-	if OS.has_feature("web"):
-		force = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('opening') || ''")) == "1"
-		cam_q = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('cam') || ''")) != ""
-	else:
-		force = bool(Engine.get_meta("menu_opening", false))   # tests: once
-		Engine.remove_meta("menu_opening") if Engine.has_meta("menu_opening") else null
-		cam_q = true        # editor and tests: only when asked for
-	var m = _mall()
-	var named: bool = m != null and m.player_name != ""
-	if force or (not cam_q and not named and _store_get(OPENING_KEY) != "skipped"):
-		show_opening()
-
-func show_opening() -> void:
-	if opening != null:
-		return
-	if is_open:
-		close()
-	opening = Opening.new()
-	opening.done.connect(_opening_done)
-	add_child(opening)
-	if not player.frozen:
-		player.frozen = true
-		_froze = true
-
-func _opening_done(how: String) -> void:
-	opening.queue_free()
-	opening = null
-	if _froze:
-		player.frozen = false
-		_froze = false
-	if how == "skip":
-		_store_set(OPENING_KEY, "skipped")
-		return
-	if how != "start":
-		return
-	# START: the creator, on the AVATAR tab, with the NAME field focused
-	open_tab("avatar")
-	_sel = Vector2i.ZERO
-	_paint_sel()
-	if _input_kind != "touch":
-		start_typing()
-	else:
-		_name_text()
-		if _name_box:
-			var sb := _name_box.get_theme_stylebox("panel") as StyleBoxFlat
-			if sb:
-				sb.border_color = AMBER
-
-# ------------------------------------------------------------------ storage
-func _store_get(k: String) -> String:
-	if OS.has_feature("web"):
-		var v = JavaScriptBridge.eval("(function(){try{return localStorage.getItem(%s)||''}catch(e){return ''}})()" % JSON.stringify(k), true)
-		return v if v is String else ""
-	return str(Engine.get_meta("menu_" + k.replace("-", "_"), ""))
-
-func _store_set(k: String, v: String) -> void:
-	if OS.has_feature("web"):
-		JavaScriptBridge.eval("(function(){try{if(%s)localStorage.setItem(%s,%s);else localStorage.removeItem(%s)}catch(e){}})()" % ["true" if v != "" else "false", JSON.stringify(k), JSON.stringify(v), JSON.stringify(k)], true)
-	else:
-		Engine.set_meta("menu_" + k.replace("-", "_"), v)
