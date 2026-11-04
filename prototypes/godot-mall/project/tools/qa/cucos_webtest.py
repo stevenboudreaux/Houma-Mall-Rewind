@@ -99,7 +99,7 @@ with sync_playwright() as p:
     ctx, pg, logs = page(b, 1280, 720)
     pg.goto(url("year=1995"))
     ready(pg, 60)
-    pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped')")   # past the opening (MENU)
+    pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped'); localStorage.setItem('mall-avatar-1', JSON.stringify({v: 1, done: true, view: 'first'}))")   # past the opening (MENU)
     pg.reload()
     check(ready(pg), "lady: loaded")
     pg.mouse.click(640, 200); time.sleep(1)
@@ -134,8 +134,8 @@ with sync_playwright() as p:
     key(pg, "Enter", 5.0)          # the gift line (the doubloon)
     shot(pg, "desktop-bar-gift")
     key(pg, "Enter", 4.0)          # END
-    for i in range(3):             # the two "You received" cards take a key each
-        key(pg, "Enter", 2.0)
+    for i in range(6):             # the two "You received" cards take a key each (swiftshader: ~1 fps)
+        key(pg, "Enter", 3.0)
     iv = inv(pg)
     check("cu_coupon" not in iv, "bar: the coupon is used up: " + str(iv))
     check(iv.get("cu_topshelf") == 1 and iv.get("cu_doubloon") == 1, "bar: the top-shelf margarita and the doubloon: " + str(iv))
@@ -166,7 +166,7 @@ with sync_playwright() as p:
     ctx, pg, logs = page(b, 390, 844, touch=True)
     pg.goto(url("year=1995"))
     ready(pg, 60)
-    pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped')")
+    pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped'); localStorage.setItem('mall-avatar-1', JSON.stringify({v: 1, done: true, view: 'first'}))")
     pg.reload()
     check(ready(pg), "phone: loaded")
     where = find_lady(pg)
