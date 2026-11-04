@@ -80,8 +80,10 @@ Steven's pattern (Corn Dog 7's fries reuse Woolworth's "Order of fries coming up
 **Prices Steven didn't give (guesses, marked in shops.json):** Woolworth's hot dog 129¢ and coffee 59¢ follow the
 lunch counter's own painted menu strip (itself invented, `tools/stores/woolworth/paint_lunch.py`); hamburger $1.99 and
 fries 99¢ are guesses (not on the strip). Corn Dog 7's fries and lemonade (.99) follow its painted menu box.
-**The boards disagree with Steven's $2:** Woolworth's strip says ROOT BEER FLOAT $1.49, Corn Dog 7's box Corn Dog
-1.29. Left as they were (question below).
+**The boards now say $2.00 (Steven, Nov 4: "repaint the menu boards to $2.00"):** Woolworth's strip said ROOT BEER
+FLOAT $1.49 and Corn Dog 7's box Corn Dog 1.29; both repainted (`paint_lunch.py price_strip()`,
+`paint_corn_dog_7.py menu_board()`; only the price changed, `production/qa/evidence/wsSHOPS-menu-boards-before-after.jpg`).
+Corn Dog 7's COMBO (corn dog, fries & lemonade 2.99) is unchanged and isn't sold yet.
 
 **RadioShack (estimates, `design/research/radioshack-1995-prices.md`):** scanner $199.99, walkie-talkies $49.99 a
 pair, R/C truck $89.99, 900 MHz cordless $149.99, AA 4-pack $3.49, pager $79.99, CB $99.99, micro-cassette $49.99;
@@ -137,8 +139,7 @@ not baked; placed at run time.
 (see the report; filled in below)
 
 ## Open (for Steven)
-- The menu boards: Woolworth's strip says the float is $1.49, Corn Dog 7's box says the corn dog is $1.29. Repaint them
-  to $2.00 (a texture change, no rebake), or keep?
+- Corn Dog 7's COMBO line (2.99 for a corn dog, fries and lemonade, which are $3.98 apart): sell the combo, change it, or leave it?
 - Corn Dog 7 in 2026: the corn dog is now shown, not picked up, in both years, and there is no 2026 attendant. A 2026
   shop (and its prices), or keep the pick-up in 2026?
 - The attendants' names, looks and sexes (Woolworth's is a woman; the rest are guesses).

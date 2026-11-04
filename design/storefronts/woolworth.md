@@ -68,4 +68,4 @@ All packaging, food photos and menu lines are invented. The only real name shown
 ## Selling (workstream SHOPS, Nov 3, 2026; `design/godot-shops.md`)
 - A PLACEHOLDER attendant (a woman, Steven) stands on the clerks' side of the lunch counter (x −19 to −16.2, z −12.85 to −12.6, facing the stools) and sells the root beer float ($2, Steven), a hot dog, a hamburger, French fries and coffee. You talk to her from the stools (the TALK spot at −17.5, −10.75).
 - The root beer float on the counter is stock on show now, not a pick-up. Nothing in the store's build changed: no rebake.
-- **The menu board disagrees:** the painted price strip (`paint_lunch.py`) says ROOT BEER FLOAT $1.49; Steven's price is $2. The board is left as it was (a question for Steven). The hot dog (129¢) and coffee (59¢) follow the board.
+- **The menu board:** the painted price strip (`paint_lunch.py`, `tex/wl/price_strip.png`) said ROOT BEER FLOAT $1.49; repainted to **$2.00** (Steven, Nov 4). The hot dog (129¢) and coffee (59¢) follow the board. A texture change only: no rebake for it.

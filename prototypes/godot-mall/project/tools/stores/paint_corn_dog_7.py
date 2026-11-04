@@ -226,7 +226,7 @@ def menu_board():
     im.paste(g, ((W - wp) // 2, 25), g)
     fh = ImageFont.truetype(FONT_C, 44)
     fi = ImageFont.truetype(FONT_C, 31)
-    cols = [("CORN DOGS", [("Corn Dog", "1.29"), ("Cheese Stick", "1.49"), ("Jumbo Dog", "1.79")]),
+    cols = [("CORN DOGS", [("Corn Dog", "2.00"), ("Cheese Stick", "1.49"), ("Jumbo Dog", "1.79")]),
             ("FRIES", [("Seasoned Fries", ".99"), ("Large Fries", "1.29"), ("Chili Fries", "1.79")]),
             ("DRINKS", [("Fresh Lemonade", ".99"), ("Lg. Lemonade", "1.39"), ("Soft Drinks", ".89")])]
     for ci, (head, items) in enumerate(cols):
