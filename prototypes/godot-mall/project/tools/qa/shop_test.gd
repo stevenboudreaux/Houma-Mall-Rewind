@@ -48,14 +48,15 @@ func _json(p: String):
 ## 1. The data.
 func _test_data(db) -> void:
 	var shops := Shop.read_shops()
-	_check(shops.keys().size() == 4 and shops.has("woolworth") and shops.has("corn_dog_7") and shops.has("radioshack") \
-		and shops.has("b_dalton"), "four shops: %s" % str(shops.keys()))
+	# int-51: Cuco's (workstream CUCOS) is a fifth entry with its own story bartender; tools/qa/cucos_test.gd checks it
+	_check(shops.has("woolworth") and shops.has("corn_dog_7") and shops.has("radioshack") and shops.has("b_dalton"),
+		"the four counters: %s" % str(shops.keys()))
 	var att := {}
 	for a in _json("res://data/story/attendants.json").attendants:
 		att[str(a.id)] = a
 	var want_store := {"woolworth": "WOOLWORTH", "corn_dog_7": "CORN DOG 7", "radioshack": "RADIO SHACK", "b_dalton": "B. DALTON BOOKSELLER"}
 	var want_wing := {"woolworth": 1, "corn_dog_7": 2, "radioshack": 1, "b_dalton": 2}
-	for id in shops:
+	for id in want_store:
 		var s: Dictionary = shops[id]
 		var a: Dictionary = att.get(str(s.attendant), {})
 		_check(not a.is_empty() and str(a.get("shop", "")) == id, "%s: its attendant names it" % id)
@@ -97,7 +98,7 @@ func _test_data(db) -> void:
 	var books := 0
 	for x in b.get("items", []):
 		books += 1 if int(x.price_cents) == 1000 else 0
-	_check(books == 5, "B. Dalton: five books at $10")
+	_check(books == b.get("items", []).size() and books >= 5, "B. Dalton: every book at $10 (%d; int-51: FOOD's four, Moby-Dick, the paperback)" % books)
 	_check(db.get_item("bd_moby_dick").get("name") == "Moby-Dick", "Moby-Dick keeps its title")
 	# RadioShack: every standalone item kind in the store is sold
 	var rs_ids := []

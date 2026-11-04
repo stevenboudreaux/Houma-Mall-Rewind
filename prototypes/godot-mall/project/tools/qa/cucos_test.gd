@@ -252,7 +252,7 @@ func _test_shop() -> void:
 	_check(res != null, "the stub's shop conversation compiles")
 	var r = await _walk(res, m, [])
 	_check(_texts(r) == [GREETING], "the greeting is Steven's line: " + str(_texts(r)))
-	_check(r.responses[0] == ["Beer, $2.00", "Margarita, $3.00", "Top-shelf margarita, $10.00", "Back"], "the list: " + str(r.responses[0]))
+	_check(r.responses[0] == ["Draft beer, $2.00", "Margarita, $3.00", "Top-shelf margarita, $10.00", "Back"], "the list: " + str(r.responses[0]))
 	var cases := [[0, "cu_beer", 200], [1, "cu_margarita", 300], [2, "cu_topshelf", 1000]]
 	for c in cases:
 		m = _mall()
