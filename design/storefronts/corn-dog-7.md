@@ -68,5 +68,5 @@ Frame: `u` runs along the frontage from the store's north end (the mall viewer's
 ## Selling (workstream SHOPS, Nov 3, 2026; `design/godot-shops.md`)
 - A PLACEHOLDER attendant stands right behind the counter (x −134.06 to −134.0, z 74.2 to 77.4, facing the queue) and sells the corn dog ($2, Steven), crinkle-cut fries and lemonade. TALK spot −135.7, 75.6 in the queue.
 - No geometry change: the back worktop (d 3.85 to 4.45) touches the attendant's back below 0.9 m, hidden behind the 1.0 m counter from the shop. No rebake.
-- The corn dog on the counter is stock on show now (both years), not a pick-up. In 2026 Corn Dog 7 has no attendant yet, so no corn dog can be had there (a question for Steven).
-- **The menu box:** it said Corn Dog 1.29; repainted to **2.00** (Steven, Nov 4; `paint_corn_dog_7.py menu_board()`, `tex/cd7/menu.png`). Fries and lemonade follow the box (.99). The box's COMBO line (corn dog, fries & lemonade 2.99) is unchanged. A texture change only: no rebake for it.
+- The corn dog on the counter is stock on show in 1995, not a pick-up. In 2026 (no attendant) it stays a pick-up (Steven, Nov 4).
+- **The menu box:** it said Corn Dog 1.29; repainted to **2.00** (Steven, Nov 4; `paint_corn_dog_7.py menu_board()`, `tex/cd7/menu.png`). Fries and lemonade follow the box (.99). The box's COMBO line (corn dog, fries & lemonade 2.99) is unchanged and not sold (Steven, Nov 4: "leave the combo"). A texture change only: no rebake for it.

@@ -83,7 +83,7 @@ fries 99¢ are guesses (not on the strip). Corn Dog 7's fries and lemonade (.99)
 **The boards now say $2.00 (Steven, Nov 4: "repaint the menu boards to $2.00"):** Woolworth's strip said ROOT BEER
 FLOAT $1.49 and Corn Dog 7's box Corn Dog 1.29; both repainted (`paint_lunch.py price_strip()`,
 `paint_corn_dog_7.py menu_board()`; only the price changed, `production/qa/evidence/wsSHOPS-menu-boards-before-after.jpg`).
-Corn Dog 7's COMBO (corn dog, fries & lemonade 2.99) is unchanged and isn't sold yet.
+Corn Dog 7's COMBO (corn dog, fries & lemonade 2.99) is unchanged and not sold (Steven, Nov 4: "leave the combo").
 
 **RadioShack (estimates, `design/research/radioshack-1995-prices.md`):** scanner $199.99, walkie-talkies $49.99 a
 pair, R/C truck $89.99, 900 MHz cordless $149.99, AA 4-pack $3.49, pager $79.99, CB $99.99, micro-cassette $49.99;
@@ -102,7 +102,8 @@ Nell Bristow (In a Dark, Dark Room-type). Invented titles and covers, clearly no
 
 ## Nothing off the shelves
 - Every item of the four stores that lay about to be picked up ("place") is now stock on show ("display"): the root
-  beer float on Woolworth's counter, the corn dog on Corn Dog 7's (both years), the three Shiverwood paperbacks on
+  beer float on Woolworth's counter, the corn dog on Corn Dog 7's (1995; in 2026, where no shop is built, it stays a
+  pick-up: Steven, Nov 4), the three Shiverwood paperbacks on
   B. Dalton's table, RadioShack's eight items on the counter's glass. They look the same and can't be taken.
 - RadioShack's eight are built into wing 1 by `radio_shack.gd items()` (unchanged spots, so the built scene is the
   same); the others are placed at run time by `shop.gd` (`"runtime": true`).
@@ -160,10 +161,13 @@ not baked; placed at run time.
 - Not run: a phone-width web pass (`shops_webtest.py … both phone` exists; the layout puts the list on the lower part)
   and native shots.
 
+## Steven's answers (Nov 4)
+- "repaint the menu boards to $2.00": done (above).
+- "leave the combo": left as painted, not sold.
+- "keep the corn dog pickup in 2026": `bl_cd7_corndog` has `"display"` for 1995 and `"place"` for 2026 (data and
+  its Blender META); `shop_test.gd` checks it.
+
 ## Open (for Steven)
-- Corn Dog 7's COMBO line (2.99 for a corn dog, fries and lemonade, which are $3.98 apart): sell the combo, change it, or leave it?
-- Corn Dog 7 in 2026: the corn dog is now shown, not picked up, in both years, and there is no 2026 attendant. A 2026
-  shop (and its prices), or keep the pick-up in 2026?
 - The attendants' names, looks and sexes (Woolworth's is a woman; the rest are guesses).
 - The ready lines for things you gave no line for (PLACEHOLDER in your pattern).
 - RadioShack: sell the DSS dish, a computer, the display truck? The cellular phone without activation at $199.99?

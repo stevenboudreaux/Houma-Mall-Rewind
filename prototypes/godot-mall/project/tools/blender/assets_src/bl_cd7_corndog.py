@@ -39,8 +39,10 @@ META = {
         ["refs/derived/frames/IMG_4461/f005.jpg", None, "IMG_4461 f005"],
     ],
     "item": {"name": "Corn dog", "year": "both", "store": "CORN DOG 7",
-             # SHOPS (design/godot-shops.md): shown on the counter, bought from the attendant (not picked up)
-             "display": {"wing": 2, "year": "both", "pos": [-134.6, 1.03, 74.5], "yaw": 90, "runtime": True}},
+             # SHOPS (design/godot-shops.md): 1995 shown on the counter, bought from the attendant; 2026 (no attendant
+             # there; Steven, Nov 4: "keep the corn dog pickup in 2026") a pick-up on the counter, as before
+             "display": {"wing": 2, "year": 1995, "pos": [-134.6, 1.03, 74.5], "yaw": 90, "runtime": True},
+             "place": {"wing": 2, "year": 2026, "pos": [-134.6, 1.03, 74.5], "yaw": 90}},
 }
 
 

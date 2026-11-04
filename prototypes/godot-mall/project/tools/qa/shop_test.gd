@@ -197,11 +197,13 @@ func _test_shelves(db) -> void:
 		var mine: bool = stores.has(str(e.get("store", ""))) or rs.has(id) or id.begins_with("standin_")
 		if not mine:
 			continue
-		if e.has("place"):
+		if e.has("place") and (str(e.place.get("year", e.year)) == "both" or int(e.place.get("year", e.year)) != 2026):   # 2026 has no shops (Steven, Nov 4: the corn dog pick-up stays there)
 			placed.append(id)
 		if e.has("display"):
 			shown += 1
-	_check(placed.is_empty(), "nothing in the four stores can be picked up off a shelf (%s)" % str(placed))
+	_check(placed.is_empty(), "nothing in the four stores can be picked up off a shelf in 1995 (%s)" % str(placed))
+	var cd: Dictionary = db.get_item("bl_cd7_corndog")
+	_check(int(cd.display.year) == 1995 and int(cd.place.year) == 2026, "the corn dog: on show in 1995, a pick-up in 2026")
 	_check(shown == 13, "13 items stand on show (8 RadioShack, the float, the corn dog, 3 paperbacks): %d" % shown)
 
 ## 5. The screen without a player.
