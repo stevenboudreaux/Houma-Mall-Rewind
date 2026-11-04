@@ -152,6 +152,32 @@ python3 tools/make_layout_2026.py      # Zales gets three fronts and "bays": 3
 # (tools/stores/directory/make_data.gd, ws/directory) so Franks / Zales sit right on the kiosk map.
 ```
 
+## Applied (Nov 4, commit 2e743364 and after)
+
+- `tools/layout_corner_c2.py` run on `layout_mall.json`, `data/eras_2026.json`, `tools/stores/posters/posters.gd`;
+  `tools/make_layout_2026.py` regenerated `layout_2026.json` (Zales: three fronts, `"bays": 3`).
+- OJ's court side is a plain wall in 1995 with walkable floor on both sides (the court patch and OJ's walk-up
+  front), so the layout marks it `"solid": true` and `build_mall.gd` adds a collider for such walls (wing 1 1995
+  `collide.json`: rect x 11.9..12.1, z 5.9..10.1). In 2026 the same edge is Zales' bay B.
+- `eras_2026.json` notes: s35 = Tee Tai's (glass, blue chairs), s36 = Optical Outlet (marble piers), s38 =
+  T.J.'s (scroll top), per Steven.
+- Rebuilt every wing, both years: BUILD OK for wings 1-6 x 1995/2026. Wings 3 and 6 came out with node-id churn
+  only (no mesh change) and were not committed; wings 1, 2, 4, 5 (both years) changed (wing 1 for real, the others
+  through their stand-in halls and slots).
+- Unbaked evidence: `production/qa/evidence/corner2026-applied-overhead.jpg`, `corner2026-applied-inhall.jpg`
+  (footage | 2026 | 1995).
+
+### Mac rebake and stand-ins (integration session)
+`.autobake`: `wing1:night wing1:day wing1_2026:day wing2:night wing2:day wing2_2026:day wing4:day wing4_2026:day wing5:day wing5_2026:day`.
+Then `tools/capture_standin.sh 4`, `4 2026`, `5`, `5 2026`, then `1`, `1 2026`, `2`, `2 2026`; export; publish.
+Wings 3 and 6 need no rebake.
+
+### For ws/directory
+`tools/stores/directory/map.json` (both years) must be regenerated (`make_data.gd`) and the panels repainted
+(`paint_dir.py`): Franks' rect is now x 2..12, z 10..16 behind a court patch; 2026 Zales covers Franks + OJ
+(x 2..16) and the 2026 s34 entry is gone. Franks' "Jump to" spot (7, 3.8, facing south) still works but stands
+6 m from the new front; (7, 7.5) would sit in front of it.
+
 ## Evidence (unbaked)
 
 - `production/qa/evidence/corner2026-overhead-before-after.jpg`: 1995 and 2026 as built, the Courier
