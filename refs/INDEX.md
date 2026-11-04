@@ -112,3 +112,14 @@ corner, PINK, Victoria's Secret, H4 east side, Rainbow/Aéropostale).
 - **Monument signs:** not legible anywhere in the footage. Build the structure from the site plan + notes and leave the face as a labelled placeholder, or ask Steven for a photo.
 - **The 1995 directory's look:** no picture. Use a period-plausible design and mark it as a guess in the design note.
 - **Solarium "teal clothing store from the 2D game":** that is in the repo (`index.html` year maps), not here. Same for Lion's Share's gold lion statues.
+
+## Nov 4, 2026 additions (interiors + bake issues)
+
+| Folder | Source | Shows |
+|---|---|---|
+| `notes/audio/walkthrough{1,2,3}-2026-11-03.m4a` | Steven's voice notes, recorded Nov 3 evening (~75 s each) | His directions for the interiors sprint. Transcripts go in `notes/transcripts/walkthrough{1,2,3}.txt` when made |
+| `new/cookie_co/gacc_t000_NNN.jpg` | YouTube "let's tour us cookies store Great American Cookies" (2:30, 640×360), **1 fps** | **Great American Cookie Co.** counter in a food court: white-tile front with scattered colored squares, maroon panel with display cookie cakes, glass case, menu boards, Coca-Cola, back prep table, cookie-cake decorating. Not Southland |
+| `new/auntie_annes/aa_t000_NNN.jpg` | short "Love a good pretzel" clip (5 s, 144×256), **6 fps** | **Auntie Anne's** counter: royal-blue front with the logo, steel warming case, pretzels and nugget cups, menu boards. Very low resolution |
+| `new/payless/payless2019_t000_NNN.jpg` | YouTube "Payless shoe shopping summer 2019 closing sale" (10:42, 640×360), **0.5 fps** (NNN ≈ (NNN−1)×2 s) | **Payless ShoeSource** interior, 2019: wood-look floor, white slatwall, long shoe-box aisles of red/white boxes, sale signs, accessories/bags wall. Not Southland; 2019 closing-sale clutter |
+| `new/spencers/spencers_t000_NNN.jpg` | YouTube "Spencer's gifts shopping" (11:00, 640×360), **0.5 fps** | **Spencer's** modern interior: dark ceiling, brick piers, concrete floor, black gondolas, mug wall with red shelf edges, tees, plush, front from the mall. From ~t≈560 s it leaves Spencer's (other stores; an **Aéropostale** front around the last frames). Not Southland; real products/IP in view — fixtures and layout only |
+| `new/bake_issues_d51/` | Steven's screen recording, Nov 4 12:06 (Demo 51 web build, 20 s) + 1 fps frames | **Bake problems**: speckled/blotchy floor lightmap along the shuttered storefronts and the main-entrance hall, banding on the checker floor |
