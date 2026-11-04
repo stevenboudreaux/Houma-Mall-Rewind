@@ -146,7 +146,12 @@ test uses it; visitors don't get it.
 - Unchanged and still OK: DIALOGUE WALK 67, FLAGS TEST 31, INVENTORY TEST 45, ECON TEST 52.
 - Native, unbaked, wing 1 rebuilt with the taps (`tools/qa/cucos_shots.gd`): **CUCOS SHOTS OK (26)** at
   1280 x 720 and at 390 x 844 (`--phone`).
-- Web, unbaked (`tools/qa/cucos_webtest.py`, wings 1+2 both years exported with this branch): see the report.
+- Web, unbaked (`tools/qa/cucos_webtest.py`, wings 1+2 both years exported with this branch, swiftshader):
+  **ALL OK, 0 console errors** in every run: the lady found in the crowd, B / A / C gives the coupon
+  (`mall-state-1995`, `cu_coupon_given` in `mall-flags-1`); asked again, no second coupon; the coupon in the hand
+  after a reload: Steven's lines, the coupon gone, the margarita and the doubloon; the shop sells a beer for
+  $2.00 ($100.00 -> $98.00); 2026: the doubloon is in `mall-state-2026`; phone 390 x 844: talked, answer C saved
+  `cu_lady_cold`. The build's shirt reads HOUMA too: `play/shirt_text.json` (LSU) is only on the published site.
 - Evidence: `production/qa/evidence/wsCUCOS-unbaked-*.jpg` (native; `-phone-` at 390 x 844) and
   `wsCUCOS-web-unbaked-*.jpg`.
 - Natively the shirt reads HOUMA (the shipped words; `play/shirt_text.json` isn't fetched natively); on the
