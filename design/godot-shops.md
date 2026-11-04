@@ -158,8 +158,10 @@ not baked; placed at run time.
 - Evidence (`production/qa/evidence/`): `wsSHOPS-web-unbaked-<shop>-approach / -open / -bought / -line.jpg` for the four
   counters, `wsSHOPS-standin-icons.jpg`, `wsSHOPS-menu-boards-before-after.jpg`. On the web the attendant wears the
   Mixamo fallback until the character pack mounts (the approach shots); from then on, the preset (the open shots).
-- Not run: a phone-width web pass (`shops_webtest.py … both phone` exists; the layout puts the list on the lower part)
-  and native shots.
+- Phone, 390 x 844 (`shops_webtest.py … both phone`): **SHOPS WEB OK**, 0 console errors, the same buys; the list on the
+  lower part, the face above (`wsSHOPS-web-unbaked-phone-*.jpg`). Seen there: the face shot is tight on a phone (the
+  conversation camera's 0.85 m); the mouth falls behind the list. Not changed (a camera tweak if Steven wants it).
+- Not run: native shots.
 
 ## Steven's answers (Nov 4)
 - "repaint the menu boards to $2.00": done (above).
