@@ -229,7 +229,9 @@ def main():
         tiles = render.turntable(glb, scratch, aid, res=320 if fast else 480, samples=16 if fast else 48)
     icon = None
     if meta.get("item") or meta.get("icon"):    # "icon": an icon without an item entry (the item lives elsewhere)
-        icon = render.icon(glb, os.path.join(out_dir, aid + "_icon.png"), samples=24 if fast else 64)
+        # META["icon_view"] = (yaw, elevation): flat things (books, coins, coupons) read better from above
+        yaw, elev = meta.get("icon_view", (30, 25))
+        icon = render.icon(glb, os.path.join(out_dir, aid + "_icon.png"), yaw=yaw, elev=elev, samples=24 if fast else 64)
     kb = sum(os.path.getsize(p) for p in written) // 1024
     info = "%s  |  %s  |  %d tris (budget %s)  |  textures %d px x %d maps (%d KB)  |  glb %d KB" % (
         aid, cls, tris, lim, size, len(written), kb, os.path.getsize(glb) // 1024)
