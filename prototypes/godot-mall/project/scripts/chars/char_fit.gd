@@ -232,6 +232,7 @@ static func _fit_one(mi: MeshInstance3D, src: ArrayMesh, ob: Dictionary, cb: Cha
 const RAD_FROM := 0.02        # m below the Head joint where the radial fit starts
 const RAD_DH := 0.012         # bin height, m
 const RAD_DA := 6.0           # bin angle, degrees
+const LOOSE_BACK := 0.018     # m of extra room behind the body below the neck (see _radial_need)
 const CLOTH_GAP := 0.002      # m over the outermost surface (the clothes are in the bins themselves)
 
 static func _radial(cb: CharBody, hair: MeshInstance3D) -> Dictionary:
@@ -276,9 +277,15 @@ static func _radial_need(rad: Dictionary, p: Vector3) -> Vector3:
 		elif aa >= 30: aa -= 60
 		surf = maxf(surf, float(rad.bins.get(Vector2i(hy, aa), 0.0)))
 	if surf <= 0.0: return Vector3.ZERO
-	var want: float = surf + float(rad.gap) + CLEAR
-	if r >= want: return Vector3.ZERO
 	var dir := d / r
+	# behind the body and below the neck: more room, growing to LOOSE_BACK at the shoulder blades. The fit
+	# is made in the bind pose (arms 45 degrees down); in the clips the arms hang lower and the shoulder
+	# blades and the back of the arms come out a little, so a curtain that only just clears the bind
+	# pose would show the shirt through it in the idle pose
+	var behind := clampf(-dir.y * 1.4, 0.0, 1.0)
+	var depth := clampf((float(rad.a.z) - p.y) / 0.12, 0.0, 1.0)
+	var want: float = surf + float(rad.gap) + CLEAR + LOOSE_BACK * behind * depth
+	if r >= want: return Vector3.ZERO
 	return Vector3(dir.x, 0.0, dir.y) * (want - r)
 
 ## Vertex neighbours over all surfaces (indices into the concatenated vertex list).

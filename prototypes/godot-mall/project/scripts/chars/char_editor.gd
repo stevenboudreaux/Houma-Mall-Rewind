@@ -380,7 +380,9 @@ func _layout() -> void:
 
 func _status() -> String:
 	var who := "your character" if mode == "player" else "preset %s" % str(preset.id)
-	var s := "%s · %s" % [who, "unsaved changes (Save keeps them)" if dirty else "saved"]
+	var st := "unsaved changes (Save keeps them)" if dirty else "saved"
+	if not dirty and mode == "player" and P.player_preset().is_empty(): st = "not saved yet"
+	var s := "%s · %s" % [who, st]
 	if mode == "owner" and P.has_local(str(preset.id)):
 		s += " · this browser's edit"
 	return s
@@ -1134,12 +1136,14 @@ func _back() -> void:
 var _save_btn: Button = null
 func _paint_save() -> void:
 	if _save_btn == null or not is_instance_valid(_save_btn): return
+	# a player who has never saved has something to save (the look the game made up for them)
+	var want := dirty or (mode == "player" and P.player_preset().is_empty())
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = AMBER if dirty else Color(0.3, 0.25, 0.18)
+	sb.bg_color = AMBER if want else Color(0.3, 0.25, 0.18)
 	sb.set_corner_radius_all(6)
 	for st in ["normal", "hover", "pressed"]: _save_btn.add_theme_stylebox_override(st, sb)
-	_save_btn.add_theme_color_override("font_color", Color(0.1, 0.07, 0.04) if dirty else Color(INK, 0.7))
-	_save_btn.text = "Save" if dirty else "Saved ✓"
+	_save_btn.add_theme_color_override("font_color", Color(0.1, 0.07, 0.04) if want else Color(INK, 0.7))
+	_save_btn.text = "Save" if want else "Saved ✓"
 
 func _skip() -> void:
 	_finish("skip" if mode == "player" else "cancel")

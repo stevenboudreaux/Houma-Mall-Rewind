@@ -41,7 +41,7 @@ func _initialize() -> void:
 	var looks: Array = j.looks
 	const PER_ROW := 3
 	var sheet := Image.create(CELL.x * VIEWS.size() * PER_ROW, CELL.y * int(ceil(looks.size() / float(PER_ROW))), false, Image.FORMAT_RGB8)
-	sheet.fill(Color(1, 1, 1))
+	sheet.fill(Color(0.9, 0.9, 0.89))
 	for li in looks.size():
 		var L: Dictionary = looks[li]
 		var p: Dictionary

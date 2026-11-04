@@ -385,7 +385,7 @@ func _shade(mi: MeshInstance3D, mask: int) -> void:
 			# CHAR-EDITOR: hair is drawn double-sided (the puffs' shells had see-through gaps, a curtain's
 			# inside showed the background from below); Godot flips a back face's normal itself
 			var hp := str(mi.get_meta("piece", ""))
-			if hp != "" and pieces.has(hp) and str(pieces[hp].slot) == "hair":
+			if hp != "" and pieces.has(hp) and str(pieces[hp].slot) == "hair" and CharFit.enabled():   # (off: the QA "before" grid)
 				sm.shader = hair_shader()
 			sm.resource_name = m.resource_name
 			sm.set_shader_parameter("albedo_color", m.albedo_color * NpcBody.tint)

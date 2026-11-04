@@ -11,6 +11,7 @@ extends SceneTree
 const Look = preload("res://scripts/avatar_look.gd")
 var out := "/tmp/charav/t"
 var late := false
+var wing := 6         # wing 6 (the cinema lobby) by default: the smallest scene (the shared cloud box runs out of memory on wing 1)
 var scn: Node
 var player: Node3D
 var errors := []
@@ -23,6 +24,7 @@ func _initialize() -> void:
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--out="): out = a.substr(6)
 		elif a.begins_with("--late="): late = a.substr(7) == "1"
+		elif a.begins_with("--wing="): wing = int(a.substr(7))
 	DirAccess.make_dir_recursive_absolute(out.get_base_dir())
 	Engine.set_meta("menu_opening", false)
 	Engine.set_meta("mall_player_name", "TESTER")
@@ -83,8 +85,10 @@ func _after_load() -> void:
 	var sh = scn.get_node_or_null("Shoppers")
 	if sh: sh.queue_free()
 	await _secs(1.5)
-	player.position = SPOT
-	player.yaw = deg_to_rad(90); player.pitch = deg_to_rad(-8)
+	if wing == 1:
+		player.position = SPOT
+		player.yaw = deg_to_rad(90)
+	player.pitch = deg_to_rad(-8)
 	player._apply_rot()
 	await _secs(1.0)
 
@@ -127,7 +131,7 @@ func _one_body(when: String, want_hair := "") -> void:
 
 func _run() -> void:
 	if late: Engine.set_meta("qa_late_chars", true)
-	await _load("res://wing1.tscn")
+	await _load("res://wing%d.tscn" % wing)
 	await _size(DESK)
 	if late:
 		_check(not (player.avatar.body is AvatarChar), "late pack: the avatar starts on V's body")
@@ -213,14 +217,14 @@ func _run() -> void:
 	await _shot("after-save-third")
 	# reload (same wing), year change, time travel
 	if late: Engine.set_meta("qa_late_chars", true)
-	await _load("res://wing1.tscn")
+	await _load("res://wing%d.tscn" % wing)
 	if late:
 		Engine.remove_meta("qa_late_chars")
 		player.get_node("CharPack")._done()
 		await _secs(1.0)
 	_one_body("after a reload", want_hair)
 	await _shot("reload-third")
-	await _load("res://wing1_2026.tscn")
+	await _load("res://wing%d_2026.tscn" % wing)
 	_one_body("in 2026", want_hair)
 	await _shot("year-2026-third")
 	# time travel from here back to 1995 (the directory's trip; a stand-in kiosk where the player is)

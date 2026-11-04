@@ -92,7 +92,7 @@ func _sheet(sex: String) -> void:
 	var W := bodies.size() * VIEWS.size() * CELL.x
 	var H := hairs.size() * CELL.y
 	var sheet := Image.create(W, H, false, Image.FORMAT_RGB8)
-	sheet.fill(Color(1, 1, 1))
+	sheet.fill(Color(0.9, 0.9, 0.89))
 	var cb := CharBody.new()
 	vp.add_child(cb)
 	for bi in bodies.size():
