@@ -1075,7 +1075,7 @@ func _jump_input(e: InputEvent) -> bool:
 		Engine.remove_meta("_jump_axis_held")
 	if e is InputEventScreenTouch and e.pressed:
 		# touches skip mouse emulation, so the menu and its button are tapped here
-		if jump_open_btn.get_global_rect().has_point(e.position):
+		if jump_open_btn.is_visible_in_tree() and jump_open_btn.get_global_rect().has_point(e.position):   # UI-OFFSCREEN: tucked away
 			_jump_show(not open)
 			return true
 		if open:

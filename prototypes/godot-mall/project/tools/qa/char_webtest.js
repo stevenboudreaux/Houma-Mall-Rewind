@@ -57,7 +57,7 @@ const errsOf = logs => logs.filter(l => l.toUpperCase().includes('ERROR'));
   took = await waitFor(logs, 'char_pack: mounted', 480);
   check(took !== null, 'phone: the character pack mounted (from the cache this time)');
   await sleep(15000);
-  await pg.touchscreen.tap(60, 24);       // the Menu button (top left)
+  await pg.touchscreen.tap(31, 29);       // the menu icon (top left; UI-OFFSCREEN)
   await sleep(8000);
   await pg.touchscreen.tap(140, 26);      // the AVATAR tab
   await sleep(30000);
