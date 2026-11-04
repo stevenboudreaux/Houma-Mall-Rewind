@@ -1,0 +1,439 @@
+{
+ "_": "Lynn's Interiors (2026) furniture placements: design/lynns/layout.md. Read by tools/stores/sears/lynns.gd. models: key -> scene and footprint [w, d] (m). groups: zone, name, rect [x0, z0, x1, z1] (world m; store.gd's box dressing skips it), optional rug [x0, z0, x1, z1, colour], items [model, x, z, yaw deg] (yaw 0 = front faces +z / south, 180 = north, -90 = west). Phase 1: SOFA-A and BED-A only.",
+ "models": {
+  "sofa_sage": {
+   "scene": "res://models/lynns/bl_ly_sofa_sage/bl_ly_sofa_sage.glb",
+   "size": [
+    2.25,
+    1.0
+   ]
+  },
+  "sofa_cream": {
+   "scene": "res://models/lynns/bl_ly_sofa_cream/bl_ly_sofa_cream.glb",
+   "size": [
+    2.36,
+    1.0
+   ]
+  },
+  "sofa_taupe": {
+   "scene": "res://models/lynns/bl_ly_sofa_taupe/bl_ly_sofa_taupe.glb",
+   "size": [
+    2.22,
+    1.0
+   ]
+  },
+  "sofa_leather": {
+   "scene": "res://models/lynns/bl_ly_sofa_leather/bl_ly_sofa_leather.glb",
+   "size": [
+    2.32,
+    1.0
+   ]
+  },
+  "bed_espresso": {
+   "scene": "res://models/lynns/bl_ly_bed_espresso/bl_ly_bed_espresso.glb",
+   "size": [
+    1.78,
+    2.27
+   ]
+  },
+  "night_espresso": {
+   "scene": "res://models/lynns/bl_ly_night_espresso/bl_ly_night_espresso.glb",
+   "size": [
+    0.75,
+    0.47
+   ]
+  },
+  "dresser_espresso": {
+   "scene": "res://models/lynns/bl_ly_dresser_espresso/bl_ly_dresser_espresso.glb",
+   "size": [
+    1.65,
+    0.53
+   ]
+  },
+  "chest_espresso": {
+   "scene": "res://models/lynns/bl_ly_chest_espresso/bl_ly_chest_espresso.glb",
+   "size": [
+    1.03,
+    0.53
+   ]
+  },
+  "bed_sage": {
+   "scene": "res://models/lynns/bl_ly_bed_sage/bl_ly_bed_sage.glb",
+   "size": [
+    1.78,
+    2.27
+   ]
+  },
+  "night_sage": {
+   "scene": "res://models/lynns/bl_ly_night_sage/bl_ly_night_sage.glb",
+   "size": [
+    0.75,
+    0.47
+   ]
+  },
+  "dresser_sage": {
+   "scene": "res://models/lynns/bl_ly_dresser_sage/bl_ly_dresser_sage.glb",
+   "size": [
+    1.65,
+    0.53
+   ]
+  },
+  "chest_sage": {
+   "scene": "res://models/lynns/bl_ly_chest_sage/bl_ly_chest_sage.glb",
+   "size": [
+    1.03,
+    0.53
+   ]
+  },
+  "bed_oak": {
+   "scene": "res://models/lynns/bl_ly_bed_oak/bl_ly_bed_oak.glb",
+   "size": [
+    1.78,
+    2.27
+   ]
+  },
+  "night_oak": {
+   "scene": "res://models/lynns/bl_ly_night_oak/bl_ly_night_oak.glb",
+   "size": [
+    0.75,
+    0.47
+   ]
+  },
+  "dresser_oak": {
+   "scene": "res://models/lynns/bl_ly_dresser_oak/bl_ly_dresser_oak.glb",
+   "size": [
+    1.65,
+    0.53
+   ]
+  },
+  "chest_oak": {
+   "scene": "res://models/lynns/bl_ly_chest_oak/bl_ly_chest_oak.glb",
+   "size": [
+    1.03,
+    0.53
+   ]
+  },
+  "bed_glam": {
+   "scene": "res://models/lynns/bl_ly_bed_glam/bl_ly_bed_glam.glb",
+   "size": [
+    1.78,
+    2.27
+   ]
+  },
+  "night_glam": {
+   "scene": "res://models/lynns/bl_ly_night_glam/bl_ly_night_glam.glb",
+   "size": [
+    0.75,
+    0.47
+   ]
+  },
+  "dresser_glam": {
+   "scene": "res://models/lynns/bl_ly_dresser_glam/bl_ly_dresser_glam.glb",
+   "size": [
+    1.65,
+    0.53
+   ]
+  },
+  "chest_glam": {
+   "scene": "res://models/lynns/bl_ly_chest_glam/bl_ly_chest_glam.glb",
+   "size": [
+    1.03,
+    0.53
+   ]
+  }
+ },
+ "groups": [
+  {
+   "zone": "Z10",
+   "name": "glam suite (east wall, bay z -110..-101)",
+   "rect": [
+    27.0,
+    -110.0,
+    30.0,
+    -101.0
+   ],
+   "items": [
+    [
+     "dresser_glam",
+     29.61,
+     -102.4,
+     -90
+    ],
+    [
+     "night_glam",
+     29.639999999999997,
+     -104.6,
+     -90
+    ],
+    [
+     "bed_glam",
+     28.74,
+     -105.9,
+     -90
+    ],
+    [
+     "night_glam",
+     29.639999999999997,
+     -107.2,
+     -90
+    ],
+    [
+     "chest_glam",
+     29.61,
+     -109.0,
+     -90
+    ]
+   ]
+  },
+  {
+   "zone": "Z10",
+   "name": "espresso suite (east wall, north of the storefront)",
+   "rect": [
+    25.0,
+    -128.0,
+    30.0,
+    -121.2
+   ],
+   "items": [
+    [
+     "dresser_espresso",
+     29.61,
+     -122.4,
+     -90
+    ],
+    [
+     "night_espresso",
+     29.639999999999997,
+     -124.1,
+     -90
+    ],
+    [
+     "bed_espresso",
+     28.74,
+     -125.4,
+     -90
+    ],
+    [
+     "night_espresso",
+     29.639999999999997,
+     -126.7,
+     -90
+    ],
+    [
+     "chest_espresso",
+     25.8,
+     -127.6,
+     0
+    ]
+   ]
+  },
+  {
+   "zone": "Z10",
+   "name": "oak suite (mall wall, bay x 18.5..27.5)",
+   "rect": [
+    18.6,
+    -99.4,
+    27.4,
+    -96.0
+   ],
+   "items": [
+    [
+     "dresser_oak",
+     20.0,
+     -96.64,
+     180
+    ],
+    [
+     "night_oak",
+     21.9,
+     -96.61,
+     180
+    ],
+    [
+     "bed_oak",
+     23.2,
+     -97.50999999999999,
+     180
+    ],
+    [
+     "night_oak",
+     24.5,
+     -96.61,
+     180
+    ],
+    [
+     "chest_oak",
+     26.2,
+     -96.64,
+     180
+    ]
+   ]
+  },
+  {
+   "zone": "Z10",
+   "name": "sage suite (mall wall, bay x 9.5..18.5)",
+   "rect": [
+    9.6,
+    -99.4,
+    18.4,
+    -96.0
+   ],
+   "items": [
+    [
+     "dresser_sage",
+     11.0,
+     -96.64,
+     180
+    ],
+    [
+     "night_sage",
+     12.9,
+     -96.61,
+     180
+    ],
+    [
+     "bed_sage",
+     14.2,
+     -97.50999999999999,
+     180
+    ],
+    [
+     "night_sage",
+     15.5,
+     -96.61,
+     180
+    ],
+    [
+     "chest_sage",
+     17.2,
+     -96.64,
+     180
+    ]
+   ]
+  },
+  {
+   "zone": "Z9",
+   "name": "sage sofas facing across a sisal rug",
+   "rect": [
+    10.0,
+    -118.0,
+    18.0,
+    -111.0
+   ],
+   "rug": [
+    12.4,
+    -115.8,
+    15.6,
+    -113.2,
+    "#b9ad97"
+   ],
+   "items": [
+    [
+     "sofa_sage",
+     14.0,
+     -113.0,
+     180
+    ],
+    [
+     "sofa_sage",
+     14.0,
+     -116.0,
+     0
+    ]
+   ]
+  },
+  {
+   "zone": "Z9",
+   "name": "cream English-arm pair on a grey vintage rug",
+   "rect": [
+    19.0,
+    -118.0,
+    27.0,
+    -111.0
+   ],
+   "rug": [
+    21.4,
+    -115.8,
+    24.6,
+    -113.2,
+    "#9e9b95"
+   ],
+   "items": [
+    [
+     "sofa_cream",
+     23.0,
+     -113.0,
+     180
+    ],
+    [
+     "sofa_cream",
+     23.0,
+     -116.0,
+     0
+    ]
+   ]
+  },
+  {
+   "zone": "Z9",
+   "name": "leather sofa facing a taupe slipcover",
+   "rect": [
+    10.0,
+    -127.0,
+    18.0,
+    -120.0
+   ],
+   "rug": [
+    12.4,
+    -124.6,
+    15.6,
+    -122.0,
+    "#bfb19a"
+   ],
+   "items": [
+    [
+     "sofa_leather",
+     14.0,
+     -122.0,
+     180
+    ],
+    [
+     "sofa_taupe",
+     14.0,
+     -125.0,
+     0
+    ]
+   ]
+  },
+  {
+   "zone": "Z9",
+   "name": "taupe slipcover facing a leather sofa",
+   "rect": [
+    19.0,
+    -127.0,
+    24.6,
+    -120.0
+   ],
+   "rug": [
+    20.6,
+    -124.6,
+    23.4,
+    -122.0,
+    "#a8a196"
+   ],
+   "items": [
+    [
+     "sofa_taupe",
+     22.0,
+     -122.0,
+     180
+    ],
+    [
+     "sofa_leather",
+     22.0,
+     -125.0,
+     0
+    ]
+   ]
+  }
+ ]
+}

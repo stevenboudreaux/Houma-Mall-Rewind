@@ -136,7 +136,7 @@ def _px(im):
 
 
 def bake_object(ob, asset, out_dir, size=1024, ao=0.0, normal=True, uv="smart", samples=16, source=None, cage=0.02, uv_shrink=None,
-                curvature=False, finish=None, scratch=None):
+                curvature=False, finish=None, scratch=None, ao_samples=None):
     """Bake and swap in the final material bl_<asset>_baked. Returns the list of written PNG paths.
     source: a high-poly object whose materials and surface detail are baked onto `ob` (selected-to-active;
     every source material is baked, none kept flat).
@@ -183,7 +183,7 @@ def bake_object(ob, asset, out_dir, size=1024, ao=0.0, normal=True, uv="smart", 
     if ao > 0:
         aoim = _img("__ao", size, True, (1, 1, 1, 1))
         bpy.context.scene.world = bpy.context.scene.world or bpy.data.worlds.new("w")
-        _bake(ob, "AO", aoim, [ob.data.materials[0]] if source else mats, max(32, samples * 4), source, cage)
+        _bake(ob, "AO", aoim, [ob.data.materials[0]] if source else mats, ao_samples or max(32, samples * 4), source, cage)
     curvim = None
     if curvature:
         curvim = _img("__curv", size, True, (0.5, 0.5, 0.5, 1))
