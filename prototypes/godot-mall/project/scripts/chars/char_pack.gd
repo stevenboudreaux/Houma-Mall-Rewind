@@ -29,7 +29,7 @@ var _waited := 0.0
 
 func _ready() -> void:
 	set_process(false)
-	if AvatarChar.available():
+	if AvatarChar.available() and not Engine.has_meta("qa_late_chars"):   # (qa: tools/qa/char_avatar_test.gd --late=1)
 		_done.call_deferred()
 		return
 	if not OS.has_feature("web") or get_node_or_null("/root/SharedPacks") == null:

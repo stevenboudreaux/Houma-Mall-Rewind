@@ -6,7 +6,7 @@ extends SubViewportContainer
 const AvatarBody = preload("res://scripts/avatar_body.gd")
 
 var vp: SubViewport
-var body: AvatarBody
+var body: NpcBody          # CHAR-EDITOR: an AvatarChar (the player's preset) when the pack ships the bodies, else V's AvatarBody
 var cam: Camera3D
 var yaw := 0.4
 
@@ -52,11 +52,19 @@ func _init() -> void:
 	cam.fov = 30.0
 	w.add_child(cam)
 	cam.current = true
-	body = AvatarBody.new()
+	# CHAR-EDITOR (Nov 4, the "default bald avatar" bug): MAIN showed V's body in V's look (Ch01, bald,
+	# by default) whatever the player had made in the character editor. Now it is the same body the
+	# mall shows: the player's preset on a B1 body when this pack ships them.
+	body = AvatarChar.new() if AvatarChar.available() else AvatarBody.new()
+	body.name = "PortraitBody"
 	w.add_child(body)
 
 func wear(look: Dictionary, year: int) -> void:
-	body.wear(look, year)
+	if body is AvatarChar:
+		(body as AvatarChar).wear_look(look, year)
+	else:
+		(body as AvatarBody).wear(look, year)
+	body.clip = ""
 	body.play("idle", 0.0, false)
 	_frame()
 

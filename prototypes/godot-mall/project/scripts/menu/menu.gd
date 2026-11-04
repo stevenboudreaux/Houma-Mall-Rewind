@@ -440,6 +440,8 @@ func _make_creator() -> void:
 	_creator.first_time = not bool(av.look.get("done", false))
 	_creator.embedded = true
 	_creator.closed.connect(_creator_closed)
+	if _creator.has_signal("saved"):      # CHAR-EDITOR: Save re-dresses the avatar, the editor stays
+		_creator.saved.connect(func(L): if av and is_instance_valid(av): av._preset_saved(L))
 	# avatar.gd owns what happens to the look (save, wear, first-time third person)
 	av.creator = _creator
 	add_child(_creator)

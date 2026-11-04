@@ -45,11 +45,18 @@ static func preset_for(L: Dictionary, year: int) -> Dictionary:
 ## Dress as the player's preset (rebuilt from scratch, then baked: one body, changed only on Done).
 func wear_look(L: Dictionary, year: int) -> void:
 	var p := preset_for(L, year)
+	# CHAR-EDITOR: a new skin brings a new AnimationPlayer: forget the old one's clip, or play("idle")
+	# (which skips the clip already playing) leaves the new body standing in its T-pose
+	clip = ""
+	base = "idle"
 	make(str(p.body))
 	CharPreset.dress(self, p)
 	CharPreset.bake(self)
-	info = {"sex": "f" if str(p.body) == "female" else "m", "id": "b2_player"}
+	info = {"sex": "f" if str(p.body) == "female" else "m", "id": "b2_player",
+		"height_m": float(CharBody.cman().bodies[str(p.body)].height_m) * (1.0 + float(p.keys.get("height", 0.0)) * 0.14)}
 	_attach_hand()
+	clip = ""
+	play("idle", 0.0, false)
 
 func _attach_hand() -> void:
 	hand = null

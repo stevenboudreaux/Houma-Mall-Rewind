@@ -21,6 +21,9 @@
 extends CanvasLayer
 
 signal closed(look: Dictionary, how: String)     # how: "done", "skip", "cancel", "saved"
+## CHAR-EDITOR (Nov 4): player mode's Save keeps the editor open; the avatar (scripts/avatar.gd
+## _preset_saved) is re-dressed at once, so the world, the menu's portrait and the preview agree.
+signal saved(look: Dictionary)
 
 const P := preload("res://scripts/chars/char_preset.gd")
 const INK := Color(1, 0.97, 0.9)
@@ -31,6 +34,20 @@ const ROW := Color(0.16, 0.13, 0.1)
 const ROW_SEL := Color(0.32, 0.24, 0.13)
 const GROUPS := [["overall", ["body"]], ["torso", ["torso"]], ["limbs", ["legs", "arms"]], ["head", ["head"]], ["face", ["face"]]]
 const SIMPLE_KEYS := ["height", "weight", "muscle", "age"]
+## CHAR-EDITOR (Nov 4, Steven: "split the single proportion slider into more contours"): the player's
+## BODY tab shows these contours without Advanced, grouped; every other slider (face, proportions,
+## posture, bust lift, youth) stays under "More sliders".
+const PLAYER_GROUPS := [
+	["OVERALL", ["height", "weight", "muscle", "age"]],
+	["TORSO", ["shoulders", "chest", "bust", "waist", "belly"]],
+	["HIPS AND LEGS", ["hips", "butt", "thigh", "calf"]],
+	["ARMS, NECK, HEAD", ["arms", "neck_length", "head_size"]]]
+## Friendlier names for some sliders (the manifest names stay the data).
+const KEY_LABELS := {"weight": "build", "thigh": "thighs", "calf": "calves", "butt": "seat",
+	"head_size": "head size", "neck_length": "neck length", "bust_lift": "bust lift", "youth_small": "youth (small)"}
+## The player's tabs (fewer steps: skin, eyes and hair are one tab) and every tab's title.
+const TAB_NAMES := {"body": "BODY", "skin": "SKIN", "hair": "HAIR", "outfit": "OUTFIT", "name": "NAME",
+	"look": "SKIN & HAIR"}
 ## Clothes palette (1995 mall clothes and neutrals; V's palettes and B1's defaults are added per piece).
 const CLOTH := ["#f4f4f2", "#1c1c1f", "#8d8e90", "#e8eef5", "#1f6f6a", "#5b2a5e", "#2f4a2e", "#7a1f2b", "#c79a2c",
 	"#24346b", "#b8352f", "#4a6a96", "#8fb0d3", "#c2ab84", "#3e4b5a", "#d9b8c4", "#f4c6d0", "#6b4f3a"]
@@ -129,7 +146,7 @@ func _tabs() -> void:
 	if mode == "owner":
 		tabs = ["body", "skin", "hair", "outfit", "name"]
 	else:
-		tabs = ["body", "skin", "hair", "outfit"]
+		tabs = ["body", "look", "outfit"]     # CHAR-EDITOR: three steps
 	if not (tab in tabs): tab = tabs[0]
 
 # ------------------------------------------------------------------ the turntable
@@ -269,6 +286,7 @@ func _shown(_b) -> Dictionary:
 func _changed(what: String) -> void:
 	dirty = true
 	_confirm_close = false
+	_paint_save()
 	if what == "dress" or _need == "dress": _need = "dress"
 	elif what == "keys" or _need == "keys": _need = "keys"
 	else: _need = "paint"
@@ -355,11 +373,14 @@ func _layout() -> void:
 	for it in _foot_items():
 		var b := _btn(foot, it[0], it[1])
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if it[0] == "Save":
+			_save_btn = b
+			_paint_save()
 	_build_rows()
 
 func _status() -> String:
-	var who := "player avatar" if mode == "player" else "preset %s" % str(preset.id)
-	var s := "%s · %s" % [who, "unsaved changes" if dirty else "saved"]
+	var who := "your character" if mode == "player" else "preset %s" % str(preset.id)
+	var s := "%s · %s" % [who, "unsaved changes (Save keeps them)" if dirty else "saved"]
 	if mode == "owner" and P.has_local(str(preset.id)):
 		s += " · this browser's edit"
 	return s
@@ -367,7 +388,8 @@ func _status() -> String:
 func _foot_items() -> Array:
 	if mode == "owner":
 		return [["Save", _save], ["Download", _download], ["Reset", _reset], ["Close", _close]]
-	return [["Advanced: " + ("on" if advanced else "off"), _toggle_adv], ["Reset", _reset], ["Done", _done]]
+	# CHAR-EDITOR: a clear Save (stays here, the avatar changes at once) and an easy Back
+	return [["◀ Back", _back], ["Reset", _reset], ["Save", _save]]
 
 func _btn(parent: Control, t: String, cb: Callable) -> Button:
 	var b := Button.new()
@@ -604,18 +626,25 @@ func _say(t: String) -> void:
 func _rows_for_tab() -> Array:
 	var rows: Array = []
 	var ti := []
-	for t in tabs: ti.append([t.to_upper(), func(): _go_tab(t), t])
+	for t in tabs: ti.append([str(TAB_NAMES.get(t, t.to_upper())), func(): _go_tab(t), t])
 	rows.append({"kind": "tabs", "items": ti})
 	var view := [["⟲", func(): _turn(-1)], ["⟳", func(): _turn(1)], ["Front", func(): _face(0.0)],
 		["Side", func(): _face(PI * 0.5)], ["Back", func(): _face(PI)], ["−", func(): _zoom(-0.4)],
 		["+", func(): _zoom(0.4)], ["Spin" if not spin else "Stop", func(): spin = not spin; _after()],
 		["Dark" if not dark else "White", func(): dark = not dark; _backdrop(); _after()]]
+	if mode == "player":
+		# CHAR-EDITOR: fewer view buttons (drag / pinch the preview turns and zooms it)
+		view = [["⟲", func(): _turn(-1)], ["⟳", func(): _turn(1)], ["Front", func(): _face(0.0)],
+			["Back", func(): _face(PI)], ["Face" if zoom < 2.0 else "Body", func(): zoom = 2.8 if zoom < 2.0 else 1.0; _after()]]
 	if mode == "owner" and target != null:
 		view.append(["In place" if not in_place else "Turntable", _toggle_place])
 	rows.append({"kind": "view", "items": view})
 	var sex: String = preset.body
 	match tab:
 		"body":
+			if mode == "player":
+				rows.append_array(_player_body_rows(sex))
+				return rows.filter(func(r): return not r.get("skip", false))
 			if mode == "owner" or advanced:
 				rows.append({"kind": "choice", "label": "Body", "opts": [["Female", "female"], ["Male", "male"]],
 					"get": func(): return preset.body, "set": _set_sex})
@@ -650,6 +679,23 @@ func _rows_for_tab() -> Array:
 				if str(sl.name) == "age":
 					rows.append({"kind": "note", "label": "Age also deepens the skin's wrinkles (the age slider, BODY)."})
 					rows.append(_key_row(sl))
+		"look":
+			var tones2 := []
+			for t in CharBody.cman().skin_tones: tones2.append(str(t[1]))
+			tones2.append("+")
+			rows.append(_color_row("skin", "Skin tone", tones2, func(): return preset.skin, func(v): preset.skin = v))
+			rows.append(_sub_sliders("skin", func(): return preset.skin, func(v): preset.skin = v))
+			rows.append_array(_piece_rows("hair", "Hair style"))
+			var hc2 := []
+			for t in CharBody.cman().hair_colors: hc2.append(str(t[1]))
+			hc2.append("+")
+			rows.append(_color_row("hairc", "Hair colour", hc2, func(): return preset.hair.color, func(v): preset.hair.color = v))
+			rows.append(_sub_sliders("hairc", func(): return preset.hair.color, func(v): preset.hair.color = v))
+			var iris2 := []
+			for t in CharBody.cman().iris_colors: iris2.append(str(t[1]))
+			iris2.append("+")
+			rows.append(_color_row("iris", "Eyes", iris2, func(): return preset.iris, func(v): preset.iris = v))
+			rows.append(_sub_sliders("iris", func(): return preset.iris, func(v): preset.iris = v))
 		"hair":
 			rows.append_array(_piece_rows("hair", "Hair style"))
 			var hc := []
@@ -677,9 +723,45 @@ func _rows_for_tab() -> Array:
 			rows.append({"kind": "button", "label": "Forget this browser's edit (back to the repo file)", "call": _forget})
 	return rows.filter(func(r): return not r.get("skip", false))
 
+## CHAR-EDITOR: the player's BODY tab: the body, the shape presets, the contours (PLAYER_GROUPS), then
+## "More sliders" (every other slider, grouped as in owner mode).
+func _player_body_rows(sex: String) -> Array:
+	var rows := []
+	rows.append({"kind": "buttons", "items": [["Female" + (" ✓" if sex == "female" else ""), func(): _set_sex("female"); _after()],
+		["Male" + (" ✓" if sex == "male" else ""), func(): _set_sex("male"); _after()]]})
+	var pres: Dictionary = CharBody.cman().presets.get(sex, {})
+	var po := []
+	for k in pres: po.append([k, k])
+	rows.append({"kind": "chips", "label": "Start from a shape", "opts": po,
+		"get": func(): return preset.get("shape_from", ""), "set": _apply_shape})
+	var by_name := {}
+	for sl in CharBody.cman().sliders: by_name[str(sl.name)] = sl
+	var shown := {}
+	for g in PLAYER_GROUPS:
+		var any := false
+		for n in g[1]:
+			if not by_name.has(n): continue
+			var sl: Dictionary = by_name[n]
+			if sl.has("sex") and str(sl.sex) != sex: continue
+			if not any:
+				rows.append({"kind": "header", "label": str(g[0])}); any = true
+			rows.append(_key_row(sl))
+			shown[n] = true
+	rows.append({"kind": "button", "label": ("▾ Fewer sliders" if advanced else "▸ More sliders (face, proportions, posture …)"), "call": _toggle_adv})
+	if advanced:
+		for g in GROUPS:
+			var any := false
+			for sl in CharBody.cman().sliders:
+				if shown.has(str(sl.name)) or not ((g[1] as Array).has(str(sl.group))): continue
+				if sl.has("sex") and str(sl.sex) != sex: continue
+				if not any:
+					rows.append({"kind": "header", "label": "MORE · " + str(g[0]).to_upper()}); any = true
+				rows.append(_key_row(sl))
+	return rows
+
 func _key_row(sl: Dictionary) -> Dictionary:
 	var n := str(sl.name)
-	var lbl := n.replace("_", " ")
+	var lbl := str(KEY_LABELS.get(n, n.replace("_", " ")))
 	if n in ["youth", "youth_small"]: lbl += " (above 0 = a child)"
 	return {"kind": "slider", "label": lbl, "min": float(sl.range[0]), "max": float(sl.range[1]),
 		"step": 0.05, "get": _get_key.bind(n), "set": _set_key.bind(n)}
@@ -906,6 +988,9 @@ func _slider_paint(r: Dictionary) -> void:
 func _toggle_adv() -> void:
 	advanced = not advanced
 	_tabs()
+	if mode == "player":
+		_build_rows()      # CHAR-EDITOR: "More sliders" opens in place (the list keeps its scroll)
+		return
 	_layout()
 
 func _toggle_place() -> void:
@@ -986,19 +1071,32 @@ func _reset() -> void:
 	preset = loaded.duplicate(true)
 	_changed("dress")
 	dirty = false
+	_confirm_close = false
+	_paint_save()
 	_say("Reset to how it was opened")
 	_after()
 
 # ------------------------------------------------------------------ save / close
 func _save() -> void:
 	if mode == "player":
+		# CHAR-EDITOR: Save is the player's commit: stored, worn by the avatar now, the editor stays open
 		P.save_player(preset)
+		look["preset"] = true
+		look["done"] = true
+		loaded = preset.duplicate(true)
+		dirty = false
+		_confirm_close = false
+		saved.emit(look)
+		_say("Saved: your character is updated.")
+		_paint_save()
+		return
 	else:
 		P.save_local(str(preset.id), preset)
 		if target and target.has_method("wear_preset"):
 			target.wear_preset(preset, in_place)
 	loaded = preset.duplicate(true)
 	dirty = false
+	_paint_save()
 	_say("Saved in this browser. Download gives the file to commit.")
 
 func _download() -> void:
@@ -1022,6 +1120,26 @@ func _done() -> void:
 	look["preset"] = true
 	look["done"] = true
 	_finish("done")
+
+## CHAR-EDITOR: the player's Back: out of the editor without saving (asks once when there are unsaved
+## changes). On a first visit with nothing saved it is the old Skip (the default, not asked again).
+func _back() -> void:
+	if dirty and not _confirm_close:
+		_confirm_close = true
+		_say("Unsaved changes: Back again to drop them, or Save.")
+		return
+	_finish("skip" if first_time and P.player_preset().is_empty() else "cancel")
+
+## CHAR-EDITOR: the Save button lights up while there is something to save.
+var _save_btn: Button = null
+func _paint_save() -> void:
+	if _save_btn == null or not is_instance_valid(_save_btn): return
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = AMBER if dirty else Color(0.3, 0.25, 0.18)
+	sb.set_corner_radius_all(6)
+	for st in ["normal", "hover", "pressed"]: _save_btn.add_theme_stylebox_override(st, sb)
+	_save_btn.add_theme_color_override("font_color", Color(0.1, 0.07, 0.04) if dirty else Color(INK, 0.7))
+	_save_btn.text = "Save" if dirty else "Saved ✓"
 
 func _skip() -> void:
 	_finish("skip" if mode == "player" else "cancel")
