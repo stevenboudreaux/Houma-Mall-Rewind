@@ -53,7 +53,7 @@ presets + heavy-set 52 + skinny 74; male: the four + the same two extremes), fro
   vertices, which don't move with the shoulders or chest sliders.
 - **Puffs** had see-through gaps (back faces culled); every curtain's inside showed the background.
 - (Not hair, seen on the way: a sawtooth fringe where the tee's collar meets the neck on every body; the
-  neutral male reads young and androgynous; Big & Tall's grid cells were mis-framed by the test.)
+  neutral male reads young and androgynous. A first grid framed Big & Tall too low; the grid now frames on the posed head bone.)
 
 **Fixes (runtime, on every body, every slider change; baked into NPCs and the avatar):**
 1. **Skinning below the jaw:** hair under the Head joint takes the weights of the skin it lies on
