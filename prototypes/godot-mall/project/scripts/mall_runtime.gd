@@ -38,6 +38,18 @@ float lines(float t, float w) {
 	float fw = fwidth(t);
 	return 1.0 - smoothstep(w, w + fw * 1.2, d);
 }
+// ---- bake-look (Nov 4 2026, design/godot-bake-quality.md): anti-aliased edges. 1 where x < e,
+// 0 where x > e, blended over one pixel's footprint, so the band, border, inlay and medallion edges
+// no longer step in pixels ("the floors pixelate"). aa_on = 0 gives the old hard edges.
+uniform int aa_on = 1;
+float inside(float x, float e) {
+	if (aa_on == 0) return x < e ? 1.0 : 0.0;
+	float fw = max(fwidth(x), 1e-4) * 0.75;
+	return 1.0 - smoothstep(e - fw, e + fw, x);
+}
+// 1 on |x - c| < w, anti-aliased
+float near(float x, float c, float w) { return inside(abs(x - c), w); }
+// ---- end bake-look
 // filtered checkerboard (0/1) on a diagonal grid
 float diag_checker(vec2 p, float period) {
 	vec2 q = vec2(p.x + p.y, p.x - p.y) / period;
@@ -63,20 +75,20 @@ void fragment() {
 		float band = half_w * 0.5;
 		float d = abs(across);
 		vec2 p = axis == 0 ? vec2(along, across) : vec2(across, along);
-		if (d < band) {
-			float k = diag_checker(p, 0.75);
-			a = mix(vec3(0.561, 0.486, 0.400), vec3(0.937, 0.902, 0.824), k);
-			vec2 q = vec2(p.x + p.y, p.x - p.y) / 0.75;
-			a = mix(a, vec3(0.725, 0.671, 0.580), max(lines(q.x, 0.008), lines(q.y, 0.008)) * 0.7);
-		} else if (d < band + 0.18) {
-			a = vec3(0.227, 0.216, 0.204);
-		} else {
-			a = planks(across + 50.0, along);
-		}
+		// bake-look: the three bands blended across their edges (was: if / else if / else)
+		float k = diag_checker(p, 0.75);
+		vec3 a1 = mix(vec3(0.561, 0.486, 0.400), vec3(0.937, 0.902, 0.824), k);
+		vec2 q = vec2(p.x + p.y, p.x - p.y) / 0.75;
+		a1 = mix(a1, vec3(0.725, 0.671, 0.580), max(lines(q.x, 0.008), lines(q.y, 0.008)) * 0.7);
+		a = planks(across + 50.0, along);
+		a = mix(a, vec3(0.227, 0.216, 0.204), inside(d, band + 0.18));
+		a = mix(a, a1, inside(d, band));
 		if (medallions == 1) {
 			float lane = band + 0.18 + (half_w - band - 0.18) * 0.5;
 			float m = abs(d - lane) + abs(mod(along, 9.0) - 4.5);
-			if (m < 0.47) a = m < 0.45 ? (m < 0.18 ? vec3(0.227, 0.216, 0.204) : vec3(0.788, 0.541, 0.451)) : vec3(0.227, 0.216, 0.204);
+			vec3 mc = mix(vec3(0.227, 0.216, 0.204), vec3(0.788, 0.541, 0.451), inside(m, 0.45));
+			mc = mix(mc, vec3(0.227, 0.216, 0.204), inside(m, 0.18));
+			a = mix(a, mc, inside(m, 0.47));
 		}
 	} else if (pattern == 2) {
 		vec2 c = wpos.xz - court.xy;
@@ -86,28 +98,30 @@ void fragment() {
 		float d = min(h.x - abs(c.x), h.y - abs(c.y)) - m0;
 		vec3 c1 = vec3(0.914, 0.890, 0.827);
 		vec3 c2 = palette == 1 ? vec3(0.490, 0.557, 0.639) : palette == 2 ? vec3(0.722, 0.420, 0.322) : palette == 3 ? vec3(0.478, 0.588, 0.529) : palette == 4 ? vec3(0.690, 0.380, 0.290) : vec3(0.561, 0.486, 0.400);
-		if (d > bw && palette == 4) {
+		// bake-look: field, border and plank lane blended across their edges (was: if / else if / else)
+		vec3 af;
+		if (palette == 4) {
 			// JCPenney court: a straight (not diagonal) checker
 			vec2 q4 = c / 0.8;
 			vec2 w4 = fwidth(q4) + 1e-4;
 			vec2 i4 = 2.0 * (abs(fract((q4 - 0.5 * w4) * 0.5) - 0.5) - abs(fract((q4 + 0.5 * w4) * 0.5) - 0.5)) / w4;
-			a = mix(c2, c1, 0.5 - 0.5 * i4.x * i4.y);
-			a = mix(a, vec3(0.714, 0.698, 0.651), max(lines(q4.x, 0.01), lines(q4.y, 0.01)) * 0.6);
-		} else if (d > bw) {
-			float k = diag_checker(c, 0.8);
-			a = mix(c2, c1, k);
-			vec2 q = vec2(c.x + c.y, c.x - c.y) / 0.8;
-			a = mix(a, vec3(0.714, 0.698, 0.651), max(lines(q.x, 0.01), lines(q.y, 0.01)) * 0.6);
-		} else if (d > 0.0) {
-			a = vec3(0.231, 0.227, 0.239);
-			float along = (h.x - abs(c.x) < h.y - abs(c.y)) ? c.y : c.x;
-			float t = mod(along, 1.5) - 0.75;
-			float across2 = d - bw * 0.5;
-			if (abs(t) + abs(across2) < 0.26) a = vec3(0.925, 0.894, 0.816);
-			if (abs(d - 0.05) < 0.02 || abs(d - (bw - 0.05)) < 0.02) a = vec3(0.847, 0.816, 0.741);
+			af = mix(c2, c1, 0.5 - 0.5 * i4.x * i4.y);
+			af = mix(af, vec3(0.714, 0.698, 0.651), max(lines(q4.x, 0.01), lines(q4.y, 0.01)) * 0.6);
 		} else {
-			a = planks(c.x + 50.0, c.y);
+			float k = diag_checker(c, 0.8);
+			af = mix(c2, c1, k);
+			vec2 q = vec2(c.x + c.y, c.x - c.y) / 0.8;
+			af = mix(af, vec3(0.714, 0.698, 0.651), max(lines(q.x, 0.01), lines(q.y, 0.01)) * 0.6);
 		}
+		vec3 ab = vec3(0.231, 0.227, 0.239);
+		float along = (h.x - abs(c.x) < h.y - abs(c.y)) ? c.y : c.x;
+		float t = mod(along, 1.5) - 0.75;
+		float across2 = d - bw * 0.5;
+		ab = mix(ab, vec3(0.925, 0.894, 0.816), inside(abs(t) + abs(across2), 0.26));
+		ab = mix(ab, vec3(0.847, 0.816, 0.741), max(near(d, 0.05, 0.02), near(d, bw - 0.05, 0.02)));
+		a = planks(c.x + 50.0, c.y);
+		a = mix(a, ab, 1.0 - inside(d, 0.0));
+		a = mix(a, af, 1.0 - inside(d, bw));
 	} else {
 		a = planks(wpos.x + 50.0, wpos.z);
 	}

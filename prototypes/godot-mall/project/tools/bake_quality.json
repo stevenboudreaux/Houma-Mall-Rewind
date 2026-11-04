@@ -1,0 +1,55 @@
+{
+  "_doc": [
+    "Lightmap bake settings per wing (design/godot-bake-quality.md). Read by tools/bake_quality.gd from",
+    "tools/build_mall.gd finish(). 'active' picks the profile; --bake-profile=<name> or MALL_BAKE_PROFILE overrides it.",
+    "Revert to the Demo 51 look: set 'active' to 'd51' (or build with --bake-profile=d51), rebuild, rebake.",
+    "texel = metres per lightmap texel (smaller = finer). Each mesh group's texel is texel x its rule's mult,",
+    "or the rule's absolute 'texel' (stand-in zones). floor_texel (when set) moves each own hall/court floor",
+    "into its own mesh '<zone>_fl' at that texel; null keeps the floor inside the zone mesh (Demo 51).",
+    "A profile may not be coarser or lower than 'd51' anywhere unless it says allow_lower: true (Steven's yes",
+    "with before/after shots first: CLAUDE-CLOUD.md)."
+  ],
+  "active": "nov4",
+  "profiles": {
+    "d51": {
+      "texel": 0.16,
+      "floor_texel": null,
+      "standin_texel": 0.40,
+      "quality": "ultra",
+      "bounces": 3,
+      "denoiser": true,
+      "denoiser_strength": 0.25,
+      "max_texture_size": 4096,
+      "probes_subdiv": 4
+    },
+    "nov4": {
+      "_why": "R2 has no pack size limit: own halls, courts, fronts and rooms 0.16 -> 0.10 m, the walked-on floors 0.06 m. Stand-ins and the outside unchanged.",
+      "texel": 0.10,
+      "floor_texel": 0.06,
+      "standin_texel": 0.40,
+      "quality": "ultra",
+      "bounces": 3,
+      "denoiser": true,
+      "denoiser_strength": 0.25,
+      "max_texture_size": 4096,
+      "probes_subdiv": 4
+    }
+  },
+  "wings": {
+    "_doc": "Overrides on top of the active profile, by scene: 'wing3' covers both years, 'wing3_2026' only 2026.",
+    "wing3": { "_why": "the outside: not part of the floor problem; kept at Demo 51 so it needs no rebake", "texel": 0.16, "floor_texel": null }
+  },
+  "rules": [
+    { "_why": "arcade machines: mostly lit by their own glow; a coarse texel keeps the atlas small", "suffix": "_mach", "mult": 1.5 },
+    { "_why": "workstream E's big rooms: plain lay-in ceilings", "prefix": ["sr_", "dl_"], "contains": "ceil", "mult": 2.0 },
+    { "_why": "workstream E's big rooms: floors and walls a little coarser than the halls", "prefix": ["sr_", "dl_"], "mult": 1.25 },
+    { "suffix": "props", "mult": 0.6 },
+    { "exact": "lanterns", "mult": 0.6 },
+    { "exact": "outside", "mult": 4.0 },
+    { "_why": "the lot: 400 m across", "exact": "ex_ground", "mult": 10.0 },
+    { "exact": "ex_far", "mult": 6.0 },
+    { "prefix": "ex_", "mult": 2.5 },
+    { "_why": "the other wing's halls and courts (the stand-in), seen across the seam only", "standin": true, "texel_key": "standin_texel" },
+    { "_why": "an own hall or court floor split out by floor_texel", "floor": true, "texel_key": "floor_texel" }
+  ]
+}

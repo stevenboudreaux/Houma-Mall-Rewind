@@ -24,7 +24,9 @@ const OPEN_H = 3.2         # storefront opening height
 const ANCHOR_FRONT = 24.0  # width of an anchor store's mall entrance (JCPenney's)
 ## Store looks that differ from the map data (from Steven's photos and memory).
 const OVERRIDES = {"CORN DOG 7": {"awningColor": "#f2cf1d", "awningStripe": "#1f2d6e"}}
-var TEXEL = 0.16           # lightmap texel size (metres); fast bake for demos
+var TEXEL = 0.16           # lightmap texel size (metres); set from tools/bake_quality.json in build()
+## bake-look (Nov 4 2026, design/godot-bake-quality.md): the bake settings as data (tools/bake_quality.gd)
+var BQ = null
 
 var mall: Node3D
 var light_root: Node3D
@@ -2656,7 +2658,11 @@ func floor_zone(z):
 			# terracotta-and-white checker
 			"palette": {"dillards": 1, "sears": 2, "shoe": 3, "penney": 4}.get(z.style, 0)}
 	m.set_meta("floor", meta)
-	quad(z.id, mname, [Vector3(r[0], 0, r[1]), Vector3(r[2], 0, r[1]), Vector3(r[2], 0, r[3]), Vector3(r[0], 0, r[3])], Vector3.UP)
+	# bake-look: an own floor gets a mesh of its own at the profile's floor_texel (tools/bake_quality.json)
+	var fg = z.id
+	if BQ != null and BQ.floor_group() and zone_wing.has(z.id) and in_wing(zone_wing[z.id]) and WING != 0:
+		fg = z.id + "_fl"
+	quad(fg, mname, [Vector3(r[0], 0, r[1]), Vector3(r[2], 0, r[1]), Vector3(r[2], 0, r[3]), Vector3(r[0], 0, r[3])], Vector3.UP)
 
 # ------------------------------------------------------------- environments
 ## Day: soft high sun, bright sky through skylights and clerestories.
@@ -2700,6 +2706,13 @@ func make_env(mode):
 	return env
 
 # ------------------------------------------------------------------ build
+## bake-look: the value of a "--name=value" user argument, "" when absent.
+func _arg(prefix):
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with(prefix):
+			return a.substr(prefix.length())
+	return ""
+
 func _parse_wing():
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--wing="):
@@ -2729,6 +2742,10 @@ func build():
 	seed(1995)
 	_parse_wing()
 	print("building wing ", WING, " year ", YEAR, " into ", GEN)
+	# bake-look: lightmap texels and LightmapGI settings from tools/bake_quality.json
+	BQ = load("res://tools/bake_quality.gd").new(scene_path().get_file().get_basename(), _arg("--bake-profile="))
+	TEXEL = float(BQ.p.texel)
+	print(BQ.describe())
 	L = JSON.parse_string(FileAccess.get_file_as_string(layout_path()))
 	if USE_FRONT_ART and FileAccess.file_exists("res://fronts.json"):
 		var fj = JSON.parse_string(FileAccess.get_file_as_string("res://fronts.json"))
@@ -2841,29 +2858,12 @@ func finish():
 			s.index()
 			s.commit(am)
 			am.surface_set_material(am.get_surface_count() - 1, glow_mat(gname, mname))
-		var texel = TEXEL
-		if gname.ends_with("_mach"):
-			# arcade machines: mostly lit by their own glow; a coarse texel keeps the
-			# lightmap atlas to one layer (a fine one doubled the download)
-			texel = TEXEL * 1.5
-		elif gname.begins_with("sr_") or gname.begins_with("dl_"):
-			# workstream E's big rooms (Sears 70 x 50 m, Dillard's 68 x 38 m): ceilings are plain lay-in,
-			# so a coarse texel there; floors and walls a little coarser than the halls
-			texel = TEXEL * (2.0 if gname.contains("ceil") else 1.25)
-		elif gname.ends_with("props") or gname == "lanterns":
-			texel = TEXEL * 0.6
-		elif gname == "outside":
-			texel = TEXEL * 4.0
-		elif gname == "ex_ground":
-			# the lot: 400 m across; a coarse texel keeps its lightmap to one layer
-			texel = TEXEL * 10.0
-		elif gname == "ex_far":
-			texel = TEXEL * 6.0
-		elif gname.begins_with("ex_"):
-			texel = TEXEL * 2.5
-		elif zones.has(gname) and not in_wing(zone_wing[gname]):
-			# the other wing's halls and courts (the stand-in): seen from across the seam only
-			texel = TEXEL * 2.5
+		# bake-look: the texel per group comes from tools/bake_quality.json's rules (the Demo 51 values are
+		# its "d51" profile: machines x1.5, E's rooms x2 / x1.25, props x0.6, outside x4, the lot x10,
+		# ex_far x6, ex_ x2.5, the other wing's halls and courts 0.4 m)
+		var standin = zones.has(gname) and not in_wing(zone_wing[gname])
+		var flr = gname.ends_with("_fl") and zones.has(gname.trim_suffix("_fl"))
+		var texel = BQ.texel(gname, standin, flr) if BQ != null else TEXEL
 		if am.lightmap_unwrap(Transform3D.IDENTITY, texel) != OK:
 			push_error("unwrap failed " + gname)
 		ResourceSaver.save(am, GEN + gname + ".res")
@@ -2915,6 +2915,8 @@ func finish():
 	lmg.environment_mode = LightmapGI.ENVIRONMENT_MODE_SCENE
 	lmg.max_texture_size = 4096
 	lmg.generate_probes_subdiv = LightmapGI.GENERATE_PROBES_SUBDIV_4
+	if BQ != null:
+		BQ.setup_lightmap(lmg)   # bake-look: tools/bake_quality.json (d51 = the values above)
 	mall.add_child(lmg); lmg.owner = mall
 
 	for c in light_root.get_children():
