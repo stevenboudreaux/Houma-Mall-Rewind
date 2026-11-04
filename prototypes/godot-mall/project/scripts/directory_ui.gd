@@ -45,6 +45,8 @@ var f_sans: Font
 var touches := {}
 var drag_from := Vector2.ZERO
 var drag_moved := false
+var look_rect := Rect2()       # PROTOTYPE ws/directory (dirlook=c): the 3D panel's place on screen
+var look_owner: Node = null    # ... and the camera reader to hand back to on close
 var pressed_in := false        # the press began while the sign was open (the tap that opened it does not count)
 var pinch_d := 0.0
 var last_touch_ms := -100000
@@ -102,6 +104,14 @@ func open(p: Node, k: Node) -> void:
 func close() -> void:
 	is_open = false
 	confirm = false
+	if look_owner:
+		# PROTOTYPE ws/directory: the camera reader takes the camera back to the player
+		var lo := look_owner
+		look_owner = null
+		look_rect = Rect2()
+		view.queue_redraw()
+		lo.flat_closed()
+		return
 	if player:
 		player.set("frozen", false)
 	view.queue_redraw()
@@ -137,6 +147,8 @@ func _fw() -> float:
 	return 10.0 if _narrow() else 18.0
 
 func _fit_scale() -> float:
+	if look_rect.size.x > 0:
+		return look_rect.size.x / _psize().x
 	var vp := _vp()
 	var m := _fw() + (6.0 if _narrow() else 20.0)
 	var top := 44.0 if _narrow() else 0.0     # phones: the toggle sits above the sign
@@ -150,6 +162,8 @@ func _scale() -> float:
 	return _fit_scale() * zoom
 
 func _centre() -> Vector2:
+	if look_rect.size.x > 0:
+		return look_rect.get_center()
 	var c := _vp() * 0.5
 	if _narrow():
 		c.y += 22.0
@@ -199,9 +213,19 @@ func _draw_view() -> void:
 		_draw_prompt(c)
 		return
 	var vp := _vp()
-	c.draw_rect(Rect2(Vector2.ZERO, vp), Color(0, 0, 0, 0.62))
 	var pr := _panel_rect()
 	var fw := _fw()
+	if look_rect.size.x > 0:
+		pass   # PROTOTYPE ws/directory: the 3D kiosk is the frame; no dimming, no drawn frame
+	else:
+		_draw_frame(c, pr, fw, vp)
+	var ptex := _panel()
+	if ptex:
+		c.draw_texture_rect(ptex, pr, false)
+	_draw_marks(c, vp)
+
+func _draw_frame(c: Control, pr: Rect2, fw: float, vp: Vector2) -> void:
+	c.draw_rect(Rect2(Vector2.ZERO, vp), Color(0, 0, 0, 0.62))
 	# the kiosk's frame round the lit panel: grey cabinet edge, the red pinstripe on top, the
 	# aluminium frame with a lighter inner lip, and the dark gasket
 	var outer := pr.grow(fw)
@@ -211,9 +235,8 @@ func _draw_view() -> void:
 	c.draw_rect(outer, FRAME_D, false, 1.5)
 	c.draw_rect(pr.grow(3), Color("#d5dadb"))
 	c.draw_rect(pr.grow(1.5), Color("#1c1d20"))
-	var ptex := _panel()
-	if ptex:
-		c.draw_texture_rect(ptex, pr, false)
+
+func _draw_marks(c: Control, vp: Vector2) -> void:
 	# the selected / hovered store: every place it appears on the sign
 	for pass_id in [hover, sel]:
 		if pass_id == "":

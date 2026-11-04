@@ -134,6 +134,8 @@ A single-sided totem: the backs are plain cream (IMG_4484 f068).
 - Benches and planters keep 7.5 m away from each kiosk (the build's `avoid` list).
 
 ## Reading the directory (scripts/directory_ui.gd)
+**Nov 4 2026: legibility options A/B/C (camera on the kiosk) are prototyped behind `?dirlook=`;
+see `design/godot-directory-legibility.md`. Steven picks before anything here changes.**
 Steven, Nov 1: "I don't want a separate UI outside the one that's posted on the sign. I want it to
 look literally identical to how the sign looks at the mall but I can just click inside the stall
 or the name of the store as it's shown on that directory signage."
