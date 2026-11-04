@@ -1,5 +1,5 @@
 {
- "_": "Items modelled in Blender (tools/blender/, design/godot-blender-pipeline.md). Same shape as the Godot-built item list: id, name, class (hand|pocket), scene, icon, year, place (optional). Written by tools/blender/build.py from each asset's META['item'].",
+ "_": "Workstream FOOD's items (Nov 3 2026; design/godot-blender-pipeline.md 'Food, drinks and books'): Corn Dog 7, Woolworth, B. Dalton and Cuco's food, drinks, books, the doubloon and the coupon, modelled in Blender. Written by tools/blender/build.py from each asset's META['item'] (item id = the brief's id, model under models/bl_*). No 'place': the store workstreams put them on counters.",
  "items": [
   {
    "id": "bd_adventure_book",

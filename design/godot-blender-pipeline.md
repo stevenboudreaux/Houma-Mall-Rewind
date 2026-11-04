@@ -359,6 +359,50 @@ coupon lie flat and read from above).
 - Blender's turntable shows liquids under transparent glass as washed-out pink; the baked albedo and the Godot
   shots are correct (golden beer, amber top-shelf), so this is the preview, not the asset.
 
+**Built (full quality; tris = the exported mesh, tex = per map, 3 maps):**
+
+| Model | Class | Tris (budget) | Tex | Files in repo |
+|---|---|---|---|---|
+| `bl_cd7_crinkle_fries` | hand | 4,860 (5,000) | 2048 | 5.8 MB |
+| `bl_cd7_lemonade` | hand | 2,032 (5,000) | 2048 | 4.0 MB |
+| `bl_wl_hot_dog` | hand | 3,904 (5,000) | 2048 | 7.5 MB |
+| `bl_wl_hamburger` | hand | 4,924 (5,000) | 2048 | 7.5 MB |
+| `bl_wl_fries` | hand | 4,830 (5,000) | 2048 | 6.2 MB |
+| `bl_wl_coffee` | hand | 2,762 (5,000) | 1024 | 1.7 MB |
+| `bl_bd_moby_dick` | hand | 1,636 (5,000) | 2048 | 7.2 MB |
+| `bl_bd_adventure_book` | hand | 1,592 (5,000) | 2048 | 2.7 MB |
+| `bl_bd_chills_book` | hand | 848 (5,000) | 2048 | 2.2 MB |
+| `bl_bd_mars_book` | hand | 880 (5,000) | 2048 | 2.2 MB |
+| `bl_bd_dark_room_book` | hand | 1,592 (5,000) | 2048 | 2.5 MB |
+| `bl_cu_beer` | hand | 3,272 (5,000) | 1024 | 1.2 MB |
+| `bl_cu_margarita` | hand | 4,060 (5,000) | 1024 | 2.4 MB |
+| `bl_cu_top_shelf_margarita` | hand | 4,952 (5,000) | 1024 | 1.9 MB |
+| `bl_cu_doubloon` | hand | 1,024 (5,000) | 1024 | 1.1 MB |
+| `bl_cu_coupon` | hand | 1,096 (5,000) | 2048 | 1.1 MB |
+| `bl_cu_bb_bottles_a` | small_fixture | 7,104 (10,000) | 2048 | 4.0 MB |
+| `bl_cu_bb_bottles_b` | small_fixture | 6,340 (10,000) | 2048 | 3.9 MB |
+| `bl_cu_bb_taps` | small_fixture | 4,792 (10,000) | 1024 | 2.2 MB |
+| `bl_cu_bb_stemrack` | small_fixture | 8,780 (10,000) | 1024 | 1.4 MB |
+| `bl_cu_bb_glasses` | small_fixture | 6,756 (10,000) | 1024 | 0.6 MB |
+| `bl_cu_bb_service` | small_fixture | 9,396 (10,000) | 2048 | 5.6 MB |
+| **22 models** | | | | **74.9 MB** |
+
+**The items pack, measured** (`python3 tools/shared_packs.py --write=items`, then `godot --export-pack "Shared
+Desktop"` / `"Shared Mobile"`; "before" = the same branch with FOOD's 22 model folders moved out):
+
+| items pack | Before | After | Change |
+|---|---|---|---|
+| `items.desktop.pck` | 22.64 MB | **68.34 MB** | +45.70 MB |
+| `items.mobile.pck` | 22.64 MB | **68.34 MB** | +45.70 MB (byte-identical to desktop, as before) |
+
+The pack stays under GitHub's 100 MiB file limit (104.9 MB) and under the ~90 MB point where
+`design/godot-build-hosting.md` says to split it (`items2` by glob in `tools/shared_packs.json`). It is a
+"start" pack, so a visitor's first wing now downloads 45.7 MB more before the mall opens (once for the whole
+mall; cached afterwards). Each site's total grows by the same 45.7 MB (twice: desktop and mobile copies are
+separate files). The cost is mostly the 2048 px maps of the food with printed paper and of the books; if the
+start download matters more than close-up print, the books and the plates can drop to 1024 px (Steven's call:
+CLAUDE-CLOUD.md asks for his yes before lowering picture quality).
+
 **Evidence:** `production/qa/evidence/wsFOOD-<model id>-sheet.jpg` (turntables, full quality) and the unbaked
 Godot shots `wsFOOD-godot-food.jpg` (Corn Dog 7 and Woolworth), `wsFOOD-godot-books.jpg`,
 `wsFOOD-godot-cucos.jpg`, `wsFOOD-godot-backbar.jpg` (the kit arranged as a back bar).
