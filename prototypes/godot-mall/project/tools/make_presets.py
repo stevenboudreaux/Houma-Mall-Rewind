@@ -29,7 +29,7 @@ import sys
 CFG = "export_presets.cfg"
 # CHARS (Nov 3 2026): files that ship in the shared packs, never in a wing pack (tools/shared_packs.py)
 # PRIZES (Nov 3 2026): the prize counters' pictures (prizes/*) moved into the items pack: both years' counters use them
-SHARED_EXCLUDES = ["models/bl_*", "models/characters/*.glb", "models/characters/*.png", "prizes/*"]
+SHARED_EXCLUDES = ["models/bl_*", "models/characters/*.glb", "models/characters/*.png", "models/ubc/*.gltf", "models/ubc/*.bin", "models/ubc/*.png", "prizes/*"]
 SHARED_NAMES = ("Shared Desktop", "Shared Mobile")
 ROOMS = {4: {"mall": 1, "pics": True}, 5: {"mall": 2, "pics": True}, 6: {"mall": 1, "pics": False}}
 ALL = [1, 2, 3, 4, 5, 6]

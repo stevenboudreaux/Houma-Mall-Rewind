@@ -1,11 +1,11 @@
 ## A B1 character body (design/godot-characters.md): one of the two base bodies in
-## models/characters/, shaped by sliders, dressed in layered pieces, playing the shoppers' clips.
+## models/ubc/ (int-52; was models/characters/), shaped by sliders, dressed in layered pieces, playing the shoppers' clips.
 ##
 ## It is an NpcBody (same clips, same NpcRig retargeting). The bodies' skeleton rest IS Ch01's
 ## (npc/anims.json "rest"), so NpcRig finds nothing to fix at neutral; the posture slider tilts
 ## the spine's rest and NpcRig then carries every clip over stooped.
 ##
-## Shaping, from models/characters/characters.json:
+## Shaping, from the manifest (models/ubc/ubc.json, the same shape as B1's characters.json):
 ##   slider x > 0 -> blend shape '<name>+' = x; x < 0 -> '<name>-' = -x; correctives = products.
 ##   Each blend shape also moves joints ("joints": local rest-translation offsets per bone), so
 ##   bones follow the flesh: new rests, and new bind poses on every Skin (body + pieces share one
@@ -19,7 +19,6 @@
 class_name CharBody
 extends NpcBody
 
-const MANIFEST := "res://models/characters/characters.json"
 static var _cm := {}
 
 var sex := "female"
@@ -31,28 +30,16 @@ var sk: Skeleton3D
 var _skins: Array[Skin] = []
 
 ## CHARS-UBC (Steven, Nov 4: design/godot-ubc-characters.md): the Quaternius Universal Base Characters
-## bodies are the default; the MakeHuman (B1) bodies stay behind a flag until Steven signs off:
-## ?chars=mh in the address, localStorage "mall-chars-body" = "mh", Engine meta "chars_body" or the
-## native command line's "-- --chars=mh" (tests).
+## bodies. int-52 (Nov 5): the MakeHuman (B1) bodies and their ?chars=mh flag are gone (Steven: drop them
+## at integration); models/characters/characters.json stays only as tools/chars/ubc_manifest.gd's source.
 const MANIFEST_UBC := "res://models/ubc/ubc.json"
 
 static func manifest_path() -> String:
-	var want := ""
-	if Engine.has_meta("chars_body"):
-		want = str(Engine.get_meta("chars_body"))
-	elif OS.get_cmdline_user_args().has("--chars=mh"):      # native tests: -- --chars=mh
-		want = "mh"
-	elif OS.has_feature("web"):
-		var q = JavaScriptBridge.eval("(function(){try{return new URLSearchParams(location.search).get('chars')||localStorage.getItem('mall-chars-body')||''}catch(e){return ''}})()")
-		want = str(q) if q != null else ""
-	# the UBC bodies only when their files are here too (a pack without them keeps the B1 bodies)
-	if want != "mh" and FileAccess.file_exists(MANIFEST_UBC) and ResourceLoader.exists("res://models/ubc/body_female.gltf"):
-		return MANIFEST_UBC
-	return MANIFEST
+	return MANIFEST_UBC
 
-## True when the UBC bodies are the ones in use.
+## True when the UBC bodies are the ones in use (always, since int-52; kept for the tests and tools).
 static func is_ubc() -> bool:
-	return manifest_path() == MANIFEST_UBC
+	return true
 
 static func cman() -> Dictionary:
 	if _cm.is_empty():
@@ -445,7 +432,7 @@ func _shade(mi: MeshInstance3D, mask: int) -> void:
 			sm.set_shader_parameter("metallic", m.metallic)
 			sm.set_shader_parameter("use_vertex_color", m.vertex_color_use_as_albedo)
 			if str(m.resource_name).begins_with("skin_"):
-				if bool(cman().get("wrinkle", true)):   # (UBC: the wrinkle map isn't made for its UVs)
+				if bool(cman().get("wrinkle", true)) and ResourceLoader.exists("res://models/characters/skin_wrinkle.png"):   # (UBC: no wrinkle map for its UVs)
 					sm.set_shader_parameter("wrinkle_tex", load("res://models/characters/skin_wrinkle.png"))
 				sm.set_shader_parameter("base_mask", base_mask())
 				sm.set_shader_parameter("base_color", BASE_COLOR)

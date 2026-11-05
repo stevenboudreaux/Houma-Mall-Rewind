@@ -140,3 +140,17 @@ built on the head; the apron's skirt rides the hips. No brands, no words.
 - Clothes: **keep the swaps** (nearest made garment stands in until the full wardrobe exists).
 - Build names, the softened "Average" body, and jaw + chin for the male face: **approved as is.**
 - MakeHuman bodies: **drop at integration.** Ship only `models/ubc/` in the shared `chars` pack; remove the `?chars=mh` fallback and `models/characters/` MakeHuman bodies (76 MB) in the same integration session, after checking nothing else still loads them.
+
+## int-52 (Nov 5, 2026): MakeHuman dropped
+- Checked first: nothing outside `CharBody.manifest_path()` loads the MakeHuman files (NPC shoppers, attendants,
+  the avatar and the editor all go through the manifest; the only direct loads were the skin wrinkle map and the
+  piece patterns, which UBC doesn't use: `"wrinkle": false`, no patterns).
+- `scripts/char_body.gd`: `manifest_path()` is always `models/ubc/ubc.json`; the `?chars=mh` / localStorage
+  `mall-chars-body` / Engine meta `chars_body` / `--chars=mh` switch is gone; `is_ubc()` stays (always true).
+- `models/characters/`: every body, piece and texture removed (247 files, ~66 MB); `characters.json` stays as
+  `tools/chars/ubc_manifest.gd`'s source (it reads the B1 slots and regions). The B1 Blender tools
+  (`tools/blender/characters/`) no longer have shipped files to work on.
+- Packs: `tools/chars/pack_list.py` reads `models/ubc/ubc.json` (aliases resolved, `.gltf` images listed, no
+  `.bin`: the import holds the meshes); `tools/shared_packs.py` / `tools/make_presets.py` keep `models/ubc/*.gltf,
+  *.bin, *.png` out of the wing packs (`ubc.json` stays in them). chars ≈ 30 MB source.
+- `char_clothed_test.gd`: the MakeHuman flattening branch removed.

@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """B2 (design/godot-character-editor.md): which character files each wing / year pack ships.
 
-models/characters/ holds every body, hair and piece (~76 MB). The wing packs ship none of it (wing 2
+models/ubc/ holds every body, hair and piece (~54 MB; int-52, Nov 5 2026: the Quaternius UBC bodies replaced
+the MakeHuman B1 bodies of models/characters/, which are gone; design/godot-ubc-characters.md). The wing packs ship none of it (wing 2
 is ~96 MB already): the character files ship as shared packs (split() below), fetched and mounted by
 scripts/chars/char_pack.gd once the mall is running. A character pack ships only:
   - the presets that map uses: data/story/attendants.json (wing, years, "look": "preset") and
     scripts/npcs.json "presets" (shoppers, every interior wing, both years), their bodies and pieces;
   - the player's wardrobe, data/characters/_wardrobe.json (the avatar creator, every pack);
   - the clothed defaults (a tee and jeans) for every body it ships (the clothed rule, B-FIX);
-  - the textures those .glb files reference, the skin wrinkle map, the piece patterns.
+  - the textures those .gltf files reference (and the skin wrinkle map and piece patterns when the
+    manifest has them; UBC has neither).
 The game copes with a missing piece (scripts/chars/char_preset.gd offers only pieces in the pack).
 
     python3 tools/chars/pack_list.py                  # print the lists and sizes
@@ -22,7 +24,7 @@ import os
 import struct
 
 ROOT = os.getcwd()
-MC = "models/characters"
+MC = "models/ubc"           # int-52: the UBC kit (was models/characters, MakeHuman)
 FEATURE = {"wing1": (1, 1995), "wing2": (2, 1995), "wing3": (3, 1995),
            "w1y26": (1, 2026), "w2y26": (2, 2026), "w3y26": (3, 2026),
            # CHARS (Nov 3): the room wings (design/godot-wings.md "Wings 4-6") have the avatar too
@@ -39,10 +41,11 @@ def load(p):
     return json.load(open(os.path.join(ROOT, p)))
 
 
-MAN = load(MC + "/characters.json")
+MAN = load(MC + "/ubc.json")
 
 
 def entry(sex, base_id):
+    base_id = MAN.get("aliases", {}).get(base_id, base_id)   # UBC: B1 ids -> the closest UBC piece (char_preset.gd)
     for e in MAN["pieces"]:
         if e["body"] == sex and (e["base_id"] == base_id or e["id"] == base_id):
             return e
@@ -50,6 +53,11 @@ def entry(sex, base_id):
 
 
 def glb_images(path):
+    """the image files a .glb or a .gltf references (a .gltf's .bin buffers are not shipped: Godot's
+    import holds the meshes)"""
+    if path.endswith(".gltf"):
+        j = json.load(open(path))
+        return [i["uri"] for i in j.get("images", []) if "uri" in i]
     b = open(path, "rb").read()
     n = struct.unpack("<I", b[12:16])[0]
     j = json.loads(b[20:20 + n])
@@ -83,7 +91,8 @@ def files_for(sexes, ids_by_sex):
     for f in list(files):
         for u in glb_images(os.path.join(ROOT, f)):
             tex.add(MC + "/" + u)
-    tex.add(MC + "/skin_wrinkle.png")
+    if MAN.get("wrinkle", True) and os.path.exists(os.path.join(ROOT, MC, "skin_wrinkle.png")):
+        tex.add(MC + "/skin_wrinkle.png")
     for e in MAN["pieces"]:
         if e.get("patterns") and e["glb"].replace("res://", "") in files:
             for pn in (MAN.get("patterns") or ["solid", "stripes", "dots", "floral", "check"]):
@@ -168,7 +177,7 @@ def size(paths):
 if __name__ == "__main__":
     pl = plan()
     every = [os.path.join(MC, f) for f in os.listdir(os.path.join(ROOT, MC)) if not f.endswith(".import")]
-    print("models/characters/ all files: %.1f MB" % (size(every) / 1e6))
+    print(MC + "/ all files: %.1f MB" % (size(every) / 1e6))
     for feat, e in pl.items():
         print("%-6s presets %-34s %3d glb + %2d textures = %5.1f MB (source files)" % (
             feat, ",".join(e["presets"]) or "-", len(e["files"]), len(e["tex"]), size(e["files"] + e["tex"]) / 1e6))

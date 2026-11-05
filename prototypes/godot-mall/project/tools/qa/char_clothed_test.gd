@@ -108,27 +108,20 @@ func _assets() -> void:
 			var f := "res://models/characters/%s_%s.glb" % [id, s]
 			if ResourceLoader.exists(f) or FileAccess.file_exists(f): left.append(f.get_file())
 	_check(left.is_empty(), "no base-layer .glb in models/characters %s" % [left])
-	if CharBody.is_ubc():
-		# CHARS-UBC: the kit's bodies carry painted underwear in their skin map, and the shader's base layer
-		# paints chest, pelvis and crotch as fabric (base_mask): every one of those regions must exist
-		for s in ["female", "male"]:
-			var sc: Node3D = load(str(man.bodies[s].glb)).instantiate()
-			var bm: MeshInstance3D = sc.find_child("body", true, false)
-			var uv2: PackedVector2Array = bm.mesh.surface_get_arrays(0)[Mesh.ARRAY_TEX_UV2]
-			var have := {}
-			for u in uv2: have[int(u.x + 0.5)] = true
-			var miss := []
-			for r in CharBody.BASE_REGIONS:
-				if not have.has(man.regions.find(r)): miss.append(r)
-			_check(miss.is_empty(), "%s (UBC): the base layer's regions are all on the body (missing %s)" % [s, miss])
-			sc.free()
-	else:
-		for s in ["female", "male"]:
-			for k in ["glb", "glb_hi"]:
-				var path := str(man.bodies[s][k])
-				var head := FileAccess.get_file_as_bytes(path).slice(20, 400000).get_string_from_ascii()
-				_check(head.contains("bfix_flattened"), "%s: chest and groin flattened (tools/blender/characters/flatten.py)" % path.get_file())
-		_check(FileAccess.file_exists("res://models/characters/skin_base_painted.txt"), "skin maps carry the painted base layer")
+	# int-52: the UBC bodies only (the MakeHuman B1 bodies and their flattening checks are gone)
+	# CHARS-UBC: the kit's bodies carry painted underwear in their skin map, and the shader's base layer
+	# paints chest, pelvis and crotch as fabric (base_mask): every one of those regions must exist
+	for s in ["female", "male"]:
+		var sc: Node3D = load(str(man.bodies[s].glb)).instantiate()
+		var bm: MeshInstance3D = sc.find_child("body", true, false)
+		var uv2: PackedVector2Array = bm.mesh.surface_get_arrays(0)[Mesh.ARRAY_TEX_UV2]
+		var have := {}
+		for u in uv2: have[int(u.x + 0.5)] = true
+		var miss := []
+		for r in CharBody.BASE_REGIONS:
+			if not have.has(man.regions.find(r)): miss.append(r)
+		_check(miss.is_empty(), "%s (UBC): the base layer's regions are all on the body (missing %s)" % [s, miss])
+		sc.free()
 	_check(CharBody.base_mask() != 0, "base_mask covers %s" % [CharBody.BASE_REGIONS])
 
 func _presets_data() -> void:

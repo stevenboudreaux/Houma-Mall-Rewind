@@ -38,8 +38,8 @@ CFG = "export_presets.cfg"
 ALL_MAPS = [pack_list.map_name(f) for f in pack_list.FEATURE]
 SKIP_EXT = (".import", ".uid", ".md", ".py", ".blend", ".blend1")
 # the patterns the wing presets exclude, so these files are only in the shared packs. characters.json
-# stays in the wing packs (small; the game reads it before the character pack arrives).
-WING_EXCLUDES = ["models/bl_*", "models/characters/*.glb", "models/characters/*.png", "prizes/*"]   # prizes/*: PRIZES (Nov 3)
+# (int-52: models/ubc/ubc.json) stays in the wing packs (small; the game reads it before the character pack arrives).
+WING_EXCLUDES = ["models/bl_*", "models/characters/*.glb", "models/characters/*.png", "models/ubc/*.gltf", "models/ubc/*.bin", "models/ubc/*.png", "prizes/*"]   # prizes/*: PRIZES (Nov 3)
 
 
 def project_files():
