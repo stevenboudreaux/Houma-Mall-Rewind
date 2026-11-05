@@ -79,9 +79,9 @@ static func inside(F_):
 	F.side_q(G, "in_sp_corrugated", 0.04, 14.15, 19.7, 0.3, 2.9, 1.0, 0.0, 0.0, 5.55 / 2.4, 1.0)
 	mug_wall(G, GS, 0.04, 20.35, D - 0.4, 1.0, rng, true)
 	# right wall: tees face-out, tumblers and bottles, hoodies
-	F.side_merch("f26_tees_dark", LN - 0.02, -1.0, 1.4, 7.3, 0.3, 2.9, 3.6, 0.9)
+	F.side_merch("in_sp_tee_rail", LN - 0.02, -1.0, 1.4, 7.3, 0.3, 2.9, 2.4, 2.6)
 	mug_wall(G, GS, LN - 0.04, 7.95, 13.5, -1.0, rng, true)
-	F.side_merch("f26_tees_dark", LN - 0.02, -1.0, 14.15, 19.7, 0.3, 2.9, 3.6, 0.9)
+	F.side_merch("in_sp_tee_rail", LN - 0.02, -1.0, 14.15, 19.7, 0.3, 2.9, 2.4, 2.6)
 	F.side_q(G, "in_sp_corrugated", LN - 0.04, 20.35, D - 0.4, 0.3, 2.9, -1.0, 0.0, 0.0, 3.25 / 2.4, 1.0)
 	# back wall: brick with the framed tees over the cash wrap, the stock-room door at the left
 	F.front_q(G, "f26_brick", 0.0, LN, 0.0, CY, D - 0.03, 0.0, 0.0, LN / 0.9, CY / 0.6)
@@ -256,7 +256,7 @@ static func fill_mat(m, key, b_):
 		"concrete":
 			m.albedo_texture = b_.tex("spencers/concrete.png"); m.roughness = 0.35; m.metallic_specular = 0.6
 			m.uv1_triplanar = true; m.uv1_world_triplanar = true; m.uv1_scale = Vector3.ONE * 0.25
-		"tee_grid", "corrugated", "folded":
+		"tee_grid", "corrugated", "folded", "tee_rail":
 			m.albedo_texture = b_.tex("spencers/%s.png" % key); m.roughness = 0.55 if key != "corrugated" else 0.4
 			if key == "corrugated":
 				m.metallic = 0.4

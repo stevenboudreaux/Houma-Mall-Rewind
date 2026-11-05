@@ -164,6 +164,70 @@ def folded():
     save(noise(im, 2), "folded")
 
 
+def tee_rail():
+    """A wall bay of tees (015, 205-209): two rough plank shelves of folded tees in stacks above, a chrome
+    rail of tees hung face-out (0.75 m long), a low plank of folded stacks under them, on black slatwall (lighter than the tees, so dark tees read). Invented
+    prints only. 2.4 m wide x 2.6 m tall (y 0.3..2.9 on the wall)."""
+    W, H = 1024, 1110
+    im = Image.new("RGB", (W, H), (44, 44, 48))
+    d = ImageDraw.Draw(im)
+    for y in range(0, H, 22):          # slatwall grooves
+        d.line([(0, y), (W, y)], fill=(28, 28, 30), width=3)
+    px = W / 2.4                        # pixels per metre
+    def y_of(m):                        # wall height (m) -> row (the bay runs 0.3..2.9 m)
+        return int(H - (m - 0.3) * px)
+    bodies = [(24, 24, 26), (24, 24, 26), (128, 130, 136), (236, 236, 232), (238, 170, 196), (150, 34, 48), (40, 56, 110), (70, 110, 70)]
+    words = ["BAYOU", "NOPE", "LOUD", "GATOR", "GLOW", "WILD"]
+    f = ImageFont.truetype(BOLD, 26)
+    # the two plank shelves of folded stacks
+    for sh in (0.62, 2.05, 2.55):
+        ys = y_of(sh)
+        x = 10
+        while x < W - 90:
+            w = R.randint(96, 120)
+            c = R.choice(bodies)
+            hh = 11
+            for k in range(R.randint(5, 8)):
+                yy = ys - 6 - (k + 1) * hh
+                cc = jit(c, 8)
+                d.rectangle([x, yy, x + w, yy + hh - 1], fill=cc)
+                d.line([(x, yy + hh - 1), (x + w, yy + hh - 1)], fill=tuple(max(0, v - 30) for v in cc), width=1)
+            d.rectangle([x + w // 2 - 18, ys - 6 - hh * 2 + 2, x + w // 2 + 18, ys - 6 - hh + 8], fill=R.choice(NEON))
+            x += w + R.randint(10, 22)
+        d.rectangle([0, ys - 6, W, ys + 8], fill=(112, 82, 54))      # the rough plank
+        d.line([(0, ys - 6), (W, ys - 6)], fill=(150, 112, 76), width=2)
+    # the chrome rail and the face-out tees under it
+    yr = y_of(1.75)
+    d.rectangle([0, yr - 4, W, yr + 4], fill=(196, 198, 204))
+    n = 4
+    cw = W / n
+    for k in range(n):
+        cx = int(cw * k + cw / 2)
+        body = R.choice(bodies)
+        top = yr + 14
+        bot = y_of(1.0)
+        hw = int(cw * 0.36)
+        d.line([(cx, yr), (cx, top)], fill=(196, 198, 204), width=4)        # the hanger
+        d.polygon([(cx - hw, top + 8), (cx - 24, top), (cx + 24, top), (cx + hw, top + 8), (cx + hw + 40, top + 70), (cx + hw - 6, top + 92),
+                   (cx + hw - 6, bot), (cx - hw + 6, bot), (cx - hw + 6, top + 92), (cx - hw - 40, top + 70)], fill=body)
+        d.arc([cx - 26, top - 16, cx + 26, top + 18], 20, 160, fill=tuple(max(0, v - 30) for v in body), width=4)
+        ink = R.choice([c for c in NEON if abs(sum(c) - sum(body)) > 200] or [(250, 220, 40)])
+        cy = (top + bot) // 2 - 30
+        kind = k % 3
+        if kind == 0:
+            wd = R.choice(words)
+            tw = d.textlength(wd, font=f)
+            d.text((cx - tw / 2, cy - 14), wd, font=f, fill=ink)
+        elif kind == 1:
+            d.ellipse([cx - 46, cy - 46, cx + 46, cy + 46], fill=ink)
+            d.ellipse([cx - 24, cy - 16, cx - 8, cy], fill=body); d.ellipse([cx + 8, cy - 16, cx + 24, cy], fill=body)
+        else:
+            for s in range(4):
+                d.rectangle([cx - 56, cy - 34 + s * 20, cx + 56, cy - 26 + s * 20], fill=ink)
+        d.rectangle([cx + hw - 40, bot - 40, cx + hw - 14, bot - 20], fill=(250, 250, 250))   # the price tag
+    save(noise(im, 2), "tee_rail")
+
+
 if __name__ == "__main__":
-    concrete(); tee_grid(); corrugated(); mugwall(); folded()
+    concrete(); tee_grid(); corrugated(); mugwall(); folded(); tee_rail()
     print("wrote", sorted(f for f in os.listdir(OUT) if f.endswith(".png")))

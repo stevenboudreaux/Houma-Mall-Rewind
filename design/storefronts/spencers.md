@@ -36,8 +36,10 @@ Not Southland: a large mall Spencer's. It leaves Spencer's at ~257 (other stores
   ducts, track runs every 3 m; warm spots plus four pink / blue / amber accent washes.
 - Left wall, front to back: framed tees (1.4-7.3 m), brick pier, the mug wall (6 plank shelves, ~240 mugs
   as small 3D cylinders with handles), pier, corrugated peg wall, pier, tumblers.
-- Right wall: tees face-out (the ws/g `f26_tees_dark`), pier, tumblers and bottles, pier, tees, pier,
-  corrugated peg wall.
+- Right wall: tees (`tex/spencers/tee_rail.png`: folded stacks on two plank shelves, four tees hung
+  face-out on a chrome rail, a low plank of stacks; 015, 205-209), pier, tumblers and bottles, pier, tees,
+  pier, corrugated peg wall. (Nov 4: the first pass borrowed ws/g's `f26_tees_dark`, a through-the-glass
+  sheet of dark tees on near-black that read as wallpaper of symbols up close.)
 - Back wall: brick, a framed-tee panel over the black cash wrap with a plank top, register and an impulse
   rack; the stock-room door at the left.
 - Floor: four black gondolas of plank shelves with folded tees and boxed gifts (two lines, a cross aisle at
@@ -48,8 +50,14 @@ Not Southland: a large mall Spencer's. It leaves Spencer's at ~257 (other stores
 The whole layout inside (the video is a much bigger store: its fixtures were fitted into 12 x 24 m), the
 positions of the piers, the accent colours, the cash wrap at the back, every product.
 
-## Evidence (unbaked)
-`production/qa/evidence/interiors-spencers-*.jpg`.
+## Evidence (unbaked, probe-lit preview)
+`production/qa/evidence/interiors-spencers-2026-{doorway,aisle,teewall,rightwall,mugwall,cashwrap,lookingout,
+corrugated}-unbaked.jpg`. Not walk-tested in an export (the box was shared; preview only): the walk grid
+opening and the window obstacles should be tried with `tools/qa/doortest.py` in the integration build.
+
+## Layout hunk (`layout_2026.json`, for the hand merge)
+`walk` rows 112-123, columns 117-122 set to `1` (written by `tools/make_layout_2026.py`, `OPEN_2026_RECTS`).
+Nothing else in the file changed (`interiors_open` is a tool-side list, not read at run time).
 
 ## Rebake
 Wing 2, 2026 (`wing2_2026`); the 2026 walk grid changed (`layout_2026.json`), so wing 1's 2026 stand-in is
