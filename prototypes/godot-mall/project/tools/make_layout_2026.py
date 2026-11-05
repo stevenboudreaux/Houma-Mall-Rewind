@@ -102,6 +102,18 @@ while changed:
         if changed:
             break
 
+# ws/corner-2026 (Nov 4 2026, design/corner-2026-c2.md): once tools/layout_corner_c2.py has put
+# Orange Julius' 4 m court side (x = 12, z 6..10) into the shell as a 1995 wall, that side is Zales'
+# third bay in 2026 (IMG_4437 f001, IMG_4436, IMG_4492 t026_001). Inert while the wall is absent.
+CORNER_RETURN = ([12.0, 6.0], [12.0, 10.0])
+ZALES3 = False
+for e in merged:
+    if e["kind"] == "wall" and [round(v, 2) for v in e["a"]] == CORNER_RETURN[0] and [round(v, 2) for v in e["b"]] == CORNER_RETURN[1]:
+        o = owner.get(tile(e["a"][0] + 0.5, e["a"][1] + 0.5))
+        if o is not None and ST26[o]["name"] == "ZALES":
+            e["kind"] = "store"; e["store"] = ST26[o]["id"]; e["depth"] = 4.0
+            ZALES3 = True
+
 stores = {}
 for st in ST26:
     nm = st["name"]
@@ -116,6 +128,10 @@ for st in ST26:
         awning=bool(st.get("awning")), awningColor=st.get("awningColor"),
         entry=st.get("entry"), plain=bool(st.get("plain")), noSign=bool(st.get("noSign")),
         carpet=st.get("carpet"), font=font, has_front_image=False)
+if ZALES3:
+    for st in ST26:
+        if st["name"] == "ZALES":
+            stores[st["id"]]["bays"] = 3     # fronts26/store.gd zales(): one bay per front
 # the 1995 layout's own bookkeeping stores (exits, restrooms) the 2026 list may lack
 for sid, sd in L["stores"].items():
     if sid not in stores and sd["name"] in ("MEN", "WOMEN", "EXIT", "MAIN ENTRANCE"):
@@ -130,13 +146,20 @@ d95 = json.loads(re.search(r'<script[^>]*id="mall-data"[^>]*>(.*?)</script>', op
 for st in d95["stores"]:
     ST95[st["id"]] = st
 shut = 0
+# mall floor patches (leftovers) are never a shop's inside, whatever the 2D map's rect says
+# (ws/corner-2026: the 2D map's Orange Julius rect, x 10..16, overlaps the court patch x 2..12)
+FLOOR = set()
+for r in L.get("leftovers", []):
+    for ty in range(int(r[1] / S + OY), int(r[3] / S + OY)):
+        for tx in range(int(r[0] / S + OX), int(r[2] / S + OX)):
+            FLOOR.add((tx, ty))
 for sid in L.get("interiors_open", []):
     if sid in KEEP_OPEN or sid not in ST95:
         continue
     st = ST95[sid]
     for y in range(st["y"], st["y"] + st["h"]):
         for x in range(st["x"], st["x"] + st["w"]):
-            if walk[y][x] == "1":
+            if walk[y][x] == "1" and (x, y) not in FLOOR:
                 walk[y][x] = "0"; shut += 1
 
 # workstream GI (Nov 2 2026): games, inc. (s52) is walked end to end in the footage, but Blockbuster

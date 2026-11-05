@@ -98,6 +98,12 @@ year button and its time-travel toggle ("1990s" / "2026" on the switch, "Loads W
 loading title ("Wing 1 · 1990s"). Internal ids stay 1995: scene names (`wing1.tscn`), `?year=`, storage keys
 (`mall-state-1995`, `mall.tickets-1995`), data (`"year": 1995`), prints. The fun facts keep their real dates.
 
+## The C2 / main-entrance corner (Nov 4, ws/corner-2026): APPLIED (Steven's yes, Nov 4)
+Zales holds both 1995 stalls (Franks + Orange Julius) with three bays, and the footage shows the
+court stepping 4 m south in front of Franks (a return wall, Zales' middle bay faces west), which the
+Oct 8 re-cut flattened. Analysis, mismatches, the proposed rects and Steven's questions:
+`design/corner-2026-c2.md`. Applied by `tools/layout_corner_c2.py` (Steven's yes, Nov 4); merged in int-52.
+
 ## Next
 - Build the 2026 storefronts from the footage, one by one (frame references are in the report's
   "Reference frames" table and the per-clip notes). The signs are done (Demo 43).

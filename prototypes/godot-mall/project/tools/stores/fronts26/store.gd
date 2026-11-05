@@ -661,6 +661,9 @@ static func phones_row(x, d, w, y, n):
 ## lit cases on cherry bases, portrait posters (refs/new/woolworth_corner t026_001-009, IMG_4437,
 ## IMG_4492 f014-f015). The 1995 Frank's/Orange Julius front is left as it was.
 static func zales(sd, e):
+	if int(sd.get("bays", 0)) == 3:
+		zales_bay()
+		return
 	var rec = 1.6
 	var px0 = 3.6
 	var px1 = 4.4
@@ -697,6 +700,75 @@ static func zales(sd, e):
 	front_q(G, "f26_posters", 2.0, 3.0, 1.3, 2.6, 7.95, 0.25, 0.0, 0.5, 1.0)
 	front_q(G, "f26_posters", 5.0, 6.0, 1.3, 2.6, 7.95, 0.75, 0.0, 1.0, 1.0)
 	ob_room(8.0)
+
+## Zales over Franks + Orange Julius (ws/corner-2026, Steven's yes Nov 4, design/corner-2026-c2.md;
+## tools/layout_corner_c2.py gives Zales three fronts and "bays": 3):
+## one roll-grille bay per front, as filmed (IMG_4437 f001-f002, IMG_4435-4436, IMG_4432,
+## refs/new/woolworth_corner IMG_4492 t026_001-005). Cream stack-bond wall, a chocolate-brown
+## wainscot 1.2 m on the piers, a ZALES over each opening, half-dome sconces either side.
+## C: Franks' court front (10 m, an ~8 m opening), the room behind it 6 m deep;
+## B: Orange Julius' court side (4 m, faces west), open into A's room;
+## A: Orange Julius' entrance-hall front (4 m), the room x 12..16, 10 m deep, its west side open
+## for its first 4 m (that is bay B). Insides: lit cases on cherry bases, portrait posters.
+static func zales_bay():
+	var side = nn.x < -0.5                # B, the court return
+	var big = LN > 6.0                    # C, Franks' front
+	var pw = 0.6 if big else 0.5          # pier width at each end
+	var oh = 3.0                          # opening height
+	var D = 6.0 if big else 10.0
+	var wall_c = "#ece6da"
+	# the room (B has none: it opens into A's)
+	if big:
+		room(D, wall_c, "#b8aa98", "white", 3.0)
+	elif not side:
+		col("#b8aa98")
+		bb.quad(G, "vcolor", [P(0, 0.003, 0), P(LN, 0.003, 0), P(LN, 0.003, D), P(0, 0.003, D)], UP)
+		col(wall_c)
+		side_q(G, "vcolor_matte", 0.02, 0.0, D, 0.0, 3.0, 1.0)
+		side_q(G, "vcolor_matte", LN - 0.02, 4.0, D, 0.0, 3.0, -1.0)
+		bb.quad(G, "vcolor_matte", [P(LN, 0, D), P(0, 0, D), P(0, 3.0, D), P(LN, 3.0, D)], nn)
+		bb.cur_color = Color.WHITE
+		var cp = [P(0, 3.0, 0), P(LN, 3.0, 0), P(LN, 3.0, D), P(0, 3.0, D)]
+		var cuv = []
+		for p in cp:
+			cuv.append(Vector2(p.x / 0.61, p.z / 1.22))
+		bb.quad(G, "kb_ceiling", cp, Vector3.DOWN, cuv)
+		for d3 in [1.5, 5.0, 8.5]:
+			var l = bb.add_omni(P(LN * 0.5, 2.6, d3), 0.45, 4.0, Color(1.0, 0.96, 0.9))
+			bb.tag(l, "", 0.4, 0.45)
+	# the front: fascia over the opening, the piers with their wainscot
+	col(wall_c)
+	bx(G, "vcolor_matte", 0.0, oh, -0.16, LN, bb.LANE_H - oh, 0.16)
+	for px0 in [0.0, LN - pw]:
+		bx(G, "vcolor_matte", px0, 1.2, -0.16, pw, oh - 1.2, 0.16)
+		col("#3a2a22")
+		bx(G, "vcolor", px0 - 0.005, 0.0, -0.17, pw + 0.01, 1.2, 0.18)
+		col(wall_c)
+	bb.cur_color = Color.WHITE
+	# sconces either side of the opening
+	for sx in [pw * 0.5, LN - pw * 0.5]:
+		col("#2a2420")
+		bx(GS, "vcolor", sx - 0.11, 2.62, -0.24, 0.22, 0.1, 0.1)
+		col("#fff2d8")
+		bx(GD, "f26_glow", sx - 0.1, 2.72, -0.23, 0.2, 0.06, 0.08, [], true)
+	bb.cur_color = Color.WHITE
+	var S = S26.for_store("ZALES")
+	S26.build(bb, G + "_sg26", "ZALES", P(LN * 0.5, 3.6, -0.17), nn, min(LN - 1.4, 3.0), 0.6, S)
+	# the cases and posters
+	if big:
+		showcase(LN * 0.5, 1.2, LN - 2.4, 0.6, "#6a2a1e", "f26_jewelry")
+		showcase(LN - 0.6, 3.6, 0.6, 2.4, "#6a2a1e", "f26_jewelry")
+		showcase(0.6, 3.6, 0.6, 2.4, "#6a2a1e", "f26_jewelry")
+		front_q(G, "f26_posters", 2.5, 3.5, 1.3, 2.6, D - 0.05, 0.25, 0.0, 0.5, 1.0)
+		front_q(G, "f26_posters", 6.5, 7.5, 1.3, 2.6, D - 0.05, 0.75, 0.0, 1.0, 1.0)
+		ob_room(D)
+	elif not side:
+		showcase(LN * 0.5, 1.2, LN - 1.6, 0.6, "#6a2a1e", "f26_jewelry")
+		showcase(0.6, 6.0, 0.6, 3.0, "#6a2a1e", "f26_jewelry")
+		front_q(G, "f26_posters", 1.5, 2.5, 1.3, 2.6, D - 0.05, 0.5, 0.0, 0.75, 1.0)
+		ob_room(D)
+	else:
+		showcase(LN * 0.5, 1.6, LN - 1.6, 0.6, "#6a2a1e", "f26_jewelry")
 
 # ------------------------------------------------------------------ 1995 insides
 ## Behind the 1995 sign-pass fronts of three stores (Steven's Oct 28 sprint, step 7), in place of

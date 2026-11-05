@@ -46,7 +46,8 @@ Cakelicious inside; which way Lids' window and entry sit (from f005's angle).
   its fascia set back with it, the right bay at the front line; a ZALES (Demo 43 spec) over each bay,
   sconces on the pier, cherry cases. Frames refs/new/woolworth_corner t026_001–009. **Guessed:** the
   recess depth (1.6 m) and which bay is recessed (read from t026_003–005, the camera moving; say if it
-  is the other way). 1995 (Frank's, Orange Julius) unchanged: the frames are 2026 only, and the
+  is the other way). **Superseded by the proposal `design/corner-2026-c2.md` (Nov 4): three bays over
+  Franks + Orange Julius, `zales_bay()`, used once `tools/layout_corner_c2.py` is applied.** 1995 (Frank's, Orange Julius) unchanged: the frames are 2026 only, and the
   recess is not in the 1995 facade record.
 - **The Billiard Room / Woolworth corner** ("still doesn't look quite right"): in 2026 the left glass
   run (toward Aéropostale) stands 1.1 m proud of the black fascia, frameless, with a glass return back

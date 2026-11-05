@@ -31,8 +31,8 @@ const PLACES = [
 	{"a": [-36.0, -86.0], "b": [-10.0, -86.0], "ads": [[0.3, "vision_plaza"], [0.7, "concepts"]]},
 	# Sears hall east, the south wall (20 m)
 	{"a": [2.0, -86.0], "b": [22.0, -86.0], "ads": [[0.3, "radiofone"], [0.7, "scatterbars"]]},
-	# Franks' side wall on the east hall (10 m), under the neon
-	{"a": [2.0, 6.0], "b": [2.0, 16.0], "ads": [[0.27, "dippin_dots"], [0.73, "gumballs"]]},
+	# Franks' side wall on the east hall (6 m, z 10..16), under the neon
+	{"a": [2.0, 10.0], "b": [2.0, 16.0], "ads": [[0.28, "dippin_dots"], [0.72, "gumballs"]]},
 ]
 
 static func build(b):

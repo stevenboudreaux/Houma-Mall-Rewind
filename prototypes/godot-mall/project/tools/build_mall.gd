@@ -2794,6 +2794,10 @@ func build():
 		# workstream S: in an anchor's own wing (4, 5) only its frontage is built for real
 		if (in_wing(edge_wing(e)) and not ROOM_WINGS.has(WING)) or (ROOM_WINGS.has(WING) and e.get("store") == ROOM_WINGS[WING].store):
 			build_edge(e)
+			# ws/corner-2026: a wall with walkable floor on both sides (Orange Julius' court side,
+			# tools/layout_corner_c2.py) is a collider too; the walk grid alone cannot close it
+			if e.kind == "wall" and e.get("solid", false):
+				obst(["rect", min(e.a[0], e.b[0]) - 0.1, min(e.a[1], e.b[1]) - 0.1, max(e.a[0], e.b[0]) + 0.1, max(e.a[1], e.b[1]) + 0.1])
 		else:
 			standin_edge(e)
 	hall_mouths()

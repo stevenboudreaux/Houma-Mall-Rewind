@@ -34,3 +34,6 @@ Run the .gd tools with `godot --headless --path . --script res://tools/qa/<tool>
   - `wsS_webtest.py <url-path> <out> [1995|2026] [sears,dillards,cinema,jump]`: the same on a web export, with screenshots (the opening's picture, the crossing card, inside, back; the gate down / locked / up / lobby / after a reload).
   - `doortest.py <url-path> <out> [wing cam to-wing [2026]]` now takes any wing's door or threshold, e.g. `4 -4,-144.4,180,0 3` (Sears side exit), `5 28.4,98.2,90,0 3`, `6 -60,-84.7,180,0 1`.
   - `movetest.py`, `packformats.py`, `frametimes.py` take the wing in the URL / the pack paths: `index.html?wing=4`, `w4.desktop.pck` etc.
+- `corner_walk_test.gd [-- --year=2026]` (ws/corner-2026, Nov 4 2026; design/corner-2026-c2.md): headless walks at the
+  C2 / main-entrance corner: the court patch to Franks' front, Orange Julius' plain court wall in 1995 (Zales' front
+  in 2026), OJ's walk-up front, the patch from the east hall. Prints `CORNER WALK OK (<year>)`.
