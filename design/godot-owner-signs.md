@@ -9,7 +9,8 @@
   - the eight Kay-Bee department boards (`kb.dept.1` to `kb.dept.8`; both faces of a board change together).
 - **Who is the owner:** any browser where the mall editor has been unlocked (localStorage `southland-editor` = `1`, set by the main game's secret code), or any visit with `?owner=1` added to the play URL. Being the owner only shows the buttons; publishing still needs a GitHub token with write access.
 - **Editing:**
-  - The owner sees **Edit signs** and **Publish signs** at the top left.
+  - The owner sees **Edit signs** and **Publish signs** in the menu's **OWNER** tab, TOOLS (since Nov 4,
+    design/godot-owner-mode.md; they were at the top left). Turning Edit signs on closes the menu.
   - With Edit signs on, tap or click a sign within about 16 m. A text box opens: type the new words, or leave it empty to restore the original.
   - The change shows at once. It is kept in this browser (localStorage `southland-signs-draft`) until it is published.
 - **Publishing:**

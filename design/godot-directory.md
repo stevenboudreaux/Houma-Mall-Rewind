@@ -161,6 +161,11 @@ history of the options: `design/godot-directory-legibility.md`.
   - Otherwise the other wing's or year's file loads at that spot, through `_go_to_wing`, which now
     takes an optional year.
 
+## The owner directory (Nov 4 2026)
+The owner also has the store list in the menu (OWNER, DIRECTORY; design/godot-owner-mode.md): the stores
+on the sign (`hotspots.json`) for either year with their jump spots, the same "Jump to this store?" and
+`player.jump_to`, and the year switch. Visitors still walk to a kiosk.
+
 ## 1995: the 1994 list vs the game's 1995 map
 **The map follows the game's 1995 map; numbers and categories follow the 1994 list.** Each number
 goes with the store, not the spot. Differences:

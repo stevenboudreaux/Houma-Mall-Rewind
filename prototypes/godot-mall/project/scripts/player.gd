@@ -615,7 +615,7 @@ func owner_hud_sync() -> void:
 	# OWNER (design/godot-owner-mode.md): the owner's toggles and Shirt words are in the menu's OWNER
 	# tab (scripts/menu/menu.gd tucks them away), so the corner column starts at the top for everyone;
 	# the owner gets the year switch back (Steven, Nov 4: every old corner button, for him)
-	var top := 8
+	var top := 40 if own and owner_hud_on else 8   # under the owner's fps line (it reaches across a phone)
 	year_btn.visible = own and not vr_on
 	_year_btn_owner = own
 	jump_open_btn.offset_top = top; jump_open_btn.offset_bottom = top + 32

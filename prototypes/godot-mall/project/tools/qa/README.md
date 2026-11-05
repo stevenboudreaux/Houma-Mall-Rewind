@@ -34,3 +34,10 @@ Run the .gd tools with `godot --headless --path . --script res://tools/qa/<tool>
   - `wsS_webtest.py <url-path> <out> [1995|2026] [sears,dillards,cinema,jump]`: the same on a web export, with screenshots (the opening's picture, the crossing card, inside, back; the gate down / locked / up / lobby / after a reload).
   - `doortest.py <url-path> <out> [wing cam to-wing [2026]]` now takes any wing's door or threshold, e.g. `4 -4,-144.4,180,0 3` (Sears side exit), `5 28.4,98.2,90,0 3`, `6 -60,-84.7,180,0 1`.
   - `movetest.py`, `packformats.py`, `frametimes.py` take the wing in the URL / the pack paths: `index.html?wing=4`, `w4.desktop.pck` etc.
+
+## Owner mode (design/godot-owner-mode.md, Nov 4 2026)
+- `owner_test.gd -- --wing=6 --out=…` (native, xvfb): owner vs visitor screen, the OWNER tab's directory (list, question, jump, year keys) and tools, then the owner's Y year switch.
+- `pictures_test.gd -- --wing=1 [--year=2026] --out=…` (native, xvfb): the owner's pictures on framed ads and poster panels, chooser and publisher mocked.
+- `pictures_publish_test.js` (Node): `window.mallPictures.publish` against a mocked GitHub contents API.
+- `pictures_pick_webtest.js [shot.png]` (Node + Playwright): the page's picture chooser (shrink to 1024 px JPEG, Cancel, Original picture).
+- `arcade_nes_webtest.js [evidence-dir]` (Node + Playwright): NES-only cabinets, `emu.html` served locally, GitHub and the emulator CDN mocked. `arcade_nes_shot.gd -- --id=pc.video.37 --out=…`: an NES cabinet, natively.
