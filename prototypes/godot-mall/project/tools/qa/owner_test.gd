@@ -311,7 +311,7 @@ func _plan() -> void:
 			menu = p2.get_node("Menu")
 		, 3.0)
 	_do(func():
-		_check(player.year_btn.is_visible_in_tree() and player.year_btn.text.contains("1995"), "owner in 2026: the year button reads '%s'" % player.year_btn.text)
+		_check(player.year_btn.is_visible_in_tree() and player.year_btn.text.contains("1990s"), "owner in 2026: the year button reads '%s'" % player.year_btn.text)   # int-52: ws/items names the year "1990s"
 		_shot("owner-game-2026-1280x720"), 0.1)
 	_do(func():
 		if errors.is_empty():

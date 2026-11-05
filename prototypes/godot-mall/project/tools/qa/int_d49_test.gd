@@ -116,7 +116,13 @@ func _process(_dt: float) -> bool:
 			if t == 10:
 				var st = p.get_node_or_null("Story")
 				_check(int(p.year) == 2026 and int(p.wing) == 2, "wing 2, 2026")
-				_check(st != null and st.attendants.is_empty(), "no attendant made in wing 2 2026 (%d)" % (st.attendants.size() if st else -1))
+				# int-52: ws/interiors staffs three 2026 counters in wing 2 (Great American Cookies, Auntie Anne's,
+				# Spencer's); Games, Inc. still has nobody (the spot check below)
+				var want26 := 0
+				for a in JSON.parse_string(FileAccess.get_file_as_string("res://data/story/attendants.json")).attendants:
+					if int(a.get("wing", 0)) == 2 and (a.get("years", []) as Array).has(2026.0):
+						want26 += 1
+				_check(st != null and st.attendants.size() == want26, "wing 2 2026 makes only its listed attendants (%d of %d)" % [st.attendants.size() if st else -1, want26])
 				var near := 0
 				for n in current_scene.find_children("*", "Node3D", true, false):
 					if n.get_script() and str(n.get_script().resource_path).contains("attendant") and n.global_position.distance_to(Vector3(-111.1, 0, 66.3)) < 3.0:
