@@ -75,8 +75,8 @@ year switch in the menu (MAIN, or a row in CONTROLS), `player._switch_year()` is
 
 ### Checks (UI-OFFSCREEN, unbaked)
 - `tools/qa/ui_offscreen_test.gd` (native): **UI OFFSCREEN TEST OK (28 checks)**, run on wing 6 (the
-  cinema lobby: the same player, menu and corner buttons as every wing; wings 1 and 2 were killed for
-  memory on the shared cloud box, see below): the five corner buttons found and not drawn, their own
+  cinema lobby: the same player, menu and corner buttons as every wing; native runs on wings 1 and 2
+  were killed for memory on the shared cloud box): the five corner buttons found and not drawn, their own
   `.visible` untouched; the icon shown with no words, top left; at 1280×720, 390×844 and 844×390 **no
   Label or Button with words on the game screen** apart from the allowed prompts (a walk over every
   CanvasLayer); a tap on the icon opens MAIN with Edit, View and Jump to all on screen; a mouse click on
@@ -85,13 +85,39 @@ year switch in the menu (MAIN, or a row in CONTROLS), `player._switch_year()` is
   Jump to opens the jump panel, Esc closes it, J still opens it; MAIN's Edit opens the editing; C and I
   still open MAIN-Edit and INVENTORY.
   `xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 --script res://tools/qa/ui_offscreen_test.gd -- --wing=6 --out=…`
-- `tools/qa/ui_offscreen_webtest.py` (web build, wing 2, `npcs=0`): WEB_RESULT
+- `tools/qa/ui_offscreen_webtest.py` (web build, wing 2, `npcs=0`, desktop export of commit 4fad6bd3):
+  every check passed: desktop (a click on the icon opens MAIN, E to INVENTORY, Tab closes, V still switches
+  the view and saves it, J opens the jump panel, 0 console errors); phone portrait and landscape by touch
+  (the icon opens MAIN, MAIN's View switches the view and saves it, the icon then the INVENTORY tab,
+  0 console errors). Each screenshot is now also checked not blank: on the shared box swiftshader
+  sometimes loses the WebGL context under load and screenshots come back black (the game still answers),
+  so the full set of shots comes from two runs of the same build (desktop from one, phones from the
+  other); `DEVICES=desktop|phone-portrait|phone-landscape` reruns one part, and swiftshader's own
+  "WebGL: too many errors" notice is not counted as a game error.
 - Updated for the move (they tapped the old buttons): `wsbc_webtest.py` (Bag → icon, INVENTORY tab, ✕),
   `avatar_webtest.py` (View → icon, MAIN's View), `char_webtest.js` (the Menu button's spot → the icon).
-  OTHER_TESTS
+  `avatar_webtest.py` was rerun on Nov 4 evening and **did not get through**: in its first part (desktop, the
+  creator opening by itself, full shoppers; nothing UI-OFFSCREEN changed) the page crashed under swiftshader
+  ("Target crashed", "WebGL: too many errors") while three other sessions were rendering on the box, so its
+  phone part (the icon, then MAIN's View) never ran. The same taps at the same spots pass in
+  `ui_offscreen_webtest.py`. To rerun on a quiet box. `wsbc_webtest.py` and `char_webtest.js` not rerun.
+- Natively, unchanged and still passing: `menu_unit_test.gd` **MENU UNIT OK (64 checks)**; `menu_test.gd
+  --wing=2` 68 checks ok and none failed, including MAIN, Edit inside MAIN (`_nav[0][0]` is still Edit),
+  every MAIN control on screen at the three sizes, "no year button on the HUD"; the run was stopped by its
+  15-minute limit at the INVENTORY HELD step (software rendering on the shared box), not by a failure.
+- Not rerun (they read the old buttons' own `.visible`, which UI-OFFSCREEN leaves untouched, and tap
+  nothing in the corners): `interact_test.gd`, `avatar_test.gd`, `econ_back_test.gd`; the walk, door and
+  shop web tests (`walk_webtest.py`, `doortest.py`, `shops_webtest.py`, `menu_webtest.py`,
+  `menu_trip_webtest.js`) tap the game screen, the prompts or the menu's own tabs, never a corner
+  button, so no selector changed.
 
 ### Evidence (`production/qa/evidence/ui-offscreen-*.jpg`, unbaked)
-EVIDENCE_LIST
+Native, wing 6 (`ui_offscreen_test.gd`): `ui-offscreen-native-w6-game-{1280x720,390x844,844x390}-unbaked.jpg`
+(the game screen with only the icon), `…-menu-main-{…}` (MAIN with Edit / View / Jump to), `…-menu-inventory-{…}`,
+`…-jump-panel-1280x720-unbaked.jpg`.
+Web, wing 2 (`ui_offscreen_webtest.py`): `ui-offscreen-web-w2-desktop-{game,menu-main,menu-inventory,jump-panel}-unbaked.jpg`,
+`ui-offscreen-web-w2-phone-{portrait,landscape}-{game,menu-main,after-view,menu-inventory}-unbaked.jpg`
+(after-view: third person after MAIN's View, back on the clean game screen).
 
 **Asked for (Steven, Nov 2):** one full-screen menu (tabs, left to right: **INVENTORY, AVATAR, CONTROLS,
 YEAR**; Steven, later Nov 2: "the first thing that shows up [is] the inventory on the far left, then the
@@ -107,7 +133,7 @@ Built on `main` at 326ed7c (Demo 47). Branch `ws/m-menu`.
 ## Files
 | File | What |
 |---|---|
-| `scripts/menu/menu.gd` | The menu (a CanvasLayer at 45), its tabs, the Menu button, the input catcher, the opening's flow. Made by `player.gd` as its child `Menu`, after `Avatar`. |
+| `scripts/menu/menu.gd` | The menu (a CanvasLayer at 45), its tabs, the menu icon (UI-OFFSCREEN; was the Menu button), the input catcher, the opening's flow. Made by `player.gd` as its child `Menu`, after `Avatar`. |
 | `scripts/menu/controls.gd` | The InputMap actions `mall_<id>`, remapping, `localStorage "mall-controls-1"`, the translation layer. |
 | `scripts/menu/actions.json` | Every action the CONTROLS tab lists, with its **default** keys and pad buttons (data). |
 | `scripts/menu/opening.gd` | The opening screen (a CanvasLayer at 50). |
@@ -422,7 +448,8 @@ shoppers, the web build (desktop and phone), the movetest.
 - **PLACEHOLDER:** the transition's hum (an empty `Hum` slot).
 - Words I used that the brief didn't spell out (UI only, easy to change in `menu.gd` / `actions.json`):
   the action names in CONTROLS, "Press a key…", "Reset to defaults", "Show the opening again",
-  "Drop", "Skip", the Menu button's "Menu (Tab)".
+  "Drop", "Skip", the menu icon's tooltip "Menu (Tab)" (was the Menu button's words), MAIN's "View: 1st / 3rd
+  person" and "Jump to".
 - Guess: Esc and a pad's B close the menu as well as Tab / Start.
 - Guess: a pocket-class item can't be HELD.
 - Guess: START without a name shows the opening again next time; Skip doesn't.

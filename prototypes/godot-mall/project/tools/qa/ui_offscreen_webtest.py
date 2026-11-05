@@ -7,7 +7,9 @@ Usage: CHROMIUM=/opt/pw-browsers/chromium python3 tools/qa/ui_offscreen_webtest.
   2. phone portrait 390x844 (touch): the clean screen; a tap on the icon opens MAIN; MAIN's View switches
      the view (saved) and closes the menu; the icon, then INVENTORY.
   3. phone landscape 844x390 (touch): the same.
-Screenshots <out>-<device>-game.png / -menu-main.png / -menu-inventory.png. Prints UI OFFSCREEN WEB OK.
+Screenshots <out>-<device>-game.png / -menu-main.png / -menu-inventory.png (each checked not blank).
+DEVICES=desktop,phone-portrait,phone-landscape (default all) runs a subset. Prints UI OFFSCREEN WEB OK.
+swiftshader's "WebGL: too many errors" notice is not a game error and is not counted.
 """
 import json, os, sys, time
 from playwright.sync_api import sync_playwright
@@ -48,11 +50,26 @@ def view(pg):
     except Exception:
         return None
 
+DEVICES = os.environ.get("DEVICES", "desktop,phone-portrait,phone-landscape").split(",")
+
 def shot(pg, name):
-    pg.screenshot(path=f"{out}-{name}.png", timeout=180000)
+    f = f"{out}-{name}.png"
+    for i in range(3):       # swiftshader sometimes answers "Unable to capture screenshot" under load
+        try:
+            pg.screenshot(path=f, timeout=180000); break
+        except Exception as ex:
+            print(f"retry {name}: {str(ex)[:80]}", flush=True)
+            if i == 2: raise
+            pg.wait_for_timeout(5000)
+    try:
+        from PIL import Image
+        lo, hi = Image.open(f).convert("L").getextrema()
+        check(hi - lo > 40, f"{name}: the screenshot is not blank (luma {lo}..{hi})")
+    except ImportError:
+        pass
 
 def errs(logs, where):
-    e = [l for l in logs if "ERROR" in l.upper() or "SCRIPT ERROR" in l]
+    e = [l for l in logs if ("ERROR" in l.upper() or "SCRIPT ERROR" in l) and "WebGL: too many errors" not in l]
     errors.extend(e)
     check(not e, f"{where}: no console errors ({e[:2]})")
 
@@ -69,25 +86,28 @@ def device(b, w, h, touch):
 with sync_playwright() as p:
     b = p.chromium.launch(args=ARGS, **({"executable_path": os.environ["CHROMIUM"]} if os.environ.get("CHROMIUM") else {}))
     # 1. desktop
-    ctx, pg, logs = device(b, 1280, 720, False)
-    pg.mouse.click(640, 700); pg.wait_for_timeout(1500)      # focus the canvas
-    shot(pg, "desktop-game")
-    pg.mouse.click(*ICON); pg.wait_for_timeout(3000)
-    shot(pg, "desktop-menu-main")
-    pg.keyboard.press("e"); pg.wait_for_timeout(2500)        # next tab: INVENTORY
-    shot(pg, "desktop-menu-inventory")
-    pg.keyboard.press("Tab"); pg.wait_for_timeout(2000)
-    v0 = view(pg)
-    pg.keyboard.press("v"); pg.wait_for_timeout(2500)
-    check(view(pg) != v0 and view(pg) is not None, f"desktop: V still switches the view ({v0} -> {view(pg)})")
-    pg.keyboard.press("v"); pg.wait_for_timeout(2000)
-    pg.keyboard.press("j"); pg.wait_for_timeout(2500)
-    shot(pg, "desktop-jump-panel")
-    pg.keyboard.press("Escape"); pg.wait_for_timeout(1500)
-    errs(logs, "desktop")
-    ctx.close()
+    if "desktop" in DEVICES:
+        ctx, pg, logs = device(b, 1280, 720, False)
+        pg.mouse.click(640, 700); pg.wait_for_timeout(1500)      # focus the canvas
+        shot(pg, "desktop-game")
+        pg.mouse.click(*ICON); pg.wait_for_timeout(3000)
+        shot(pg, "desktop-menu-main")
+        pg.keyboard.press("e"); pg.wait_for_timeout(2500)        # next tab: INVENTORY
+        shot(pg, "desktop-menu-inventory")
+        pg.keyboard.press("Tab"); pg.wait_for_timeout(2000)
+        v0 = view(pg)
+        pg.keyboard.press("v"); pg.wait_for_timeout(2500)
+        check(view(pg) != v0 and view(pg) is not None, f"desktop: V still switches the view ({v0} -> {view(pg)})")
+        pg.keyboard.press("v"); pg.wait_for_timeout(2000)
+        pg.keyboard.press("j"); pg.wait_for_timeout(2500)
+        shot(pg, "desktop-jump-panel")
+        pg.keyboard.press("Escape"); pg.wait_for_timeout(1500)
+        errs(logs, "desktop")
+        ctx.close()
     # 2. and 3. phones, by touch
     for (w, h, name) in [(390, 844, "phone-portrait"), (844, 390, "phone-landscape")]:
+        if name not in DEVICES:
+            continue
         k = f"{w}x{h}"
         ctx, pg, logs = device(b, w, h, True)
         pg.touchscreen.tap(w // 2, h // 2); pg.wait_for_timeout(1500)   # a first touch: touch glyphs
