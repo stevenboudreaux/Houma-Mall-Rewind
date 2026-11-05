@@ -36,7 +36,12 @@ HAIRS = {
 ALIASES = {"hair_shoulder": "hair_long", "hair_puffs": "hair_buns", "hair_crew": "hair_buzzed",
            "hair_sidepart": "hair_simpleparted", "hair_bowl": "hair_simpleparted", "hair_fade": "hair_buzzed",
            "hair_balding": "hair_buzzed", "hair_elderly": "hair_simpleparted", "hair_perm": "hair_buns",
-           "hair_braids": "hair_long"}
+           "hair_braids": "hair_long",
+           # garments not made for the UBC bodies yet: the closest one stands in (design note "Stand-ins")
+           "shoe_dressshoes": "shoe_sneakers", "shoe_boots": "shoe_sneakers", "shoe_sandals": "shoe_sneakers",
+           "top_buttondown": "top_polo", "top_cardigan": "top_flannel", "top_tank": "top_tee", "top_babytee": "top_tee",
+           "bot_widejeans": "bot_jeans", "bot_skirt": "bot_slacks", "bot_longshorts": "bot_khakis",
+           "bot_shortshorts": "bot_khakis", "bot_overalls": "bot_jeans", "x_cap_fwd": "x_cap_back"}
 SCALP = 0.002
 
 

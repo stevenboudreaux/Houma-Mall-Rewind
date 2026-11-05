@@ -45,7 +45,8 @@ static func manifest_path() -> String:
 	elif OS.has_feature("web"):
 		var q = JavaScriptBridge.eval("(function(){try{return new URLSearchParams(location.search).get('chars')||localStorage.getItem('mall-chars-body')||''}catch(e){return ''}})()")
 		want = str(q) if q != null else ""
-	if want != "mh" and FileAccess.file_exists(MANIFEST_UBC):
+	# the UBC bodies only when their files are here too (a pack without them keeps the B1 bodies)
+	if want != "mh" and FileAccess.file_exists(MANIFEST_UBC) and ResourceLoader.exists("res://models/ubc/body_female.gltf"):
 		return MANIFEST_UBC
 	return MANIFEST
 

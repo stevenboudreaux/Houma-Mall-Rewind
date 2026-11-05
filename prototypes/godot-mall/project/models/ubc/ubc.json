@@ -5585,6 +5585,19 @@
 		"hair_balding": "hair_buzzed",
 		"hair_elderly": "hair_simpleparted",
 		"hair_perm": "hair_buns",
-		"hair_braids": "hair_long"
+		"hair_braids": "hair_long",
+		"shoe_dressshoes": "shoe_sneakers",
+		"shoe_boots": "shoe_sneakers",
+		"shoe_sandals": "shoe_sneakers",
+		"top_buttondown": "top_polo",
+		"top_cardigan": "top_flannel",
+		"top_tank": "top_tee",
+		"top_babytee": "top_tee",
+		"bot_widejeans": "bot_jeans",
+		"bot_skirt": "bot_slacks",
+		"bot_longshorts": "bot_khakis",
+		"bot_shortshorts": "bot_khakis",
+		"bot_overalls": "bot_jeans",
+		"x_cap_fwd": "x_cap_back"
 	}
 }
