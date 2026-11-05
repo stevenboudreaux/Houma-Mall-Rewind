@@ -56,6 +56,9 @@ def main(src, out_path):
             if rows[y][x] == "1":
                 solid[y][x] = 1
     for i, st in enumerate(stores):
+        # EXT-B: the map's block n2 is parking (wall_fixes F5); it would touch JCPenney's rear block now
+        if st["id"] in getattr(WF, "DROP", []):
+            continue
         for y in range(st["y"], st["y"] + st["h"]):
             for x in range(st["x"], st["x"] + st["w"]):
                 if 0 <= y < H and 0 <= x < W:
@@ -240,27 +243,44 @@ def main(src, out_path):
                           yaw_in=math.degrees(math.atan2(-n[0], -n[1])), yaw_out=math.degrees(math.atan2(n[0], n[1]))))
 
     # ---- the walk grid: every map tile outside any building
-    walk = []
+    # EXT-B (Nov 4 2026): grown on three sides (wall_fixes.GROW): the new tiles are all lot
+    G = getattr(WF, "GROW", dict(west=0, north=0, east=0, south=0))
+    GW, GN = G["west"], G["north"]
+    W2, H2 = W + G["west"] + G["east"], H + G["north"] + G["south"]
+    walk = [["1"] * W2 for _ in range(H2)]
     for y in range(H):
-        walk.append("".join("0" if mask[y][x] else "1" for x in range(W)))
+        for x in range(W):
+            if mask[y][x]:
+                walk[y + GN][x + GW] = "0"
     # Workstream F: the map's standalone block n2 is not where the map puts it (west of JCPenney's
     # back lot: parking); Unitech stands north of Sears by Armour Dr (wall_fixes.STANDALONE)
-    walk = [list(r) for r in walk]
     for k, tiles in enumerate(comps):
         if k != main_k:
             for (tx, ty) in tiles:
-                walk[ty][tx] = "1"
+                walk[ty + GN][tx + GW] = "1"
+    OX2, OY2 = OX + GW, OY + GN
     for sa in WF.STANDALONE:
         r = sa["rect"]
-        for ty in range(int(r[1] / S + OY), int(r[3] / S + OY)):
-            for tx in range(int(r[0] / S + OX), int(r[2] / S + OX)):
+        for ty in range(int(r[1] / S + OY2), int(r[3] / S + OY2)):
+            for tx in range(int(r[0] / S + OX2), int(r[2] / S + OX2)):
                 walk[ty][tx] = "0"
     walk = ["".join(r) for r in walk]
     standalone = [dict(name=sa["name"], rect=sa["rect"]) for sa in WF.STANDALONE]
 
+    # EXT-B: the doors whose outside wall moved (wall_fixes.DOOR_MOVES): the outside face only
+    for d in doors:
+        mv = getattr(WF, "DOOR_MOVES", {}).get(d["store"])
+        if not mv:
+            continue
+        a, b, n = mv["a"], mv["b"], d["n"]
+        mid = [(a[0] + b[0]) * 0.5, (a[1] + b[1]) * 0.5]
+        dep = float(mv["depth"])
+        d.update(a=a, b=b, mid=mid, depth=dep, width=abs(b[0] - a[0]) + abs(b[1] - a[1]),
+                 out=[mid[0] - n[0] * (dep + 2.2), mid[1] - n[1] * (dep + 2.2)])
+
     xs = [t[0] for t in comps[main_k]]; ys = [t[1] for t in comps[main_k]]
     bounds = [wx(min(xs)), wz(min(ys)), wx(max(xs) + 1), wz(max(ys) + 1)]
-    json.dump(dict(scale=S, origin=[OX, OY], bounds=bounds, map=[wx(0), wz(0), wx(W), wz(H)], segments=segments, roofs=roofs,
+    json.dump(dict(scale=S, origin=[OX2, OY2], bounds=bounds, map=[wx(-GW), wz(-GN), wx(W + G["east"]), wz(H + G["south"])], segments=segments, roofs=roofs,
                    doors=doors, standalone=standalone, walk=walk,
                    bay=WF.BAY, door_spots=WF.DOOR_SPOTS), open(out_path, "w"), indent=1)
     print("segments", len(segments), "roofs", len(roofs), "doors", len(doors), "standalone", standalone, "bounds", bounds)

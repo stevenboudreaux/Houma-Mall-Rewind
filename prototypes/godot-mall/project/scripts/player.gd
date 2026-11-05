@@ -127,6 +127,9 @@ func _ready() -> void:
 	if wj is Dictionary:
 		# this wing's walk grid: the other wing's tiles are closed, so the seam is a wall
 		walk_rows = PackedStringArray(wj.get("walk", walk_rows))
+		# EXT-B (Nov 4 2026): the outside's walk grid is grown past the mall map, with its own origin
+		if wj.has("origin"):
+			map_origin = Vector2(float(wj.origin[0]), float(wj.origin[1]))
 		seam = wj.get("seam", [])
 		other_side = float(wj.get("other_side", 1.0))
 		thresholds = wj.get("thresholds", [])   # S

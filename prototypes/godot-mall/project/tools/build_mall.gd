@@ -2834,6 +2834,10 @@ func finish():
 	mall.add_child(sun); sun.owner = mall
 	# high sun (about 65 degrees) so window patches land short and close to the walls
 	sun.transform = Transform3D(Basis.looking_at(Vector3(0.30, -0.906, 0.30), Vector3.UP), Vector3.ZERO)
+	if WING == 3:
+		# EXT-B (Steven, Nov 3): the outside's day sun is the footage's early afternoon, from the game's
+		# N / NE about 40 degrees up (real S / SW; design/exterior-sequence.md §2, §5 #13)
+		sun.transform = Transform3D(Basis.looking_at(Vector3(-0.42, -0.64, 0.64), Vector3.UP), Vector3.ZERO)
 
 	DirAccess.make_dir_recursive_absolute("res://gen")
 	ResourceSaver.save(make_env("day"), "res://gen/env_day.tres")
@@ -2952,7 +2956,8 @@ func finish():
 	if WING == 3:
 		# the outside: its walk grid is the lot (exterior.json), its doors lead into wings 1 and 2
 		var wf = FileAccess.open(GEN + "wing.json", FileAccess.WRITE)
-		wf.store_string(JSON.stringify({"wing": WING, "seam": [], "spawn": outside.spawn, "walk": outside.walk, "doors": outside.doors}))
+		# EXT-B (Nov 4 2026): the outside's grid is bigger than the mall's, so it carries its own origin
+		wf.store_string(JSON.stringify({"wing": WING, "seam": [], "spawn": outside.spawn, "walk": outside.walk, "doors": outside.doors, "origin": outside.get("origin", [148, 100])}))
 		wf.close()
 	elif ROOM_WINGS.has(WING):
 		# workstream S: a room wing (4-6). Its one threshold leads back into the mall wing; a fresh
