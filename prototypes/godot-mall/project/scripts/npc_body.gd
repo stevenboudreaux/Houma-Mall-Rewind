@@ -76,6 +76,11 @@ func set_skin(e: Dictionary) -> void:
 	ap.name = "Anim"
 	skin.add_child(ap)
 	ap.root_node = ap.get_path_to(skin)
+	# CHARS-UBC: the clips address "Skeleton3D:<bone>"; a Blender glTF puts the skeleton one node down
+	# (Armature/Skeleton3D), so the clips are rooted at the skeleton's parent
+	var sk0: Skeleton3D = skin.find_child("Skeleton3D", true, false)
+	if sk0 and sk0.get_parent() != skin:
+		ap.root_node = ap.get_path_to(sk0.get_parent())
 	ap.add_animation_library("npc", _lib)
 	ap.playback_default_blend_time = 0.3
 	ap.animation_finished.connect(_on_finished)

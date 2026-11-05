@@ -30,11 +30,35 @@ var colors := {}          # "skin" / "iris" / "hair" / piece id -> Color
 var sk: Skeleton3D
 var _skins: Array[Skin] = []
 
+## CHARS-UBC (Steven, Nov 4: design/godot-ubc-characters.md): the Quaternius Universal Base Characters
+## bodies are the default; the MakeHuman (B1) bodies stay behind a flag until Steven signs off:
+## ?chars=mh in the address, localStorage "mall-chars-body" = "mh", or Engine meta "chars_body" (tests).
+const MANIFEST_UBC := "res://models/ubc/ubc.json"
+
+static func manifest_path() -> String:
+	var want := ""
+	if Engine.has_meta("chars_body"):
+		want = str(Engine.get_meta("chars_body"))
+	elif OS.has_feature("web"):
+		var q = JavaScriptBridge.eval("(function(){try{return new URLSearchParams(location.search).get('chars')||localStorage.getItem('mall-chars-body')||''}catch(e){return ''}})()")
+		want = str(q) if q != null else ""
+	if want != "mh" and FileAccess.file_exists(MANIFEST_UBC):
+		return MANIFEST_UBC
+	return MANIFEST
+
+## True when the UBC bodies are the ones in use.
+static func is_ubc() -> bool:
+	return manifest_path() == MANIFEST_UBC
+
 static func cman() -> Dictionary:
 	if _cm.is_empty():
-		var j = JSON.parse_string(FileAccess.get_file_as_string(MANIFEST))
+		var j = JSON.parse_string(FileAccess.get_file_as_string(manifest_path()))
 		_cm = j if j is Dictionary else {}
 	return _cm
+
+## Tests: forget the loaded manifest (after changing the flag).
+static func reload_manifest() -> void:
+	_cm = {}
 
 ## Load a base body ("female" / "male"); hi = the full-resolution mesh (close-ups, face passes).
 func make(s: String, hi := false) -> void:
@@ -399,7 +423,7 @@ func _shade(mi: MeshInstance3D, mask: int) -> void:
 			sm.set_shader_parameter("roughness", m.roughness)
 			sm.set_shader_parameter("metallic", m.metallic)
 			sm.set_shader_parameter("use_vertex_color", m.vertex_color_use_as_albedo)
-			if str(m.resource_name).begins_with("skin_"):
+			if str(m.resource_name).begins_with("skin_") and bool(cman().get("wrinkle", true)):   # (UBC: not on its UVs)
 				sm.set_shader_parameter("wrinkle_tex", load("res://models/characters/skin_wrinkle.png"))
 				sm.set_shader_parameter("base_mask", base_mask())
 				sm.set_shader_parameter("base_color", BASE_COLOR)
