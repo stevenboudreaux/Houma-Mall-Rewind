@@ -1,5 +1,5 @@
 {
- "_": "Lynn's Interiors (2026) furniture placements: design/lynns/layout.md. Read by tools/stores/sears/lynns.gd. models: key -> scene and footprint [w, d] (m). groups: zone, name, rect [x0, z0, x1, z1] (world m; store.gd's box dressing skips it), optional rug [x0, z0, x1, z1, colour], items [model, x, z, yaw deg] (yaw 0 = front faces +z / south, 180 = north, -90 = west). Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py.",
+ "_": "Lynn's Interiors (2026) furniture placements: design/lynns/layout.md. Read by tools/stores/sears/lynns.gd. models: key -> scene and footprint [w, d] (m). groups: zone, name, rect [x0, z0, x1, z1] (world m; store.gd's box dressing skips it), optional rug [x0, z0, x1, z1, colour], items [model, x, z, yaw deg] (yaw 0 = front faces +z / south, 180 = north, -90 = west). Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py.",
  "models": {
   "sofa_sage": {
    "scene": "res://models/lynns/bl_ly_sofa_sage/bl_ly_sofa_sage.glb",
@@ -82,504 +82,504 @@
    "size": [1.03, 0.53]
   },
   "pk_accent_black": {
-   "scene": "res://models/lynns/pack/pk_accent_black.glb",
+   "scene": "res://models/lynns/pack/pk_accent_black.gltf",
    "size": [0.82, 0.82],
    "h": 0.8,
    "family": "CHAIR-A accent / barrel chair"
   },
   "pk_accent_cognac": {
-   "scene": "res://models/lynns/pack/pk_accent_cognac.glb",
+   "scene": "res://models/lynns/pack/pk_accent_cognac.gltf",
    "size": [0.82, 0.82],
    "h": 0.8,
    "family": "CHAIR-A accent / barrel chair"
   },
   "pk_accent_cream": {
-   "scene": "res://models/lynns/pack/pk_accent_cream.glb",
+   "scene": "res://models/lynns/pack/pk_accent_cream.gltf",
    "size": [0.82, 0.82],
    "h": 0.8,
    "family": "CHAIR-A accent / barrel chair"
   },
   "pk_accent_green": {
-   "scene": "res://models/lynns/pack/pk_accent_green.glb",
+   "scene": "res://models/lynns/pack/pk_accent_green.gltf",
    "size": [0.82, 0.82],
    "h": 0.8,
    "family": "CHAIR-A accent / barrel chair"
   },
   "pk_accent_navy": {
-   "scene": "res://models/lynns/pack/pk_accent_navy.glb",
+   "scene": "res://models/lynns/pack/pk_accent_navy.gltf",
    "size": [0.82, 0.82],
    "h": 0.8,
    "family": "CHAIR-A accent / barrel chair"
   },
   "pk_bediron_black": {
-   "scene": "res://models/lynns/pack/pk_bediron_black.glb",
+   "scene": "res://models/lynns/pack/pk_bediron_black.gltf",
    "size": [1.75, 2.25],
    "h": 1.15,
    "family": "BED-B iron bed (queen)"
   },
   "pk_bediron_bronze": {
-   "scene": "res://models/lynns/pack/pk_bediron_bronze.glb",
+   "scene": "res://models/lynns/pack/pk_bediron_bronze.gltf",
    "size": [1.75, 2.25],
    "h": 1.15,
    "family": "BED-B iron bed (queen)"
   },
   "pk_bediron_white": {
-   "scene": "res://models/lynns/pack/pk_bediron_white.glb",
+   "scene": "res://models/lynns/pack/pk_bediron_white.gltf",
    "size": [1.75, 2.25],
    "h": 1.15,
    "family": "BED-B iron bed (queen)"
   },
   "pk_bookcase_walnut": {
-   "scene": "res://models/lynns/pack/pk_bookcase_walnut.glb",
+   "scene": "res://models/lynns/pack/pk_bookcase_walnut.gltf",
    "size": [1.8, 0.4],
    "h": 2.1,
    "family": "STOR bookcase"
   },
   "pk_chair_cush_grey": {
-   "scene": "res://models/lynns/pack/pk_chair_cush_grey.glb",
+   "scene": "res://models/lynns/pack/pk_chair_cush_grey.gltf",
    "size": [0.46, 0.52],
    "h": 0.98,
    "family": "DIN-A cushioned chair"
   },
   "pk_chair_cush_white": {
-   "scene": "res://models/lynns/pack/pk_chair_cush_white.glb",
+   "scene": "res://models/lynns/pack/pk_chair_cush_white.gltf",
    "size": [0.46, 0.52],
    "h": 0.98,
    "family": "DIN-A cushioned chair"
   },
   "pk_chair_ladder_black": {
-   "scene": "res://models/lynns/pack/pk_chair_ladder_black.glb",
+   "scene": "res://models/lynns/pack/pk_chair_ladder_black.gltf",
    "size": [0.46, 0.52],
    "h": 0.98,
    "family": "DIN-A ladder-back chair"
   },
   "pk_chair_ladder_espresso": {
-   "scene": "res://models/lynns/pack/pk_chair_ladder_espresso.glb",
+   "scene": "res://models/lynns/pack/pk_chair_ladder_espresso.gltf",
    "size": [0.46, 0.52],
    "h": 0.98,
    "family": "DIN-A slat-back chair"
   },
   "pk_chest_cream": {
-   "scene": "res://models/lynns/pack/pk_chest_cream.glb",
+   "scene": "res://models/lynns/pack/pk_chest_cream.gltf",
    "size": [1.0, 0.48],
    "h": 1.32,
    "family": "STOR chest"
   },
   "pk_cocktail_burl": {
-   "scene": "res://models/lynns/pack/pk_cocktail_burl.glb",
+   "scene": "res://models/lynns/pack/pk_cocktail_burl.gltf",
    "size": [1.0, 1.0],
    "h": 0.46,
    "family": "OCC-A round burl cocktail table"
   },
   "pk_cocktail_glass": {
-   "scene": "res://models/lynns/pack/pk_cocktail_glass.glb",
+   "scene": "res://models/lynns/pack/pk_cocktail_glass.gltf",
    "size": [1.2, 0.7],
    "h": 0.45,
    "family": "OCC-A metal + glass cocktail table"
   },
   "pk_cocktail_oak": {
-   "scene": "res://models/lynns/pack/pk_cocktail_oak.glb",
+   "scene": "res://models/lynns/pack/pk_cocktail_oak.gltf",
    "size": [1.3, 0.75],
    "h": 0.45,
    "family": "OCC-A cocktail table"
   },
   "pk_cocktail_round": {
-   "scene": "res://models/lynns/pack/pk_cocktail_round.glb",
+   "scene": "res://models/lynns/pack/pk_cocktail_round.gltf",
    "size": [1.0, 1.0],
    "h": 0.46,
    "family": "OCC-A round cocktail table"
   },
   "pk_cocktail_walnut": {
-   "scene": "res://models/lynns/pack/pk_cocktail_walnut.glb",
+   "scene": "res://models/lynns/pack/pk_cocktail_walnut.gltf",
    "size": [1.3, 0.75],
    "h": 0.45,
    "family": "OCC-A cocktail table"
   },
   "pk_console_oak": {
-   "scene": "res://models/lynns/pack/pk_console_oak.glb",
+   "scene": "res://models/lynns/pack/pk_console_oak.gltf",
    "size": [1.6, 0.4],
    "h": 0.78,
    "family": "OCC-C console"
   },
   "pk_curtain_beige": {
-   "scene": "res://models/lynns/pack/pk_curtain_beige.glb",
+   "scene": "res://models/lynns/pack/pk_curtain_beige.gltf",
    "size": [3.4, 0.3],
    "h": 2.8,
    "family": "FIX curtain"
   },
   "pk_dryer_white": {
-   "scene": "res://models/lynns/pack/pk_dryer_white.glb",
+   "scene": "res://models/lynns/pack/pk_dryer_white.gltf",
    "size": [0.69, 0.75],
    "h": 0.98,
    "family": "APPL dryer"
   },
   "pk_end_black": {
-   "scene": "res://models/lynns/pack/pk_end_black.glb",
+   "scene": "res://models/lynns/pack/pk_end_black.gltf",
    "size": [0.55, 0.45],
    "h": 0.6,
    "family": "OCC-B end table"
   },
   "pk_end_oak": {
-   "scene": "res://models/lynns/pack/pk_end_oak.glb",
+   "scene": "res://models/lynns/pack/pk_end_oak.gltf",
    "size": [0.55, 0.45],
    "h": 0.6,
    "family": "OCC-B end table"
   },
   "pk_end_white": {
-   "scene": "res://models/lynns/pack/pk_end_white.glb",
+   "scene": "res://models/lynns/pack/pk_end_white.gltf",
    "size": [0.55, 0.45],
    "h": 0.62,
    "family": "OCC-B end table"
   },
   "pk_fridge_steel": {
-   "scene": "res://models/lynns/pack/pk_fridge_steel.glb",
+   "scene": "res://models/lynns/pack/pk_fridge_steel.gltf",
    "size": [0.91, 0.75],
    "h": 1.78,
    "family": "APPL refrigerator"
   },
   "pk_lamp_brass": {
-   "scene": "res://models/lynns/pack/pk_lamp_brass.glb",
+   "scene": "res://models/lynns/pack/pk_lamp_brass.gltf",
    "size": [0.29, 0.305],
    "h": 0.7,
    "family": "LAMP table lamp, brass"
   },
   "pk_lamp_glass": {
-   "scene": "res://models/lynns/pack/pk_lamp_glass.glb",
+   "scene": "res://models/lynns/pack/pk_lamp_glass.gltf",
    "size": [0.313, 0.313],
    "h": 0.68,
    "family": "LAMP table lamp, glass"
   },
   "pk_lamp_gourd": {
-   "scene": "res://models/lynns/pack/pk_lamp_gourd.glb",
+   "scene": "res://models/lynns/pack/pk_lamp_gourd.gltf",
    "size": [0.322, 0.339],
    "h": 0.72,
    "family": "LAMP table lamp, white ceramic"
   },
   "pk_love_brown": {
-   "scene": "res://models/lynns/pack/pk_love_brown.glb",
+   "scene": "res://models/lynns/pack/pk_love_brown.gltf",
    "size": [1.65, 1.0],
    "h": 1.0,
    "family": "SOFA-C loveseat"
   },
   "pk_love_cognac": {
-   "scene": "res://models/lynns/pack/pk_love_cognac.glb",
+   "scene": "res://models/lynns/pack/pk_love_cognac.gltf",
    "size": [1.65, 1.0],
    "h": 1.0,
    "family": "SOFA-C loveseat"
   },
   "pk_love_grey": {
-   "scene": "res://models/lynns/pack/pk_love_grey.glb",
+   "scene": "res://models/lynns/pack/pk_love_grey.gltf",
    "size": [1.65, 1.0],
    "h": 1.0,
    "family": "SOFA-C loveseat"
   },
   "pk_mat_adjustable": {
-   "scene": "res://models/lynns/pack/pk_mat_adjustable.glb",
+   "scene": "res://models/lynns/pack/pk_mat_adjustable.gltf",
    "size": [1.53, 2.035],
    "h": 0.965,
    "family": "MAT adjustable base"
   },
   "pk_mat_grey": {
-   "scene": "res://models/lynns/pack/pk_mat_grey.glb",
+   "scene": "res://models/lynns/pack/pk_mat_grey.gltf",
    "size": [1.53, 2.035],
    "h": 0.56,
    "family": "MAT mattress on foundation (queen)"
   },
   "pk_mat_navy": {
-   "scene": "res://models/lynns/pack/pk_mat_navy.glb",
+   "scene": "res://models/lynns/pack/pk_mat_navy.gltf",
    "size": [1.53, 2.035],
    "h": 0.56,
    "family": "MAT mattress on foundation (queen)"
   },
   "pk_mat_white": {
-   "scene": "res://models/lynns/pack/pk_mat_white.glb",
+   "scene": "res://models/lynns/pack/pk_mat_white.gltf",
    "size": [1.53, 2.035],
    "h": 0.56,
    "family": "MAT mattress on foundation (queen)"
   },
   "pk_motion_brown": {
-   "scene": "res://models/lynns/pack/pk_motion_brown.glb",
+   "scene": "res://models/lynns/pack/pk_motion_brown.gltf",
    "size": [2.15, 1.0],
    "h": 1.0,
    "family": "SOFA-C motion sofa"
   },
   "pk_motion_cognac": {
-   "scene": "res://models/lynns/pack/pk_motion_cognac.glb",
+   "scene": "res://models/lynns/pack/pk_motion_cognac.gltf",
    "size": [2.15, 1.0],
    "h": 1.0,
    "family": "SOFA-C motion sofa"
   },
   "pk_motion_grey": {
-   "scene": "res://models/lynns/pack/pk_motion_grey.glb",
+   "scene": "res://models/lynns/pack/pk_motion_grey.gltf",
    "size": [2.15, 1.0],
    "h": 1.0,
    "family": "SOFA-C motion sofa"
   },
   "pk_motion_taupe": {
-   "scene": "res://models/lynns/pack/pk_motion_taupe.glb",
+   "scene": "res://models/lynns/pack/pk_motion_taupe.gltf",
    "size": [2.15, 1.0],
    "h": 1.0,
    "family": "SOFA-C motion sofa"
   },
   "pk_ott_cream": {
-   "scene": "res://models/lynns/pack/pk_ott_cream.glb",
+   "scene": "res://models/lynns/pack/pk_ott_cream.gltf",
    "size": [1.2, 0.9],
    "h": 0.42,
    "family": "OTT cocktail ottoman"
   },
   "pk_ott_grey": {
-   "scene": "res://models/lynns/pack/pk_ott_grey.glb",
+   "scene": "res://models/lynns/pack/pk_ott_grey.gltf",
    "size": [1.2, 0.9],
    "h": 0.42,
    "family": "OTT cocktail ottoman"
   },
   "pk_ott_tweed": {
-   "scene": "res://models/lynns/pack/pk_ott_tweed.glb",
+   "scene": "res://models/lynns/pack/pk_ott_tweed.gltf",
    "size": [1.2, 0.9],
    "h": 0.42,
    "family": "OTT cocktail ottoman"
   },
   "pk_pillowtower": {
-   "scene": "res://models/lynns/pack/pk_pillowtower.glb",
+   "scene": "res://models/lynns/pack/pk_pillowtower.gltf",
    "size": [0.9, 0.5],
    "h": 1.6,
    "family": "FIX pillow tower"
   },
   "pk_plant_monstera": {
-   "scene": "res://models/lynns/pack/pk_plant_monstera.glb",
+   "scene": "res://models/lynns/pack/pk_plant_monstera.gltf",
    "size": [1.256, 1.314],
    "h": 0.95,
    "family": "DECO faux plant"
   },
   "pk_plant_small": {
-   "scene": "res://models/lynns/pack/pk_plant_small.glb",
+   "scene": "res://models/lynns/pack/pk_plant_small.gltf",
    "size": [0.59, 0.532],
    "h": 0.55,
    "family": "DECO faux plant"
   },
   "pk_plant_tall": {
-   "scene": "res://models/lynns/pack/pk_plant_tall.glb",
+   "scene": "res://models/lynns/pack/pk_plant_tall.gltf",
    "size": [0.498, 0.498],
    "h": 1.5,
    "family": "DECO faux plant"
   },
   "pk_range_steel": {
-   "scene": "res://models/lynns/pack/pk_range_steel.glb",
+   "scene": "res://models/lynns/pack/pk_range_steel.gltf",
    "size": [0.76, 0.7],
    "h": 0.95,
    "family": "APPL range"
   },
   "pk_recl_beige": {
-   "scene": "res://models/lynns/pack/pk_recl_beige.glb",
+   "scene": "res://models/lynns/pack/pk_recl_beige.gltf",
    "size": [0.95, 1.25],
    "h": 1.05,
    "family": "CHAIR-B recliner (footrest out)"
   },
   "pk_recl_black": {
-   "scene": "res://models/lynns/pack/pk_recl_black.glb",
+   "scene": "res://models/lynns/pack/pk_recl_black.gltf",
    "size": [0.95, 1.25],
    "h": 1.05,
    "family": "CHAIR-B recliner (footrest out)"
   },
   "pk_recl_brown": {
-   "scene": "res://models/lynns/pack/pk_recl_brown.glb",
+   "scene": "res://models/lynns/pack/pk_recl_brown.gltf",
    "size": [0.95, 1.25],
    "h": 1.05,
    "family": "CHAIR-B recliner (footrest out)"
   },
   "pk_recl_cognac": {
-   "scene": "res://models/lynns/pack/pk_recl_cognac.glb",
+   "scene": "res://models/lynns/pack/pk_recl_cognac.gltf",
    "size": [0.95, 1.25],
    "h": 1.05,
    "family": "CHAIR-B recliner (footrest out)"
   },
   "pk_recl_grey": {
-   "scene": "res://models/lynns/pack/pk_recl_grey.glb",
+   "scene": "res://models/lynns/pack/pk_recl_grey.gltf",
    "size": [0.95, 1.25],
    "h": 1.05,
    "family": "CHAIR-B recliner (footrest out)"
   },
   "pk_recl_quilt": {
-   "scene": "res://models/lynns/pack/pk_recl_quilt.glb",
+   "scene": "res://models/lynns/pack/pk_recl_quilt.gltf",
    "size": [0.95, 1.25],
    "h": 1.05,
    "family": "CHAIR-B recliner (footrest out)"
   },
   "pk_reclc_beige": {
-   "scene": "res://models/lynns/pack/pk_reclc_beige.glb",
+   "scene": "res://models/lynns/pack/pk_reclc_beige.gltf",
    "size": [0.95, 1.0],
    "h": 1.02,
    "family": "CHAIR-B recliner (closed)"
   },
   "pk_reclc_brown": {
-   "scene": "res://models/lynns/pack/pk_reclc_brown.glb",
+   "scene": "res://models/lynns/pack/pk_reclc_brown.gltf",
    "size": [0.95, 1.0],
    "h": 1.02,
    "family": "CHAIR-B recliner (closed)"
   },
   "pk_reclc_grey": {
-   "scene": "res://models/lynns/pack/pk_reclc_grey.glb",
+   "scene": "res://models/lynns/pack/pk_reclc_grey.gltf",
    "size": [0.95, 1.0],
    "h": 1.02,
    "family": "CHAIR-B recliner (closed)"
   },
   "pk_rug_cream": {
-   "scene": "res://models/lynns/pack/pk_rug_cream.glb",
+   "scene": "res://models/lynns/pack/pk_rug_cream.gltf",
    "size": [2.7, 3.0],
    "h": 0.012,
    "family": "RUG",
    "walk": true
   },
   "pk_rug_round": {
-   "scene": "res://models/lynns/pack/pk_rug_round.glb",
+   "scene": "res://models/lynns/pack/pk_rug_round.gltf",
    "size": [2.4, 2.4],
    "h": 0.012,
    "family": "RUG",
    "walk": true
   },
   "pk_rug_sisal": {
-   "scene": "res://models/lynns/pack/pk_rug_sisal.glb",
+   "scene": "res://models/lynns/pack/pk_rug_sisal.gltf",
    "size": [2.7, 3.0],
    "h": 0.012,
    "family": "RUG",
    "walk": true
   },
   "pk_rug_taupe": {
-   "scene": "res://models/lynns/pack/pk_rug_taupe.glb",
+   "scene": "res://models/lynns/pack/pk_rug_taupe.gltf",
    "size": [2.4, 3.0],
    "h": 0.012,
    "family": "RUG",
    "walk": true
   },
   "pk_rug_vintage": {
-   "scene": "res://models/lynns/pack/pk_rug_vintage.glb",
+   "scene": "res://models/lynns/pack/pk_rug_vintage.gltf",
    "size": [2.4, 3.0],
    "h": 0.012,
    "family": "RUG",
    "walk": true
   },
   "pk_sect_bluegrey": {
-   "scene": "res://models/lynns/pack/pk_sect_bluegrey.glb",
+   "scene": "res://models/lynns/pack/pk_sect_bluegrey.gltf",
    "size": [2.9, 2.1],
    "h": 0.88,
    "family": "SOFA-B sectional (L with chaise)"
   },
   "pk_sect_cream": {
-   "scene": "res://models/lynns/pack/pk_sect_cream.glb",
+   "scene": "res://models/lynns/pack/pk_sect_cream.gltf",
    "size": [2.9, 2.1],
    "h": 0.88,
    "family": "SOFA-B sectional (L with chaise)"
   },
   "pk_sect_creamleather": {
-   "scene": "res://models/lynns/pack/pk_sect_creamleather.glb",
+   "scene": "res://models/lynns/pack/pk_sect_creamleather.gltf",
    "size": [2.9, 2.1],
    "h": 0.88,
    "family": "SOFA-B sectional (L with chaise)"
   },
   "pk_sect_grey": {
-   "scene": "res://models/lynns/pack/pk_sect_grey.glb",
+   "scene": "res://models/lynns/pack/pk_sect_grey.gltf",
    "size": [2.9, 2.1],
    "h": 0.88,
    "family": "SOFA-B sectional (L with chaise)"
   },
   "pk_sideboard_black": {
-   "scene": "res://models/lynns/pack/pk_sideboard_black.glb",
+   "scene": "res://models/lynns/pack/pk_sideboard_black.gltf",
    "size": [1.7, 0.45],
    "h": 0.85,
    "family": "STOR sideboard"
   },
   "pk_sideboard_greywash": {
-   "scene": "res://models/lynns/pack/pk_sideboard_greywash.glb",
+   "scene": "res://models/lynns/pack/pk_sideboard_greywash.gltf",
    "size": [1.7, 0.45],
    "h": 0.85,
    "family": "STOR sideboard"
   },
   "pk_sideboard_white": {
-   "scene": "res://models/lynns/pack/pk_sideboard_white.glb",
+   "scene": "res://models/lynns/pack/pk_sideboard_white.gltf",
    "size": [1.7, 0.45],
    "h": 0.85,
    "family": "STOR sideboard"
   },
   "pk_stool_black": {
-   "scene": "res://models/lynns/pack/pk_stool_black.glb",
+   "scene": "res://models/lynns/pack/pk_stool_black.gltf",
    "size": [0.44, 0.46],
    "h": 0.68,
    "family": "DIN-B counter stool"
   },
   "pk_stool_oak": {
-   "scene": "res://models/lynns/pack/pk_stool_oak.glb",
+   "scene": "res://models/lynns/pack/pk_stool_oak.gltf",
    "size": [0.44, 0.46],
    "h": 0.68,
    "family": "DIN-B counter stool"
   },
   "pk_tcounter_oak": {
-   "scene": "res://models/lynns/pack/pk_tcounter_oak.glb",
+   "scene": "res://models/lynns/pack/pk_tcounter_oak.gltf",
    "size": [1.5, 0.9],
    "h": 0.92,
    "family": "DIN-B counter table"
   },
   "pk_trect_black": {
-   "scene": "res://models/lynns/pack/pk_trect_black.glb",
+   "scene": "res://models/lynns/pack/pk_trect_black.gltf",
    "size": [1.9, 0.95],
    "h": 0.76,
    "family": "DIN-A rectangular dining table"
   },
   "pk_trect_greyoak": {
-   "scene": "res://models/lynns/pack/pk_trect_greyoak.glb",
+   "scene": "res://models/lynns/pack/pk_trect_greyoak.gltf",
    "size": [1.9, 0.95],
    "h": 0.76,
    "family": "DIN-A rectangular dining table"
   },
   "pk_trect_oak": {
-   "scene": "res://models/lynns/pack/pk_trect_oak.glb",
+   "scene": "res://models/lynns/pack/pk_trect_oak.gltf",
    "size": [1.9, 0.95],
    "h": 0.76,
    "family": "DIN-A rectangular dining table"
   },
   "pk_tround_espresso": {
-   "scene": "res://models/lynns/pack/pk_tround_espresso.glb",
+   "scene": "res://models/lynns/pack/pk_tround_espresso.gltf",
    "size": [1.2, 1.2],
    "h": 0.76,
    "family": "DIN-A round pedestal table"
   },
   "pk_tround_oak": {
-   "scene": "res://models/lynns/pack/pk_tround_oak.glb",
+   "scene": "res://models/lynns/pack/pk_tround_oak.gltf",
    "size": [1.2, 1.2],
    "h": 0.76,
    "family": "DIN-A round pedestal table"
   },
   "pk_tround_white": {
-   "scene": "res://models/lynns/pack/pk_tround_white.glb",
+   "scene": "res://models/lynns/pack/pk_tround_white.gltf",
    "size": [1.2, 1.2],
    "h": 0.76,
    "family": "DIN-A round pedestal table"
   },
   "pk_washer_white": {
-   "scene": "res://models/lynns/pack/pk_washer_white.glb",
+   "scene": "res://models/lynns/pack/pk_washer_white.gltf",
    "size": [0.69, 0.75],
    "h": 0.98,
    "family": "APPL washer"
   },
   "pk_desk_white": {
-   "scene": "res://models/lynns/pack/pk_desk_white.glb",
+   "scene": "res://models/lynns/pack/pk_desk_white.gltf",
    "size": [1.5, 0.7],
    "h": 0.76,
    "family": "FIX sales desk"
   },
   "pk_monitor": {
-   "scene": "res://models/lynns/pack/pk_monitor.glb",
+   "scene": "res://models/lynns/pack/pk_monitor.gltf",
    "size": [0.55, 0.147],
    "h": 0.42,
    "family": "FIX sales desk monitor"
   },
   "pk_plant_snake": {
-   "scene": "res://models/lynns/pack/pk_plant_snake.glb",
+   "scene": "res://models/lynns/pack/pk_plant_snake.gltf",
    "size": [0.328, 0.328],
    "h": 0.9,
    "family": "DECO faux plant"
   },
   "pk_taskchair": {
-   "scene": "res://models/lynns/pack/pk_taskchair.glb",
+   "scene": "res://models/lynns/pack/pk_taskchair.gltf",
    "size": [0.6, 0.6],
    "h": 0.95,
    "family": "FIX task chair"
@@ -678,35 +678,35 @@
    "pass": 2,
    "zone": "Z1",
    "name": "entry: cream sectional + ottoman, west of the aisle",
-   "rect": [-14.05, -106.95, -10.14, -103.44],
+   "rect": [-16.35, -106.95, -12.44, -103.44],
    "items": [
-    ["pk_rug_cream", -12.4, -105.0, 90.0],
-    ["pk_sect_cream", -12.6, -105.9, 0.0],
-    ["pk_ott_cream", -12.95, -104.25, 0.0],
-    ["pk_accent_cream", -10.7, -104.0, -120.0]
+    ["pk_rug_cream", -14.7, -105.0, 90.0],
+    ["pk_sect_cream", -14.9, -105.9, 0.0],
+    ["pk_ott_cream", -15.25, -104.25, 0.0],
+    ["pk_accent_cream", -13.0, -104.0, -120.0]
    ]
   },
   {
    "pass": 2,
    "zone": "Z1",
    "name": "entry: grey sectional + ottoman, east of the aisle",
-   "rect": [3.35, -106.95, 7.26, -103.44],
+   "rect": [4.45, -106.95, 8.36, -103.44],
    "items": [
-    ["pk_rug_vintage", 5.0, -105.0, 90.0],
-    ["pk_sect_grey", 4.8, -105.9, 0.0],
-    ["pk_ott_grey", 4.45, -104.25, 0.0],
-    ["pk_accent_black", 6.7, -104.0, -120.0]
+    ["pk_rug_vintage", 6.1, -105.0, 90.0],
+    ["pk_sect_grey", 5.9, -105.9, 0.0],
+    ["pk_ott_grey", 5.55, -104.25, 0.0],
+    ["pk_accent_black", 7.8, -104.0, -120.0]
    ]
   },
   {
    "pass": 2,
    "zone": "Z1",
    "name": "entry: blue-grey sectional",
-   "rect": [-23.45, -106.95, -20.55, -103.8],
+   "rect": [-25.45, -106.95, -22.55, -103.8],
    "items": [
-    ["pk_rug_round", -21.8, -105.0, 90.0],
-    ["pk_sect_bluegrey", -22.0, -105.9, 0.0],
-    ["pk_ott_tweed", -22.35, -104.25, 0.0]
+    ["pk_rug_round", -23.8, -105.0, 90.0],
+    ["pk_sect_bluegrey", -24.0, -105.9, 0.0],
+    ["pk_ott_tweed", -24.35, -104.25, 0.0]
    ]
   },
   {
@@ -808,60 +808,193 @@
    "pass": 2,
    "zone": "Z4",
    "name": "leather sofa group",
-   "rect": [-23.79, -115.75, -20.21, -111.95],
+   "rect": [-25.38, -115.75, -21.82, -111.95],
    "items": [
-    ["pk_rug_taupe", -22.0, -113.8, 90],
-    ["sofa_leather", -22.0, -115.25, 0.0],
-    ["pk_cocktail_oak", -22.0, -113.75, 0.0],
-    ["pk_end_oak", -23.51, -115.35, 0.0],
-    ["pk_lamp_gourd", -23.51, -115.35, 0, 0.6],
-    ["pk_end_oak", -20.49, -115.35, 0.0],
-    ["pk_lamp_gourd", -20.49, -115.35, 0, 0.6],
-    ["pk_accent_cognac", -22.62, -112.45, -165],
-    ["pk_accent_cognac", -21.38, -112.45, 165]
+    ["pk_rug_taupe", -23.6, -113.8, 90],
+    ["sofa_leather", -23.6, -115.25, 0.0],
+    ["pk_cocktail_oak", -23.6, -113.75, 0.0],
+    ["pk_end_oak", -25.11, -115.35, 0.0],
+    ["pk_lamp_gourd", -25.11, -115.35, 0, 0.6],
+    ["pk_end_oak", -22.09, -115.35, 0.0],
+    ["pk_lamp_gourd", -22.09, -115.35, 0, 0.6],
+    ["pk_accent_cognac", -24.22, -112.45, -165],
+    ["pk_accent_cognac", -22.98, -112.45, 165]
    ]
   },
   {
    "pass": 2,
    "zone": "Z4",
    "name": "taupe slipcover facing sage",
-   "rect": [-14.34, -115.75, -10.87, -111.75],
+   "rect": [-15.94, -115.75, -12.46, -111.75],
    "items": [
-    ["pk_rug_sisal", -12.6, -113.8, 90],
-    ["sofa_taupe", -12.6, -115.25, 0.0],
-    ["pk_cocktail_walnut", -12.6, -113.75, 0.0],
-    ["pk_end_white", -14.06, -115.35, 0.0],
-    ["pk_lamp_brass", -14.06, -115.35, 0, 0.62],
-    ["pk_end_white", -11.14, -115.35, 0.0],
-    ["pk_lamp_brass", -11.14, -115.35, 0, 0.62],
-    ["sofa_sage", -12.6, -112.25, -180]
+    ["pk_rug_sisal", -14.2, -113.8, 90],
+    ["sofa_taupe", -14.2, -115.25, 0.0],
+    ["pk_cocktail_walnut", -14.2, -113.75, 0.0],
+    ["pk_end_white", -15.66, -115.35, 0.0],
+    ["pk_lamp_brass", -15.66, -115.35, 0, 0.62],
+    ["pk_end_white", -12.74, -115.35, 0.0],
+    ["pk_lamp_brass", -12.74, -115.35, 0, 0.62],
+    ["sofa_sage", -14.2, -112.25, -180]
    ]
   },
   {
    "pass": 2,
    "zone": "Z4",
    "name": "accent chairs + ottomans, console with lamps",
-   "rect": [-23.5, -125.5, -20.5, -122.2],
+   "rect": [-25.3, -125.5, -22.3, -122.2],
    "items": [
-    ["pk_rug_round", -22.0, -123.4, 0],
-    ["pk_accent_cream", -22.9, -123.9, 20],
+    ["pk_rug_round", -23.8, -123.4, 0],
+    ["pk_accent_cream", -24.7, -123.9, 20],
+    ["pk_ott_tweed", -24.7, -122.65, 0],
+    ["pk_accent_cream", -22.9, -123.9, -20],
     ["pk_ott_tweed", -22.9, -122.65, 0],
-    ["pk_accent_cream", -21.1, -123.9, -20],
-    ["pk_ott_tweed", -21.1, -122.65, 0],
-    ["pk_console_oak", -22.0, -125.3, 0.0],
-    ["pk_lamp_gourd", -22.55, -125.3, 0, 0.78],
-    ["pk_lamp_gourd", -21.45, -125.3, 0, 0.78]
+    ["pk_console_oak", -23.8, -125.3, 0.0],
+    ["pk_lamp_gourd", -24.35, -125.3, 0, 0.78],
+    ["pk_lamp_gourd", -23.25, -125.3, 0, 0.78]
    ]
   },
   {
    "pass": 2,
    "zone": "Z4",
    "name": "cream leather sectional",
-   "rect": [-13.85, -125.25, -10.7, -122.1],
+   "rect": [-15.65, -125.25, -12.5, -122.1],
    "items": [
-    ["pk_rug_vintage", -12.2, -123.3, 90],
-    ["pk_sect_creamleather", -12.4, -124.2, 0.0],
-    ["pk_ott_cream", -12.75, -122.55, 0.0]
+    ["pk_rug_vintage", -14.0, -123.3, 90],
+    ["pk_sect_creamleather", -14.2, -124.2, 0.0],
+    ["pk_ott_cream", -14.55, -122.55, 0.0]
+   ]
+  },
+  {
+   "pass": 2,
+   "zone": "Z1",
+   "name": "entry: leather sofa + cognac chairs",
+   "rect": [-12.38, -106.75, -8.81, -102.95],
+   "items": [
+    ["pk_rug_taupe", -10.6, -104.8, 90],
+    ["sofa_leather", -10.6, -106.25, 0.0],
+    ["pk_cocktail_oak", -10.6, -104.75, 0.0],
+    ["pk_end_black", -12.11, -106.35, 0.0],
+    ["pk_lamp_glass", -12.11, -106.35, 0, 0.6],
+    ["pk_end_black", -9.09, -106.35, 0.0],
+    ["pk_lamp_glass", -9.09, -106.35, 0, 0.6],
+    ["pk_accent_cognac", -11.22, -103.45, -165],
+    ["pk_accent_cognac", -9.98, -103.45, 165]
+   ]
+  },
+  {
+   "pass": 2,
+   "zone": "Z1",
+   "name": "entry: taupe sofa + navy chairs",
+   "rect": [-21.33, -106.75, -17.87, -102.95],
+   "items": [
+    ["pk_rug_sisal", -19.6, -104.8, 90],
+    ["sofa_taupe", -19.6, -106.25, 0.0],
+    ["pk_cocktail_walnut", -19.6, -104.75, 0.0],
+    ["pk_end_white", -21.06, -106.35, 0.0],
+    ["pk_lamp_gourd", -21.06, -106.35, 0, 0.62],
+    ["pk_end_white", -18.14, -106.35, 0.0],
+    ["pk_lamp_gourd", -18.14, -106.35, 0, 0.62],
+    ["pk_accent_navy", -20.22, -103.45, -165],
+    ["pk_accent_navy", -18.98, -103.45, 165]
+   ]
+  },
+  {
+   "pass": 2,
+   "zone": "Z1",
+   "name": "entry front row facing the mall (west of the mouth)",
+   "rect": [-25.08, -99.8, -17.17, -98.67],
+   "items": [
+    ["sofa_cream", -23.9, -99.3, 0.0],
+    ["pk_end_oak", -22.25, -99.3, 0.0],
+    ["pk_lamp_brass", -22.25, -99.3, 0, 0.6],
+    ["sofa_sage", -20.55, -99.3, 0.0],
+    ["pk_end_oak", -18.95, -99.3, 0.0],
+    ["pk_lamp_gourd", -18.95, -99.3, 0, 0.6],
+    ["pk_accent_green", -17.7, -99.2, -20]
+   ]
+  },
+  {
+   "pass": 2,
+   "zone": "Z1",
+   "name": "entry: accent chairs by the east aisle column",
+   "rect": [1.39, -106.81, 2.21, -103.99],
+   "items": [
+    ["pk_accent_cream", 1.8, -106.4, 90],
+    ["pk_end_white", 1.8, -105.4, 0.0],
+    ["pk_lamp_gourd", 1.8, -105.4, 0, 0.62],
+    ["pk_accent_cream", 1.8, -104.4, 90]
+   ]
+  },
+  {
+   "pass": 2,
+   "zone": "Z2",
+   "name": "white sofas facing the mall",
+   "rect": [-35.88, -99.8, -30.52, -98.8],
+   "items": [
+    ["sofa_cream", -34.7, -99.3, 0.0],
+    ["pk_end_white", -33.2, -99.3, 0.0],
+    ["pk_lamp_gourd", -33.2, -99.3, 0, 0.62],
+    ["sofa_cream", -31.7, -99.3, 0.0]
+   ]
+  },
+  {
+   "pass": 2,
+   "zone": "Z4",
+   "name": "wingback-style chairs + ottomans (pack tub chairs)",
+   "rect": [-21.05, -115.62, -18.15, -113.15],
+   "items": [
+    ["pk_rug_round", -19.6, -114.4, 0],
+    ["pk_accent_green", -20.45, -114.85, 25],
+    ["pk_ott_grey", -20.45, -113.6, 0],
+    ["pk_accent_green", -18.75, -114.85, -25],
+    ["pk_ott_grey", -18.75, -113.6, 0],
+    ["pk_end_oak", -19.6, -115.4, 0.0],
+    ["pk_lamp_brass", -19.6, -115.4, 0, 0.6]
+   ]
+  },
+  {
+   "pass": 2,
+   "zone": "Z4",
+   "name": "cognac chairs and a console by the aisle",
+   "rect": [-11.5, -115.8, -9.3, -112.55],
+   "items": [
+    ["pk_accent_cognac", -11.0, -114.2, 15],
+    ["pk_accent_cognac", -9.8, -114.2, -15],
+    ["pk_cocktail_round", -10.4, -113.05, 0.0],
+    ["pk_console_oak", -10.4, -115.6, 0.0],
+    ["pk_lamp_gourd", -10.9, -115.6, 0, 0.78],
+    ["pk_lamp_gourd", -9.9, -115.6, 0, 0.78]
+   ]
+  },
+  {
+   "pass": 2,
+   "zone": "Z4",
+   "name": "brown motion sofa group",
+   "rect": [-21.5, -125.35, -18.1, -121.44],
+   "items": [
+    ["pk_rug_taupe", -19.8, -123.4, 90],
+    ["pk_motion_brown", -19.8, -124.85, 0.0],
+    ["pk_cocktail_walnut", -19.8, -123.35, 0.0],
+    ["pk_end_black", -21.225, -124.95, 0.0],
+    ["pk_lamp_glass", -21.225, -124.95, 0, 0.6],
+    ["pk_end_black", -18.375, -124.95, 0.0],
+    ["pk_lamp_glass", -18.375, -124.95, 0, 0.6],
+    ["pk_reclc_brown", -20.42, -122.05, -165],
+    ["pk_reclc_beige", -19.18, -122.05, 165]
+   ]
+  },
+  {
+   "pass": 2,
+   "zone": "Z4",
+   "name": "cream accent chairs and a sideboard by the aisle",
+   "rect": [-11.5, -125.17, -9.3, -122.38],
+   "items": [
+    ["pk_sideboard_white", -10.4, -124.9, 0.0],
+    ["pk_lamp_brass", -10.95, -124.9, 0, 0.85],
+    ["pk_plant_small", -9.9, -124.9, 0, 0.85],
+    ["pk_accent_cream", -11.0, -123.5, 15],
+    ["pk_accent_black", -9.8, -123.5, -15],
+    ["pk_end_oak", -10.4, -122.6, 0.0]
    ]
   },
   {

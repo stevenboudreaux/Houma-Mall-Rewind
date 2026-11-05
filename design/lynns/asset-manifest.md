@@ -73,91 +73,91 @@ Only the models placed are kept (`pk_love_taupe` and `pk_lamp_floor` were made a
 written by `tools/stores/sears/lynns_fill.py` from `models/lynns/pack/manifest.json` and `data/lynns/placements.json`.
 
 <!-- AUTO: tools/stores/sears/lynns_fill.py -->
-| Model (`models/lynns/pack/`) | Family | Source file | Licence | Size W x D x H (m) | Tris | glb KB | Placed (zone x count) |
+| Model (`models/lynns/pack/`) | Family | Source file | Licence | Size W x D x H (m) | Tris | KB | Placed (zone x count) |
 |---|---|---|---|---|---|---|---|
-| `pk_accent_black.glb` | CHAIR-A accent / barrel chair | Quaternius `FBX/Couch_Small1.fbx` | CC0 1.0 | 0.82 x 0.82 x 0.80 | 852 | 22 | Z1 x1, Z2 x3 |
-| `pk_accent_cognac.glb` | CHAIR-A accent / barrel chair | Quaternius `FBX/Couch_Small1.fbx` | CC0 1.0 | 0.82 x 0.82 x 0.80 | 852 | 22 | Z4 x2 |
-| `pk_accent_cream.glb` | CHAIR-A accent / barrel chair | Quaternius `FBX/Couch_Small1.fbx` | CC0 1.0 | 0.82 x 0.82 x 0.80 | 852 | 22 | Z1 x1, Z11 x1, Z4 x2, Z9 x1 |
-| `pk_accent_green.glb` | CHAIR-A accent / barrel chair | Quaternius `FBX/Couch_Small1.fbx` | CC0 1.0 | 0.82 x 0.82 x 0.80 | 852 | 22 | Z2 x2, Z9 x2 |
-| `pk_accent_navy.glb` | CHAIR-A accent / barrel chair | Quaternius `FBX/Couch_Small1.fbx` | CC0 1.0 | 0.82 x 0.82 x 0.80 | 852 | 22 | Z2 x2 |
-| `pk_bediron_black.glb` | BED-B iron bed (queen) | Quaternius `FBX/Bed_King.fbx` | CC0 1.0 | 1.75 x 2.25 x 1.15 | 676 | 26 | Z7 x1 |
-| `pk_bediron_bronze.glb` | BED-B iron bed (queen) | Quaternius `FBX/Bed_King.fbx` | CC0 1.0 | 1.75 x 2.25 x 1.15 | 676 | 26 | Z7 x1 |
-| `pk_bediron_white.glb` | BED-B iron bed (queen) | Quaternius `FBX/Bed_King.fbx` | CC0 1.0 | 1.75 x 2.25 x 1.15 | 676 | 26 | Z6 x1 |
-| `pk_bookcase_walnut.glb` | STOR bookcase | Quaternius `FBX/Bookshelf.fbx` | CC0 1.0 | 1.80 x 0.40 x 2.10 | 120 | 11 | Z2 x3 |
-| `pk_chair_cush_grey.glb` | DIN-A cushioned chair | Quaternius `FBX/Chair_3.fbx` | CC0 1.0 | 0.46 x 0.52 x 0.98 | 428 | 26 | Z8 x16 |
-| `pk_chair_cush_white.glb` | DIN-A cushioned chair | Quaternius `FBX/Chair_2.fbx` | CC0 1.0 | 0.46 x 0.52 x 0.98 | 352 | 21 | Z8 x28 |
-| `pk_chair_ladder_black.glb` | DIN-A ladder-back chair | Quaternius `FBX/Chair_1.fbx` | CC0 1.0 | 0.46 x 0.52 x 0.98 | 216 | 17 | Z8 x28 |
-| `pk_chair_ladder_espresso.glb` | DIN-A slat-back chair | Quaternius `FBX/Chair_4.fbx` | CC0 1.0 | 0.46 x 0.52 x 0.98 | 264 | 18 | Z8 x16 |
-| `pk_chest_cream.glb` | STOR chest | Quaternius `FBX/Drawer_4.fbx` | CC0 1.0 | 1.00 x 0.48 x 1.32 | 464 | 19 | Z11 x1, Z2 x1 |
-| `pk_cocktail_burl.glb` | OCC-A round burl cocktail table | Quaternius `FBX/Table_RoundSmall2.fbx` | CC0 1.0 | 1.00 x 1.00 x 0.46 | 744 | 32 | Z9 x3 |
-| `pk_cocktail_glass.glb` | OCC-A metal + glass cocktail table | Kenney `tableCoffeeGlass.glb` | CC0 1.0 | 1.20 x 0.70 x 0.45 | 140 | 10 | Z3 x1 |
-| `pk_cocktail_oak.glb` | OCC-A cocktail table | Kenney `tableCoffee.glb` | CC0 1.0 | 1.30 x 0.75 x 0.45 | 124 | 9 | Z4 x1, Z9 x2 |
-| `pk_cocktail_round.glb` | OCC-A round cocktail table | Quaternius `FBX/Table_RoundSmall2.fbx` | CC0 1.0 | 1.00 x 1.00 x 0.46 | 744 | 32 | Z2 x1, Z3 x1 |
-| `pk_cocktail_walnut.glb` | OCC-A cocktail table | Kenney `tableCoffee.glb` | CC0 1.0 | 1.30 x 0.75 x 0.45 | 124 | 9 | Z4 x1 |
-| `pk_console_oak.glb` | OCC-C console | Quaternius `FBX/Drawer_5.fbx` | CC0 1.0 | 1.60 x 0.40 x 0.78 | 352 | 21 | Z4 x1 |
-| `pk_curtain_beige.glb` | FIX curtain | Quaternius `FBX/Curtains_Double.fbx` | CC0 1.0 | 3.40 x 0.30 x 2.80 | 320 | 16 | Z5 x1 |
-| `pk_desk_white.glb` | FIX sales desk | Kenney `desk.glb` | CC0 1.0 | 1.50 x 0.70 x 0.76 | 198 | 14 | Z11 x1 |
-| `pk_dryer_white.glb` | APPL dryer | Kenney `dryer.glb` | CC0 1.0 | 0.69 x 0.75 x 0.98 | 262 | 16 | Z12 x1 |
-| `pk_end_black.glb` | OCC-B end table | Quaternius `FBX/NightStand_1.fbx` | CC0 1.0 | 0.55 x 0.45 x 0.60 | 172 | 12 | Z3 x3, Z9 x2 |
-| `pk_end_oak.glb` | OCC-B end table | Quaternius `FBX/NightStand_3.fbx` | CC0 1.0 | 0.55 x 0.45 x 0.60 | 272 | 17 | Z1 x2, Z4 x2, Z9 x4 |
-| `pk_end_white.glb` | OCC-B end table | Quaternius `FBX/NightStand_2.fbx` | CC0 1.0 | 0.55 x 0.45 x 0.62 | 184 | 13 | Z2 x2, Z4 x2, Z9 x4 |
-| `pk_fridge_steel.glb` | APPL refrigerator | Kenney `kitchenFridgeLarge.glb` | CC0 1.0 | 0.91 x 0.75 x 1.78 | 436 | 26 | Z12 x1 |
-| `pk_lamp_brass.glb` | LAMP table lamp, brass | Quaternius `FBX/Light_Floor2.fbx` | CC0 1.0 | 0.29 x 0.30 x 0.70 | 276 | 12 | Z2 x2, Z4 x2, Z8 x1, Z9 x4 |
-| `pk_lamp_glass.glb` | LAMP table lamp, glass | Quaternius `FBX/Light_Floor4.fbx` | CC0 1.0 | 0.31 x 0.31 x 0.68 | 244 | 12 | Z11 x1, Z3 x2, Z8 x1, Z9 x2 |
-| `pk_lamp_gourd.glb` | LAMP table lamp, white ceramic | Quaternius `FBX/Light_Floor3.fbx` | CC0 1.0 | 0.32 x 0.34 x 0.72 | 244 | 12 | Z4 x4, Z8 x4, Z9 x4 |
-| `pk_love_brown.glb` | SOFA-C loveseat | Quaternius `FBX/Couch_Large1.fbx` | CC0 1.0 | 1.65 x 1.00 x 1.00 | 1460 | 36 | Z3 x1 |
-| `pk_love_cognac.glb` | SOFA-C loveseat | Quaternius `FBX/Couch_Large1.fbx` | CC0 1.0 | 1.65 x 1.00 x 1.00 | 1460 | 36 | Z3 x1 |
-| `pk_love_grey.glb` | SOFA-C loveseat | Quaternius `FBX/Couch_Large2.fbx` | CC0 1.0 | 1.65 x 1.00 x 1.00 | 1332 | 45 | Z3 x1 |
-| `pk_mat_adjustable.glb` | MAT adjustable base | built in the script (`adjustable`) | project | 1.53 x 2.04 x 0.96 | 120 | 11 | Z7 x5 |
-| `pk_mat_grey.glb` | MAT mattress on foundation (queen) | built in the script (`mattress`) | project | 1.53 x 2.04 x 0.56 | 60 | 7 | Z7 x3 |
-| `pk_mat_navy.glb` | MAT mattress on foundation (queen) | built in the script (`mattress`) | project | 1.53 x 2.04 x 0.56 | 60 | 7 | Z7 x7 |
-| `pk_mat_white.glb` | MAT mattress on foundation (queen) | built in the script (`mattress`) | project | 1.53 x 2.04 x 0.56 | 60 | 7 | Z7 x2 |
-| `pk_monitor.glb` | FIX sales desk monitor | Kenney `computerScreen.glb` | CC0 1.0 | 0.55 x 0.15 x 0.42 | 72 | 7 | Z11 x2 |
-| `pk_motion_brown.glb` | SOFA-C motion sofa | Quaternius `FBX/Couch_Large1.fbx` | CC0 1.0 | 2.15 x 1.00 x 1.00 | 1460 | 36 | Z3 x1 |
-| `pk_motion_cognac.glb` | SOFA-C motion sofa | Quaternius `FBX/Couch_Large1.fbx` | CC0 1.0 | 2.15 x 1.00 x 1.00 | 1460 | 36 | Z3 x1 |
-| `pk_motion_grey.glb` | SOFA-C motion sofa | Quaternius `FBX/Couch_Large2.fbx` | CC0 1.0 | 2.15 x 1.00 x 1.00 | 1332 | 45 | Z3 x1 |
-| `pk_motion_taupe.glb` | SOFA-C motion sofa | Quaternius `FBX/Couch_Large2.fbx` | CC0 1.0 | 2.15 x 1.00 x 1.00 | 1332 | 45 | Z3 x1 |
-| `pk_ott_cream.glb` | OTT cocktail ottoman | Kenney `loungeSofaOttoman.glb` | CC0 1.0 | 1.20 x 0.90 x 0.42 | 84 | 8 | Z1 x1, Z4 x1 |
-| `pk_ott_grey.glb` | OTT cocktail ottoman | Kenney `loungeSofaOttoman.glb` | CC0 1.0 | 1.20 x 0.90 x 0.42 | 84 | 8 | Z1 x1, Z9 x1 |
-| `pk_ott_tweed.glb` | OTT cocktail ottoman | Kenney `loungeSofaOttoman.glb` | CC0 1.0 | 1.20 x 0.90 x 0.42 | 84 | 8 | Z1 x1, Z4 x2 |
-| `pk_pillowtower.glb` | FIX pillow tower | built in the script (`pillowtower`) | project | 0.90 x 0.50 x 1.60 | 276 | 22 | Z7 x1 |
-| `pk_plant_monstera.glb` | DECO faux plant | Quaternius `FBX/Houseplant_7.fbx` | CC0 1.0 | 1.26 x 1.31 x 0.95 | 449 | 19 | Z2 x1 |
-| `pk_plant_small.glb` | DECO faux plant | Quaternius `FBX/Houseplant_1.fbx` | CC0 1.0 | 0.59 x 0.53 x 0.55 | 245 | 11 | Z8 x3 |
-| `pk_plant_snake.glb` | DECO faux plant | Quaternius `FBX/Houseplant_4.fbx` | CC0 1.0 | 0.33 x 0.33 x 0.90 | 316 | 16 | Z1 x1 |
-| `pk_plant_tall.glb` | DECO faux plant | Quaternius `FBX/Houseplant_8.fbx` | CC0 1.0 | 0.50 x 0.50 x 1.50 | 310 | 23 | Z1 x1 |
-| `pk_range_steel.glb` | APPL range | Kenney `kitchenStove.glb` | CC0 1.0 | 0.76 x 0.70 x 0.95 | 830 | 48 | Z12 x1 |
-| `pk_recl_beige.glb` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 14 | not placed yet |
-| `pk_recl_black.glb` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 14 | Z5 x2 |
-| `pk_recl_brown.glb` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 14 | Z5 x2 |
-| `pk_recl_cognac.glb` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 14 | Z5 x2 |
-| `pk_recl_grey.glb` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 14 | Z5 x2 |
-| `pk_recl_quilt.glb` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 14 | Z5 x2 |
-| `pk_reclc_beige.glb` | CHAIR-B recliner (closed) | Quaternius `FBX/Couch_Small2.fbx` | CC0 1.0 | 0.95 x 1.00 x 1.02 | 468 | 18 | Z5 x10 |
-| `pk_reclc_brown.glb` | CHAIR-B recliner (closed) | Quaternius `FBX/Couch_Small2.fbx` | CC0 1.0 | 0.95 x 1.00 x 1.02 | 468 | 18 | Z5 x10 |
-| `pk_reclc_grey.glb` | CHAIR-B recliner (closed) | Quaternius `FBX/Couch_Small2.fbx` | CC0 1.0 | 0.95 x 1.00 x 1.02 | 468 | 18 | Z5 x8 |
-| `pk_rug_cream.glb` | RUG | Quaternius `FBX/Carpet_2.fbx` | CC0 1.0 | 2.70 x 3.00 x 0.01 | 98 | 6 | Z1 x1, Z9 x1 |
-| `pk_rug_round.glb` | RUG | built in the script (`roundrug`) | project | 2.40 x 2.40 x 0.01 | 240 | 15 | Z1 x1, Z2 x1, Z4 x1 |
-| `pk_rug_sisal.glb` | RUG | Quaternius `FBX/Carpet_2.fbx` | CC0 1.0 | 2.70 x 3.00 x 0.01 | 98 | 6 | Z4 x1 |
-| `pk_rug_taupe.glb` | RUG | Quaternius `FBX/Carpet_1.fbx` | CC0 1.0 | 2.40 x 3.00 x 0.01 | 108 | 7 | Z11 x1, Z3 x1, Z4 x1 |
-| `pk_rug_vintage.glb` | RUG | Quaternius `FBX/Carpet_1.fbx` | CC0 1.0 | 2.40 x 3.00 x 0.01 | 108 | 7 | Z1 x1, Z3 x1, Z4 x1, Z9 x1 |
-| `pk_sect_bluegrey.glb` | SOFA-B sectional (L with chaise) | Quaternius `FBX/Couch_L.fbx` | CC0 1.0 | 2.90 x 2.10 x 0.88 | 1428 | 36 | Z1 x1 |
-| `pk_sect_cream.glb` | SOFA-B sectional (L with chaise) | Quaternius `FBX/Couch_L.fbx` | CC0 1.0 | 2.90 x 2.10 x 0.88 | 1428 | 36 | Z1 x1 |
-| `pk_sect_creamleather.glb` | SOFA-B sectional (L with chaise) | Quaternius `FBX/Couch_L.fbx` | CC0 1.0 | 2.90 x 2.10 x 0.88 | 1428 | 36 | Z4 x1 |
-| `pk_sect_grey.glb` | SOFA-B sectional (L with chaise) | Quaternius `FBX/Couch_L.fbx` | CC0 1.0 | 2.90 x 2.10 x 0.88 | 1428 | 36 | Z1 x1, Z9 x1 |
-| `pk_sideboard_black.glb` | STOR sideboard | Quaternius `FBX/Drawer_1.fbx` | CC0 1.0 | 1.70 x 0.45 x 0.85 | 404 | 16 | Z11 x1, Z8 x2 |
-| `pk_sideboard_greywash.glb` | STOR sideboard | Quaternius `FBX/Drawer_1.fbx` | CC0 1.0 | 1.70 x 0.45 x 0.85 | 404 | 16 | Z8 x2 |
-| `pk_sideboard_white.glb` | STOR sideboard | Quaternius `FBX/Drawer_1.fbx` | CC0 1.0 | 1.70 x 0.45 x 0.85 | 404 | 16 | Z8 x2 |
-| `pk_stool_black.glb` | DIN-B counter stool | Quaternius `FBX/Stool.fbx` | CC0 1.0 | 0.44 x 0.46 x 0.68 | 500 | 22 | Z6 x6 |
-| `pk_stool_oak.glb` | DIN-B counter stool | Quaternius `FBX/Stool.fbx` | CC0 1.0 | 0.44 x 0.46 x 0.68 | 500 | 22 | Z6 x6 |
-| `pk_taskchair.glb` | FIX task chair | Kenney `chairDesk.glb` | CC0 1.0 | 0.60 x 0.60 x 0.95 | 588 | 36 | Z11 x1 |
-| `pk_tcounter_oak.glb` | DIN-B counter table | Kenney `table.glb` | CC0 1.0 | 1.50 x 0.90 x 0.92 | 120 | 9 | Z6 x2 |
-| `pk_trect_black.glb` | DIN-A rectangular dining table | Kenney `table.glb` | CC0 1.0 | 1.90 x 0.95 x 0.76 | 120 | 9 | Z8 x4 |
-| `pk_trect_greyoak.glb` | DIN-A rectangular dining table | Kenney `table.glb` | CC0 1.0 | 1.90 x 0.95 x 0.76 | 120 | 9 | Z8 x4 |
-| `pk_trect_oak.glb` | DIN-A rectangular dining table | Kenney `table.glb` | CC0 1.0 | 1.90 x 0.95 x 0.76 | 120 | 9 | Z8 x4 |
-| `pk_tround_espresso.glb` | DIN-A round pedestal table | Quaternius `FBX/Table_RoundSmall.fbx` | CC0 1.0 | 1.20 x 1.20 x 0.76 | 592 | 24 | Z8 x2 |
-| `pk_tround_oak.glb` | DIN-A round pedestal table | Quaternius `FBX/Table_RoundSmall.fbx` | CC0 1.0 | 1.20 x 1.20 x 0.76 | 592 | 24 | Z8 x1 |
-| `pk_tround_white.glb` | DIN-A round pedestal table | Quaternius `FBX/Table_RoundSmall.fbx` | CC0 1.0 | 1.20 x 1.20 x 0.76 | 592 | 24 | Z8 x1 |
-| `pk_washer_white.glb` | APPL washer | Kenney `washer.glb` | CC0 1.0 | 0.69 x 0.75 x 0.98 | 720 | 42 | Z12 x1 |
+| `pk_accent_black.gltf` | CHAIR-A accent / barrel chair | Quaternius `FBX/Couch_Small1.fbx` | CC0 1.0 | 0.82 x 0.82 x 0.80 | 852 | 21 | Z1 x1, Z2 x3, Z4 x1 |
+| `pk_accent_cognac.gltf` | CHAIR-A accent / barrel chair | Quaternius `FBX/Couch_Small1.fbx` | CC0 1.0 | 0.82 x 0.82 x 0.80 | 852 | 21 | Z1 x2, Z4 x4 |
+| `pk_accent_cream.gltf` | CHAIR-A accent / barrel chair | Quaternius `FBX/Couch_Small1.fbx` | CC0 1.0 | 0.82 x 0.82 x 0.80 | 852 | 21 | Z1 x3, Z11 x1, Z4 x3, Z9 x1 |
+| `pk_accent_green.gltf` | CHAIR-A accent / barrel chair | Quaternius `FBX/Couch_Small1.fbx` | CC0 1.0 | 0.82 x 0.82 x 0.80 | 852 | 21 | Z1 x1, Z2 x2, Z4 x2, Z9 x2 |
+| `pk_accent_navy.gltf` | CHAIR-A accent / barrel chair | Quaternius `FBX/Couch_Small1.fbx` | CC0 1.0 | 0.82 x 0.82 x 0.80 | 852 | 21 | Z1 x2, Z2 x2 |
+| `pk_bediron_black.gltf` | BED-B iron bed (queen) | Quaternius `FBX/Bed_King.fbx` | CC0 1.0 | 1.75 x 2.25 x 1.15 | 676 | 26 | Z7 x1 |
+| `pk_bediron_bronze.gltf` | BED-B iron bed (queen) | Quaternius `FBX/Bed_King.fbx` | CC0 1.0 | 1.75 x 2.25 x 1.15 | 676 | 25 | Z7 x1 |
+| `pk_bediron_white.gltf` | BED-B iron bed (queen) | Quaternius `FBX/Bed_King.fbx` | CC0 1.0 | 1.75 x 2.25 x 1.15 | 676 | 26 | Z6 x1 |
+| `pk_bookcase_walnut.gltf` | STOR bookcase | Quaternius `FBX/Bookshelf.fbx` | CC0 1.0 | 1.80 x 0.40 x 2.10 | 120 | 10 | Z2 x3 |
+| `pk_chair_cush_grey.gltf` | DIN-A cushioned chair | Quaternius `FBX/Chair_3.fbx` | CC0 1.0 | 0.46 x 0.52 x 0.98 | 428 | 25 | Z8 x16 |
+| `pk_chair_cush_white.gltf` | DIN-A cushioned chair | Quaternius `FBX/Chair_2.fbx` | CC0 1.0 | 0.46 x 0.52 x 0.98 | 352 | 20 | Z8 x28 |
+| `pk_chair_ladder_black.gltf` | DIN-A ladder-back chair | Quaternius `FBX/Chair_1.fbx` | CC0 1.0 | 0.46 x 0.52 x 0.98 | 216 | 16 | Z8 x28 |
+| `pk_chair_ladder_espresso.gltf` | DIN-A slat-back chair | Quaternius `FBX/Chair_4.fbx` | CC0 1.0 | 0.46 x 0.52 x 0.98 | 264 | 17 | Z8 x16 |
+| `pk_chest_cream.gltf` | STOR chest | Quaternius `FBX/Drawer_4.fbx` | CC0 1.0 | 1.00 x 0.48 x 1.32 | 464 | 18 | Z11 x1, Z2 x1 |
+| `pk_cocktail_burl.gltf` | OCC-A round burl cocktail table | Quaternius `FBX/Table_RoundSmall2.fbx` | CC0 1.0 | 1.00 x 1.00 x 0.46 | 744 | 31 | Z9 x3 |
+| `pk_cocktail_glass.gltf` | OCC-A metal + glass cocktail table | Kenney `tableCoffeeGlass.glb` | CC0 1.0 | 1.20 x 0.70 x 0.45 | 140 | 9 | Z3 x1 |
+| `pk_cocktail_oak.gltf` | OCC-A cocktail table | Kenney `tableCoffee.glb` | CC0 1.0 | 1.30 x 0.75 x 0.45 | 124 | 8 | Z1 x1, Z4 x1, Z9 x2 |
+| `pk_cocktail_round.gltf` | OCC-A round cocktail table | Quaternius `FBX/Table_RoundSmall2.fbx` | CC0 1.0 | 1.00 x 1.00 x 0.46 | 744 | 31 | Z2 x1, Z3 x1, Z4 x1 |
+| `pk_cocktail_walnut.gltf` | OCC-A cocktail table | Kenney `tableCoffee.glb` | CC0 1.0 | 1.30 x 0.75 x 0.45 | 124 | 8 | Z1 x1, Z4 x2 |
+| `pk_console_oak.gltf` | OCC-C console | Quaternius `FBX/Drawer_5.fbx` | CC0 1.0 | 1.60 x 0.40 x 0.78 | 352 | 20 | Z4 x2 |
+| `pk_curtain_beige.gltf` | FIX curtain | Quaternius `FBX/Curtains_Double.fbx` | CC0 1.0 | 3.40 x 0.30 x 2.80 | 320 | 15 | Z5 x1 |
+| `pk_desk_white.gltf` | FIX sales desk | Kenney `desk.glb` | CC0 1.0 | 1.50 x 0.70 x 0.76 | 198 | 13 | Z11 x1 |
+| `pk_dryer_white.gltf` | APPL dryer | Kenney `dryer.glb` | CC0 1.0 | 0.69 x 0.75 x 0.98 | 262 | 16 | Z12 x1 |
+| `pk_end_black.gltf` | OCC-B end table | Quaternius `FBX/NightStand_1.fbx` | CC0 1.0 | 0.55 x 0.45 x 0.60 | 172 | 12 | Z1 x2, Z3 x3, Z4 x2, Z9 x2 |
+| `pk_end_oak.gltf` | OCC-B end table | Quaternius `FBX/NightStand_3.fbx` | CC0 1.0 | 0.55 x 0.45 x 0.60 | 272 | 17 | Z1 x4, Z4 x4, Z9 x4 |
+| `pk_end_white.gltf` | OCC-B end table | Quaternius `FBX/NightStand_2.fbx` | CC0 1.0 | 0.55 x 0.45 x 0.62 | 184 | 12 | Z1 x3, Z2 x3, Z4 x2, Z9 x4 |
+| `pk_fridge_steel.gltf` | APPL refrigerator | Kenney `kitchenFridgeLarge.glb` | CC0 1.0 | 0.91 x 0.75 x 1.78 | 436 | 26 | Z12 x1 |
+| `pk_lamp_brass.gltf` | LAMP table lamp, brass | Quaternius `FBX/Light_Floor2.fbx` | CC0 1.0 | 0.29 x 0.30 x 0.70 | 276 | 11 | Z1 x1, Z2 x2, Z4 x4, Z8 x1, Z9 x4 |
+| `pk_lamp_glass.gltf` | LAMP table lamp, glass | Quaternius `FBX/Light_Floor4.fbx` | CC0 1.0 | 0.31 x 0.31 x 0.68 | 244 | 11 | Z1 x2, Z11 x1, Z3 x2, Z4 x2, Z8 x1, Z9 x2 |
+| `pk_lamp_gourd.gltf` | LAMP table lamp, white ceramic | Quaternius `FBX/Light_Floor3.fbx` | CC0 1.0 | 0.32 x 0.34 x 0.72 | 244 | 11 | Z1 x4, Z2 x1, Z4 x6, Z8 x4, Z9 x4 |
+| `pk_love_brown.gltf` | SOFA-C loveseat | Quaternius `FBX/Couch_Large1.fbx` | CC0 1.0 | 1.65 x 1.00 x 1.00 | 1460 | 36 | Z3 x1 |
+| `pk_love_cognac.gltf` | SOFA-C loveseat | Quaternius `FBX/Couch_Large1.fbx` | CC0 1.0 | 1.65 x 1.00 x 1.00 | 1460 | 36 | Z3 x1 |
+| `pk_love_grey.gltf` | SOFA-C loveseat | Quaternius `FBX/Couch_Large2.fbx` | CC0 1.0 | 1.65 x 1.00 x 1.00 | 1332 | 44 | Z3 x1 |
+| `pk_mat_adjustable.gltf` | MAT adjustable base | built in the script (`adjustable`) | project | 1.53 x 2.04 x 0.96 | 120 | 10 | Z7 x5 |
+| `pk_mat_grey.gltf` | MAT mattress on foundation (queen) | built in the script (`mattress`) | project | 1.53 x 2.04 x 0.56 | 60 | 6 | Z7 x3 |
+| `pk_mat_navy.gltf` | MAT mattress on foundation (queen) | built in the script (`mattress`) | project | 1.53 x 2.04 x 0.56 | 60 | 6 | Z7 x7 |
+| `pk_mat_white.gltf` | MAT mattress on foundation (queen) | built in the script (`mattress`) | project | 1.53 x 2.04 x 0.56 | 60 | 6 | Z7 x2 |
+| `pk_monitor.gltf` | FIX sales desk monitor | Kenney `computerScreen.glb` | CC0 1.0 | 0.55 x 0.15 x 0.42 | 72 | 6 | Z11 x2 |
+| `pk_motion_brown.gltf` | SOFA-C motion sofa | Quaternius `FBX/Couch_Large1.fbx` | CC0 1.0 | 2.15 x 1.00 x 1.00 | 1460 | 36 | Z3 x1, Z4 x1 |
+| `pk_motion_cognac.gltf` | SOFA-C motion sofa | Quaternius `FBX/Couch_Large1.fbx` | CC0 1.0 | 2.15 x 1.00 x 1.00 | 1460 | 36 | Z3 x1 |
+| `pk_motion_grey.gltf` | SOFA-C motion sofa | Quaternius `FBX/Couch_Large2.fbx` | CC0 1.0 | 2.15 x 1.00 x 1.00 | 1332 | 44 | Z3 x1 |
+| `pk_motion_taupe.gltf` | SOFA-C motion sofa | Quaternius `FBX/Couch_Large2.fbx` | CC0 1.0 | 2.15 x 1.00 x 1.00 | 1332 | 44 | Z3 x1 |
+| `pk_ott_cream.gltf` | OTT cocktail ottoman | Kenney `loungeSofaOttoman.glb` | CC0 1.0 | 1.20 x 0.90 x 0.42 | 84 | 7 | Z1 x1, Z4 x1 |
+| `pk_ott_grey.gltf` | OTT cocktail ottoman | Kenney `loungeSofaOttoman.glb` | CC0 1.0 | 1.20 x 0.90 x 0.42 | 84 | 7 | Z1 x1, Z4 x2, Z9 x1 |
+| `pk_ott_tweed.gltf` | OTT cocktail ottoman | Kenney `loungeSofaOttoman.glb` | CC0 1.0 | 1.20 x 0.90 x 0.42 | 84 | 7 | Z1 x1, Z4 x2 |
+| `pk_pillowtower.gltf` | FIX pillow tower | built in the script (`pillowtower`) | project | 0.90 x 0.50 x 1.60 | 276 | 21 | Z7 x1 |
+| `pk_plant_monstera.gltf` | DECO faux plant | Quaternius `FBX/Houseplant_7.fbx` | CC0 1.0 | 1.26 x 1.31 x 0.95 | 449 | 18 | Z2 x1 |
+| `pk_plant_small.gltf` | DECO faux plant | Quaternius `FBX/Houseplant_1.fbx` | CC0 1.0 | 0.59 x 0.53 x 0.55 | 245 | 10 | Z4 x1, Z8 x3 |
+| `pk_plant_snake.gltf` | DECO faux plant | Quaternius `FBX/Houseplant_4.fbx` | CC0 1.0 | 0.33 x 0.33 x 0.90 | 316 | 15 | Z1 x1 |
+| `pk_plant_tall.gltf` | DECO faux plant | Quaternius `FBX/Houseplant_8.fbx` | CC0 1.0 | 0.50 x 0.50 x 1.50 | 310 | 22 | Z1 x1 |
+| `pk_range_steel.gltf` | APPL range | Kenney `kitchenStove.glb` | CC0 1.0 | 0.76 x 0.70 x 0.95 | 830 | 47 | Z12 x1 |
+| `pk_recl_beige.gltf` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 13 | not placed yet |
+| `pk_recl_black.gltf` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 13 | Z5 x2 |
+| `pk_recl_brown.gltf` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 13 | Z5 x2 |
+| `pk_recl_cognac.gltf` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 13 | Z5 x2 |
+| `pk_recl_grey.gltf` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 13 | Z5 x2 |
+| `pk_recl_quilt.gltf` | CHAIR-B recliner (footrest out) | Kenney `loungeChairRelax.glb` | CC0 1.0 | 0.95 x 1.25 x 1.05 | 188 | 13 | Z5 x2 |
+| `pk_reclc_beige.gltf` | CHAIR-B recliner (closed) | Quaternius `FBX/Couch_Small2.fbx` | CC0 1.0 | 0.95 x 1.00 x 1.02 | 468 | 17 | Z4 x1, Z5 x10 |
+| `pk_reclc_brown.gltf` | CHAIR-B recliner (closed) | Quaternius `FBX/Couch_Small2.fbx` | CC0 1.0 | 0.95 x 1.00 x 1.02 | 468 | 17 | Z4 x1, Z5 x10 |
+| `pk_reclc_grey.gltf` | CHAIR-B recliner (closed) | Quaternius `FBX/Couch_Small2.fbx` | CC0 1.0 | 0.95 x 1.00 x 1.02 | 468 | 17 | Z5 x8 |
+| `pk_rug_cream.gltf` | RUG | Quaternius `FBX/Carpet_2.fbx` | CC0 1.0 | 2.70 x 3.00 x 0.01 | 98 | 6 | Z1 x1, Z9 x1 |
+| `pk_rug_round.gltf` | RUG | built in the script (`roundrug`) | project | 2.40 x 2.40 x 0.01 | 240 | 14 | Z1 x1, Z2 x1, Z4 x2 |
+| `pk_rug_sisal.gltf` | RUG | Quaternius `FBX/Carpet_2.fbx` | CC0 1.0 | 2.70 x 3.00 x 0.01 | 98 | 6 | Z1 x1, Z4 x1 |
+| `pk_rug_taupe.gltf` | RUG | Quaternius `FBX/Carpet_1.fbx` | CC0 1.0 | 2.40 x 3.00 x 0.01 | 108 | 6 | Z1 x1, Z11 x1, Z3 x1, Z4 x2 |
+| `pk_rug_vintage.gltf` | RUG | Quaternius `FBX/Carpet_1.fbx` | CC0 1.0 | 2.40 x 3.00 x 0.01 | 108 | 6 | Z1 x1, Z3 x1, Z4 x1, Z9 x1 |
+| `pk_sect_bluegrey.gltf` | SOFA-B sectional (L with chaise) | Quaternius `FBX/Couch_L.fbx` | CC0 1.0 | 2.90 x 2.10 x 0.88 | 1428 | 36 | Z1 x1 |
+| `pk_sect_cream.gltf` | SOFA-B sectional (L with chaise) | Quaternius `FBX/Couch_L.fbx` | CC0 1.0 | 2.90 x 2.10 x 0.88 | 1428 | 36 | Z1 x1 |
+| `pk_sect_creamleather.gltf` | SOFA-B sectional (L with chaise) | Quaternius `FBX/Couch_L.fbx` | CC0 1.0 | 2.90 x 2.10 x 0.88 | 1428 | 36 | Z4 x1 |
+| `pk_sect_grey.gltf` | SOFA-B sectional (L with chaise) | Quaternius `FBX/Couch_L.fbx` | CC0 1.0 | 2.90 x 2.10 x 0.88 | 1428 | 36 | Z1 x1, Z9 x1 |
+| `pk_sideboard_black.gltf` | STOR sideboard | Quaternius `FBX/Drawer_1.fbx` | CC0 1.0 | 1.70 x 0.45 x 0.85 | 404 | 15 | Z11 x1, Z8 x2 |
+| `pk_sideboard_greywash.gltf` | STOR sideboard | Quaternius `FBX/Drawer_1.fbx` | CC0 1.0 | 1.70 x 0.45 x 0.85 | 404 | 15 | Z8 x2 |
+| `pk_sideboard_white.gltf` | STOR sideboard | Quaternius `FBX/Drawer_1.fbx` | CC0 1.0 | 1.70 x 0.45 x 0.85 | 404 | 15 | Z4 x1, Z8 x2 |
+| `pk_stool_black.gltf` | DIN-B counter stool | Quaternius `FBX/Stool.fbx` | CC0 1.0 | 0.44 x 0.46 x 0.68 | 500 | 21 | Z6 x6 |
+| `pk_stool_oak.gltf` | DIN-B counter stool | Quaternius `FBX/Stool.fbx` | CC0 1.0 | 0.44 x 0.46 x 0.68 | 500 | 21 | Z6 x6 |
+| `pk_taskchair.gltf` | FIX task chair | Kenney `chairDesk.glb` | CC0 1.0 | 0.60 x 0.60 x 0.95 | 588 | 35 | Z11 x1 |
+| `pk_tcounter_oak.gltf` | DIN-B counter table | Kenney `table.glb` | CC0 1.0 | 1.50 x 0.90 x 0.92 | 120 | 8 | Z6 x2 |
+| `pk_trect_black.gltf` | DIN-A rectangular dining table | Kenney `table.glb` | CC0 1.0 | 1.90 x 0.95 x 0.76 | 120 | 8 | Z8 x4 |
+| `pk_trect_greyoak.gltf` | DIN-A rectangular dining table | Kenney `table.glb` | CC0 1.0 | 1.90 x 0.95 x 0.76 | 120 | 8 | Z8 x4 |
+| `pk_trect_oak.gltf` | DIN-A rectangular dining table | Kenney `table.glb` | CC0 1.0 | 1.90 x 0.95 x 0.76 | 120 | 8 | Z8 x4 |
+| `pk_tround_espresso.gltf` | DIN-A round pedestal table | Quaternius `FBX/Table_RoundSmall.fbx` | CC0 1.0 | 1.20 x 1.20 x 0.76 | 592 | 23 | Z8 x2 |
+| `pk_tround_oak.gltf` | DIN-A round pedestal table | Quaternius `FBX/Table_RoundSmall.fbx` | CC0 1.0 | 1.20 x 1.20 x 0.76 | 592 | 23 | Z8 x1 |
+| `pk_tround_white.gltf` | DIN-A round pedestal table | Quaternius `FBX/Table_RoundSmall.fbx` | CC0 1.0 | 1.20 x 1.20 x 0.76 | 592 | 23 | Z8 x1 |
+| `pk_washer_white.gltf` | APPL washer | Kenney `washer.glb` | CC0 1.0 | 0.69 x 0.75 x 0.98 | 720 | 41 | Z12 x1 |
 
 Generator models (own, `models/lynns/bl_ly_*`, baked 3-map textures) placed in the store:
 
@@ -177,8 +177,8 @@ Generator models (own, `models/lynns/bl_ly_*`, baked 3-map textures) placed in t
 - `night_glam`: Z10 x2
 - `night_oak`: Z10 x2
 - `night_sage`: Z10 x2
-- `sofa_cream`: Z2 x1, Z9 x2
-- `sofa_leather`: Z4 x1, Z9 x2
-- `sofa_sage`: Z4 x1, Z9 x3
-- `sofa_taupe`: Z4 x1, Z9 x2
+- `sofa_cream`: Z1 x1, Z2 x3, Z9 x2
+- `sofa_leather`: Z1 x1, Z4 x1, Z9 x2
+- `sofa_sage`: Z1 x1, Z4 x1, Z9 x3
+- `sofa_taupe`: Z1 x1, Z4 x1, Z9 x2
 <!-- /AUTO -->

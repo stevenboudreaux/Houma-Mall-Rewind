@@ -79,20 +79,41 @@ def main(out):
     for x, z in PIPES:
         d.ellipse([P(x - 0.2, z - 0.2), P(x + 0.2, z + 0.2)], fill=(70, 70, 70))
     # placed pieces
-    for g in D["groups"]:
+    def poly(key, x, z, yaw):
+        w, dd = D["models"][key]["size"]
+        a = math.radians(yaw)
+        fx, fz = math.sin(a), math.cos(a)   # front direction (+z at yaw 0) in plan
+        rx, rz = math.cos(a), -math.sin(a)
+        return [P(x + sx * rx * w / 2 + sz * fx * dd / 2, z + sx * rz * w / 2 + sz * fz * dd / 2) for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1))], fx, fz, dd
+
+    def colour(key):
+        if key.startswith(("bed", "night", "dresser", "chest")):
+            return (90, 60, 40)          # generator bedroom suites
+        if key.startswith("sofa"):
+            return (70, 90, 110)         # generator sofas
+        for pre, c in (("pk_mat", (40, 55, 110)), ("pk_bed", (120, 90, 60)), ("pk_recl", (110, 70, 50)), ("pk_t", (150, 120, 80)),
+                       ("pk_chair", (170, 140, 100)), ("pk_stool", (170, 140, 100)), ("pk_side", (120, 120, 110)), ("pk_book", (120, 120, 110)),
+                       ("pk_plant", (60, 120, 60)), ("pk_fridge", (150, 160, 170)), ("pk_range", (150, 160, 170)), ("pk_washer", (150, 160, 170)),
+                       ("pk_dryer", (150, 160, 170))):
+            if key.startswith(pre):
+                return c
+        return (120, 135, 150)           # other pack upholstery and tables
+
+    for g in D["groups"]:          # rugs first, under everything
         if "rug" in g:
             r = g["rug"]
             c = r[4].lstrip("#")
             d.rectangle([P(r[0], r[1]), P(r[2], r[3])], fill=tuple(int(c[i:i + 2], 16) for i in (0, 2, 4)) + (200,))
-        for key, x, z, yaw in g["items"]:
-            w, dd = D["models"][key]["size"]
-            a = math.radians(yaw)
-            # front direction (+z at yaw 0) in plan
-            fx, fz = math.sin(a), math.cos(a)
-            rx, rz = math.cos(a), -math.sin(a)
-            pts = [P(x + sx * rx * w / 2 + sz * fx * dd / 2, z + sx * rz * w / 2 + sz * fz * dd / 2) for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
-            col = (90, 60, 40) if key.startswith(("bed", "night", "dresser", "chest")) else (70, 90, 110)
-            d.polygon(pts, fill=col + (230,), outline=(20, 20, 20))
+        for it in g["items"]:
+            if D["models"][it[0]].get("walk"):
+                d.polygon(poly(it[0], it[1], it[2], it[3])[0], fill=(185, 175, 155, 170), outline=(150, 140, 120))
+    for g in D["groups"]:
+        for it in g["items"]:
+            key, x, z, yaw = it[:4]
+            if D["models"][key].get("walk") or len(it) > 4:
+                continue
+            pts, fx, fz, dd = poly(key, x, z, yaw)
+            d.polygon(pts, fill=colour(key) + (230,), outline=(20, 20, 20))
             # a tick on the front edge
             d.line([P(x + fx * dd / 2 * 0.6, z + fz * dd / 2 * 0.6), P(x + fx * dd / 2, z + fz * dd / 2)], fill=(255, 255, 255), width=2)
     # scale, north, legend
@@ -100,7 +121,7 @@ def main(out):
     d.line([(M, y0), (M + 9 * S, y0)], fill=(0, 0, 0), width=3)
     d.text((M, y0 + 6), "9 m (one column bay)", fill=(0, 0, 0), font=f)
     d.text((W - 160, M - 30), "N (back) ↑   mall ↓ S", fill=(0, 0, 0), font=f)
-    d.text((M, 8), "Lynn's Interiors 2026: zones and phase-1 furniture (design/lynns/layout.md)", fill=(0, 0, 0), font=fb)
+    d.text((M, 8), "Lynn's Interiors 2026: zones and furniture, phase 1 + pass 2 (design/lynns/layout.md)", fill=(0, 0, 0), font=fb)
     yy = y0 + 30
     for i, z in enumerate(Z):
         c = z["colour"].lstrip("#")
@@ -109,7 +130,7 @@ def main(out):
         cy = yy + (i // 2) * 24
         d.rectangle([cx, cy, cx + 16, cy + 16], fill=rgb)
         d.text((cx + 22, cy), z["id"] + "  " + z["what"], fill=(20, 20, 20), font=f)
-    d.text((M, H - 22), "brown = BED-A pieces, blue-grey = SOFA-A (white tick = the front); grey squares = 0.7 m columns, dots = pipe columns",
+    d.text((M, H - 22), "brown = generator suites, steel blue = generator sofas, other colours = pack pieces, beige = rugs (white tick = the front); grey squares = columns",
            fill=(60, 60, 60), font=f)
     im.save(out)
     print("wrote", out, im.size)

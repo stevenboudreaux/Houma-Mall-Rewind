@@ -14,7 +14,7 @@ Every model:
   - recoloured by MATERIAL swap onto one shared palette: every face gets UVs at the centre of its swatch in
     models/lynns/pack/ly_palette.png (albedo) and ly_palette_orm.png (AO/roughness/metal), so a model is one
     material, one draw call, and the flat-shaded look of the packs is kept;
-  - exported as models/lynns/pack/<id>.glb (the palette embedded: 128 px, a few KB each).
+  - exported as models/lynns/pack/<id>.gltf + <id>.bin, the palette PNGs shared beside them (one texture in Godot).
 Writes models/lynns/pack/manifest.json: id -> source, size [w, d, h], tris (read by placements and the asset manifest).
 
 Run (headless, from the project):
@@ -290,18 +290,20 @@ def convert(e, uvmap, pmat):
     ob.name = e["id"]
     me.name = e["id"]
     tris = sum(len(p.vertices) - 2 for p in me.polygons)
-    path = os.path.join(OUT, e["id"] + ".glb")
+    # .gltf + .bin with the palette as an external file next to them: Godot then shares ONE imported palette
+    # texture between all the pack models (a .glb would embed and extract a copy per model)
+    path = os.path.join(OUT, e["id"] + ".gltf")
     bpy.ops.object.select_all(action="DESELECT")
     ob.select_set(True)
     bpy.context.view_layer.objects.active = ob
-    bpy.ops.export_scene.gltf(filepath=path, export_format="GLB", use_selection=True, export_yup=True,
+    bpy.ops.export_scene.gltf(filepath=path, export_format="GLTF_SEPARATE", export_texture_dir="", use_selection=True, export_yup=True,
                               export_apply=True, export_texcoords=True, export_normals=True, export_tangents=False,
                               export_materials="EXPORT", export_image_format="AUTO", export_cameras=False,
                               export_lights=False, export_animations=False)
     xs = [v.co.x for v in me.vertices]; ys = [v.co.y for v in me.vertices]; zs = [v.co.z for v in me.vertices]
     size = [round(max(xs) - min(xs), 3), round(max(ys) - min(ys), 3), round(max(zs) - min(zs), 3)]
     print("LYPACK %s %s tris=%d size=%s" % (e["id"], e["src"], tris, size))
-    return ob, {"src": e["src"], "size": size, "tris": tris, "family": e.get("family", ""), "kb": round(os.path.getsize(path) / 1024)}
+    return ob, {"src": e["src"], "size": size, "tris": tris, "family": e.get("family", ""), "kb": round((os.path.getsize(path) + os.path.getsize(path[:-5] + ".bin")) / 1024)}
 
 
 def sheet(ids, out, cols=6):
@@ -312,7 +314,7 @@ def sheet(ids, out, cols=6):
     os.makedirs(tmp, exist_ok=True)
     for i in ids:
         clear()
-        bpy.ops.import_scene.gltf(filepath=os.path.join(OUT, i + ".glb"))
+        bpy.ops.import_scene.gltf(filepath=os.path.join(OUT, i + ".gltf"))
         obs = [o for o in bpy.context.scene.objects if o.type == "MESH"]
         mx = max(max(abs(v[0]) for v in o.bound_box) for o in obs)
         my = max(max(abs(v[1]) for v in o.bound_box) for o in obs)

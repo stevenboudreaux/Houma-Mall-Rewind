@@ -122,11 +122,11 @@ def dining_round(g, table, chair):
 
 def build():
     # ---------------- Z1 entry showcase: big sectionals either side of the aisle (IMG_4409)
-    sectional(group("Z1", "entry: cream sectional + ottoman, west of the aisle", -12.6, -105.3), "pk_sect_cream", "pk_ott_cream",
+    sectional(group("Z1", "entry: cream sectional + ottoman, west of the aisle", -14.9, -105.3), "pk_sect_cream", "pk_ott_cream",
               extra="pk_accent_cream")
-    sectional(group("Z1", "entry: grey sectional + ottoman, east of the aisle", 4.8, -105.3), "pk_sect_grey", "pk_ott_grey",
+    sectional(group("Z1", "entry: grey sectional + ottoman, east of the aisle", 5.9, -105.3), "pk_sect_grey", "pk_ott_grey",
               rug="pk_rug_vintage", extra="pk_accent_black")
-    sectional(group("Z1", "entry: blue-grey sectional", -22.0, -105.3), "pk_sect_bluegrey", "pk_ott_tweed", rug="pk_rug_round")
+    sectional(group("Z1", "entry: blue-grey sectional", -24.0, -105.3), "pk_sect_bluegrey", "pk_ott_tweed", rug="pk_rug_round")
     g = group("Z1", "entry: end tables and plants by the aisle columns", 0, 0)
     for x, z in ((-7.3, -103.0), (-0.7, -103.0), (-7.3, -107.6), (-0.7, -107.6)):
         g.add(("pk_plant_tall" if x < -3 else "pk_plant_snake") if z > -105 else "pk_end_oak", x, z, 0)
@@ -148,17 +148,42 @@ def build():
     g = group("Z3", "R2 west wall: brown leather motion sofas", -40.0, -118.6, 90)
     g.add("pk_motion_brown", 2.4, 0.55).add("pk_end_black", 0.95, 0.3).add("pk_motion_taupe", -0.6, 0.55).add("pk_love_brown", -2.9, 0.55)
     # ---------------- Z4 centre-west living: wingbacks, consoles + lamps, the cognac group (IMG_4411 t007-035)
-    living(group("Z4", "leather sofa group", -22.0, -114.0, 0), "sofa_leather", 2.32, chairs=["pk_accent_cognac", "pk_accent_cognac"],
+    living(group("Z4", "leather sofa group", -23.6, -114.0, 0), "sofa_leather", 2.32, chairs=["pk_accent_cognac", "pk_accent_cognac"],
            table="pk_cocktail_oak", rug="pk_rug_taupe")
-    living(group("Z4", "taupe slipcover facing sage", -12.6, -114.0, 0), "sofa_taupe", 2.22, facing_sofa="sofa_sage",
+    living(group("Z4", "taupe slipcover facing sage", -14.2, -114.0, 0), "sofa_taupe", 2.22, facing_sofa="sofa_sage",
            table="pk_cocktail_walnut", rug="pk_rug_sisal", end="pk_end_white", lamp="pk_lamp_brass")
-    g = group("Z4", "accent chairs + ottomans, console with lamps", -22.0, -123.4, 0)
+    g = group("Z4", "accent chairs + ottomans, console with lamps", -23.8, -123.4, 0)
     g.add("pk_rug_round", 0, 0, 0)
     for s in (-1, 1):
         g.add("pk_accent_cream", s * 0.9, -0.5, s * -20).add("pk_ott_tweed", s * 0.9, 0.75, 0)
     g.add("pk_console_oak", 0, -1.9).add("pk_lamp_gourd", -0.55, -1.9, 0, 0.78).add("pk_lamp_gourd", 0.55, -1.9, 0, 0.78)
-    g = group("Z4", "cream leather sectional", -12.4, -123.6, 0)
+    g = group("Z4", "cream leather sectional", -14.2, -123.6, 0)
     sectional(g, "pk_sect_creamleather", "pk_ott_cream", rug="pk_rug_vintage")
+    # ---- pass 2b: density (the footage packs the floor: a second group in every open bay, the front strip filled)
+    living(group("Z1", "entry: leather sofa + cognac chairs", -10.6, -105.0, 0), "sofa_leather", 2.32, chairs=["pk_accent_cognac", "pk_accent_cognac"],
+           table="pk_cocktail_oak", rug="pk_rug_taupe", end="pk_end_black", lamp="pk_lamp_glass")
+    living(group("Z1", "entry: taupe sofa + navy chairs", -19.6, -105.0, 0), "sofa_taupe", 2.22, chairs=["pk_accent_navy", "pk_accent_navy"],
+           table="pk_cocktail_walnut", rug="pk_rug_sisal", end="pk_end_white", lamp="pk_lamp_gourd")
+    g = group("Z1", "entry front row facing the mall (west of the mouth)", -21.3, -99.3, 0)
+    g.add("sofa_cream", -2.6, 0).add("pk_end_oak", -0.95, 0).add("pk_lamp_brass", -0.95, 0, 0, 0.6).add("sofa_sage", 0.75, 0)
+    g.add("pk_end_oak", 2.35, 0).add("pk_lamp_gourd", 2.35, 0, 0, 0.6).add("pk_accent_green", 3.6, 0.1, -20)
+    g = group("Z1", "entry: accent chairs by the east aisle column", 1.8, -105.4, 0)
+    g.add("pk_accent_cream", 0, -1.0, 90).add("pk_end_white", 0, 0).add("pk_lamp_gourd", 0, 0, 0, 0.62).add("pk_accent_cream", 0, 1.0, 90)
+    g = group("Z2", "white sofas facing the mall", -33.4, -99.3, 0)
+    g.add("sofa_cream", -1.3, 0).add("pk_end_white", 0.2, 0).add("pk_lamp_gourd", 0.2, 0, 0, 0.62).add("sofa_cream", 1.7, 0)
+    g = group("Z4", "wingback-style chairs + ottomans (pack tub chairs)", -19.6, -114.4, 0)
+    g.add("pk_rug_round", 0, 0, 0)
+    for s_ in (-1, 1):
+        g.add("pk_accent_green", s_ * 0.85, -0.45, s_ * -25).add("pk_ott_grey", s_ * 0.85, 0.8, 0)
+    g.add("pk_end_oak", 0, -1.0).add("pk_lamp_brass", 0, -1.0, 0, 0.6)
+    g = group("Z4", "cognac chairs and a console by the aisle", -10.4, -114.4, 0)
+    g.add("pk_accent_cognac", -0.6, 0.2, 15).add("pk_accent_cognac", 0.6, 0.2, -15).add("pk_cocktail_round", 0, 1.35)
+    g.add("pk_console_oak", 0, -1.2).add("pk_lamp_gourd", -0.5, -1.2, 0, 0.78).add("pk_lamp_gourd", 0.5, -1.2, 0, 0.78)
+    living(group("Z4", "brown motion sofa group", -19.8, -123.6, 0), "pk_motion_brown", 2.15, chairs=["pk_reclc_brown", "pk_reclc_beige"],
+           table="pk_cocktail_walnut", rug="pk_rug_taupe", end="pk_end_black", lamp="pk_lamp_glass")
+    g = group("Z4", "cream accent chairs and a sideboard by the aisle", -10.4, -123.6, 0)
+    g.add("pk_sideboard_white", 0, -1.3).add("pk_lamp_brass", -0.55, -1.3, 0, 0.85).add("pk_plant_small", 0.5, -1.3, 0, 0.85)
+    g.add("pk_accent_cream", -0.6, 0.1, 15).add("pk_accent_black", 0.6, 0.1, -15).add("pk_end_oak", 0, 1.0)
     # ---------------- Z5 R1 recliner gallery: two facing runs along a cross aisle, curtain to the back (IMG_4412 t001-011)
     cols = ["pk_reclc_brown", "pk_reclc_beige", "pk_reclc_grey", "pk_recl_cognac", "pk_reclc_brown", "pk_recl_black",
             "pk_reclc_beige", "pk_recl_quilt", "pk_reclc_grey", "pk_recl_brown", "pk_reclc_beige", "pk_recl_grey",
@@ -322,7 +347,7 @@ def write_manifest(d, man, cfg):
             u = use.setdefault(it[0], {})
             u[g["zone"]] = u.get(g["zone"], 0) + 1
     src = {e["id"]: e for e in cfg["models"]}
-    rows = ["| Model (`models/lynns/pack/`) | Family | Source file | Licence | Size W x D x H (m) | Tris | glb KB | Placed (zone x count) |",
+    rows = ["| Model (`models/lynns/pack/`) | Family | Source file | Licence | Size W x D x H (m) | Tris | KB | Placed (zone x count) |",
             "|---|---|---|---|---|---|---|---|"]
     for k in sorted(man):
         v = man[k]
@@ -330,7 +355,7 @@ def write_manifest(d, man, cfg):
         sf = {"q": "Quaternius `FBX/%s.fbx`" % name, "k": "Kenney `%s.glb`" % name, "gen": "built in the script (`%s`)" % name}[kind]
         lic = "CC0 1.0" if kind in ("q", "k") else "project"
         pl = ", ".join("%s x%d" % (z, n) for z, n in sorted(use.get(k, {}).items())) or "not placed yet"
-        rows.append("| `%s.glb` | %s | %s | %s | %.2f x %.2f x %.2f | %d | %d | %s |" % (k, v.get("family", ""), sf, lic, v["size"][0], v["size"][1], v["size"][2], v["tris"], v.get("kb", 0), pl))
+        rows.append("| `%s.gltf` | %s | %s | %s | %.2f x %.2f x %.2f | %d | %d | %s |" % (k, v.get("family", ""), sf, lic, v["size"][0], v["size"][1], v["size"][2], v["tris"], v.get("kb", 0), pl))
     gen = sorted(k for k in d["models"] if not k.startswith("pk_"))
     rows += ["", "Generator models (own, `models/lynns/bl_ly_*`, baked 3-map textures) placed in the store:", ""]
     rows += ["- `%s`: %s" % (k, ", ".join("%s x%d" % (z, n) for z, n in sorted(use.get(k, {}).items())) or "not placed") for k in gen]
@@ -348,7 +373,7 @@ def main():
     for k in [k for k in d["models"] if k.startswith("pk_") and k not in man]:
         del d["models"][k]
     for k, v in man.items():
-        d["models"][k] = {"scene": "res://models/lynns/pack/%s.glb" % k, "size": [v["size"][0], v["size"][1]], "h": v["size"][2],
+        d["models"][k] = {"scene": "res://models/lynns/pack/%s.gltf" % k, "size": [v["size"][0], v["size"][1]], "h": v["size"][2],
                           "family": v.get("family", "")}
         if k in walk:
             d["models"][k]["walk"] = True

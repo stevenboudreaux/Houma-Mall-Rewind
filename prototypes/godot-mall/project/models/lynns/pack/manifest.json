@@ -8,7 +8,7 @@
   ],
   "tris": 852,
   "family": "CHAIR-A accent / barrel chair",
-  "kb": 22
+  "kb": 21
  },
  "pk_accent_cognac": {
   "src": "q:Couch_Small1",
@@ -19,7 +19,7 @@
   ],
   "tris": 852,
   "family": "CHAIR-A accent / barrel chair",
-  "kb": 22
+  "kb": 21
  },
  "pk_accent_cream": {
   "src": "q:Couch_Small1",
@@ -30,7 +30,7 @@
   ],
   "tris": 852,
   "family": "CHAIR-A accent / barrel chair",
-  "kb": 22
+  "kb": 21
  },
  "pk_accent_green": {
   "src": "q:Couch_Small1",
@@ -41,7 +41,7 @@
   ],
   "tris": 852,
   "family": "CHAIR-A accent / barrel chair",
-  "kb": 22
+  "kb": 21
  },
  "pk_accent_navy": {
   "src": "q:Couch_Small1",
@@ -52,7 +52,7 @@
   ],
   "tris": 852,
   "family": "CHAIR-A accent / barrel chair",
-  "kb": 22
+  "kb": 21
  },
  "pk_bediron_black": {
   "src": "q:Bed_King",
@@ -74,7 +74,7 @@
   ],
   "tris": 676,
   "family": "BED-B iron bed (queen)",
-  "kb": 26
+  "kb": 25
  },
  "pk_bediron_white": {
   "src": "q:Bed_King",
@@ -96,7 +96,7 @@
   ],
   "tris": 120,
   "family": "STOR bookcase",
-  "kb": 11
+  "kb": 10
  },
  "pk_chair_cush_grey": {
   "src": "q:Chair_3",
@@ -107,7 +107,7 @@
   ],
   "tris": 428,
   "family": "DIN-A cushioned chair",
-  "kb": 26
+  "kb": 25
  },
  "pk_chair_cush_white": {
   "src": "q:Chair_2",
@@ -118,7 +118,7 @@
   ],
   "tris": 352,
   "family": "DIN-A cushioned chair",
-  "kb": 21
+  "kb": 20
  },
  "pk_chair_ladder_black": {
   "src": "q:Chair_1",
@@ -129,7 +129,7 @@
   ],
   "tris": 216,
   "family": "DIN-A ladder-back chair",
-  "kb": 17
+  "kb": 16
  },
  "pk_chair_ladder_espresso": {
   "src": "q:Chair_4",
@@ -140,7 +140,7 @@
   ],
   "tris": 264,
   "family": "DIN-A slat-back chair",
-  "kb": 18
+  "kb": 17
  },
  "pk_chest_cream": {
   "src": "q:Drawer_4",
@@ -151,7 +151,7 @@
   ],
   "tris": 464,
   "family": "STOR chest",
-  "kb": 19
+  "kb": 18
  },
  "pk_cocktail_burl": {
   "src": "q:Table_RoundSmall2",
@@ -162,7 +162,7 @@
   ],
   "tris": 744,
   "family": "OCC-A round burl cocktail table",
-  "kb": 32
+  "kb": 31
  },
  "pk_cocktail_glass": {
   "src": "k:tableCoffeeGlass",
@@ -173,7 +173,7 @@
   ],
   "tris": 140,
   "family": "OCC-A metal + glass cocktail table",
-  "kb": 10
+  "kb": 9
  },
  "pk_cocktail_oak": {
   "src": "k:tableCoffee",
@@ -184,7 +184,7 @@
   ],
   "tris": 124,
   "family": "OCC-A cocktail table",
-  "kb": 9
+  "kb": 8
  },
  "pk_cocktail_round": {
   "src": "q:Table_RoundSmall2",
@@ -195,7 +195,7 @@
   ],
   "tris": 744,
   "family": "OCC-A round cocktail table",
-  "kb": 32
+  "kb": 31
  },
  "pk_cocktail_walnut": {
   "src": "k:tableCoffee",
@@ -206,7 +206,7 @@
   ],
   "tris": 124,
   "family": "OCC-A cocktail table",
-  "kb": 9
+  "kb": 8
  },
  "pk_console_oak": {
   "src": "q:Drawer_5",
@@ -217,7 +217,7 @@
   ],
   "tris": 352,
   "family": "OCC-C console",
-  "kb": 21
+  "kb": 20
  },
  "pk_curtain_beige": {
   "src": "q:Curtains_Double",
@@ -228,7 +228,7 @@
   ],
   "tris": 320,
   "family": "FIX curtain",
-  "kb": 16
+  "kb": 15
  },
  "pk_desk_white": {
   "src": "k:desk",
@@ -239,7 +239,7 @@
   ],
   "tris": 198,
   "family": "FIX sales desk",
-  "kb": 14
+  "kb": 13
  },
  "pk_dryer_white": {
   "src": "k:dryer",
@@ -283,7 +283,7 @@
   ],
   "tris": 184,
   "family": "OCC-B end table",
-  "kb": 13
+  "kb": 12
  },
  "pk_fridge_steel": {
   "src": "k:kitchenFridgeLarge",
@@ -305,7 +305,7 @@
   ],
   "tris": 276,
   "family": "LAMP table lamp, brass",
-  "kb": 12
+  "kb": 11
  },
  "pk_lamp_glass": {
   "src": "q:Light_Floor4",
@@ -316,7 +316,7 @@
   ],
   "tris": 244,
   "family": "LAMP table lamp, glass",
-  "kb": 12
+  "kb": 11
  },
  "pk_lamp_gourd": {
   "src": "q:Light_Floor3",
@@ -327,7 +327,7 @@
   ],
   "tris": 244,
   "family": "LAMP table lamp, white ceramic",
-  "kb": 12
+  "kb": 11
  },
  "pk_love_brown": {
   "src": "q:Couch_Large1",
@@ -360,7 +360,7 @@
   ],
   "tris": 1332,
   "family": "SOFA-C loveseat",
-  "kb": 45
+  "kb": 44
  },
  "pk_mat_adjustable": {
   "src": "gen:adjustable",
@@ -371,7 +371,7 @@
   ],
   "tris": 120,
   "family": "MAT adjustable base",
-  "kb": 11
+  "kb": 10
  },
  "pk_mat_grey": {
   "src": "gen:mattress",
@@ -382,7 +382,7 @@
   ],
   "tris": 60,
   "family": "MAT mattress on foundation (queen)",
-  "kb": 7
+  "kb": 6
  },
  "pk_mat_navy": {
   "src": "gen:mattress",
@@ -393,7 +393,7 @@
   ],
   "tris": 60,
   "family": "MAT mattress on foundation (queen)",
-  "kb": 7
+  "kb": 6
  },
  "pk_mat_white": {
   "src": "gen:mattress",
@@ -404,7 +404,7 @@
   ],
   "tris": 60,
   "family": "MAT mattress on foundation (queen)",
-  "kb": 7
+  "kb": 6
  },
  "pk_monitor": {
   "src": "k:computerScreen",
@@ -415,7 +415,7 @@
   ],
   "tris": 72,
   "family": "FIX sales desk monitor",
-  "kb": 7
+  "kb": 6
  },
  "pk_motion_brown": {
   "src": "q:Couch_Large1",
@@ -448,7 +448,7 @@
   ],
   "tris": 1332,
   "family": "SOFA-C motion sofa",
-  "kb": 45
+  "kb": 44
  },
  "pk_motion_taupe": {
   "src": "q:Couch_Large2",
@@ -459,7 +459,7 @@
   ],
   "tris": 1332,
   "family": "SOFA-C motion sofa",
-  "kb": 45
+  "kb": 44
  },
  "pk_ott_cream": {
   "src": "k:loungeSofaOttoman",
@@ -470,7 +470,7 @@
   ],
   "tris": 84,
   "family": "OTT cocktail ottoman",
-  "kb": 8
+  "kb": 7
  },
  "pk_ott_grey": {
   "src": "k:loungeSofaOttoman",
@@ -481,7 +481,7 @@
   ],
   "tris": 84,
   "family": "OTT cocktail ottoman",
-  "kb": 8
+  "kb": 7
  },
  "pk_ott_tweed": {
   "src": "k:loungeSofaOttoman",
@@ -492,7 +492,7 @@
   ],
   "tris": 84,
   "family": "OTT cocktail ottoman",
-  "kb": 8
+  "kb": 7
  },
  "pk_pillowtower": {
   "src": "gen:pillowtower",
@@ -503,7 +503,7 @@
   ],
   "tris": 276,
   "family": "FIX pillow tower",
-  "kb": 22
+  "kb": 21
  },
  "pk_plant_monstera": {
   "src": "q:Houseplant_7",
@@ -514,7 +514,7 @@
   ],
   "tris": 449,
   "family": "DECO faux plant",
-  "kb": 19
+  "kb": 18
  },
  "pk_plant_small": {
   "src": "q:Houseplant_1",
@@ -525,7 +525,7 @@
   ],
   "tris": 245,
   "family": "DECO faux plant",
-  "kb": 11
+  "kb": 10
  },
  "pk_plant_snake": {
   "src": "q:Houseplant_4",
@@ -536,7 +536,7 @@
   ],
   "tris": 316,
   "family": "DECO faux plant",
-  "kb": 16
+  "kb": 15
  },
  "pk_plant_tall": {
   "src": "q:Houseplant_8",
@@ -547,7 +547,7 @@
   ],
   "tris": 310,
   "family": "DECO faux plant",
-  "kb": 23
+  "kb": 22
  },
  "pk_range_steel": {
   "src": "k:kitchenStove",
@@ -558,7 +558,7 @@
   ],
   "tris": 830,
   "family": "APPL range",
-  "kb": 48
+  "kb": 47
  },
  "pk_recl_beige": {
   "src": "k:loungeChairRelax",
@@ -569,7 +569,7 @@
   ],
   "tris": 188,
   "family": "CHAIR-B recliner (footrest out)",
-  "kb": 14
+  "kb": 13
  },
  "pk_recl_black": {
   "src": "k:loungeChairRelax",
@@ -580,7 +580,7 @@
   ],
   "tris": 188,
   "family": "CHAIR-B recliner (footrest out)",
-  "kb": 14
+  "kb": 13
  },
  "pk_recl_brown": {
   "src": "k:loungeChairRelax",
@@ -591,7 +591,7 @@
   ],
   "tris": 188,
   "family": "CHAIR-B recliner (footrest out)",
-  "kb": 14
+  "kb": 13
  },
  "pk_recl_cognac": {
   "src": "k:loungeChairRelax",
@@ -602,7 +602,7 @@
   ],
   "tris": 188,
   "family": "CHAIR-B recliner (footrest out)",
-  "kb": 14
+  "kb": 13
  },
  "pk_recl_grey": {
   "src": "k:loungeChairRelax",
@@ -613,7 +613,7 @@
   ],
   "tris": 188,
   "family": "CHAIR-B recliner (footrest out)",
-  "kb": 14
+  "kb": 13
  },
  "pk_recl_quilt": {
   "src": "k:loungeChairRelax",
@@ -624,7 +624,7 @@
   ],
   "tris": 188,
   "family": "CHAIR-B recliner (footrest out)",
-  "kb": 14
+  "kb": 13
  },
  "pk_reclc_beige": {
   "src": "q:Couch_Small2",
@@ -635,7 +635,7 @@
   ],
   "tris": 468,
   "family": "CHAIR-B recliner (closed)",
-  "kb": 18
+  "kb": 17
  },
  "pk_reclc_brown": {
   "src": "q:Couch_Small2",
@@ -646,7 +646,7 @@
   ],
   "tris": 468,
   "family": "CHAIR-B recliner (closed)",
-  "kb": 18
+  "kb": 17
  },
  "pk_reclc_grey": {
   "src": "q:Couch_Small2",
@@ -657,7 +657,7 @@
   ],
   "tris": 468,
   "family": "CHAIR-B recliner (closed)",
-  "kb": 18
+  "kb": 17
  },
  "pk_rug_cream": {
   "src": "q:Carpet_2",
@@ -679,7 +679,7 @@
   ],
   "tris": 240,
   "family": "RUG",
-  "kb": 15
+  "kb": 14
  },
  "pk_rug_sisal": {
   "src": "q:Carpet_2",
@@ -701,7 +701,7 @@
   ],
   "tris": 108,
   "family": "RUG",
-  "kb": 7
+  "kb": 6
  },
  "pk_rug_vintage": {
   "src": "q:Carpet_1",
@@ -712,7 +712,7 @@
   ],
   "tris": 108,
   "family": "RUG",
-  "kb": 7
+  "kb": 6
  },
  "pk_sect_bluegrey": {
   "src": "q:Couch_L",
@@ -767,7 +767,7 @@
   ],
   "tris": 404,
   "family": "STOR sideboard",
-  "kb": 16
+  "kb": 15
  },
  "pk_sideboard_greywash": {
   "src": "q:Drawer_1",
@@ -778,7 +778,7 @@
   ],
   "tris": 404,
   "family": "STOR sideboard",
-  "kb": 16
+  "kb": 15
  },
  "pk_sideboard_white": {
   "src": "q:Drawer_1",
@@ -789,7 +789,7 @@
   ],
   "tris": 404,
   "family": "STOR sideboard",
-  "kb": 16
+  "kb": 15
  },
  "pk_stool_black": {
   "src": "q:Stool",
@@ -800,7 +800,7 @@
   ],
   "tris": 500,
   "family": "DIN-B counter stool",
-  "kb": 22
+  "kb": 21
  },
  "pk_stool_oak": {
   "src": "q:Stool",
@@ -811,7 +811,7 @@
   ],
   "tris": 500,
   "family": "DIN-B counter stool",
-  "kb": 22
+  "kb": 21
  },
  "pk_taskchair": {
   "src": "k:chairDesk",
@@ -822,7 +822,7 @@
   ],
   "tris": 588,
   "family": "FIX task chair",
-  "kb": 36
+  "kb": 35
  },
  "pk_tcounter_oak": {
   "src": "k:table",
@@ -833,7 +833,7 @@
   ],
   "tris": 120,
   "family": "DIN-B counter table",
-  "kb": 9
+  "kb": 8
  },
  "pk_trect_black": {
   "src": "k:table",
@@ -844,7 +844,7 @@
   ],
   "tris": 120,
   "family": "DIN-A rectangular dining table",
-  "kb": 9
+  "kb": 8
  },
  "pk_trect_greyoak": {
   "src": "k:table",
@@ -855,7 +855,7 @@
   ],
   "tris": 120,
   "family": "DIN-A rectangular dining table",
-  "kb": 9
+  "kb": 8
  },
  "pk_trect_oak": {
   "src": "k:table",
@@ -866,7 +866,7 @@
   ],
   "tris": 120,
   "family": "DIN-A rectangular dining table",
-  "kb": 9
+  "kb": 8
  },
  "pk_tround_espresso": {
   "src": "q:Table_RoundSmall",
@@ -877,7 +877,7 @@
   ],
   "tris": 592,
   "family": "DIN-A round pedestal table",
-  "kb": 24
+  "kb": 23
  },
  "pk_tround_oak": {
   "src": "q:Table_RoundSmall",
@@ -888,7 +888,7 @@
   ],
   "tris": 592,
   "family": "DIN-A round pedestal table",
-  "kb": 24
+  "kb": 23
  },
  "pk_tround_white": {
   "src": "q:Table_RoundSmall",
@@ -899,7 +899,7 @@
   ],
   "tris": 592,
   "family": "DIN-A round pedestal table",
-  "kb": 24
+  "kb": 23
  },
  "pk_washer_white": {
   "src": "k:washer",
@@ -910,6 +910,6 @@
   ],
   "tris": 720,
   "family": "APPL washer",
-  "kb": 42
+  "kb": 41
  }
 }
