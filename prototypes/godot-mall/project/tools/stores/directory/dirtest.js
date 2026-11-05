@@ -1,4 +1,6 @@
 // Headless browser check of the mall directory (design/godot-directory.md) in a web export.
+// OUT OF DATE (Nov 4 2026): the reader is now the camera on the kiosk (option B, design/godot-directory-legibility.md);
+// spot() below still assumes the old flat full-screen reader. Native check: kiosk_test.gd. Rewrite before the next web check.
 // Usage: node tools/stores/directory/dirtest.js <build-url-dir> <out-prefix>   (repo root served on :8765)
 //   e.g. node tools/stores/directory/dirtest.js prototypes/godot-mall/project/.scratch/builds/wsa production/qa/evidence/wsA
 // ONLY=<part of a step name> runs one step: 1995-h2, 2026-h2, 1995-h6, 2026-h6, 1995-h3, 1995-silverman, phone, jump.

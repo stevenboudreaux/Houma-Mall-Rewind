@@ -32,12 +32,13 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 [autoload]
 
 SharedPacks="*res://scripts/shared_packs.gd"
+Hidpi="*res://scripts/hidpi.gd"
 
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
-window/dpi/allow_hidpi=false
+window/dpi/allow_hidpi=true
 
 [editor_plugins]
 
