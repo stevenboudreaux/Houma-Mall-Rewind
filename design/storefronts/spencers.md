@@ -63,6 +63,6 @@ Nothing else in the file changed (`interiors_open` is a tool-side list, not read
 Wing 2, 2026 (`wing2_2026`); the 2026 walk grid changed (`layout_2026.json`), so wing 1's 2026 stand-in is
 unaffected but `gen/w2y26/wing.json` must be rebuilt.
 
-## Shoppable (a proposal for ws/items; nothing added here)
+## Shoppable (built Nov 4, Steven's yes, the lava lamp included: shop `spencers`, `design/godot-shops.md` "ws/interiors")
 A counter shop at the cash wrap: an invented-print tee, a mug, a plush, a sticker pack, a lava lamp (Gumballs'
 `bl_gb_lavalamp` model, if Steven wants it here). All generic (IP rule). Prices for Steven.

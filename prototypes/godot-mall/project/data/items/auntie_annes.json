@@ -1,0 +1,57 @@
+{
+ "_": "AUNTIE ANNE'S. One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by tools/items/items_io.py (tools/blender/build.py, tools/prizes/make_items.py, tools/shops/make_standins.py). Never change an id.",
+ "items": [
+  {
+   "id": "standin_aa_original_pretzel",
+   "name": "Original pretzel",
+   "category": "food",
+   "subcategory": "snack",
+   "class": "hand",
+   "scene": "res://models/bl_standin_aa_original_pretzel/standin_aa_original_pretzel.tscn",
+   "icon": "res://models/bl_standin_aa_original_pretzel/standin_aa_original_pretzel_icon.png",
+   "year": 2026,
+   "store": "AUNTIE ANNE'S",
+   "standin": true,
+   "standin_for": "a model (Auntie Anne's: a salted pretzel; the warmer's KNOT path in bl_aa_warmer.py could make it)"
+  },
+  {
+   "id": "standin_aa_cinnamon_pretzel",
+   "name": "Cinnamon sugar pretzel",
+   "category": "food",
+   "subcategory": "sweet",
+   "class": "hand",
+   "scene": "res://models/bl_standin_aa_cinnamon_pretzel/standin_aa_cinnamon_pretzel.tscn",
+   "icon": "res://models/bl_standin_aa_cinnamon_pretzel/standin_aa_cinnamon_pretzel_icon.png",
+   "year": 2026,
+   "store": "AUNTIE ANNE'S",
+   "standin": true,
+   "standin_for": "a model (Auntie Anne's: a cinnamon sugar pretzel)"
+  },
+  {
+   "id": "standin_aa_pretzel_bites",
+   "name": "Cup of pretzel bites",
+   "category": "food",
+   "subcategory": "snack",
+   "class": "hand",
+   "scene": "res://models/bl_standin_aa_pretzel_bites/standin_aa_pretzel_bites.tscn",
+   "icon": "res://models/bl_standin_aa_pretzel_bites/standin_aa_pretzel_bites_icon.png",
+   "year": 2026,
+   "store": "AUNTIE ANNE'S",
+   "standin": true,
+   "standin_for": "a model (Auntie Anne's: a cup of pretzel bites)"
+  },
+  {
+   "id": "standin_aa_lemonade",
+   "name": "Lemonade",
+   "category": "drink",
+   "subcategory": "soft",
+   "class": "hand",
+   "scene": "res://models/bl_standin_aa_lemonade/standin_aa_lemonade.tscn",
+   "icon": "res://models/bl_standin_aa_lemonade/standin_aa_lemonade_icon.png",
+   "year": 2026,
+   "store": "AUNTIE ANNE'S",
+   "standin": true,
+   "standin_for": "a model (Auntie Anne's: a lemonade)"
+  }
+ ]
+}

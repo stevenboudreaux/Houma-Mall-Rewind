@@ -11,16 +11,70 @@
    "icon": "res://models/bl_gac_sugarcookie/bl_gac_sugarcookie_icon.png",
    "year": 1995,
    "store": "GREAT AMERICAN COOKIE CO",
-   "place": {
+   "display": {
+    "runtime": true,
     "wing": 2,
     "year": 1995,
     "pos": [
      -26.92,
-     0.862,
-     45.02
+     0.68,
+     45.08
     ],
     "yaw": 12
-   }
+   },
+   "_display_note": "ws/interiors (Nov 4, Steven): was a pick-up; now stock on show on the 1995 case, sold by the counter (design/godot-shops.md 'Nothing off the shelves')"
+  },
+  {
+   "id": "standin_gac_choc_chip_cookie",
+   "name": "Chocolate-chip cookie",
+   "category": "food",
+   "subcategory": "sweet",
+   "class": "hand",
+   "scene": "res://models/bl_standin_gac_choc_chip_cookie/standin_gac_choc_chip_cookie.tscn",
+   "icon": "res://models/bl_standin_gac_choc_chip_cookie/standin_gac_choc_chip_cookie_icon.png",
+   "year": "both",
+   "store": "GREAT AMERICAN COOKIE CO",
+   "standin": true,
+   "standin_for": "a model (Great American Cookie Co.: a chocolate-chip cookie)"
+  },
+  {
+   "id": "standin_gac_cake_slice",
+   "name": "Cookie-cake slice",
+   "category": "food",
+   "subcategory": "sweet",
+   "class": "hand",
+   "scene": "res://models/bl_standin_gac_cake_slice/standin_gac_cake_slice.tscn",
+   "icon": "res://models/bl_standin_gac_cake_slice/standin_gac_cake_slice_icon.png",
+   "year": "both",
+   "store": "GREAT AMERICAN COOKIE CO",
+   "standin": true,
+   "standin_for": "a model (Great American Cookie Co.: a slice of cookie cake)"
+  },
+  {
+   "id": "standin_gac_brownie",
+   "name": "Brownie",
+   "category": "food",
+   "subcategory": "sweet",
+   "class": "hand",
+   "scene": "res://models/bl_standin_gac_brownie/standin_gac_brownie.tscn",
+   "icon": "res://models/bl_standin_gac_brownie/standin_gac_brownie_icon.png",
+   "year": "both",
+   "store": "GREAT AMERICAN COOKIE CO",
+   "standin": true,
+   "standin_for": "a model (Great American Cookie Co.: a brownie)"
+  },
+  {
+   "id": "standin_gac_fountain_drink",
+   "name": "Fountain drink",
+   "category": "drink",
+   "subcategory": "soft",
+   "class": "hand",
+   "scene": "res://models/bl_standin_gac_fountain_drink/standin_gac_fountain_drink.tscn",
+   "icon": "res://models/bl_standin_gac_fountain_drink/standin_gac_fountain_drink_icon.png",
+   "year": "both",
+   "store": "GREAT AMERICAN COOKIE CO",
+   "standin": true,
+   "standin_for": "a model (Great American Cookie Co.: a fountain drink)"
   }
  ]
 }

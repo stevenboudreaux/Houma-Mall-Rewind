@@ -29,10 +29,10 @@ META = {
     "refs": [],
     "item_file": "blender_props_2.json",
     "item": {"name": "Sugar cookie", "year": 1995, "store": "GREAT AMERICAN COOKIE CO",
-             # lying on the top of the cookie case at its east end, beside the register, behind the front glass
-             # (wave7.gd cookie(): co = P(W-0.6, 0, 2.6) = (-26.6, 0, 45.4), case top 0.85-0.86, register x -27.2..-28.1).
-             # Workstream G is rebuilding the case: if its top height changes, change pos[1] to match.
-             "place": {"wing": 2, "year": 1995, "pos": [-26.92, 0.862, 45.02], "yaw": 12}},
+             # ws/interiors (Nov 4, Steven): stock on show, sold at the counter (design/godot-shops.md), no longer a
+             # pick-up: on the deck of ws/g's case (gac/case.gd: DECK_Y 0.66, 0.32 m behind the customer face at
+             # d 2.6), at its east end, behind the curved glass. "display" with "runtime": shop.gd places it.
+             "display": {"runtime": True, "wing": 2, "year": 1995, "pos": [-26.92, 0.68, 45.08], "yaw": 12}},
 }
 
 

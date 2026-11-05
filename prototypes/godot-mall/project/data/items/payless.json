@@ -1,0 +1,83 @@
+{
+ "_": "PAYLESS SHOES. One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by tools/items/items_io.py (tools/blender/build.py, tools/prizes/make_items.py, tools/shops/make_standins.py). Never change an id.",
+ "items": [
+  {
+   "id": "standin_pay_sneakers",
+   "name": "Sneakers (boxed pair)",
+   "category": "clothing",
+   "subcategory": "shoes",
+   "class": "hand",
+   "scene": "res://models/bl_standin_pay_sneakers/standin_pay_sneakers.tscn",
+   "icon": "res://models/bl_standin_pay_sneakers/standin_pay_sneakers_icon.png",
+   "year": 1995,
+   "store": "PAYLESS SHOES",
+   "standin": true,
+   "standin_for": "a model (Payless: a pair of sneakers in a box)"
+  },
+  {
+   "id": "standin_pay_pumps",
+   "name": "Pumps (boxed pair)",
+   "category": "clothing",
+   "subcategory": "shoes",
+   "class": "hand",
+   "scene": "res://models/bl_standin_pay_pumps/standin_pay_pumps.tscn",
+   "icon": "res://models/bl_standin_pay_pumps/standin_pay_pumps_icon.png",
+   "year": 1995,
+   "store": "PAYLESS SHOES",
+   "standin": true,
+   "standin_for": "a model (Payless: a pair of pumps in a box)"
+  },
+  {
+   "id": "standin_pay_sandals",
+   "name": "Sandals (boxed pair)",
+   "category": "clothing",
+   "subcategory": "shoes",
+   "class": "hand",
+   "scene": "res://models/bl_standin_pay_sandals/standin_pay_sandals.tscn",
+   "icon": "res://models/bl_standin_pay_sandals/standin_pay_sandals_icon.png",
+   "year": 1995,
+   "store": "PAYLESS SHOES",
+   "standin": true,
+   "standin_for": "a model (Payless: a pair of sandals in a box)"
+  },
+  {
+   "id": "standin_pay_boots",
+   "name": "Boots (boxed pair)",
+   "category": "clothing",
+   "subcategory": "shoes",
+   "class": "hand",
+   "scene": "res://models/bl_standin_pay_boots/standin_pay_boots.tscn",
+   "icon": "res://models/bl_standin_pay_boots/standin_pay_boots_icon.png",
+   "year": 1995,
+   "store": "PAYLESS SHOES",
+   "standin": true,
+   "standin_for": "a model (Payless: a pair of boots in a box)"
+  },
+  {
+   "id": "standin_pay_socks",
+   "name": "Socks, 3-pack",
+   "category": "clothing",
+   "subcategory": "socks",
+   "class": "hand",
+   "scene": "res://models/bl_standin_pay_socks/standin_pay_socks.tscn",
+   "icon": "res://models/bl_standin_pay_socks/standin_pay_socks_icon.png",
+   "year": 1995,
+   "store": "PAYLESS SHOES",
+   "standin": true,
+   "standin_for": "a model (Payless: a 3-pack of socks on a card)"
+  },
+  {
+   "id": "standin_pay_shoe_polish",
+   "name": "Shoe polish",
+   "category": "clothing",
+   "subcategory": "care",
+   "class": "pocket",
+   "scene": "res://models/bl_standin_pay_shoe_polish/standin_pay_shoe_polish.tscn",
+   "icon": "res://models/bl_standin_pay_shoe_polish/standin_pay_shoe_polish_icon.png",
+   "year": 1995,
+   "store": "PAYLESS SHOES",
+   "standin": true,
+   "standin_for": "a model (Payless: a tin of shoe polish)"
+  }
+ ]
+}

@@ -54,7 +54,7 @@ The warmer's own Blender sheet was not kept by the first session (the asset scri
 ## Rebake
 Wing 2, 2026 (`wing2_2026`).
 
-## Shoppable (a proposal for ws/items; nothing added here)
+## Shoppable (built Nov 4, Steven's yes: shop `auntie_annes`, `design/godot-shops.md` "ws/interiors"; as proposed)
 A counter shop (`design/godot-shops.md`), 2026: an original salted pretzel, a cinnamon-sugar pretzel, a cup of
 pretzel bites, a lemonade. The pretzels in `bl_aa_warmer` are part of the fixture; a hand-item pretzel
 (`bl_aa_pretzel`) could reuse its knot path (`KNOT` in the asset script). Prices and the attendant for Steven.

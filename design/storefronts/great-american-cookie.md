@@ -85,7 +85,7 @@ clamps the width to the front's length. Wicks checked: `interiors-gac-1995-wicks
 `interiors-gac-2026-{doorway,workarea,backcounter}-unbaked.jpg`.
 **Rebake:** wing 2, both years (`wing2`, `wing2_2026`); the 1995 one also carries the Wicks fix.
 
-**Shoppable (a proposal for ws/items; nothing added here):** a counter shop (`design/godot-shops.md`) in both
+**Shoppable (built Nov 4, Steven's yes):** shops `great_american_cookie` (1995) and `great_american_cookie_2026`, `design/godot-shops.md` "ws/interiors". Was proposed: a counter shop (`design/godot-shops.md`) in both
 years, the attendant behind the case: a chocolate-chip cookie (a new Blender item; `bl_gac_sugarcookie`
 already exists as a 1995 pick-up and would become stock on display), a cookie-cake slice, a brownie, a
 fountain drink. Prices for Steven. The cookie cake on the prep table is a fixture, not an item.

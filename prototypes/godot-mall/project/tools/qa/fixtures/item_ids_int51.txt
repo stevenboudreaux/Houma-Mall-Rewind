@@ -134,3 +134,22 @@ wl_coffee
 wl_fries
 wl_hamburger
 wl_hot_dog
+# ws/interiors (Nov 4 2026): the four counter shops' stand-ins (tools/shops/make_standins_interiors.py)
+standin_gac_choc_chip_cookie
+standin_gac_cake_slice
+standin_gac_brownie
+standin_gac_fountain_drink
+standin_aa_original_pretzel
+standin_aa_cinnamon_pretzel
+standin_aa_pretzel_bites
+standin_aa_lemonade
+standin_pay_sneakers
+standin_pay_pumps
+standin_pay_sandals
+standin_pay_boots
+standin_pay_socks
+standin_pay_shoe_polish
+standin_sp_tee
+standin_sp_mug
+standin_sp_plush
+standin_sp_stickers

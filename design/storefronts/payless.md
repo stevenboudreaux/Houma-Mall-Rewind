@@ -63,6 +63,6 @@ white slatwall) is used for 1995 because Steven says it is what the store looked
 counter,aisle,aisle-back,gondola,backwall}-unbaked.jpg`. **Rebake:** wing 2 (1995); the
 walk grid changed (`layout_mall.json`), so `gen/w2/wing.json` and wing 1's stand-in of the front.
 
-**Shoppable (a proposal for ws/items; nothing added here):** a counter shop at the cash counter (1995): a pair of
+**Shoppable (built Nov 4, Steven's yes: shop `payless`, `design/godot-shops.md` "ws/interiors"; Steven also kept the 1990s look as built). Was proposed:** a counter shop at the cash counter (1995): a pair of
 shoes in a box (one item per kind: sneakers, pumps, sandals, boots), a 3-pack of socks, shoe polish. The boxes
 on the shelves stay painted (not pick-ups).

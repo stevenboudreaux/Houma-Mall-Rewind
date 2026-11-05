@@ -31,7 +31,7 @@ META = {
     "tex": 512,
     "ao": 0.4,
     "refs": [],
-    "item": {"name": "Lava lamp", "year": 1995, "store": "GUMBALLS",
+    "item": {"name": "Lava lamp", "year": "both", "store": "GUMBALLS",   # "both": also sold at Spencer's in 2026 (ws/interiors, Steven Nov 4)
              "recolor": {"bl_gb_lavalamp_wax": ["#ff3a20", "#3a8cff", "#4cff5a", "#c04cff", "#ff9a1a", "#ff5ab4"]}},
 }
 

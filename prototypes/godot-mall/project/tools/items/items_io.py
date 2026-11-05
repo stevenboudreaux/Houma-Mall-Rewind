@@ -27,7 +27,9 @@ CATEGORIES = ["food", "drink", "book", "toy", "electronics", "home", "clothing",
 FILES = {"POCKET CHANGE": "pocket_change", "GAMES, INC.": "games_inc", "B. DALTON BOOKSELLER": "b_dalton",
          "WOOLWORTH": "woolworth", "CORN DOG 7": "corn_dog_7", "CUCOS": "cucos", "RADIO SHACK": "radio_shack",
          "GUMBALLS": "gumballs", "GREAT AMERICAN COOKIE CO": "great_american_cookie", "KARMELKORN": "karmelkorn",
-         "ORANGE JULIUS": "orange_julius", "TEE TAI'S": "tee_tais"}
+         "ORANGE JULIUS": "orange_julius", "TEE TAI'S": "tee_tais",
+         # ws/interiors (Nov 4 2026): the counter shops built from Steven's videos (design/storefronts/*.md)
+         "AUNTIE ANNE'S": "auntie_annes", "PAYLESS SHOES": "payless", "SPENCER'S": "spencers"}
 ORDER = ["id", "name", "category", "subcategory", "class", "scene", "icon", "year", "store"]
 NOTE = (" One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, "
         "icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by "
