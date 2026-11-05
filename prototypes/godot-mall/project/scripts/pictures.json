@@ -1,0 +1,9 @@
+{
+ "_doc": "OWNER (design/godot-owner-mode.md 'Pictures'): the surfaces the owner can put his own pictures on, found in the wing's meshes at run time by material name (scripts/pictures.gd). framed: the framed newspaper ads (tools/stores/posters/posters.gd), whose frame is rebuilt to the new picture's aspect; panels: poster and ad panels (window posters, lit poster stands, wall poster slots), where the picture is fitted inside the panel on a dark backing. Remove a material from panels to take its surfaces out of Edit pictures.",
+ "framed": {"node": "dyn_posters", "print_prefix": "ad_", "frame": "black", "mat": "poster_mat", "long": 1.15, "mat_w": 0.06, "frame_w": 0.045, "deep": 0.032},
+ "panels": ["f26_posters", "f26_posters_lit", "f26_phone_poster", "cin_posters", "poster", "gb_bl_posters", "md_ss_posters", "w9_posters", "y95_gz_ads", "ap_posters", "cm_posters"],
+ "min_side": 0.25,
+ "max_aspect": 4.0,
+ "max_px": 1024,
+ "pick_range": 16.0
+}

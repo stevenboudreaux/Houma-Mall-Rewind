@@ -222,6 +222,10 @@ func _ready() -> void:
 	menu = load("res://scripts/menu/menu.gd").new()
 	menu.name = "Menu"; menu.player = self
 	add_child(menu)
+	# OWNER: the owner's own pictures on posters and ad panels (scripts/pictures.gd, design/godot-owner-mode.md)
+	var pics = load("res://scripts/pictures.gd").new()
+	pics.name = "Pictures"; pics.player = self
+	get_parent().add_child.call_deferred(pics)
 	# S: the threshold gates (the cinema doors, data/story/gates.json; scripts/cinema_gate.gd)
 	load("res://scripts/cinema_gate.gd").make_all(self)
 	_light_btn_ok = buttons[2].visible
