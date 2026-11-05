@@ -1,15 +1,97 @@
-# Reading the directory kiosk: legibility options (Godot mall)
+# Reading the directory kiosk: legibility (Godot mall)
 
-Workstream ws/directory, Nov 4 2026. **Prototypes for Steven to choose from; nothing here is the
-final feature.** Follows `design/godot-directory.md` (the kiosk, the panels, today's reader) and
-`design/godot-dialogue.md` (the camera that goes to a person you talk to).
+Workstream ws/directory, Nov 4 2026. Follows `design/godot-directory.md` (the kiosk, the panels,
+the reader) and `design/godot-dialogue.md` (the camera that goes to a person you talk to).
 
 **Steven's problem:** the store names on the kiosk are too pixelated to read. He would like the
 camera to go to the kiosk the way it goes to a person you talk to, and text that reads by itself,
 perhaps by zooming to the list or the map. Balance the real kiosk's look against legibility. Text
 is moving off the game screen into the menu, so no new overlay text; text on the kiosk is fine.
 
-## Why it is pixelated today (measured)
+## Decided (Steven, Nov 4 2026, after seeing the A / B / C prototypes)
+1. **Option B is the kiosk.** The camera frames the sign, then moves in to the store list at
+   reading size (one column a page on a phone, swipe to turn); tapping a name lights it (the pink
+   outline is fine) and glides the camera to the store on the map. **No overlay text.** A and C
+   are removed (`scripts/directory_look.gd`, `tools/qa/dirlook_mini.gd` and the `?dirlook=` flag
+   are gone; option B now lives in `scripts/directory_ui.gd`, which replaces the old flat reader).
+2. **Yes to full iPhone sharpness, project-wide** (`allow_hidpi=true`, `scripts/hidpi.gd`). The 3D
+   world keeps today's render resolution, except while the camera is on the kiosk.
+   **Not yet checked on a real iPhone** (see "Steven to check" below).
+3. **The 1990s / 2026 time-travel switch is on the kiosk itself**: a dark plate on the frame's
+   bottom rail with two keys labelled "1990s" and "2026", the current year's key lit. Not a
+   screen overlay.
+4. **Keep a confirm before jumping**, styled like the game's menu.
+5. **Unnamed 2026 map blocks:** keep the lit list line in view if cheap. Done where it is cheap
+   (below, "What was built").
+
+## What was built (option B, final)
+- **Opening** (`directory_kiosk.gd interact()` → `directory_ui.gd open()`): the HUD hides, the
+  player freezes, and a reader camera glides from the player's view to the kiosk in 0.6 s (cubic
+  in-out, FOV 70 → 40°). It frames the whole sign **with the year switch under it** and holds 0.8 s,
+  then moves in to the list's first page at **0.72 screen px per panel px** (capitals ~10 px).
+- **Pages** (`_columns()`, `_make_pages()`, computed at run time from the click areas): as many
+  list columns side by side as fit the screen at reading size, then down those columns a screen
+  at a time (12 % overlap). A phone in portrait gets one column per page; a computer gets the
+  list, the legend and the map's edge. Swipe left / right, the arrows, the d-pad or the stick
+  turn the page.
+- **Picking a store:** tap its name (or its block on the map). Every list line and map block it
+  has lights on the sign itself (`#ff2d6f` outline and a light tint, drawn by the quad's shader),
+  and the camera glides to its block on the map:
+  - **When a lit list line and the block fit one view at ≥ 0.5 px per panel px** (a computer, a
+    phone held sideways, a few stores on a portrait phone), the camera frames both, using the
+    store's list line nearest the block. This is the "cheap" answer to question 5.
+  - **Otherwise** (most stores on a portrait phone): the block with its neighbours at 0.54. The
+    name is then on the line you tapped (still lit when you go back with **<**) and in the
+    confirm. Measured from `hotspots.json` on a 390-wide phone: keeping both in view would take
+    0.3 px per panel px for 26 of 43 2026 stores (capitals ~4 px), so it is not cheap there.
+- **The confirm:** tap the lit store again (or Enter / A on the map) and "Jump to this store?"
+  opens with the store's name (1995: with its number) and "Loads Wing N" when the jump changes
+  wing, with **Yes, go there** / **Cancel**, in the game menu's colours (`scripts/menu/menu.gd`:
+  dark brown ground, cream and gold type, amber for the chosen button, rounded corners).
+  Yes calls `player.jump_to()`.
+- **Back and close:** an **X** box (close) and, off the whole-sign view, a **<** box (map → list
+  → whole sign). They are the only things drawn over the view besides the confirm.
+- **The year switch** (`directory_kiosk.gd _build_switch()`, made at run time, so no rebuild or
+  rebake): a 0.40 × 0.088 m dark plate on the frame's bottom rail, two 0.182 m keys, "1990s"
+  (teal `#2a8a96` when lit) and "2026" (cyan `#3fa9d8`). Tap the other year's key on the
+  whole-sign view, or press Y (keyboard or gamepad) anywhere in the reader: the sign closes and
+  MENU2's time-travel trip (`scripts/timetravel_trip.gd begin()`) starts from this kiosk.
+  Tapping the current year's key does nothing. The real 2026 kiosk has no such switch: it is
+  the game's addition, kept small and in the frame's own materials.
+- **Sharp type:** the sign is drawn from the 4x panels (`tex/dir/hi/panel_<year>.png`, 4096 ×
+  4580) on a quad 3 mm in front of the kiosk's own panel, only while reading; the picture is
+  released on close.
+- **Controls:** touch / mouse as above; keys and gamepad: up / down (W S, d-pad, stick) step from
+  store to store down the list, turning pages; left / right turn the page; Enter / Space / E / A
+  pick, then ask; Esc / Backspace / B go back, then close; Y travels in time.
+
+## Full device pixels (scripts/hidpi.gd, project.godot)
+- `project.godot`: `window/dpi/allow_hidpi=true` and the autoload `Hidpi`
+  (`scripts/hidpi.gd`). **Shared file:** two lines.
+- At start and on every resize, `Hidpi` sets `root.content_scale_factor = devicePixelRatio`
+  (max 3), so every HUD, menu and screen keeps its size and becomes sharper, and
+  `root.scaling_3d_scale = 1 / devicePixelRatio`, so the 3D world costs what it cost before.
+- While the camera is on the sign, `directory_ui.gd _sharp()` puts the 3D scale at 1.0 (the view
+  is then one unshaded quad), and back on close.
+- WebXR: the 3D scale is held at 1.0 while `use_xr` is on (a headset renders its own eye buffers).
+- Native Linux / Windows windows report scale 1 and are unchanged. Tests force a factor with
+  `Engine.set_meta("hidpi", 3.0)` (`--hidpi=3`).
+
+## Steven to check on his iPhone
+1. **Everything's text is sharper** (HUD, menu, dialogue, shop), with the same sizes as before.
+   If anything is half or a third its old size, or the touch spots are off, `hidpi.gd` has missed
+   a screen: say which.
+2. **The frame rate walking the halls** is the same as before (the 3D is still drawn at 390 × 844
+   and stretched). If it is worse, the lever can be turned off by setting `allow_hidpi=false`.
+3. **The kiosk:** the list reads without zooming; swipe pages; tap a name, the map, the lit block,
+   the confirm; the 1990s / 2026 keys on the kiosk. Safari memory with the 4x panel open (~100 MB
+   of texture while reading).
+
+## Earlier: the three options as prototyped (history)
+Kept as the record of what Steven chose from. The `?dirlook=` flag, `directory_look.gd` and
+`dirlook_mini.gd` named below no longer exist.
+
+### Why it is pixelated today (measured)
 1. **The sign is shown whole, so the type is tiny.** The list type's capitals are about **14 panel
    px** tall (in `tex/dir/panel_*.png`, 2048 × 2290). Shown whole, the sign is drawn at 0.175 screen
    px per panel px on a 390-wide phone, which makes the capitals **2.4 px** tall. On a 1280 × 720
@@ -30,7 +112,7 @@ pixels:
 - **Middle:** option B's list page on today's canvas (1x, stretched by Safari).
 - **Right:** the same page with the game drawing at device pixels (3x).
 
-## The options (all behind a flag; off by default)
+### The options (prototyped behind `?dirlook=`, now removed)
 Turn on with **`?dirlook=a`**, **`b`** or **`c`** on the game URL (native: `-- --dirlook=b`).
 Without the flag, the kiosk opens today's reader unchanged (checked).
 
@@ -46,7 +128,7 @@ Without the flag, the kiosk opens today's reader unchanged (checked).
   painter at `DIR_K=4`) on a quad 3 mm in front of the kiosk's panel. The quad exists only while
   you read, so the big picture is only in memory then.
 
-### A: Face the sign (free zoom)
+#### A: Face the sign (free zoom)
 - **What it looks like:** the camera stops square on the whole lit panel in its aluminium frame.
   Pinch or the wheel dollies the camera in; drag pans across the sign. Tap a name or a block and it
   lights on the sign; tap it again to go.
@@ -61,7 +143,7 @@ Without the flag, the kiosk opens today's reader unchanged (checked).
   - The year toggle and the confirm (see Open questions).
   - Update `dirtest.js`, a web check.
 
-### B: List, then map (guided)
+#### B: List, then map (guided)
 - **What it looks like:**
   - The camera frames the whole sign for half a second, then moves in to the store list at reading
     size (0.72 screen px per panel px, capitals ~10 px).
@@ -85,7 +167,7 @@ Without the flag, the kiosk opens today's reader unchanged (checked).
   - Picking on the map directly, landscape phones, a gamepad cursor.
   - The year toggle and the confirm, `dirtest.js`, a web check.
 
-### C: Camera in, then the flat copy takes over
+#### C: Camera in, then the flat copy takes over
 - **What it looks like:**
   - The camera glides to the kiosk as in A. On arrival, today's reader (`directory_ui.gd`) opens
     with its picture laid exactly over the 3D panel's place on screen. There is no dimming and no
@@ -108,7 +190,7 @@ Without the flag, the kiosk opens today's reader unchanged (checked).
   handover on window resize and the brightness match. It keeps today's overlay text unless that
   text moves to the menu.
 
-### The sharpness lever (applies to A, B and C; Steven's call, global)
+#### The sharpness lever (applies to A, B and C; Steven's call, global)
 Draw the game at device pixels on phones:
 - `allow_hidpi=true`.
 - At start, `root.content_scale_factor = devicePixelRatio`, so the HUD keeps its size.
@@ -129,27 +211,16 @@ sharp.
 - Simulated natively with `--hidpi=3 --resolution 1170x2532`
   (`directory-opt*-iphone3x-unbaked.jpg`).
 
-## Recommendation
-**B, with the device-pixel lever.**
-- It is the only option where the list is readable on an iPhone the moment you arrive, without a
-  pinch.
-- It keeps the kiosk itself as the only text on screen.
-- It does what the real sign asks of you: find the name, look across to the block.
-
-A is the purist version of the same look but makes every phone visit start with a pinch. A
-reasonable hybrid is to finish B and let pinch/wheel also free-zoom as in A (about +0.25 day). C is
-the cheapest and safest, but it brings back the flat overlay with text that is leaving the screen.
-If the lever is turned down, B still reads (middle crop), only softer.
-
 ## How the map gets regenerated (layout changes, e.g. the C2 corner / Zales s33+s34)
-None of the options bakes a picture of today's outline into code. All three read the painted panels
-and their click areas, and those come from the layout files:
+Nothing bakes a picture of today's outline into code. The reader reads the painted panels and
+their click areas, and those come from the layout files. This is how Steven's C2-corner change
+(`ws/corner-2026`) reaches the kiosk at integration:
 1. `godot --headless --path . --script res://tools/stores/directory/make_data.gd` writes `map.json`
    from `layout_mall.json` / `layout_2026.json` (`map_data.gd`).
 2. `python3 tools/stores/directory/paint_dir.py` writes `tex/dir/panel_<year>.png` and
    `tex/dir/hotspots.json`.
 3. **New:** `DIR_K=4 DIR_OUT=tex/dir/hi python3 tools/stores/directory/paint_dir.py`, then delete
-   `tex/dir/hi/back.png` and `hotspots.json` there. This writes the 4x panels A and B use. The
+   `tex/dir/hi/back.png` and `hotspots.json` there. This writes the 4x panels the reader uses. The
    click areas stay the 2048 ones, scaled.
 4. Rebuild the wings: their `gen/<wing>/directory.json` jump spots come from the layout too.
 
@@ -160,46 +231,46 @@ and their click areas, and those come from the layout files:
   layout change moves the stores' stretches on those blocks (`map_spot_2026`, from frontage order)
   and the click areas, not the block outlines. Zales on s33+s34 gets one stretch spanning both.
 
-B's pages and map framings are computed at run time from the click areas (`_columns()`,
+The pages and map framings are computed at run time from the click areas (`_columns()`,
 `_make_pages()`), so they follow a repainted list or map without changes.
 
 ## Files (branch ws/directory)
-- **New:**
-  - `scripts/directory_look.gd`: the three options, the lit-sign shader, the camera.
-  - `tools/qa/dirlook_mini.gd`: the shots.
-  - `tex/dir/hi/panel_1995.png`, `panel_2026.png` and their `.import` files (lossless + mipmaps,
-    as the 2048 ones).
-- **Changed (small, marked `PROTOTYPE ws/directory`):**
-  - `scripts/directory_kiosk.gd`: `interact()` asks `directory_look.flag()` first; `_look()`.
-  - `scripts/directory_ui.gd`: `look_rect` / `look_owner` for C. When set: no dimming and no drawn
-    frame (`_draw_view` split into `_draw_frame` / `_draw_marks`, same drawing), the panel placed
-    on `look_rect`, and `close()` hands back to the camera.
-  - `tools/stores/directory/paint_dir.py`: `DIR_K` / `DIR_OUT` environment overrides; the defaults
-    are unchanged.
-- **Export:** `tex/dir/hi/*` should ride in the existing `tex/dir/*` include filter (not
-  exported here: no build in this workstream).
-- **No rebake:** the kiosk is dynamic and nothing baked changed.
+- **Runtime:**
+  - `scripts/directory_ui.gd`: the reader (option B), rewritten; the old flat reader is gone.
+  - `scripts/directory_kiosk.gd`: `interact()` opens the reader; the year switch on the frame
+    (`_build_switch()`, `switch_key_at()`, `switch_key_pos()`).
+  - `scripts/hidpi.gd` (new autoload) and `project.godot` (`allow_hidpi=true`, autoload `Hidpi`).
+  - `tex/dir/hi/panel_1995.png`, `panel_2026.png` (+ `.import`: lossless, mipmaps). They ride in
+    the existing `tex/dir/*` export filter.
+- **Painter:** `tools/stores/directory/paint_dir.py`: `DIR_K` / `DIR_OUT` overrides (defaults
+  unchanged).
+- **Tests:**
+  - `tools/stores/directory/kiosk_test.gd` (new): the whole reader, natively, in the preview room.
+  - `tools/stores/directory/ui_test.gd`: the in-wing keyboard jump, updated for B.
+  - `tools/qa/menu_test.gd`: its directory step checks the year switch on the kiosk.
+  - Removed: `tools/stores/directory/ui_shot.gd`, `tools/qa/dirlook_mini.gd`.
+  - **Out of date:** `tools/stores/directory/dirtest.js` (web) still clicks where the old flat
+    reader drew the sign; it needs rewriting against the camera view before the next web check.
+- **No rebake:** the kiosk is dynamic (the switch is made at run time) and nothing baked changed.
 
-## Checks
-- `xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 --script
-  res://tools/qa/dirlook_mini.gd -- --mode=b --year=2026 --out=/tmp/d/b26d` → `DIRLOOK SHOTS OK`.
-  Run for each mode (a, b, c), year (1995, 2026) and size (1280 × 720, 390 × 844, and 1170 × 2532
-  with `--hidpi=3`). `--mode=` (empty) opens today's reader: unchanged.
-- **The shots are unbaked and outside the mall.** The kiosk stands alone in the preview room
-  (`tools/qa/preview.gd`) with a stand-in player. On the shared cloud box, loading a whole wing was
-  OOM-killed every time (seven tries) (other sessions' imports and Blender jobs). Everything after the
-  approach frame is the sign filling the view, so the hall does not change what the shots show.
-  Not run: a web export.
+## Checks (Nov 4 2026, final)
+- `xvfb-run -a -s "-screen 0 1600x2600x24" godot --path . --rendering-driver opengl3 --resolution
+  <size> --script res://tools/stores/directory/kiosk_test.gd -- --year=<1995|2026> [--hidpi=3]
+  --out=<prefix>` → **KIOSK TEST OK (25 checks)** for 1280 × 720 both years and 1170 × 2532 at
+  `--hidpi=3` (an iPhone at device pixels) both years. Open, camera, 3D at full scale, list at
+  reading size, swipe a page and back, tap a name (lit, camera on the block), tap the lit block
+  (confirm, names the store), Yes (`jump_to` with the store's spot), closed and 3D scale restored,
+  Enter / Down / Esc, the current year's key does nothing, the other year's key starts the trip.
+- Evidence (unbaked, the preview room): `production/qa/evidence/directory-B-final-<desktop|
+  phone3x>-<1995|2026>-unbaked.jpg`.
+- In-wing keyboard jump (`godot --headless --path . --script res://tools/stores/directory/ui_test.gd
+  -- <scene> <name>`): `wing1.tscn dil` → Dillard's (#67) in wing 5, and `wing1_2026.tscn foot` →
+  Foot Locker in wing 2_2026: **UI TEST OK** both. The test now waits for the list (up to 12 s),
+  since a wing's first frames hitch while its characters bake.
 
 ## Open questions for Steven
-1. **Which option** (A, B, C, or B with A's free zoom)? And the **device-pixel lever**, yes or no?
-2. **The 1995 / 2026 time-travel toggle** lives on today's reader (MENU2: the only way to change
-   year). A and B leave it out. Where should it go: the menu, or something on the kiosk itself
-   (such as a lit button on the frame)?
-3. **"Jump to this store?"** A and B use "tap the lit store again to go", with no question box.
-   Is that enough, or should the confirm move into the menu?
-4. **The lit outline** on the sign (pink, as today's reader) is not on the real kiosk. Is it
-   acceptable, or should the camera framing alone carry the selection?
-5. **2026 map has no names on blocks** (as on the real sign). On a phone, B's map view shows the
-   lit block but not its name. Is that OK, or should the camera pull back far enough to keep the
-   lit list line in view?
+1. The year switch is not on the real 2026 kiosk. Is a small dark plate with two keys on the
+   bottom rail right, or would you rather it be lit buttons in the sign's cyan band?
+2. On a portrait phone the map view for most stores shows the lit block without its name (the
+   2026 sign has no names on blocks). The name is in the confirm and on the lit line when you go
+   back. Enough?

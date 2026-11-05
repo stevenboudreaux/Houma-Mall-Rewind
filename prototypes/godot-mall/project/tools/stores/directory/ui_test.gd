@@ -58,6 +58,9 @@ func _process(_dt):
 			if _wait(2600):
 				return false
 			var ui = scn.get_meta("directory_ui")
+			# a loaded wing can hitch for seconds on its first frames (characters baking): wait for the list
+			if ui.state != "list" and _wait(12000):
+				return false
 			print("open: ", ui.is_open, " frozen: ", pl.frozen, " year ", ui.year, " state ", ui.state, " click areas ", ui._hot().size())
 			if not (ui.is_open and pl.frozen and ui.state == "list"):
 				_fail("not open on the list")

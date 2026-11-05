@@ -245,6 +245,7 @@ func _restore() -> void:
 		from_cam.current = true
 	if quad:
 		quad.visible = false
+		mat.set_shader_parameter("tex", null)   # the 4x picture is only in memory while reading
 	_sharp(false)
 	_freeze(false)
 	hud.queue_redraw()
@@ -424,21 +425,26 @@ func _page_of(id: String) -> int:
 ## neighbours (the line stays lit on the page it came from).
 func _show_map() -> void:
 	var blk := Rect2()
-	var line := Rect2()
+	var lines := []
 	for h in _hot():
 		if h.id != sel:
 			continue
 		var r := Rect2(h.rect[0], h.rect[1], h.rect[2] - h.rect[0], h.rect[3] - h.rect[1])
 		if h.kind == "map" and blk.size == Vector2.ZERO:
 			blk = r
-		elif h.kind == "list" and line.size == Vector2.ZERO:
-			line = r
+		elif h.kind == "list":
+			lines.append(r)
 	if blk.size == Vector2.ZERO:
 		return
 	state = "map"
 	hold_t = 0.0
-	var both := _fit(blk.merge(line).grow(60), 1.0)
-	if line.size != Vector2.ZERO and _vp().x / both.size.x >= 0.5:
+	# of the store's list lines (a store can be listed twice), the one that frames closest with its block
+	var both := Rect2()
+	for line in lines:
+		var b := _fit(blk.merge(line).grow(60), 1.0)
+		if both.size == Vector2.ZERO or b.size.x < both.size.x:
+			both = b
+	if both.size != Vector2.ZERO and _vp().x / both.size.x >= 0.5:
 		want = both
 	else:
 		want = _rect_at(blk.get_center(), MAP_SCALE)

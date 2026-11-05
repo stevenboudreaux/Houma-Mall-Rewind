@@ -128,7 +128,7 @@ func switch_key_at(o: Vector3, d: Vector3) -> String:
 	for y in ["1995", "2026"]:
 		var x := -KEY_X if y == "1995" else KEY_X
 		# a little slack round each key, so a finger finds it
-		if absf(lx - x) <= KEY.x * 0.5 + 0.004 and absf(ly) <= KEY.y * 0.5 + 0.02:
+		if absf(lx - x) <= KEY.x * 0.5 + 0.004 and absf(ly) <= KEY.y * 0.5 + 0.03:
 			return y
 	return ""
 

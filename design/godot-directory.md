@@ -134,32 +134,24 @@ A single-sided totem: the backs are plain cream (IMG_4484 f068).
 - Benches and planters keep 7.5 m away from each kiosk (the build's `avoid` list).
 
 ## Reading the directory (scripts/directory_ui.gd)
-**Nov 4 2026: legibility options A/B/C (camera on the kiosk) are prototyped behind `?dirlook=`;
-see `design/godot-directory-legibility.md`. Steven picks before anything here changes.**
 Steven, Nov 1: "I don't want a separate UI outside the one that's posted on the sign. I want it to
 look literally identical to how the sign looks at the mall but I can just click inside the stall
 or the name of the store as it's shown on that directory signage."
+**Nov 4 2026: Steven chose option B** (the camera goes to the kiosk and reads the sign itself);
+the flat full-screen reader is replaced. The full description, the device-pixel change and the
+history of the options: `design/godot-directory-legibility.md`.
 - **Opening it:** the kiosk is a node in group `interactable` (`scripts/directory_kiosk.gd`:
-  `interact_prompt()` → "Mall Directory", `interact(player)` opens it). This is the shared
-  contract with workstream B+C.
-  - **Fallback (remove when interact.gd lands):** within 2.4 m of a kiosk's lit side, a prompt
-    "Read the Mall Directory" shows. E, a controller's X or a tap on the prompt opens the
-    directory. The fallback turns itself off when `res://scripts/interact.gd` exists.
-- **What you see:** the kiosk's own panel picture, the same texture as on the 3D sign. It is shown
-  as large as the screen allows, inside the kiosk's aluminium frame with the red pinstripe on top.
-  - **Nothing else is added** except a small 1995 / 2026 toggle and a close button on the frame,
-    and the "Jump to this store?" question.
-  - **Choosing a store:** hover or select a store and every place it appears on the sign lights up
-    (its list line or lines and its place on the map), with its name on a small tag over the map.
-  - **The 1995 / 2026 toggle** switches to the other year's sign.
-- **Controls:**
-  - **Mouse:** click a store's name or its place on the map, then answer "Jump to this store?".
-    The wheel zooms in on the sign; drag pans once zoomed in. Clicking off the sign closes it.
-  - **Touch:** the same with taps; pinch to zoom, drag to pan.
-  - **Keyboard:** arrows move from store to store across the sign; Enter asks, and Enter again
-    jumps. Esc backs out. Tab or Y switches the year; +/− zoom on the selected store.
-  - **Controller:** d-pad or stick moves; A asks and confirms; B backs out; Y, LB or RB switch the
-    year; X zooms.
+  `interact_prompt()` → "Mall Directory", `interact(player)` opens it).
+- **What you see:** the camera glides to the kiosk and frames the whole lit sign with the year
+  switch on its frame, then moves in to the store list at reading size (a column a page on a
+  phone). Nothing is drawn over the view but an **X**, a **<** and the jump question.
+  - **Choosing a store:** tap its name and every place it appears on the sign lights up (pink
+    outline), and the camera glides to its block on the map. Tap the lit store again: "Jump to
+    this store?" in the game menu's style.
+  - **The year switch** is on the kiosk: two keys, "1990s" and "2026", on the frame's bottom
+    rail. The other year's key (or Y) starts the time-travel trip from this kiosk.
+- **Controls:** touch / mouse tap, swipe to turn the page; keys / gamepad: up / down step through
+  the stores, left / right turn the page, Enter / A pick and ask, Esc / B back, Y travels in time.
 - **Jump spots:** each wing build writes `gen/<wing>/directory.json` (`map_data.gd`) for both
   years from `layout_mall.json` / `layout_2026.json`. Each store's spot is 2.2 m out from the
   middle of its longest frontage, on hall floor, facing the store, in the wing whose floor that
@@ -236,17 +228,18 @@ goes with the store, not the spot. Differences:
   - `paint_dir.py`: the panels and their click areas, and `fonts/` (Liberation Sans, OFL).
 - **Tests:**
   - `ui_test.gd`: a native headless jump test, e.g. `-- wing1.tscn dil` → Dillard's in Wing 2.
-  - `ui_shot.gd`: native screenshots of the directory view.
-  - `dirtest.js`: the web shots and the jumps (Node Playwright).
-- **Runtime:** `scripts/directory_kiosk.gd`, `scripts/directory_ui.gd`, and `tex/dir/` (the
-  panels, `hotspots.json`).
+  - `kiosk_test.gd`: the whole reader natively (open, pages, tap, confirm, jump, year switch).
+  - `dirtest.js`: the web shots and the jumps (Node Playwright). Out of date since option B.
+- **Runtime:** `scripts/directory_kiosk.gd`, `scripts/directory_ui.gd`, `scripts/hidpi.gd`, and
+  `tex/dir/` (the panels, the 4x panels in `tex/dir/hi/`, `hotspots.json`).
 - **Shared files, small hunks:**
   - `tools/build_mall.gd`: the `dir_` material branch, and the `place()` call before
     `place_fixtures`.
   - `scripts/player.gd`: `jump_to()`, and the optional `year_to` in `_go_to_wing`.
   - `tools/qa/preview.gd`: previews any module by full path that has `preview()`.
   - `export_presets.cfg`: the eight wing presets include `tex/dir/*`, so every pack carries both
-    years' panels (the 1995 / 2026 toggle shows the other year's).
+    years' panels.
+  - `project.godot` (ws/directory, Nov 4): `allow_hidpi=true` and the `Hidpi` autoload.
 
 ## Evidence (production/qa/evidence/)
 - `wsA-kiosk-vs-ref.jpg`: the preview against the footage.
@@ -254,3 +247,4 @@ goes with the store, not the spot. Differences:
 - `wsA-kiosk-<year>-<spot>-unbaked.jpg`: in game.
 - `wsA-map-<year>-<desktop|phone>*.jpg`: the directory open, on desktop and at phone width.
 - `wsA-jump-before/after.jpg`, `wsA-phone-jump-after.jpg`: the jumps.
+- `directory-B-final-<desktop|phone3x>-<1995|2026>-unbaked.jpg`: the reader as chosen (Nov 4).
