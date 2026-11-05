@@ -78,3 +78,18 @@ Mac (wings that need a rebake: **wing 4, 2026** only; wing 1 2026's anchor pictu
 - Soft-box upholstery reads well at 2–5 m; very close up the seams are in the normal map only.
 - The 2-CPU box: a full 2048 build takes 10–25 min when other sessions are busy (the out-of-memory
   killer stopped one build in phase 1); batch builds run in the background with retries.
+
+## Status after pass 2 (Nov 4 evening) and the plan from here
+
+Steven's Nov 4 spec changed the order: the CC0 packs (Quaternius primary, Kenney for gaps) fill the whole floor
+now, and the generator replaces pack pieces family by family where it looks better (`asset-manifest.md` "Which
+source won"). Done: phase 1 (SOFA-A ×4, BED-A ×4 suites) + **pass 2: 83 pack models, 407 pieces placed in all 12
+zones** (`layout.md` "Pass 2"), unbaked shots for Steven's layout review.
+
+| Next | Content | Sessions |
+|---|---|---|
+| A — after Steven's layout review | move zones / groups as he says (data only); price tags on every piece (`lib/labels.py` hang tag + markdown cards as a MultiMesh); slatwall brand panels; books in the bookcases (Kenney `books`), throw pillows | 1 |
+| B — generator upgrades where the pack is weakest | SOFA-B sectional mode (cloud U, L with chaise) to replace `Couch_L`; recliner / lift chair; wingback + chair-and-a-half; trestle tables + benches | 2–3 |
+| C — case goods and decor | curio, hutch, carved sideboards, mirrors (try Quaternius `Bathroom_Mirror1/2`), urns / vases / trays, floor lamps, PIL-painted art and rugs with the footage's patterns | 2 |
+| D — finish | the ogee and canopy beds, performance (visibility ranges, MultiMesh for tags and decor), the mobile texture decision for the generator props, Mac bake of wing4_2026 + stand-in recapture, before/after | 1–2 |
+| | **remaining** | **6–8 sessions ≈ 1–1.5 weeks** |
