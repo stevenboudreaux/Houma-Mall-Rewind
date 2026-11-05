@@ -367,7 +367,7 @@ func _input(e: InputEvent) -> void:
 		return
 	# touches skip mouse emulation: the bag and action buttons and the prompt are tapped here
 	if e is InputEventScreenTouch and e.pressed:
-		if bag_btn.visible and bag_btn.get_global_rect().has_point(e.position):
+		if bag_btn.is_visible_in_tree() and bag_btn.get_global_rect().has_point(e.position):   # UI-OFFSCREEN: tucked away
 			get_viewport().set_input_as_handled()
 			open_panel(true)
 			return

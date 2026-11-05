@@ -113,9 +113,11 @@ with sync_playwright() as p:
     shot(pg, "phone-visitor-use")
     tap(844 - 80, 390 - 192); time.sleep(1.5)   # the round Use button
     check(state(pg).get("inventory", [{}])[0].get("id") == "pogs", "phone: the Use button took the Pog pack")
-    tap(844 - 105, 104); time.sleep(1.5)  # Bag
+    # UI-OFFSCREEN (design/godot-menu.md): no Bag button on the game screen; the menu icon, then INVENTORY
+    tap(31, 29); time.sleep(2)            # the menu icon (top left)
+    tap(397, 28); time.sleep(1.5)         # the INVENTORY tab
     shot(pg, "phone-visitor-bag")
-    tap(20, 20); time.sleep(1)            # outside closes
+    tap(844 - 34, 28); time.sleep(1)      # the menu's close button
     # a touch-drag walk (movetest's)
     before = [l for l in logs if l.startswith("DBG")][-1:]
     t("touchStart", 200, 300); time.sleep(0.2)
@@ -138,7 +140,8 @@ with sync_playwright() as p:
     tap(200, 500); time.sleep(1)
     shot(pg, "phone-portrait-use")
     tap(390 - 80, 844 - 192); time.sleep(1.5)
-    tap(390 - 105, 104); time.sleep(1.5)
+    tap(31, 29); time.sleep(2)            # UI-OFFSCREEN: the menu icon, then the INVENTORY tab
+    tap(170, 26); time.sleep(1.5)
     shot(pg, "phone-portrait-bag")
     check(not errors(logs), "phone portrait: 0 errors")
     ctx.close()

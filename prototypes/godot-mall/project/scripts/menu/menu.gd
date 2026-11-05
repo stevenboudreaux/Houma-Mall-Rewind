@@ -61,6 +61,9 @@ var _touch := {}                 # touch index -> {"at": Vector2, "scroll": int,
 var _menu_btn: Button
 var _built_for := Vector2.ZERO
 var _input_kind := "kb"
+## UI-OFFSCREEN (Steven, Nov 4): the menu icon shows on touch devices only (a touch screen, or once a
+## touch arrives); a desktop opens the menu with Tab / Esc, a pad with Start.
+var touch_device := false
 
 class Catcher extends Node:
 	var menu: Node
@@ -162,15 +165,103 @@ func _can_open() -> bool:
 	return true
 
 # ------------------------------------------------------------------ the HUD button
+## UI-OFFSCREEN (Steven, Nov 4 2026: "no text on the game screen; everything goes in the menu"):
+## the Menu button is a small unlabelled icon (three bars) top left, the one thing left in the
+## corners. Tab / Start open the menu too. The corner buttons it replaces (Jump to, Bag, View, Avatar)
+## are tucked away by _tuck_corner_buttons() and reached from MAIN / INVENTORY.
 func _build_menu_button() -> void:
 	_menu_btn = Button.new()
-	_menu_btn.text = "Menu (%s)" % _first_key("menu", "Tab")
+	_menu_btn.text = ""
+	_menu_btn.tooltip_text = "Menu (%s)" % _first_key("menu", "Tab")
 	_menu_btn.focus_mode = Control.FOCUS_NONE
-	_menu_btn.add_theme_font_size_override("font_size", 14)
 	_menu_btn.position = Vector2(10, 8)
-	_menu_btn.size = Vector2(110, 32)
+	_menu_btn.size = Vector2(ICON_SIZE, ICON_SIZE)
+	for st in ["normal", "hover", "pressed", "focus"]:
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(0, 0, 0, 0.42 if st == "hover" or st == "pressed" else 0.28)
+		sb.set_corner_radius_all(9)
+		_menu_btn.add_theme_stylebox_override(st, sb)
+	_menu_btn.draw.connect(func():
+		var s := _menu_btn.size
+		var w := s.x * 0.46
+		for i in 3:
+			var y := s.y * (0.34 + 0.16 * i)
+			_menu_btn.draw_line(Vector2((s.x - w) * 0.5, y), Vector2((s.x + w) * 0.5, y), Color(1, 1, 1, 0.82), 2.6, true))
 	_menu_btn.pressed.connect(func(): open_tab("main"))
 	player._cl.add_child(_menu_btn)
+	touch_device = DisplayServer.is_touchscreen_available()
+	_tuck_corner_buttons.call_deferred()
+	_hint_sync.call_deferred()
+
+## UI-OFFSCREEN: on a desktop (no icon) the existing first-start walk hint also names the menu key, so a
+## mouse player finds the menu; no new words on the screen. Touch devices keep the hint as it was.
+func _hint_sync() -> void:
+	var h = player.get("hint")
+	if h == null or not is_instance_valid(h):
+		return
+	if not h.has_meta("base_text"):
+		h.set_meta("base_text", h.text)
+	var base: String = h.get_meta("base_text")
+	h.text = base if touch_device else "%s  ·  %s or Esc: menu" % [base, _first_key("menu", "Tab")]
+	if not touch_device:
+		h.offset_left = minf(h.offset_left, -320.0)
+		h.offset_right = maxf(h.offset_right, 320.0)
+
+func _icon_sync() -> void:
+	_menu_btn.visible = touch_device and not is_open and not player.vr_on \
+			and not (player.frozen and not _froze)
+
+const ICON_SIZE := 42.0
+const OFFSCREEN := "OffscreenHud"
+
+## UI-OFFSCREEN: the old corner buttons go into a hidden holder beside them. They keep working
+## (their code still sets .visible, lays out round them and reads them), but nothing draws them and
+## a tap can't reach them (every hit test checks is_visible_in_tree()). MAIN: Jump to, View, Edit
+## (Avatar); INVENTORY: the Bag.
+func corner_buttons() -> Array:
+	var out: Array = []
+	var it = player.interact
+	var av = player.avatar
+	for b in [player.jump_open_btn, player.year_btn, it.bag_btn if it and "bag_btn" in it else null,
+			av.view_btn if av and "view_btn" in av else null, av.make_btn if av and "make_btn" in av else null]:
+		if b != null and is_instance_valid(b):
+			out.append(b)
+	return out
+
+func _tuck_corner_buttons() -> void:
+	for b in corner_buttons():
+		var par: Node = b.get_parent()
+		if par == null or par.name == OFFSCREEN:
+			continue
+		var hold: Control = par.get_node_or_null(OFFSCREEN)
+		if hold == null:
+			hold = Control.new()
+			hold.name = OFFSCREEN
+			hold.visible = false
+			hold.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			hold.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			par.add_child(hold)
+		b.reparent(hold, false)
+
+## MAIN's Jump to: the quick-jump panel, on the game screen (as J).
+func menu_jump() -> void:
+	if not _jump_ok():
+		return
+	close()
+	player._jump_show(true)
+
+func _jump_ok() -> bool:
+	var jb = player.jump_open_btn
+	return jb != null and jb.visible and not player.jump_locked and not player.leaving
+
+## MAIN's View: first / third person (as V); the menu closes so you see it.
+func menu_view() -> void:
+	close()
+	if player.avatar:
+		player.avatar.toggle_view()
+
+func _hint(id: String, fallback: String) -> String:
+	return "" if _input_kind == "touch" else "  (%s)" % _first_key(id, fallback)
 
 func _process(dt: float) -> void:
 	# entering VR: the flat menu can't be seen in the headset, so it closes
@@ -178,9 +269,10 @@ func _process(dt: float) -> void:
 		if is_open:
 			close()
 	if _menu_btn:
-		_menu_btn.visible = not is_open and not player.vr_on and not (player.frozen and not _froze)
+		_icon_sync()
 		# the owner's fps readout is top left: go under it
 		_menu_btn.position.y = 34.0 if (player.hud and player.hud.visible) else 8.0
+		_menu_btn.tooltip_text = "Menu (%s)" % _first_key("menu", "Tab")
 	if _typing and _name_lbl:
 		_caret_t += dt
 		_name_text()
@@ -372,11 +464,34 @@ func _build_main(narrow: bool) -> void:
 	var gap := Control.new()
 	gap.custom_minimum_size.y = 2 if compact else (4 if narrow else 10)
 	col.add_child(gap)
-	var eb := _button(col, "Edit", Rect2(), 18, edit_avatar)
-	eb.custom_minimum_size = Vector2(150, 46)
-	eb.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	# UI-OFFSCREEN: Edit (was the Avatar corner button), View and Jump to (were corner buttons too)
+	var fl := HFlowContainer.new()
+	fl.add_theme_constant_override("h_separation", 8)
+	fl.add_theme_constant_override("v_separation", 8)
+	fl.custom_minimum_size.x = minf(ir.size.x, 560.0)
+	col.add_child(fl)
+	var fs_b := 16 if narrow or compact else 18
+	var bh := 42.0 if compact else 46.0
+	var eb := _button(fl, "Edit" + _hint("avatar", "C"), Rect2(), fs_b, edit_avatar)
+	eb.name = "MainEdit"
+	eb.custom_minimum_size = Vector2(110, bh)
 	_paint(eb, AMBER, Color(0.1, 0.07, 0.04))
-	_nav.append([[eb, edit_avatar]])
+	var third: bool = player.avatar != null and bool(player.avatar.third)
+	var vb := _button(fl, "View: %s%s" % ["3rd person" if third else "1st person", _hint("view", "V")], Rect2(), fs_b, menu_view)
+	vb.name = "MainView"
+	vb.custom_minimum_size = Vector2(150, bh)
+	_paint(vb, Color(0.2, 0.16, 0.12), INK)
+	var jb := _button(fl, "Jump to" + _hint("jump", "J"), Rect2(), fs_b, menu_jump)
+	jb.name = "MainJump"
+	jb.custom_minimum_size = Vector2(120, bh)
+	jb.disabled = not _jump_ok()
+	_paint(jb, Color(0.2, 0.16, 0.12), INK)
+	for b in [eb, vb, jb]:
+		b.clip_text = false       # grow to fit (the key hint, "3rd person")
+	var nr: Array = [[eb, edit_avatar], [vb, menu_view]]
+	if not jb.disabled:
+		nr.append([jb, menu_jump])
+	_nav.append(nr)
 	var mm = _mall()
 	if mm and not mm.changed.is_connected(_inv_changed):
 		mm.changed.connect(_inv_changed)
@@ -591,6 +706,7 @@ func _finish_capture(code: int) -> void:
 	var c := _capture
 	_capture = {}
 	var err: String = controls.rebind(str(c.id), str(c.kind), code)
+	_hint_sync()      # UI-OFFSCREEN: the walk hint names the menu key
 	var keep := _sel
 	var sv := _scroll.scroll_vertical if _scroll else 0
 	_build()
@@ -602,7 +718,7 @@ func _finish_capture(code: int) -> void:
 
 func _reset_controls() -> void:
 	controls.reset()
-	_menu_btn.text = "Menu (%s)" % _first_key("menu", "Tab")
+	_hint_sync()
 	_build()
 	_say("Back to the defaults.")
 
@@ -719,6 +835,11 @@ func _catch(e: InputEvent) -> void:
 		_input_kind = "kb"
 	elif e is InputEventScreenTouch:
 		_input_kind = "touch"
+		if not touch_device:
+			touch_device = true      # a touch screen after all: the icon, and the hint as it was
+			_hint_sync()
+			if _menu_btn:
+				_icon_sync()
 	if is_open:
 		get_viewport().set_input_as_handled()
 		_menu_input(e)
@@ -728,7 +849,7 @@ func _catch(e: InputEvent) -> void:
 	if controls.filter(e):
 		get_viewport().set_input_as_handled()
 		return
-	if _is(e, "menu"):
+	if _is(e, "menu") or _esc_opens(e):
 		if _can_open():
 			get_viewport().set_input_as_handled()
 			open_tab("main")
@@ -737,6 +858,14 @@ func _catch(e: InputEvent) -> void:
 		if _menu_btn.is_visible_in_tree() and _menu_btn.get_global_rect().has_point(e.position):
 			get_viewport().set_input_as_handled()
 			open_tab("main")
+
+## UI-OFFSCREEN: Esc opens the menu too (Steven, Nov 4), when nothing on the game screen uses it
+## (the jump panel closes with Esc; the shops, prize counter, directory and talk freeze the player).
+func _esc_opens(e: InputEvent) -> bool:
+	if not (e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_ESCAPE):
+		return false
+	var jp = player.get("jump_panel")
+	return not (jp != null and is_instance_valid(jp) and jp.visible)
 
 func _is(e: InputEvent, id: String) -> bool:
 	if not (e is InputEventKey or e is InputEventJoypadButton) or not e.is_pressed() or e.is_echo():

@@ -14,6 +14,140 @@
 >    other year, facing the same way. Sections "MAIN" and "Time travel at the directory" below.
 > The earlier text is kept where it still holds; superseded parts are struck or marked.
 
+> **UI-OFFSCREEN, Nov 4 2026 (branch `ws/ui-offscreen`):** Steven: "no text on the game screen;
+> everything goes in the menu", confirmed as **the corner buttons only**. The walk-up action prompts
+> stay. Section "The game screen (UI-OFFSCREEN)" below; the tables in "The menu" and "CONTROLS" are
+> updated to match. **Steven's answers, Nov 4 evening:** the year switch is the kiosk's only, no menu
+> entry; the menu icon shows on **touch devices only** (desktop: Tab or Esc, pad: Start); the owner HUD,
+> Enter VR and the walk hint stay on screen.
+
+## The game screen (UI-OFFSCREEN, Nov 4)
+**What a visitor sees while walking:** the mall; on a phone or tablet one small **menu icon** top left
+(three white bars on a faint dark rounded square, 42 × 42 px, no words; none on a desktop); and only
+when they apply: the walk-up prompts
+("E · Go outside", "Read the directory", "Talk" …), the round touch **Use / Swing** button, the short
+status line (`_say`: "Third person" …) and, on a first start until you move, the walk hint. Owner mode
+is unchanged (below).
+
+**What moved where:**
+| Was on the game screen | Now | Key / pad (unchanged) |
+|---|---|---|
+| **Menu (Tab)** button, top left | touch devices: the unlabelled menu icon, same spot; desktop: nothing (Tab or Esc) | Tab, Esc, Start |
+| **Jump to (J)**, top right | MAIN: **Jump to** (closes the menu, opens the jump panel) | J, pad Y |
+| **Bag (I)**, top right | the **INVENTORY** tab (as the Bag already led there since M) | I, pad Back |
+| **View: 1st / 3rd person (V)**, top right | MAIN: **View: 1st / 3rd person** (closes the menu so you see it) | V, right-stick click |
+| **Avatar (C)**, top right | MAIN: **Edit** (as before) | C |
+| ~~Visit 2026 / Back to 1995 (Y)~~ | already never shown (MENU2); tucked away with the rest | — |
+
+MAIN's three buttons sit under NAME / MONEY / TICKETS in a row that wraps (on a phone held upright,
+Jump to goes to a second line). On a keyboard or pad they are one row: ← → between them, Enter / A.
+The labels show the current key, read from the InputMap (`Edit (C)`, `View: 1st person (V)`,
+`Jump to (J)`, so a remap shows), and no key when the last input was a touch. Jump to is greyed when the
+jump isn't available (a visitor in the Stockrooms, `jump_locked`).
+
+**Opening the menu, one way per device (Steven, Nov 4 evening):** touch (iPhone, iPad): a tap on the
+icon; desktop keyboard / mouse: **Tab** (remappable) or **Esc**, no icon; gamepad: **Start**. Why the icon
+and not a gesture on touch (two-finger tap, swipe from an edge): a gesture is invisible, so nobody finds
+it, and Safari takes the edge swipes for back / forward and the home bar.
+- **Which devices get the icon:** `menu.touch_device`, true when `DisplayServer.is_touchscreen_available()`
+  (on the web: the browser reports touch points) and from the first touch on, for the rest of the run.
+  A touch laptop counts as a touch device; a mouse click on the icon still works there (an iPad with a
+  trackpad). A pad on a desktop doesn't bring it.
+- **A desktop mouse player still finds the menu:** the existing first-start walk hint (bottom middle
+  until you first move) gains, on a desktop only, "· Tab or Esc: menu" (the key read from the InputMap,
+  so a remap shows; refreshed after a remap or Reset). No new label: the same hint, the same moment.
+- **Esc opens the menu** when nothing on the game screen uses Esc: the jump panel still closes with Esc
+  (it is checked first); the shops, prize counter, directory and conversations freeze the player, and the
+  menu doesn't open over them (`_can_open`). Esc and Tab close it, as before. In a browser, Esc with the
+  mouse captured first releases the mouse (the browser's), so a second Esc opens the menu.
+- The icon moves down under the owner's fps line, as the button did.
+
+**How (small hunks, nothing renamed):** the old buttons are still made by their own scripts
+(`player.gd` Jump to and the year switch, `interact.gd` the Bag, `avatar.gd` View and Avatar) and their
+code still sets `.visible` and lays out round them, so `shop.gd`, `redemption.gd`, `prizes.gd`,
+`stockrooms.gd` and the tests that read them are untouched. `menu.gd _tuck_corner_buttons()` moves them
+into a hidden `OffscreenHud` Control beside them (deferred, after every script made its button):
+nothing draws them, and every hand-made touch hit test now checks `is_visible_in_tree()` (one line each
+in `interact.gd` and `player.gd`; `avatar.gd` already did), so a tap where they were does nothing.
+`menu.gd corner_buttons()` lists them. `actions.json`'s TOUCH column names the new places.
+
+**Not moved (Steven, Nov 4 evening: they stay on screen):** the owner-only HUD (fps line, Reflections, Benches &
+plants, Lighting, Shirt words, the prizes' / signs' Edit and Publish words, the lighting panel), the
+**Enter VR** button (bottom middle, only when a headset is offered; WebXR needs it pressed in the page
+itself, a user gesture, so it can't simply move into the Godot menu), the first-start walk hint
+("Drag left side to walk · drag right side to look", bottom middle until you first move), and the
+full-screen moments that bring their own words (the directory, the prize counter, Pocket Change's
+closer look, the jump panel, the conversation screen, the shops).
+
+**The year jump (decided, Steven, Nov 4 evening): the kiosk only, no menu entry.** The year button has
+been hidden since MENU2 (Nov 3: "the directory's toggle is the only way to change year"; ws/directory
+moves the switch onto the kiosk); it is tucked away with the rest and the menu has no year entry.
+
+### Checks (UI-OFFSCREEN, unbaked)
+- `tools/qa/ui_offscreen_test.gd` (native), after Steven's answers: **UI OFFSCREEN TEST OK (35 checks)**
+  on wing 6. It starts as a desktop (no touch screen natively): no icon, the walk hint reads "… · Tab or
+  Esc: menu", no words on the game screen but the hint, Esc opens MAIN and closes it, Tab and Start open
+  MAIN, a pad brings no icon; then a first tap makes it a touch device: the icon shows top left with no
+  words, the hint is back as it was, and the checks below follow (a click on the icon now stands for an
+  iPad with a trackpad; Esc on the open jump panel closes it and doesn't open the menu).
+  The first run (before the answers, 28 checks, icon on every device) was on wing 6 too (the
+  cinema lobby: the same player, menu and corner buttons as every wing; native runs on wings 1 and 2
+  were killed for memory on the shared cloud box): the five corner buttons found and not drawn, their own
+  `.visible` untouched; the icon shown with no words, top left; at 1280×720, 390×844 and 844×390 **no
+  Label or Button with words on the game screen** apart from the allowed prompts (a walk over every
+  CanvasLayer); a tap on the icon opens MAIN with Edit, View and Jump to all on screen; a mouse click on
+  the icon, Tab and Start open MAIN; taps where the old buttons were open nothing; MAIN's View by tap,
+  mouse and pad (Start, d-pad right, A) switches the view and closes the menu; V still switches it; MAIN's
+  Jump to opens the jump panel, Esc closes it, J still opens it; MAIN's Edit opens the editing; C and I
+  still open MAIN-Edit and INVENTORY.
+  `xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 --script res://tools/qa/ui_offscreen_test.gd -- --wing=6 --out=…`
+- `tools/qa/ui_offscreen_webtest.py` after Steven's answers (web build of this change, wing 2, `npcs=0`,
+  desktop and phone portrait, one browser at a time): **every UI check passed.** Desktop: no menu icon top
+  left (the bars' bright pixels absent), a click where it would be opens nothing, **Esc opens the menu**
+  (MAIN's amber tab drawn), E to INVENTORY, Tab closes, V switches the view and saves it, J opens the jump
+  panel. Phone portrait (touch): the icon drawn top left, a tap opens the menu, MAIN's View switches the
+  view and saves it, the icon then the INVENTORY tab. The one red line in each part was a console
+  message from the loader ("could not keep the next files for later … Cache … Request failed"): to fit
+  the shared box's last 500 MB of disk I deleted the wing 1 and 2026 packs from the test build after
+  exporting it, and the loader's background prefetch of wing 1 got a 404. Not a game error; a full
+  build doesn't have it. The test now retries blank (all-black) swiftshader frames and turns off
+  Chromium's HTTP disk cache. Phone landscape not rerun (same touch path as portrait).
+  First run (before the answers, commit 4fad6bd3, icon on every device): every check passed: desktop (a click on the icon opens MAIN, E to INVENTORY, Tab closes, V still switches
+  the view and saves it, J opens the jump panel, 0 console errors); phone portrait and landscape by touch
+  (the icon opens MAIN, MAIN's View switches the view and saves it, the icon then the INVENTORY tab,
+  0 console errors). Each screenshot is now also checked not blank: on the shared box swiftshader
+  sometimes loses the WebGL context under load and screenshots come back black (the game still answers),
+  so the full set of shots comes from two runs of the same build (desktop from one, phones from the
+  other); `DEVICES=desktop|phone-portrait|phone-landscape` reruns one part, and swiftshader's own
+  "WebGL: too many errors" notice is not counted as a game error.
+- Updated for the move (they tapped the old buttons): `wsbc_webtest.py` (Bag → icon, INVENTORY tab, ✕),
+  `avatar_webtest.py` (View → icon, MAIN's View), `char_webtest.js` (the Menu button's spot → the icon).
+  `avatar_webtest.py` was rerun on Nov 4 evening and **did not get through**: in its first part (desktop, the
+  creator opening by itself, full shoppers; nothing UI-OFFSCREEN changed) the page crashed under swiftshader
+  ("Target crashed", "WebGL: too many errors") while three other sessions were rendering on the box, so its
+  phone part (the icon, then MAIN's View) never ran. The same taps at the same spots pass in
+  `ui_offscreen_webtest.py`. To rerun on a quiet box. `wsbc_webtest.py` and `char_webtest.js` not rerun.
+- Natively, unchanged and still passing: `menu_unit_test.gd` **MENU UNIT OK (64 checks)**; `menu_test.gd
+  --wing=2` 68 checks ok and none failed, including MAIN, Edit inside MAIN (`_nav[0][0]` is still Edit),
+  every MAIN control on screen at the three sizes, "no year button on the HUD"; the run was stopped by its
+  15-minute limit at the INVENTORY HELD step (software rendering on the shared box), not by a failure.
+- Not rerun (they read the old buttons' own `.visible`, which UI-OFFSCREEN leaves untouched, and tap
+  nothing in the corners): `interact_test.gd`, `avatar_test.gd`, `econ_back_test.gd`; the walk, door and
+  shop web tests (`walk_webtest.py`, `doortest.py`, `shops_webtest.py`, `menu_webtest.py`,
+  `menu_trip_webtest.js`) tap the game screen, the prompts or the menu's own tabs, never a corner
+  button, so no selector changed.
+
+### Evidence (`production/qa/evidence/ui-offscreen-*.jpg`, unbaked)
+Native, wing 6 (`ui_offscreen_test.gd`): `ui-offscreen-native-w6-desktop-game-hint-1280x720-unbaked.jpg`
+(a desktop: no icon, the first-start walk hint ending "· Tab or Esc: menu"),
+`ui-offscreen-native-w6-game-{1280x720,390x844,844x390}-unbaked.jpg` (a touch device: only the icon), `…-menu-main-{…}` (MAIN with Edit / View / Jump to), `…-menu-inventory-{…}`,
+`…-jump-panel-1280x720-unbaked.jpg`.
+Web, wing 2 (`ui_offscreen_webtest.py`): `ui-offscreen-web-w2-desktop-{game,menu-main,menu-inventory,jump-panel}-unbaked.jpg`,
+`ui-offscreen-web-w2-phone-{portrait,landscape}-{game,menu-main,after-view,menu-inventory}-unbaked.jpg`
+(after-view: third person after MAIN's View, back on the clean game screen). The desktop and phone-portrait
+shots are from the run after Steven's answers (desktop: no icon; its menu-main was opened with Esc); the
+phone-landscape shots are from the first run (the touch path, unchanged).
+
 **Asked for (Steven, Nov 2):** one full-screen menu (tabs, left to right: **INVENTORY, AVATAR, CONTROLS,
 YEAR**; Steven, later Nov 2: "the first thing that shows up [is] the inventory on the far left, then the
 avatar builder") on a key, a
@@ -28,7 +162,7 @@ Built on `main` at 326ed7c (Demo 47). Branch `ws/m-menu`.
 ## Files
 | File | What |
 |---|---|
-| `scripts/menu/menu.gd` | The menu (a CanvasLayer at 45), its tabs, the Menu button, the input catcher, the opening's flow. Made by `player.gd` as its child `Menu`, after `Avatar`. |
+| `scripts/menu/menu.gd` | The menu (a CanvasLayer at 45), its tabs, the menu icon (UI-OFFSCREEN; was the Menu button), the input catcher, the opening's flow. Made by `player.gd` as its child `Menu`, after `Avatar`. |
 | `scripts/menu/controls.gd` | The InputMap actions `mall_<id>`, remapping, `localStorage "mall-controls-1"`, the translation layer. |
 | `scripts/menu/actions.json` | Every action the CONTROLS tab lists, with its **default** keys and pad buttons (data). |
 | ~~`scripts/menu/opening.gd`, `data/story/opening.json`~~ | The opening: removed Nov 4 2026 (ws/items; "The opening" below). |
@@ -60,7 +194,7 @@ Opening it shows MAIN, the far-left tab (guess, following Steven's Nov 2 rule "t
 first"). `TABS` in `menu.gd`; a JOURNAL tab would be appended after CONTROLS.
 | | Keyboard / mouse | Gamepad | Touch |
 |---|---|---|---|
-| Open / close | **Tab** (Esc closes too), the **Menu (Tab)** button top left | **Start** (B closes too) | **Menu** button, ✕ |
+| Open / close | **Tab** or **Esc** (UI-OFFSCREEN, Nov 4: Esc opens too; no icon on a desktop) | **Start** (B closes too) | the **menu icon** top left (touch devices only; was the "Menu (Tab)" button), ✕ |
 | Tabs | **Q / E**, a click on the tab | **LB / RB** (L1 / R1), and **LT / RT** (L2 / R2) | a sideways swipe, a tap on the tab |
 | Inside a tab | ↑↓←→ (W S A D) + Enter / Space | d-pad + A | taps; drag to scroll |
 Tab is Steven's call; Tab is the default and it is remappable (CONTROLS). The old ways in open their tab:
@@ -70,7 +204,7 @@ the Menu button always open on the far-left tab**, MAIN since MENU2. "L2 / R2 as
 keys were and are the shoulder buttons (LB / RB, pad buttons 9 / 10; L1 / R1 on a PlayStation pad); the
 triggers (LT / RT, L2 / R2) now switch tabs as well, once per pull, so either reading works. The player is frozen while it is open
 (`player.frozen`), so nothing behind it reacts. The menu doesn't open while something else has the screen
-(the prize counter's closer look, the directory), while leaving, or in VR. The Menu button sits top left
+(the prize counter's closer look, the directory), while leaving, or in VR. The menu icon (UI-OFFSCREEN; was the Menu button; touch devices only) sits top left
 (under the owner's fps line); the owner-only HUD rules (design/godot-interaction.md) are unchanged.
 
 **How input reaches it:** a catcher node is added last under the root, so its `_input` runs before every
@@ -128,12 +262,12 @@ every start.
 | Look around | mouse drag | — | drag on the right half | — |
 | Action (use / pick up / swing) | E | X | Use / Swing button | keys, pad |
 | Go through (wing seam, door) | the Action key, Enter | A | tap the prompt | — |
-| Menu | Tab (Esc closes) | Start (B closes) | Menu button | keys, pad |
+| Menu | Tab, Esc (opens and closes) | Start (B closes) | menu icon (top left) | keys, pad |
 | Menu: previous / next tab | Q / E | LB / RB | swipe, tap | keys, pad (menu only) |
-| First / third person | V | right-stick click | View button | keys, pad |
-| Avatar → MAIN, Edit | C | — | Avatar button | keys, pad |
-| Inventory → INVENTORY tab | I | Back / Select | Bag button | keys, pad |
-| Jump to | J | Y | Jump to button | keys, pad |
+| First / third person | V | right-stick click | Menu: MAIN, View | keys, pad |
+| Avatar → MAIN, Edit | C | — | Menu: MAIN, Edit | keys, pad |
+| Inventory → INVENTORY tab | I | Back / Select | Menu: INVENTORY | keys, pad |
+| Jump to | J | Y | Menu: MAIN, Jump to | keys, pad |
 | Put the held item away / Drop it | R / G | — | INVENTORY tab | keys, pad |
 | Coin pusher: nudge (tilts if overdone) | N, B, Shift (fixed, in `play/pusher.html`) | LB / RB | NUDGE button, shake | row `tilt`, kind `fixed` (INT, Demo 49) |
 
@@ -348,7 +482,8 @@ shoppers, the web build (desktop and phone), the movetest.
 - **PLACEHOLDER:** the transition's hum (an empty `Hum` slot).
 - Words I used that the brief didn't spell out (UI only, easy to change in `menu.gd` / `actions.json`):
   the action names in CONTROLS, "Press a key…", "Reset to defaults", "Show the opening again",
-  "Drop", "Skip", the Menu button's "Menu (Tab)".
+  "Drop", "Skip", the menu icon's tooltip "Menu (Tab)" (was the Menu button's words), MAIN's "View: 1st / 3rd
+  person" and "Jump to".
 - Guess: Esc and a pad's B close the menu as well as Tab / Start.
 - Guess: a pocket-class item can't be HELD.
 - Guess: START without a name shows the opening again next time; Skip doesn't.

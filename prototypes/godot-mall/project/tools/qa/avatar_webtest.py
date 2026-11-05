@@ -89,8 +89,9 @@ with sync_playwright() as p:
     key(pg, "Escape", 3)
     s = saved(pg)
     check(s is not None and s.get("done") and s.get("view") == "first" and s.get("body") == "Ch01", f"phone: Skip = the default avatar, first person ({s})")
-    # the View button: top right column, under Jump to / Visit 2026 / Bag (visitor layout)
-    pg.touchscreen.tap(390 - 105, 144); time.sleep(3)
+    # UI-OFFSCREEN (design/godot-menu.md): no View button on the game screen; the menu icon, then MAIN's View
+    pg.touchscreen.tap(31, 29); time.sleep(3)
+    pg.touchscreen.tap(201, 596); time.sleep(3)
     s = saved(pg)
     check(s is not None and s.get("view") == "third", "phone: tapping View switches to third person")
     shot(pg, "tp-phone-portrait")
