@@ -158,7 +158,9 @@ def main():
     meta = mod.META
     aid = meta["id"]
     cls = meta["class"]
-    out_dir = os.path.join(PROJ, "models", aid)
+    # META["out"]: a subfolder of models/ (Lynn's furniture: models/lynns/<id>), so the model is not caught by
+    # the shared 'items' pack's models/bl_* glob and ships in the wing pack whose scene uses it
+    out_dir = os.path.join(PROJ, "models", meta["out"], aid) if meta.get("out") else os.path.join(PROJ, "models", aid)
     scratch = os.path.join(PROJ, ".scratch", "blender")
     os.makedirs(scratch, exist_ok=True)
     os.makedirs(out_dir, exist_ok=True)
@@ -213,7 +215,8 @@ def main():
                                normal=meta.get("normal", True), uv=meta.get("uv", "smart"),
                                samples=8 if fast else 16, source=high, cage=meta.get("cage", 0.02),
                                uv_shrink=meta.get("uv_shrink"), curvature=meta.get("curvature", False),
-                               finish=getattr(mod, "finish_maps", None), scratch=scratch)
+                               finish=getattr(mod, "finish_maps", None), scratch=scratch,
+                               ao_samples=meta.get("ao_samples"))   # META["ao_samples"]: fewer AO rays for big soft pieces
     if high is not None:
         bpy.data.objects.remove(high)
         bpy.context.view_layer.update()

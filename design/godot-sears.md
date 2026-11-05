@@ -99,6 +99,15 @@ Sofa and sectional groups with ottomans and rugs on the open floor, dining sets 
 toward the back, eight beds in R3 with a white slatwall, a row of ten recliners along R2's east side,
 eight stainless fridges and a TV wall in R1. Dynamic meshes (`dyn_sr_dress`, no lightmap).
 
+**Being replaced by workstream LYNNS (Nov 4 2026):** the furniture research, zones and build plan are in
+`design/lynns/` (`inventory.md`, `layout.md` + `layout.png`, `plan.md`). Blender models
+(`models/lynns/bl_ly_*`) are placed from `data/lynns/placements.json` by `tools/stores/sears/lynns.gd`,
+called first in `dress_2026()`; the boxes above skip the rects it claims. Phase 1: four sofas (SOFA-A) in
+the east living area and four bedroom suites (BED-A) on the east and mall walls.
+**Pass 2 (Nov 4 evening):** the whole floor is furnished (403 pieces: CC0 Quaternius / Kenney pack models
+recoloured onto one palette, `models/lynns/pack/`, plus the generator props; `design/lynns/asset-manifest.md`);
+`placements.json` sets `replace_boxes`, so `dress_2026()` now keeps only the R3 slatwall from the boxes above.
+
 ## Exits ("Go outside")
 `tools/make_exterior.py` adds two Sears doors to `exterior.json` (`s1x` side exit, out (−4, −149);
 `s1e` customer storefront, out (32.5, −118)), so standing at them offers "Go outside · the Sears side

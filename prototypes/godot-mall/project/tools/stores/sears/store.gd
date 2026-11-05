@@ -594,13 +594,19 @@ static func lights(b):
 ## sets, bedroom vignettes and mattresses in R3, recliners along a west run, stainless fridges and a
 ## TV wall in R1's navy corner. Generic shapes in muted fabric colours; dynamic meshes (no lightmap).
 static func dress_2026(b):
+	# workstream LYNNS: the Blender furniture (design/lynns/layout.md); the boxes below skip its groups
+	var LY = load("res://tools/stores/sears/lynns.gd")
+	LY.place(b)
+	if LY.replaces_boxes():
+		r3_slatwall(b)   # the pack furniture fills the floor; only the R3 slatwall stays from the boxes below
+		return
 	var rng = RandomNumberGenerator.new()
 	rng.seed = 4409
 	var fab = ["#d9d2c3", "#c9c1b0", "#8b8378", "#5d5852", "#a89c88", "#e6e1d6", "#6f6a62", "#b8a68c"]
 	# sofas and sectionals on the open floor, either side of the main aisle
 	for cx in [-30.0, -22.0, -13.0, 5.0, 14.0, 23.0]:
 		for cz in [-104.5, -114.0, -123.5]:
-			if (cx < -26.5 and cz < -110.0) or (cx > 9.5 and cz < -128.0):
+			if (cx < -26.5 and cz < -110.0) or (cx > 9.5 and cz < -128.0) or LY.claimed(cx, cz, 1.6):
 				continue
 			var col = Color(fab[rng.randi() % fab.size()])
 			var yaw = [0.0, PI * 0.5, PI][rng.randi() % 3]
@@ -613,11 +619,7 @@ static func dress_2026(b):
 	for i in 4:
 		for j in 2:
 			bed(b, Vector3(13.5 + i * 4.3, 0, -143.0 + j * 7.5), Color(["#2b3550", "#e8e6e0", "#3a4566", "#d2d6dc"][(i + j) % 4]))
-	b.cur_color = Color("#f2f1ec")
-	var y = 0.3
-	while y < 2.6:
-		b.box("sr_dress", "vcolor_matte", Vector3(19.5, y, Z_BACK + 0.04), Vector3(18.0, 0.07, 0.03), Transform3D.IDENTITY, [], true)
-		y += 0.15
+	r3_slatwall(b)
 	# recliners in a row along R2's east side (IMG_4412 f004)
 	for k in 10:
 		var c = Color(["#3b2e27", "#6a4a34", "#2a2a2c", "#8a7a68"][k % 4])
@@ -635,7 +637,18 @@ static func dress_2026(b):
 	# rugs under a few groups
 	b.cur_color = Color("#bfb5a2")
 	for r in [[-31.0, -104.5], [14.0, -114.0], [5.0, -123.5]]:
+		if LY.claimed(r[0], r[1]):
+			continue
 		b.quad("sr_dress", "vcolor_matte", [Vector3(r[0] - 1.8, 0.006, r[1] - 1.3), Vector3(r[0] + 1.8, 0.006, r[1] - 1.3), Vector3(r[0] + 1.8, 0.006, r[1] + 1.3), Vector3(r[0] - 1.8, 0.006, r[1] + 1.3)], Vector3.UP, [], true)
+	b.cur_color = Color.WHITE
+
+## R3's white horizontal slatwall on the back wall (the mattress wall, IMG_4412 t042-043).
+static func r3_slatwall(b):
+	b.cur_color = Color("#f2f1ec")
+	var y = 0.3
+	while y < 2.6:
+		b.box("sr_dress", "vcolor_matte", Vector3(19.5, y, Z_BACK + 0.04), Vector3(18.0, 0.07, 0.03), Transform3D.IDENTITY, [], true)
+		y += 0.15
 	b.cur_color = Color.WHITE
 
 static func xf(at, yaw):

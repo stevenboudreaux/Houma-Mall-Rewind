@@ -1,0 +1,166 @@
+{
+ "_": "Lynn's Interiors (2026) zones, world metres [x0, z0, x1, z1]: design/lynns/layout.md (drawn by tools/stores/sears/lynns_layout_png.py).",
+ "zones": [
+  {
+   "id": "Z1",
+   "what": "Entry showcase: modular sectionals + cocktail ottomans",
+   "rects": [
+    [
+     -26.5,
+     -110,
+     -6,
+     -96.3
+    ],
+    [
+     -2,
+     -110,
+     9.5,
+     -96.3
+    ]
+   ],
+   "colour": "#d8c39a"
+  },
+  {
+   "id": "Z2",
+   "what": "West perimeter: swivel chairs, bookcases, art, curio",
+   "rects": [
+    [
+     -40,
+     -110,
+     -26.5,
+     -96.3
+    ]
+   ],
+   "colour": "#b7c7d9"
+  },
+  {
+   "id": "Z3",
+   "what": "R2 motion: reclining sofa groups",
+   "rects": [
+    [
+     -40,
+     -128,
+     -26.5,
+     -110
+    ]
+   ],
+   "colour": "#c9b3d6"
+  },
+  {
+   "id": "Z4",
+   "what": "Centre-west living: accent chairs, wingbacks, consoles, hutch",
+   "rects": [
+    [
+     -26.5,
+     -128,
+     -6,
+     -110
+    ]
+   ],
+   "colour": "#e3c9b3"
+  },
+  {
+   "id": "Z5",
+   "what": "R1 recliner gallery (the old appliances room)",
+   "rects": [
+    [
+     -40,
+     -146,
+     -17.5,
+     -128
+    ]
+   ],
+   "colour": "#a8c3b0"
+  },
+  {
+   "id": "Z6",
+   "what": "R4 counter-height stools and tables",
+   "rects": [
+    [
+     -17.5,
+     -146,
+     -8.5,
+     -137
+    ]
+   ],
+   "colour": "#d9d29c"
+  },
+  {
+   "id": "Z7",
+   "what": "R3 mattress gallery (taupe carpet, slatwall)",
+   "rects": [
+    [
+     9.5,
+     -146,
+     30,
+     -128
+    ]
+   ],
+   "colour": "#9fb0c9"
+  },
+  {
+   "id": "Z8",
+   "what": "Dining hall + sideboards",
+   "rects": [
+    [
+     -2,
+     -137,
+     9.5,
+     -110
+    ],
+    [
+     -17.5,
+     -137,
+     -6,
+     -128
+    ]
+   ],
+   "colour": "#cfe0b8"
+  },
+  {
+   "id": "Z9",
+   "what": "East living: SOFA-A groups, sectionals, leather, glam",
+   "rects": [
+    [
+     9.5,
+     -128,
+     27,
+     -99.4
+    ]
+   ],
+   "colour": "#f0c7b4"
+  },
+  {
+   "id": "Z10",
+   "what": "Bedroom vignettes on the perimeter (BED-A)",
+   "rects": [
+    [
+     27,
+     -128,
+     30,
+     -99.4
+    ],
+    [
+     9.5,
+     -99.4,
+     30,
+     -96.3
+    ]
+   ],
+   "colour": "#e8b4b4"
+  },
+  {
+   "id": "Z11",
+   "what": "Side-exit corner: sales desk, sideboard, chest",
+   "rects": [
+    [
+     -8.5,
+     -146,
+     0.5,
+     -137
+    ]
+   ],
+   "colour": "#dddddd"
+  }
+ ]
+}
