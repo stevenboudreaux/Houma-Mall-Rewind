@@ -14,6 +14,7 @@ extends CanvasLayer
 
 signal closed(look: Dictionary, how: String)   # how: "done", "skip", "cancel"
 
+const Years = preload("res://scripts/years.gd")   # ITEMS: the years as the player reads them
 const Look = preload("res://scripts/avatar_look.gd")
 const AvatarBody = preload("res://scripts/avatar_body.gd")
 
@@ -171,7 +172,7 @@ func _layout() -> void:
 	col.add_theme_constant_override("separation", int(maxf(2.0, rh * 0.12)))
 	root.add_child(col)
 	var title := Label.new()
-	title.text = ("Make your shopper · %d" % year) if first_time else ("Your shopper · %d" % year)
+	title.text = ("Make your shopper · %s" % Years.label(year)) if first_time else ("Your shopper · %s" % Years.label(year))
 	title.add_theme_font_size_override("font_size", int(clampf(rh * 0.5, 16, 24)))
 	title.add_theme_color_override("font_color", Color(1, 0.95, 0.78))
 	title.custom_minimum_size.y = rh * 0.85

@@ -1,0 +1,26 @@
+{
+ "_": "Great American Cookie Co. (1995). One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by tools/items/items_io.py (tools/blender/build.py, tools/prizes/make_items.py, tools/shops/make_standins.py). Never change an id.",
+ "items": [
+  {
+   "id": "bl_gac_sugarcookie",
+   "name": "Sugar cookie",
+   "category": "food",
+   "subcategory": "sweet",
+   "class": "hand",
+   "scene": "res://models/bl_gac_sugarcookie/bl_gac_sugarcookie.glb",
+   "icon": "res://models/bl_gac_sugarcookie/bl_gac_sugarcookie_icon.png",
+   "year": 1995,
+   "store": "GREAT AMERICAN COOKIE CO",
+   "place": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -26.92,
+     0.862,
+     45.02
+    ],
+    "yaw": 12
+   }
+  }
+ ]
+}

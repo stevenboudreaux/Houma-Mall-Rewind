@@ -1,0 +1,131 @@
+{
+ "_": "B. Dalton Bookseller (1995): the books sold at its counter (data/story/shops.json) and the Shiverwood paperbacks on its table. Titles other than Moby-Dick are invented. One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by tools/items/items_io.py (tools/blender/build.py, tools/prizes/make_items.py, tools/shops/make_standins.py). Never change an id.",
+ "items": [
+  {
+   "id": "bl_bd_paperback",
+   "name": "Shiverwood #7 paperback",
+   "category": "book",
+   "subcategory": "paperback",
+   "class": "pocket",
+   "scene": "res://models/bl_bd_paperback/bl_bd_paperback.glb",
+   "icon": "res://models/bl_bd_paperback/bl_bd_paperback_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "display": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -105.42,
+     0.76,
+     45.98
+    ],
+    "yaw": 6,
+    "runtime": true
+   }
+  },
+  {
+   "id": "bl_bd_paperback_b",
+   "name": "Shiverwood #7 paperback",
+   "category": "book",
+   "subcategory": "paperback",
+   "class": "pocket",
+   "scene": "res://models/bl_bd_paperback/bl_bd_paperback.glb",
+   "icon": "res://models/bl_bd_paperback/bl_bd_paperback_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "display": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -105.62,
+     0.76,
+     45.95
+    ],
+    "yaw": -4,
+    "runtime": true
+   }
+  },
+  {
+   "id": "bl_bd_paperback_c",
+   "name": "Shiverwood #7 paperback",
+   "category": "book",
+   "subcategory": "paperback",
+   "class": "pocket",
+   "scene": "res://models/bl_bd_paperback/bl_bd_paperback.glb",
+   "icon": "res://models/bl_bd_paperback/bl_bd_paperback_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "display": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -105.82,
+     0.76,
+     45.99
+    ],
+    "yaw": 3,
+    "runtime": true
+   }
+  },
+  {
+   "id": "bd_adventure_book",
+   "name": "The Sunken Compass",
+   "category": "book",
+   "subcategory": "hardcover",
+   "class": "hand",
+   "scene": "res://models/bl_bd_adventure_book/bl_bd_adventure_book.glb",
+   "icon": "res://models/bl_bd_adventure_book/bl_bd_adventure_book_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "price": 2295
+  },
+  {
+   "id": "bd_chills_book",
+   "name": "Chill Hollow #4 paperback",
+   "category": "book",
+   "subcategory": "paperback",
+   "class": "hand",
+   "scene": "res://models/bl_bd_chills_book/bl_bd_chills_book.glb",
+   "icon": "res://models/bl_bd_chills_book/bl_bd_chills_book_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "price": 399
+  },
+  {
+   "id": "bd_dark_room_book",
+   "name": "Safelight",
+   "category": "book",
+   "subcategory": "hardcover",
+   "class": "hand",
+   "scene": "res://models/bl_bd_dark_room_book/bl_bd_dark_room_book.glb",
+   "icon": "res://models/bl_bd_dark_room_book/bl_bd_dark_room_book_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "price": 2195
+  },
+  {
+   "id": "bd_mars_book",
+   "name": "Dust Over Tharsis",
+   "category": "book",
+   "subcategory": "hardcover",
+   "class": "hand",
+   "scene": "res://models/bl_bd_mars_book/bl_bd_mars_book.glb",
+   "icon": "res://models/bl_bd_mars_book/bl_bd_mars_book_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "price": 1295
+  },
+  {
+   "id": "bd_moby_dick",
+   "name": "Moby-Dick",
+   "category": "book",
+   "subcategory": "paperback",
+   "class": "hand",
+   "scene": "res://models/bl_bd_moby_dick/bl_bd_moby_dick.glb",
+   "icon": "res://models/bl_bd_moby_dick/bl_bd_moby_dick_icon.png",
+   "year": 1995,
+   "store": "B. DALTON BOOKSELLER",
+   "price": 1495
+  }
+ ]
+}

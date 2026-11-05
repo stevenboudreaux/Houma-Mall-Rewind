@@ -2,7 +2,7 @@
 ## from tools/stores/radioshack_items/spec.json (paint_items.py): one mesh, one scene and one
 ## 256 px icon per item, in res://items/radioshack/. Each scene's root is a Node3D named after the
 ## item id, with the item's id, name and class in its metadata; its origin is the item's bottom
-## centre and its front faces +z. The pick-up code is workstream B+C's (data/items/radioshack.json).
+## centre and its front faces +z. The pick-up code is workstream B+C's (data/items/radio_shack.json).
 ##
 ## Run (the icons need a renderer, so not --headless):
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --script res://tools/stores/radioshack_items/make_items.gd

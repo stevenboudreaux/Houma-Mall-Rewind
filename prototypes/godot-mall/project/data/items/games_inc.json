@@ -1,9 +1,50 @@
 {
- "_": "games, inc.'s prizes, 2026 (workstream PRIZES, Steven Nov 3 2026; design/godot-prize-counter.md 'games, inc.'): stock only, redeemed at its counter (scripts/redemption.json 'stock_2026'). Models: scripts/items/prize_model.gd -> scripts/prize_units.gd. Names and prices as scripts/prizes_2026.json. Written by tools/prizes/make_items.py.",
+ "_": "games, inc. (2026 arcade): its redemption prizes (scripts/redemption.json 'stock_2026'; names and prices as scripts/prizes_2026.json). One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by tools/items/items_io.py (tools/blender/build.py, tools/prizes/make_items.py, tools/shops/make_standins.py). Never change an id.",
  "items": [
+  {
+   "id": "bl_gi_capybara",
+   "name": "Capybara plush",
+   "category": "toy",
+   "subcategory": "plush",
+   "class": "hand",
+   "scene": "res://models/bl_gi_capybara/bl_gi_capybara.glb",
+   "icon": "res://models/bl_gi_capybara/bl_gi_capybara_icon.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 2000,
+   "prize": "g_capybara"
+  },
+  {
+   "id": "bl_gi_doughball",
+   "name": "Squishy dough ball",
+   "category": "toy",
+   "subcategory": "squishy",
+   "class": "pocket",
+   "scene": "res://models/bl_gi_doughball/bl_gi_doughball.glb",
+   "icon": "res://models/bl_gi_doughball/bl_gi_doughball_icon.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 300,
+   "prize": "g_dough_ball"
+  },
+  {
+   "id": "bl_gi_squish",
+   "name": "Round plush",
+   "category": "toy",
+   "subcategory": "plush",
+   "class": "hand",
+   "scene": "res://models/bl_gi_squish/bl_gi_squish.glb",
+   "icon": "res://models/bl_gi_squish/bl_gi_squish_icon.png",
+   "year": 2026,
+   "store": "GAMES, INC.",
+   "tickets": 1200,
+   "prize": "g_squish"
+  },
   {
    "id": "gi_popper_key",
    "name": "Popper keychain",
+   "category": "toy",
+   "subcategory": "fidget",
    "class": "pocket",
    "scene": "res://scripts/items/gi_popper_key.tscn",
    "icon": "res://tex/items/gi_popper_key.png",
@@ -15,6 +56,8 @@
   {
    "id": "gi_squishy",
    "name": "Mini squishy",
+   "category": "toy",
+   "subcategory": "squishy",
    "class": "pocket",
    "scene": "res://scripts/items/gi_squishy.tscn",
    "icon": "res://tex/items/gi_squishy.png",
@@ -26,6 +69,8 @@
   {
    "id": "gi_light_ring",
    "name": "Light-up ring",
+   "category": "toy",
+   "subcategory": "light-up",
    "class": "pocket",
    "scene": "res://scripts/items/gi_light_ring.tscn",
    "icon": "res://tex/items/gi_light_ring.png",
@@ -37,6 +82,8 @@
   {
    "id": "gi_fidget",
    "name": "Fidget spinner",
+   "category": "toy",
+   "subcategory": "fidget",
    "class": "pocket",
    "scene": "res://scripts/items/gi_fidget.tscn",
    "icon": "res://tex/items/gi_fidget.png",
@@ -48,6 +95,8 @@
   {
    "id": "gi_slime",
    "name": "Slime tub",
+   "category": "toy",
+   "subcategory": "squishy",
    "class": "hand",
    "scene": "res://scripts/items/gi_slime.tscn",
    "icon": "res://tex/items/gi_slime.png",
@@ -59,6 +108,8 @@
   {
    "id": "gi_blind_bag",
    "name": "Mystery figure",
+   "category": "toy",
+   "subcategory": "figure",
    "class": "pocket",
    "scene": "res://scripts/items/gi_blind_bag.tscn",
    "icon": "res://tex/items/gi_blind_bag.png",
@@ -70,6 +121,8 @@
   {
    "id": "gi_emoji_key",
    "name": "Emoji keychain",
+   "category": "clothing",
+   "subcategory": "keychain",
    "class": "pocket",
    "scene": "res://scripts/items/gi_emoji_key.tscn",
    "icon": "res://tex/items/gi_emoji_key.png",
@@ -81,6 +134,8 @@
   {
    "id": "gi_popper_board",
    "name": "Popper board",
+   "category": "toy",
+   "subcategory": "fidget",
    "class": "hand",
    "scene": "res://scripts/items/gi_popper_board.tscn",
    "icon": "res://tex/items/gi_popper_board.png",
@@ -92,6 +147,8 @@
   {
    "id": "gi_led_wand",
    "name": "Light-up wand",
+   "category": "toy",
+   "subcategory": "light-up",
    "class": "hand",
    "scene": "res://scripts/items/gi_led_wand.tscn",
    "icon": "res://tex/items/gi_led_wand.png",
@@ -103,6 +160,8 @@
   {
    "id": "gi_play_ball",
    "name": "Play ball",
+   "category": "toy",
+   "subcategory": "ball",
    "class": "hand",
    "scene": "res://scripts/items/gi_play_ball.tscn",
    "icon": "res://tex/items/gi_play_ball.png",
@@ -114,6 +173,8 @@
   {
    "id": "gi_bubbles",
    "name": "Bubble wand",
+   "category": "toy",
+   "subcategory": "outdoor",
    "class": "hand",
    "scene": "res://scripts/items/gi_bubbles.tscn",
    "icon": "res://tex/items/gi_bubbles.png",
@@ -125,6 +186,8 @@
   {
    "id": "gi_squish_big",
    "name": "Big round plush",
+   "category": "toy",
+   "subcategory": "plush",
    "class": "hand",
    "scene": "res://scripts/items/gi_squish_big.tscn",
    "icon": "res://tex/items/gi_squish_big.png",
@@ -136,6 +199,8 @@
   {
    "id": "gi_jumbo",
    "name": "Jumbo plush",
+   "category": "toy",
+   "subcategory": "plush",
    "class": "hand",
    "scene": "res://scripts/items/gi_jumbo.tscn",
    "icon": "res://tex/items/gi_jumbo.png",
@@ -147,6 +212,8 @@
   {
    "id": "gi_phone_stand",
    "name": "Phone stand",
+   "category": "electronics",
+   "subcategory": "accessory",
    "class": "hand",
    "scene": "res://scripts/items/gi_phone_stand.tscn",
    "icon": "res://tex/items/gi_phone_stand.png",
@@ -158,6 +225,8 @@
   {
    "id": "gi_cable",
    "name": "Charging cable",
+   "category": "electronics",
+   "subcategory": "accessory",
    "class": "hand",
    "scene": "res://scripts/items/gi_cable.tscn",
    "icon": "res://tex/items/gi_cable.png",
@@ -169,6 +238,8 @@
   {
    "id": "gi_earbuds",
    "name": "Wireless earbuds",
+   "category": "electronics",
+   "subcategory": "audio",
    "class": "hand",
    "scene": "res://scripts/items/gi_earbuds.tscn",
    "icon": "res://tex/items/gi_earbuds.png",
@@ -180,6 +251,8 @@
   {
    "id": "gi_speaker",
    "name": "Bluetooth speaker",
+   "category": "electronics",
+   "subcategory": "audio",
    "class": "hand",
    "scene": "res://scripts/items/gi_speaker.tscn",
    "icon": "res://tex/items/gi_speaker.png",
@@ -191,6 +264,8 @@
   {
    "id": "gi_projector",
    "name": "Star projector",
+   "category": "home",
+   "subcategory": "lamp",
    "class": "hand",
    "scene": "res://scripts/items/gi_projector.tscn",
    "icon": "res://tex/items/gi_projector.png",
@@ -202,6 +277,8 @@
   {
    "id": "gi_ledstrip",
    "name": "LED strip lights",
+   "category": "home",
+   "subcategory": "lamp",
    "class": "hand",
    "scene": "res://scripts/items/gi_ledstrip.tscn",
    "icon": "res://tex/items/gi_ledstrip.png",
@@ -213,6 +290,8 @@
   {
    "id": "gi_headphones",
    "name": "Headphones",
+   "category": "electronics",
+   "subcategory": "audio",
    "class": "hand",
    "scene": "res://scripts/items/gi_headphones.tscn",
    "icon": "res://tex/items/gi_headphones.png",
@@ -224,6 +303,8 @@
   {
    "id": "gi_giftcard",
    "name": "Gift card",
+   "category": "token",
+   "subcategory": "card",
    "class": "pocket",
    "scene": "res://scripts/items/gi_giftcard.tscn",
    "icon": "res://tex/items/gi_giftcard.png",
@@ -235,6 +316,8 @@
   {
    "id": "gi_arcade",
    "name": "Mini arcade",
+   "category": "electronics",
+   "subcategory": "game",
    "class": "hand",
    "scene": "res://scripts/items/gi_arcade.tscn",
    "icon": "res://tex/items/gi_arcade.png",
@@ -246,6 +329,8 @@
   {
    "id": "gi_handheld",
    "name": "Handheld console",
+   "category": "electronics",
+   "subcategory": "game",
    "class": "hand",
    "scene": "res://scripts/items/gi_handheld.tscn",
    "icon": "res://tex/items/gi_handheld.png",
@@ -257,6 +342,8 @@
   {
    "id": "gi_console",
    "name": "Game console",
+   "category": "electronics",
+   "subcategory": "game",
    "class": "hand",
    "scene": "res://scripts/items/gi_console.tscn",
    "icon": "res://tex/items/gi_console.png",

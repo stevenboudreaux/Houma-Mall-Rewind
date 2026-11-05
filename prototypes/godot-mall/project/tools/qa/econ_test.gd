@@ -177,7 +177,7 @@ func _test_redemption() -> void:
 
 ## 6. The price field.
 func _test_price() -> void:
-	var e := {"id": "a", "name": "A", "class": "pocket", "scene": "", "icon": "", "year": 1995, "price": 299}
+	var e := {"id": "a", "name": "A", "category": "toy", "subcategory": "test", "class": "pocket", "scene": "", "icon": "", "year": 1995, "price": 299}
 	_check(ItemDB.check(e) == "" and ItemDB.price(e) == 299, "an item with \"price\": 299 costs 299 cents")
 	_check(ItemDB.price({"id": "b"}) == -1, "no price: -1 (not for sale)")
 	for bad in [-1, 2.5, "3"]:

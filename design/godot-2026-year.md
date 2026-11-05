@@ -90,6 +90,14 @@ Cell Xpert (-44..-40), the elevator alcove at x -44 (`ELEV_X`, `build_mall.gd`),
 `production/qa/evidence/wsG-elevator-restroom-order.jpg` (frames | game 2026 and 1995). The ATM pier
 between Cinnamonster and the black vacant is not built (a free-standing ATM in the footage).
 
+## The years' names (ws/items, Steven Nov 4 2026)
+The two years are shown to the player as **"1990s"** and **"2026"**: the 1995 mall is the decade now (virtual pets
+stay). Everything the player reads goes through `scripts/years.gd` (`Years.label(1995)` = "1990s"): the directory's
+year button and its time-travel toggle ("1990s" / "2026" on the switch, "Loads Wing 2, 1990s"), the old year button
+("Visit 2026 (Y)" / "Back to the 1990s (Y)"), the shopper creator's title, the owner's HUD and the web shell's
+loading title ("Wing 1 · 1990s"). Internal ids stay 1995: scene names (`wing1.tscn`), `?year=`, storage keys
+(`mall-state-1995`, `mall.tickets-1995`), data (`"year": 1995`), prints. The fun facts keep their real dates.
+
 ## Next
 - Build the 2026 storefronts from the footage, one by one (frame references are in the report's
   "Reference frames" table and the per-clip notes). The signs are done (Demo 43).

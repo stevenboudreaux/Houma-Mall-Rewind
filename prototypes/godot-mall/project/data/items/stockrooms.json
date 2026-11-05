@@ -1,9 +1,25 @@
 {
- "_": "Pick-up items in the Stockrooms (the stick's model: Blender, models/bl_sr_folse_stick, workstream T2) (design/godot-interaction.md, design/godot-stockrooms.md). The stick lies where scripts/stockrooms_map.json puts the 'stick' prop: grid (304.55, 44.45) + the level's ORIGIN (2000, 0, 2000).",
+ "_": "The Stockrooms (design/godot-stockrooms.md): Martin Folse's stick, lying where scripts/stockrooms_map.json puts the 'stick' prop (grid (304.55, 44.45) + the level's ORIGIN (2000, 0, 2000)). One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by tools/items/items_io.py (tools/blender/build.py, tools/prizes/make_items.py, tools/shops/make_standins.py). Never change an id.",
  "items": [
-  {"id": "folse_stick", "name": "Martin Folse's stick", "class": "hand",
-   "scene": "res://scripts/items/folse_stick.tscn", "icon": "res://models/bl_sr_folse_stick/bl_sr_folse_stick_icon.png",
+  {
+   "id": "folse_stick",
+   "name": "Martin Folse's stick",
+   "category": "story",
+   "subcategory": "prop",
+   "class": "hand",
+   "scene": "res://scripts/items/folse_stick.tscn",
+   "icon": "res://models/bl_sr_folse_stick/bl_sr_folse_stick_icon.png",
    "year": 1995,
-   "place": {"wing": 1, "year": 1995, "pos": [2304.55, 0.0, 2044.45], "yaw": 0}}
+   "place": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     2304.55,
+     0.0,
+     2044.45
+    ],
+    "yaw": 0
+   }
+  }
  ]
 }

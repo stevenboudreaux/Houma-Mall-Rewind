@@ -3,10 +3,9 @@
 ## "Interact".
 ##
 ## - The look (scripts/avatar_look.gd) is read from localStorage "mall-avatar-1" at start. A visitor
-##   who has never made one gets the creator (scripts/avatar_creator.tscn) when the game starts;
-##   Skip gives the default body and first person. The "Avatar (C)" button, C, or a gamepad's Start
-##   opens it again later. Not opened by itself when the address has ?cam= (tests and shared spots);
-##   ?avatar=1 opens it whatever the saved state.
+##   who has never made one starts in the mall with the default body and first person (ws/items, Nov 4
+##   2026: no opening, no creator by itself). The "Avatar (C)" button, C, a gamepad's Start or MAIN's
+##   Edit opens the creator; ?avatar=1 opens it at start whatever the saved state.
 ## - View: V, a gamepad's right-stick click, or the "View" button switches first / third person; the
 ##   choice is saved with the look. ?view=third / ?view=first sets it for one load (tests).
 ##   First person is the game exactly as before (player.gd's camera, speed, hand item).
@@ -72,16 +71,13 @@ func _ready() -> void:
 	look = Look.load_look()
 	third = look.view == "third"
 	var force_open := false
-	var cam_q := false
 	if OS.has_feature("web"):
 		var vq := str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('view') || ''"))
 		if vq == "third" or vq == "first": third = vq == "third"
 		force_open = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('avatar') || ''")) == "1"
-		cam_q = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('cam') || ''")) != ""
 	else:
 		if Engine.has_meta("avatar_view"): third = str(Engine.get_meta("avatar_view")) == "third"
 		force_open = bool(Engine.get_meta("avatar_open", false))
-		cam_q = true
 	# B2 (design/godot-character-editor.md): the B1 body from the player's preset when this pack ships it
 	body = AvatarChar.new() if AvatarChar.available() else AvatarBody.new()
 	body.name = "Avatar"
@@ -96,7 +92,9 @@ func _ready() -> void:
 	tp_cam.far = player.cam.far
 	player.get_parent().add_child.call_deferred(tp_cam)
 	_build_ui()
-	if force_open or (not look.done and not cam_q):
+	# ws/items (Steven, Nov 4 2026: "the game just starts in the mall"): no creator by itself on a first
+	# visit any more (the default body, first person); MAIN's Edit, C or the Avatar button open it, ?avatar=1 too
+	if force_open:
 		open_creator.call_deferred()
 
 # ------------------------------------------------------------------ the view

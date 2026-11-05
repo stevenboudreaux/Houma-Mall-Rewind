@@ -11,13 +11,14 @@ Writes, run from the project folder (python3 tools/shops/make_standins.py):
   models/bl_standin_<key>/<id>.tscn          the model (primitives; in the shared `items` pack, glob models/bl_*)
   models/bl_standin_<key>/<id>_icon.png      the icon
   models/bl_standin_<key>/<id>_front.png     a painted front, where it has one
-  data/items/shop_standins.json              the item entries (year 1995, no place: bought, never lying about)
+  data/items/radio_shack.json                the item entries (year 1995, no place: bought, never lying about; items_io.py)
 Then `godot --headless --path . --import` once for the PNGs.
 
 When FOOD's model lands: point the shop at FOOD's id in data/story/shops.json and delete the stand-in here.
 """
 import json
 import os
+import sys
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -368,12 +369,16 @@ def main():
         items.append({"id": e["id"], "name": e["name"], "class": e["class"], "scene": "res://%s/%s.tscn" % (d, e["id"]),
                       "icon": "res://%s/%s_icon.png" % (d, e["id"]), "year": 1995, "store": e["store"], "standin": True,
                       "standin_for": e["for"]})
-    with open("data/items/shop_standins.json", "w") as f:
-        json.dump({"_": "Labelled STAND-IN items for the shops (workstream SHOPS, design/godot-shops.md), made by tools/shops/make_standins.py: "
-                        "primitive shapes with a STAND-IN tag and a STAND-IN icon until workstream FOOD's (or a later) model lands. Sold at the "
-                        "counters (data/story/shops.json); never placed in the world. Book titles other than Moby-Dick are invented.",
-                   "items": items}, f, indent=1)
-        f.write("\n")
+    # ws/items (Nov 4 2026; design/godot-items.md): into the store's file (data/items/radio_shack.json) through
+    # tools/items/items_io.py, updated where they are, their category kept (a new stand-in needs "category" and
+    # "subcategory" in STANDINS)
+    sys.path.insert(0, os.path.join(ROOT, "tools", "items"))
+    import items_io
+    for it, e in zip(items, STANDINS):
+        for k in ("category", "subcategory"):
+            if k in e:
+                it[k] = e[k]
+    items_io.upsert(items)
     print("wrote %d stand-ins" % len(items))
 
 

@@ -84,7 +84,7 @@ func _initialize() -> void:
 	m.tickets = 5100
 	_check(r.can_buy(bb) and r.buy(bb), "5,100 tickets: the boom box can be bought")
 	_check(m.tickets == 100, "tickets go down by the price (5,100 - 5,000 = %d)" % m.tickets)
-	_check(m.count("bl_pc_boombox") == 1 and m.hand == "", "the boom box is in the bag, put away (not in the hand)")
+	_check(m.count("bl_pc_boombox") == 1 and m.hand == "bl_pc_boombox", "the boom box is in the hand (ws/items, Nov 4: hand by default; design/godot-items.md)")
 	_check(got == ["bl_pc_boombox"], "mall.received fired once for it %s" % str(got))
 	_check(not r.buy(plush) and m.tickets == 100 and not m.has("bl_pc_plush_bear"), "100 tickets: the plush (700) is refused, nothing changes")
 	var cheap := 0
@@ -113,7 +113,7 @@ func _initialize() -> void:
 	root.add_child(pop)
 	mall2.add("bl_pc_boombox")
 	mall2.add("pogs")
-	_check(pop.is_showing() and pop.current == "bl_pc_boombox" and pop.queue == ["pogs"], "the pop-up shows the first and queues the second")
+	_check(pop.is_showing() and pop.current == "bl_pc_boombox" and pop.queue == [["pogs", "bag"]], "the pop-up shows the first and queues the second (with where it went)")
 	_check(pop.name_l.text == "Boom box" and pop.line_l.text == "You received Boom box" and pop.icon_r.texture != null, "the card: icon, name, 'You received Boom box'")
 	_check(mall2.get_meta("popup_open", false), "mall meta popup_open while it shows")
 

@@ -474,8 +474,8 @@ func _prop(root: Node3D, p: Dictionary) -> void:
 		"stick":
 			# B+C (design/godot-interaction.md): the stick is a pick-up item now (data/items/stockrooms.json,
 			# placed by scripts/interact.gd at this spot, glow and all); the old prop and its caption only
-			# when that item file is missing
-			if FileAccess.file_exists("res://data/items/stockrooms.json"):
+			# when the item list has no folse_stick (ITEMS: asked of the one loader, design/godot-items.md)
+			if not load("res://scripts/items/item_db.gd").shared().get_item("folse_stick").is_empty():
 				stick_is_item = true
 			else:
 				_stick(node)

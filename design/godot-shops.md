@@ -14,7 +14,7 @@ system, `mall.shop.open(shop_id)`, the redemption screen's look, greyed out when
 | `scripts/shop.gd` | the screen and the API; also shows the stock on display (items with `"display": {"runtime": true}`) |
 | `data/story/attendants.json` | four new attendants, `"shop": <id>`, `"name": "PLACEHOLDER"`, a preset each |
 | `data/characters/woolworth.json`, `corn_dog_7.json`, `radioshack.json`, `b_dalton.json` | PLACEHOLDER presets, clothed |
-| `data/items/shop_standins.json`, `models/bl_standin_*/` | 20 labelled STAND-INs (`tools/shops/make_standins.py`) |
+| `data/items/radio_shack.json` (was `shop_standins.json`), `models/bl_standin_*/` | labelled STAND-INs (`tools/shops/make_standins.py`, through `tools/items/items_io.py`; ws/items: one item schema, one file per store, `design/godot-items.md`) |
 | `tools/qa/shop_test.gd` | headless checks |
 | `tools/qa/shops_webtest.py` | the web check at each counter |
 
@@ -23,7 +23,9 @@ node beside the redemption screen), `scripts/attendants/attendant.gd` (`interact
 opens its list instead of a dialogue), `tools/qa/dialogue_walk.gd` (skips shop attendants: they have no dialogue),
 `tools/stores/small/radio_shack.gd` (reads `"display"`), `tools/stores/small/store2.gd` (B. Dalton's counter),
 `data/items/radioshack.json`, `blender_props.json`, `blender_props_2.json` and the three Blender `assets_src` METAs
-(`"place"` becomes `"display"`).
+(`"place"` becomes `"display"`). (ws/items, Nov 4: those item files are now `data/items/radio_shack.json`,
+`woolworth.json`, `corn_dog_7.json`, `b_dalton.json` …, one per store; `radio_shack.gd` reads the rs_ entries
+through `scripts/items/item_db.gd`.)
 
 ## shops.json
 ```
@@ -56,8 +58,10 @@ opens its list instead of a dialogue), `tools/qa/dialogue_walk.gd` (skips shop a
    as a conversation: `dialogue_ui.gd face_shot`, turned a little so the face sits beside the list), and the list
    opens: the store's name, **Your money: $100.00**, the attendant (PLACEHOLDER, in gold) saying the greeting, and a
    card per thing (icon, name, price, BUY). What you can't afford is greyed out and its BUY is off.
-3. BUY (Enter / E / Space, a pad's A, a click or tap on BUY): the money comes off once, the thing goes into the bag
-   (never the hand), the "You received" card shows, and the attendant's line becomes the ready line. The list stays
+3. BUY (Enter / E / Space, a pad's A, a click or tap on BUY): the money comes off once, the thing is received
+   (`mall.receive`, ws/items Nov 4, `design/godot-items.md`: a holdable thing goes **into the hand**, what was held
+   into the bag; a pocket thing into the bag; it was "never the hand" before), the "You received" card shows (with
+   "In your hand" / "In your bag"), and the attendant's line becomes the ready line. The list stays
    open for another purchase; each BUY is one purchase.
 4. Back (Esc / Q / Backspace, a pad's B, the Back button, a click outside the list): the list closes, the camera glides
    back, you walk again. No line on leaving.
@@ -140,7 +144,7 @@ not baked; placed at run time.
 - `godot --headless --path . --script res://tools/qa/shop_test.gd`: **SHOP TEST OK (210 checks)**: the data (four shops,
   attendants with PLACEHOLDER clothed presets, wing and year, whole-cent prices, models and icons load, stand-ins and
   RadioShack estimates marked, Steven's lines word for word, five books at $10, RadioShack sells all eight standalone
-  items); a buy ($100.00 to $98.00 once, one ledger entry, one card, in the bag not the hand, the ready line, saved:
+  items); a buy ($100.00 to $98.00 once, one ledger entry, one card, in the hand (ws/items; was "in the bag not the hand"), the ready line, saved:
   a fresh load has the float and $98.00; 2026 shares the wallet, not the bag); can't afford ($1.50 can't buy a $2.00
   corn dog, nothing changes; exactly $2.00 can); nothing in the four stores has a pick-up "place" any more (13 on
   display); the screen (greyed-out cards, BUY, the line and the money update, Back; no shop opens in 2026).

@@ -6,7 +6,7 @@
 ##                             scripts/prizes.json plus the Blender prizes), each with its icon, name and
 ##                             ticket price, and the player's tickets at the top.
 ##   BUY (Enter/E/Space, a pad's A, a tap on BUY): when tickets >= price, the tickets go down, the item is
-##   added to the bag (mall.add: put away, not in the hand) and the "You received" pop-up shows
+##   received (mall.receive, design/godot-items.md: a holdable prize into the hand, else the bag) and the "You received" pop-up shows
 ##   (scripts/received_popup.gd, through mall.received). What you can't afford is greyed out.
 ##   Back (Esc/Q/Backspace, a pad's B, the Back button) closes. "Look at the prizes" (L, a pad's Y, its
 ##   button) closes this and opens the counter's closer look (scripts/prizes.gd), when the counter is here.
@@ -95,13 +95,13 @@ func can_buy(i: int) -> bool:
 	return i >= 0 and i < stock.size() and int(mall.tickets) >= price(i)
 
 ## Redeem stock entry i: false (nothing changes) when the tickets don't cover it. Else the tickets go
-## down, the item goes into the bag (mall.add, which shows the pop-up) and the state is saved.
+## down, the item is received (mall.receive: a holdable one into the hand, else the bag; the pop-up) and the state is saved.
 func buy(i: int) -> bool:
 	if not can_buy(i):
 		return false
 	if not mall.spend_tickets(price(i), "redeemed " + str(stock[i].item)):   # ECON: this year's tickets
 		return false
-	mall.add(str(stock[i].item))
+	mall.receive(str(stock[i].item), 1, "prize")   # ITEMS (design/godot-items.md): a holdable prize into the hand
 	mall.save()
 	if is_open:
 		_refresh()

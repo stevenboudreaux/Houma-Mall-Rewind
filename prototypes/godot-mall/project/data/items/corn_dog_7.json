@@ -1,0 +1,61 @@
+{
+ "_": "Corn Dog 7 (both years): its food and drinks (data/story/shops.json). One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by tools/items/items_io.py (tools/blender/build.py, tools/prizes/make_items.py, tools/shops/make_standins.py). Never change an id.",
+ "items": [
+  {
+   "id": "bl_cd7_corndog",
+   "name": "Corn dog",
+   "category": "food",
+   "subcategory": "meal",
+   "class": "hand",
+   "scene": "res://models/bl_cd7_corndog/bl_cd7_corndog.glb",
+   "icon": "res://models/bl_cd7_corndog/bl_cd7_corndog_icon.png",
+   "year": "both",
+   "store": "CORN DOG 7",
+   "display": {
+    "wing": 2,
+    "year": 1995,
+    "pos": [
+     -134.6,
+     1.03,
+     74.5
+    ],
+    "yaw": 90,
+    "runtime": true
+   },
+   "place": {
+    "wing": 2,
+    "year": 2026,
+    "pos": [
+     -134.6,
+     1.03,
+     74.5
+    ],
+    "yaw": 90
+   }
+  },
+  {
+   "id": "cd7_crinkle_fries",
+   "name": "Seasoned fries",
+   "category": "food",
+   "subcategory": "side",
+   "class": "hand",
+   "scene": "res://models/bl_cd7_crinkle_fries/bl_cd7_crinkle_fries.glb",
+   "icon": "res://models/bl_cd7_crinkle_fries/bl_cd7_crinkle_fries_icon.png",
+   "year": "both",
+   "store": "CORN DOG 7",
+   "price": 99
+  },
+  {
+   "id": "cd7_lemonade",
+   "name": "Fresh lemonade",
+   "category": "drink",
+   "subcategory": "soft",
+   "class": "hand",
+   "scene": "res://models/bl_cd7_lemonade/bl_cd7_lemonade.glb",
+   "icon": "res://models/bl_cd7_lemonade/bl_cd7_lemonade_icon.png",
+   "year": "both",
+   "store": "CORN DOG 7",
+   "price": 99
+  }
+ ]
+}

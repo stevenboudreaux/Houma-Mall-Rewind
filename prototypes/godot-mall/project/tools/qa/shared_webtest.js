@@ -45,7 +45,7 @@ async function waitFor(logs, needle, t) {
       await waitFor(logs, `${a} dressed and baked`, 120);
       check(logs.some(l => l.includes(`${a} dressed and baked`)), `${m}: attendant ${a} dressed from its preset`);
     }
-    // without ?cam= a first start shows the opening (scripts/menu/opening.gd): Esc = Skip
+    // (the opening is gone since ws/items, Nov 4 2026; the Esc is harmless and kept for older builds)
     if (!CAM[m]) { await sleep(5000); await pg.keyboard.press('Escape'); await sleep(3000); }
     if (process.env.THIRD) { await sleep(5000); await pg.keyboard.press('v'); }
     await sleep(15000);
