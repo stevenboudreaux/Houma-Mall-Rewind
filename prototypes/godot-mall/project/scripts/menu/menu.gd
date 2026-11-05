@@ -26,7 +26,7 @@ const Controls = preload("res://scripts/menu/controls.gd")
 const CREATOR := "res://scripts/avatar_creator.tscn"
 ## MENU2 (Steven, Nov 3): MAIN, INVENTORY, CONTROLS. A later "journal" (JOURNAL) goes last; not built.
 const TABS := ["main", "inventory", "controls"]
-const TAB_NAMES := {"main": "MAIN", "controls": "CONTROLS", "inventory": "INVENTORY"}
+const TAB_NAMES := {"main": "MAIN", "controls": "CONTROLS", "inventory": "INVENTORY", "owner": "OWNER"}
 const Portrait = preload("res://scripts/menu/portrait.gd")
 const BG := Color(0.07, 0.055, 0.045, 0.97)
 const INK := Color(1, 0.97, 0.9)
@@ -61,6 +61,7 @@ var _touch := {}                 # touch index -> {"at": Vector2, "scroll": int,
 var _menu_btn: Button
 var _built_for := Vector2.ZERO
 var _input_kind := "kb"
+var _tuck_t := 0.0
 ## UI-OFFSCREEN (Steven, Nov 4): the menu icon shows on touch devices only (a touch screen, or once a
 ## touch arrives); a desktop opens the menu with Tab / Esc, a pad with Start.
 var touch_device := false
@@ -103,7 +104,7 @@ func open_tab(t: String) -> void:
 		t = "main"
 	elif t == "year":
 		t = "main"
-	if not (t in TABS):
+	if not (t in tabs()):
 		t = tab
 	if not is_open:
 		if not _can_open():
@@ -132,6 +133,10 @@ func open_tab(t: String) -> void:
 ## The avatar's "open the creator" (avatar.gd open_creator: C, the Avatar button, a first visit).
 func request_creator() -> void:
 	open_tab("avatar")
+
+## The tabs this visitor gets: TABS, and for the owner OWNER last (design/godot-owner-mode.md).
+func tabs() -> Array:
+	return TABS + ["owner"] if is_owner() else TABS.duplicate()
 
 func _editing() -> bool:
 	return tab == "main" and editing
@@ -176,6 +181,16 @@ func _build_menu_button() -> void:
 	_menu_btn.focus_mode = Control.FOCUS_NONE
 	_menu_btn.position = Vector2(10, 8)
 	_menu_btn.size = Vector2(ICON_SIZE, ICON_SIZE)
+	if is_owner():
+		# OWNER (design/godot-owner-mode.md): the owner keeps the old labelled Menu button
+		_menu_btn.text = "Menu (%s)" % _first_key("menu", "Tab")
+		_menu_btn.add_theme_font_size_override("font_size", 14)
+		_menu_btn.size = Vector2(110, 32)
+		_menu_btn.pressed.connect(func(): open_tab("main"))
+		player._cl.add_child(_menu_btn)
+		touch_device = DisplayServer.is_touchscreen_available()
+		_tuck_corner_buttons.call_deferred()
+		return
 	for st in ["normal", "hover", "pressed", "focus"]:
 		var sb := StyleBoxFlat.new()
 		sb.bg_color = Color(0, 0, 0, 0.42 if st == "hover" or st == "pressed" else 0.28)
@@ -208,7 +223,8 @@ func _hint_sync() -> void:
 		h.offset_right = maxf(h.offset_right, 320.0)
 
 func _icon_sync() -> void:
-	_menu_btn.visible = touch_device and not is_open and not player.vr_on \
+	# OWNER: the owner's labelled Menu button shows on every device (design/godot-owner-mode.md)
+	_menu_btn.visible = (touch_device or is_owner()) and not is_open and not player.vr_on \
 			and not (player.frozen and not _froze)
 
 const ICON_SIZE := 42.0
@@ -228,8 +244,38 @@ func corner_buttons() -> Array:
 			out.append(b)
 	return out
 
+## OWNER (design/godot-owner-mode.md): the owner's loose tool buttons that the OWNER tab replaces:
+## the Reflections / Benches & plants / Lighting toggles (player.gd), Edit signs / Publish signs /
+## Arcade (signs.gd) and Shirt words (npc_shirt.gd). Tucked like the corner buttons, so their own
+## code (and VR's menu, which reads player.buttons[2].visible) is unchanged.
+func owner_tool_buttons() -> Array:
+	var out: Array = []
+	for b in player.buttons:
+		out.append(b)
+	var scn: Node = player.get_parent()
+	var sg = scn.get_node_or_null("Signs") if scn else null
+	if sg:
+		for k in ["b_edit", "b_pub", "b_arc"]:
+			if sg.get(k) is Button:
+				out.append(sg.get(k))
+	var sw = scn.get_node_or_null("ShirtWords") if scn else null
+	if sw and sw.get("btn") is Button:
+		out.append(sw.get("btn"))
+	return out.filter(func(b): return b != null and is_instance_valid(b))
+
+## OWNER (design/godot-owner-mode.md): owner mode, as player.is_owner() (localStorage
+## "southland-editor" = "1", ?owner=1, the hallway code; tests: Engine meta "mall_owner").
+func is_owner() -> bool:
+	return player != null and player.has_method("is_owner") and player.is_owner()
+
+## What goes into the hidden holder: a visitor's corner buttons (UI-OFFSCREEN); for the owner, who
+## keeps every corner button on screen, the loose owner-tool buttons instead (owner_tool_buttons(),
+## reached from the OWNER tab).
+func _tuck_list() -> Array:
+	return owner_tool_buttons() if is_owner() else corner_buttons()
+
 func _tuck_corner_buttons() -> void:
-	for b in corner_buttons():
+	for b in _tuck_list():
 		var par: Node = b.get_parent()
 		if par == null or par.name == OFFSCREEN:
 			continue
@@ -268,6 +314,11 @@ func _process(dt: float) -> void:
 	if player and player.vr_on:
 		if is_open:
 			close()
+	# OWNER: tools made later (Signs, ShirtWords are added deferred) are tucked as they appear
+	_tuck_t += dt
+	if _tuck_t > 0.5:
+		_tuck_t = 0.0
+		_tuck_corner_buttons()
 	if _menu_btn:
 		_icon_sync()
 		# the owner's fps readout is top left: go under it
@@ -308,10 +359,11 @@ func _build() -> void:
 	_root.add_child(bg)
 	# the tab bar
 	var close_w := 44.0
-	var tw := (vs.x - pad * 2 - close_w - 6.0 * TABS.size()) / TABS.size()
+	var TB := tabs()
+	var tw := (vs.x - pad * 2 - close_w - 6.0 * TB.size()) / TB.size()
 	var fs_tab := int(clampf(tw / 7.2, 11, 17))
-	for i in TABS.size():
-		var t: String = TABS[i]
+	for i in TB.size():
+		var t: String = TB[i]
 		var b := _button(_root, TAB_NAMES[t], Rect2(pad + i * (tw + 6.0), pad * 0.5, tw, bar_h), fs_tab, func(): open_tab(t))
 		_paint(b, AMBER if t == tab else Color(0.2, 0.16, 0.12), Color(0.1, 0.07, 0.04) if t == tab else INK)
 	var cb := _button(_root, "×", Rect2(vs.x - pad - close_w, pad * 0.5, close_w, bar_h), 18, close)
@@ -333,6 +385,7 @@ func _build() -> void:
 		"main": _build_avatar(narrow) if editing else _build_main(narrow)
 		"controls": _build_controls(narrow)
 		"inventory": _build_inventory(narrow)
+		"owner": _build_owner(narrow)
 	if not _editing() and _creator != null:
 		_creator.visible = false
 	if not _editing():
@@ -724,6 +777,18 @@ func _reset_controls() -> void:
 	_build()
 	_say("Back to the defaults.")
 
+# ------------------------------------------------------------------ OWNER
+## OWNER (design/godot-owner-mode.md): the owner's directory and tools (scripts/menu/owner_tab.gd).
+const OwnerTab = preload("res://scripts/menu/owner_tab.gd")
+var owner_tab: OwnerTab = null
+
+func _build_owner(narrow: bool) -> void:
+	if not is_owner():
+		return
+	if owner_tab == null:
+		owner_tab = OwnerTab.new(self)
+	owner_tab.build(narrow)
+
 # ------------------------------------------------------------------ INVENTORY
 func _build_inventory(narrow: bool) -> void:
 	var col := _column()
@@ -827,7 +892,8 @@ func _activate() -> void:
 			(p[1] as Callable).call()
 
 func _next_tab(d: int) -> void:
-	open_tab(TABS[posmod(TABS.find(tab) + d, TABS.size())])
+	var TB := tabs()
+	open_tab(TB[posmod(TB.find(tab) + d, TB.size())])
 
 # ------------------------------------------------------------------ input
 func _catch(e: InputEvent) -> void:

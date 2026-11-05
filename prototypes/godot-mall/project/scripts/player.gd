@@ -226,9 +226,14 @@ func _ready() -> void:
 	menu = load("res://scripts/menu/menu.gd").new()
 	menu.name = "Menu"; menu.player = self
 	add_child(menu)
+	# OWNER: the owner's own pictures on posters and ad panels (scripts/pictures.gd, design/godot-owner-mode.md)
+	var pics = load("res://scripts/pictures.gd").new()
+	pics.name = "Pictures"; pics.player = self
+	get_parent().add_child.call_deferred(pics)
 	# S: the threshold gates (the cinema doors, data/story/gates.json; scripts/cinema_gate.gd)
 	load("res://scripts/cinema_gate.gd").make_all(self)
 	_light_btn_ok = buttons[2].visible
+	_owner_hud_load()   # OWNER
 	owner_hud_sync()
 	_spawn_1995_life()
 	vr = Node3D.new()
@@ -441,6 +446,13 @@ func _input(e: InputEvent) -> void:
 	_secret_input(e)
 	if frozen:
 		return
+	# OWNER: Y (keyboard) and a tap on the year button switch the year, for the owner only
+	if is_owner() and year_btn and year_btn.is_visible_in_tree() and not leaving:
+		if (e is InputEventKey and e.pressed and not e.echo and e.physical_keycode == KEY_Y) \
+				or (e is InputEventScreenTouch and e.pressed and year_btn.get_global_rect().has_point(e.position)):
+			get_viewport().set_input_as_handled()
+			_switch_year()
+			return
 	if _jump_input(e):
 		get_viewport().set_input_as_handled()
 		return
@@ -570,6 +582,25 @@ func _secret_touch_tok(e: InputEvent) -> String:
 # ---- B+C: the owner-only HUD (design/godot-interaction.md has the full button list)
 var _light_btn_ok := true   # the Lighting switch is wanted at all (a day lightmap, not day-only)
 
+## OWNER (design/godot-owner-mode.md): the owner's fps line, on unless turned off in the menu's OWNER
+## tab (kept in this browser: localStorage "mall-owner-hud" = "off"; tests: Engine meta).
+var owner_hud_on := true
+var _year_btn_owner := false
+
+func set_owner_hud(on: bool) -> void:
+	owner_hud_on = on
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("(function(){try{if(%s)localStorage.removeItem('mall-owner-hud');else localStorage.setItem('mall-owner-hud','off')}catch(e){}})()" % ("true" if on else "false"), true)
+	else:
+		Engine.set_meta("mall_owner_hud", on)
+	owner_hud_sync()
+
+func _owner_hud_load() -> void:
+	if OS.has_feature("web"):
+		owner_hud_on = str(JavaScriptBridge.eval("(function(){try{return localStorage.getItem('mall-owner-hud')||''}catch(e){return ''}})()")) != "off"
+	else:
+		owner_hud_on = bool(Engine.get_meta("mall_owner_hud", true))
+
 ## Owner mode: localStorage "southland-editor" = "1" (?owner=1 or the secret code); off the web,
 ## Engine meta "mall_owner" (tests).
 func is_owner() -> bool:
@@ -580,13 +611,17 @@ func is_owner() -> bool:
 ## up into the freed corner. Called at start and whenever something re-shows the buttons.
 func owner_hud_sync() -> void:
 	var own := is_owner()
-	hud.visible = own
+	hud.visible = own and owner_hud_on   # OWNER: the fps line can be turned off in the OWNER tab
 	for b in buttons:
 		b.visible = own
 	if own and buttons.size() > 2 and not _light_btn_ok:
 		buttons[2].visible = false
-	# the owner's 1995 column also holds Shirt words at 128 (scripts/npc_shirt.gd): go under it
-	var top := (168 if year == 1995 else 128) if own else 8
+	# OWNER (design/godot-owner-mode.md): the owner's toggles and Shirt words are in the menu's OWNER
+	# tab (scripts/menu/menu.gd tucks them away), so the corner column starts at the top for everyone;
+	# the owner gets the year switch back (Steven, Nov 4: every old corner button, for him)
+	var top := 40 if own and owner_hud_on else 8   # under the owner's fps line (it reaches across a phone)
+	year_btn.visible = own and not vr_on
+	_year_btn_owner = own
 	jump_open_btn.offset_top = top; jump_open_btn.offset_bottom = top + 32
 	year_btn.offset_top = top + 40; year_btn.offset_bottom = top + 72
 
@@ -644,6 +679,8 @@ func _process(dt: float) -> void:
 			_try_move(Vector3(0, 0, step.z / n))
 	_update_prompt()
 	_light_poll(dt)
+	if year_btn and _year_btn_owner:   # OWNER: the year switch steps aside for the menu and full-screen moments
+		year_btn.visible = not vr_on and not frozen and not leaving
 	fps_t += dt
 	if fps_t > 0.5:
 		fps_t = 0.0
@@ -837,6 +874,8 @@ func _build_year_ui() -> void:
 	# (scripts/timetravel_trip.gd). The button is kept, never shown, as other HUD code lays out
 	# round it.
 	year_btn.visible = false
+	# OWNER (design/godot-owner-mode.md): the owner keeps this button (owner_hud_sync shows it)
+	year_btn.pressed.connect(func(): if is_owner(): _switch_year())
 	_cl.add_child(year_btn)
 
 

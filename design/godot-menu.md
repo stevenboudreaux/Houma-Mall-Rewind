@@ -14,6 +14,11 @@
 >    other year, facing the same way. Sections "MAIN" and "Time travel at the directory" below.
 > The earlier text is kept where it still holds; superseded parts are struck or marked.
 
+> **OWNER, Nov 4 2026 (branch `ws/owner-tools`; design/godot-owner-mode.md):** the owner keeps every old
+> corner button on screen (labelled Menu, Jump to, the year switch, Bag, View, Avatar) and gets a fourth tab,
+> **OWNER** (owner only): the owner directory (every store, either year, the kiosk's jump question, the year
+> switch) and every owner tool. The owner's loose toggles and sign / shirt buttons moved into it.
+
 > **UI-OFFSCREEN, Nov 4 2026 (branch `ws/ui-offscreen`):** Steven: "no text on the game screen;
 > everything goes in the menu", confirmed as **the corner buttons only**. The walk-up action prompts
 > stay. Section "The game screen (UI-OFFSCREEN)" below; the tables in "The menu" and "CONTROLS" are
@@ -26,8 +31,8 @@
 (three white bars on a faint dark rounded square, 42 × 42 px, no words; none on a desktop); and only
 when they apply: the walk-up prompts
 ("E · Go outside", "Read the directory", "Talk" …), the round touch **Use / Swing** button, the short
-status line (`_say`: "Third person" …) and, on a first start until you move, the walk hint. Owner mode
-is unchanged (below).
+status line (`_say`: "Third person" …) and, on a first start until you move, the walk hint. Owner mode:
+superseded by OWNER (design/godot-owner-mode.md): the owner sees the old corner buttons again.
 
 **What moved where:**
 | Was on the game screen | Now | Key / pad (unchanged) |

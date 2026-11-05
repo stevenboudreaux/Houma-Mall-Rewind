@@ -22,6 +22,11 @@ Franks.
 - Dynamic geometry in the wing's `dyn_posters.res`: no rebake. A wall missing from the layout is
   skipped with a warning.
 
+## The owner's own pictures (Nov 4 2026)
+In owner mode, Edit pictures (menu, OWNER) puts the owner's own picture on any of these ads (id
+`ad.<name>`), with a new frame wrapped round the picture's aspect, and on poster / ad panels elsewhere;
+Publish pictures writes `play/posters/` and `play/posters.json`. design/godot-owner-mode.md "Pictures".
+
 ## Period and tenancy notes
 - Scatterbar's (1832 West Park) and Radiofone (Houma office) were not mall tenants; Steven sent
   them with the rest. Pull them from `PLACES` if he says so.

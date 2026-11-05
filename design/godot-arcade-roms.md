@@ -4,6 +4,12 @@
 - He wants Pocket Change cabinets that play ROMs: open-source games he made himself.
 - "I want a sprinkling of 3 Atari, 3 NES, 3 Genesis, 3 SNES, 12 total."
 
+> **ARCADE-NES, Nov 4 2026 (Steven; branch `ws/owner-tools`, design/godot-owner-mode.md):** all twelve
+> playable cabinets are **NES** now (same cabinets, NES-red stickers). The setup page accepts only `.nes`,
+> `.fds`, `.unf`, play uses the `nes` core, and writing `roms.json` drops entries for other systems (none
+> existed on Nov 4). The Atari / Genesis / Super NES lists below are the Oct 6 state. Arcade mode is in
+> the menu's OWNER tab.
+
 ## What it does
 - **The cabinets:** twelve upright video cabinets with joysticks are playable. They are spread round the arcade, three for each system:
   - Atari 2600: `pc.video.33`, `pc.video.11`, `pc.video.22`.

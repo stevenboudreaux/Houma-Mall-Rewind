@@ -44,7 +44,17 @@ with sync_playwright() as p:
     pg.on("dialog", lambda d: (asked.append(d.message), d.accept("TEST TITLE")))
     pg.goto(f"http://127.0.0.1:8765/{path}?cam=-106.7,72.47,90,1")
     ready(pg); time.sleep(10)
-    pg.mouse.click(97, 153); time.sleep(1.5)
+    # OWNER (design/godot-owner-mode.md): Edit signs is in the menu's OWNER tab now, not top left:
+    # Tab opens MAIN, E three times reaches OWNER, right + Enter shows TOOLS, then the Signs row
+    # (rows: view switch, owner HUD, quick jump, year, signs) and Enter turns Edit signs on.
+    pg.keyboard.press("Tab"); time.sleep(1)
+    for _ in range(3):
+        pg.keyboard.press("e"); time.sleep(0.6)
+    pg.keyboard.press("ArrowRight"); time.sleep(0.4)
+    pg.keyboard.press("Enter"); time.sleep(1)
+    for _ in range(4):
+        pg.keyboard.press("ArrowDown"); time.sleep(0.3)
+    pg.keyboard.press("Enter"); time.sleep(1.5)
     pg.mouse.click(640, 345); time.sleep(3)
     pg.screenshot(path=f"{out}-edit.png", timeout=180000)
     print("prompt:", asked[:1])

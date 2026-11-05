@@ -37,3 +37,10 @@ Run the .gd tools with `godot --headless --path . --script res://tools/qa/<tool>
 - `corner_walk_test.gd [-- --year=2026]` (ws/corner-2026, Nov 4 2026; design/corner-2026-c2.md): headless walks at the
   C2 / main-entrance corner: the court patch to Franks' front, Orange Julius' plain court wall in 1995 (Zales' front
   in 2026), OJ's walk-up front, the patch from the east hall. Prints `CORNER WALK OK (<year>)`.
+
+## Owner mode (design/godot-owner-mode.md, Nov 4 2026)
+- `owner_test.gd -- --wing=6 --out=…` (native, xvfb): owner vs visitor screen, the OWNER tab's directory (list, question, jump, year keys) and tools, then the owner's Y year switch.
+- `pictures_test.gd -- --wing=1 [--year=2026] --out=…` (native, xvfb): the owner's pictures on framed ads and poster panels, chooser and publisher mocked.
+- `pictures_publish_test.js` (Node): `window.mallPictures.publish` against a mocked GitHub contents API.
+- `pictures_pick_webtest.js [shot.png]` (Node + Playwright): the page's picture chooser (shrink to 1024 px JPEG, Cancel, Original picture).
+- `arcade_nes_webtest.js [evidence-dir]` (Node + Playwright): NES-only cabinets, `emu.html` served locally, GitHub and the emulator CDN mocked. `arcade_nes_shot.gd -- --id=pc.video.37 --out=…`: an NES cabinet, natively.

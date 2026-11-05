@@ -721,6 +721,146 @@ window.mallSigns = mallPublisher('prototypes/godot-mall/play/signs.json', 'signs
 window.mallPrizeText = mallPublisher('prototypes/godot-mall/play/prize_text.json', 'text', 'prize words');
 // The words on Ch02's sweatshirt (scripts/npc_shirt.gd): play/shirt_text.json {"text": {"ch02": {text, font, size, fill, outline}}}
 window.mallShirtText = mallPublisher('prototypes/godot-mall/play/shirt_text.json', 'text', 'shirt words');
+// PICTURES-BEGIN (OWNER, design/godot-owner-mode.md "Pictures"; scripts/pictures.gd)
+// The owner's own pictures on posters and ad panels. pick(specJson) shows a dialog with a real file
+// input (so an iPhone's photo picker opens from the owner's own tap), shrinks the chosen picture to at
+// most spec.max px on its longer side as a JPEG, and leaves '{"data": dataURL, "w", "h"}',
+// '{"reset": 1}' or '{"cancel": 1}' for take(). publish(draftJson) uploads each new picture to
+// prototypes/godot-mall/play/posters/<id>-<hash>.jpg on main (GitHub contents API, the editor's token,
+// as signs.json), then merges play/posters.json ({"pictures": {id: {file, w, h}}}) with the live copy:
+// new pictures added, "reset" ones removed, everything published elsewhere kept. status: 'busy', 'ok'
+// or 'error: ...'; published: the merged list (JSON) after 'ok'.
+window.mallPictures = (function () {
+	var P = mallPublisher('prototypes/godot-mall/play/posters.json', 'pictures', 'poster pictures');
+	var DIR = 'prototypes/godot-mall/play/posters/';
+	var S = { status: '', result: '', published: '' };
+	S.take = function () { var r = S.result; S.result = ''; return r; };
+	S.safe = function (id) { return String(id).replace(/[^A-Za-z0-9._-]+/g, '_').replace(/_+/g, '_').slice(0, 80); };
+	S.hash = function (s) { var h = 0x811c9dc5; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return ('0000000' + h.toString(16)).slice(-8); };
+	// a picture file -> {data, w, h}: at most max px on the longer side, JPEG, under ~900 KB
+	S.shrink = function (file, max) {
+		return new Promise(function (ok, bad) {
+			var url = URL.createObjectURL(file), im = new Image();
+			im.onload = function () {
+				URL.revokeObjectURL(url);
+				var k = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight));
+				var c = document.createElement('canvas');
+				c.width = Math.max(1, Math.round(im.naturalWidth * k)); c.height = Math.max(1, Math.round(im.naturalHeight * k));
+				var g = c.getContext('2d'); g.imageSmoothingQuality = 'high';
+				g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height);
+				var q = [0.86, 0.8, 0.72, 0.62], d = '';
+				for (var i = 0; i < q.length; i++) { d = c.toDataURL('image/jpeg', q[i]); if (d.length < 1200000) break; }
+				ok({ data: d, w: c.width, h: c.height });
+			};
+			im.onerror = function () { URL.revokeObjectURL(url); bad("that file isn't a picture this browser can read"); };
+			im.src = url;
+		});
+	};
+	S.pick = function (specJson) {
+		var spec = JSON.parse(specJson), max = spec.max || 1024, got = null;
+		S.result = '';
+		var old = document.getElementById('pic-pick'); if (old) old.remove();
+		var el = function (tag, css, txt) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (txt != null) e.textContent = txt; return e; };
+		var wrap = el('div', 'position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font:15px system-ui,-apple-system,sans-serif');
+		wrap.id = 'pic-pick';
+		var box = el('div', 'background:#fbf6ea;color:#1e1a18;border:2px solid #c0141e;border-radius:10px;width:min(480px,calc(100% - 32px));max-height:calc(100% - 32px);overflow:auto;padding:14px 16px;box-sizing:border-box');
+		box.appendChild(el('div', 'font-weight:700;font-size:18px;margin-bottom:4px', 'Your picture on: ' + spec.title));
+		box.appendChild(el('div', 'font-size:13px;color:#6b5f4c;margin-bottom:10px', 'It shows here at once; Publish pictures (menu, OWNER) shows it to everyone. Pictures are shrunk to ' + max + ' px.'));
+		var lab = el('label', 'display:inline-block;background:#c0141e;color:#fff;border-radius:8px;padding:9px 14px;font-size:16px;cursor:pointer', 'Choose a picture');
+		var inp = el('input'); inp.type = 'file'; inp.accept = 'image/*'; inp.id = 'pic-file'; inp.style.cssText = 'position:absolute;left:-9999px';
+		lab.appendChild(inp); box.appendChild(lab);
+		var prev = el('img', 'display:none;max-width:100%;max-height:40vh;margin:10px auto 0;border:1px solid #d8cfbc');
+		var note = el('div', 'font-size:13px;color:#6b5f4c;margin-top:6px;min-height:18px');
+		box.appendChild(prev); box.appendChild(note);
+		var bar = el('div', 'display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px');
+		var close = function (res) { S.result = JSON.stringify(res); wrap.remove(); var cv = document.getElementById('canvas'); if (cv) cv.focus(); };
+		var btn = function (t, css, fn) { var b = el('button', 'font-size:16px;padding:8px 14px;border-radius:8px;border:1px solid #8a7a60;' + css, t); b.onclick = fn; bar.appendChild(b); return b; };
+		if (spec.custom) btn('Original picture', 'background:#fff;margin-right:auto', function () { close({ reset: 1 }); });
+		btn('Cancel', 'background:#fff', function () { close({ cancel: 1 }); });
+		var use = btn('Use this picture', 'background:#c0141e;color:#fff;border-color:#c0141e', function () { if (got) close(got); });
+		use.disabled = true; use.style.opacity = '0.5'; use.id = 'pic-use';
+		inp.onchange = function () {
+			var f = inp.files && inp.files[0]; if (!f) return;
+			note.textContent = 'Shrinking the picture...';
+			S.shrink(f, max).then(function (o) {
+				got = o; prev.src = o.data; prev.style.display = 'block';
+				note.textContent = o.w + ' × ' + o.h + ' px · ' + Math.round(o.data.length * 0.75 / 1024) + ' KB';
+				use.disabled = false; use.style.opacity = '1';
+			}).catch(function (e) { note.textContent = typeof e === 'string' ? e : "That picture couldn't be read."; });
+		};
+		box.appendChild(bar);
+		box.addEventListener('keydown', function (e) { e.stopPropagation(); });
+		box.addEventListener('keyup', function (e) { e.stopPropagation(); });
+		wrap.appendChild(box);
+		document.body.appendChild(wrap);
+	};
+	S.publish = function (draftJson) {
+		S.status = 'busy';
+		var cfg = {};
+		try { cfg = JSON.parse(localStorage.getItem('southland-gh') || '{}'); } catch (e) {}
+		var repo = P.repo(cfg), br = cfg.branch || 'main', tok = cfg.token;
+		if (!tok) tok = prompt('GitHub token to publish the poster pictures (the one the mall editor uses). It is not saved.');
+		if (!tok) { S.status = 'error: no GitHub token'; return Promise.resolve(); }
+		var draft = JSON.parse(draftJson), ids = Object.keys(draft), files = {};
+		var H = { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github.object+json', 'X-GitHub-Api-Version': '2022-11-28' };
+		var api = function (path) { return 'https://api.github.com/repos/' + repo + '/contents/' + path.split('/').map(encodeURIComponent).join('/'); };
+		var get = function (path) {
+			return fetch(api(path) + '?ref=' + encodeURIComponent(br), { headers: H, cache: 'no-store' }).then(function (r) {
+				if (r.status === 404) return null;
+				if (r.status === 401) throw 'the token was refused';
+				if (!r.ok) throw 'GitHub said ' + r.status;
+				return r.json();
+			});
+		};
+		var put = function (path, b64, msg, sha) {
+			var body = { message: msg, content: b64, branch: br };
+			if (sha) body.sha = sha;
+			return fetch(api(path), { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, H), body: JSON.stringify(body) }).then(function (r) {
+				if (r.ok) return r;
+				if (r.status === 401) throw 'the token was refused';
+				if (r.status === 403 || r.status === 404) throw 'this token cannot write to ' + repo;
+				if (r.status === 409) throw 'someone else changed the poster pictures; reload and publish again';
+				if (r.status === 413 || r.status === 422) throw 'GitHub refused a picture (too big?)';
+				throw 'GitHub said ' + r.status;
+			});
+		};
+		// one picture at a time (each write is a commit on the branch), then the list
+		var chain = Promise.resolve();
+		ids.forEach(function (id) {
+			var d = draft[id];
+			if (!d || !d.data) return;
+			var b64 = String(d.data).slice(String(d.data).indexOf(',') + 1);
+			var name = S.safe(id) + '-' + S.hash(b64) + '.jpg';
+			files[id] = { file: 'posters/' + name, w: d.w | 0, h: d.h | 0 };
+			chain = chain.then(function () {
+				return get(DIR + name).then(function (cur) {
+					if (cur && cur.sha) return null;        // the very same picture is already there
+					return put(DIR + name, b64, 'Add a poster picture from the Godot mall: ' + name);
+				});
+			});
+		});
+		return chain.then(function () { return get(P.path); }).then(function (cur) {
+			var live = {};
+			if (cur && cur.content) {
+				try {
+					var bin = atob(cur.content.replace(/\n/g, '')), arr = new Uint8Array(bin.length);
+					for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+					live = JSON.parse(new TextDecoder().decode(arr));
+				} catch (e) { live = {}; }
+			}
+			live.pictures = live.pictures || {};
+			ids.forEach(function (id) {
+				if (draft[id] && draft[id].reset) delete live.pictures[id];
+				else if (files[id]) live.pictures[id] = files[id];
+			});
+			S.published = JSON.stringify(live.pictures);
+			return put(P.path, P.b64(JSON.stringify(live, null, 1) + '\n'), 'Update the poster pictures from the Godot mall', cur && cur.sha);
+		}).then(function () { S.status = 'ok'; })
+			.catch(function (e) { S.status = 'error: ' + (typeof e === 'string' ? e : (e && e.message) || 'network error'); });
+	};
+	return S;
+}());
+// PICTURES-END
 // The owner's form for a prize's words: open(specJson) shows it; result becomes
 // '{"save": {id: fields}}', '{"reset": [ids]}' or '{"cancel": 1}' when it closes.
 window.mallPrizeEdit = {

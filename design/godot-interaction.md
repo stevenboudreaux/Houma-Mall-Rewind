@@ -120,6 +120,10 @@ shopper in range plays a gesture if their rig has one and a line shows ("Hey!", 
 you mind?", "Ow! Kids these days.", "Easy with that thing."). No damage.
 
 ## Owner-only HUD
+> **OWNER, Nov 4 2026:** superseded by design/godot-owner-mode.md: the owner keeps every corner button on
+> screen (and the year switch), while Reflections, Benches & plants, Lighting, Edit / Publish signs, Arcade
+> and Shirt words moved into the menu's OWNER tab. The table below is the Nov 1 state.
+
 Owner mode = `localStorage "southland-editor" = "1"` (set by `?owner=1`, the mall editor, or the
 secret code). `player.is_owner()`, `player.owner_hud_sync()`.
 
