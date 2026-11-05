@@ -25,9 +25,9 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PROJ = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
-OUT = os.path.join(PROJ, "tex", "dir")
+OUT = os.environ.get("DIR_OUT") or os.path.join(PROJ, "tex", "dir")   # DIR_OUT / DIR_K: the hi-res proof (ws/directory)
 FONTS = os.path.join(PROJ, "tools", "stores", "signs", "y26", "src", "fonts")
-K = 2                       # panel pixels per unit of the 1024 x 1145 tracing space
+K = int(os.environ.get("DIR_K", "2"))  # panel pixels per unit of the 1024 x 1145 tracing space
 W, H = 1024 * K, 1145 * K
 
 
