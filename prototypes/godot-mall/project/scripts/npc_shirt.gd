@@ -191,7 +191,7 @@ func _input(e: InputEvent) -> void:
 		pos = e.position
 	elif e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
 		pos = e.position
-	if pos != null and btn.get_global_rect().has_point(pos):
+	if pos != null and btn.is_visible_in_tree() and btn.get_global_rect().has_point(pos):   # OWNER: tucked into the menu
 		get_viewport().set_input_as_handled()
 		_open_dialog()
 

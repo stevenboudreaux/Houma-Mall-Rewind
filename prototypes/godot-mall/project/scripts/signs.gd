@@ -87,6 +87,11 @@ func _ready() -> void:
 				recs[r.id] = r
 				order.append(r.id)
 	if not web:
+		# OWNER (design/godot-owner-mode.md): tests and the editor take owner mode from Engine meta
+		# "mall_owner" (player.is_owner()); nothing is fetched or published off the web
+		is_owner = bool(Engine.get_meta("mall_owner", false))
+		if is_owner:
+			_build_ui()
 		return
 	_stickers()
 	_build_play_ui()
@@ -514,6 +519,29 @@ func _build_ui() -> void:
 	ui.add_child(status)
 	_refresh_ui()
 
+## OWNER (design/godot-owner-mode.md): the menu's OWNER tab works these, as the buttons did.
+func set_editing(on: bool) -> void:
+	editing = on
+	if on and arcade_mode:
+		arcade_mode = false
+		_show_sys_tags(false)
+	_refresh_ui()
+
+func set_arcade(on: bool) -> void:
+	arcade_mode = on
+	if on:
+		editing = false
+	if web:
+		_show_sys_tags(on)
+	_refresh_ui()
+
+func publish() -> void:
+	_publish()
+	_refresh_ui()
+
+func draft_count() -> int:
+	return draft.size()
+
 func _btn(txt: String, pos: Vector2) -> Button:
 	var b := Button.new()
 	b.text = txt
@@ -569,7 +597,7 @@ func _input(e: InputEvent) -> void:
 		return
 	if down:
 		for b in [b_edit, b_pub, b_arc]:
-			if b.get_global_rect().has_point(pos):
+			if b.is_visible_in_tree() and b.get_global_rect().has_point(pos):   # OWNER: tucked into the menu
 				get_viewport().set_input_as_handled()
 				if b == b_edit:
 					editing = not editing
