@@ -1,19 +1,19 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bk2h8yd8r83fl"]
 
-[ext_resource type="FontFile" path="res://fonts/sans.otf" id="1_42ofk"]
-[ext_resource type="FontFile" path="res://fonts/sans_italic.otf" id="2_si5eh"]
-[ext_resource type="FontFile" path="res://fonts/serif.ttf" id="3_itvds"]
-[ext_resource type="PackedScene" path="res://models/bl_rs_scanner/bl_rs_scanner.glb" id="4_u43l6"]
-[ext_resource type="PackedScene" path="res://models/bl_rs_walkie/bl_rs_walkie.glb" id="5_6ypyx"]
-[ext_resource type="PackedScene" path="res://models/bl_rs_rcbox/bl_rs_rcbox.glb" id="6_vg8dy"]
-[ext_resource type="PackedScene" path="res://models/bl_rs_cordless/bl_rs_cordless.glb" id="7_bcs4d"]
-[ext_resource type="PackedScene" path="res://models/bl_rs_battcard/bl_rs_battcard.glb" id="8_r7b7k"]
-[ext_resource type="PackedScene" path="res://models/bl_rs_pager/bl_rs_pager.glb" id="9_dsofx"]
+[ext_resource type="FontFile" uid="uid://ben4k8s2bfllr" path="res://fonts/sans.otf" id="1_42ofk"]
+[ext_resource type="FontFile" uid="uid://2amxti7h5cy0" path="res://fonts/sans_italic.otf" id="2_si5eh"]
+[ext_resource type="FontFile" uid="uid://dcnghf3fxs8al" path="res://fonts/serif.ttf" id="3_itvds"]
+[ext_resource type="PackedScene" uid="uid://cahq4gkdbf8x8" path="res://models/bl_rs_scanner/bl_rs_scanner.glb" id="4_u43l6"]
+[ext_resource type="PackedScene" uid="uid://bnota5l5ksv3f" path="res://models/bl_rs_walkie/bl_rs_walkie.glb" id="5_6ypyx"]
+[ext_resource type="PackedScene" uid="uid://cy06fqo37jsa2" path="res://models/bl_rs_rcbox/bl_rs_rcbox.glb" id="6_vg8dy"]
+[ext_resource type="PackedScene" uid="uid://6f1whyu2caxj" path="res://models/bl_rs_cordless/bl_rs_cordless.glb" id="7_bcs4d"]
+[ext_resource type="PackedScene" uid="uid://d38f63scgkkch" path="res://models/bl_rs_battcard/bl_rs_battcard.glb" id="8_r7b7k"]
+[ext_resource type="PackedScene" uid="uid://d385jvgs0jyte" path="res://models/bl_rs_pager/bl_rs_pager.glb" id="9_dsofx"]
 [ext_resource type="PackedScene" path="res://items/radioshack/cb_radio.tscn" id="10_4bcc6"]
 [ext_resource type="PackedScene" path="res://items/radioshack/microcassette.tscn" id="11_vw3t5"]
-[ext_resource type="FontFile" path="res://fonts/script.ttf" id="12_brk2y"]
-[ext_resource type="Script" path="res://scripts/directory_kiosk.gd" id="13_wdajw"]
-[ext_resource type="Environment" path="res://gen/env_night.tres" id="14_ehhhp"]
+[ext_resource type="FontFile" uid="uid://dtr3jom6wlm84" path="res://fonts/script.ttf" id="12_brk2y"]
+[ext_resource type="Script" uid="uid://dq6mwghk0nd1v" path="res://scripts/directory_kiosk.gd" id="13_wdajw"]
+[ext_resource type="Environment" uid="uid://vf7piov86y3w" path="res://gen/env_day.tres" id="14_si5eh"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/C1_fl.res" id="15_uuy1i"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/C1.res" id="16_xcu6h"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/H1a_fl.res" id="17_gubgc"]
@@ -136,62 +136,63 @@
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_glass_frames.res" id="134_ypdj0"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_glass.res" id="135_xsnhf"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_fixtures.res" id="136_lr5jk"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_doorpic.res" id="137_krwif"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_standin.res" id="138_sle8a"]
+[ext_resource type="ArrayMesh" uid="uid://nn5wvwuurrxj" path="res://gen/w1/dyn_doorpic.res" id="137_krwif"]
+[ext_resource type="ArrayMesh" uid="uid://cogrx760gq5ei" path="res://gen/w1/dyn_standin.res" id="138_sle8a"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_cinf_props.res" id="139_agaso"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_cinf_sign.res" id="140_tqfwm"]
+[ext_resource type="ArrayMesh" uid="uid://fgriepvbptmv" path="res://gen/w1/dyn_cinf_sign.res" id="140_tqfwm"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_cin_gate.res" id="141_mobyo"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w9bf_props.res" id="142_h24s8"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w8cf_sign.res" id="143_xqrg6"]
+[ext_resource type="ArrayMesh" uid="uid://do40rwqfdn73g" path="res://gen/w1/dyn_w9bf_props.res" id="142_h24s8"]
+[ext_resource type="ArrayMesh" uid="uid://bq11671momutg" path="res://gen/w1/dyn_w8cf_sign.res" id="143_xqrg6"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w8cf_sign_glow.res" id="144_rtjqv"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w8c_paper.res" id="145_jfm7p"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w9sf_props.res" id="146_0uh80"]
+[ext_resource type="ArrayMesh" uid="uid://bcpvwilguc3ix" path="res://gen/w1/dyn_w8c_paper.res" id="145_jfm7p"]
+[ext_resource type="ArrayMesh" uid="uid://d3lh0rrsh85hy" path="res://gen/w1/dyn_w9sf_props.res" id="146_0uh80"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_ap_small.res" id="147_nmhq7"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_ap_faceout.res" id="148_scqng"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_duf_sign.res" id="149_j2jve"]
+[ext_resource type="ArrayMesh" uid="uid://bss2x0h6iw2j3" path="res://gen/w1/dyn_ap_faceout.res" id="148_scqng"]
+[ext_resource type="ArrayMesh" uid="uid://b5g51b8rwpl4d" path="res://gen/w1/dyn_duf_sign.res" id="149_j2jve"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_duf_sign_glow.res" id="150_wt3ai"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w9rf_sign.res" id="151_cbnt7"]
+[ext_resource type="ArrayMesh" uid="uid://bs88d0mxgg3em" path="res://gen/w1/dyn_w9rf_sign.res" id="151_cbnt7"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w9rf_sign_glow.res" id="152_1336g"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_shoe_small.res" id="153_t41tr"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_a2f_props.res" id="154_ji6ml"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_lflf_sign.res" id="155_7xqjj"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_ssf_sign.res" id="156_456n3"]
+[ext_resource type="ArrayMesh" uid="uid://150wiauofy0a" path="res://gen/w1/dyn_a2f_props.res" id="154_ji6ml"]
+[ext_resource type="ArrayMesh" uid="uid://cm8ospketknl0" path="res://gen/w1/dyn_lflf_sign.res" id="155_7xqjj"]
+[ext_resource type="ArrayMesh" uid="uid://dgqdp2an7gtbs" path="res://gen/w1/dyn_ssf_sign.res" id="156_456n3"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_ss_small.res" id="157_b7313"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_kbf_props.res" id="158_h01fy"]
+[ext_resource type="ArrayMesh" uid="uid://bup43q7wiv6nu" path="res://gen/w1/dyn_kbf_props.res" id="158_h01fy"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_kb_fix.res" id="159_81qoo"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_kb_small.res" id="160_w6k8n"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_smmf_props.res" id="161_m6umn"]
+[ext_resource type="ArrayMesh" uid="uid://bp6k64turd1rr" path="res://gen/w1/dyn_smmf_props.res" id="161_m6umn"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_sm_small.res" id="162_821vy"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w7jf_props.res" id="163_mp8nh"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_knbf_sign.res" id="164_7xsi8"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_faf_sign.res" id="165_bw5sp"]
+[ext_resource type="ArrayMesh" uid="uid://iws8g5a73vau" path="res://gen/w1/dyn_w7jf_props.res" id="163_mp8nh"]
+[ext_resource type="ArrayMesh" uid="uid://ci3k1kslg453l" path="res://gen/w1/dyn_knbf_sign.res" id="164_7xsi8"]
+[ext_resource type="ArrayMesh" uid="uid://bin2plr1t1vus" path="res://gen/w1/dyn_faf_sign.res" id="165_bw5sp"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_faf_sign_glow.res" id="166_4wvw3"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w7gf_sign.res" id="167_xdbyn"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_wlf_sign.res" id="168_y8qxx"]
+[ext_resource type="ArrayMesh" uid="uid://cdh2b7e5ddf5i" path="res://gen/w1/dyn_wlf_sign.res" id="168_y8qxx"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_wlf_sign_glow.res" id="169_iqpwy"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_wl_tape.res" id="170_tcwc6"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w8lf_sign.res" id="171_rjxu7"]
+[ext_resource type="ArrayMesh" uid="uid://cejo1aufm0jyb" path="res://gen/w1/dyn_w8lf_sign.res" id="171_rjxu7"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w8lf_sign_glow.res" id="172_yuaql"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w8l_paper.res" id="173_ag8uj"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w8tf_props.res" id="174_ex3bu"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w8of_props.res" id="175_c8v3q"]
+[ext_resource type="ArrayMesh" uid="uid://cpb2enhylc3s5" path="res://gen/w1/dyn_w8tf_props.res" id="174_ex3bu"]
+[ext_resource type="ArrayMesh" uid="uid://ckcm2k1lkaox4" path="res://gen/w1/dyn_w8of_props.res" id="175_c8v3q"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_frf_sign.res" id="176_k8b3n"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_frf_sign_glow.res" id="177_83s3q"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_w7of_props.res" id="178_6m4xs"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_smcf_sign.res" id="179_70ssl"]
+[ext_resource type="ArrayMesh" uid="uid://ctwqarvle1v3d" path="res://gen/w1/dyn_w7of_props.res" id="178_6m4xs"]
+[ext_resource type="ArrayMesh" uid="uid://cvee2fj4125rd" path="res://gen/w1/dyn_smcf_sign.res" id="179_70ssl"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_smcf_sign_glow.res" id="180_cqghq"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_s6rf_sign.res" id="181_hqp3d"]
+[ext_resource type="ArrayMesh" uid="uid://cwanvq010m56e" path="res://gen/w1/dyn_s6rf_sign.res" id="181_hqp3d"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_s6rf_sign_glow.res" id="182_x82qv"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_s6r_small.res" id="183_5aokh"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_smgf_props.res" id="184_6k136"]
+[ext_resource type="ArrayMesh" uid="uid://fbn81gatsg72" path="res://gen/w1/dyn_smgf_props.res" id="184_6k136"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_gb_small.res" id="185_jmaso"]
-[ext_resource type="ArrayMesh" path="res://gen/w1/dyn_gbf_props.res" id="186_428f4"]
+[ext_resource type="ArrayMesh" uid="uid://bkjpgkuvhh63n" path="res://gen/w1/dyn_gbf_props.res" id="186_428f4"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_info.res" id="187_g562h"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_directory.res" id="188_t46lj"]
 [ext_resource type="ArrayMesh" path="res://gen/w1/dyn_posters.res" id="189_x8xvo"]
-[ext_resource type="Script" path="res://scripts/player.gd" id="190_er5hu"]
-[ext_resource type="Script" path="res://scripts/mall_runtime.gd" id="191_u3sme"]
-[ext_resource type="Script" path="res://scripts/signs.gd" id="192_t8clk"]
+[ext_resource type="Script" uid="uid://105g70usqyss" path="res://scripts/player.gd" id="190_er5hu"]
+[ext_resource type="LightmapGIData" uid="uid://xsv05x3fkon5" path="res://wing1_day.lmbake" id="190_itvds"]
+[ext_resource type="Script" uid="uid://ccw0jg6editjo" path="res://scripts/mall_runtime.gd" id="191_u3sme"]
+[ext_resource type="Script" uid="uid://btfg103laerxm" path="res://scripts/signs.gd" id="192_t8clk"]
 
 [node name="Mall" type="Node3D" unique_id=285220276]
 metadata/wing = 1
@@ -209,6 +210,7 @@ metadata/only = "day"
 
 [node name="@SpotLight3D@3" type="SpotLight3D" parent="Lights" unique_id=1949628520]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -9.4, 6.4, -94.3)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -219,6 +221,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@4" type="SpotLight3D" parent="Lights" unique_id=1500427989]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -9.4, 6.4, -91)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -229,6 +232,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@5" type="SpotLight3D" parent="Lights" unique_id=249236996]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -9.4, 6.4, -87.7)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -239,6 +243,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@6" type="SpotLight3D" parent="Lights" unique_id=1516417441]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 1.4, 6.4, -94.3)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -249,6 +254,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@7" type="SpotLight3D" parent="Lights" unique_id=1972062866]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 1.4, 6.4, -91)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -259,6 +265,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@8" type="SpotLight3D" parent="Lights" unique_id=1373527789]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 1.4, 6.4, -87.7)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -269,6 +276,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@9" type="SpotLight3D" parent="Lights" unique_id=1473927593]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -15.85, 6.45, -94)
+visible = false
 light_color = Color(0.8627451, 0.9019608, 1, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -279,6 +287,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@10" type="SpotLight3D" parent="Lights" unique_id=2022550588]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -15.85, 6.45, -91)
+visible = false
 light_color = Color(0.8627451, 0.9019608, 1, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -289,6 +298,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@11" type="SpotLight3D" parent="Lights" unique_id=1033555595]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -15.85, 6.45, -88)
+visible = false
 light_color = Color(0.8627451, 0.9019608, 1, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -299,6 +309,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@12" type="SpotLight3D" parent="Lights" unique_id=1613328536]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, 7.85, 6.45, -94)
+visible = false
 light_color = Color(0.8627451, 0.9019608, 1, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -309,6 +320,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@13" type="SpotLight3D" parent="Lights" unique_id=1306202628]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, 7.85, 6.45, -91)
+visible = false
 light_color = Color(0.8627451, 0.9019608, 1, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -319,6 +331,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@14" type="SpotLight3D" parent="Lights" unique_id=1602796926]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, 7.85, 6.45, -88)
+visible = false
 light_color = Color(0.8627451, 0.9019608, 1, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -672,6 +685,7 @@ metadata/only = "day"
 
 [node name="@SpotLight3D@47" type="SpotLight3D" parent="Lights" unique_id=1753815828]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -3.95, 6.4, -7.28)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -682,6 +696,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@48" type="SpotLight3D" parent="Lights" unique_id=1035529411]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -3.95, 6.4, -2)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -692,6 +707,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@49" type="SpotLight3D" parent="Lights" unique_id=520932384]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -3.95, 6.4, 3.28)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -702,6 +718,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@50" type="SpotLight3D" parent="Lights" unique_id=2136490994]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 5.95, 6.4, -7.28)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -712,6 +729,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@51" type="SpotLight3D" parent="Lights" unique_id=934256427]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 5.95, 6.4, -2)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -722,6 +740,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@52" type="SpotLight3D" parent="Lights" unique_id=1331569160]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 5.95, 6.4, 3.28)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -732,6 +751,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@53" type="SpotLight3D" parent="Lights" unique_id=2078260465]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -9.85, 6.45, -6.8)
+visible = false
 light_color = Color(1, 0.7882353, 0.5411765, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -742,6 +762,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@54" type="SpotLight3D" parent="Lights" unique_id=1006144629]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -9.85, 6.45, -2)
+visible = false
 light_color = Color(1, 0.7882353, 0.5411765, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -752,6 +773,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@55" type="SpotLight3D" parent="Lights" unique_id=301890431]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -9.85, 6.45, 2.8000002)
+visible = false
 light_color = Color(1, 0.7882353, 0.5411765, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -762,6 +784,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@56" type="SpotLight3D" parent="Lights" unique_id=416077366]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, 11.85, 6.45, -6.8)
+visible = false
 light_color = Color(1, 0.7882353, 0.5411765, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -772,6 +795,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@57" type="SpotLight3D" parent="Lights" unique_id=547314951]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, 11.85, 6.45, -2)
+visible = false
 light_color = Color(1, 0.7882353, 0.5411765, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -782,6 +806,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@58" type="SpotLight3D" parent="Lights" unique_id=267071715]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, 11.85, 6.45, 2.8000002)
+visible = false
 light_color = Color(1, 0.7882353, 0.5411765, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -977,6 +1002,7 @@ metadata/only = "day"
 
 [node name="@SpotLight3D@78" type="SpotLight3D" parent="Lights" unique_id=220415087]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -13.95, 6.4, 52.42)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -987,6 +1013,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@79" type="SpotLight3D" parent="Lights" unique_id=618786481]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -13.95, 6.4, 61)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -997,6 +1024,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@80" type="SpotLight3D" parent="Lights" unique_id=142094261]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -13.95, 6.4, 69.58)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -1007,6 +1035,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@81" type="SpotLight3D" parent="Lights" unique_id=616540717]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -4.05, 6.4, 52.42)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -1017,6 +1046,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@82" type="SpotLight3D" parent="Lights" unique_id=575234064]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -4.05, 6.4, 61)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -1027,6 +1057,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@83" type="SpotLight3D" parent="Lights" unique_id=491399617]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -4.05, 6.4, 69.58)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -1037,6 +1068,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@84" type="SpotLight3D" parent="Lights" unique_id=808867329]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -19.85, 6.45, 53.2)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1047,6 +1079,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@85" type="SpotLight3D" parent="Lights" unique_id=625827076]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -19.85, 6.45, 61)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1057,6 +1090,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@86" type="SpotLight3D" parent="Lights" unique_id=1438335508]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -19.85, 6.45, 68.8)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1067,6 +1101,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@87" type="SpotLight3D" parent="Lights" unique_id=200825837]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, 1.85, 6.45, 53.2)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1077,6 +1112,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@88" type="SpotLight3D" parent="Lights" unique_id=670584448]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, 1.85, 6.45, 61)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1087,6 +1123,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@89" type="SpotLight3D" parent="Lights" unique_id=1069523677]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, 1.85, 6.45, 68.8)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1396,6 +1433,7 @@ metadata/only = "day"
 
 [node name="@SpotLight3D@118" type="SpotLight3D" parent="Lights" unique_id=2083294003]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -149.05, 6.4, 48.08)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -1406,6 +1444,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@119" type="SpotLight3D" parent="Lights" unique_id=351895737]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -149.05, 6.4, 56)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -1416,6 +1455,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@120" type="SpotLight3D" parent="Lights" unique_id=1956596720]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -149.05, 6.4, 63.92)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -1426,6 +1466,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@121" type="SpotLight3D" parent="Lights" unique_id=1478434057]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -140.95, 6.4, 48.08)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -1436,6 +1477,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@122" type="SpotLight3D" parent="Lights" unique_id=509660024]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -140.95, 6.4, 56)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -1446,6 +1488,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@123" type="SpotLight3D" parent="Lights" unique_id=531420012]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -140.95, 6.4, 63.92)
+visible = false
 light_color = Color(1, 0.9137255, 0.78431374, 1)
 light_energy = 3.2
 light_bake_mode = 1
@@ -1456,6 +1499,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@124" type="SpotLight3D" parent="Lights" unique_id=1302832331]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -153.85, 6.45, 48.8)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1466,6 +1510,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@125" type="SpotLight3D" parent="Lights" unique_id=1563409484]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -153.85, 6.45, 56)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1476,6 +1521,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@126" type="SpotLight3D" parent="Lights" unique_id=247230921]
 transform = Transform3D(0, -0.87621593, -0.48191878, 0, 0.48191878, -0.87621593, 1, 0, 0, -153.85, 6.45, 63.2)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1486,6 +1532,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@127" type="SpotLight3D" parent="Lights" unique_id=1558240147]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, -136.15, 6.45, 48.8)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1496,6 +1543,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@128" type="SpotLight3D" parent="Lights" unique_id=543288587]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, -136.15, 6.45, 56)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1506,6 +1554,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@129" type="SpotLight3D" parent="Lights" unique_id=1219875479]
 transform = Transform3D(0, 0.87621593, 0.48191878, 0, 0.48191878, -0.87621593, -1, 0, 0, -136.15, 6.45, 63.2)
+visible = false
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 3.0
 light_bake_mode = 1
@@ -1681,6 +1730,7 @@ metadata/e_night = 1.4
 
 [node name="@OmniLight3D@145" type="OmniLight3D" parent="Lights" unique_id=1916418278]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90, 9, -101)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -1689,6 +1739,7 @@ metadata/only = "night"
 
 [node name="@OmniLight3D@146" type="OmniLight3D" parent="Lights" unique_id=1651082976]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90, 9, -91)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -1697,6 +1748,7 @@ metadata/only = "night"
 
 [node name="@OmniLight3D@147" type="OmniLight3D" parent="Lights" unique_id=1732343290]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -90, 9, -81)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -1705,6 +1757,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@148" type="SpotLight3D" parent="Lights" unique_id=439653753]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -78, 3.2, -91)
+visible = false
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
 light_bake_mode = 1
@@ -1715,6 +1768,7 @@ metadata/only = "night"
 
 [node name="@OmniLight3D@151" type="OmniLight3D" parent="Lights" unique_id=200765413]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 9, -101)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -1723,6 +1777,7 @@ metadata/only = "night"
 
 [node name="@OmniLight3D@152" type="OmniLight3D" parent="Lights" unique_id=676017782]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 9, -91)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -1731,6 +1786,7 @@ metadata/only = "night"
 
 [node name="@OmniLight3D@153" type="OmniLight3D" parent="Lights" unique_id=1246746728]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 9, -81)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -1739,6 +1795,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@154" type="SpotLight3D" parent="Lights" unique_id=990811465]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 38, 3.2, -91)
+visible = false
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
 light_bake_mode = 1
@@ -1750,7 +1807,7 @@ metadata/only = "night"
 [node name="@OmniLight3D@156" type="OmniLight3D" parent="Lights" unique_id=827095923]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48.4, 2.3, -84.92)
 light_color = Color(1, 0.82, 0.6, 1)
-light_energy = 0.5
+light_energy = 0.4
 light_bake_mode = 1
 omni_range = 3.5
 metadata/e_day = 0.4
@@ -1759,7 +1816,7 @@ metadata/e_night = 0.6
 [node name="@OmniLight3D@157" type="OmniLight3D" parent="Lights" unique_id=595113813]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50.4, 2.75, -86.3)
 light_color = Color(1, 0.82, 0.55, 1)
-light_energy = 0.6
+light_energy = 0.35
 light_bake_mode = 1
 omni_range = 3.5
 metadata/e_day = 0.35
@@ -1768,7 +1825,7 @@ metadata/e_night = 0.8
 [node name="@OmniLight3D@158" type="OmniLight3D" parent="Lights" unique_id=1236947266]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -54, 2.75, -86.3)
 light_color = Color(1, 0.82, 0.55, 1)
-light_energy = 0.6
+light_energy = 0.35
 light_bake_mode = 1
 omni_range = 3.5
 metadata/e_day = 0.35
@@ -1777,7 +1834,7 @@ metadata/e_night = 0.8
 [node name="@OmniLight3D@159" type="OmniLight3D" parent="Lights" unique_id=1363083163]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58, 2.75, -86.3)
 light_color = Color(1, 0.82, 0.55, 1)
-light_energy = 0.6
+light_energy = 0.35
 light_bake_mode = 1
 omni_range = 3.5
 metadata/e_day = 0.35
@@ -1786,7 +1843,7 @@ metadata/e_night = 0.8
 [node name="@OmniLight3D@160" type="OmniLight3D" parent="Lights" unique_id=420010670]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -61.6, 2.75, -86.3)
 light_color = Color(1, 0.82, 0.55, 1)
-light_energy = 0.6
+light_energy = 0.35
 light_bake_mode = 1
 omni_range = 3.5
 metadata/e_day = 0.35
@@ -1795,7 +1852,7 @@ metadata/e_night = 0.8
 [node name="@OmniLight3D@161" type="OmniLight3D" parent="Lights" unique_id=822669599]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65.6, 2.75, -86.3)
 light_color = Color(1, 0.82, 0.55, 1)
-light_energy = 0.6
+light_energy = 0.35
 light_bake_mode = 1
 omni_range = 3.5
 metadata/e_day = 0.35
@@ -1804,7 +1861,7 @@ metadata/e_night = 0.8
 [node name="@OmniLight3D@162" type="OmniLight3D" parent="Lights" unique_id=410272198]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -69.1, 2.75, -86.3)
 light_color = Color(1, 0.82, 0.55, 1)
-light_energy = 0.6
+light_energy = 0.35
 light_bake_mode = 1
 omni_range = 3.5
 metadata/e_day = 0.35
@@ -1813,7 +1870,7 @@ metadata/e_night = 0.8
 [node name="@SpotLight3D@163" type="SpotLight3D" parent="Lights" unique_id=403913058]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -52, 3.1, -81.5)
 light_color = Color(1, 0.85, 0.65, 1)
-light_energy = 0.9
+light_energy = 0.6
 light_bake_mode = 1
 spot_attenuation = 0.9
 spot_angle = 60.0
@@ -1823,7 +1880,7 @@ metadata/e_night = 0.9
 [node name="@SpotLight3D@164" type="SpotLight3D" parent="Lights" unique_id=1094345134]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -58, 3.1, -81.5)
 light_color = Color(1, 0.85, 0.65, 1)
-light_energy = 0.9
+light_energy = 0.6
 light_bake_mode = 1
 spot_attenuation = 0.9
 spot_angle = 60.0
@@ -1833,7 +1890,7 @@ metadata/e_night = 0.9
 [node name="@SpotLight3D@165" type="SpotLight3D" parent="Lights" unique_id=1477811461]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -64, 3.1, -81.5)
 light_color = Color(1, 0.85, 0.65, 1)
-light_energy = 0.9
+light_energy = 0.6
 light_bake_mode = 1
 spot_attenuation = 0.9
 spot_angle = 60.0
@@ -1843,7 +1900,7 @@ metadata/e_night = 0.9
 [node name="@OmniLight3D@166" type="OmniLight3D" parent="Lights" unique_id=93719945]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58, 2.2, -79)
 light_color = Color(1, 0.78, 0.5, 1)
-light_energy = 0.8
+light_energy = 0.6
 light_bake_mode = 1
 omni_range = 6.0
 metadata/e_day = 0.6
@@ -1852,7 +1909,7 @@ metadata/e_night = 1.0
 [node name="@OmniLight3D@167" type="OmniLight3D" parent="Lights" unique_id=1316433090]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 2.35, -86.75)
 light_color = Color(1, 0.82, 0.55, 1)
-light_energy = 0.4
+light_energy = 0.2
 light_bake_mode = 1
 omni_range = 3.5
 metadata/e_day = 0.2
@@ -1861,7 +1918,7 @@ metadata/e_night = 0.4
 [node name="@OmniLight3D@168" type="OmniLight3D" parent="Lights" unique_id=1191309479]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37, 2.35, -86.75)
 light_color = Color(1, 0.82, 0.55, 1)
-light_energy = 0.4
+light_energy = 0.2
 light_bake_mode = 1
 omni_range = 3.5
 metadata/e_day = 0.2
@@ -1887,7 +1944,7 @@ interior = true
 [node name="@OmniLight3D@171" type="OmniLight3D" parent="Lights" unique_id=1510005548]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.1, 2, -81.4)
 light_color = Color(1, 0.82, 0.58, 1)
-light_energy = 0.55
+light_energy = 0.45
 light_bake_mode = 1
 omni_range = 5.5
 metadata/e_day = 0.45
@@ -1896,7 +1953,7 @@ metadata/e_night = 0.6
 [node name="@OmniLight3D@172" type="OmniLight3D" parent="Lights" unique_id=977830712]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.1, 2, -75.8)
 light_color = Color(1, 0.82, 0.58, 1)
-light_energy = 0.55
+light_energy = 0.45
 light_bake_mode = 1
 omni_range = 5.5
 metadata/e_day = 0.45
@@ -1905,7 +1962,7 @@ metadata/e_night = 0.6
 [node name="@OmniLight3D@173" type="OmniLight3D" parent="Lights" unique_id=1990801358]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.6, 2, -81.4)
 light_color = Color(1, 0.82, 0.58, 1)
-light_energy = 0.55
+light_energy = 0.45
 light_bake_mode = 1
 omni_range = 5.5
 metadata/e_day = 0.45
@@ -1914,7 +1971,7 @@ metadata/e_night = 0.6
 [node name="@OmniLight3D@174" type="OmniLight3D" parent="Lights" unique_id=537547178]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.6, 2, -75.8)
 light_color = Color(1, 0.82, 0.58, 1)
-light_energy = 0.55
+light_energy = 0.45
 light_bake_mode = 1
 omni_range = 5.5
 metadata/e_day = 0.45
@@ -1923,7 +1980,7 @@ metadata/e_night = 0.6
 [node name="@OmniLight3D@175" type="OmniLight3D" parent="Lights" unique_id=1301428810]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 2, -78.6)
 light_color = Color(1, 0.82, 0.58, 1)
-light_energy = 0.55
+light_energy = 0.45
 light_bake_mode = 1
 omni_range = 5.5
 metadata/e_day = 0.45
@@ -1932,7 +1989,7 @@ metadata/e_night = 0.6
 [node name="@OmniLight3D@176" type="OmniLight3D" parent="Lights" unique_id=1595759572]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.4, 2, -75)
 light_color = Color(1, 0.82, 0.58, 1)
-light_energy = 0.55
+light_energy = 0.45
 light_bake_mode = 1
 omni_range = 5.5
 metadata/e_day = 0.45
@@ -1974,6 +2031,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@181" type="SpotLight3D" parent="Lights" unique_id=1194889694]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, 2.4, 3.05, -83)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -2044,6 +2102,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@189" type="SpotLight3D" parent="Lights" unique_id=1320474010]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, 2.4, 3.05, -76)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -2180,6 +2239,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@202" type="SpotLight3D" parent="Lights" unique_id=605512859]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, 2.4, 3.05, -69)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -2199,6 +2259,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@204" type="SpotLight3D" parent="Lights" unique_id=659717558]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, 2.4, 3.05, -64)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -2210,7 +2271,7 @@ metadata/only = "night"
 [node name="@OmniLight3D@205" type="OmniLight3D" parent="Lights" unique_id=1431933642]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.7, 2.65, -61)
 light_color = Color(1, 0.62, 0.3, 1)
-light_energy = 0.5
+light_energy = 0.35
 light_bake_mode = 1
 omni_range = 3.5
 metadata/e_day = 0.35
@@ -2471,6 +2532,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@232" type="SpotLight3D" parent="Lights" unique_id=2055501336]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, 2.4, 3.05, -51)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -2702,6 +2764,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@255" type="SpotLight3D" parent="Lights" unique_id=1661109843]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, 2.4, 3.05, -41)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -2838,6 +2901,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@268" type="SpotLight3D" parent="Lights" unique_id=1223879585]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, 2.4, 3.05, -28)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -2857,6 +2921,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@271" type="SpotLight3D" parent="Lights" unique_id=1453228586]
 transform = Transform3D(0, 0.7432942, -0.66896474, 0, 0.66896474, 0.7432942, 1, 0, 0, -10.4, 3.05, -26)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -2876,6 +2941,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@273" type="SpotLight3D" parent="Lights" unique_id=425773515]
 transform = Transform3D(0, 0.7432942, -0.66896474, 0, 0.66896474, 0.7432942, 1, 0, 0, -10.4, 3.05, -18)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -3418,6 +3484,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@327" type="SpotLight3D" parent="Lights" unique_id=1384994063]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, 27, 3.05, -6.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -3437,6 +3504,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@330" type="SpotLight3D" parent="Lights" unique_id=1005872783]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, 33, 3.05, -6.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -3447,6 +3515,7 @@ metadata/only = "night"
 
 [node name="@OmniLight3D@331" type="OmniLight3D" parent="Lights" unique_id=857938960]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 9, -10)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -3455,6 +3524,7 @@ metadata/only = "night"
 
 [node name="@OmniLight3D@332" type="OmniLight3D" parent="Lights" unique_id=148306998]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 9, 0)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -3463,6 +3533,7 @@ metadata/only = "night"
 
 [node name="@OmniLight3D@333" type="OmniLight3D" parent="Lights" unique_id=1158337158]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 9, 10)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -3471,6 +3542,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@334" type="SpotLight3D" parent="Lights" unique_id=101022872]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 38, 3.2, 0)
+visible = false
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
 light_bake_mode = 1
@@ -3570,6 +3642,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@346" type="SpotLight3D" parent="Lights" unique_id=2102532940]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, 33, 3.05, 6.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -3589,6 +3662,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@348" type="SpotLight3D" parent="Lights" unique_id=1471720064]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, 7, 3.05, 10.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4244,6 +4318,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@411" type="SpotLight3D" parent="Lights" unique_id=1455499364]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, 2.4, 3.05, 44)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4263,6 +4338,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@413" type="SpotLight3D" parent="Lights" unique_id=1931143005]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -146, 3.05, 43.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4282,6 +4358,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@415" type="SpotLight3D" parent="Lights" unique_id=1630829157]
 transform = Transform3D(0, 0.7432942, -0.66896474, 0, 0.66896474, 0.7432942, 1, 0, 0, -154.4, 3.05, 56)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4301,6 +4378,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@417" type="SpotLight3D" parent="Lights" unique_id=64232576]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -127, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4320,6 +4398,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@419" type="SpotLight3D" parent="Lights" unique_id=1333555838]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -116, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4339,6 +4418,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@421" type="SpotLight3D" parent="Lights" unique_id=619006437]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -106, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4358,6 +4438,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@423" type="SpotLight3D" parent="Lights" unique_id=1966545831]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -98, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4377,6 +4458,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@425" type="SpotLight3D" parent="Lights" unique_id=1770105930]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -83, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4396,6 +4478,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@427" type="SpotLight3D" parent="Lights" unique_id=1828553478]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -77, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4415,6 +4498,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@429" type="SpotLight3D" parent="Lights" unique_id=1268589379]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -71, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4434,6 +4518,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@431" type="SpotLight3D" parent="Lights" unique_id=1181298263]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -65, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4453,6 +4538,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@433" type="SpotLight3D" parent="Lights" unique_id=1465243667]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -56, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4472,6 +4558,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@435" type="SpotLight3D" parent="Lights" unique_id=1354157254]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -45.35, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4491,6 +4578,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@437" type="SpotLight3D" parent="Lights" unique_id=391874096]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -34.5, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4510,6 +4598,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@439" type="SpotLight3D" parent="Lights" unique_id=1101317717]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -29, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4529,6 +4618,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@441" type="SpotLight3D" parent="Lights" unique_id=980203978]
 transform = Transform3D(-1, 0, 0, 0, 0.66896474, 0.7432942, 0, 0.7432942, -0.66896474, -23, 3.05, 47.6)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4548,6 +4638,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@443" type="SpotLight3D" parent="Lights" unique_id=34251651]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, 2.4, 3.05, 58)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4567,6 +4658,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@445" type="SpotLight3D" parent="Lights" unique_id=1420380600]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -127, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4586,6 +4678,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@447" type="SpotLight3D" parent="Lights" unique_id=28213060]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -121, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4605,6 +4698,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@449" type="SpotLight3D" parent="Lights" unique_id=1158439490]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -114, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4624,6 +4718,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@451" type="SpotLight3D" parent="Lights" unique_id=1519905642]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -106, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4643,6 +4738,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@453" type="SpotLight3D" parent="Lights" unique_id=1674419485]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -98, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4662,6 +4758,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@455" type="SpotLight3D" parent="Lights" unique_id=452787466]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -90, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4681,6 +4778,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@457" type="SpotLight3D" parent="Lights" unique_id=1288440034]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -71, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4700,6 +4798,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@459" type="SpotLight3D" parent="Lights" unique_id=1389564848]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -63, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4719,6 +4818,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@461" type="SpotLight3D" parent="Lights" unique_id=2028180192]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -54, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4738,6 +4838,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@463" type="SpotLight3D" parent="Lights" unique_id=486123147]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -46, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4757,6 +4858,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@465" type="SpotLight3D" parent="Lights" unique_id=1092495274]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -42, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4776,6 +4878,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@467" type="SpotLight3D" parent="Lights" unique_id=1693672463]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -38, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4795,6 +4898,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@469" type="SpotLight3D" parent="Lights" unique_id=613088585]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -28, 3.05, 60.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4814,6 +4918,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@471" type="SpotLight3D" parent="Lights" unique_id=1329235182]
 transform = Transform3D(0, 0.7432942, -0.66896474, 0, 0.66896474, 0.7432942, 1, 0, 0, -20.4, 3.05, 65)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4833,6 +4938,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@473" type="SpotLight3D" parent="Lights" unique_id=1704843778]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -150, 3.05, 68.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4852,6 +4958,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@475" type="SpotLight3D" parent="Lights" unique_id=1014426750]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, 2.4, 3.05, 70)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4871,6 +4978,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@477" type="SpotLight3D" parent="Lights" unique_id=800535719]
 transform = Transform3D(0, 0.7432942, -0.66896474, 0, 0.66896474, 0.7432942, 1, 0, 0, -146.4, 3.05, 73)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4890,6 +4998,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@479" type="SpotLight3D" parent="Lights" unique_id=599345022]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, -137.6, 3.05, 74)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4909,6 +5018,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@482" type="SpotLight3D" parent="Lights" unique_id=1820230351]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -15, 3.05, 74.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4928,6 +5038,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@484" type="SpotLight3D" parent="Lights" unique_id=1197874973]
 transform = Transform3D(0, 0.7432942, -0.66896474, 0, 0.66896474, 0.7432942, 1, 0, 0, -10.4, 3.05, 77)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4947,6 +5058,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@486" type="SpotLight3D" parent="Lights" unique_id=2061691188]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, 2.4, 3.05, 77)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4966,6 +5078,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@488" type="SpotLight3D" parent="Lights" unique_id=1259925311]
 transform = Transform3D(0, 0.7432942, -0.66896474, 0, 0.66896474, 0.7432942, 1, 0, 0, -146.4, 3.05, 83)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -4985,6 +5098,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@490" type="SpotLight3D" parent="Lights" unique_id=463742475]
 transform = Transform3D(1, 0, 0, 0, 0.66896474, 0.7432942, 0, -0.7432942, 0.66896474, -4, 3.05, 80.4)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -5004,6 +5118,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@492" type="SpotLight3D" parent="Lights" unique_id=396874454]
 transform = Transform3D(0, -0.7432942, 0.66896474, 0, 0.66896474, 0.7432942, -1, 0, 0, -137.6, 3.05, 84)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -5014,6 +5129,7 @@ metadata/only = "night"
 
 [node name="@OmniLight3D@494" type="OmniLight3D" parent="Lights" unique_id=118707542]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -152, 9, 102)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -5022,6 +5138,7 @@ metadata/only = "night"
 
 [node name="@OmniLight3D@495" type="OmniLight3D" parent="Lights" unique_id=2052736061]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -142, 9, 102)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -5030,6 +5147,7 @@ metadata/only = "night"
 
 [node name="@OmniLight3D@496" type="OmniLight3D" parent="Lights" unique_id=1618656262]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -132, 9, 102)
+visible = false
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 4.0
 light_bake_mode = 1
@@ -5038,6 +5156,7 @@ metadata/only = "night"
 
 [node name="@SpotLight3D@497" type="SpotLight3D" parent="Lights" unique_id=157696020]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -142, 3.2, 90)
+visible = false
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
 light_bake_mode = 1
@@ -5057,6 +5176,7 @@ metadata/e_night = 1.2
 
 [node name="@SpotLight3D@500" type="SpotLight3D" parent="Lights" unique_id=123396348]
 transform = Transform3D(0.70710677, -0.5255883, 0.47302958, 0, 0.66896486, 0.74329406, -0.70710677, -0.5255883, 0.47302958, -132.71716, 3.05, 63.282845)
+visible = false
 light_color = Color(1, 0.94509804, 0.8627451, 1)
 light_energy = 1.6
 light_bake_mode = 1
@@ -5178,35 +5298,29 @@ font_size = 128
 
 [node name="Items" type="Node3D" parent="." unique_id=2034632350]
 
-[node name="rs_scanner" type="Node3D" parent="Items" unique_id=1024117471 instance=ExtResource("4_u43l6")]
+[node name="rs_scanner" parent="Items" unique_id=1024117471 instance=ExtResource("4_u43l6")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 6.35, 0.982, 31.86)
 
-[node name="rs_walkie_talkies" type="Node3D" parent="Items" unique_id=659793239 instance=ExtResource("5_6ypyx")]
+[node name="rs_walkie_talkies" parent="Items" unique_id=659793239 instance=ExtResource("5_6ypyx")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 7.15, 0.982, 31.86)
 
-[node name="rs_rc_car_box" type="Node3D" parent="Items" unique_id=327907492 instance=ExtResource("6_vg8dy")]
+[node name="rs_rc_car_box" parent="Items" unique_id=327907492 instance=ExtResource("6_vg8dy")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 4.4, 0.9, 30.55)
 
-[node name="rs_cordless_phone" type="Node3D" parent="Items" unique_id=1031541528 instance=ExtResource("7_bcs4d")]
+[node name="rs_cordless_phone" parent="Items" unique_id=1031541528 instance=ExtResource("7_bcs4d")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 8, 0.982, 31.86)
 
-[node name="rs_battery_card" type="Node3D" parent="Items" unique_id=866591716 instance=ExtResource("8_r7b7k")]
+[node name="rs_battery_card" parent="Items" unique_id=866591716 instance=ExtResource("8_r7b7k")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 5.5, 0.982, 31.86)
 
-[node name="rs_pager" type="Node3D" parent="Items" unique_id=1033878223 instance=ExtResource("9_dsofx")]
+[node name="rs_pager" parent="Items" unique_id=1033878223 instance=ExtResource("9_dsofx")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 5, 0.982, 31.86)
 
-[node name="rs_cb_radio" type="Node3D" parent="Items" unique_id=300923364 instance=ExtResource("10_4bcc6")]
+[node name="rs_cb_radio" parent="Items" unique_id=300923364 instance=ExtResource("10_4bcc6")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 9.05, 0.982, 31.86)
-metadata/item_id = "rs_cb_radio"
-metadata/item_name = "CB-440 CB radio"
-metadata/item_class = "hand"
 
-[node name="rs_microcassette" type="Node3D" parent="Items" unique_id=816442839 instance=ExtResource("11_vw3t5")]
+[node name="rs_microcassette" parent="Items" unique_id=816442839 instance=ExtResource("11_vw3t5")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 9.85, 0.982, 31.86)
-metadata/item_id = "rs_microcassette"
-metadata/item_name = "Micro-cassette recorder"
-metadata/item_class = "pocket"
 
 [node name="@Label3D@409" type="Label3D" parent="." unique_id=1337418607]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.75, 3.9, 44)
@@ -5299,7 +5413,7 @@ shadow_enabled = true
 metadata/only = "day"
 
 [node name="Env" type="WorldEnvironment" parent="." unique_id=582786109]
-environment = ExtResource("14_ehhhp")
+environment = ExtResource("14_si5eh")
 
 [node name="Static" type="Node3D" parent="." unique_id=388042843]
 
@@ -6038,11 +6152,11 @@ quality = 3
 denoiser_strength = 0.25
 max_texture_size = 4096
 generate_probes_subdiv = 1
+light_data = ExtResource("190_itvds")
 
 [node name="Player" type="Node3D" parent="." unique_id=208886156]
 script = ExtResource("190_er5hu")
-obstacles = [[-14.7, -94.7, 0.55], [-14.7, -87.3, 0.55], [6.7, -94.7, 0.55], [6.7, -87.3, 0.55], [-8.7, 4.7, 0.55], [10.7, -8.7, 0.55], [10.7, 4.7, 0.55], [-18.7, 49.3, 0.55], [-18.7, 72.7, 0.55], [0.7, 49.3, 0.55], [0.7, 72.7, 0.55], [-152.7, 45.3, 0.55], [-152.7, 66.7, 0.55], [-137.3, 45.3, 0.55], [-137.3, 66.7, 0.55], ["rect", -49.75, -86.1, -47.05, -85.62], ["rect", -57.35, -86.1, -54.65, -85.62], ["rect", -64.95, -86.1, -62.25, -85.62], ["rect", -46.02, -86.32000305175781, -35.98, -85.88000152587891], ["rect", 30.070000381469725, -86.33000305175781, 30.47000053405762, -84.72], ["rect", 27.530001373291014, -86.33000305175781, 27.929999618530275, -84.72], ["rect", 35.24999923706055, -86.24999694824218, 36.05, -85.95], ["rect", 30.390000534057616, -86.24999694824218, 30.849999237060548, -85.95], ["rect", 27.150000762939452, -86.24999694824218, 27.610001373291016, -85.95], ["rect", 21.95, -86.24999694824218, 22.750000762939454, -85.95], ["rect", 30.749999237060546, -86.35000305175781, 35.349999237060544, -85.95], ["rect", 22.650000762939452, -86.35000305175781, 27.250000762939454, -85.95], ["rect", 34.820001220703126, -84.10000457763672, 35.740003967285155, -82.69999847412109], ["rect", 34.58000106811524, -84.39999847412109, 35.93000106811523, -82.40000457763672], ["rect", 34.820001220703126, -81.70000305175782, 35.740003967285155, -80.29999694824218], ["rect", 34.58000106811524, -81.99999694824218, 35.93000106811523, -80.00000305175782], ["rect", 34.820001220703126, -79.30000152587891, 35.740003967285155, -77.89999542236328], ["rect", 34.58000106811524, -79.59999542236328, 35.93000106811523, -77.60000152587891], ["rect", 34.820001220703126, -76.9, 35.740003967285155, -75.49999389648437], ["rect", 34.58000106811524, -77.19999389648437, 35.93000106811523, -75.2], ["rect", 34.820001220703126, -74.50000610351563, 35.740003967285155, -73.1], ["rect", 34.58000106811524, -74.8, 35.93000106811523, -72.80000610351563], ["rect", 31.559999084472658, -83.34000244140626, 32.63999786376953, -82.26000366210937], ["rect", 31.559999084472658, -80.53999938964844, 32.63999786376953, -79.46000061035156], ["rect", 31.559999084472658, -77.73999633789063, 32.63999786376953, -76.65999755859374], ["rect", 31.559999084472658, -74.94000091552735, 32.63999786376953, -73.86000213623046], ["rect", 26.06000099182129, -83.34000244140626, 27.139999771118163, -82.26000366210937], ["rect", 26.06000099182129, -80.53999938964844, 27.139999771118163, -79.46000061035156], ["rect", 26.06000099182129, -77.73999633789063, 27.139999771118163, -76.65999755859374], ["rect", 26.45, -84.64999847412109, 27.150000381469727, -84.10000152587891], ["rect", 22.069998931884765, -79.14999847412109, 24.449999618530274, -71.14999694824219], ["rect", -10.05, -86.05, -9.79000015258789, -85.75000305175782], ["rect", -10.05, -80.24999694824218, -9.79000015258789, -79.95], ["rect", -10.150000381469727, -85.85000305175781, -9.849999618530273, -83.64999694824219], ["rect", -10.150000381469727, -82.35000305175781, -9.849999618530273, -80.14999694824219], ["rect", -11.100000190734864, -85.2000015258789, -10.500000190734863, -84.60000152587891], ["rect", -11.100000190734864, -81.39999847412109, -10.500000190734863, -80.7999984741211], ["rect", -16.200000381469728, -85.97999725341796, -11.500000381469727, -85.37999572753907], ["rect", -14.900000190734863, -80.62000427246093, -11.500000381469727, -80.02000274658204], ["rect", -12.900000190734863, -83.5000015258789, -11.500000381469727, -82.4999984741211], ["rect", -14.749999618530273, -83.7500015258789, -13.250000381469727, -82.2499984741211], ["rect", -16.699999618530274, -83.8, -15.099999618530273, -82.2], ["rect", -16.12, -82.14000427246094, -15.279999618530274, -80.10000122070312], ["rect", -17.980001068115236, -85.97999725341796, -16.379999542236327, -83.4999984741211], ["rect", -10.05, -80.05, -9.830000114440917, -79.75000305175782], ["rect", -10.05, -72.24999694824218, -9.830000114440917, -71.95], ["rect", -10.150000381469727, -79.85000305175781, -9.849999618530273, -77.0499984741211], ["rect", -10.150000381469727, -74.9500015258789, -9.849999618530273, -72.14999694824219], ["rect", -11.100000190734864, -79.10000305175781, -10.500000190734863, -78.50000305175782], ["rect", -11.100000190734864, -73.49999694824218, -10.500000190734863, -72.89999694824219], ["rect", -19.650000381469727, -79.92999725341797, -11.750000190734863, -79.32999725341797], ["rect", -17.449999618530274, -72.67000274658203, -11.750000190734863, -72.07000274658203], ["rect", -14.14999942779541, -76.74999694824218, -12.649999809265136, -75.25000305175782], ["rect", -16.750000762939454, -76.74999694824218, -15.250000190734863, -75.25000305175782], ["rect", -19.35000114440918, -76.74999694824218, -17.849999618530273, -75.25000305175782], ["rect", -19.519999618530274, -75.42000305175782, -18.679999237060546, -72.7800015258789], ["rect", -10.35, -72.1, -9.65, -71.4], ["rect", -10.35, -69.6500030517578, -9.65, -68.95000305175782], ["rect", -10.35, -67.04999694824218, -9.65, -66.3499969482422], ["rect", -10.35, -64.6, -9.65, -63.9], ["rect", -11.3, -71.10000305175781, -10.7, -70.50000305175782], ["rect", -11.3, -70.3, -10.7, -69.7], ["rect", -11.6, -71.4000030517578, -10.4, -69.4], ["rect", -11.3, -66.3, -10.7, -65.7], ["rect", -11.3, -65.49999694824218, -10.7, -64.89999694824219], ["rect", -11.6, -66.6, -10.4, -64.5999969482422], ["rect", -31.499999618530275, -71.97999725341796, -11.299999618530274, -71.37999572753907], ["rect", -18.1, -64.62000427246093, -11.299999618530274, -64.02000274658204], ["rect", -31.500001525878908, -64.62000427246093, -21.500000381469725, -64.02000274658204], ["rect", -21.12, -66.13999664306641, -18.279999618530272, -65.29999816894531], ["rect", -33.97999725341797, -71.97999725341796, -31.7799991607666, -65.41999664306641], ["rect", -13.820000267028808, -68.82000122070312, -12.179999732971192, -67.17999877929688], ["rect", -16.699999618530274, -68.8, -15.099999618530273, -67.2], ["rect", -19.64999923706055, -68.54999694824218, -17.949999237060545, -67.44999542236329], ["rect", -22.520000076293947, -68.82000122070312, -20.88000144958496, -67.17999877929688], ["rect", -25.400000381469727, -68.8, -23.800000381469726, -67.2], ["rect", -28.319999313354494, -68.82000122070312, -26.680000686645506, -67.17999877929688], ["rect", -10.08, -63.660001831054686, -9.520000381469726, -63.10000030517578], ["rect", -10.08, -58.89999969482422, -9.520000381469726, -58.339998168945314], ["rect", -10.900000381469727, -62.00000076293945, -10.300000381469726, -61.400000762939456], ["rect", -14.519999618530273, -59.98999893188476, -11.279999618530274, -59.13], ["rect", -14.62, -59.23999893188476, -11.180000190734864, -57.99999893188477], ["rect", -12.670000190734862, -63.020001525878904, -11.53000057220459, -61.88], ["rect", -13.569999809265136, -61.520001525878904, -12.430000190734864, -60.38], ["rect", -10.900000381469727, -62.00000076293945, -10.300000381469726, -61.400000762939456], ["rect", -16.339999313354493, -58.58999740600586, -14.88, -57.99999893188477], ["rect", -17.559998626708985, -58.58999740600586, -16.09999931335449, -57.99999893188477], ["rect", -18.77999984741211, -58.58999740600586, -17.320000534057616, -57.99999893188477], ["rect", -19.999999160766603, -58.58999740600586, -18.53999984741211, -57.99999893188477], ["rect", -21.220000381469728, -58.58999740600586, -19.760001068115233, -57.99999893188477], ["rect", -22.43999969482422, -58.58999740600586, -20.980000381469726, -57.99999893188477], ["rect", -23.659999008178712, -58.58999740600586, -22.199999694824218, -57.99999893188477], ["rect", -24.880000228881837, -58.58999740600586, -23.420000915527343, -57.99999893188477], ["rect", -26.09999954223633, -58.58999740600586, -24.640000228881835, -57.99999893188477], ["rect", -27.31999885559082, -58.58999740600586, -25.859999542236327, -57.99999893188477], ["rect", -28.540000076293946, -58.58999740600586, -27.080000762939452, -57.99999893188477], ["rect", -29.75999938964844, -58.58999740600586, -28.300000076293944, -57.99999893188477], ["rect", -30.97999870300293, -58.58999740600586, -29.519999389648437, -57.99999893188477], ["rect", -32.200001831054685, -58.58999740600586, -30.74000061035156, -57.99999893188477], ["rect", -33.42000305175781, -58.58999740600586, -31.960001831054687, -57.99999893188477], ["rect", -33.55000030517578, -64.00000106811524, -32.08999908447266, -63.41000259399414], ["rect", -32.329999084472654, -64.00000106811524, -30.869999771118163, -63.41000259399414], ["rect", -31.109999771118165, -64.00000106811524, -29.65000045776367, -63.41000259399414], ["rect", -29.890000457763673, -64.00000106811524, -28.43000114440918, -63.41000259399414], ["rect", -28.669999237060548, -64.00000106811524, -27.209999923706054, -63.41000259399414], ["rect", -27.449999923706056, -64.00000106811524, -25.99000061035156, -63.41000259399414], ["rect", -26.230000610351563, -64.00000106811524, -24.77000129699707, -63.41000259399414], ["rect", -25.00999938964844, -64.00000106811524, -23.550000076293944, -63.41000259399414], ["rect", -23.790000076293946, -64.00000106811524, -22.330000762939452, -63.41000259399414], ["rect", -22.570000762939454, -64.00000106811524, -21.11000144958496, -63.41000259399414], ["rect", -21.34999954223633, -64.00000106811524, -19.890000228881835, -63.41000259399414], ["rect", -20.130000228881837, -64.00000106811524, -18.670000915527343, -63.41000259399414], ["rect", -18.910000915527345, -64.00000106811524, -17.45000160217285, -63.41000259399414], ["rect", -17.68999969482422, -64.00000106811524, -16.230000381469726, -63.41000259399414], ["rect", -16.470000381469728, -64.00000106811524, -15.010000114440919, -63.41000259399414], ["rect", -15.250000114440917, -64.00000106811524, -13.78999984741211, -63.41000259399414], ["rect", -14.029999847412109, -64.00000106811524, -12.569999580383302, -63.41000259399414], ["rect", -12.810000534057616, -64.00000106811524, -11.35000026702881, -63.41000259399414], ["rect", -33.999997253417966, -62.30000030517578, -33.40999877929688, -58.400000457763674], ["rect", -17.320000762939454, -61.169999237060544, -16.080000762939452, -59.830000762939456], ["rect", -18.339999313354493, -61.169999237060544, -17.09999931335449, -59.830000762939456], ["rect", -19.359999771118165, -61.169999237060544, -18.119999771118163, -59.830000762939456], ["rect", -20.380000228881837, -61.169999237060544, -19.140000228881835, -59.830000762939456], ["rect", -21.399998779296876, -61.169999237060544, -20.159998779296874, -59.830000762939456], ["rect", -22.419999237060548, -61.169999237060544, -21.179999237060546, -59.830000762939456], ["rect", -25.12, -61.169999237060544, -23.88, -59.830000762939456], ["rect", -26.140000457763673, -61.169999237060544, -24.90000045776367, -59.830000762939456], ["rect", -27.160000915527345, -61.169999237060544, -25.920000915527343, -59.830000762939456], ["rect", -28.179999465942384, -61.169999237060544, -26.939999465942382, -59.830000762939456], ["rect", -29.199999923706056, -61.169999237060544, -27.959999923706054, -59.830000762939456], ["rect", -30.220000381469728, -61.169999237060544, -28.980000381469726, -59.830000762939456], ["rect", -10.649999809265136, -58.10000152587891, -9.650000381469727, -57.099999237060544], ["rect", -10.500000190734863, -53.49999923706055, -9.739999580383301, -51.8], ["rect", -11.349999809265137, -53.10000076293945, -10.150000190734863, -52.00000152587891], ["rect", -12.799999618530274, -55.300001525878905, -11.799999809265136, -54.1], ["rect", -11.250000381469727, -54.24999847412109, -10.249999618530273, -53.25000152587891], ["rect", -11.65, -57.35000076293945, -10.749999618530273, -56.35], ["rect", -14.62, -53.669999237060544, -11.779999618530274, -51.99999893188477], ["rect", -32.56000244140625, -58.00000106811523, -11.579999809265138, -57.310000305175784], ["rect", -33.020001525878904, -52.689999694824216, -14.480000381469727, -51.99999893188477], ["rect", -33.999997253417966, -55.30999862670898, -33.310000305175784, -52.63], ["rect", -15.750000381469727, -55.60000076293945, -14.85, -54.39999923706055], ["rect", -22.559998626708985, -55.55999862670898, -16.72000015258789, -54.44000137329102], ["rect", -23.949999237060545, -55.65, -22.85, -54.35], ["rect", -30.359999771118165, -55.55999862670898, -24.519999389648437, -54.44000137329102], ["rect", -31.85000076293945, -55.60000076293945, -30.950000381469728, -54.39999923706055], ["rect", -10.35, -52.1, -9.65, -51.300001525878905], ["rect", -10.35, -46.39999923706055, -9.65, -45.60000076293945], ["rect", -10.35, -40.699998474121095, -9.65, -39.9], ["rect", -35.50000152587891, -51.980001068115236, -11.299999618530274, -51.37999954223633], ["rect", -18.699998474121095, -40.62000045776367, -11.299999618530274, -40.019998931884764], ["rect", -35.50000152587891, -40.62000045776367, -22.10000076293945, -40.019998931884764], ["rect", -21.720000381469728, -42.139996643066404, -18.88, -41.299998168945315], ["rect", -37.97999725341797, -51.980001068115236, -35.77999725341797, -44.9], ["rect", -13.820000267028808, -48.91999969482422, -12.179999732971192, -47.27999725341797], ["rect", -16.699999618530274, -48.89999847412109, -15.099999618530273, -47.2999984741211], ["rect", -19.64999923706055, -48.64999923706055, -17.949999237060545, -47.54999771118164], ["rect", -22.520000076293947, -48.91999969482422, -20.88000144958496, -47.27999725341797], ["rect", -25.400000381469727, -48.89999847412109, -23.800000381469726, -47.2999984741211], ["rect", -28.319999313354494, -48.91999969482422, -26.680000686645506, -47.27999725341797], ["rect", -31.219998931884767, -48.91999969482422, -29.58000030517578, -47.27999725341797], ["rect", -34.099999237060544, -48.89999847412109, -32.49999923706055, -47.2999984741211], ["rect", -13.8, -44.7000015258789, -12.2, -43.10000152587891], ["rect", -16.749999618530275, -44.45000228881836, -15.049999618530274, -43.35000076293945], ["rect", -19.61999855041504, -44.72000274658203, -17.979999923706053, -43.08000030517578], ["rect", -22.500000762939454, -44.7000015258789, -20.900000762939452, -43.10000152587891], ["rect", -25.41999969482422, -44.72000274658203, -23.780001068115233, -43.08000030517578], ["rect", -28.319999313354494, -44.72000274658203, -26.680000686645506, -43.08000030517578], ["rect", -31.199999618530274, -44.7000015258789, -29.599999618530273, -43.10000152587891], ["rect", -34.14999923706055, -44.45000228881836, -32.449999237060545, -43.35000076293945], ["rect", 1.8000000238418579, -48.05, 2.149999904632568, -45.900000762939456], ["rect", 3.88, -47.21999847412109, 5.520000095367432, -46.42999923706055], ["rect", 4.2500001907348635, -47.93000106811523, 5.649999904632568, -47.47999877929688], ["rect", 6.349999618530274, -45.5699966430664, 7.05, -44.869998168945315], ["rect", 7.95, -45.5699966430664, 8.650000381469727, -44.869998168945315], ["rect", 9.54999942779541, -45.5699966430664, 10.249999809265137, -44.869998168945315], ["rect", 5.95, -44.66999893188476, 10.949999618530274, -44.06999893188477], ["rect", 12.550000381469726, -47.93000106811523, 15.249999809265137, -47.22999877929688], ["rect", -10.850000190734864, -39.50000076293945, -10.250000190734863, -38.900000762939456], ["rect", -10.850000190734864, -38.3, -10.250000190734863, -37.7], ["rect", -11.1, -40.00000152587891, -9.799999618530274, -36.699999237060545], ["rect", -10.850000190734864, -32.8, -10.250000190734863, -32.2], ["rect", -10.850000190734864, -31.599999237060548, -10.250000190734863, -30.999999237060546], ["rect", -11.1, -33.300000762939455, -9.799999618530274, -30.000000381469725], ["rect", -31.499999618530275, -30.61999855041504, -11.299999618530274, -30.019998931884764], ["rect", -18.1, -39.980001068115236, -11.299999618530274, -39.37999954223633], ["rect", -31.500001525878908, -39.980001068115236, -21.500000381469725, -39.37999954223633], ["rect", -21.12, -38.700001831054685, -18.279999618530272, -37.860003356933596], ["rect", -33.97999725341797, -39.980001068115236, -31.7799991607666, -33.9], ["rect", -13.820000267028808, -37.41999969482422, -12.179999732971192, -35.77999725341797], ["rect", -16.699999618530274, -37.39999847412109, -15.099999618530273, -35.7999984741211], ["rect", -19.64999923706055, -37.14999923706055, -17.949999237060545, -36.04999771118164], ["rect", -22.520000076293947, -37.41999969482422, -20.88000144958496, -35.77999725341797], ["rect", -25.400000381469727, -37.39999847412109, -23.800000381469726, -35.7999984741211], ["rect", -28.319999313354494, -37.41999969482422, -26.680000686645506, -35.77999725341797], ["rect", -13.8, -34.2000015258789, -12.2, -32.60000152587891], ["rect", -16.749999618530275, -33.95000228881836, -15.049999618530274, -32.85000076293945], ["rect", -19.61999855041504, -34.22000274658203, -17.979999923706053, -32.58000030517578], ["rect", -22.500000762939454, -34.2000015258789, -20.900000762939452, -32.60000152587891], ["rect", -25.41999969482422, -34.22000274658203, -23.780001068115233, -32.58000030517578], ["rect", -28.319999313354494, -34.22000274658203, -26.680000686645506, -32.58000030517578], ["rect", -10.05, -14.350000190734864, -9.750000190734863, -13.95], ["rect", -10.05, -22.05, -9.750000190734863, -21.650000762939452], ["rect", 1.95, -10.449999618530274, 2.4500000953674315, -9.95], ["rect", 3.2799996185302733, -17.999999160766603, 11.519999618530273, -17.209999923706054], ["rect", 11.209999923706055, -16.720000381469728, 12.000000114440917, -10.88], ["rect", 4.88, -13.12, 7.520000095367432, -12.329999809265138], ["rect", 4.88, -14.270000572204589, 7.520000095367432, -13.480000381469727], ["rect", -10.249999618530273, -13.85, -9.799999618530274, -6.9], ["rect", -10.720000381469726, 21.429999237060546, -9.730000381469727, 22.12], ["rect", -10.720000381469726, -5.12, -9.730000381469727, -4.279999618530273], ["rect", -11.1, -5.219999885559082, -9.9, -4.299999618530274], ["rect", -24.1, -5.219999885559082, -14.500000381469727, -4.299999618530274], ["rect", -24.200000381469728, -13.980000114440918, -23.799999618530272, -4.780000114440918], ["rect", -19.35, 5.949999237060547, -18.65, 6.6499992370605465], ["rect", -28.85, 5.949999237060547, -28.15, 6.6499992370605465], ["rect", -37.85, 5.949999237060547, -37.15, 6.6499992370605465], ["rect", -19.35, 10.350000762939453, -18.65, 11.050000762939453], ["rect", -28.85, 10.350000762939453, -28.15, 11.050000762939453], ["rect", -37.85, 10.350000762939453, -37.15, 11.050000762939453], ["rect", -11.440000343322755, -8.8, -10.04000015258789, -7.0499999046325685], ["rect", -11.440000343322755, -10.55, -10.04000015258789, -8.800000381469726], ["rect", -11.440000343322755, -12.3, -10.04000015258789, -10.550000381469726], ["rect", -16.160000228881835, -6.419999980926514, -15.239999389648437, -5.019999599456787], ["rect", -16.699999618530274, -6.419999885559082, -14.7, -5.069999885559082], ["rect", -18.25999870300293, -6.419999980926514, -17.339999771118165, -5.019999599456787], ["rect", -18.8, -6.419999885559082, -16.799998474121093, -5.069999885559082], ["rect", -20.359999084472655, -6.419999980926514, -19.440000152587892, -5.019999599456787], ["rect", -20.900000381469727, -6.419999885559082, -18.89999885559082, -5.069999885559082], ["rect", -14.924999618530274, -9.424999618530274, -13.874999618530273, -8.374999618530273], ["rect", -18.125000381469725, -9.424999618530274, -17.075000381469728, -8.374999618530273], ["rect", -22.890000381469726, -13.920000114440917, -13.560000381469727, -11.46], ["rect", -18.599998, -11.95, -17.8, -11.15], ["rect", -13.77272, -11.972385, -12.972719, -11.172385], ["rect", -13.326894, -12.061066, -12.526894, -11.2610655], ["rect", -12.906935, -12.235018, -12.106935, -11.435019], ["rect", -12.528981, -12.487558, -11.728981, -11.687558], ["rect", -12.207559, -12.808981, -11.407558, -12.008982], ["rect", -11.955018, -13.186934, -11.155018, -12.386934], ["rect", -11.781065, -13.606894, -10.981066, -12.806893], ["rect", -11.692385, -14.05272, -10.8923855, -13.25272], ["rect", -22.57000114440918, -11.349999923706054, -22.129999618530274, -10.910000305175782], ["rect", -21.95000030517578, -11.349999923706054, -21.509998779296875, -10.910000305175782], ["rect", -21.330001373291015, -11.349999923706054, -20.88999984741211, -10.910000305175782], ["rect", -20.710000534057617, -11.349999923706054, -20.26999900817871, -10.910000305175782], ["rect", -20.08999969482422, -11.349999923706054, -19.649998168945313, -10.910000305175782], ["rect", -19.470000762939453, -11.349999923706054, -19.029999237060547, -10.910000305175782], ["rect", -18.850001831054687, -11.349999923706054, -18.41000030517578, -10.910000305175782], ["rect", -18.23000099182129, -11.349999923706054, -17.789999465942383, -10.910000305175782], ["rect", -17.61000015258789, -11.349999923706054, -17.169998626708985, -10.910000305175782], ["rect", -16.990001220703125, -11.349999923706054, -16.54999969482422, -10.910000305175782], ["rect", -16.370000381469726, -11.349999923706054, -15.929999809265137, -10.910000305175782], ["rect", -15.750000495910644, -11.349999923706054, -15.310000877380372, -10.910000305175782], ["rect", -15.129999656677246, -11.349999923706054, -14.690000038146973, -10.910000305175782], ["rect", -14.509999771118164, -11.349999923706054, -14.070000152587891, -10.910000305175782], ["rect", -12.879444618225097, -11.515844841003418, -12.439444999694825, -11.075845222473145], ["rect", -11.875456352233886, -12.155456085205078, -11.435456733703614, -11.715456466674805], ["rect", -11.235845108032226, -13.159444351196289, -10.795845489501954, -12.719444732666016], ["rect", -12.940000648498534, 21.31000030517578, -11.480000381469727, 22.000001068115235], ["rect", -14.159999961853027, 21.31000030517578, -12.69999969482422, 22.000001068115235], ["rect", -15.380000228881835, 21.31000030517578, -13.919999961853028, 22.000001068115235], ["rect", -16.59999954223633, 21.31000030517578, -15.140000228881837, 22.000001068115235], ["rect", -17.81999885559082, 21.31000030517578, -16.359999542236327, 22.000001068115235], ["rect", -19.040000076293946, 21.31000030517578, -17.580000762939452, 22.000001068115235], ["rect", -20.25999938964844, 21.31000030517578, -18.800000076293944, 22.000001068115235], ["rect", -21.47999870300293, 21.31000030517578, -20.019999389648437, 22.000001068115235], ["rect", -22.699999923706056, 21.31000030517578, -21.24000061035156, 22.000001068115235], ["rect", -23.919999237060548, 21.31000030517578, -22.459999923706054, 22.000001068115235], ["rect", -25.13999855041504, 21.31000030517578, -23.679999237060546, 22.000001068115235], ["rect", -26.359999771118165, 21.31000030517578, -24.90000045776367, 22.000001068115235], ["rect", -27.579999084472657, 21.31000030517578, -26.119999771118163, 22.000001068115235], ["rect", -28.79999839782715, 21.31000030517578, -27.339999084472655, 22.000001068115235], ["rect", -30.019999618530274, 21.31000030517578, -28.56000030517578, 22.000001068115235], ["rect", -31.239998931884767, 21.31000030517578, -29.779999618530272, 22.000001068115235], ["rect", -32.46000015258789, 21.31000030517578, -31.000000839233397, 22.000001068115235], ["rect", -33.68000137329101, 21.31000030517578, -32.22000015258789, 22.000001068115235], ["rect", -34.89999877929687, 21.31000030517578, -33.43999755859375, 22.000001068115235], ["rect", -36.12, 21.31000030517578, -34.65999877929688, 22.000001068115235], ["rect", -37.34000122070312, 21.31000030517578, -35.88, 22.000001068115235], ["rect", -38.56000244140625, 21.31000030517578, -37.10000122070313, 22.000001068115235], ["rect", -39.78000366210937, 21.31000030517578, -38.32000244140625, 22.000001068115235], ["rect", -41.00000106811523, 21.31000030517578, -39.53999984741211, 22.000001068115235], ["rect", -42.21999847412109, 21.31000030517578, -40.75999725341797, 22.000001068115235], ["rect", -43.439999694824216, 21.31000030517578, -41.979998474121096, 22.000001068115235], ["rect", -44.66000091552734, 21.31000030517578, -43.19999969482422, 22.000001068115235], ["rect", -46.00000106811523, 18.869999771118163, -45.310000305175784, 20.329999084472657], ["rect", -46.00000106811523, 17.650002365112304, -45.310000305175784, 19.110001678466798], ["rect", -46.00000106811523, 16.43000114440918, -45.310000305175784, 17.890000457763673], ["rect", -46.00000106811523, 15.209998970031739, -45.310000305175784, 16.669999237060548], ["rect", -46.00000106811523, 13.989999656677247, -45.310000305175784, 15.449999923706054], ["rect", -46.00000106811523, 12.770000343322755, -45.310000305175784, 14.230000610351562], ["rect", -46.00000106811523, 11.54999912261963, -45.310000305175784, 13.009999389648437], ["rect", -46.00000106811523, 4.22999942779541, -45.310000305175784, 5.689999694824219], ["rect", -46.00000106811523, 3.010000352859497, -45.310000305175784, 4.470000381469727], ["rect", -46.00000106811523, 1.789999132156372, -45.310000305175784, 3.2499991607666017], ["rect", -46.00000106811523, 0.5699998188018799, -45.310000305175784, 2.0299998474121095], ["rect", -46.00000106811523, -0.6500004482269287, -45.310000305175784, 0.8099995803833008], ["rect", -46.00000106811523, -1.869999761581421, -45.310000305175784, -0.4099997329711914], ["rect", -46.00000106811523, -3.0900000286102296, -45.310000305175784, -1.63], ["rect", -46.00000106811523, -4.310000534057617, -45.310000305175784, -2.8500002670288085], ["rect", -46.00000106811523, -5.5299998474121095, -45.310000305175784, -4.069999580383301], ["rect", -46.00000106811523, -6.750000114440918, -45.310000305175784, -5.289999847412109], ["rect", -46.00000106811523, -7.970000381469727, -45.310000305175784, -6.510000114440918], ["rect", -46.00000106811523, -9.189999694824218, -45.310000305175784, -7.729999904632568], ["rect", -46.00000106811523, -10.409999961853027, -45.310000305175784, -8.94999969482422], ["rect", -46.00000106811523, -11.630000228881835, -45.310000305175784, -10.169999961853028], ["rect", -46.00000106811523, -12.850000495910644, -45.310000305175784, -11.390000228881837], ["rect", -45.55000030517578, -14.000000114440917, -44.08999908447266, -13.310000305175782], ["rect", -44.329999084472654, -14.000000114440917, -42.869997863769534, -13.310000305175782], ["rect", -43.110001678466794, -14.000000114440917, -41.650000457763674, -13.310000305175782], ["rect", -41.89000045776367, -14.000000114440917, -40.42999923706055, -13.310000305175782], ["rect", -40.669999237060544, -14.000000114440917, -39.209998016357424, -13.310000305175782], ["rect", -39.450001831054685, -14.000000114440917, -37.990000610351565, -13.310000305175782], ["rect", -38.23000061035156, -14.000000114440917, -36.76999938964844, -13.310000305175782], ["rect", -37.009999389648435, -14.000000114440917, -35.549998168945315, -13.310000305175782], ["rect", -35.78999816894531, -14.000000114440917, -34.32999694824219, -13.310000305175782], ["rect", -34.57000076293945, -14.000000114440917, -33.10999954223633, -13.310000305175782], ["rect", -33.349999542236326, -14.000000114440917, -31.889998321533202, -13.310000305175782], ["rect", -32.130002136230466, -14.000000114440917, -30.670002822875976, -13.310000305175782], ["rect", -30.910000915527345, -14.000000114440917, -29.45000160217285, -13.310000305175782], ["rect", -29.68999969482422, -14.000000114440917, -28.230000381469726, -13.310000305175782], ["rect", -28.470000381469728, -14.000000114440917, -27.010001068115233, -13.310000305175782], ["rect", -27.249999160766603, -14.000000114440917, -25.78999984741211, -13.310000305175782], ["rect", -26.02999984741211, -14.000000114440917, -24.570000534057616, -13.310000305175782], ["rect", -16.470000381469728, -2.979999656677246, -15.529999618530274, 5.840000743865967], ["rect", -19.769999618530274, -2.979999656677246, -18.82999885559082, 5.840000743865967], ["rect", -23.070000762939454, -2.979999656677246, -22.13, 5.840000743865967], ["rect", -33.069996948242185, -2.979999656677246, -32.13, 5.840000743865967], ["rect", -36.37, -2.979999656677246, -35.430003051757815, 5.840000743865967], ["rect", -39.669999237060544, -2.979999656677246, -38.73000228881836, 5.840000743865967], ["rect", -42.76999771118164, -2.979999656677246, -41.830000762939456, 5.840000743865967], ["rect", -28.269999618530274, -10.720000381469726, -27.32999885559082, -5.559999828338623], ["rect", -31.87, -10.720000381469726, -30.929999237060546, -5.559999828338623], ["rect", -35.46999847412109, -10.720000381469726, -34.53000152587891, -5.559999828338623], ["rect", -39.069996948242185, -10.720000381469726, -38.13, -5.559999828338623], ["rect", -33.069996948242185, 11.520000343322755, -32.13, 20.340001220703126], ["rect", -36.37, 11.520000343322755, -35.430003051757815, 20.340001220703126], ["rect", -39.669999237060544, 11.520000343322755, -38.73000228881836, 20.340001220703126], ["rect", -42.76999771118164, 11.520000343322755, -41.830000762939456, 20.340001220703126], ["rect", -17.14999923706055, 12.349999809265137, -15.849999809265137, 13.650000190734863], ["rect", -17.14999923706055, 15.55000057220459, -15.849999809265137, 16.85], ["rect", -17.85, 18.550001525878905, -16.550001525878905, 19.85], ["rect", -20.64999923706055, 12.349999809265137, -19.35000076293945, 13.650000190734863], ["rect", -20.64999923706055, 15.55000057220459, -19.35000076293945, 16.85], ["rect", -21.449998474121095, 18.550001525878905, -20.15, 19.85], ["rect", -24.14999923706055, 12.349999809265137, -22.85000076293945, 13.650000190734863], ["rect", -24.14999923706055, 15.55000057220459, -22.85000076293945, 16.85], ["rect", -14.720000381469726, -2.9200001907348634, -11.480000381469727, -1.9300001907348632], ["rect", -14.720000381469726, -0.5199996185302734, -11.480000381469727, 0.47000038146972656], ["rect", -14.720000381469726, 1.88, -11.480000381469727, 2.87], ["rect", -14.720000381469726, 4.279999618530273, -11.480000381469727, 5.2699996185302735], ["rect", -13.1, 5.699999237060547, -10.9, 6.700000381469726], ["rect", -14.499999618530273, 16.299999618530272, -10.700000190734864, 21.980001068115236], ["rect", 11.79000015258789, -6.55, 12.55, -5.790000152587891], ["rect", 19.45, -6.05, 20.05, -5.790000152587891], ["rect", 11.79000015258789, -10.05, 12.20999984741211, -9.550000381469726], ["rect", 19.38000030517578, -15.449999618530274, 19.930001068115235, -7.149999809265137], ["rect", 16.230000686645507, -15.930000114440919, 19.930001068115235, -15.38000030517578], ["rect", 12.069999885559081, -15.749999809265137, 12.61999969482422, -10.050000381469726], ["rect", 12.69999969482422, -14.220000381469726, 15.939999694824218, -13.360000495910645], ["rect", 14.63000030517578, -9.769999313354493, 15.36999969482422, -9.029999923706054], ["rect", 16.63000030517578, -12.169999885559083, 17.36999969482422, -11.430000495910644], ["rect", 12.95, -6.849999713897705, 13.449999618530274, -6.350000095367432], ["rect", 19.95, -6.05, 20.199999618530274, -5.8100001335144045], ["rect", 23.800000381469726, -6.05, 24.05, -5.8100001335144045], ["rect", 21.249999237060546, -6.149999904632568, 23.900000381469727, -5.850000095367432], ["rect", 22.300000381469726, -6.899999904632568, 22.900000381469727, -6.2999999046325685], ["rect", 23.330001068115234, -13.850000190734864, 23.930001068115235, -7.7500001907348635], ["rect", 20.070000839233398, -11.449999618530274, 20.590000915527344, -8.149999809265136], ["rect", 21.349999618530273, -12.900000381469727, 21.949999618530274, -12.300000381469726], ["rect", 22.050000381469726, -12.900000381469727, 22.650000381469727, -12.300000381469726], ["rect", 21.249999237060546, -13.05, 22.750000762939454, -12.150000762939452], ["rect", 21.080000762939452, -15.019999618530273, 23.720000381469728, -14.159999732971192], ["rect", 20.020000839233397, -17.980001068115236, 23.980001068115236, -15.979999923706055], ["rect", 15.95, 5.7500001907348635, 16.199999618530274, 6.05], ["rect", 21.800000381469726, 5.7500001907348635, 22.05, 6.05], ["rect", 15.979998474121095, 7.63, 22.019999618530274, 8.62], ["rect", 16.12, 8.5, 21.880001, 13.88], ["rect", 21.95, 5.770000171661377, 22.250000762939454, 6.05], ["rect", 29.749999237060546, 5.770000171661377, 30.05, 6.05], ["rect", 22.150000762939452, 5.850000095367432, 25.150000381469727, 6.149999904632568], ["rect", 26.849999618530273, 5.850000095367432, 29.849999237060548, 6.149999904632568], ["rect", 22.070000839233398, 7.149999809265137, 22.590000915527344, 14.449999618530274], ["rect", 29.41000099182129, 7.149999809265137, 29.930001068115235, 14.449999618530274], ["rect", 24.480000381469726, 9.329999809265138, 27.519999618530274, 10.12], ["rect", 23.550000381469726, 11.95, 24.85000114440918, 12.650000381469727], ["rect", 27.14999885559082, 11.95, 28.449999618530274, 12.650000381469727], ["rect", 12.479999427795411, 8.279999618530274, 15.519999618530273, 9.21999942779541], ["rect", 12.12, 7.7, 12.6, 8.4], ["rect", 15.4, 7.7, 15.88, 8.4], ["rect", 12.12, 8.4, 15.88, 15.88], ["rect", 1.2999999046325683, 18.800000381469726, 2.0000000476837156, 19.49999885559082], ["rect", 1.2999999046325683, 22.50000114440918, 2.0000000476837156, 23.199999618530274], ["rect", 1.8000000238418579, 16.249999237060546, 2.149999904632568, 19.449999618530274], ["rect", 1.8000000238418579, 22.550000381469726, 2.149999904632568, 25.750000762939454], ["rect", 2.150000047683716, 16.45, 3.149999904632568, 19.250000762939454], ["rect", 2.150000047683716, 22.749999237060546, 3.149999904632568, 25.55], ["rect", 3.5199999046325683, 16.0400008392334, 23.200000839233397, 16.590000228881834], ["rect", 3.5199999046325683, 25.409999771118166, 23.200000839233397, 25.960001068115233], ["rect", 5.8500002670288085, 18.859999542236327, 6.750000114440918, 20.359999771118165], ["rect", 10.050000076293946, 18.859999542236327, 10.949999923706054, 20.359999771118165], ["rect", 7.949999694824219, 22.459999923706054, 8.849999542236327, 23.96000015258789], ["rect", 12.150000457763673, 22.459999923706054, 13.05000030517578, 23.96000015258789], ["rect", 14.550000076293946, 18.859999542236327, 15.449999923706054, 20.359999771118165], ["rect", 16.550000076293944, 22.459999923706054, 17.449999923706056, 23.96000015258789], ["rect", 19.9, 20.250000381469725, 21.1, 20.950000381469728], ["rect", 21.080000762939452, 17.59999931335449, 23.720000381469728, 18.46000015258789], ["rect", -10.850000190734864, 22.499999237060546, -10.250000190734863, 23.099999237060548], ["rect", -10.850000190734864, 23.7, -10.250000190734863, 24.3], ["rect", -10.850000190734864, 24.900000762939452, -10.250000190734863, 25.500000762939454], ["rect", -11.1, 22.000000381469725, -9.799999618530274, 26.499999618530275], ["rect", -10.850000190734864, 31.999999237060546, -10.250000190734863, 32.599999237060544], ["rect", -10.850000190734864, 33.2, -10.250000190734863, 33.8], ["rect", -10.850000190734864, 34.400000762939456, -10.250000190734863, 35.00000076293945], ["rect", -11.1, 31.500000381469725, -9.799999618530274, 36.00000152587891], ["rect", -35.50000152587891, 35.37999954223633, -11.299999618530274, 35.980001068115236], ["rect", -18.699998474121095, 22.020000839233397, -11.299999618530274, 22.620000457763673], ["rect", -35.50000152587891, 22.020000839233397, -22.10000076293945, 22.620000457763673], ["rect", -21.720000381469728, 23.300000076293944, -18.88, 24.140000457763673], ["rect", -37.97999725341797, 22.020000839233397, -35.77999725341797, 30.1], ["rect", -13.820000267028808, 25.780001068115233, -12.179999732971192, 27.41999969482422], ["rect", -16.699999618530274, 25.800000381469726, -15.099999618530273, 27.400000381469727], ["rect", -19.64999923706055, 26.049999618530272, -17.949999237060545, 27.14999923706055], ["rect", -22.520000076293947, 25.780001068115233, -20.88000144958496, 27.41999969482422], ["rect", -25.400000381469727, 25.800000381469726, -23.800000381469726, 27.400000381469727], ["rect", -28.319999313354494, 25.780001068115233, -26.680000686645506, 27.41999969482422], ["rect", -31.219998931884767, 25.780001068115233, -29.58000030517578, 27.41999969482422], ["rect", -34.099999237060544, 25.800000381469726, -32.49999923706055, 27.400000381469727], ["rect", -13.8, 30.599999618530273, -12.2, 32.2000015258789], ["rect", -16.749999618530275, 30.84999885559082, -15.049999618530274, 31.949998474121095], ["rect", -19.61999855041504, 30.58000030517578, -17.979999923706053, 32.21999893188477], ["rect", -22.500000762939454, 30.599999618530273, -20.900000762939452, 32.2000015258789], ["rect", -25.41999969482422, 30.58000030517578, -23.780001068115233, 32.21999893188477], ["rect", -28.319999313354494, 30.58000030517578, -26.680000686645506, 32.21999893188477], ["rect", -31.199999618530274, 30.599999618530273, -29.599999618530273, 32.2000015258789], ["rect", -34.14999923706055, 30.84999885559082, -32.449999237060545, 31.949998474121095], ["rect", 1.8000000238418579, 27.95, 2.149999904632568, 34.05], ["rect", 2.0499999046325685, 27.95, 2.9500000953674315, 34.05], ["rect", 3.239999952316284, 26.0600008392334, 16.780001220703124, 26.629999694824217], ["rect", 17.370000305175783, 26.0600008392334, 17.940001068115233, 31.06], ["rect", 4.429999713897705, 31.5099991607666, 11.169999237060546, 32.419999237060544], ["rect", 6.829999809265137, 28.199999694824218, 12.05000030517578, 29.300000305175782], ["rect", 3.8000001430511476, 28.89999885559082, 4.8, 29.900000381469727], ["rect", 5.0499999046325685, 26.800000381469726, 5.750000286102295, 27.49999885559082], ["rect", 4.0000001907348635, 30.14999885559082, 4.8, 30.949999618530274], ["rect", 12.2, 28.349999618530273, 13.000000762939454, 29.150000381469727], ["rect", 14.029999618530274, 28.38, 15.96999942779541, 29.12], ["rect", 11.13, 30.030001525878905, 12.720000381469726, 31.67000114440918], ["rect", 1.849999976158142, 34.150000762939456, 2.4500000953674315, 35.14999847412109], ["rect", 1.849999976158142, 36.85000152587891, 2.4500000953674315, 37.849999237060544], ["rect", 2.92, 34.03999893188477, 12.840000228881836, 34.5899983215332], ["rect", 2.92, 37.4100016784668, 12.840000228881836, 37.96000106811523], ["rect", 13.260000114440919, 35.080000762939456, 14.12, 37.520001525878904], ["rect", -10.450000000000001, 35.85, -9.85, 40.35], ["rect", -20.15, 47.550000000000004, -14.85, 48.15], ["rect", -19.62, 36.0, -14.500000000000002, 36.8], ["rect", -20.0, 36.48, -19.2, 40.379999999999995], ["rect", -20.0, 40.38, -19.31, 44.12], ["rect", -20.0, 40.010000000000005, -19.159999999999997, 40.75], ["rect", -20.0, 43.88, -19.36, 47.82], ["rect", -13.12, 43.18, -12.180000000000001, 46.62], ["rect", -14.319999999999999, 36.0, -10.48, 36.88999999999999], ["rect", -10.5, 47.5, -9.9, 48.1], ["rect", -11.720000190734863, 40.98000152587891, -10.880000190734863, 41.8200015258789], ["rect", -15.069999999999999, 46.6, -14.13, 47.3], ["rect", -14.799999618530272, 44.800000762939455, -13.999999618530275, 45.60000076293945], ["rect", -17.049999618530276, 41.28000152587891, -15.749999618530275, 44.3600015258789], ["rect", -14.139999999999999, 40.760000000000005, -13.06, 41.839999999999996], ["rect", 11.9, 5.9, 12.1, 10.1], ["rect", -54.199999237060545, 52.6, -47.39999923706055, 55.4], ["rect", -3.7799999952316283, -82.90999999046326, -2.2200000047683717, -82.09000000953674], ["rect", 26.090000009536745, 2.4200000524520875, 26.909999990463255, 3.980000042915344]]
-walk_rows = PackedStringArray()
+obstacles = [[-14.7, -94.7, 0.55], [-14.7, -87.3, 0.55], [6.7, -94.7, 0.55], [6.7, -87.3, 0.55], [-8.7, 4.7, 0.55], [10.7, -8.7, 0.55], [10.7, 4.7, 0.55], [-18.7, 49.3, 0.55], [-18.7, 72.7, 0.55], [0.7, 49.3, 0.55], [0.7, 72.7, 0.55], [-152.7, 45.3, 0.55], [-152.7, 66.7, 0.55], [-137.3, 45.3, 0.55], [-137.3, 66.7, 0.55], ["rect", -49.75, -86.1, -47.05, -85.62], ["rect", -57.35, -86.1, -54.65, -85.62], ["rect", -64.95, -86.1, -62.25, -85.62], ["rect", -46.02, -86.32000305175781, -35.98, -85.88000152587891], ["rect", 30.070000381469725, -86.33000305175781, 30.47000053405762, -84.72], ["rect", 27.530001373291014, -86.33000305175781, 27.929999618530275, -84.72], ["rect", 35.24999923706055, -86.24999694824218, 36.05, -85.95], ["rect", 30.390000534057616, -86.24999694824218, 30.849999237060548, -85.95], ["rect", 27.150000762939452, -86.24999694824218, 27.610001373291016, -85.95], ["rect", 21.95, -86.24999694824218, 22.750000762939457, -85.95], ["rect", 30.749999237060543, -86.35000305175781, 35.349999237060544, -85.95], ["rect", 22.650000762939452, -86.35000305175781, 27.250000762939457, -85.95], ["rect", 34.820001220703126, -84.10000457763672, 35.740003967285155, -82.69999847412109], ["rect", 34.58000106811524, -84.39999847412109, 35.93000106811523, -82.40000457763672], ["rect", 34.820001220703126, -81.70000305175782, 35.740003967285155, -80.29999694824218], ["rect", 34.58000106811524, -81.99999694824218, 35.93000106811523, -80.00000305175782], ["rect", 34.820001220703126, -79.30000152587891, 35.740003967285155, -77.89999542236328], ["rect", 34.58000106811524, -79.59999542236328, 35.93000106811523, -77.60000152587891], ["rect", 34.820001220703126, -76.9, 35.740003967285155, -75.49999389648437], ["rect", 34.58000106811524, -77.19999389648437, 35.93000106811523, -75.2], ["rect", 34.820001220703126, -74.50000610351563, 35.740003967285155, -73.1], ["rect", 34.58000106811524, -74.8, 35.93000106811523, -72.80000610351563], ["rect", 31.559999084472658, -83.34000244140626, 32.63999786376953, -82.26000366210937], ["rect", 31.559999084472658, -80.53999938964844, 32.63999786376953, -79.46000061035156], ["rect", 31.559999084472658, -77.73999633789063, 32.63999786376953, -76.65999755859374], ["rect", 31.559999084472658, -74.94000091552735, 32.63999786376953, -73.86000213623046], ["rect", 26.06000099182129, -83.34000244140626, 27.139999771118163, -82.26000366210937], ["rect", 26.06000099182129, -80.53999938964844, 27.139999771118163, -79.46000061035156], ["rect", 26.06000099182129, -77.73999633789063, 27.139999771118163, -76.65999755859374], ["rect", 26.45, -84.64999847412109, 27.150000381469727, -84.10000152587891], ["rect", 22.069998931884765, -79.14999847412109, 24.44999961853027, -71.14999694824219], ["rect", -10.05, -86.05, -9.79000015258789, -85.75000305175782], ["rect", -10.05, -80.24999694824218, -9.79000015258789, -79.95], ["rect", -10.150000381469727, -85.85000305175781, -9.849999618530273, -83.64999694824219], ["rect", -10.150000381469727, -82.35000305175781, -9.849999618530273, -80.14999694824219], ["rect", -11.100000190734864, -85.2000015258789, -10.500000190734864, -84.60000152587891], ["rect", -11.100000190734864, -81.39999847412109, -10.500000190734864, -80.7999984741211], ["rect", -16.200000381469728, -85.97999725341796, -11.500000381469729, -85.37999572753907], ["rect", -14.900000190734865, -80.62000427246093, -11.500000381469729, -80.02000274658204], ["rect", -12.900000190734865, -83.5000015258789, -11.500000381469729, -82.4999984741211], ["rect", -14.749999618530271, -83.7500015258789, -13.250000381469729, -82.2499984741211], ["rect", -16.699999618530274, -83.8, -15.099999618530273, -82.2], ["rect", -16.12, -82.14000427246094, -15.279999618530274, -80.10000122070312], ["rect", -17.980001068115236, -85.97999725341796, -16.379999542236327, -83.4999984741211], ["rect", -10.05, -80.05, -9.830000114440915, -79.75000305175782], ["rect", -10.05, -72.24999694824218, -9.830000114440915, -71.95], ["rect", -10.150000381469727, -79.85000305175781, -9.849999618530273, -77.0499984741211], ["rect", -10.150000381469727, -74.9500015258789, -9.849999618530273, -72.14999694824219], ["rect", -11.100000190734864, -79.10000305175781, -10.500000190734864, -78.50000305175782], ["rect", -11.100000190734864, -73.49999694824218, -10.500000190734864, -72.89999694824219], ["rect", -19.650000381469727, -79.92999725341797, -11.750000190734864, -79.32999725341797], ["rect", -17.449999618530274, -72.67000274658203, -11.750000190734864, -72.07000274658203], ["rect", -14.14999942779541, -76.74999694824218, -12.649999809265136, -75.25000305175782], ["rect", -16.750000762939454, -76.74999694824218, -15.250000190734864, -75.25000305175782], ["rect", -19.35000114440918, -76.74999694824218, -17.849999618530273, -75.25000305175782], ["rect", -19.51999961853027, -75.42000305175782, -18.679999237060542, -72.7800015258789], ["rect", -10.35, -72.1, -9.65, -71.4], ["rect", -10.35, -69.6500030517578, -9.65, -68.95000305175782], ["rect", -10.35, -67.04999694824218, -9.65, -66.3499969482422], ["rect", -10.35, -64.6, -9.65, -63.9], ["rect", -11.3, -71.10000305175781, -10.7, -70.50000305175782], ["rect", -11.3, -70.3, -10.7, -69.7], ["rect", -11.6, -71.4000030517578, -10.4, -69.4], ["rect", -11.3, -66.3, -10.7, -65.7], ["rect", -11.3, -65.49999694824218, -10.7, -64.89999694824219], ["rect", -11.6, -66.6, -10.4, -64.5999969482422], ["rect", -31.499999618530275, -71.97999725341796, -11.299999618530274, -71.37999572753907], ["rect", -18.1, -64.62000427246093, -11.299999618530274, -64.02000274658204], ["rect", -31.500001525878908, -64.62000427246093, -21.500000381469725, -64.02000274658204], ["rect", -21.12, -66.13999664306641, -18.279999618530272, -65.29999816894531], ["rect", -33.97999725341797, -71.97999725341796, -31.7799991607666, -65.41999664306641], ["rect", -13.820000267028808, -68.82000122070312, -12.179999732971192, -67.17999877929688], ["rect", -16.699999618530274, -68.8, -15.099999618530273, -67.2], ["rect", -19.64999923706055, -68.54999694824218, -17.949999237060545, -67.44999542236329], ["rect", -22.520000076293947, -68.82000122070312, -20.88000144958496, -67.17999877929688], ["rect", -25.400000381469727, -68.8, -23.80000038146973, -67.2], ["rect", -28.319999313354497, -68.82000122070312, -26.680000686645503, -67.17999877929688], ["rect", -10.08, -63.660001831054686, -9.520000381469726, -63.10000030517578], ["rect", -10.08, -58.89999969482422, -9.520000381469726, -58.339998168945314], ["rect", -10.900000381469727, -62.00000076293945, -10.300000381469726, -61.400000762939456], ["rect", -14.519999618530273, -59.98999893188476, -11.279999618530274, -59.13], ["rect", -14.62, -59.23999893188476, -11.180000190734864, -57.99999893188477], ["rect", -12.670000190734862, -63.020001525878904, -11.53000057220459, -61.88], ["rect", -13.569999809265136, -61.520001525878904, -12.430000190734864, -60.38], ["rect", -10.900000381469727, -62.00000076293945, -10.300000381469726, -61.400000762939456], ["rect", -16.339999313354493, -58.58999740600586, -14.88, -57.99999893188477], ["rect", -17.559998626708985, -58.58999740600586, -16.09999931335449, -57.99999893188477], ["rect", -18.77999984741211, -58.58999740600586, -17.320000534057616, -57.99999893188477], ["rect", -19.999999160766603, -58.58999740600586, -18.53999984741211, -57.99999893188477], ["rect", -21.220000381469728, -58.58999740600586, -19.760001068115233, -57.99999893188477], ["rect", -22.43999969482422, -58.58999740600586, -20.98000038146973, -57.99999893188477], ["rect", -23.659999008178712, -58.58999740600586, -22.199999694824218, -57.99999893188477], ["rect", -24.880000228881837, -58.58999740600586, -23.420000915527343, -57.99999893188477], ["rect", -26.09999954223633, -58.58999740600586, -24.640000228881835, -57.99999893188477], ["rect", -27.31999885559082, -58.58999740600586, -25.859999542236327, -57.99999893188477], ["rect", -28.540000076293943, -58.58999740600586, -27.080000762939452, -57.99999893188477], ["rect", -29.75999938964844, -58.58999740600586, -28.300000076293944, -57.99999893188477], ["rect", -30.97999870300293, -58.58999740600586, -29.519999389648437, -57.99999893188477], ["rect", -32.200001831054685, -58.58999740600586, -30.74000061035156, -57.99999893188477], ["rect", -33.42000305175781, -58.58999740600586, -31.960001831054687, -57.99999893188477], ["rect", -33.55000030517578, -64.00000106811524, -32.08999908447266, -63.41000259399414], ["rect", -32.329999084472654, -64.00000106811524, -30.869999771118163, -63.41000259399414], ["rect", -31.109999771118165, -64.00000106811524, -29.65000045776367, -63.41000259399414], ["rect", -29.890000457763673, -64.00000106811524, -28.43000114440918, -63.41000259399414], ["rect", -28.669999237060548, -64.00000106811524, -27.209999923706057, -63.41000259399414], ["rect", -27.449999923706056, -64.00000106811524, -25.99000061035156, -63.41000259399414], ["rect", -26.230000610351563, -64.00000106811524, -24.77000129699707, -63.41000259399414], ["rect", -25.00999938964844, -64.00000106811524, -23.550000076293944, -63.41000259399414], ["rect", -23.790000076293943, -64.00000106811524, -22.330000762939452, -63.41000259399414], ["rect", -22.570000762939458, -64.00000106811524, -21.11000144958496, -63.41000259399414], ["rect", -21.34999954223633, -64.00000106811524, -19.890000228881835, -63.41000259399414], ["rect", -20.130000228881837, -64.00000106811524, -18.670000915527343, -63.41000259399414], ["rect", -18.910000915527345, -64.00000106811524, -17.45000160217285, -63.41000259399414], ["rect", -17.68999969482422, -64.00000106811524, -16.230000381469726, -63.41000259399414], ["rect", -16.470000381469728, -64.00000106811524, -15.01000011444092, -63.41000259399414], ["rect", -15.250000114440915, -64.00000106811524, -13.78999984741211, -63.41000259399414], ["rect", -14.029999847412109, -64.00000106811524, -12.569999580383302, -63.41000259399414], ["rect", -12.810000534057616, -64.00000106811524, -11.35000026702881, -63.41000259399414], ["rect", -33.999997253417966, -62.30000030517578, -33.40999877929688, -58.400000457763674], ["rect", -17.320000762939454, -61.169999237060544, -16.080000762939452, -59.830000762939456], ["rect", -18.339999313354493, -61.169999237060544, -17.09999931335449, -59.830000762939456], ["rect", -19.359999771118165, -61.169999237060544, -18.119999771118163, -59.830000762939456], ["rect", -20.380000228881837, -61.169999237060544, -19.140000228881835, -59.830000762939456], ["rect", -21.399998779296876, -61.169999237060544, -20.15999877929687, -59.830000762939456], ["rect", -22.419999237060548, -61.169999237060544, -21.179999237060542, -59.830000762939456], ["rect", -25.12, -61.169999237060544, -23.88, -59.830000762939456], ["rect", -26.140000457763673, -61.169999237060544, -24.90000045776367, -59.830000762939456], ["rect", -27.160000915527345, -61.169999237060544, -25.920000915527343, -59.830000762939456], ["rect", -28.179999465942384, -61.169999237060544, -26.939999465942385, -59.830000762939456], ["rect", -29.199999923706056, -61.169999237060544, -27.959999923706057, -59.830000762939456], ["rect", -30.220000381469728, -61.169999237060544, -28.98000038146973, -59.830000762939456], ["rect", -10.649999809265136, -58.10000152587891, -9.650000381469727, -57.099999237060544], ["rect", -10.500000190734864, -53.49999923706055, -9.7399995803833, -51.8], ["rect", -11.349999809265135, -53.10000076293945, -10.150000190734865, -52.00000152587891], ["rect", -12.799999618530274, -55.300001525878905, -11.799999809265136, -54.1], ["rect", -11.250000381469729, -54.24999847412109, -10.249999618530271, -53.25000152587891], ["rect", -11.65, -57.35000076293945, -10.749999618530271, -56.35], ["rect", -14.62, -53.669999237060544, -11.779999618530274, -51.99999893188477], ["rect", -32.56000244140625, -58.00000106811523, -11.579999809265138, -57.310000305175784], ["rect", -33.020001525878904, -52.689999694824216, -14.480000381469727, -51.99999893188477], ["rect", -33.999997253417966, -55.30999862670898, -33.310000305175784, -52.63], ["rect", -15.750000381469729, -55.60000076293945, -14.85, -54.39999923706055], ["rect", -22.559998626708985, -55.55999862670898, -16.72000015258789, -54.44000137329102], ["rect", -23.949999237060545, -55.65, -22.85, -54.35], ["rect", -30.359999771118165, -55.55999862670898, -24.519999389648437, -54.44000137329102], ["rect", -31.85000076293945, -55.60000076293945, -30.950000381469728, -54.39999923706055], ["rect", -10.35, -52.1, -9.65, -51.300001525878905], ["rect", -10.35, -46.39999923706055, -9.65, -45.60000076293945], ["rect", -10.35, -40.699998474121095, -9.65, -39.9], ["rect", -35.50000152587891, -51.98000106811523, -11.299999618530274, -51.37999954223633], ["rect", -18.699998474121095, -40.62000045776367, -11.299999618530274, -40.01999893188477], ["rect", -35.50000152587891, -40.62000045776367, -22.10000076293945, -40.01999893188477], ["rect", -21.720000381469728, -42.1399966430664, -18.88, -41.299998168945315], ["rect", -37.97999725341797, -51.98000106811523, -35.77999725341797, -44.9], ["rect", -13.820000267028808, -48.91999969482422, -12.179999732971192, -47.27999725341797], ["rect", -16.699999618530274, -48.89999847412109, -15.099999618530273, -47.2999984741211], ["rect", -19.64999923706055, -48.64999923706055, -17.949999237060545, -47.54999771118164], ["rect", -22.520000076293947, -48.91999969482422, -20.88000144958496, -47.27999725341797], ["rect", -25.400000381469727, -48.89999847412109, -23.80000038146973, -47.2999984741211], ["rect", -28.319999313354497, -48.91999969482422, -26.680000686645503, -47.27999725341797], ["rect", -31.219998931884767, -48.91999969482422, -29.58000030517578, -47.27999725341797], ["rect", -34.099999237060544, -48.89999847412109, -32.49999923706055, -47.2999984741211], ["rect", -13.8, -44.7000015258789, -12.2, -43.10000152587891], ["rect", -16.749999618530275, -44.45000228881836, -15.049999618530274, -43.35000076293945], ["rect", -19.61999855041504, -44.72000274658203, -17.979999923706053, -43.08000030517578], ["rect", -22.500000762939457, -44.7000015258789, -20.900000762939452, -43.10000152587891], ["rect", -25.41999969482422, -44.72000274658203, -23.780001068115233, -43.08000030517578], ["rect", -28.319999313354497, -44.72000274658203, -26.680000686645503, -43.08000030517578], ["rect", -31.19999961853027, -44.7000015258789, -29.599999618530273, -43.10000152587891], ["rect", -34.14999923706055, -44.45000228881836, -32.449999237060545, -43.35000076293945], ["rect", 1.800000023841858, -48.05, 2.149999904632568, -45.900000762939456], ["rect", 3.88, -47.21999847412109, 5.520000095367432, -46.42999923706055], ["rect", 4.2500001907348635, -47.93000106811523, 5.649999904632568, -47.47999877929688], ["rect", 6.349999618530274, -45.5699966430664, 7.05, -44.869998168945315], ["rect", 7.95, -45.5699966430664, 8.650000381469727, -44.869998168945315], ["rect", 9.54999942779541, -45.5699966430664, 10.249999809265136, -44.869998168945315], ["rect", 5.95, -44.66999893188476, 10.949999618530274, -44.06999893188477], ["rect", 12.550000381469726, -47.93000106811523, 15.249999809265136, -47.22999877929688], ["rect", -10.850000190734864, -39.50000076293945, -10.250000190734864, -38.900000762939456], ["rect", -10.850000190734864, -38.3, -10.250000190734864, -37.7], ["rect", -11.1, -40.00000152587891, -9.799999618530274, -36.699999237060545], ["rect", -10.850000190734864, -32.8, -10.250000190734864, -32.2], ["rect", -10.850000190734864, -31.599999237060548, -10.250000190734864, -30.999999237060543], ["rect", -11.1, -33.300000762939455, -9.799999618530274, -30.000000381469725], ["rect", -31.499999618530275, -30.61999855041504, -11.299999618530274, -30.019998931884764], ["rect", -18.1, -39.98000106811523, -11.299999618530274, -39.37999954223633], ["rect", -31.500001525878908, -39.98000106811523, -21.500000381469725, -39.37999954223633], ["rect", -21.12, -38.700001831054685, -18.279999618530272, -37.8600033569336], ["rect", -33.97999725341797, -39.98000106811523, -31.7799991607666, -33.9], ["rect", -13.820000267028808, -37.41999969482422, -12.179999732971192, -35.77999725341797], ["rect", -16.699999618530274, -37.39999847412109, -15.099999618530273, -35.7999984741211], ["rect", -19.64999923706055, -37.14999923706055, -17.949999237060545, -36.04999771118164], ["rect", -22.520000076293947, -37.41999969482422, -20.88000144958496, -35.77999725341797], ["rect", -25.400000381469727, -37.39999847412109, -23.80000038146973, -35.7999984741211], ["rect", -28.319999313354497, -37.41999969482422, -26.680000686645503, -35.77999725341797], ["rect", -13.8, -34.2000015258789, -12.2, -32.60000152587891], ["rect", -16.749999618530275, -33.95000228881836, -15.049999618530274, -32.85000076293945], ["rect", -19.61999855041504, -34.22000274658203, -17.979999923706053, -32.58000030517578], ["rect", -22.500000762939457, -34.2000015258789, -20.900000762939452, -32.60000152587891], ["rect", -25.41999969482422, -34.22000274658203, -23.780001068115233, -32.58000030517578], ["rect", -28.319999313354497, -34.22000274658203, -26.680000686645503, -32.58000030517578], ["rect", -10.05, -14.350000190734864, -9.750000190734864, -13.95], ["rect", -10.05, -22.05, -9.750000190734864, -21.650000762939452], ["rect", 1.95, -10.449999618530274, 2.4500000953674315, -9.95], ["rect", 3.2799996185302733, -17.999999160766603, 11.519999618530273, -17.209999923706054], ["rect", 11.209999923706055, -16.720000381469728, 12.000000114440915, -10.88], ["rect", 4.88, -13.12, 7.520000095367432, -12.329999809265138], ["rect", 4.88, -14.270000572204587, 7.520000095367432, -13.480000381469727], ["rect", -10.249999618530271, -13.85, -9.799999618530274, -6.9], ["rect", -10.720000381469726, 21.429999237060542, -9.730000381469727, 22.12], ["rect", -10.720000381469726, -5.12, -9.730000381469727, -4.279999618530273], ["rect", -11.1, -5.219999885559082, -9.9, -4.299999618530274], ["rect", -24.1, -5.219999885559082, -14.500000381469729, -4.299999618530274], ["rect", -24.200000381469728, -13.980000114440918, -23.799999618530272, -4.780000114440918], ["rect", -19.35, 5.949999237060547, -18.65, 6.6499992370605465], ["rect", -28.85, 5.949999237060547, -28.15, 6.6499992370605465], ["rect", -37.85, 5.949999237060547, -37.15, 6.6499992370605465], ["rect", -19.35, 10.350000762939452, -18.65, 11.050000762939453], ["rect", -28.85, 10.350000762939452, -28.15, 11.050000762939453], ["rect", -37.85, 10.350000762939452, -37.15, 11.050000762939453], ["rect", -11.440000343322756, -8.8, -10.04000015258789, -7.0499999046325685], ["rect", -11.440000343322756, -10.55, -10.04000015258789, -8.800000381469726], ["rect", -11.440000343322756, -12.3, -10.04000015258789, -10.550000381469726], ["rect", -16.160000228881835, -6.419999980926514, -15.239999389648435, -5.019999599456787], ["rect", -16.699999618530274, -6.419999885559082, -14.7, -5.069999885559082], ["rect", -18.25999870300293, -6.419999980926514, -17.339999771118165, -5.019999599456787], ["rect", -18.8, -6.419999885559082, -16.799998474121093, -5.069999885559082], ["rect", -20.359999084472655, -6.419999980926514, -19.440000152587892, -5.019999599456787], ["rect", -20.900000381469727, -6.419999885559082, -18.89999885559082, -5.069999885559082], ["rect", -14.924999618530274, -9.424999618530274, -13.874999618530271, -8.374999618530273], ["rect", -18.125000381469725, -9.424999618530274, -17.075000381469728, -8.374999618530273], ["rect", -22.89000038146973, -13.920000114440915, -13.560000381469727, -11.46], ["rect", -18.599998, -11.95, -17.8, -11.15], ["rect", -13.77272, -11.972385, -12.972719, -11.172385], ["rect", -13.326894, -12.061066, -12.526894, -11.2610655], ["rect", -12.906935, -12.235018, -12.106935, -11.435019], ["rect", -12.528981, -12.487558, -11.728981, -11.687558], ["rect", -12.207559, -12.808981, -11.407558, -12.008982], ["rect", -11.955018, -13.186934, -11.155018, -12.386934], ["rect", -11.781065, -13.606894, -10.981066, -12.806893], ["rect", -11.692385, -14.05272, -10.8923855, -13.25272], ["rect", -22.57000114440918, -11.349999923706054, -22.12999961853027, -10.910000305175782], ["rect", -21.95000030517578, -11.349999923706054, -21.509998779296875, -10.910000305175782], ["rect", -21.330001373291015, -11.349999923706054, -20.88999984741211, -10.910000305175782], ["rect", -20.710000534057617, -11.349999923706054, -20.26999900817871, -10.910000305175782], ["rect", -20.08999969482422, -11.349999923706054, -19.649998168945313, -10.910000305175782], ["rect", -19.470000762939453, -11.349999923706054, -19.029999237060547, -10.910000305175782], ["rect", -18.850001831054687, -11.349999923706054, -18.41000030517578, -10.910000305175782], ["rect", -18.23000099182129, -11.349999923706054, -17.789999465942383, -10.910000305175782], ["rect", -17.61000015258789, -11.349999923706054, -17.169998626708985, -10.910000305175782], ["rect", -16.990001220703125, -11.349999923706054, -16.54999969482422, -10.910000305175782], ["rect", -16.370000381469726, -11.349999923706054, -15.929999809265135, -10.910000305175782], ["rect", -15.750000495910644, -11.349999923706054, -15.310000877380372, -10.910000305175782], ["rect", -15.129999656677246, -11.349999923706054, -14.690000038146971, -10.910000305175782], ["rect", -14.509999771118164, -11.349999923706054, -14.070000152587893, -10.910000305175782], ["rect", -12.879444618225095, -11.515844841003418, -12.439444999694825, -11.075845222473143], ["rect", -11.875456352233886, -12.155456085205078, -11.435456733703614, -11.715456466674803], ["rect", -11.235845108032226, -13.159444351196289, -10.795845489501954, -12.719444732666016], ["rect", -12.940000648498534, 21.31000030517578, -11.480000381469727, 22.000001068115235], ["rect", -14.159999961853028, 21.31000030517578, -12.69999969482422, 22.000001068115235], ["rect", -15.380000228881835, 21.31000030517578, -13.919999961853028, 22.000001068115235], ["rect", -16.59999954223633, 21.31000030517578, -15.140000228881837, 22.000001068115235], ["rect", -17.81999885559082, 21.31000030517578, -16.359999542236327, 22.000001068115235], ["rect", -19.040000076293943, 21.31000030517578, -17.580000762939452, 22.000001068115235], ["rect", -20.25999938964844, 21.31000030517578, -18.800000076293944, 22.000001068115235], ["rect", -21.47999870300293, 21.31000030517578, -20.019999389648437, 22.000001068115235], ["rect", -22.699999923706056, 21.31000030517578, -21.24000061035156, 22.000001068115235], ["rect", -23.919999237060548, 21.31000030517578, -22.459999923706057, 22.000001068115235], ["rect", -25.13999855041504, 21.31000030517578, -23.679999237060542, 22.000001068115235], ["rect", -26.359999771118165, 21.31000030517578, -24.90000045776367, 22.000001068115235], ["rect", -27.579999084472657, 21.31000030517578, -26.119999771118163, 22.000001068115235], ["rect", -28.79999839782715, 21.31000030517578, -27.339999084472655, 22.000001068115235], ["rect", -30.01999961853027, 21.31000030517578, -28.56000030517578, 22.000001068115235], ["rect", -31.239998931884767, 21.31000030517578, -29.779999618530272, 22.000001068115235], ["rect", -32.46000015258789, 21.31000030517578, -31.000000839233397, 22.000001068115235], ["rect", -33.68000137329101, 21.31000030517578, -32.22000015258789, 22.000001068115235], ["rect", -34.89999877929687, 21.31000030517578, -33.43999755859375, 22.000001068115235], ["rect", -36.12, 21.31000030517578, -34.65999877929688, 22.000001068115235], ["rect", -37.34000122070312, 21.31000030517578, -35.88, 22.000001068115235], ["rect", -38.56000244140625, 21.31000030517578, -37.10000122070313, 22.000001068115235], ["rect", -39.78000366210937, 21.31000030517578, -38.32000244140625, 22.000001068115235], ["rect", -41.00000106811523, 21.31000030517578, -39.53999984741211, 22.000001068115235], ["rect", -42.21999847412109, 21.31000030517578, -40.75999725341797, 22.000001068115235], ["rect", -43.439999694824216, 21.31000030517578, -41.979998474121096, 22.000001068115235], ["rect", -44.66000091552734, 21.31000030517578, -43.19999969482422, 22.000001068115235], ["rect", -46.00000106811523, 18.869999771118163, -45.310000305175784, 20.329999084472657], ["rect", -46.00000106811523, 17.650002365112304, -45.310000305175784, 19.1100016784668], ["rect", -46.00000106811523, 16.43000114440918, -45.310000305175784, 17.890000457763673], ["rect", -46.00000106811523, 15.20999897003174, -45.310000305175784, 16.669999237060548], ["rect", -46.00000106811523, 13.989999656677249, -45.310000305175784, 15.449999923706054], ["rect", -46.00000106811523, 12.770000343322756, -45.310000305175784, 14.230000610351562], ["rect", -46.00000106811523, 11.54999912261963, -45.310000305175784, 13.009999389648437], ["rect", -46.00000106811523, 4.22999942779541, -45.310000305175784, 5.689999694824219], ["rect", -46.00000106811523, 3.010000352859497, -45.310000305175784, 4.470000381469727], ["rect", -46.00000106811523, 1.789999132156372, -45.310000305175784, 3.2499991607666017], ["rect", -46.00000106811523, 0.5699998188018799, -45.310000305175784, 2.0299998474121095], ["rect", -46.00000106811523, -0.6500004482269287, -45.310000305175784, 0.8099995803833008], ["rect", -46.00000106811523, -1.869999761581421, -45.310000305175784, -0.4099997329711914], ["rect", -46.00000106811523, -3.0900000286102296, -45.310000305175784, -1.63], ["rect", -46.00000106811523, -4.310000534057617, -45.310000305175784, -2.8500002670288085], ["rect", -46.00000106811523, -5.5299998474121095, -45.310000305175784, -4.069999580383301], ["rect", -46.00000106811523, -6.750000114440918, -45.310000305175784, -5.289999847412109], ["rect", -46.00000106811523, -7.970000381469727, -45.310000305175784, -6.510000114440918], ["rect", -46.00000106811523, -9.189999694824218, -45.310000305175784, -7.729999904632568], ["rect", -46.00000106811523, -10.409999961853028, -45.310000305175784, -8.94999969482422], ["rect", -46.00000106811523, -11.630000228881835, -45.310000305175784, -10.169999961853028], ["rect", -46.00000106811523, -12.850000495910644, -45.310000305175784, -11.390000228881837], ["rect", -45.55000030517578, -14.000000114440915, -44.08999908447266, -13.310000305175782], ["rect", -44.329999084472654, -14.000000114440915, -42.869997863769534, -13.310000305175782], ["rect", -43.110001678466794, -14.000000114440915, -41.650000457763674, -13.310000305175782], ["rect", -41.89000045776367, -14.000000114440915, -40.42999923706055, -13.310000305175782], ["rect", -40.669999237060544, -14.000000114440915, -39.209998016357424, -13.310000305175782], ["rect", -39.450001831054685, -14.000000114440915, -37.990000610351565, -13.310000305175782], ["rect", -38.23000061035156, -14.000000114440915, -36.76999938964844, -13.310000305175782], ["rect", -37.009999389648435, -14.000000114440915, -35.549998168945315, -13.310000305175782], ["rect", -35.78999816894531, -14.000000114440915, -34.32999694824219, -13.310000305175782], ["rect", -34.57000076293945, -14.000000114440915, -33.10999954223633, -13.310000305175782], ["rect", -33.349999542236326, -14.000000114440915, -31.8899983215332, -13.310000305175782], ["rect", -32.130002136230466, -14.000000114440915, -30.670002822875976, -13.310000305175782], ["rect", -30.910000915527345, -14.000000114440915, -29.45000160217285, -13.310000305175782], ["rect", -29.68999969482422, -14.000000114440915, -28.23000038146973, -13.310000305175782], ["rect", -28.470000381469728, -14.000000114440915, -27.010001068115233, -13.310000305175782], ["rect", -27.249999160766603, -14.000000114440915, -25.78999984741211, -13.310000305175782], ["rect", -26.02999984741211, -14.000000114440915, -24.570000534057616, -13.310000305175782], ["rect", -16.470000381469728, -2.979999656677246, -15.529999618530274, 5.840000743865967], ["rect", -19.76999961853027, -2.979999656677246, -18.82999885559082, 5.840000743865967], ["rect", -23.070000762939458, -2.979999656677246, -22.13, 5.840000743865967], ["rect", -33.069996948242185, -2.979999656677246, -32.13, 5.840000743865967], ["rect", -36.37, -2.979999656677246, -35.430003051757815, 5.840000743865967], ["rect", -39.669999237060544, -2.979999656677246, -38.73000228881836, 5.840000743865967], ["rect", -42.76999771118164, -2.979999656677246, -41.830000762939456, 5.840000743865967], ["rect", -28.26999961853027, -10.720000381469726, -27.32999885559082, -5.559999828338623], ["rect", -31.87, -10.720000381469726, -30.929999237060542, -5.559999828338623], ["rect", -35.46999847412109, -10.720000381469726, -34.53000152587891, -5.559999828338623], ["rect", -39.069996948242185, -10.720000381469726, -38.13, -5.559999828338623], ["rect", -33.069996948242185, 11.520000343322756, -32.13, 20.34000122070313], ["rect", -36.37, 11.520000343322756, -35.430003051757815, 20.34000122070313], ["rect", -39.669999237060544, 11.520000343322756, -38.73000228881836, 20.34000122070313], ["rect", -42.76999771118164, 11.520000343322756, -41.830000762939456, 20.34000122070313], ["rect", -17.14999923706055, 12.349999809265135, -15.849999809265135, 13.650000190734865], ["rect", -17.14999923706055, 15.55000057220459, -15.849999809265135, 16.85], ["rect", -17.85, 18.550001525878905, -16.550001525878905, 19.85], ["rect", -20.64999923706055, 12.349999809265135, -19.35000076293945, 13.650000190734865], ["rect", -20.64999923706055, 15.55000057220459, -19.35000076293945, 16.85], ["rect", -21.449998474121095, 18.550001525878905, -20.15, 19.85], ["rect", -24.14999923706055, 12.349999809265135, -22.85000076293945, 13.650000190734865], ["rect", -24.14999923706055, 15.55000057220459, -22.85000076293945, 16.85], ["rect", -14.720000381469726, -2.9200001907348634, -11.480000381469727, -1.9300001907348632], ["rect", -14.720000381469726, -0.5199996185302734, -11.480000381469727, 0.47000038146972656], ["rect", -14.720000381469726, 1.88, -11.480000381469727, 2.87], ["rect", -14.720000381469726, 4.279999618530273, -11.480000381469727, 5.2699996185302735], ["rect", -13.1, 5.699999237060547, -10.9, 6.700000381469726], ["rect", -14.499999618530271, 16.299999618530272, -10.700000190734864, 21.980001068115236], ["rect", 11.79000015258789, -6.55, 12.55, -5.790000152587891], ["rect", 19.45, -6.05, 20.05, -5.790000152587891], ["rect", 11.79000015258789, -10.05, 12.20999984741211, -9.550000381469726], ["rect", 19.38000030517578, -15.449999618530274, 19.930001068115235, -7.149999809265137], ["rect", 16.230000686645507, -15.93000011444092, 19.930001068115235, -15.38000030517578], ["rect", 12.06999988555908, -15.749999809265136, 12.61999969482422, -10.050000381469726], ["rect", 12.69999969482422, -14.220000381469726, 15.939999694824218, -13.360000495910644], ["rect", 14.63000030517578, -9.769999313354491, 15.36999969482422, -9.029999923706054], ["rect", 16.63000030517578, -12.169999885559085, 17.36999969482422, -11.430000495910644], ["rect", 12.95, -6.849999713897705, 13.449999618530274, -6.350000095367432], ["rect", 19.95, -6.05, 20.19999961853027, -5.8100001335144045], ["rect", 23.80000038146973, -6.05, 24.05, -5.8100001335144045], ["rect", 21.249999237060543, -6.149999904632568, 23.900000381469727, -5.850000095367432], ["rect", 22.30000038146973, -6.899999904632568, 22.900000381469727, -6.2999999046325685], ["rect", 23.330001068115234, -13.850000190734864, 23.930001068115235, -7.750000190734864], ["rect", 20.0700008392334, -11.449999618530274, 20.590000915527344, -8.149999809265136], ["rect", 21.349999618530273, -12.900000381469727, 21.94999961853027, -12.300000381469726], ["rect", 22.05000038146973, -12.900000381469727, 22.650000381469727, -12.300000381469726], ["rect", 21.249999237060543, -13.05, 22.750000762939457, -12.150000762939452], ["rect", 21.080000762939452, -15.019999618530273, 23.720000381469728, -14.159999732971192], ["rect", 20.020000839233397, -17.980001068115236, 23.980001068115236, -15.979999923706057], ["rect", 15.95, 5.7500001907348635, 16.199999618530274, 6.05], ["rect", 21.80000038146973, 5.7500001907348635, 22.05, 6.05], ["rect", 15.979998474121096, 7.63, 22.01999961853027, 8.62], ["rect", 16.12, 8.5, 21.880001, 13.88], ["rect", 21.95, 5.770000171661377, 22.250000762939457, 6.05], ["rect", 29.749999237060543, 5.770000171661377, 30.05, 6.05], ["rect", 22.150000762939452, 5.850000095367432, 25.150000381469727, 6.149999904632568], ["rect", 26.849999618530273, 5.850000095367432, 29.849999237060548, 6.149999904632568], ["rect", 22.0700008392334, 7.149999809265137, 22.590000915527344, 14.449999618530274], ["rect", 29.41000099182129, 7.149999809265137, 29.930001068115235, 14.449999618530274], ["rect", 24.48000038146973, 9.329999809265138, 27.51999961853027, 10.12], ["rect", 23.55000038146973, 11.95, 24.85000114440918, 12.650000381469727], ["rect", 27.14999885559082, 11.95, 28.44999961853027, 12.650000381469727], ["rect", 12.479999427795413, 8.279999618530274, 15.519999618530273, 9.21999942779541], ["rect", 12.12, 7.7, 12.6, 8.4], ["rect", 15.4, 7.7, 15.88, 8.4], ["rect", 12.12, 8.4, 15.88, 15.88], ["rect", 1.2999999046325683, 18.80000038146973, 2.0000000476837156, 19.49999885559082], ["rect", 1.2999999046325683, 22.50000114440918, 2.0000000476837156, 23.19999961853027], ["rect", 1.800000023841858, 16.249999237060546, 2.149999904632568, 19.44999961853027], ["rect", 1.800000023841858, 22.55000038146973, 2.149999904632568, 25.750000762939457], ["rect", 2.150000047683716, 16.45, 3.149999904632568, 19.250000762939457], ["rect", 2.150000047683716, 22.749999237060543, 3.149999904632568, 25.55], ["rect", 3.5199999046325683, 16.0400008392334, 23.200000839233397, 16.590000228881834], ["rect", 3.5199999046325683, 25.40999977111817, 23.200000839233397, 25.960001068115233], ["rect", 5.8500002670288085, 18.859999542236327, 6.750000114440918, 20.359999771118165], ["rect", 10.050000076293946, 18.859999542236327, 10.949999923706054, 20.359999771118165], ["rect", 7.949999694824219, 22.459999923706057, 8.849999542236327, 23.96000015258789], ["rect", 12.150000457763673, 22.459999923706057, 13.05000030517578, 23.96000015258789], ["rect", 14.550000076293946, 18.859999542236327, 15.449999923706054, 20.359999771118165], ["rect", 16.550000076293944, 22.459999923706057, 17.449999923706056, 23.96000015258789], ["rect", 19.9, 20.250000381469725, 21.1, 20.950000381469728], ["rect", 21.080000762939452, 17.59999931335449, 23.720000381469728, 18.46000015258789], ["rect", -10.850000190734864, 22.499999237060543, -10.250000190734864, 23.099999237060548], ["rect", -10.850000190734864, 23.7, -10.250000190734864, 24.3], ["rect", -10.850000190734864, 24.900000762939452, -10.250000190734864, 25.500000762939457], ["rect", -11.1, 22.000000381469725, -9.799999618530274, 26.499999618530275], ["rect", -10.850000190734864, 31.999999237060543, -10.250000190734864, 32.599999237060544], ["rect", -10.850000190734864, 33.2, -10.250000190734864, 33.8], ["rect", -10.850000190734864, 34.400000762939456, -10.250000190734864, 35.00000076293945], ["rect", -11.1, 31.500000381469725, -9.799999618530274, 36.00000152587891], ["rect", -35.50000152587891, 35.37999954223633, -11.299999618530274, 35.980001068115236], ["rect", -18.699998474121095, 22.020000839233397, -11.299999618530274, 22.620000457763673], ["rect", -35.50000152587891, 22.020000839233397, -22.10000076293945, 22.620000457763673], ["rect", -21.720000381469728, 23.300000076293944, -18.88, 24.140000457763673], ["rect", -37.97999725341797, 22.020000839233397, -35.77999725341797, 30.1], ["rect", -13.820000267028808, 25.780001068115233, -12.179999732971192, 27.41999969482422], ["rect", -16.699999618530274, 25.80000038146973, -15.099999618530273, 27.400000381469727], ["rect", -19.64999923706055, 26.049999618530272, -17.949999237060545, 27.14999923706055], ["rect", -22.520000076293947, 25.780001068115233, -20.88000144958496, 27.41999969482422], ["rect", -25.400000381469727, 25.80000038146973, -23.80000038146973, 27.400000381469727], ["rect", -28.319999313354497, 25.780001068115233, -26.680000686645503, 27.41999969482422], ["rect", -31.219998931884767, 25.780001068115233, -29.58000030517578, 27.41999969482422], ["rect", -34.099999237060544, 25.80000038146973, -32.49999923706055, 27.400000381469727], ["rect", -13.8, 30.599999618530273, -12.2, 32.2000015258789], ["rect", -16.749999618530275, 30.84999885559082, -15.049999618530274, 31.949998474121095], ["rect", -19.61999855041504, 30.58000030517578, -17.979999923706053, 32.21999893188477], ["rect", -22.500000762939457, 30.599999618530273, -20.900000762939452, 32.2000015258789], ["rect", -25.41999969482422, 30.58000030517578, -23.780001068115233, 32.21999893188477], ["rect", -28.319999313354497, 30.58000030517578, -26.680000686645503, 32.21999893188477], ["rect", -31.19999961853027, 30.599999618530273, -29.599999618530273, 32.2000015258789], ["rect", -34.14999923706055, 30.84999885559082, -32.449999237060545, 31.949998474121095], ["rect", 1.800000023841858, 27.95, 2.149999904632568, 34.05], ["rect", 2.0499999046325685, 27.95, 2.9500000953674315, 34.05], ["rect", 3.239999952316284, 26.0600008392334, 16.780001220703124, 26.629999694824217], ["rect", 17.370000305175783, 26.0600008392334, 17.940001068115233, 31.06], ["rect", 4.429999713897705, 31.5099991607666, 11.169999237060546, 32.419999237060544], ["rect", 6.829999809265137, 28.199999694824218, 12.05000030517578, 29.300000305175782], ["rect", 3.800000143051147, 28.89999885559082, 4.8, 29.900000381469727], ["rect", 5.0499999046325685, 26.80000038146973, 5.750000286102295, 27.49999885559082], ["rect", 4.0000001907348635, 30.14999885559082, 4.8, 30.94999961853027], ["rect", 12.2, 28.349999618530273, 13.000000762939454, 29.150000381469727], ["rect", 14.029999618530274, 28.38, 15.96999942779541, 29.12], ["rect", 11.13, 30.030001525878905, 12.720000381469726, 31.67000114440918], ["rect", 1.849999976158142, 34.150000762939456, 2.4500000953674315, 35.14999847412109], ["rect", 1.849999976158142, 36.85000152587891, 2.4500000953674315, 37.849999237060544], ["rect", 2.92, 34.03999893188477, 12.840000228881836, 34.5899983215332], ["rect", 2.92, 37.4100016784668, 12.840000228881836, 37.96000106811523], ["rect", 13.26000011444092, 35.080000762939456, 14.12, 37.520001525878904], ["rect", -10.45, 35.85, -9.85, 40.35], ["rect", -20.15, 47.55, -14.85, 48.15], ["rect", -19.62, 36.0, -14.500000000000002, 36.8], ["rect", -20.0, 36.48, -19.2, 40.379999999999995], ["rect", -20.0, 40.38, -19.31, 44.12], ["rect", -20.0, 40.010000000000005, -19.159999999999997, 40.75], ["rect", -20.0, 43.88, -19.36, 47.82], ["rect", -13.12, 43.18, -12.18, 46.62], ["rect", -14.32, 36.0, -10.48, 36.88999999999999], ["rect", -10.5, 47.5, -9.9, 48.1], ["rect", -11.720000190734863, 40.98000152587891, -10.880000190734863, 41.8200015258789], ["rect", -15.07, 46.6, -14.13, 47.3], ["rect", -14.799999618530272, 44.800000762939455, -13.999999618530277, 45.60000076293945], ["rect", -17.049999618530276, 41.28000152587891, -15.749999618530277, 44.3600015258789], ["rect", -14.14, 40.760000000000005, -13.06, 41.84], ["rect", 11.9, 5.9, 12.1, 10.1], ["rect", -54.199999237060545, 52.6, -47.39999923706055, 55.4], ["rect", -3.779999995231628, -82.90999999046326, -2.2200000047683717, -82.09000000953674], ["rect", 26.090000009536745, 2.4200000524520875, 26.909999990463255, 3.980000042915344]]
 
 [node name="Runtime" type="Node" parent="." unique_id=1275912586]
 script = ExtResource("191_u3sme")
