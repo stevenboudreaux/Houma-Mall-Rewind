@@ -1,0 +1,29 @@
+This is the standard FREE version of the Universal Base Characters Kit, which only contains 
+a portion of the models . You can buy the SOURCE version which has all the models with rigged .blends,
+and Unity(URP), Unreal Engine and Godot projects
+with custom shaders already set up.
+
+You can get the other version from the website https://quaternius.com
+
+-------------------------------------------------------
+License:
+CC0 1.0 Universal (CC0 1.0) 
+Public Domain Dedication
+https://creativecommons.org/publicdomain/zero/1.0/
+
+------------------------------------------------------
+Models by @Quaternius
+Consider supporting me on Patreon!
+
+https://www.patreon.com/quaternius
+
+-------------------------------------------------------
+Join the Discord Server:
+https://discord.gg/vJqnRUYRfT
+
+-------------------------------------------------------
+Houma Mall Rewind: the bodies, hairstyles and eyebrows in this folder are derived from
+Quaternius's Universal Base Characters (Standard, free version), CC0 1.0. Credit: Quaternius
+(https://quaternius.com). Changes (tools/blender/ubc/, design/godot-ubc-characters.md): bones renamed
+to Mixamo names, the build toned down, shape keys, region ids, textures neutralised for tinting,
+garments made for the bodies.

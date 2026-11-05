@@ -40,7 +40,10 @@ const SLOTS := [
 	{"slot": "hat", "label": "Hat", "from": ["hat"], "extra": true},
 	{"slot": "glasses", "label": "Glasses", "from": ["glasses"], "extra": true},
 	{"slot": "watch", "label": "Watch", "from": ["watch"], "extra": true},
+	{"slot": "beard", "label": "Beard", "from": ["beard"], "extra": true},     # CHARS-UBC (the kit's beard)
 ]
+## The extras' slots (an outfit's "extras" list).
+const EXTRA_SLOTS := ["hat", "glasses", "watch", "beard"]
 const OUTFIT_KEYS := ["under", "top", "bottom", "full", "outer", "shoes"]
 
 # ------------------------------------------------------------------ the data
@@ -111,6 +114,7 @@ static func normalize(src: Dictionary) -> Dictionary:
 	var h = p.get("hair", {})
 	if not (h is Dictionary): h = {"id": str(h)}
 	var hid := str(h.get("id", ""))
+	hid = str(man().get("aliases", {}).get(hid, hid))     # CHARS-UBC: B1 hair ids -> the closest UBC style
 	if hid != "" and (_entry(sex, hid).is_empty() or not in_pack(_entry(sex, hid))
 			or str(_entry(sex, hid).slot) != "hair"): hid = ""
 	p.hair = {"id": hid, "color": _hex(h.get("color", ""), "#3a2a1e")}
@@ -119,14 +123,16 @@ static func normalize(src: Dictionary) -> Dictionary:
 	var out := {}
 	for k in OUTFIT_KEYS:
 		var v := str(o.get(k, ""))
+		v = str(man().get("aliases", {}).get(v, v))
 		if v != "" and not slot_offers(sex, k, v): v = ""
 		if v != "" and child and not CharBody.child_ok(_entry(sex, v)): v = ""
 		out[k] = v
 	var ex := []
-	for v in o.get("extras", []):
+	for v0 in o.get("extras", []):
+		var v := str(man().get("aliases", {}).get(str(v0), str(v0)))
 		var e := _entry(sex, str(v))
 		if e.is_empty() or not in_pack(e) or ex.has(str(e.base_id)): continue
-		if not (str(e.slot) in ["hat", "glasses", "watch"]): continue
+		if not (str(e.slot) in EXTRA_SLOTS): continue
 		if child and not CharBody.child_ok(e): continue
 		ex.append(str(e.base_id))
 	out.extras = ex

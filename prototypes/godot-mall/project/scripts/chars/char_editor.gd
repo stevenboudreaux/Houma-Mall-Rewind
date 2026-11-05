@@ -842,7 +842,7 @@ func _hsv(g: Callable, s: Callable, dh: float, ds: float, dv: float) -> void:
 
 func _slot_get(slot: String) -> String:
 	if slot == "hair": return str(preset.hair.id)
-	if slot in ["hat", "glasses", "watch"]:
+	if slot in P.EXTRA_SLOTS:
 		for id in preset.outfit.extras:
 			var e := P._entry(str(preset.body), str(id))
 			if not e.is_empty() and str(e.slot) == slot: return str(id)
@@ -852,7 +852,7 @@ func _slot_get(slot: String) -> String:
 func _slot_set(slot: String, id: String) -> void:
 	if slot == "hair":
 		preset.hair.id = id
-	elif slot in ["hat", "glasses", "watch"]:
+	elif slot in P.EXTRA_SLOTS:
 		var ex: Array = []
 		for x in preset.outfit.extras:
 			var e := P._entry(str(preset.body), str(x))

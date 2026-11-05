@@ -30,11 +30,39 @@ var colors := {}          # "skin" / "iris" / "hair" / piece id -> Color
 var sk: Skeleton3D
 var _skins: Array[Skin] = []
 
+## CHARS-UBC (Steven, Nov 4: design/godot-ubc-characters.md): the Quaternius Universal Base Characters
+## bodies are the default; the MakeHuman (B1) bodies stay behind a flag until Steven signs off:
+## ?chars=mh in the address, localStorage "mall-chars-body" = "mh", Engine meta "chars_body" or the
+## native command line's "-- --chars=mh" (tests).
+const MANIFEST_UBC := "res://models/ubc/ubc.json"
+
+static func manifest_path() -> String:
+	var want := ""
+	if Engine.has_meta("chars_body"):
+		want = str(Engine.get_meta("chars_body"))
+	elif OS.get_cmdline_user_args().has("--chars=mh"):      # native tests: -- --chars=mh
+		want = "mh"
+	elif OS.has_feature("web"):
+		var q = JavaScriptBridge.eval("(function(){try{return new URLSearchParams(location.search).get('chars')||localStorage.getItem('mall-chars-body')||''}catch(e){return ''}})()")
+		want = str(q) if q != null else ""
+	# the UBC bodies only when their files are here too (a pack without them keeps the B1 bodies)
+	if want != "mh" and FileAccess.file_exists(MANIFEST_UBC) and ResourceLoader.exists("res://models/ubc/body_female.gltf"):
+		return MANIFEST_UBC
+	return MANIFEST
+
+## True when the UBC bodies are the ones in use.
+static func is_ubc() -> bool:
+	return manifest_path() == MANIFEST_UBC
+
 static func cman() -> Dictionary:
 	if _cm.is_empty():
-		var j = JSON.parse_string(FileAccess.get_file_as_string(MANIFEST))
+		var j = JSON.parse_string(FileAccess.get_file_as_string(manifest_path()))
 		_cm = j if j is Dictionary else {}
 	return _cm
+
+## Tests: forget the loaded manifest (after changing the flag).
+static func reload_manifest() -> void:
+	_cm = {}
 
 ## Load a base body ("female" / "male"); hi = the full-resolution mesh (close-ups, face passes).
 func make(s: String, hi := false) -> void:
@@ -74,6 +102,11 @@ static func shape_weights(vals: Dictionary, s: String) -> Dictionary:
 ## anything a child may not wear.
 func apply(vals: Dictionary) -> void:
 	values = vals.duplicate()
+	# only this manifest's sliders (CHARS-UBC: the UBC bodies have no youth sliders, so no child bodies)
+	var known := {}
+	for sl in cman().sliders: known[str(sl.name)] = true
+	for k in values.keys():
+		if not known.has(str(k)): values.erase(k)
 	if is_child(values):
 		for k in CHILD_ZERO_KEYS: values.erase(k)
 	weights = shape_weights(values, sex)
@@ -378,6 +411,18 @@ func _shade(mi: MeshInstance3D, mask: int) -> void:
 			sm = cur
 		else:
 			var m = mi.mesh.surface_get_material(i)
+			# CHARS-UBC: the kit's hair is alpha cards: drawn alpha-scissored and double-sided (no sorting
+			# problems), tinted by paint() like any BaseMaterial3D
+			if cur is BaseMaterial3D and cur.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR:
+				continue      # already made (and maybe tinted by paint())
+			if m is BaseMaterial3D and m.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and str(mi.get_meta("piece", "")) != "":
+				var hm: BaseMaterial3D = m.duplicate()
+				hm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+				hm.alpha_scissor_threshold = 0.45
+				hm.cull_mode = BaseMaterial3D.CULL_DISABLED
+				hm.albedo_color = hm.albedo_color * NpcBody.tint
+				mi.set_surface_override_material(i, hm)
+				continue
 			if not (m is BaseMaterial3D) or m.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED:
 				continue
 			sm = ShaderMaterial.new()
@@ -400,7 +445,8 @@ func _shade(mi: MeshInstance3D, mask: int) -> void:
 			sm.set_shader_parameter("metallic", m.metallic)
 			sm.set_shader_parameter("use_vertex_color", m.vertex_color_use_as_albedo)
 			if str(m.resource_name).begins_with("skin_"):
-				sm.set_shader_parameter("wrinkle_tex", load("res://models/characters/skin_wrinkle.png"))
+				if bool(cman().get("wrinkle", true)):   # (UBC: the wrinkle map isn't made for its UVs)
+					sm.set_shader_parameter("wrinkle_tex", load("res://models/characters/skin_wrinkle.png"))
 				sm.set_shader_parameter("base_mask", base_mask())
 				sm.set_shader_parameter("base_color", BASE_COLOR)
 			if m.cull_mode == BaseMaterial3D.CULL_DISABLED:
