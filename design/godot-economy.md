@@ -104,7 +104,7 @@ The per-year record `mall-state-<year>` keeps everything else (inventory, hand, 
 | `mall.add_tickets(n, reason, id = "") -> bool` | a payout; with an id it counts once |
 | `mall.spend_tickets(n, reason) -> bool` | the redemption counter uses it |
 | `Inventory.money_text(cents)` | `"$12.34"` |
-| `ItemDB.price(item) -> int` | the item's `"price"` in whole cents (`data/items/*.json`), `-1` when it has none |
+| `ItemDB.price(item) -> int` | the item's `"price"` in whole cents (`data/items/<store>.json`, one schema: `design/godot-items.md`), `-1` when it has none |
 
 Each change emits `mall.changed`. A store would do:
 `var p := ItemDB.price(db.get_item(id)); if p >= 0 and player.mall.spend(p, "Store: " + id): player.mall.add(id); player.mall.save()`.
@@ -151,7 +151,10 @@ change was needed. (If Back should go back to the screen instead, it is one line
 - **Prices:** "do your best with the game's incorporated prices": the 1995 prices above stand.
 
 ## Claw prizes in the bag
-- **The items** (`data/items/claw_prizes.json`): every prize the claw game hands out that isn't tickets, named as the
+- **ws/items (Nov 4 2026; design/godot-items.md):** the claw's items moved into `data/items/pocket_change.json` (same
+  ids, `"prize": "claw"`, each with a category). They arrive through `mall.receive()` now: a plush or the Bayou
+  Bruiser figure goes **into the hand** (what was held into the bag), the POGs and the slammer into the bag.
+- **The items** (were `data/items/claw_prizes.json`): every prize the claw game hands out that isn't tickets, named as the
   claw names it (`play/claw/logic.js` KINDS): Gator, Crawfish, Pelican, Nutria, Rougarou and Captain Comet plush and
   the Bayou Bruiser stretch figure (held in the hand), the three POG capsules (Swamp Skull ×3; Gator Bite +
   Lightning; Eye Spy + 8-Ball) and the Hologram Eye slammer (in the pocket). Ids `pc_claw_<kind>`, 1995, never placed.
@@ -164,7 +167,7 @@ change was needed. (If Back should go back to the screen instead, it is one line
   code fetched from outside is not run here.)
 - **How it arrives** (the same once-only rule as the tickets): when the claw drops a plush or POGs in the chute the
   page leaves it in `localStorage "mall.inbox-<year>"` with a payout id (`mallbank.js give()`). The mall
-  (`inventory.gd collect()`) takes the inbox into the bag when the game's frame closes (`interact.gd` watches it)
+  (`inventory.gd collect()`) takes the inbox in (`mall.receive`: a holdable prize into the hand) when the game's frame closes (`interact.gd` watches it)
   and when a wing loads, each with the "You received" card; the ids it took are saved in the year's record
   (`"got"`, the last 200) before the inbox is emptied, so a stop between the two never doubles a prize.
 - **Export:** wings 1 and 2 (1995) pack `models/pc_claw_*` beside `models/bl_pc_*` (`export_presets.cfg`, four

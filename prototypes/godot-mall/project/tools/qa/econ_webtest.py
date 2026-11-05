@@ -158,10 +158,10 @@ with sync_playwright() as p:
         wait(lambda: f.evaluate("__claw.ST.mode === 'over'"), 200)
         won = f.evaluate("(__claw.ST.won && __claw.ST.won.kind) || ''")
         check(won == "plush" and close_frame(pg, f), "the claw wins a Gator plush; Back closes it")
-        inbag = wait(lambda: any(e.get("id") == "pc_claw_gator" for e in json.loads(pg.evaluate("localStorage.getItem('mall-state-1995')") or "{}").get("inventory", [])), 120)
+        inbag = wait(lambda: (lambda st: st.get("hand") == "pc_claw_gator" or any(e.get("id") == "pc_claw_gator" for e in st.get("inventory", [])))(json.loads(pg.evaluate("localStorage.getItem('mall-state-1995')") or "{}")), 120)   # ws/items: a plush goes into the hand
         time.sleep(15)
         pg.screenshot(path=f"{out}-claw-received.png", timeout=180000)
-        check(inbag and not pg.evaluate("localStorage.getItem('mall.inbox-1995')"), "the mall puts the Gator plush in the bag (mall-state-1995) and empties the inbox; screenshot: the card")
+        check(inbag and not pg.evaluate("localStorage.getItem('mall.inbox-1995')"), "the mall puts the Gator plush in the hand (mall-state-1995; ws/items) and empties the inbox; screenshot: the card")
         pg.keyboard.press("Space"); time.sleep(10)
 
     f = open_game(pg, "pusher.html?pos=1&year=1995&name=COIN%20COMET&test=1", "pusher.html", "PUSHER_PAGE")

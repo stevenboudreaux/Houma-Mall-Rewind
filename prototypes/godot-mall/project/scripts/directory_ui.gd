@@ -18,6 +18,7 @@
 ## jumps, Esc / B backs out; Y (key or a gamepad's Y) or the toggle travels in time; +/- zoom.
 extends CanvasLayer
 
+const Years = preload("res://scripts/years.gd")   # ITEMS: the years as the player reads them
 const LAYER := 25
 const FRAME := Color("#b3babc")      # the kiosk's aluminium (sampled from the footage)
 const FRAME_D := Color("#7d8487")
@@ -252,7 +253,7 @@ func _draw_view() -> void:
 			"year":
 				c.draw_rect(r, Color(0.12, 0.13, 0.15, 0.85))
 				c.draw_rect(r, Color(1, 1, 1, 0.8), false, 1.5)
-				_text_c(c, map_year, r.get_center(), 19, Color.WHITE)
+				_text_c(c, Years.label(map_year), r.get_center(), 19, Color.WHITE)
 			"travel":
 				_draw_toggle(c, r)
 			_:
@@ -278,8 +279,8 @@ func _draw_toggle(c: Control, r: Rect2) -> void:
 	c.draw_rect(Rect2(kr.position + Vector2(kh, 0), kr.size - Vector2(2 * kh, 0)), knob)
 	c.draw_circle(kr.position + Vector2(kh, kh), kh, knob)
 	c.draw_circle(kr.position + Vector2(kr.size.x - kh, kh), kh, knob)
-	_text_c(c, map_year, kr.get_center(), 14, Color.WHITE)
-	var other := "1995" if on_right else "2026"
+	_text_c(c, Years.label(map_year), kr.get_center(), 14, Color.WHITE)
+	var other := Years.label(1995 if on_right else 2026)   # ITEMS: "1990s" / "2026" (design/godot-2026-year.md)
 	var oc := r.position + Vector2(kw * 0.5 if on_right else r.size.x - kw * 0.5, rad)
 	var kind: String = str(player.get("input_kind")) if player else "kb"
 	_text_c(c, other + (" Y" if kind != "touch" else ""), oc, 13, Color(1, 1, 1, 0.75))
@@ -325,7 +326,7 @@ func _draw_confirm(c: Control) -> void:
 	_text_c(c, nm, dlg.position + Vector2(dw * 0.5, 70), 17, HILITE.darkened(0.25))
 	var j: Array = st.jump
 	if player and (int(j[0]) != int(player.get("wing")) or map_year != str(player.get("year"))):
-		_text_c(c, "Loads Wing %d, %s" % [int(j[0]), map_year], dlg.position + Vector2(dw * 0.5, 92), 12, Color("#666666"))
+		_text_c(c, "Loads Wing %d, %s" % [int(j[0]), Years.label(map_year)], dlg.position + Vector2(dw * 0.5, 92), 12, Color("#666666"))
 	r_yes = Rect2(dlg.position.x + 16, dlg.end.y - 58, dw * 0.5 - 24, 44)
 	r_no = Rect2(dlg.position.x + dw * 0.5 + 8, dlg.end.y - 58, dw * 0.5 - 24, 44)
 	for b in [[r_yes, "Yes, go there", confirm_yes], [r_no, "Cancel", not confirm_yes]]:

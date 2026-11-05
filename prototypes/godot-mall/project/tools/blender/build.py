@@ -3,7 +3,7 @@
   assets_src/<asset>.py  defines META (dict) and build() (makes the parts in an empty scene)
   -> clean (weld, triangulate, join) -> budget check -> UV0 + bake -> models/<asset>/<asset>.glb + PNGs
   -> re-import the .glb -> turntable renders + icon -> .scratch/blender/<asset>-sheet.png
-  -> data/items/blender_props.json entry (when META has "item")
+  -> data/items/<store>.json entry (when META has "item"; tools/items/items_io.py, design/godot-items.md)
 
 Flags: --fast (low samples, 512 px sheet tiles: for iterating), --no-sheet.
 """
@@ -248,14 +248,12 @@ def main():
 
 
 def write_item(meta, aid, cls):
-    # META["item_file"]: which data/items/ file holds the entry (workstream T2 writes blender_props_2.json)
-    p = os.path.join(PROJ, "data", "items", meta.get("item_file", "blender_props.json"))
-    data = {"_": "Items modelled in Blender (tools/blender/, design/godot-blender-pipeline.md). Same shape as the "
-                 "Godot-built item list: id, name, class (hand|pocket), scene, icon, year, place (optional). "
-                 "Written by tools/blender/build.py from each asset's META['item'].", "items": []}
-    if os.path.exists(p):
-        with open(p) as f:
-            data = json.load(f)
+    # ws/items (Nov 4 2026; design/godot-items.md): one item schema, one file per store (data/items/<store>.json),
+    # written through tools/items/items_io.py: an existing id is updated where it is (its category kept); a new
+    # one needs META["item"]["category"] and ["subcategory"] and goes to its store's file. (META["item_file"]
+    # named a per-workstream file before; it is ignored now.)
+    sys.path.insert(0, os.path.join(PROJ, "tools", "items"))
+    import items_io
     it = {"id": aid, "name": meta["item"]["name"], "class": cls,
           "scene": "res://models/%s/%s.glb" % (aid, aid), "icon": "res://models/%s/%s_icon.png" % (aid, aid),
           "year": meta["item"].get("year", 1995)}
@@ -264,13 +262,7 @@ def write_item(meta, aid, cls):
             it[k] = v
     # "copies": more pick-ups of the same model, [{"id": ..., "place": {...}}, ...] (e.g. a table of paperbacks)
     new = [it] + [dict(it, **c) for c in meta["item"].get("copies", [])]
-    ids = set(x["id"] for x in new)
-    data["items"] = [x for x in data["items"] if x["id"] not in ids] + new
-    data["items"].sort(key=lambda x: x["id"])
-    os.makedirs(os.path.dirname(p), exist_ok=True)
-    with open(p, "w") as f:
-        json.dump(data, f, indent=1)
-        f.write("\n")
+    items_io.upsert(new)
 
 
 if __name__ == "__main__":

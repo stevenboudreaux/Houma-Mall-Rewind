@@ -52,6 +52,10 @@ same moment.
   centre, if it is big).
 
 ## Contract 2: item files `data/items/*.json`
+**Superseded Nov 4 2026 by `design/godot-items.md` (ws/items):** one schema (adds the required `category` and
+`subcategory`), one file per store, a repeated id is an error (no longer "a later file wins"), and every received
+thing goes through `mall.receive()`: a `"hand"` thing into the hand whatever is held. The text below is the
+original contract.
 A file is `{"_": "comment", "items": [entry, ...]}` (a bare array also works). Every file is read
 at start, sorted by name; a later file wins on a repeated id. Bad entries are skipped with a
 warning (`item_db.gd check()`).

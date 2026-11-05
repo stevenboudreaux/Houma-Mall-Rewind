@@ -202,7 +202,8 @@ func _test_coupon_once() -> void:
 	var r = await _walk(res, m, [1, 0, 2])
 	_check(m.count("cu_coupon") == 1 and _gave(r).is_empty(), "the coupon is given once only (a second Cuco's answer gives nothing): %d" % m.count("cu_coupon"))
 	_check(str(_texts(r)[-1]).begins_with("PLACEHOLDER"), "the second time she says the PLACEHOLDER line: " + str(_texts(r)[-1]))
-	# even after it is used up
+	# even after it is used up (ws/items: a given coupon is in the hand; put it away first)
+	m.put_away()
 	m.remove("cu_coupon")
 	r = await _walk(res, m, [1, 0, 2])
 	_check(m.count("cu_coupon") == 0 and _gave(r).is_empty(), "no new coupon after the first is used up")
@@ -231,7 +232,7 @@ func _test_bartender() -> void:
 	_check(m.count("cu_doubloon") == 1 and _gave(r) == ["cu_topshelf"], "the doubloon is given once only: " + str(_gave(r)))
 	# the coupon in the bag, not the hand: the file says nothing (the shop opens instead)
 	m = _mall()
-	m.add("cu_coupon")
+	m.add("cu_coupon", 1, true)     # ws/items: straight into the bag (a received one goes into the hand)
 	r = await _walk(res, m, [])
 	_check(r.lines.is_empty() and m.count("cu_coupon") == 1, "the coupon in the bag (not held): no coupon lines, nothing taken")
 
@@ -296,7 +297,7 @@ func _test_bartender_choice() -> void:
 	b.display_name = "PLACEHOLDER Cuco's bartender"
 	b.interact(p)
 	_check(st.talks == ["shop://cucos"], "no coupon held: the shop opens (the stub, mall.shop absent): " + str(st.talks))
-	p.mall.add("cu_coupon")
+	p.mall.add("cu_coupon", 1, true)     # ws/items: into the bag, not the hand
 	b.interact(p)
 	_check(st.talks.size() == 2 and st.talks[1] == "shop://cucos", "the coupon in the bag: still the shop")
 	p.mall.hold("cu_coupon")

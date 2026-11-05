@@ -57,8 +57,9 @@ var _whoosh: AudioStreamPlayer
 var _sway_t := 0.0
 
 func _ready() -> void:
-	db = ItemDB.new().load_dir()
+	db = ItemDB.shared()      # ITEMS: the one item list (design/godot-items.md)
 	mall = Inventory.new()
+	mall.db = db
 	mall.year = int(player.year) if player and "year" in player else 1995
 	mall.load_saved()
 	# a saved hand item that isn't an item of this year (data changed) goes back to the inventory
@@ -146,12 +147,11 @@ func _spawn(e: Dictionary, pl: Dictionary, dropped: bool) -> Node3D:
 ## pickup.gd: the player took it.
 func pick_up(n: Node) -> void:
 	var e: Dictionary = n.entry
-	var to_hand: bool = str(e["class"]) == "hand"
-	mall.take(str(e.id), to_hand)
+	mall.take(str(e.id))      # ITEMS: received like anything else (a holdable thing into the hand)
 	mall.save()
 	n.queue_free()
 	target = null
-	_say(("In hand: " if to_hand else "Into the bag: ") + str(e.name))
+	_say(("In hand: " if mall.hand == str(e.id) else "Into the bag: ") + str(e.name))
 
 func drop(id: String) -> void:
 	var e: Dictionary = db.get_item(id)

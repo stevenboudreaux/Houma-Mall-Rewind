@@ -145,9 +145,9 @@ func _test_item_files() -> void:
 			bad.append(id + " icon")
 	_check(bad.is_empty(), "every item's scene and icon exist " + str(bad))
 	_check(db.get_item("folse_stick").get("class") == "hand", "Martin Folse's stick is a hand item")
-	_check(ItemDB.check({"id": "a", "name": "A", "class": "belt", "scene": "", "icon": "", "year": 1995}) != "", "a wrong class is refused")
-	_check(ItemDB.check({"id": "a", "name": "A", "class": "pocket", "scene": "", "icon": "", "year": "both"}) == "", "year \"both\" is fine")
-	_check(ItemDB.check({"id": "a", "name": "A", "class": "pocket", "scene": "", "icon": "", "year": 1995, "place": {"wing": 1}}) != "", "a place without pos is refused")
+	_check(ItemDB.check({"id": "a", "name": "A", "category": "toy", "subcategory": "test", "class": "belt", "scene": "", "icon": "", "year": 1995}) != "", "a wrong class is refused")
+	_check(ItemDB.check({"id": "a", "name": "A", "category": "toy", "subcategory": "test", "class": "pocket", "scene": "", "icon": "", "year": "both"}) == "", "year \"both\" is fine")
+	_check(ItemDB.check({"id": "a", "name": "A", "category": "toy", "subcategory": "test", "class": "pocket", "scene": "", "icon": "", "year": 1995, "place": {"wing": 1}}) != "", "a place without pos is refused")
 	_check(db.ids_for_year(2026).is_empty() or db.ids_for_year(2026).all(func(i): return ItemDB.in_year(db.get_item(i), 2026)), "ids_for_year filters by year")
 
 ## P (COIN COMET): a field another system wrote survives a round trip and a save. ECON (Nov 3): the old

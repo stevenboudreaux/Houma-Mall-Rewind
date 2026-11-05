@@ -162,7 +162,7 @@ func _test_grammar() -> void:
 	r = await _walk(path, [0], func(m): m.add("pogs"))
 	_check(str(r.lines[1][1]).contains("has") and not r.mall.has("pogs") and r.mall.flags.has("placeholder_saw_has"), "grammar: if has pogs, take pogs")
 	# the spring in the hand, the dice in the bag: holding wins; the dice response shows
-	r = await _walk(path, [0], func(m): m.hand = "spring"; m.add("dice"))
+	r = await _walk(path, [0], func(m): m.hand = "spring"; m.add("dice", 1, true))
 	_check(str(r.lines[1][1]).contains("holding") and r.mall.flags.has("placeholder_saw_holding"), "grammar: if holding spring")
 	_check(r.branches == [1], "grammar: dice in the bag is not 'holding dice' (the response stays hidden): " + str(r.branches))
 	r = await _walk(path, [1], func(m): m.hand = "dice")

@@ -1,0 +1,36 @@
+{
+ "_": "Gumballs (1995): the lava lamp on its counter. One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by tools/items/items_io.py (tools/blender/build.py, tools/prizes/make_items.py, tools/shops/make_standins.py). Never change an id.",
+ "items": [
+  {
+   "id": "bl_gb_lavalamp",
+   "name": "Lava lamp",
+   "category": "home",
+   "subcategory": "lamp",
+   "class": "hand",
+   "scene": "res://models/bl_gb_lavalamp/bl_gb_lavalamp.glb",
+   "icon": "res://models/bl_gb_lavalamp/bl_gb_lavalamp_icon.png",
+   "year": 1995,
+   "store": "GUMBALLS",
+   "recolor": {
+    "bl_gb_lavalamp_wax": [
+     "#ff3a20",
+     "#3a8cff",
+     "#4cff5a",
+     "#c04cff",
+     "#ff9a1a",
+     "#ff5ab4"
+    ]
+   },
+   "place": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     -12.65,
+     1.06,
+     45.0
+    ],
+    "yaw": 90
+   }
+  }
+ ]
+}

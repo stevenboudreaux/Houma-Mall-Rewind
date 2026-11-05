@@ -1,0 +1,309 @@
+{
+ "_": "Radio Shack (1995; design/storefronts/radio-shack.md): the standalone items on the counter ('display', built by tools/stores/small/radio_shack.gd) and the labelled STAND-IN items sold at the counter (standin: true; tools/shops/make_standins.py) until real models land. One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by tools/items/items_io.py (tools/blender/build.py, tools/prizes/make_items.py, tools/shops/make_standins.py). Never change an id.",
+ "items": [
+  {
+   "id": "rs_scanner",
+   "name": "Scanner radio",
+   "category": "electronics",
+   "subcategory": "radio",
+   "class": "hand",
+   "scene": "res://models/bl_rs_scanner/bl_rs_scanner.glb",
+   "icon": "res://models/bl_rs_scanner/bl_rs_scanner_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "display": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     6.35,
+     0.982,
+     31.86
+    ],
+    "yaw": 180
+   },
+   "model_from": "workstream T (Blender), merged Nov 1"
+  },
+  {
+   "id": "rs_walkie_talkies",
+   "name": "Walkie-talkie",
+   "category": "electronics",
+   "subcategory": "radio",
+   "class": "hand",
+   "scene": "res://models/bl_rs_walkie/bl_rs_walkie.glb",
+   "icon": "res://models/bl_rs_walkie/bl_rs_walkie_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "display": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     7.15,
+     0.982,
+     31.86
+    ],
+    "yaw": 180
+   },
+   "model_from": "workstream T (Blender), merged Nov 1"
+  },
+  {
+   "id": "rs_rc_car_box",
+   "name": "R/C monster truck (boxed)",
+   "category": "electronics",
+   "subcategory": "rc",
+   "class": "hand",
+   "scene": "res://models/bl_rs_rcbox/bl_rs_rcbox.glb",
+   "icon": "res://models/bl_rs_rcbox/bl_rs_rcbox_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "display": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     4.4,
+     0.9,
+     30.55
+    ],
+    "yaw": -90
+   },
+   "model_from": "workstream T (Blender), merged Nov 1"
+  },
+  {
+   "id": "rs_cordless_phone",
+   "name": "Cordless phone",
+   "category": "electronics",
+   "subcategory": "phone",
+   "class": "hand",
+   "scene": "res://models/bl_rs_cordless/bl_rs_cordless.glb",
+   "icon": "res://models/bl_rs_cordless/bl_rs_cordless_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "display": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     8.0,
+     0.982,
+     31.86
+    ],
+    "yaw": 180
+   },
+   "model_from": "workstream T (Blender), merged Nov 1"
+  },
+  {
+   "id": "rs_battery_card",
+   "name": "AA batteries, 4-pack",
+   "category": "electronics",
+   "subcategory": "battery",
+   "class": "pocket",
+   "scene": "res://models/bl_rs_battcard/bl_rs_battcard.glb",
+   "icon": "res://models/bl_rs_battcard/bl_rs_battcard_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "display": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     5.5,
+     0.982,
+     31.86
+    ],
+    "yaw": 180
+   },
+   "model_from": "workstream T (Blender), merged Nov 1"
+  },
+  {
+   "id": "rs_pager",
+   "name": "Pager",
+   "category": "electronics",
+   "subcategory": "phone",
+   "class": "pocket",
+   "scene": "res://models/bl_rs_pager/bl_rs_pager.glb",
+   "icon": "res://models/bl_rs_pager/bl_rs_pager_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "display": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     5.0,
+     0.982,
+     31.86
+    ],
+    "yaw": 180
+   },
+   "model_from": "workstream T (Blender), merged Nov 1"
+  },
+  {
+   "id": "rs_cb_radio",
+   "name": "CB-440 CB radio",
+   "category": "electronics",
+   "subcategory": "radio",
+   "class": "hand",
+   "scene": "res://items/radioshack/cb_radio.tscn",
+   "icon": "res://items/radioshack/icons/cb_radio.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "display": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     9.05,
+     0.982,
+     31.86
+    ],
+    "yaw": 180
+   }
+  },
+  {
+   "id": "rs_microcassette",
+   "name": "Micro-cassette recorder",
+   "category": "electronics",
+   "subcategory": "audio",
+   "class": "pocket",
+   "scene": "res://items/radioshack/microcassette.tscn",
+   "icon": "res://items/radioshack/icons/microcassette.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "display": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     9.85,
+     0.982,
+     31.86
+    ],
+    "yaw": 180
+   }
+  },
+  {
+   "id": "standin_rs_corded_phone",
+   "name": "Corded telephone",
+   "category": "electronics",
+   "subcategory": "phone",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_corded_phone/standin_rs_corded_phone.tscn",
+   "icon": "res://models/bl_standin_rs_corded_phone/standin_rs_corded_phone_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack shelf: corded phone)"
+  },
+  {
+   "id": "standin_rs_answering_machine",
+   "name": "Answering machine",
+   "category": "electronics",
+   "subcategory": "phone",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_answering_machine/standin_rs_answering_machine.tscn",
+   "icon": "res://models/bl_standin_rs_answering_machine/standin_rs_answering_machine_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack shelf: answering machine)"
+  },
+  {
+   "id": "standin_rs_clock_radio",
+   "name": "Clock radio",
+   "category": "electronics",
+   "subcategory": "radio",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_clock_radio/standin_rs_clock_radio.tscn",
+   "icon": "res://models/bl_standin_rs_clock_radio/standin_rs_clock_radio_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack shelf: clock radio)"
+  },
+  {
+   "id": "standin_rs_cell_phone",
+   "name": "Cellular phone",
+   "category": "electronics",
+   "subcategory": "phone",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_cell_phone/standin_rs_cell_phone.tscn",
+   "icon": "res://models/bl_standin_rs_cell_phone/standin_rs_cell_phone_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack shelf: cellular phone)"
+  },
+  {
+   "id": "standin_rs_9v_battery",
+   "name": "9-volt battery",
+   "category": "electronics",
+   "subcategory": "battery",
+   "class": "pocket",
+   "scene": "res://models/bl_standin_rs_9v_battery/standin_rs_9v_battery.tscn",
+   "icon": "res://models/bl_standin_rs_9v_battery/standin_rs_9v_battery_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack: 9V alkaline)"
+  },
+  {
+   "id": "standin_rs_c_batteries",
+   "name": "C batteries, 2-pack",
+   "category": "electronics",
+   "subcategory": "battery",
+   "class": "pocket",
+   "scene": "res://models/bl_standin_rs_c_batteries/standin_rs_c_batteries.tscn",
+   "icon": "res://models/bl_standin_rs_c_batteries/standin_rs_c_batteries_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack: C/D alkaline 2-pack)"
+  },
+  {
+   "id": "standin_rs_ic_card",
+   "name": "Timer chip (blister card)",
+   "category": "electronics",
+   "subcategory": "part",
+   "class": "pocket",
+   "scene": "res://models/bl_standin_rs_ic_card/standin_rs_ic_card.tscn",
+   "icon": "res://models/bl_standin_rs_ic_card/standin_rs_ic_card_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack pegboard parts: ICs)"
+  },
+  {
+   "id": "standin_rs_plug_adapter",
+   "name": "Plug adapter",
+   "category": "electronics",
+   "subcategory": "part",
+   "class": "pocket",
+   "scene": "res://models/bl_standin_rs_plug_adapter/standin_rs_plug_adapter.tscn",
+   "icon": "res://models/bl_standin_rs_plug_adapter/standin_rs_plug_adapter_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack pegboard parts: plugs and adapters)"
+  },
+  {
+   "id": "standin_rs_ac_adapter",
+   "name": "AC adapter",
+   "category": "electronics",
+   "subcategory": "part",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_ac_adapter/standin_rs_ac_adapter.tscn",
+   "icon": "res://models/bl_standin_rs_ac_adapter/standin_rs_ac_adapter_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack: AC adapter, boxed)"
+  },
+  {
+   "id": "standin_rs_speaker_wire",
+   "name": "Speaker wire (spool)",
+   "category": "electronics",
+   "subcategory": "part",
+   "class": "hand",
+   "scene": "res://models/bl_standin_rs_speaker_wire/standin_rs_speaker_wire.tscn",
+   "icon": "res://models/bl_standin_rs_speaker_wire/standin_rs_speaker_wire_icon.png",
+   "year": 1995,
+   "store": "RADIO SHACK",
+   "standin": true,
+   "standin_for": "a model (RadioShack wire wall: a spool)"
+  }
+ ]
+}

@@ -1,0 +1,60 @@
+{
+ "_": "Cuco's (1995; design/godot-cucos.md): the bar's drinks (data/story/cucos/*.dialogue, buy/give), the football lady's coupon and the doubloon that travels to 2026 (data/story/cucos/cucos.json 'travels'). One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by tools/items/items_io.py (tools/blender/build.py, tools/prizes/make_items.py, tools/shops/make_standins.py). Never change an id.",
+ "items": [
+  {
+   "id": "cu_beer",
+   "name": "Draft beer",
+   "category": "drink",
+   "subcategory": "alcohol",
+   "class": "hand",
+   "scene": "res://models/bl_cu_beer/bl_cu_beer.glb",
+   "icon": "res://models/bl_cu_beer/bl_cu_beer_icon.png",
+   "year": 1995,
+   "store": "CUCOS"
+  },
+  {
+   "id": "cu_coupon",
+   "name": "Coupon: free top shelf margarita",
+   "category": "token",
+   "subcategory": "coupon",
+   "class": "hand",
+   "scene": "res://models/bl_cu_coupon/bl_cu_coupon.glb",
+   "icon": "res://models/bl_cu_coupon/bl_cu_coupon_icon.png",
+   "year": 1995,
+   "store": "CUCOS"
+  },
+  {
+   "id": "cu_doubloon",
+   "name": "Cuco's doubloon",
+   "category": "token",
+   "subcategory": "coin",
+   "class": "pocket",
+   "scene": "res://models/bl_cu_doubloon/bl_cu_doubloon.glb",
+   "icon": "res://models/bl_cu_doubloon/bl_cu_doubloon_icon.png",
+   "year": "both",
+   "store": "CUCOS"
+  },
+  {
+   "id": "cu_margarita",
+   "name": "Margarita",
+   "category": "drink",
+   "subcategory": "alcohol",
+   "class": "hand",
+   "scene": "res://models/bl_cu_margarita/bl_cu_margarita.glb",
+   "icon": "res://models/bl_cu_margarita/bl_cu_margarita_icon.png",
+   "year": 1995,
+   "store": "CUCOS"
+  },
+  {
+   "id": "cu_topshelf",
+   "name": "Top-shelf margarita",
+   "category": "drink",
+   "subcategory": "alcohol",
+   "class": "hand",
+   "scene": "res://models/bl_cu_top_shelf_margarita/bl_cu_top_shelf_margarita.glb",
+   "icon": "res://models/bl_cu_top_shelf_margarita/bl_cu_top_shelf_margarita_icon.png",
+   "year": 1995,
+   "store": "CUCOS"
+  }
+ ]
+}

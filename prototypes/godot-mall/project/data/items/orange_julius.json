@@ -1,0 +1,26 @@
+{
+ "_": "Orange Julius (1995). One item schema for every file here: design/godot-items.md (id, name, category, subcategory, class, scene, icon, year, store, and the optional fields it lists). Read by scripts/items/item_db.gd; written by hand or by tools/items/items_io.py (tools/blender/build.py, tools/prizes/make_items.py, tools/shops/make_standins.py). Never change an id.",
+ "items": [
+  {
+   "id": "bl_oj_cup",
+   "name": "Orange Julius",
+   "category": "drink",
+   "subcategory": "soft",
+   "class": "hand",
+   "scene": "res://models/bl_oj_cup/bl_oj_cup.glb",
+   "icon": "res://models/bl_oj_cup/bl_oj_cup_icon.png",
+   "year": 1995,
+   "store": "ORANGE JULIUS",
+   "place": {
+    "wing": 1,
+    "year": 1995,
+    "pos": [
+     12.95,
+     1.0,
+     8.66
+    ],
+    "yaw": 200
+   }
+  }
+ ]
+}
