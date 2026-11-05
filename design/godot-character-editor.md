@@ -16,6 +16,133 @@ packs. **Ground rule: machinery only.** No characters, names or story: the three
 > the shared files below are saved as `design/chars-live-hooks.patch` (`git diff 2552ce2 ws/b2-editor`),
 > to be applied after Demo 49 once Q and M are merged.
 
+## CHAR-EDITOR (Steven's notes, Nov 4 2026; branch `ws/char-editor` from `int-51` 4d09e18)
+
+Asked for: (1) the "default bald avatar with the new one on top" bug; (2) hair that fits every body,
+checked by looking at a grid; (3) a tighter creator flow and more body contours than one slider;
+(4) five looks to perfect first (a proposal); (5) research on the pipeline
+(`design/research/character-pipeline-2026-11.md`, no rebuild).
+
+### 1. The one-body bug
+- **Cause.** Two avatars were drawn from two systems. The menu's MAIN tab (where Done / Back lands)
+  showed `scripts/menu/portrait.gd`, which always built **V's `AvatarBody` in V's look** (`Ch01`, bald, by
+  default), never the B2 preset the player had just saved. So after saving, MAIN showed the bald default,
+  while the editor's preview and the mall showed the new one. Two more defects on the same path:
+  `AvatarChar.wear_look()` remade the skin without forgetting the old clip, so the new body stood in its
+  **T-pose** until it walked (`play("idle")` skipped the clip "already playing"); and re-dressing freed a
+  held item that hung on the old skeleton's hand.
+- **Fix.** The portrait is the same body the mall shows (an `AvatarChar` wearing the player's preset when
+  the pack ships the bodies, else V's body); `wear_look()` resets the clip and plays idle; `avatar.gd
+  _wear_body()` moves a held item back to the first-person hand before re-dressing (`_hand_sync` returns
+  it). The editor's **Save** re-dresses the avatar at once (`saved` signal → `avatar._preset_saved`).
+- **Test** `tools/qa/char_avatar_test.gd` (native, unbaked; wing 6 by default: the shared cloud box
+  ran out of memory on wing 1): exactly one avatar body in the world (and one skeleton under it), the
+  saved hair worn, after: start, Save, Back, the menu closing, a reload, the year change (wing 6 2026)
+  and a time-travel trip (`timetravel_trip.gd`). `--late=1` starts on V's body and mounts the character
+  pack afterwards, as the web does. **CHAR AVATAR OK (40 checks)**, `--late=1` **(41 checks)**.
+  Not run on the web build this session (no export: the box was shared by four sessions).
+
+### 2. Hair fit (`scripts/chars/char_fit.gd`, `class_name CharFit`)
+Looked at in `tools/qa/char_hair_grid.gd`: every hair (11) on every adult body (female: the six shape
+presets + heavy-set 52 + skinny 74; male: the four + the same two extremes), front and 3/4, the idle pose.
+**Found (before):**
+- Long, shoulder and perm curtains **rigid on the Head bone**: in the idle pose (head tilted down) the
+  front edges stood out as flaps beside the face and the back swung into the shoulders.
+- Curtains and braids **inside the shoulders, upper back and shirt** on the broader / heavier bodies
+  (up to 3.3 cm inside on the neutral body): their blend shapes come from the 8 nearest head / neck
+  vertices, which don't move with the shoulders or chest sliders.
+- **Puffs** had see-through gaps (back faces culled); every curtain's inside showed the background.
+- (Not hair, seen on the way: a sawtooth fringe where the tee's collar meets the neck on every body; the
+  neutral male reads young and androgynous. A first grid framed Big & Tall too low; the grid now frames on the posed head bone.)
+
+**Fixes (runtime, on every body, every slider change; baked into NPCs and the avatar):**
+1. **Skinning below the jaw:** hair under the Head joint takes the weights of the skin it lies on
+   (neck, shoulders, back, chest and the little arm weight the shoulder blades carry; never skin that is
+   mostly arm), blended in over 7 cm. The curtain moves like the shirt under it.
+2. **Radial fit:** below the jaw, around the body's axis (Neck → Spine1), every hair vertex keeps at least
+   the outermost radius of the torso skin **and the clothes as they hang** + 6 mm (+ up to 18 mm more
+   behind the shoulder blades, because the fit is made in the bind pose and the clips' arms hang lower).
+   Above the jaw the scalp shells keep 1.5 mm over the head (short styles are thin by design).
+   The push is smoothed over the mesh's edges.
+3. **B1's pieces use NORMALIZED blend shapes** (absolute targets), so the push goes into every target too
+   (without that a heavy body's weights scaled the fix away: the first version did nothing on heavy-set).
+4. **Hair is drawn double-sided** (the region shader with `cull_disabled`, made from its code).
+Cost: one hair against ~10k obstacle vertices, tens of ms per change (not measured on a phone).
+**Grids:** `production/qa/evidence/chars-hair-before-<sex>-<front|34>.jpg` and
+`chars-hair-after-<sex>-<front|34>.jpg` (rows: balding, bowl, braids, crew, elderly, fade, long, perm,
+puffs, shoulder, sidepart; columns: the bodies listed above). Close-ups (front, 3/4, side, back; rows
+braids, long, puffs, shoulder): `chars-hair-closeup-<before|after>-<straight-missy|curvy-plus|heavy-set-52>.jpg`.
+A rough number beside the pictures (`char_hair_grid.gd` prints it per cell): the share of hair vertices
+within 1 mm of, or behind, the skin or clothes under them in the bind pose, all bodies, before → after:
+braids 26 → 13 % (female) / 27 → 13 % (male), long 15 → 12 / 12 → 9, shoulder 14 → 12 / 12 → 9,
+puffs 12 → 8 / 12 → 7, the short shells unchanged (2-18 %: their hems touch the scalp by design, which
+this number counts too). The pictures, not this number, are the check: it is measured in the bind pose
+and the flaps, holes and see-through backs were pose and draw problems.
+**Still visible:** on the heaviest body the back of the upper arms shows through the sides of a long
+curtain in the idle pose (arms are not obstacles: a curtain can't follow an arm swing); shells still read
+as helmets (perm most); braids are tubes. Those are generator work: proxy binding and hair cards
+(`design/research/character-pipeline-2026-11.md`).
+
+### 3. The creator flow (player mode)
+Was: BODY · SKIN · HAIR · OUTFIT, nine view buttons, 4 sliders until "Advanced: on", Advanced / Reset /
+**Done** (Done was the only save, and closing the menu also saved). Now:
+- **Three tabs: BODY · SKIN & HAIR · OUTFIT.** BODY starts with **Female / Male** (no Advanced needed),
+  then "Start from a shape" (the shape presets), then the **contours** in groups: OVERALL (height, build,
+  muscle, age), TORSO (shoulders, chest or bust, waist, belly), HIPS AND LEGS (hips, seat, thighs,
+  calves), ARMS, NECK, HEAD (arms, neck length, head size). "▸ More sliders" opens face, proportions,
+  posture, bust lift and youth in place. (Every one is a B1 slider the rig already supports.)
+- **View row:** ⟲ ⟳ Front Back Face/Body (drag / pinch the preview still turns and zooms it).
+- **Footer: ◀ Back · Reset · Save.** Save is amber while there is something to save ("Saved ✓" after);
+  Save keeps you in the editor and the avatar, the portrait and the mall change at once. Back leaves
+  without saving (asks once if there are unsaved changes); on a first visit with nothing saved it is the
+  old Skip. Closing the menu (× / Esc) still keeps what was made (as before).
+- Owner mode is unchanged except the slider names ("build", "seat", "thighs" …) and Save's colour.
+Screens: `production/qa/evidence/chars-creator-*.jpg` (desk: body, more sliders, skin & hair, outfit,
+saved; phone: body, skin & hair; MAIN before / after a save; the avatar in third person after a reload,
+in 2026 and after time travel).
+
+### 4. The first five (a proposal for Steven: looks, not characters)
+Combinations of what exists, chosen to cover both bodies, every hair problem and the layering; no names,
+no story (`tools/qa/fixtures/char_first_five.json`, sheet `production/qa/evidence/chars-first-five.jpg`
+by `tools/qa/char_first_five.gd`):
+1. The Pocket Change attendant preset: curvy female, shoulder-length curtain over the bust, polo + store
+   vest, slacks, watch. (Shows: the shoulder curtain still reads as a helmet with flaps.)
+2. The Sound Shop preset: slim male, side part under a backward cap, tee under an open flannel, jeans.
+   (Shows: cap over hair; flannel fronts hang straight.)
+3. The Kay-Bee preset: plus female, puffs, tee + store apron, khakis, glasses. (Shows: the apron reads
+   as a flat board.)
+4. The player's female default: neutral body, long straight hair, teal tee, jeans.
+5. The player's male default on Big & Tall: crew cut, burgundy sweatshirt, khakis. (Shows: the
+   sweatshirt's cuffs and collar show a light sawtooth trim.)
+Perfecting them means: hair cards for 1, 3, 4; the collar / cuff seams; the apron's drape; faces (the
+neutral male reads young).
+
+### 5. NPCs on the same bodies (note)
+The machinery is already shared: `CharPreset.body_for(preset, bake=true)` makes any NPC body, and
+`scripts/npcs.json` `"presets": {"<Mixamo skin id>": "<preset id>"}` swaps a shopper's skin for a baked
+preset body (empty today). The hair fit and skinning above run inside `CharBody.apply`, so NPCs get them
+at bake time with no extra work. What NPCs need before the crowd moves over: a per-NPC cost check on a
+phone (`tools/qa/char_perf.gd`, still not run), a few dozen presets (Steven's casting), and LODs.
+
+### Checks (Nov 4, CHAR-EDITOR; native, unbaked, opengl3 under xvfb)
+- `tools/qa/char_avatar_test.gd`: **CHAR AVATAR OK (40 checks)**; `--late=1`: **CHAR AVATAR OK (41)**.
+- `tools/qa/char_editor_test.gd -- --only=unit`: **CHAR EDITOR OK (28 checks)**.
+- `tools/qa/char_clothed_test.gd`: **CHAR CLOTHED OK (1632 checks)** (the clothed and child rules hold
+  with the new editor rows and the hair fit).
+- `tools/qa/char_hair_grid.gd` (before `--fit=0`, after `--fit=1`) and `tools/qa/char_first_five.gd`: looked at.
+- Not run: the web build (export + Playwright) and `char_editor_test.gd`'s full in-mall run: the cloud box
+  was shared by four sessions and the memory cgroup killed every wing 1 scene load (hence wing 6 in the
+  avatar test). The integration session should run `tools/qa/char_webtest.js` and the full
+  `char_editor_test.gd` on wing 1 once.
+
+### Shared files touched (CHAR-EDITOR)
+`scripts/char_body.gd` (2 hooks: `CharFit.fit_hair`; hair double-sided), `scripts/avatar.gd`
+(`_preset_saved`, held item on re-dress, the `qa_late_chars` test hook), `scripts/menu/menu.gd`
+(connects `saved`, 2 lines), `scripts/menu/portrait.gd`, `scripts/chars/avatar_char.gd`,
+`scripts/chars/char_editor.gd`, `scripts/chars/char_pack.gd` (test hook). New: `scripts/chars/char_fit.gd`,
+`tools/qa/char_avatar_test.gd`, `tools/qa/char_hair_grid.gd`, `tools/qa/char_first_five.gd`,
+`tools/qa/fixtures/char_first_five.json`. No scene, layout or bake change: **no rebake**.
+
 Branch `ws/b2-editor` (history; superseded by `ws/chars-live`), from `ws/b1-bodies`, with `ws/m-menu` (the menu, AVATAR tab) and `ws/q-dialogue`
 (the attendants) merged in, because both are unmerged and B2 builds on both (merge commits
 `c2644d1`, `2552ce2`; the three small conflicts, all "keep both", are described under "Merging").
@@ -277,3 +404,9 @@ session): the generator fix is untested until the next `garments.py` run.
   apron, glasses.
 - The owner key K and the left-stick click; Esc / B close; Q / E switch tabs only outside the menu.
 - The player wardrobe (`_wardrobe.json`): a lean set to keep packs small.
+
+## Steven's decisions (Nov 4, 2026, evening)
+- The five looks to perfect first: approved (Pocket Change, Sound Shop and Kay-Bee attendant presets; female and male player defaults).
+- Next character session does the rebuild: proxy binding, hair cards, curtain skinning (research note, recommendation 2a–c), plus **a face pass** on the neutral male face (reads young / androgynous).
+- Closing the menu keeps changes (as before); Save and Back stay as built.
+- He wants to explore importing better hair and body assets: options in `design/research/character-pipeline-2026-11.md`, "Addendum".

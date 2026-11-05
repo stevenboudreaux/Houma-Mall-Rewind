@@ -79,7 +79,9 @@ func _ready() -> void:
 		if Engine.has_meta("avatar_view"): third = str(Engine.get_meta("avatar_view")) == "third"
 		force_open = bool(Engine.get_meta("avatar_open", false))
 	# B2 (design/godot-character-editor.md): the B1 body from the player's preset when this pack ships it
-	body = AvatarChar.new() if AvatarChar.available() else AvatarBody.new()
+	# (qa_late_chars: tools/qa/char_avatar_test.gd --late=1 starts on V's body, as the web does before the
+	# character pack arrives)
+	body = AvatarChar.new() if AvatarChar.available() and not Engine.has_meta("qa_late_chars") else AvatarBody.new()
 	body.name = "Avatar"
 	player.get_parent().add_child.call_deferred(body)
 	body.ready.connect(func():
@@ -457,8 +459,27 @@ func chars_ready() -> void:
 		item.transform = _hand_xf.get(item.get_instance_id(), item.transform)
 	old.queue_free()
 
+## CHAR-EDITOR (Nov 4): the editor's Save (player mode) re-dresses the avatar at once and keeps the
+## editor open; a first visit's Save shows the new character in third person (as V's Done did).
+func _preset_saved(L: Dictionary) -> void:
+	look = L
+	look.done = true
+	if creator != null and "first_time" in creator and creator.first_time:
+		third = true
+		creator.first_time = false
+	look.view = "third" if third else "first"
+	Look.save_look(look)
+	_wear_body()
+
 ## B2: dress the avatar (an AvatarChar wears the player's preset; V's body its look).
 func _wear_body() -> void:
+	# CHAR-EDITOR: a held item in the avatar's hand goes back to the first-person hand first (re-dressing
+	# makes a new skeleton and frees the old one with whatever hangs on it); _hand_sync moves it back
+	var it = player.interact if player else null
+	if it and "hand_item" in it and it.hand_item and is_instance_valid(it.hand_item) and body and body.is_ancestor_of(it.hand_item):
+		var item: Node3D = it.hand_item
+		item.reparent(it.hand_root, false)
+		item.transform = _hand_xf.get(item.get_instance_id(), item.transform)
 	if body is AvatarChar:
 		(body as AvatarChar).wear_look(look, player.year)
 	elif body is AvatarBody:

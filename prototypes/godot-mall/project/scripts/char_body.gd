@@ -82,6 +82,7 @@ func apply(vals: Dictionary) -> void:
 		_weigh(mi)
 	_bones()
 	_layers()
+	CharFit.fit_hair(self)   # CHAR-EDITOR: the hair fitted to this shape (scripts/chars/char_fit.gd)
 
 func _weigh(mi: MeshInstance3D) -> void:
 	var m := mi.mesh
@@ -146,6 +147,7 @@ func wear(p) -> bool:
 	ensure_clothed(false)
 	_bones()
 	_layers()
+	CharFit.fit_hair(self)   # CHAR-EDITOR
 	return ok
 
 ## Wear several pieces at once (one rebuild of bones and layers at the end), with the same rules as
@@ -380,6 +382,11 @@ func _shade(mi: MeshInstance3D, mask: int) -> void:
 				continue
 			sm = ShaderMaterial.new()
 			sm.shader = REGION_SHADER
+			# CHAR-EDITOR: hair is drawn double-sided (the puffs' shells had see-through gaps, a curtain's
+			# inside showed the background from below); Godot flips a back face's normal itself
+			var hp := str(mi.get_meta("piece", ""))
+			if hp != "" and pieces.has(hp) and str(pieces[hp].slot) == "hair" and CharFit.enabled():   # (off: the QA "before" grid)
+				sm.shader = hair_shader()
 			sm.resource_name = m.resource_name
 			sm.set_shader_parameter("albedo_color", m.albedo_color * NpcBody.tint)
 			if m.albedo_texture:
@@ -402,6 +409,14 @@ func _shade(mi: MeshInstance3D, mask: int) -> void:
 		sm.set_shader_parameter("hide_mask", mask)
 		if str(sm.resource_name).begins_with("skin_"):
 			sm.set_shader_parameter("wrinkle", float(values.get("age", 0.0)))
+
+## The region shader drawn double-sided (hair), made once from REGION_SHADER's code.
+static var _hair_sh: Shader = null
+static func hair_shader() -> Shader:
+	if _hair_sh == null:
+		_hair_sh = Shader.new()
+		_hair_sh.code = REGION_SHADER.code.replace("cull_back", "cull_disabled")
+	return _hair_sh
 
 ## Paint (tint) every material whose name starts with mat_prefix: "skin_" = skin tone, "eye_iris",
 ## "lashes", "<piece id>_main" / "_trim" / "_accent" = a piece's colour regions.
