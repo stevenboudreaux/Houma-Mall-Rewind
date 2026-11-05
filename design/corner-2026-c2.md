@@ -167,6 +167,30 @@ python3 tools/make_layout_2026.py      # Zales gets three fronts and "bays": 3
 - Unbaked evidence: `production/qa/evidence/corner2026-applied-overhead.jpg`, `corner2026-applied-inhall.jpg`
   (footage | 2026 | 1995).
 
+### Tests (Nov 4 evening, on the committed scenes, unbaked)
+- Pass: `wsS_thresholds_test.gd` (1995 and `-- 2026`: WSS TEST OK), `int_d49_test`, `flags_test` (31),
+  `inventory_test` (45), `econ_test` (52), `shop_test` (204), `prizes_years_test` (27), `redemption_test` (32),
+  `cucos_test` (89), `pusher_play_test` (20).
+- New `tools/qa/corner_walk_test.gd`: CORNER WALK OK in 1995 and 2026. 1995: the court patch reaches Franks'
+  front (stops z 9.70), OJ's court wall holds (x 11.90), OJ's walk-up front lets you in (z 8.26), the patch is
+  reachable from H4. 2026: the same patch (z 9.68), Zales' bay B and bay A fronts hold (x 11.70, z 5.70).
+- Not corner-related, failing on this box: `avatar_test.gd` (wing 1, spots at the corner, both years): its
+  "Avatar (C)" step now lands on the menu's MAIN tab (workstream M), which keeps the player frozen, so every
+  walk/run check reads 0 m/s; its camera checks at the three corner spots pass (clear of walls and glass, under
+  the signs). `stockrooms_test.gd` fails three Rougarou-gate / caption / buttons checks in Woolworth's back
+  corner, far from C2 (the layout change is confined to x 2..16, z 6..16). `interact_test.gd` was OOM-killed
+  twice (the box is shared). Web `doortest.py` / `walk_webtest.py` not run: a full web export (wings 1-3, both
+  years, shared packs) does not fit the ~1.5 GB of disk left on the shared box; the integration export covers it.
+
+### Merging
+The branch's first commit was a flat copy of main's `4d09e185` (int-51) with no parent; a `-s ours` merge of
+`4d09e185` (no file change) gives it that base. `git merge-tree` against `origin/main`, `origin/ws/interiors` and
+`origin/ws/directory`: no textual conflicts. ws/interiors also edits `layout_mall.json`, `layout_2026.json`
+(walk-grid rows at the Spencer's / Payless units, not the corner's), `build_mall.gd` (`mat()`), `make_layout_2026.py`
+(a later block) and `fronts26/store.gd` (other stores): after merging both, rerun `make_layout_2026.py` and rebuild
+every wing in both years (stand-in slots cross wings), since each branch's scenes were built without the other's
+layout; then the rebake below.
+
 ### Mac rebake and stand-ins (integration session)
 `.autobake`: `wing1:night wing1:day wing1_2026:day wing2:night wing2:day wing2_2026:day wing4:day wing4_2026:day wing5:day wing5_2026:day`.
 Then `tools/capture_standin.sh 4`, `4 2026`, `5`, `5 2026`, then `1`, `1 2026`, `2`, `2 2026`; export; publish.
