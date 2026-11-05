@@ -157,7 +157,8 @@ static func shelves_side(G, GS, x, d0, d1, s, dep, rng):
 		var pb = F.P(front, y, d1)
 		var top = UP * 0.2 - ux * (s * (dep - 0.08))
 		var nrm = (ux * s + UP * 0.6).normalized()
-		var flip = (pb - pa).dot(nrm.cross(UP)) < 0.0
+		# u runs to the viewer's right, (-nrm) x UP (checked by looking, Nov 4: nrm x UP mirrored the sizes)
+		var flip = (pb - pa).dot((-nrm).cross(UP)) < 0.0
 		var u0 = 0.0
 		var u1 = (d1 - d0) / 1.2
 		if flip:

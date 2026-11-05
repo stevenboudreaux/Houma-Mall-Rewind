@@ -52,7 +52,15 @@ words and colours (an invented 1995 look; the video's store has none legible), a
 1995-safe: socks, knee-highs, polish, insoles, laces, plain bags). The 2019 decor (wood-look floor,
 white slatwall) is used for 1995 because Steven says it is what the store looked like.
 
-**Evidence (unbaked):** `production/qa/evidence/interiors-payless-*.jpg`. **Rebake:** wing 2 (1995); the
+**Checked by looking (Nov 4):** the size labels on every gondola face and both side walls read mirrored
+(`shelves_side` picked the texture direction from the viewer's left); fixed, the back wall was already right.
+
+**Layout hunks (`layout_mall.json`, for the hand merge):** `walk` rows 125-132, columns 149-161 set to `1`
+(the sales floor; written by `tools/open_interiors.py` `OPEN["s4"]`); `"s4"` added to `interiors_open`
+(between `"s36"` and `"s42"`).
+
+**Evidence (unbaked, probe-lit preview):** `production/qa/evidence/interiors-payless-1995-{doorway,frontzone,
+counter,aisle,aisle-back,gondola,backwall}-unbaked.jpg`. **Rebake:** wing 2 (1995); the
 walk grid changed (`layout_mall.json`), so `gen/w2/wing.json` and wing 1's stand-in of the front.
 
 **Shoppable (a proposal for ws/items; nothing added here):** a counter shop at the cash counter (1995): a pair of
