@@ -255,11 +255,11 @@ func _plan() -> void:
 		for b in menu._root.find_children("OwnerTool_*", "Button", true, false):
 			names.append(b.name)
 		print("TOOLS ", names)
-		var want := ["OwnerTool_TurnOff", "OwnerTool_Open", "OwnerTool_EditSigns", "OwnerTool_PublishSigns", "OwnerTool_Arcade", "OwnerTool_EditPictures", "OwnerTool_PublishPictures", "OwnerTool_ShowItAgain"]
+		var want := ["OwnerTool_TurnOff", "OwnerTool_Open", "OwnerTool_EditSigns", "OwnerTool_PublishSigns", "OwnerTool_Arcade", "OwnerTool_EditPictures", "OwnerTool_PublishPictures"]   # int-52: no opening (ws/items), so no "Show it again"
 		var miss: Array = []
 		for w in want:
 			if not w in names: miss.append(w)
-		_check(miss.is_empty(), "OWNER tools: owner HUD, quick jump, signs, arcade, pictures, the opening (missing %s)" % [miss])
+		_check(miss.is_empty(), "OWNER tools: owner HUD, quick jump, signs, arcade, pictures (missing %s)" % [miss])
 		var pb := _find("OwnerTool_PublishSigns") as Button
 		_check(pb != null and pb.disabled, "Publish signs is greyed with nothing to publish")
 		_shot("owner-tools-390x844"), 0.1)
