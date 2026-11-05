@@ -165,3 +165,8 @@ inside mesh's UV2, so the Demo 51 lightmaps no longer fit those scenes):
 2. nov4 (bigger) or nov4_lite? nov4 adds ~12 MB to wing 1's download and ~1.5 h of baking per full
    rebake instead of ~45 min.
 3. Your clip shows the 2026 hall; is the 1995 hall as bad for you? (Causes 1 and 2 are in both years.)
+
+## Steven's decisions (Nov 4, 2026, evening)
+- Bake profile: **nov4** (sharpest). Keep it active.
+- Floor reflection / `floor_spec`: **he will test first** (`?refl=0` on Demo 51, `?floorspec=0` on the next build). Default stays 0.25 until he answers.
+- The 1995 main entrance hall looks as bad as 2026: fix both years.
