@@ -43,8 +43,13 @@ number of screens (three; f025 shows two and part of a third), every word on scr
 pretzel count. The fascia sign and the pretzel mark are the tenant's own (IP rule: allowed); the cups
 are plain.
 
-## Evidence (unbaked)
-`production/qa/evidence/interiors-auntie-annes-*.jpg`; the warmer's sheet `interiors-bl_aa_warmer-sheet.jpg`.
+**Checked by looking (Nov 4):** the rolling counter's dough was nearly white on white in the first pass;
+`paint.py rolltop` now paints bigger, darker dough balls, ropes and a darker tray. The two lemonade
+dispensers were bare tinted blocks; they now have a white base and lid, a tinted tank and a black tap.
+
+## Evidence (unbaked, probe-lit preview)
+`production/qa/evidence/interiors-auntie-annes-2026-{doorway,warmer,counter,staffside,rolling}-unbaked.jpg`.
+The warmer's own Blender sheet was not kept by the first session (the asset script can re-render it).
 
 ## Rebake
 Wing 2, 2026 (`wing2_2026`).

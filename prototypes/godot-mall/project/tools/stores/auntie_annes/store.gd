@@ -93,8 +93,12 @@ static func build(F, sd):
 	# a butter-dip station and the lemonade dispenser on the left behind the warmer
 	F.cbx("#f2f0ea", 0.15, 0.0, 1.55, 0.9, 0.9, 0.55, "", "wl_steel")
 	F.cbx("#f4f2ee", 0.12, 0.9, 1.53, 0.96, 0.04, 0.59)
-	F.cbx("#e8d050", 0.25, 0.94, 1.65, 0.28, 0.42, 0.28, GS)
-	F.cbx("#e86a8a", 0.6, 0.94, 1.65, 0.28, 0.42, 0.28, GS)
+	# two lemonade dispensers: a white base, a tinted tank, a black tap (Nov 4: were bare blocks)
+	for dz in [[0.25, "#e8d050"], [0.6, "#e86a8a"]]:
+		F.cbx("#f4f2ee", dz[0], 0.94, 1.65, 0.28, 0.14, 0.28, GS)
+		F.cbx(dz[1], dz[0] + 0.02, 1.08, 1.67, 0.24, 0.3, 0.24, GS)
+		F.cbx("#f4f2ee", dz[0], 1.38, 1.65, 0.28, 0.04, 0.28, GS)
+		F.cbx("#1c1c20", dz[0] + 0.11, 1.0, 1.6, 0.06, 0.07, 0.05, GS)
 	F.cbx("#2a2a2c", 0.22, 0.94, 1.62, 0.7, 0.06, 0.34, GS)
 	# lights: the opening's downlights and the room
 	for x in [0.8, 2.0, 3.2]:

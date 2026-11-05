@@ -155,16 +155,17 @@ def rolltop():
     for _ in range(600):
         x, y = R.uniform(0, W), R.uniform(0, H)
         d.point((x, y), fill=(252, 250, 244))
-    for k in range(9):
-        cx, cy = 60 + k * 36, 70 + (k % 2) * 30
-        d.ellipse([cx - 16, cy - 14, cx + 16, cy + 14], fill=(236, 220, 186), outline=(210, 190, 150))
+    # (Nov 4: darker, bigger dough than the first pass, which vanished against the white top)
+    for k in range(8):
+        cx, cy = 50 + k * 40, 80 + (k % 2) * 60
+        d.ellipse([cx - 22, cy - 20, cx + 22, cy + 20], fill=(224, 196, 148), outline=(176, 146, 100), width=3)
     for k in range(5):
-        y = 150 + k * 16
-        d.line([(380, y), (640, y + R.uniform(-4, 4))], fill=(232, 214, 176), width=9)
-    d.rectangle([700, 40, 990, 220], fill=(160, 160, 166))
+        y = 120 + k * 24
+        d.line([(380, y), (650, y + R.uniform(-6, 6))], fill=(218, 186, 136), width=13)
+    d.rectangle([700, 30, 1000, 226], fill=(128, 130, 136), outline=(96, 98, 104), width=4)
     for j in range(2):
         for i in range(3):
-            pretzel(d, 750 + i * 95, 85 + j * 85, 32, (236, 214, 170), 8)
+            pretzel(d, 752 + i * 98, 80 + j * 92, 36, (222, 188, 132), 10)
     save(noise(im, 1.5), "rolltop")
 
 
