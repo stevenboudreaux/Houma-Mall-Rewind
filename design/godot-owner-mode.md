@@ -19,7 +19,7 @@ GitHub token with write access (the one the mall editor keeps, localStorage `sou
 ## 1. The owner's screen
 | | Visitor | Owner |
 |---|---|---|
-| Menu | the small unlabelled icon (UI-OFFSCREEN) | the labelled **Menu (Tab)** button, under the fps line |
+| Menu | the small unlabelled icon on touch devices; Tab / Esc on a desktop (UI-OFFSCREEN) | the labelled **Menu (Tab)** button on every device, under the fps line |
 | Jump to (J), Bag (I), View (V), Avatar (C) | in the menu only | **on screen**, top right, as before UI-OFFSCREEN |
 | Year: **Visit 2026 / Back to 1995 (Y)** | none (the year changes only at a kiosk, MENU2) | **on screen** under Jump to; a tap or **Y** (keyboard) switches the year where he stands, with the time-travel trip (`player._switch_year()`); hidden while the menu or a full-screen moment is open |
 | fps line ("Houma Mall Rewind · Godot mall (1995) 60 fps") | none | top left; can be turned off in OWNER (kept in localStorage `mall-owner-hud`) |
@@ -150,7 +150,7 @@ was dropped. No ROM files are added: ROMs remain only what the owner uploads him
   back 1024×683 JPEG).
 - `tools/qa/arcade_nes_webtest.js` (Chromium, `emu.html` served locally, GitHub and the CDN mocked): **OK (14)**.
 - Still passing: `menu_unit_test.gd` MENU UNIT OK (64), `ui_offscreen_test.gd --wing=6` UI OFFSCREEN TEST OK
-  (28), `kiosk_test.gd --year=1995` KIOSK TEST OK (25).
+  (35, after merging ws/ui-offscreen's touch-only icon), `kiosk_test.gd --year=1995` KIOSK TEST OK (25).
 - Updated, not rerun (needs a web export, too big for the shared box's disk on Nov 4): `signstest.py` now turns
   Edit signs on through the menu (Tab, E×3, right, Enter, down×4, Enter).
 
