@@ -9,7 +9,7 @@
 		{"id": "look", "label": "Look around", "kind": "fixed", "keys": [], "also_keys": "drag with the mouse", "pad": [], "also_pad": "", "touch": "Drag on the right half"},
 		{"id": "interact", "label": "Action (use / pick up / swing)", "kind": "event", "keys": ["E"], "pad": [2], "touch": "Use / Swing button"},
 		{"id": "enter", "label": "Go through (wing, door)", "kind": "fixed", "keys": [], "also_keys": "Action key, Enter", "pad": [], "also_pad": "A", "touch": "Tap the prompt"},
-		{"id": "menu", "label": "Menu (opens on MAIN)", "kind": "menu", "keys": ["Tab"], "also_keys": "Esc closes", "pad": [6], "also_pad": "B closes", "touch": "Menu icon (top left)"},
+		{"id": "menu", "label": "Menu (opens on MAIN)", "kind": "menu", "keys": ["Tab"], "also_keys": "Esc opens and closes", "pad": [6], "also_pad": "B closes", "touch": "Menu icon (top left)"},
 		{"id": "tab_prev", "label": "Menu: previous tab", "kind": "menu", "keys": ["Q"], "pad": [9], "also_pad": "LT", "touch": "Swipe right, or tap a tab"},
 		{"id": "tab_next", "label": "Menu: next tab", "kind": "menu", "keys": ["E"], "pad": [10], "also_pad": "RT", "touch": "Swipe left, or tap a tab"},
 		{"id": "view", "label": "First / third person", "kind": "event", "keys": ["V"], "pad": [8], "touch": "Menu: MAIN, View"},

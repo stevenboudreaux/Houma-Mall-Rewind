@@ -1,7 +1,8 @@
 ## Workstream UI-OFFSCREEN (design/godot-menu.md "The game screen"): no corner buttons on the game
-## screen; the one way into the menu is the small unlabelled icon top left (touch, mouse), Tab
-## (keyboard) or Start (gamepad); every function the corner buttons reached is in the menu, and its
-## key still works. Native, unbaked (no lightmap).
+## screen; the way into the menu is the small unlabelled icon top left on a touch device, Tab or Esc
+## on a desktop (no icon there; the first-start walk hint names the key), Start on a gamepad; every
+## function the corner buttons reached is in the menu, and its key still works. Native, unbaked.
+## Starts as a desktop (no touch screen natively), then a first tap makes it a touch device.
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 \
 ##     --script res://tools/qa/ui_offscreen_test.gd -- --wing=2 --out=/tmp/uo/w2 [--year=2026]
 ## Prints UI OFFSCREEN TEST OK (n checks) or the failures; writes <out>-<name>.png.
@@ -135,7 +136,6 @@ func _plan() -> void:
 	_do(func(): pass, 3.0)
 	_do(func():
 		menu = player.get_node("Menu")
-		player.hint.visible = false      # the first-start walk hint (it hides once you move; kept, see the note)
 		var tucked: Array = menu.corner_buttons()
 		_check(tucked.size() >= 5, "five corner buttons found: Jump to, year, Bag, View, Avatar (%d)" % tucked.size())
 		var hidden := true
@@ -145,9 +145,33 @@ func _plan() -> void:
 				printerr("  still drawn: ", b.text)
 		_check(hidden, "the corner buttons are tucked away (not drawn)")
 		_check(player.jump_open_btn.visible and player.interact.bag_btn.visible, "their own state is untouched (Jump to, Bag still 'visible' for the code that lays out round them)")
+		# ---- a desktop: no icon; the walk hint names the menu key; Esc, Tab, Start open MAIN
+		_check(not menu.touch_device and not menu._menu_btn.is_visible_in_tree(), "desktop: no menu icon on the game screen")
+		player.hint.visible = true
+		var ht: String = player.hint.text
+		_check("Tab or Esc: menu" in ht, "desktop: the first-start walk hint names the menu key (%s)" % ht)
+		_clean_screen("desktop 1280x720")
+		_shot("desktop-game-hint-1280x720")
+		player.hint.visible = false      # the first-start walk hint (it hides once you move)
+		_key(KEY_ESCAPE), 0.5)
+	_do(func():
+		_check(menu.is_open and menu.tab == "main", "desktop: Esc opens MAIN")
+		_key(KEY_ESCAPE), 0.4)
+	_do(func():
+		_check(not menu.is_open, "desktop: Esc closes it again")
+		_key(KEY_TAB), 0.4)
+	_do(func(): _check(menu.is_open and menu.tab == "main", "desktop: Tab opens MAIN"); menu.close(), 0.3)
+	_do(func(): _pad(JOY_BUTTON_START), 0.4)
+	_do(func():
+		_check(menu.is_open and menu.tab == "main", "a gamepad's Start opens MAIN"); menu.close()
+		_check(not menu._menu_btn.is_visible_in_tree(), "desktop with a pad: still no icon")
+		# ---- a touch device: the first touch brings the icon (a phone shows it from the start)
+		_tap(Vector2(900, 400)), 0.5)
+	_do(func():
 		var mb: Button = menu._menu_btn
-		_check(mb.is_visible_in_tree() and mb.text == "", "the menu icon is shown, with no words")
+		_check(menu.touch_device and mb.is_visible_in_tree() and mb.text == "", "touch: the menu icon is shown, with no words")
 		_check(mb.get_global_rect().end.x < 60 and mb.get_global_rect().end.y < 60, "the icon sits top left (%s)" % mb.get_global_rect())
+		_check(not ("Esc: menu" in String(player.hint.text)), "touch: the walk hint is as it was (%s)" % player.hint.text)
 		, 0.2)
 	for sz in sizes:
 		var s: Vector2i = sz
@@ -176,11 +200,7 @@ func _plan() -> void:
 	_do(func(): _size(Vector2i(1280, 720)), 1.2)
 	# ---- the other ways in
 	_do(func(): _click(_centre(menu._menu_btn)), 0.5)
-	_do(func(): _check(menu.is_open and menu.tab == "main", "a mouse click on the icon opens MAIN"); menu.close(), 0.3)
-	_do(func(): _key(KEY_TAB), 0.4)
-	_do(func(): _check(menu.is_open and menu.tab == "main", "Tab opens MAIN"); menu.close(), 0.3)
-	_do(func(): _pad(JOY_BUTTON_START), 0.4)
-	_do(func(): _check(menu.is_open and menu.tab == "main", "a gamepad's Start opens MAIN"); menu.close(), 0.3)
+	_do(func(): _check(menu.is_open and menu.tab == "main", "touch device with a mouse / trackpad: a click on the icon opens MAIN"); menu.close(), 0.3)
 	# ---- where the corner buttons were, a tap does nothing now
 	_do(func():
 		for b in menu.corner_buttons():
@@ -215,7 +235,7 @@ func _plan() -> void:
 		_shot("jump-panel-1280x720")
 		_key(KEY_ESCAPE), 0.4)
 	_do(func():
-		_check(not player.jump_panel.visible, "Esc closes the jump panel")
+		_check(not player.jump_panel.visible and not menu.is_open, "Esc closes the jump panel (and doesn't open the menu)")
 		_key(KEY_J), 0.4)
 	_do(func():
 		_check(player.jump_panel.visible, "J still opens the jump panel")

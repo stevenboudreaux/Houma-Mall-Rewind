@@ -64,6 +64,9 @@ var _touch := {}                 # touch index -> {"at": Vector2, "scroll": int,
 var _menu_btn: Button
 var _built_for := Vector2.ZERO
 var _input_kind := "kb"
+## UI-OFFSCREEN (Steven, Nov 4): the menu icon shows on touch devices only (a touch screen, or once a
+## touch arrives); a desktop opens the menu with Tab / Esc, a pad with Start.
+var touch_device := false
 
 class Catcher extends Node:
 	var menu: Node
@@ -193,7 +196,27 @@ func _build_menu_button() -> void:
 			_menu_btn.draw_line(Vector2((s.x - w) * 0.5, y), Vector2((s.x + w) * 0.5, y), Color(1, 1, 1, 0.82), 2.6, true))
 	_menu_btn.pressed.connect(func(): open_tab("main"))
 	player._cl.add_child(_menu_btn)
+	touch_device = DisplayServer.is_touchscreen_available()
 	_tuck_corner_buttons.call_deferred()
+	_hint_sync.call_deferred()
+
+## UI-OFFSCREEN: on a desktop (no icon) the existing first-start walk hint also names the menu key, so a
+## mouse player finds the menu; no new words on the screen. Touch devices keep the hint as it was.
+func _hint_sync() -> void:
+	var h = player.get("hint")
+	if h == null or not is_instance_valid(h):
+		return
+	if not h.has_meta("base_text"):
+		h.set_meta("base_text", h.text)
+	var base: String = h.get_meta("base_text")
+	h.text = base if touch_device else "%s  ·  %s or Esc: menu" % [base, _first_key("menu", "Tab")]
+	if not touch_device:
+		h.offset_left = minf(h.offset_left, -320.0)
+		h.offset_right = maxf(h.offset_right, 320.0)
+
+func _icon_sync() -> void:
+	_menu_btn.visible = touch_device and not is_open and opening == null and not player.vr_on \
+			and not (player.frozen and not _froze)
 
 const ICON_SIZE := 42.0
 const OFFSCREEN := "OffscreenHud"
@@ -256,7 +279,7 @@ func _process(dt: float) -> void:
 		if is_open:
 			close()
 	if _menu_btn:
-		_menu_btn.visible = not is_open and opening == null and not player.vr_on and not (player.frozen and not _froze)
+		_icon_sync()
 		# the owner's fps readout is top left: go under it
 		_menu_btn.position.y = 34.0 if (player.hud and player.hud.visible) else 8.0
 		_menu_btn.tooltip_text = "Menu (%s)" % _first_key("menu", "Tab")
@@ -698,6 +721,7 @@ func _finish_capture(code: int) -> void:
 	var c := _capture
 	_capture = {}
 	var err: String = controls.rebind(str(c.id), str(c.kind), code)
+	_hint_sync()      # UI-OFFSCREEN: the walk hint names the menu key
 	var keep := _sel
 	var sv := _scroll.scroll_vertical if _scroll else 0
 	_build()
@@ -709,6 +733,7 @@ func _finish_capture(code: int) -> void:
 
 func _reset_controls() -> void:
 	controls.reset()
+	_hint_sync()
 	_build()
 	_say("Back to the defaults.")
 
@@ -830,6 +855,11 @@ func _catch(e: InputEvent) -> void:
 		_input_kind = "kb"
 	elif e is InputEventScreenTouch:
 		_input_kind = "touch"
+		if not touch_device:
+			touch_device = true      # a touch screen after all: the icon, and the hint as it was
+			_hint_sync()
+			if _menu_btn:
+				_icon_sync()
 	if opening != null:
 		get_viewport().set_input_as_handled()
 		opening.handle(e)
@@ -843,7 +873,7 @@ func _catch(e: InputEvent) -> void:
 	if controls.filter(e):
 		get_viewport().set_input_as_handled()
 		return
-	if _is(e, "menu"):
+	if _is(e, "menu") or _esc_opens(e):
 		if _can_open():
 			get_viewport().set_input_as_handled()
 			open_tab("main")
@@ -852,6 +882,14 @@ func _catch(e: InputEvent) -> void:
 		if _menu_btn.is_visible_in_tree() and _menu_btn.get_global_rect().has_point(e.position):
 			get_viewport().set_input_as_handled()
 			open_tab("main")
+
+## UI-OFFSCREEN: Esc opens the menu too (Steven, Nov 4), when nothing on the game screen uses it
+## (the jump panel closes with Esc; the shops, prize counter, directory and talk freeze the player).
+func _esc_opens(e: InputEvent) -> bool:
+	if not (e is InputEventKey and e.pressed and not e.echo and e.keycode == KEY_ESCAPE):
+		return false
+	var jp = player.get("jump_panel")
+	return not (jp != null and is_instance_valid(jp) and jp.visible)
 
 func _is(e: InputEvent, id: String) -> bool:
 	if not (e is InputEventKey or e is InputEventJoypadButton) or not e.is_pressed() or e.is_echo():
