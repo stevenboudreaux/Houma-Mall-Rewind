@@ -103,9 +103,6 @@ def regions(F):
             r = "neck"
         elif n == "Spine2":
             r = "chest_f" if front else "chest_b"
-        if (n == "Spine2" or "Shoulder" in n or n == "Spine1") and front and abs(x) < 0.17 \
-                and F.head["mixamorig_Spine1"][2] < z < F.head["mixamorig_Neck"][2] - 0.04:
-            r = "chest_f"      # the whole chest front (breasts weighted to the shoulders too): the base layer
         elif n in ("Spine1", "Spine"):
             r = "belly_f" if front else "belly_b"
         elif n in ("Hips", "root"):
@@ -128,6 +125,9 @@ def regions(F):
             r = "shin_" + lr
         else:
             r = "foot_" + lr
+        if (n == "Spine2" or "Shoulder" in n or n == "Spine1") and front and abs(x) < 0.17 \
+                and F.head["mixamorig_Spine1"][2] < z < F.head["mixamorig_Neck"][2] - 0.04:
+            r = "chest_f"      # the whole chest front (breasts weighted to the shoulders too): the base layer
         out[i] = REGIONS.index(r)
     return out
 
@@ -138,7 +138,7 @@ def write_region_uv(o, reg):
     loops = np.zeros(len(me.loops), dtype=np.int64)
     me.loops.foreach_get("vertex_index", loops)
     co = np.zeros((len(me.loops), 2))
-    co[:, 0] = reg[loops] + 0.5          # the shader reads int(UV2.x)
+    co[:, 0] = reg[loops]          # the shader reads int(UV2.x + 0.5)
     uv.data.foreach_set("uv", co.reshape(-1))
 
 

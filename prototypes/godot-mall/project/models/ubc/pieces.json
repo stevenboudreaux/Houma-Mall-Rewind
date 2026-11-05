@@ -1,6 +1,306 @@
 {
 	"pieces": [
 		{
+			"id": "bot_jeans_female",
+			"base_id": "bot_jeans",
+			"body": "female",
+			"tris": 2080,
+			"glb": "res://models/ubc/bot_jeans_female.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#4a6a96"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#4a6a96"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "bottom",
+			"layer": 2,
+			"label": "Straight jeans",
+			"default_color": "#4a6a96",
+			"texture": "denim",
+			"hides": [
+				"thigh_l",
+				"thigh_r",
+				"crotch"
+			]
+		},
+		{
+			"id": "bot_jeans_male",
+			"base_id": "bot_jeans",
+			"body": "male",
+			"tris": 2164,
+			"glb": "res://models/ubc/bot_jeans_male.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#4a6a96"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#4a6a96"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "bottom",
+			"layer": 2,
+			"label": "Straight jeans",
+			"default_color": "#4a6a96",
+			"texture": "denim",
+			"hides": [
+				"thigh_l",
+				"thigh_r",
+				"crotch"
+			]
+		},
+		{
+			"id": "bot_khakis_female",
+			"base_id": "bot_khakis",
+			"body": "female",
+			"tris": 2100,
+			"glb": "res://models/ubc/bot_khakis_female.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#c2ab84"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#c2ab84"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "bottom",
+			"layer": 2,
+			"label": "Khakis",
+			"default_color": "#c2ab84",
+			"texture": "twill",
+			"hides": [
+				"thigh_l",
+				"thigh_r",
+				"crotch"
+			]
+		},
+		{
+			"id": "bot_khakis_male",
+			"base_id": "bot_khakis",
+			"body": "male",
+			"tris": 2184,
+			"glb": "res://models/ubc/bot_khakis_male.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#c2ab84"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#c2ab84"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "bottom",
+			"layer": 2,
+			"label": "Khakis",
+			"default_color": "#c2ab84",
+			"texture": "twill",
+			"hides": [
+				"thigh_l",
+				"thigh_r",
+				"crotch"
+			]
+		},
+		{
+			"id": "bot_slacks_female",
+			"base_id": "bot_slacks",
+			"body": "female",
+			"tris": 2128,
+			"glb": "res://models/ubc/bot_slacks_female.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#2e3238"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#2e3238"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "bottom",
+			"layer": 2,
+			"label": "Slacks",
+			"default_color": "#2e3238",
+			"texture": "twill",
+			"hides": [
+				"thigh_l",
+				"thigh_r",
+				"crotch"
+			]
+		},
+		{
+			"id": "bot_slacks_male",
+			"base_id": "bot_slacks",
+			"body": "male",
+			"tris": 2204,
+			"glb": "res://models/ubc/bot_slacks_male.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#2e3238"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#2e3238"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "bottom",
+			"layer": 2,
+			"label": "Slacks",
+			"default_color": "#2e3238",
+			"texture": "twill",
+			"hides": [
+				"thigh_l",
+				"thigh_r",
+				"crotch"
+			]
+		},
+		{
+			"id": "full_storeapron_female",
+			"base_id": "full_storeapron",
+			"body": "female",
+			"tris": 1012,
+			"glb": "res://models/ubc/full_storeapron_female.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#1f5a3a"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#1f5a3a"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#f2efe6"
+				}
+			},
+			"slot": "outer",
+			"layer": 3,
+			"label": "Store uniform (apron + name tag)",
+			"default_color": "#1f5a3a",
+			"texture": "canvas",
+			"hides": []
+		},
+		{
+			"id": "full_storeapron_male",
+			"base_id": "full_storeapron",
+			"body": "male",
+			"tris": 572,
+			"glb": "res://models/ubc/full_storeapron_male.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#1f5a3a"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#1f5a3a"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#f2efe6"
+				}
+			},
+			"slot": "outer",
+			"layer": 3,
+			"label": "Store uniform (apron + name tag)",
+			"default_color": "#1f5a3a",
+			"texture": "canvas",
+			"hides": []
+		},
+		{
+			"id": "full_storevest_female",
+			"base_id": "full_storevest",
+			"body": "female",
+			"tris": 1864,
+			"glb": "res://models/ubc/full_storevest_female.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#b8202a"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#b8202a"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#f2efe6"
+				}
+			},
+			"slot": "outer",
+			"layer": 3,
+			"label": "Store uniform (vest + name tag)",
+			"default_color": "#b8202a",
+			"texture": "twill",
+			"hides": [
+				"belly_f",
+				"belly_b"
+			]
+		},
+		{
+			"id": "full_storevest_male",
+			"base_id": "full_storevest",
+			"body": "male",
+			"tris": 1370,
+			"glb": "res://models/ubc/full_storevest_male.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#b8202a"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#b8202a"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#f2efe6"
+				}
+			},
+			"slot": "outer",
+			"layer": 3,
+			"label": "Store uniform (vest + name tag)",
+			"default_color": "#b8202a",
+			"texture": "twill",
+			"hides": [
+				"belly_f",
+				"belly_b"
+			]
+		},
+		{
 			"id": "hair_buns_female",
 			"base_id": "hair_buns",
 			"body": "female",
@@ -201,6 +501,336 @@
 			"modelled_on": "male"
 		},
 		{
+			"id": "shoe_sneakers_female",
+			"base_id": "shoe_sneakers",
+			"body": "female",
+			"tris": 1448,
+			"glb": "res://models/ubc/shoe_sneakers_female.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#f4f4f2"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#f0f0ee"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#c8c8c8"
+				}
+			},
+			"slot": "shoes",
+			"layer": 4,
+			"label": "Sneakers",
+			"default_color": "#f4f4f2",
+			"texture": "canvas",
+			"hides": [
+				"foot_l",
+				"foot_r"
+			]
+		},
+		{
+			"id": "shoe_sneakers_male",
+			"base_id": "shoe_sneakers",
+			"body": "male",
+			"tris": 1424,
+			"glb": "res://models/ubc/shoe_sneakers_male.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#f4f4f2"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#f0f0ee"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#c8c8c8"
+				}
+			},
+			"slot": "shoes",
+			"layer": 4,
+			"label": "Sneakers",
+			"default_color": "#f4f4f2",
+			"texture": "canvas",
+			"hides": [
+				"foot_l",
+				"foot_r"
+			]
+		},
+		{
+			"id": "top_flannel_female",
+			"base_id": "top_flannel",
+			"body": "female",
+			"tris": 3148,
+			"glb": "res://models/ubc/top_flannel_female.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#8c2a22"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#8c2a22"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "top",
+			"layer": 3,
+			"label": "Flannel (open, over a tee)",
+			"default_color": "#8c2a22",
+			"texture": "plaid",
+			"hides": [
+				"chest_b",
+				"belly_b",
+				"upperarm_l",
+				"upperarm_r"
+			]
+		},
+		{
+			"id": "top_flannel_male",
+			"base_id": "top_flannel",
+			"body": "male",
+			"tris": 2872,
+			"glb": "res://models/ubc/top_flannel_male.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#8c2a22"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#8c2a22"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "top",
+			"layer": 3,
+			"label": "Flannel (open, over a tee)",
+			"default_color": "#8c2a22",
+			"texture": "plaid",
+			"hides": [
+				"chest_b",
+				"belly_b",
+				"upperarm_l",
+				"upperarm_r",
+				"forearm_l",
+				"forearm_r"
+			]
+		},
+		{
+			"id": "top_polo_female",
+			"base_id": "top_polo",
+			"body": "female",
+			"tris": 2300,
+			"glb": "res://models/ubc/top_polo_female.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#1f4e79"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#1f4e79"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "top",
+			"layer": 2,
+			"label": "Polo shirt",
+			"default_color": "#1f4e79",
+			"texture": "pique",
+			"hides": [
+				"chest_b",
+				"belly_f",
+				"belly_b"
+			]
+		},
+		{
+			"id": "top_polo_male",
+			"base_id": "top_polo",
+			"body": "male",
+			"tris": 1966,
+			"glb": "res://models/ubc/top_polo_male.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#1f4e79"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#1f4e79"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "top",
+			"layer": 2,
+			"label": "Polo shirt",
+			"default_color": "#1f4e79",
+			"texture": "pique",
+			"hides": [
+				"belly_f",
+				"belly_b"
+			]
+		},
+		{
+			"id": "top_sweatshirt_female",
+			"base_id": "top_sweatshirt",
+			"body": "female",
+			"tris": 3378,
+			"glb": "res://models/ubc/top_sweatshirt_female.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#7f8a99"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#6f7a89"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "top",
+			"layer": 2,
+			"label": "Sweatshirt",
+			"default_color": "#7f8a99",
+			"texture": "fleece",
+			"hides": [
+				"chest_f",
+				"chest_b",
+				"belly_f",
+				"belly_b",
+				"shoulder_l",
+				"shoulder_r",
+				"upperarm_l",
+				"upperarm_r"
+			]
+		},
+		{
+			"id": "top_sweatshirt_male",
+			"base_id": "top_sweatshirt",
+			"body": "male",
+			"tris": 2968,
+			"glb": "res://models/ubc/top_sweatshirt_male.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#7f8a99"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#6f7a89"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "top",
+			"layer": 2,
+			"label": "Sweatshirt",
+			"default_color": "#7f8a99",
+			"texture": "fleece",
+			"hides": [
+				"chest_f",
+				"chest_b",
+				"belly_f",
+				"belly_b",
+				"upperarm_l",
+				"upperarm_r",
+				"forearm_l",
+				"forearm_r"
+			]
+		},
+		{
+			"id": "top_tee_female",
+			"base_id": "top_tee",
+			"body": "female",
+			"tris": 2240,
+			"glb": "res://models/ubc/top_tee_female.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#ffffff"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#ffffff"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "top",
+			"layer": 2,
+			"label": "T-shirt",
+			"default_color": "#ffffff",
+			"texture": "knit",
+			"hides": [
+				"chest_b",
+				"belly_f",
+				"belly_b"
+			],
+			"shirt_words": true,
+			"shirt_words_at": {
+				"bone": "mixamorig_Spine2",
+				"height": 1.321
+			}
+		},
+		{
+			"id": "top_tee_male",
+			"base_id": "top_tee",
+			"body": "male",
+			"tris": 1934,
+			"glb": "res://models/ubc/top_tee_male.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#ffffff"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#ffffff"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "top",
+			"layer": 2,
+			"label": "T-shirt",
+			"default_color": "#ffffff",
+			"texture": "knit",
+			"hides": [
+				"belly_f",
+				"belly_b"
+			],
+			"shirt_words": true,
+			"shirt_words_at": {
+				"bone": "mixamorig_Spine2",
+				"height": 1.341
+			}
+		},
+		{
 			"id": "x_beard_male",
 			"base_id": "x_beard",
 			"body": "male",
@@ -219,6 +849,144 @@
 			"hides": [],
 			"kit": "Hair_Beard.gltf",
 			"modelled_on": "male"
+		},
+		{
+			"id": "x_cap_back_female",
+			"base_id": "x_cap_back",
+			"body": "female",
+			"tris": 600,
+			"glb": "res://models/ubc/x_cap_back_female.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#22325a"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#22325a"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "hat",
+			"layer": 5,
+			"label": "Cap (backward)",
+			"default_color": "#22325a",
+			"texture": "knit",
+			"hides": []
+		},
+		{
+			"id": "x_cap_back_male",
+			"base_id": "x_cap_back",
+			"body": "male",
+			"tris": 600,
+			"glb": "res://models/ubc/x_cap_back_male.gltf",
+			"materials": {
+				"main": {
+					"label": "main colour",
+					"default": "#22325a"
+				},
+				"trim": {
+					"label": "trim colour",
+					"default": "#22325a"
+				},
+				"accent": {
+					"label": "accent colour",
+					"default": "#d8d4c8"
+				}
+			},
+			"slot": "hat",
+			"layer": 5,
+			"label": "Cap (backward)",
+			"default_color": "#22325a",
+			"texture": "knit",
+			"hides": []
+		},
+		{
+			"id": "x_glasses_female",
+			"base_id": "x_glasses",
+			"body": "female",
+			"tris": 528,
+			"glb": "res://models/ubc/x_glasses_female.gltf",
+			"materials": {
+				"main": {
+					"label": "frame colour",
+					"default": "#2a2522"
+				}
+			},
+			"slot": "glasses",
+			"layer": 5,
+			"label": "Glasses",
+			"default_color": "#2a2522",
+			"texture": "knit",
+			"hides": []
+		},
+		{
+			"id": "x_glasses_male",
+			"base_id": "x_glasses",
+			"body": "male",
+			"tris": 528,
+			"glb": "res://models/ubc/x_glasses_male.gltf",
+			"materials": {
+				"main": {
+					"label": "frame colour",
+					"default": "#2a2522"
+				}
+			},
+			"slot": "glasses",
+			"layer": 5,
+			"label": "Glasses",
+			"default_color": "#2a2522",
+			"texture": "knit",
+			"hides": []
+		},
+		{
+			"id": "x_watch_female",
+			"base_id": "x_watch",
+			"body": "female",
+			"tris": 133,
+			"glb": "res://models/ubc/x_watch_female.gltf",
+			"materials": {
+				"main": {
+					"label": "band colour",
+					"default": "#2a2a2a"
+				},
+				"accent": {
+					"label": "face colour",
+					"default": "#d9d6cf"
+				}
+			},
+			"slot": "watch",
+			"layer": 5,
+			"label": "Watch",
+			"default_color": "#2a2a2a",
+			"texture": "knit",
+			"hides": []
+		},
+		{
+			"id": "x_watch_male",
+			"base_id": "x_watch",
+			"body": "male",
+			"tris": 73,
+			"glb": "res://models/ubc/x_watch_male.gltf",
+			"materials": {
+				"main": {
+					"label": "band colour",
+					"default": "#2a2a2a"
+				},
+				"accent": {
+					"label": "face colour",
+					"default": "#d9d6cf"
+				}
+			},
+			"slot": "watch",
+			"layer": 5,
+			"label": "Watch",
+			"default_color": "#2a2a2a",
+			"texture": "knit",
+			"hides": []
 		}
 	],
 	"aliases": {
