@@ -51,10 +51,11 @@
 (function () {
   var q = new URLSearchParams(location.search);
   var ROMS = 'prototypes/godot-mall/play/roms.json';
-  // each playable cabinet is one system (scripts/signs.gd ARCADE): its core and the file endings it takes
-  var SYS = { atari2600: { name: 'Atari 2600', ext: ['a26', 'bin'] }, nes: { name: 'NES', ext: ['nes', 'fds', 'unf'] },
-              segaMD: { name: 'Genesis', ext: ['md', 'gen', 'smd', 'bin'] }, snes: { name: 'Super NES', ext: ['sfc', 'smc'] } };
-  var CORE = { nes: 'nes', fds: 'nes', unf: 'nes', sfc: 'snes', smc: 'snes', md: 'segaMD', gen: 'segaMD', smd: 'segaMD', a26: 'atari2600' };
+  // every playable cabinet is an NES (scripts/signs.gd ARCADE; ARCADE-NES, Steven, Nov 4 2026,
+  // design/godot-arcade-roms.md): the NES core and the file endings it takes. Only the owner's own files.
+  var SYS = { nes: { name: 'NES', ext: ['nes', 'fds', 'unf'] } };
+  var CORE = { nes: 'nes', fds: 'nes', unf: 'nes' };
+  function isNes(c) { return !!c && (c.core || CORE[ext(c.file)]) === 'nes'; }
   function ext(name) { var m = /\.([a-z0-9]+)$/i.exec(name || ''); return m ? m[1].toLowerCase() : ''; }
   function close() {
     if (window.parent && window.parent !== window) window.parent.postMessage('emu-close', '*');
@@ -70,11 +71,11 @@
   if (q.get('id')) {
     loadList().then(function (L) {
       var c = (L.cabinets || {})[q.get('id')];
-      if (!c) { document.getElementById('title').textContent = 'No game on this cabinet'; return; }
+      if (!c || !isNes(c)) { document.getElementById('title').textContent = 'No game on this cabinet'; return; }
       document.getElementById('title').textContent = c.title || c.name || 'Pocket Change';
       document.getElementById('wrap').hidden = false;
       window.EJS_player = '#game';
-      window.EJS_core = c.core || CORE[ext(c.file)] || 'nes';
+      window.EJS_core = 'nes';
       window.EJS_gameUrl = c.file;
       window.EJS_gameName = c.title || c.name || 'game';
       window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
@@ -94,15 +95,16 @@
   document.getElementById('setup').hidden = false;
   document.getElementById('title').textContent = 'Arcade setup';
   document.getElementById('s-title').textContent = (q.get('title') || 'Cabinet') + '  (' + id + ')';
-  var sys = SYS[q.get('sys')] ? q.get('sys') : null;
+  var sys = 'nes';     // whatever the link says: every cabinet takes NES files
   if (sys) {
-    document.getElementById('s-sys').textContent = 'This is a ' + SYS[sys].name + ' cabinet: it takes .' + SYS[sys].ext.join(', .') + ' files.';
+    document.getElementById('s-sys').textContent = 'This is an ' + SYS[sys].name + ' cabinet: it takes .' + SYS[sys].ext.join(', .') + ' files.';
     document.getElementById('file').accept = SYS[sys].ext.map(function (e) { return '.' + e; }).join(',');
   }
   var msg = document.getElementById('msg');
   function say(t, cls) { msg.textContent = t; msg.className = cls || ''; }
   function show(L) {
     var c = (L.cabinets || {})[id];
+    if (c && !isNes(c)) c = null;
     document.getElementById('current').textContent = c ? ('On this cabinet now: ' + (c.name || c.file)) : 'Nothing on this cabinet yet.';
     document.getElementById('remove').hidden = !c;
   }
@@ -161,6 +163,8 @@
         } catch (e) { L = { cabinets: {} }; }
       }
       L.cabinets = L.cabinets || {};
+      // ARCADE-NES: entries for other systems (from before every cabinet was an NES) are dropped
+      Object.keys(L.cabinets).forEach(function (k) { if (!isNes(L.cabinets[k])) delete L.cabinets[k]; });
       change(L.cabinets);
       return put(ROMS, b64text(JSON.stringify(L, null, 1) + '\n'), 'Update the arcade ROM list', tok, br).then(function () { return L; });
     });

@@ -37,13 +37,13 @@ const PC_STYLE := [
 ]
 const KB_STYLE := {"font": "sans", "fill": "#b0f03c", "outline": ""}
 
-## The twelve playable cabinets (Steven, Oct 6: "3 Atari, 3 NES, 3 Genesis, 3 SNES",
-## sprinkled round the room): video cabinets with joysticks, picked to spread across
-## Pocket Change. Each takes one system's ROMs (play/emu.html); play/roms.json says which
-## ROM each one has. Values are EmulatorJS core names.
-const ARCADE := {"pc.video.33": "atari2600", "pc.video.37": "nes", "pc.video.03": "segaMD", "pc.video.62": "snes",
-	"pc.video.11": "atari2600", "pc.video.46": "nes", "pc.video.17": "segaMD", "pc.video.52": "snes",
-	"pc.video.22": "atari2600", "pc.video.54": "nes", "pc.video.29": "segaMD", "pc.video.67": "snes"}
+## The twelve playable cabinets: video cabinets with joysticks, spread across Pocket Change. Steven,
+## Oct 6: "3 Atari, 3 NES, 3 Genesis, 3 SNES"; ARCADE-NES (Steven, Nov 4 2026; design/godot-arcade-roms.md):
+## every one is an NES now. Each takes NES files only (play/emu.html); play/roms.json says which ROM each
+## one has. Values are EmulatorJS core names.
+const ARCADE := {"pc.video.33": "nes", "pc.video.37": "nes", "pc.video.03": "nes", "pc.video.62": "nes",
+	"pc.video.11": "nes", "pc.video.46": "nes", "pc.video.17": "nes", "pc.video.52": "nes",
+	"pc.video.22": "nes", "pc.video.54": "nes", "pc.video.29": "nes", "pc.video.67": "nes"}
 const SYS_NAME := {"atari2600": "Atari 2600", "nes": "NES", "segaMD": "Genesis", "snes": "Super NES"}
 const SYS_COL := {"atari2600": "#e8742a", "nes": "#d8202a", "segaMD": "#2a5ad8", "snes": "#8a4ad0"}
 const FONT_FILES := {"sans": "sans.otf", "sans_italic": "sans_italic.otf", "serif": "serif.ttf", "script": "script.ttf"}
@@ -201,8 +201,8 @@ func _near_check() -> void:
 		fwd = fwd.normalized()
 	if cam != null and not roms.is_empty():
 		for id in ARCADE:
-			if not roms.has(id) or not recs.has(id):
-				continue
+			if not roms.has(id) or not recs.has(id) or str(roms[id].get("core", "nes")) != ARCADE[id]:
+				continue     # ARCADE-NES: an older entry for another system is not played
 			var f = recs[id].faces[0]
 			var c = Vector3.ZERO
 			for p in f.p:
@@ -347,7 +347,8 @@ func _show_sys_tags(on: bool) -> void:
 		var lab := Label3D.new()
 		lab.font = fonts["sans"]
 		lab.font_size = 64
-		lab.text = SYS_NAME[ARCADE[id]] + ("\n" + str(roms[id].get("name", "")) if roms.has(id) else "\n(empty)")
+		var has: bool = roms.has(id) and str(roms[id].get("core", "nes")) == ARCADE[id]
+		lab.text = SYS_NAME[ARCADE[id]] + ("\n" + str(roms[id].get("name", "")) if has else "\n(empty)")
 		lab.modulate = Color.WHITE
 		lab.outline_size = 18
 		lab.outline_modulate = Color(SYS_COL[ARCADE[id]])
