@@ -108,12 +108,27 @@ func _assets() -> void:
 			var f := "res://models/characters/%s_%s.glb" % [id, s]
 			if ResourceLoader.exists(f) or FileAccess.file_exists(f): left.append(f.get_file())
 	_check(left.is_empty(), "no base-layer .glb in models/characters %s" % [left])
-	for s in ["female", "male"]:
-		for k in ["glb", "glb_hi"]:
-			var path := str(man.bodies[s][k])
-			var head := FileAccess.get_file_as_bytes(path).slice(20, 400000).get_string_from_ascii()
-			_check(head.contains("bfix_flattened"), "%s: chest and groin flattened (tools/blender/characters/flatten.py)" % path.get_file())
-	_check(FileAccess.file_exists("res://models/characters/skin_base_painted.txt"), "skin maps carry the painted base layer")
+	if CharBody.is_ubc():
+		# CHARS-UBC: the kit's bodies carry painted underwear in their skin map, and the shader's base layer
+		# paints chest, pelvis and crotch as fabric (base_mask): every one of those regions must exist
+		for s in ["female", "male"]:
+			var sc: Node3D = load(str(man.bodies[s].glb)).instantiate()
+			var bm: MeshInstance3D = sc.find_child("body", true, false)
+			var uv2: PackedVector2Array = bm.mesh.surface_get_arrays(0)[Mesh.ARRAY_TEX_UV2]
+			var have := {}
+			for u in uv2: have[int(u.x + 0.5)] = true
+			var miss := []
+			for r in CharBody.BASE_REGIONS:
+				if not have.has(man.regions.find(r)): miss.append(r)
+			_check(miss.is_empty(), "%s (UBC): the base layer's regions are all on the body (missing %s)" % [s, miss])
+			sc.free()
+	else:
+		for s in ["female", "male"]:
+			for k in ["glb", "glb_hi"]:
+				var path := str(man.bodies[s][k])
+				var head := FileAccess.get_file_as_bytes(path).slice(20, 400000).get_string_from_ascii()
+				_check(head.contains("bfix_flattened"), "%s: chest and groin flattened (tools/blender/characters/flatten.py)" % path.get_file())
+		_check(FileAccess.file_exists("res://models/characters/skin_base_painted.txt"), "skin maps carry the painted base layer")
 	_check(CharBody.base_mask() != 0, "base_mask covers %s" % [CharBody.BASE_REGIONS])
 
 func _presets_data() -> void:
@@ -174,7 +189,10 @@ func _bodies_api() -> void:
 		var full := ""
 		for k in cb.pieces:
 			if CharBody.covers(cb.pieces[k]) == "full": full = k
-		_check(full != "" and not cb.take_off(full), "%s: take_off refuses the only full outfit" % s)
+		if CharPreset._entry(s, "full_coveralls").is_empty():
+			_check(full == "", "%s (UBC: no full outfits made yet): none worn" % s)
+		else:
+			_check(full != "" and not cb.take_off(full), "%s: take_off refuses the only full outfit" % s)
 		cb.wear("top_sweatshirt")
 		_body_ok(cb, "%s: a top over a full outfit replaces it and gets a bottom" % s, true)
 		cb.wear_many(["top_flannel", "shoe_boots", "x_cap_fwd", "base_lacebra", "bot_slacks"])
@@ -196,9 +214,12 @@ func _bodies_api() -> void:
 		var adult_ids := _ids(cb)
 		cb.apply({"youth": 0.5})
 		_body_ok(cb, "%s: youth 0.5 after %s" % [s, adult_ids], true)
-		for id in ADULT_ONLY:
+		for id in (ADULT_ONLY if _has_youth() else []):
 			_check(not cb.wear(id), "%s child: wear(%s) refused" % [s, id], false)
-		_check(cb.wear("top_flannel") and cb.wear("bot_overalls"), "%s child: plain pieces still wear (flannel, overalls)" % s)
+		if _has_youth():
+			_check(cb.wear("top_flannel") and cb.wear("bot_overalls"), "%s child: plain pieces still wear (flannel, overalls)" % s)
+		else:
+			_check(not CharBody.is_child(cb.values), "%s (UBC: no child bodies): youth is not a slider here" % s)
 		_body_ok(cb, "%s child dressed in plain pieces" % s, true)
 		cb.apply({"youth": 1.0, "youth_small": 0.4, "bust": 1.0, "bust_lift": 1.0})
 		_body_ok(cb, "%s: child 7 with bust sliders pushed" % s, true)
@@ -336,6 +357,16 @@ func _editor() -> void:
 			if str(r.kind) == "choice" and r.has("opts"):
 				for o in r.opts:
 					if str(o[1]) != "" and str(r.label) != "Hair style" and not CharBody.CHILD_ALLOW.has(str(o[1])): offered.append(str(o[1]))
-		_check(offered.is_empty(), "%s editor: a child is offered only plain pieces %s" % [mode, offered])
+		if _has_youth():
+			_check(offered.is_empty(), "%s editor: a child is offered only plain pieces %s" % [mode, offered])
+		else:
+			_check(not CharBody.is_child(ed.preset.keys), "%s editor (UBC: no child bodies): a youth key is refused" % mode)
 		ed.queue_free()
 		await _wait(2)
+
+
+## CHARS-UBC: the UBC bodies have no youth sliders (no child bodies); the child checks then check that.
+func _has_youth() -> bool:
+	for sl in CharBody.cman().sliders:
+		if str(sl.name) == "youth": return true
+	return false

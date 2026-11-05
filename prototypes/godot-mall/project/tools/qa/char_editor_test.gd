@@ -66,8 +66,12 @@ func _unit() -> void:
 	# the clothed rule (B-FIX; the full walk is tools/qa/char_clothed_test.gd)
 	var f := CharPreset.normalize({"body": "female", "outfit": {"base_top": "base_lacebra", "base_bottom": "base_panties"}})
 	_check(f.outfit.top != "" and f.outfit.bottom != "" and not f.outfit.has("base_top"), "a preset asking for a base layer gets a top and a bottom instead")
-	var fu := CharPreset.normalize({"body": "female", "outfit": {"top": "top_tee", "bottom": "bot_jeans", "full": "full_cheer"}})
-	_check(fu.outfit.top == "" and fu.outfit.bottom == "" and fu.outfit.full == "full_cheer", "a full outfit replaces top and bottom")
+	if CharPreset.slot_offers("female", "full", "full_cheer"):
+		var fu := CharPreset.normalize({"body": "female", "outfit": {"top": "top_tee", "bottom": "bot_jeans", "full": "full_cheer"}})
+		_check(fu.outfit.top == "" and fu.outfit.bottom == "" and fu.outfit.full == "full_cheer", "a full outfit replaces top and bottom")
+	else:       # CHARS-UBC: no full outfit made yet: one asked for is dropped and the clothed defaults stay
+		var fu := CharPreset.normalize({"body": "female", "outfit": {"top": "top_tee", "bottom": "bot_jeans", "full": "full_cheer"}})
+		_check(fu.outfit.full == "" and fu.outfit.top == "top_tee" and fu.outfit.bottom == "bot_jeans", "a full outfit this pack lacks is dropped (top and bottom kept)")
 	var cb := CharBody.new()
 	host.add_child(cb)
 	cb.make("female")

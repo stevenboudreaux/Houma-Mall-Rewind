@@ -32,13 +32,16 @@ var _skins: Array[Skin] = []
 
 ## CHARS-UBC (Steven, Nov 4: design/godot-ubc-characters.md): the Quaternius Universal Base Characters
 ## bodies are the default; the MakeHuman (B1) bodies stay behind a flag until Steven signs off:
-## ?chars=mh in the address, localStorage "mall-chars-body" = "mh", or Engine meta "chars_body" (tests).
+## ?chars=mh in the address, localStorage "mall-chars-body" = "mh", Engine meta "chars_body" or the
+## native command line's "-- --chars=mh" (tests).
 const MANIFEST_UBC := "res://models/ubc/ubc.json"
 
 static func manifest_path() -> String:
 	var want := ""
 	if Engine.has_meta("chars_body"):
 		want = str(Engine.get_meta("chars_body"))
+	elif OS.get_cmdline_user_args().has("--chars=mh"):      # native tests: -- --chars=mh
+		want = "mh"
 	elif OS.has_feature("web"):
 		var q = JavaScriptBridge.eval("(function(){try{return new URLSearchParams(location.search).get('chars')||localStorage.getItem('mall-chars-body')||''}catch(e){return ''}})()")
 		want = str(q) if q != null else ""
@@ -98,6 +101,11 @@ static func shape_weights(vals: Dictionary, s: String) -> Dictionary:
 ## anything a child may not wear.
 func apply(vals: Dictionary) -> void:
 	values = vals.duplicate()
+	# only this manifest's sliders (CHARS-UBC: the UBC bodies have no youth sliders, so no child bodies)
+	var known := {}
+	for sl in cman().sliders: known[str(sl.name)] = true
+	for k in values.keys():
+		if not known.has(str(k)): values.erase(k)
 	if is_child(values):
 		for k in CHILD_ZERO_KEYS: values.erase(k)
 	weights = shape_weights(values, sex)
@@ -435,8 +443,9 @@ func _shade(mi: MeshInstance3D, mask: int) -> void:
 			sm.set_shader_parameter("roughness", m.roughness)
 			sm.set_shader_parameter("metallic", m.metallic)
 			sm.set_shader_parameter("use_vertex_color", m.vertex_color_use_as_albedo)
-			if str(m.resource_name).begins_with("skin_") and bool(cman().get("wrinkle", true)):   # (UBC: not on its UVs)
-				sm.set_shader_parameter("wrinkle_tex", load("res://models/characters/skin_wrinkle.png"))
+			if str(m.resource_name).begins_with("skin_"):
+				if bool(cman().get("wrinkle", true)):   # (UBC: the wrinkle map isn't made for its UVs)
+					sm.set_shader_parameter("wrinkle_tex", load("res://models/characters/skin_wrinkle.png"))
 				sm.set_shader_parameter("base_mask", base_mask())
 				sm.set_shader_parameter("base_color", BASE_COLOR)
 			if m.cull_mode == BaseMaterial3D.CULL_DISABLED:
