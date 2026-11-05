@@ -402,6 +402,18 @@ func _shade(mi: MeshInstance3D, mask: int) -> void:
 			sm = cur
 		else:
 			var m = mi.mesh.surface_get_material(i)
+			# CHARS-UBC: the kit's hair is alpha cards: drawn alpha-scissored and double-sided (no sorting
+			# problems), tinted by paint() like any BaseMaterial3D
+			if cur is BaseMaterial3D and cur.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR:
+				continue      # already made (and maybe tinted by paint())
+			if m is BaseMaterial3D and m.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and str(mi.get_meta("piece", "")) != "":
+				var hm: BaseMaterial3D = m.duplicate()
+				hm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+				hm.alpha_scissor_threshold = 0.45
+				hm.cull_mode = BaseMaterial3D.CULL_DISABLED
+				hm.albedo_color = hm.albedo_color * NpcBody.tint
+				mi.set_surface_override_material(i, hm)
+				continue
 			if not (m is BaseMaterial3D) or m.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED:
 				continue
 			sm = ShaderMaterial.new()

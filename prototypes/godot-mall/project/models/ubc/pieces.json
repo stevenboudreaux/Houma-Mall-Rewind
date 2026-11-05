@@ -1,0 +1,237 @@
+{
+	"pieces": [
+		{
+			"id": "hair_buns_female",
+			"base_id": "hair_buns",
+			"body": "female",
+			"tris": 3284,
+			"glb": "res://models/ubc/hair_buns_female.gltf",
+			"materials": {
+				"hair": {
+					"label": "hair colour",
+					"default": null
+				}
+			},
+			"slot": "hair",
+			"layer": 5,
+			"label": "Buns",
+			"style": "buns",
+			"hides": [],
+			"kit": "Hair_Buns.gltf",
+			"modelled_on": "female"
+		},
+		{
+			"id": "hair_buns_male",
+			"base_id": "hair_buns",
+			"body": "male",
+			"tris": 3284,
+			"glb": "res://models/ubc/hair_buns_male.gltf",
+			"materials": {
+				"hair": {
+					"label": "hair colour",
+					"default": null
+				}
+			},
+			"slot": "hair",
+			"layer": 5,
+			"label": "Buns",
+			"style": "buns",
+			"hides": [],
+			"kit": "Hair_Buns.gltf",
+			"modelled_on": "female"
+		},
+		{
+			"id": "hair_buzzed_female",
+			"base_id": "hair_buzzed",
+			"body": "female",
+			"tris": 830,
+			"glb": "res://models/ubc/hair_buzzed_female.gltf",
+			"materials": {
+				"hair": {
+					"label": "hair colour",
+					"default": null
+				}
+			},
+			"slot": "hair",
+			"layer": 5,
+			"label": "Buzzed",
+			"style": "buzzed",
+			"hides": [],
+			"kit": "Hair_Buzzed.gltf",
+			"modelled_on": "male"
+		},
+		{
+			"id": "hair_buzzed_male",
+			"base_id": "hair_buzzed",
+			"body": "male",
+			"tris": 830,
+			"glb": "res://models/ubc/hair_buzzed_male.gltf",
+			"materials": {
+				"hair": {
+					"label": "hair colour",
+					"default": null
+				}
+			},
+			"slot": "hair",
+			"layer": 5,
+			"label": "Buzzed",
+			"style": "buzzed",
+			"hides": [],
+			"kit": "Hair_Buzzed.gltf",
+			"modelled_on": "male"
+		},
+		{
+			"id": "hair_buzzedfemale_female",
+			"base_id": "hair_buzzedfemale",
+			"body": "female",
+			"tris": 830,
+			"glb": "res://models/ubc/hair_buzzedfemale_female.gltf",
+			"materials": {
+				"hair": {
+					"label": "hair colour",
+					"default": null
+				}
+			},
+			"slot": "hair",
+			"layer": 5,
+			"label": "Short crop",
+			"style": "buzzedfemale",
+			"hides": [],
+			"kit": "Hair_BuzzedFemale.gltf",
+			"modelled_on": "female"
+		},
+		{
+			"id": "hair_buzzedfemale_male",
+			"base_id": "hair_buzzedfemale",
+			"body": "male",
+			"tris": 830,
+			"glb": "res://models/ubc/hair_buzzedfemale_male.gltf",
+			"materials": {
+				"hair": {
+					"label": "hair colour",
+					"default": null
+				}
+			},
+			"slot": "hair",
+			"layer": 5,
+			"label": "Short crop",
+			"style": "buzzedfemale",
+			"hides": [],
+			"kit": "Hair_BuzzedFemale.gltf",
+			"modelled_on": "female"
+		},
+		{
+			"id": "hair_long_female",
+			"base_id": "hair_long",
+			"body": "female",
+			"tris": 2906,
+			"glb": "res://models/ubc/hair_long_female.gltf",
+			"materials": {
+				"hair": {
+					"label": "hair colour",
+					"default": null
+				}
+			},
+			"slot": "hair",
+			"layer": 5,
+			"label": "Shoulder length",
+			"style": "long",
+			"hides": [],
+			"kit": "Hair_Long.gltf",
+			"modelled_on": "female"
+		},
+		{
+			"id": "hair_long_male",
+			"base_id": "hair_long",
+			"body": "male",
+			"tris": 2906,
+			"glb": "res://models/ubc/hair_long_male.gltf",
+			"materials": {
+				"hair": {
+					"label": "hair colour",
+					"default": null
+				}
+			},
+			"slot": "hair",
+			"layer": 5,
+			"label": "Shoulder length",
+			"style": "long",
+			"hides": [],
+			"kit": "Hair_Long.gltf",
+			"modelled_on": "female"
+		},
+		{
+			"id": "hair_simpleparted_female",
+			"base_id": "hair_simpleparted",
+			"body": "female",
+			"tris": 1301,
+			"glb": "res://models/ubc/hair_simpleparted_female.gltf",
+			"materials": {
+				"hair": {
+					"label": "hair colour",
+					"default": null
+				}
+			},
+			"slot": "hair",
+			"layer": 5,
+			"label": "Side part",
+			"style": "simpleparted",
+			"hides": [],
+			"kit": "Hair_SimpleParted.gltf",
+			"modelled_on": "male"
+		},
+		{
+			"id": "hair_simpleparted_male",
+			"base_id": "hair_simpleparted",
+			"body": "male",
+			"tris": 1301,
+			"glb": "res://models/ubc/hair_simpleparted_male.gltf",
+			"materials": {
+				"hair": {
+					"label": "hair colour",
+					"default": null
+				}
+			},
+			"slot": "hair",
+			"layer": 5,
+			"label": "Side part",
+			"style": "simpleparted",
+			"hides": [],
+			"kit": "Hair_SimpleParted.gltf",
+			"modelled_on": "male"
+		},
+		{
+			"id": "x_beard_male",
+			"base_id": "x_beard",
+			"body": "male",
+			"tris": 1034,
+			"glb": "res://models/ubc/x_beard_male.gltf",
+			"materials": {
+				"hair": {
+					"label": "hair colour",
+					"default": null
+				}
+			},
+			"slot": "beard",
+			"layer": 5,
+			"label": "Beard",
+			"style": "x_beard",
+			"hides": [],
+			"kit": "Hair_Beard.gltf",
+			"modelled_on": "male"
+		}
+	],
+	"aliases": {
+		"hair_shoulder": "hair_long",
+		"hair_puffs": "hair_buns",
+		"hair_crew": "hair_buzzed",
+		"hair_sidepart": "hair_simpleparted",
+		"hair_bowl": "hair_simpleparted",
+		"hair_fade": "hair_buzzed",
+		"hair_balding": "hair_buzzed",
+		"hair_elderly": "hair_simpleparted",
+		"hair_perm": "hair_buns",
+		"hair_braids": "hair_long"
+	},
+	"_": "CHARS-UBC pieces (tools/blender/ubc/build_pieces.py); merged into models/ubc/ubc.json by tools/chars/ubc_manifest.gd."
+}

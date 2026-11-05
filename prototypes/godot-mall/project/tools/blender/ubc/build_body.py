@@ -103,6 +103,9 @@ def regions(F):
             r = "neck"
         elif n == "Spine2":
             r = "chest_f" if front else "chest_b"
+        if (n == "Spine2" or "Shoulder" in n or n == "Spine1") and front and abs(x) < 0.17 \
+                and F.head["mixamorig_Spine1"][2] < z < F.head["mixamorig_Neck"][2] - 0.04:
+            r = "chest_f"      # the whole chest front (breasts weighted to the shoulders too): the base layer
         elif n in ("Spine1", "Spine"):
             r = "belly_f" if front else "belly_b"
         elif n in ("Hips", "root"):
@@ -398,6 +401,11 @@ def main(sex):
             p = os.path.join(U.OUT, "ubc_" + src.lower().replace("t_", "").replace("_basecolor", "_albedo"))
             grey(find_image(src), p, 1.0, rgba=True)
             set_image(m, "base", p)
+    # the head's box (tools/blender/ubc/build_pieces.py moves a hairstyle from one kit head to the other)
+    os.makedirs(U.SCRATCH, exist_ok=True)
+    hv = base[F.w("mixamorig_Head") > 0.9]
+    import json
+    json.dump([hv.min(0).tolist(), hv.max(0).tolist()], open(os.path.join(U.SCRATCH, "headbox_%s.json" % sex), "w"))
     # shape keys
     S = shapes(F, sex, base, orig)
     for name in sorted(S):
