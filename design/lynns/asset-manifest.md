@@ -8,7 +8,7 @@ the skeleton (walls, columns, rooms) is unchanged. Research: `inventory.md`; flo
 ## Which source won, family by family (decided by looking)
 
 Sheets (footage | generator | pack, same light): `production/qa/evidence/lynns-compare-{sofa,bedroom,chairs,mattress,dining,occasional}.jpg`;
-every pack conversion: `production/qa/evidence/lynns-pack-sheet-{a,b}.jpg`.
+every pack conversion: `production/qa/evidence/lynns-pack-sheet-{a,b}.jpg` (rendered before three fixes: the round rug is now script-built, `pk_plant_tall` is the leafy tree, the navy mattress has a navy top).
 
 | Family | Winner | Why (what the sheet shows) |
 |---|---|---|
@@ -39,8 +39,8 @@ every pack conversion: `production/qa/evidence/lynns-pack-sheet-{a,b}.jpg`.
 - **Axes:** metres, origin at the floor centre, the front on Blender −Y (Godot +Z): the same as the `bl_ly_*` props.
 - **Recolour by material swap:** each source material maps to a swatch of one shared 128 px palette
   (`models/lynns/pack/ly_palette.png` + `ly_palette_orm.png`: roughness and metal per swatch; colours from
-  `inventory.md`). Every face is UV'd to its swatch's centre, so a model is **one material, one draw call**, and the
-  packs' flat-shaded look is kept. No per-prop textures: the 83 models are 1.8 MB together (the generator props are ~94 MB).
+  `inventory.md`). Every face is UV'd to its swatch's centre, so a model is **one material, one draw call**, all sharing one imported texture (`.gltf` + `.bin`, the palette beside them), and the
+  packs' flat-shaded look is kept. No per-prop textures: the 83 models are 2.0 MB together (the generator props are ~94 MB).
 - **Triangles:** 60–1,460 per model (sofas ~1–1.5k, chairs 200–850, lamps ~250, rugs 100–240).
 - **Not done (and why):** no baked contact AO on pack models (they are flat-coloured; the wing's probes light them);
   price tags not yet on them.

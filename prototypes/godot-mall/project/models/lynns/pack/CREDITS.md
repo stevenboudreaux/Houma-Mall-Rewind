@@ -1,6 +1,6 @@
 # Lynn's Interiors pack furniture: sources and licence
 
-The `pk_*.glb` models in this folder are converted (rescaled, re-oriented, recoloured onto `ly_palette.png`,
+The `pk_*.gltf` + `.bin` models in this folder are converted (rescaled, re-oriented, recoloured onto `ly_palette.png`,
 joined into one mesh) by `tools/blender/import_quaternius.py` from two CC0 packs Steven supplied on Nov 4 2026.
 Both are released under **CC0 1.0 Universal (Public Domain Dedication)**,
 https://creativecommons.org/publicdomain/zero/1.0/ . Credit is not required; it is given here with thanks.
