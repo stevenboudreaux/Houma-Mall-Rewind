@@ -8,6 +8,9 @@ extends Node
 
 @export var scale := 0.5          # reflection resolution vs. the screen
 @export var strength := 0.6
+## bake-look (design/godot-bake-quality.md): the floor's share of the ReflectionProbes (Demo 51: 0.25).
+## On the web ?floorspec=<0..1> overrides it, so Steven can compare before choosing a default.
+@export var floor_spec := 0.25
 var vp: SubViewport
 var mcam: Camera3D
 var floor_mats := []
@@ -26,6 +29,10 @@ uniform int palette = 0;       // court: 0 taupe, 1 blue-grey (Dillard's), 2 ter
 uniform float strength = 0.5;
 uniform float refl_clamp = 1.5;
 uniform vec2 px = vec2(0.002, 0.003);
+// bake-look (design/godot-bake-quality.md): how much the floor takes from the hall ReflectionProbes.
+// 0.25 = Demo 51. The probes' box-projected picture of the shop grilles shows as pale streaks and
+// blotches on the floor; 0 leaves the polish to the mirror above. Steven decides (?floorspec=0 to try).
+uniform float floor_spec = 0.25;
 varying vec3 wpos;
 
 void vertex() { wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz; }
@@ -150,7 +157,7 @@ void fragment() {
 	k *= mix(1.25, 0.55, lum);   // dark tiles mirror more, as real terrazzo does
 	ALBEDO = a * (1.0 - k * 0.35);
 	ROUGHNESS = 0.35;
-	SPECULAR = 0.25;
+	SPECULAR = floor_spec;   // bake-look: was 0.25 (the default)
 	EMISSION = r * k;
 }
 """
@@ -180,6 +187,14 @@ void fragment() {
 ## BPTC) or in phone and headset ones (ETC2 and ASTC), and web/shell.html picks one before
 ## the engine starts. If it guessed wrong for this GPU, switch to the other build once and
 ## remember the choice in this browser.
+## bake-look: the floor's probe share, from ?floorspec= on the web, else floor_spec.
+func _floor_spec() -> float:
+	if OS.has_feature("web"):
+		var q := str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('floorspec') || ''"))
+		if q.is_valid_float():
+			return clampf(float(q), 0.0, 1.0)
+	return floor_spec
+
 func _check_pack() -> void:
 	if not OS.has_feature("web"):
 		return
@@ -240,6 +255,7 @@ func _ready() -> void:
 					s.set_shader_parameter("medallions", int(f.get("medallions", 0)))
 					s.set_shader_parameter("court", Vector4(f.get("cx", 0.0), f.get("cz", 0.0), f.get("hx", 8.0), f.get("hz", 8.0)))
 					s.set_shader_parameter("palette", int(f.get("palette", 0)))
+					s.set_shader_parameter("floor_spec", _floor_spec())
 					cache[sm.resource_name] = s
 					floor_mats.append(s)
 				mi.set_surface_override_material(i, cache[sm.resource_name])

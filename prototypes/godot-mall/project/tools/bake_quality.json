@@ -23,10 +23,22 @@
       "probes_subdiv": 4
     },
     "nov4": {
-      "_why": "R2 has no pack size limit: own halls, courts, fronts and rooms 0.16 -> 0.10 m, the walked-on floors 0.06 m. Stand-ins and the outside unchanged.",
+      "_why": "R2 has no pack size limit: own halls, courts, fronts and rooms 0.16 -> 0.10 m, the walked-on hall and court floors 0.06 m, the other wing's halls and courts (stand-ins) 0.40 -> 0.16 m. The outside (wing 3) unchanged.",
       "texel": 0.10,
       "floor_texel": 0.06,
-      "standin_texel": 0.40,
+      "standin_texel": 0.16,
+      "quality": "ultra",
+      "bounces": 3,
+      "denoiser": true,
+      "denoiser_strength": 0.25,
+      "max_texture_size": 4096,
+      "probes_subdiv": 4
+    },
+    "nov4_lite": {
+      "_why": "fallback if the nov4 lightmaps cost too much memory on the iPhone (design/godot-bake-quality.md 'Risks'): still finer than Demo 51 everywhere, about half nov4's extra texels",
+      "texel": 0.12,
+      "floor_texel": 0.08,
+      "standin_texel": 0.20,
       "quality": "ultra",
       "bounces": 3,
       "denoiser": true,
@@ -37,7 +49,7 @@
   },
   "wings": {
     "_doc": "Overrides on top of the active profile, by scene: 'wing3' covers both years, 'wing3_2026' only 2026.",
-    "wing3": { "_why": "the outside: not part of the floor problem; kept at Demo 51 so it needs no rebake", "texel": 0.16, "floor_texel": null }
+    "wing3": { "_why": "the outside: not part of the floor problem; kept at Demo 51 so it needs no rebake", "texel": 0.16, "floor_texel": null, "standin_texel": 0.40 }
   },
   "rules": [
     { "_why": "arcade machines: mostly lit by their own glow; a coarse texel keeps the atlas small", "suffix": "_mach", "mult": 1.5 },
