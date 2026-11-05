@@ -104,7 +104,7 @@ eight stainless fridges and a TV wall in R1. Dynamic meshes (`dyn_sr_dress`, no 
 (`models/lynns/bl_ly_*`) are placed from `data/lynns/placements.json` by `tools/stores/sears/lynns.gd`,
 called first in `dress_2026()`; the boxes above skip the rects it claims. Phase 1: four sofas (SOFA-A) in
 the east living area and four bedroom suites (BED-A) on the east and mall walls.
-**Pass 2 (Nov 4 evening):** the whole floor is furnished (407 pieces: CC0 Quaternius / Kenney pack models
+**Pass 2 (Nov 4 evening):** the whole floor is furnished (403 pieces: CC0 Quaternius / Kenney pack models
 recoloured onto one palette, `models/lynns/pack/`, plus the generator props; `design/lynns/asset-manifest.md`);
 `placements.json` sets `replace_boxes`, so `dress_2026()` now keeps only the R3 slatwall from the boxes above.
 

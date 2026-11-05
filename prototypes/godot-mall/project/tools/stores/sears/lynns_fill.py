@@ -259,9 +259,8 @@ def build():
            chairs=["pk_accent_green", "pk_accent_green"], table="pk_cocktail_burl", rug="pk_rug_cream", end="pk_end_white", lamp="pk_lamp_brass")
     g = group("Z9", "grey chenille sectional", 22.6, -105.0, 0)
     sectional(g, "pk_sect_grey", "pk_ott_grey", rug="pk_rug_vintage", extra="pk_accent_cream")
-    # ---------------- appliances by the east customer entrance (Steven's Nov 4 spec; not in the 2026 footage: question)
-    g = group("Z12", "appliances by the east storefront (Steven's spec)", 29.35, -112.6, -90)
-    g.add("pk_fridge_steel", -1.6, 0.0).add("pk_range_steel", -0.5, 0.05).add("pk_washer_white", 0.35, 0.05).add("pk_dryer_white", 1.15, 0.05)
+    # (Z12, appliances by the east storefront: removed on Steven's decision of Nov 4 evening, the 2026 footage has none;
+    #  the strip by the storefront stays open)
     # ---------------- Z11 side-exit corner: sales desk, black sideboard, cream chest, toile chair (IMG_4413 t001-041)
     g = group("Z11", "sales desk", -7.3, -139.0, 90)
     g.add("pk_desk_white", 0, 0).add("pk_monitor", -0.35, -0.12, 180, 0.76).add("pk_monitor", 0.35, -0.12, 180, 0.76).add("pk_taskchair", 0, -0.75, 0)

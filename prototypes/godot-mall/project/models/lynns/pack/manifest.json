@@ -241,17 +241,6 @@
   "family": "FIX sales desk",
   "kb": 13
  },
- "pk_dryer_white": {
-  "src": "k:dryer",
-  "size": [
-   0.69,
-   0.75,
-   0.98
-  ],
-  "tris": 262,
-  "family": "APPL dryer",
-  "kb": 16
- },
  "pk_end_black": {
   "src": "q:NightStand_1",
   "size": [
@@ -284,17 +273,6 @@
   "tris": 184,
   "family": "OCC-B end table",
   "kb": 12
- },
- "pk_fridge_steel": {
-  "src": "k:kitchenFridgeLarge",
-  "size": [
-   0.91,
-   0.75,
-   1.78
-  ],
-  "tris": 436,
-  "family": "APPL refrigerator",
-  "kb": 26
  },
  "pk_lamp_brass": {
   "src": "q:Light_Floor2",
@@ -548,17 +526,6 @@
   "tris": 310,
   "family": "DECO faux plant",
   "kb": 22
- },
- "pk_range_steel": {
-  "src": "k:kitchenStove",
-  "size": [
-   0.76,
-   0.7,
-   0.95
-  ],
-  "tris": 830,
-  "family": "APPL range",
-  "kb": 47
  },
  "pk_recl_beige": {
   "src": "k:loungeChairRelax",
@@ -900,16 +867,5 @@
   "tris": 592,
   "family": "DIN-A round pedestal table",
   "kb": 23
- },
- "pk_washer_white": {
-  "src": "k:washer",
-  "size": [
-   0.69,
-   0.75,
-   0.98
-  ],
-  "tris": 720,
-  "family": "APPL washer",
-  "kb": 41
  }
 }

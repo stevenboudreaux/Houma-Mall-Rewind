@@ -161,19 +161,6 @@
     ]
    ],
    "colour": "#dddddd"
-  },
-  {
-   "id": "Z12",
-   "what": "Appliances by the east storefront (Steven's spec; not in the 2026 footage)",
-   "rects": [
-    [
-     27.0,
-     -114.6,
-     30.0,
-     -110.4
-    ]
-   ],
-   "colour": "#c9ccd2"
   }
  ]
 }

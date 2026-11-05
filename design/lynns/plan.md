@@ -83,13 +83,17 @@ Mac (wings that need a rebake: **wing 4, 2026** only; wing 1 2026's anchor pictu
 
 Steven's Nov 4 spec changed the order: the CC0 packs (Quaternius primary, Kenney for gaps) fill the whole floor
 now, and the generator replaces pack pieces family by family where it looks better (`asset-manifest.md` "Which
-source won"). Done: phase 1 (SOFA-A ×4, BED-A ×4 suites) + **pass 2: 83 pack models, 407 pieces placed in all 12
+source won"). Done: phase 1 (SOFA-A ×4, BED-A ×4 suites) + **pass 2: 79 pack models, 403 pieces placed in 11
 zones** (`layout.md` "Pass 2"), unbaked shots for Steven's layout review.
 
 | Next | Content | Sessions |
 |---|---|---|
 | A — after Steven's layout review | move zones / groups as he says (data only); price tags on every piece (`lib/labels.py` hang tag + markdown cards as a MultiMesh); slatwall brand panels; books in the bookcases (Kenney `books`), throw pillows | 1 |
-| B — generator upgrades where the pack is weakest | SOFA-B sectional mode (cloud U, L with chaise) to replace `Couch_L`; recliner / lift chair; wingback + chair-and-a-half; trestle tables + benches | 2–3 |
-| C — case goods and decor | curio, hutch, carved sideboards, mirrors (try Quaternius `Bathroom_Mirror1/2`), urns / vases / trays, floor lamps, PIL-painted art and rugs with the footage's patterns | 2 |
+| B — generator upgrades where the pack is weakest | SOFA-B sectional mode (cloud U, L with chaise) to replace `Couch_L`; recliner / lift chair; wingback + chair-and-a-half; swivel barrel; trestle tables + benches | 2–3 |
+| C — case goods and decor (all generator) | curio, hutch, carved sideboards, mirrors, urns / vases / trays, floor lamps, sample racks, PIL-painted art and rugs with the footage's patterns | 2 |
 | D — finish | the ogee and canopy beds, performance (visibility ranges, MultiMesh for tags and decor), the mobile texture decision for the generator props, Mac bake of wing4_2026 + stand-in recapture, before/after | 1–2 |
 | | **remaining** | **6–8 sessions ≈ 1–1.5 weeks** |
+
+**Steven's decisions (Nov 4 evening)** (`asset-manifest.md`): no appliances (Z12 removed); the mattress wall stays
+on R3's back wall; the bedroom suites stay on the outer walls; every gap piece is built with our generator, no
+downloaded models. The estimate above is unchanged (6–8 sessions).

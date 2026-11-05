@@ -1394,68 +1394,6 @@
    "family": "FIX curtain"
   },
   {
-   "id": "pk_fridge_steel",
-   "src": "k:kitchenFridgeLarge",
-   "size": [
-    0.91,
-    0.75,
-    1.78
-   ],
-   "mats": {
-    "metalLight": "stainless",
-    "metalMedium": "black_metal"
-   },
-   "family": "APPL refrigerator"
-  },
-  {
-   "id": "pk_range_steel",
-   "src": "k:kitchenStove",
-   "size": [
-    0.76,
-    0.7,
-    0.95
-   ],
-   "mats": {
-    "metal": "stainless",
-    "wood": "stainless",
-    "metalDark": "black_metal",
-    "carpetWhite": "white_metal",
-    "glass": "black_glass"
-   },
-   "family": "APPL range"
-  },
-  {
-   "id": "pk_washer_white",
-   "src": "k:washer",
-   "size": [
-    0.69,
-    0.75,
-    0.98
-   ],
-   "mats": {
-    "*": "white_metal",
-    "metalDark": "black_metal",
-    "metal": "nickel",
-    "glass": "black_glass"
-   },
-   "family": "APPL washer"
-  },
-  {
-   "id": "pk_dryer_white",
-   "src": "k:dryer",
-   "size": [
-    0.69,
-    0.75,
-    0.98
-   ],
-   "mats": {
-    "*": "white_metal",
-    "metalDark": "black_metal",
-    "metalMedium": "nickel"
-   },
-   "family": "APPL dryer"
-  },
-  {
    "id": "pk_desk_white",
    "src": "k:desk",
    "size": [

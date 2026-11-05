@@ -1,5 +1,5 @@
 {
- "_": "Lynn's Interiors (2026) furniture placements: design/lynns/layout.md. Read by tools/stores/sears/lynns.gd. models: key -> scene and footprint [w, d] (m). groups: zone, name, rect [x0, z0, x1, z1] (world m; store.gd's box dressing skips it), optional rug [x0, z0, x1, z1, colour], items [model, x, z, yaw deg] (yaw 0 = front faces +z / south, 180 = north, -90 = west). Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py.",
+ "_": "Lynn's Interiors (2026) furniture placements: design/lynns/layout.md. Read by tools/stores/sears/lynns.gd. models: key -> scene and footprint [w, d] (m). groups: zone, name, rect [x0, z0, x1, z1] (world m; store.gd's box dressing skips it), optional rug [x0, z0, x1, z1, colour], items [model, x, z, yaw deg] (yaw 0 = front faces +z / south, 180 = north, -90 = west). Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py. Items may carry a 5th value y (on top of another piece). Models with walk=true (rugs) are not obstacles. replace_boxes: store.gd's old box dressing is skipped (the R3 slatwall stays). Pass 2 (pack furniture) groups carry \"pass\": 2 and are rewritten by tools/stores/sears/lynns_fill.py.",
  "models": {
   "sofa_sage": {
    "scene": "res://models/lynns/bl_ly_sofa_sage/bl_ly_sofa_sage.glb",
@@ -207,12 +207,6 @@
    "h": 2.8,
    "family": "FIX curtain"
   },
-  "pk_dryer_white": {
-   "scene": "res://models/lynns/pack/pk_dryer_white.gltf",
-   "size": [0.69, 0.75],
-   "h": 0.98,
-   "family": "APPL dryer"
-  },
   "pk_end_black": {
    "scene": "res://models/lynns/pack/pk_end_black.gltf",
    "size": [0.55, 0.45],
@@ -230,12 +224,6 @@
    "size": [0.55, 0.45],
    "h": 0.62,
    "family": "OCC-B end table"
-  },
-  "pk_fridge_steel": {
-   "scene": "res://models/lynns/pack/pk_fridge_steel.gltf",
-   "size": [0.91, 0.75],
-   "h": 1.78,
-   "family": "APPL refrigerator"
   },
   "pk_lamp_brass": {
    "scene": "res://models/lynns/pack/pk_lamp_brass.gltf",
@@ -362,12 +350,6 @@
    "size": [0.498, 0.498],
    "h": 1.5,
    "family": "DECO faux plant"
-  },
-  "pk_range_steel": {
-   "scene": "res://models/lynns/pack/pk_range_steel.gltf",
-   "size": [0.76, 0.7],
-   "h": 0.95,
-   "family": "APPL range"
   },
   "pk_recl_beige": {
    "scene": "res://models/lynns/pack/pk_recl_beige.gltf",
@@ -553,12 +535,6 @@
    "size": [1.2, 1.2],
    "h": 0.76,
    "family": "DIN-A round pedestal table"
-  },
-  "pk_washer_white": {
-   "scene": "res://models/lynns/pack/pk_washer_white.gltf",
-   "size": [0.69, 0.75],
-   "h": 0.98,
-   "family": "APPL washer"
   },
   "pk_desk_white": {
    "scene": "res://models/lynns/pack/pk_desk_white.gltf",
@@ -1478,18 +1454,6 @@
     ["pk_sect_grey", 22.6, -105.6, 0.0],
     ["pk_ott_grey", 22.25, -103.95, 0.0],
     ["pk_accent_cream", 24.5, -103.7, -120]
-   ]
-  },
-  {
-   "pass": 2,
-   "zone": "Z12",
-   "name": "appliances by the east storefront (Steven's spec)",
-   "rect": [28.93, -114.66, 29.73, -111.11],
-   "items": [
-    ["pk_fridge_steel", 29.35, -114.2, -90.0],
-    ["pk_range_steel", 29.3, -113.1, -90.0],
-    ["pk_washer_white", 29.3, -112.25, -90.0],
-    ["pk_dryer_white", 29.3, -111.45, -90.0]
    ]
   },
   {

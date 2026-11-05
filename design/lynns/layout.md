@@ -25,7 +25,6 @@ R3. Nothing here moves a wall.
 | Z8 Dining hall | −2,−137,9.5,−110 and −17.5,−137,−6,−128 | DIN-A ~20 sets in rows, STOR sideboards and curios on R5's and R3's walls (corbel wall), DECO tiered trays | IMG_4412 t049–083: straight on from the gallery, many columns, the corbel wall with sideboards | medium |
 | Z9 East living | 9.5,−128,27,−99.4 | **SOFA-A (phase 1)**, SOFA-B grey chenille / cream leather, the glam group with OCC burl tables, leather group | IMG_4413 t051–117, t127–143: the living groups between the side-exit walk and the east storefront | medium |
 | Z10 Bedroom vignettes | 27,−128,30,−99.4 (east wall) and 9.5,−99.4,30,−96.3 (mall wall, east part) | **BED-A (phase 1)**, later the ogee and canopy beds | IMG_4413 t029, t085–091, t119–125: suites against white panel walls under the ledge, the storefront glass beyond (t127–133) | medium (east wall), low (mall wall) |
-| Z12 Appliances (pass 2) | 27,−114.6,30,−110.4 | fridge, range, washer, dryer against the east wall, just north of the customer storefront | **Steven's Nov 4 spec** ("appliances near the exterior customer entrance"); the 2026 footage has none ("back here used to be appliances", IMG_4411) — question in the report | spec |
 | Z11 Side-exit corner | −8.5,−146,0.5,−137 | FIX sales desk + task chair + monitors, STOR black arched sideboard, cream chest, CHAIR-A toile swivel, RUG | IMG_4413 t001–015, t031, t041 | high |
 | Main aisle | −6,−146,−2,−96.3 | kept clear (4 m) | IMG_4409, 4413 t031–037 | high |
 
@@ -59,7 +58,7 @@ wall along a partition, bedroom sets in the partitioned rooms, appliances near t
 lamps / plants / rugs as dressing, density as in the walkthrough; placements as data. Models and the
 generator-vs-pack decisions: `asset-manifest.md`.
 
-- **Data:** `data/lynns/placements.json`, 66 groups, 407 pieces (28 phase-1 generator pieces + generator sofas
+- **Data:** `data/lynns/placements.json`, 65 groups, 403 pieces (28 phase-1 generator pieces + generator sofas
   reused in Z1/Z2/Z4 + 83 pack models). Pass-2 groups carry `"pass": 2` and are written by
   `tools/stores/sears/lynns_fill.py` (templates: living group, sectional group, rect / round dining set); after a
   hand nudge, change that group's `"pass"` to 3 so a re-run keeps it. An item is `[model, x, z, yaw]` or
@@ -77,7 +76,7 @@ generator-vs-pack decisions: `asset-manifest.md`.
   the west partition, two iron beds and the glam upholstered bed on the south partition, the pillow tower;
   Z8 twelve rectangular and four round dining sets, six sideboards with lamps on R5's and R4's walls; Z9 tables
   and lamps for the phase-1 pairs, the glam group, the grey sectional; Z11 the sales desk with two monitors and a
-  task chair, black sideboard, cream chest; Z12 the appliances.
-- **Guesses:** the mattress wall is R3's **back** wall (where workstream E built the slatwall), not a
-  partition; bedroom suites stay on the east and mall walls (phase 1) rather than in a partitioned room;
-  Steven's spec reads differently on both (questions in the report).
+  task chair, black sideboard, cream chest. (Z12, appliances by the storefront, was removed on Steven's decision
+  of Nov 4 evening: `asset-manifest.md`.)
+- **Confirmed by Steven (Nov 4 evening):** the mattress wall is R3's back wall (the slatwall); the bedroom suites
+  stay on the east and mall walls as filmed; no appliances.

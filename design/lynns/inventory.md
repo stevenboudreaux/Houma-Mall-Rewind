@@ -182,7 +182,7 @@ panels in R1, 3 flat rug quads. All vertex-coloured boxes. Screenshot:
 ("back here used to be appliances", IMG_4411: past tense); phase 2 removes them.
 
 **Since pass 2 (Nov 4 evening)** the old box dressing is off (`placements.json` `replace_boxes`); the fridges and
-TVs in R1 are gone, but Steven's spec puts four appliances by the east storefront (Z12, a question).
+TVs in R1 are gone, and Steven confirmed (Nov 4 evening) that the 2026 store has no appliances.
 
 ## Guesses and questions (also in the session report)
 - Which zone sits where is inferred from the camera paths; the headings cannot be fixed from the
