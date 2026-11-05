@@ -134,3 +134,9 @@ built on the head; the apron's skirt rides the hips. No brands, no words.
 3. The face pass: are jaw / chin sliders enough, or should the male face be sculpted further?
 4. The stand-ins for the garments not made yet: OK until the full wardrobe, or hide those pieces?
 5. When to retire the MakeHuman bodies (the flag) and their 76 MB of files.
+
+## Steven's decisions (Nov 4, 2026, evening)
+- Hair: **use the six kit styles we have.** No Source kit purchase and no new hair modelling for now; missing styles keep mapping to the nearest kit style.
+- Clothes: **keep the swaps** (nearest made garment stands in until the full wardrobe exists).
+- Build names, the softened "Average" body, and jaw + chin for the male face: **approved as is.**
+- MakeHuman bodies: **drop at integration.** Ship only `models/ubc/` in the shared `chars` pack; remove the `?chars=mh` fallback and `models/characters/` MakeHuman bodies (76 MB) in the same integration session, after checking nothing else still loads them.
