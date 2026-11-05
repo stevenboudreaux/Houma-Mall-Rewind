@@ -3,7 +3,7 @@
 ## Workstream LYNNS (Nov 4 2026). Called from store.gd dress_2026(); the generic box dressing there skips
 ## any spot inside a rect this file has claimed, so the two never overlap.
 ##
-## Each placement is [model, x, z, yaw_degrees] in world metres (+x east, +z south); yaw 0 = the piece's
+## Each placement is [model, x, z, yaw_degrees] (or [..., y] for a piece standing on another) in world metres (+x east, +z south); yaw 0 = the piece's
 ## front faces +z (south, toward the mall), 90 = faces +x (east), -90 = faces west, 180 = faces north.
 ## The models are dynamic (no lightmap UV2): lit by the wing's lightmap probes, their contact shadows baked
 ## into their own albedo (META ao). Each piece is also a walk obstacle (its footprint, from "size").
@@ -17,6 +17,10 @@ static func data():
 		var t = FileAccess.get_file_as_string(PLACEMENTS)
 		_data = JSON.parse_string(t) if t != "" else {"models": {}, "groups": []}
 	return _data
+
+## True when the pack furniture (pass 2, design/lynns/layout.md) replaces store.gd's old box dressing.
+static func replaces_boxes():
+	return bool(data().get("replace_boxes", false))
 
 ## True when (x, z) is inside a group rect this file dresses (store.gd's box dressing skips it).
 static func claimed(x, z, pad = 0.0):
@@ -47,13 +51,16 @@ static func place(b):
 				push_warning("lynns: no model " + str(it[0]))
 				continue
 			var yaw = deg_to_rad(float(it[3]))
-			var at = Vector3(float(it[1]), 0.0, float(it[2]))
-			# the footprint as an obstacle (rotated half-sizes)
-			var hw = m.size[0] * 0.5
-			var hd = m.size[1] * 0.5
-			var ex = abs(cos(yaw)) * hw + abs(sin(yaw)) * hd
-			var ez = abs(sin(yaw)) * hw + abs(cos(yaw)) * hd
-			b.obst(["rect", at.x - ex, at.z - ez, at.x + ex, at.z + ez])
+			# a 5th value is a height: the piece stands on another one (a lamp on an end table)
+			var y = float(it[4]) if it.size() > 4 else 0.0
+			var at = Vector3(float(it[1]), y, float(it[2]))
+			# the footprint as an obstacle (rotated half-sizes); rugs (walk) and pieces on top are not obstacles
+			if y == 0.0 and not m.get("walk", false):
+				var hw = m.size[0] * 0.5
+				var hd = m.size[1] * 0.5
+				var ex = abs(cos(yaw)) * hw + abs(sin(yaw)) * hd
+				var ez = abs(sin(yaw)) * hw + abs(cos(yaw)) * hd
+				b.obst(["rect", at.x - ex, at.z - ez, at.x + ex, at.z + ez])
 			if holder == null or not ResourceLoader.exists(m.scene):
 				missing[m.scene] = true
 				continue
