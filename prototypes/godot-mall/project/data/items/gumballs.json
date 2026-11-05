@@ -9,7 +9,7 @@
    "class": "hand",
    "scene": "res://models/bl_gb_lavalamp/bl_gb_lavalamp.glb",
    "icon": "res://models/bl_gb_lavalamp/bl_gb_lavalamp_icon.png",
-   "year": 1995,
+   "year": "both",
    "store": "GUMBALLS",
    "recolor": {
     "bl_gb_lavalamp_wax": [

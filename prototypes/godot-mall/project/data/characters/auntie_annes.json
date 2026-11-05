@@ -1,0 +1,38 @@
+{
+	"_": "PLACEHOLDER preset (ws/interiors, Nov 4 2026; design/godot-shops.md): no character, a body, skin, hair and clothes for the shop's attendant until Steven makes the person in the owner's character editor and commits the downloaded file here. Clothes are a guess at the store's staff look.",
+	"id": "auntie_annes",
+	"name": "PLACEHOLDER",
+	"version": 1,
+	"body": "female",
+	"keys": {
+		"height": -0.1,
+		"weight": 0.05,
+		"age": -0.35
+	},
+	"skin": "#7a4a30",
+	"iris": "#2a1c12",
+	"hair": {
+		"id": "hair_puffs",
+		"color": "#1b1714"
+	},
+	"outfit": {
+		"top": "top_tee",
+		"bottom": "bot_slacks",
+		"shoes": "shoe_sneakers",
+		"extras": [
+			"x_cap_fwd"
+		],
+		"colors": {
+			"top_tee": {
+				"main": "#1f2c6a"
+			},
+			"bot_slacks": {
+				"main": "#1c1c22"
+			},
+			"x_cap_fwd": {
+				"main": "#1f2c6a"
+			}
+		}
+	},
+	"shape_from": "ws/interiors guess: staff in navy (IMG_4439 f025). The sex is a guess."
+}

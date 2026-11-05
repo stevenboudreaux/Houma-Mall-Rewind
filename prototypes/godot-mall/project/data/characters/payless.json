@@ -1,0 +1,29 @@
+{
+	"_": "PLACEHOLDER preset (ws/interiors, Nov 4 2026; design/godot-shops.md): no character, a body, skin, hair and clothes for the shop's attendant until Steven makes the person in the owner's character editor and commits the downloaded file here. Clothes are a guess at the store's staff look.",
+	"id": "payless",
+	"name": "PLACEHOLDER",
+	"version": 1,
+	"body": "male",
+	"keys": {
+		"height": 0.05,
+		"weight": 0.0,
+		"age": -0.1
+	},
+	"skin": "#d0a080",
+	"iris": "#3a5a3a",
+	"hair": {
+		"id": "hair_sidepart",
+		"color": "#4a3020"
+	},
+	"outfit": {
+		"top": "top_buttondown",
+		"bottom": "bot_khakis",
+		"shoes": "shoe_dressshoes",
+		"colors": {
+			"top_buttondown": {
+				"main": "#e8e4dc"
+			}
+		}
+	},
+	"shape_from": "ws/interiors guess: a light button-down and khakis (no Payless staff seen in the 2019 video). The sex is a guess."
+}

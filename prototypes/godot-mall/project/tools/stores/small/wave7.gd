@@ -293,7 +293,8 @@ static func cookie(b, a, t, n, W, D, rng):
 			K.fq(b, "w7kf_sign", "sg_gac_check", o, t, n, 0.0, x1 - x0, y0, y1, 0.0, 0.0, 0.0, (x1 - x0) / (sq * 8.0), 0.3 / (sq * 8.0), true)
 	CH.build(b, "w7kf_sign", "res://tools/stores/signs/gac_script_logo.json", P(a, t, n, W * 0.5, head + 0.98, -0.28), n, "sg_gac_neon", "sg_gac_neon_ret", "", 0.03, 0.03, 0.0, "sg_gac_glow")
 	CH.build(b, "w7kf_sign", "res://tools/stores/signs/gac_name_logo.json", P(a, t, n, W * 0.5, head + 0.3, -0.28), n, "sg_gac_white", "sg_gac_white_ret", "", 0.02, 0.07, 0.0, "sg_gac_name_glow")
-	M2.shell2(b, "w7k_shell", a, t, n, W, D, 3.0, 0.0, "wl_floor", 1.22, "w7_white_tile", "kb_ceiling", [1.6, 4.0], 1.0)
+	# ws/interiors: the walls in the video's white tile with scattered coloured squares (gac/kitchen.gd)
+	M2.shell2(b, "w7k_shell", a, t, n, W, D, 3.0, 0.0, "wl_floor", 1.22, "gac_tile_sq", "kb_ceiling", [1.6, 4.0], 1.0)
 	M2.soffit(b, F, a, t, n, W, head, "w7_cream")
 	# the red check course round the walls at counter height
 	for w in [[SIDE + 0.01, t], [W - SIDE - 0.01, -t]]:
@@ -307,9 +308,9 @@ static func cookie(b, a, t, n, W, D, rng):
 	K.register(b, "w7k_small", K.L(co, t, -n, W - 1.9, 1.33, 0.82), t, n)
 	K.ob(b, P(a, t, n, SIDE, 0, 2.6), P(a, t, n, 0.6, 0, 3.4), 0.0)
 	K.ob(b, P(a, t, n, W - 0.6, 0, 2.6), P(a, t, n, W - SIDE, 0, 3.4), 0.0)
-	K.lbox(b, G, "wl_steel", P(a, t, n, W - 0.4, 0, D - SIDE), -t, n, 0.0, 0.0, 0.0, W - 0.8, 1.4, 0.7)
-	for k in 3:
-		K.fq(b, G, "sm_cards", P(a, t, n, W - 0.5, 0, D - SIDE), -t, n, k * 1.7, k * 1.7 + 1.5, 1.8, 2.6, 0.72, k * 0.25, 0.75, k * 0.25 + 0.25, 1.0)
+	# ws/interiors (Nov 4): the work area from the tour video Steven chose (tools/stores/gac/kitchen.gd):
+	# the tiled menu wall with the back counter and the lit pictures, the kitchen behind its doorway
+	load("res://tools/stores/gac/kitchen.gd").build_1995(b, G, "w7k_small", a, t, n, W, D, SIDE)
 	K.ob(b, P(a, t, n, SIDE, 0, 3.4), P(a, t, n, W - SIDE, 0, D - SIDE), 0.0)
 
 # ------------------------------------------------------------------ Regis

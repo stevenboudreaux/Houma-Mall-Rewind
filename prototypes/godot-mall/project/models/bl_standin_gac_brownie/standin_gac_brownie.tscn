@@ -1,0 +1,42 @@
+[gd_scene load_steps=5 format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.2902, 0.1647, 0.0941, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_2"]
+material = SubResource("StandardMaterial3D_1")
+size = Vector3(0.0750, 0.0350, 0.0750)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3"]
+albedo_color = Color(0.2275, 0.1176, 0.0627, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_4"]
+material = SubResource("StandardMaterial3D_3")
+size = Vector3(0.0760, 0.0040, 0.0760)
+
+[node name="standin_gac_brownie" type="Node3D"]
+metadata/item_id = "standin_gac_brownie"
+metadata/item_name = "Brownie"
+metadata/item_class = "hand"
+metadata/standin = true
+
+[node name="Part0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0175, 0.0000)
+mesh = SubResource("BoxMesh_2")
+
+[node name="Part1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0370, 0.0000)
+mesh = SubResource("BoxMesh_4")
+
+[node name="StandInTag" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0690, 0)
+billboard = 1
+no_depth_test = true
+fixed_size = false
+pixel_size = 0.0004
+modulate = Color(1, 0.85, 0.15, 1)
+outline_size = 8
+font_size = 48
+text = "STAND-IN"

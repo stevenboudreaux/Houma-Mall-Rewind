@@ -173,6 +173,47 @@ not baked; placed at run time.
 - "keep the corn dog pickup in 2026": `bl_cd7_corndog` has `"display"` for 1995 and `"place"` for 2026 (data and
   its Blender META); `shop_test.gd` checks it.
 
+## ws/interiors: four more counters (Nov 4 2026)
+Steven (Nov 4, through the coordinator): "ADD the proposed shop items, prices as guesses marked PLACEHOLDER";
+the lava lamp is the Gumballs prize's id, also sold at Spencer's; prices and attendants otherwise stay open.
+The stores are the walk-in / counter builds of `design/storefronts/great-american-cookie.md`, `auntie-annes.md`,
+`payless.md`, `spencers.md` (all wing 2).
+
+| Shop id | Year | Attendant stands (x0, z0 -> x1, z1), faces | TALK spot | Sells (PLACEHOLDER prices) |
+|---|---|---|---|---|
+| `great_american_cookie` | 1995 | behind the case -30.5, 44.1 -> -27.6, 44.45, faces +z | -29.0, 46.0 | chocolate-chip cookie $0.99, sugar cookie $0.89 (the Blender model, now stock on show), cookie-cake slice $1.75, brownie $1.25, fountain drink $0.99 |
+| `great_american_cookie_2026` | 2026 | behind the front case -30.5, 46.0 -> -27.6, 46.45, faces +z | -29.0, 49.0 (the hall) | the same four at $2.99, $5.49, $3.49, $2.99 |
+| `auntie_annes` | 2026 | behind the counter -39.0, 61.0 -> -37.2, 61.4, faces -z | -37.5, 59.1 (the hall) | original pretzel $5.49, cinnamon sugar pretzel $5.99, cup of pretzel bites $6.49, lemonade $3.99 |
+| `payless` | 1995 | between the cash counter and the right wall 4.8, 65.6 -> 6.3, 65.85, faces -z | 5.5, 64.3 | boxed sneakers $14.99, pumps $12.99, sandals $9.99, boots $19.99; socks 3-pack $3.99; shoe polish $1.99 |
+| `spencers` | 2026 | behind the cash wrap -56.8, 24.6 -> -54.0, 25.4, faces +z | -54.8, 27.0 | printed tee $24.99, mug $14.99, plush $19.99, sticker pack $5.99, lava lamp $29.99 (`bl_gb_lavalamp`) |
+
+- **Two entries for the cookie shop:** the same store and stock in both years, but `shop.gd` has one price per
+  entry and the 2026 case stands at the front (served from the hall), so 1995 and 2026 are separate entries,
+  each with its own attendant. The sugar cookie is a 1995 item and is sold only then.
+- **Items:** 18 labelled STAND-INs (`tools/shops/make_standins_interiors.py`, reusing `make_standins.py`'s scene
+  writer and band; `models/bl_standin_{gac,aa,pay,sp}_*`), in the store files `great_american_cookie.json`,
+  `auntie_annes.json`, `payless.json`, `spencers.json` (`items_io.FILES` gained the three new stores). Invented,
+  generic goods (plain shoe boxes, invented words on the tee and mug). Classes: everything is `"hand"` (into the
+  hand when bought) except the shoe polish and the sticker pack (`"pocket"`, into the bag). Categories: cookies,
+  pretzels: `food` (`sweet` / `snack`); drinks: `drink/soft`; shoes, socks, polish, tee: `clothing` (`shoes`,
+  `socks`, `care`, `shirt`); mug: `home/mug`; plush: `toy/plush`; stickers: `stationery/stickers`. Guesses: the
+  polish as clothing, the mug as home (the category's label is "Lamps and lights").
+- **Changed ids (no id renamed):** `bl_gac_sugarcookie` is no longer a pick-up: `"display": {"runtime": true}` on
+  the 1995 case's deck (y 0.68: ws/g's case is lower than the one the old spot was measured on); its Blender META
+  too. `bl_gb_lavalamp` is `"year": "both"` (still the Gumballs pick-up in 1995; its META too).
+- **Attendants:** PLACEHOLDER presets `data/characters/great_american_cookie.json` (maroon polo and cap),
+  `great_american_cookie_2026.json` (red tee, black cap), `auntie_annes.json` (navy, f025), `payless.json`
+  (light button-down, khakis), `spencers.json` (black tee, jeans); Mixamo fallbacks Ch12, Ch21, Ch36, Ch08, Ch42.
+  Sexes are guesses. Greetings and ready lines are PLACEHOLDER in Steven's pattern.
+- **Checks:** `tools/qa/shop_interiors_test.gd` (SHOP INTERIORS TEST OK, 179 checks: data, years, a buy into the
+  hand in each shop, pocket things into the bag, the lava lamp at Spencer's in 2026, the sugar cookie on show);
+  ITEMS TEST OK (49; the fixture gained the 18 ids, the count check is now `>= 135`), SHOP TEST OK (204),
+  INVENTORY 45, ECON 52, REDEMPTION 32, CHAR CLOTHED 1662 unchanged. Panel shots (unbaked, the probe-lit
+  store preview with the attendant and the real screen, `tools/qa/shop_panel_shots.gd`):
+  `production/qa/evidence/interiors-shop-{gac-1995,gac-2026,auntie-annes-2026,payless-1995,spencers-2026}-open-unbaked.jpg`,
+  icons `interiors-shop-standin-icons.jpg`. Not run: the web check at each counter (`shops_webtest.py` needs the
+  wings rebuilt with these stores).
+
 ## Open (for Steven)
 - The attendants' names, looks and sexes (Woolworth's is a woman; the rest are guesses).
 - The ready lines for things you gave no line for (PLACEHOLDER in your pattern).

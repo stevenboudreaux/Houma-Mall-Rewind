@@ -15,7 +15,7 @@ Workstream ITEMS (`ws/items`, from int-51, Nov 4 2026). Steven's decisions, Nov 
 
 | Path | What |
 |---|---|
-| `data/items/<store>.json` | THE item list, one file per store (or place): `pocket_change`, `games_inc`, `b_dalton`, `woolworth`, `corn_dog_7`, `cucos`, `radio_shack`, `gumballs`, `great_american_cookie`, `karmelkorn`, `orange_julius`, `tee_tais`, `stockrooms` (Martin Folse's stick). 135 items. |
+| `data/items/<store>.json` | THE item list, one file per store (or place): `pocket_change`, `games_inc`, `b_dalton`, `woolworth`, `corn_dog_7`, `cucos`, `radio_shack`, `gumballs`, `great_american_cookie`, `karmelkorn`, `orange_julius`, `tee_tais`, `stockrooms` (Martin Folse's stick). 135 items at the split; ws/interiors (Nov 4) added `auntie_annes`, `payless`, `spencers` and 18 stand-ins (`design/godot-shops.md` "ws/interiors"). |
 | `scripts/items/item_db.gd` | The one loader (`ItemDb.shared()`, read once per run), the checks, `CATEGORIES`, `holdable()`, `ids_in()`, `price()`, `in_year()`. |
 | `scripts/inventory.gd` | `mall.receive(id, n, source)`: the one receive path (below). |
 | `tools/items/items_io.py` | The same files from Python: `load()`, `upsert()`, `set_field()`. Every tool that writes entries uses it (`tools/blender/build.py`, `tools/prizes/make_items.py`, `tools/shops/make_standins.py`). |

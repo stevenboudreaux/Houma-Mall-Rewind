@@ -1,0 +1,38 @@
+{
+	"_": "PLACEHOLDER preset (ws/interiors, Nov 4 2026; design/godot-shops.md): no character, a body, skin, hair and clothes for the shop's attendant until Steven makes the person in the owner's character editor and commits the downloaded file here. Clothes are a guess at the store's staff look.",
+	"id": "great_american_cookie",
+	"name": "PLACEHOLDER",
+	"version": 1,
+	"body": "female",
+	"keys": {
+		"height": -0.05,
+		"weight": 0.0,
+		"age": -0.4
+	},
+	"skin": "#e0b090",
+	"iris": "#4a3a22",
+	"hair": {
+		"id": "hair_shoulder",
+		"color": "#6a4428"
+	},
+	"outfit": {
+		"top": "top_polo",
+		"bottom": "bot_khakis",
+		"shoes": "shoe_sneakers",
+		"extras": [
+			"x_cap_fwd"
+		],
+		"colors": {
+			"top_polo": {
+				"main": "#7a1830"
+			},
+			"bot_khakis": {
+				"main": "#2a2a30"
+			},
+			"x_cap_fwd": {
+				"main": "#7a1830"
+			}
+		}
+	},
+	"shape_from": "ws/interiors guess: a maroon polo and cap in the store's maroon (the 1995 sign). The sex is a guess."
+}

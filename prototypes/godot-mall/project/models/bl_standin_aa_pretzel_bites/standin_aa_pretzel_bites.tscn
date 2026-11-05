@@ -1,0 +1,74 @@
+[gd_scene load_steps=9 format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.1216, 0.1725, 0.4157, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2"]
+material = SubResource("StandardMaterial3D_1")
+top_radius = 0.0480
+bottom_radius = 0.0480
+height = 0.0900
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3"]
+albedo_color = Color(0.7216, 0.4627, 0.2275, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4"]
+material = SubResource("StandardMaterial3D_3")
+top_radius = 0.0460
+bottom_radius = 0.0460
+height = 0.0300
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5"]
+albedo_color = Color(0.6588, 0.4078, 0.1804, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_6"]
+material = SubResource("StandardMaterial3D_5")
+size = Vector3(0.0200, 0.0180, 0.0200)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7"]
+albedo_color = Color(0.7529, 0.5020, 0.2510, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_8"]
+material = SubResource("StandardMaterial3D_7")
+size = Vector3(0.0200, 0.0180, 0.0200)
+
+[node name="standin_aa_pretzel_bites" type="Node3D"]
+metadata/item_id = "standin_aa_pretzel_bites"
+metadata/item_name = "Cup of pretzel bites"
+metadata/item_class = "hand"
+metadata/standin = true
+
+[node name="Part0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0450, 0.0000)
+mesh = SubResource("CylinderMesh_2")
+
+[node name="Part1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0950, 0.0000)
+mesh = SubResource("CylinderMesh_4")
+
+[node name="Part2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0150, 0.1140, 0.0100)
+mesh = SubResource("BoxMesh_6")
+
+[node name="Part3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0160, 0.1130, -0.0060)
+mesh = SubResource("BoxMesh_8")
+
+[node name="StandInTag" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1530, 0)
+billboard = 1
+no_depth_test = true
+fixed_size = false
+pixel_size = 0.0004
+modulate = Color(1, 0.85, 0.15, 1)
+outline_size = 8
+font_size = 48
+text = "STAND-IN"

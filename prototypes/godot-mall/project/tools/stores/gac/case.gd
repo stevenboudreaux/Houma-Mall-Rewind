@@ -232,6 +232,8 @@ static func build_2026(b, G, a, t, n, Ln, flip):
 		cb(b, G, "#141414", x - 0.03, 1.85, D - 0.06, 1.56, 0.9, 0.04)
 		b.quad(GS, "gac_menu", [P(x, 1.88, D - 0.065), P(x + 1.5, 1.88, D - 0.065), P(x + 1.5, 2.72, D - 0.065), P(x, 2.72, D - 0.065)], n,
 			[Vector2(k / 3.0, 1), Vector2((k + 1) / 3.0, 1), Vector2((k + 1) / 3.0, 0), Vector2(k / 3.0, 0)], true)
+	# ws/interiors: the video's work area between the case and the back counter (gac/kitchen.gd)
+	load("res://tools/stores/gac/kitchen.gd").build_2026(b, G, GS, a0, tt, nn, LN, FLIP)
 	var lo = b.add_omni(P(LN * 0.5, 2.5, 3.5), 0.55, 6.0, Color(1.0, 0.97, 0.92))
 	b.tag(lo, "", 0.45, 0.55)
 
@@ -261,5 +263,6 @@ static func fill_mat(m, key, b):
 			m.albedo_color = Color("#fff8ea")
 			K.emit(m, Color("#fff4dc"), 2.0)
 		_:
-			return false
+			# ws/interiors: the work-area kit's materials (tile, pictures, cake, fountain)
+			return load("res://tools/stores/gac/kitchen.gd").fill_mat(m, key, b)
 	return true

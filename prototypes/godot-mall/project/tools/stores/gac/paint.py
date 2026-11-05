@@ -92,7 +92,128 @@ def rgb():
     save(im.filter(ImageFilter.GaussianBlur(14)), "rgb")
 
 
+# ------------------------------------------------------------------ ws/interiors (Nov 4): the work-area kit
+def tile_sq():
+    """The video's wall (refs/new/cookie_co gacc_t000_005, 011-015, 134, 146): white 15 cm glazed tile,
+    grey grout, scattered single squares, mostly black, then maroon, a few green and yellow, never
+    touching. One tile = 2.4 x 2.4 m (16 x 16 tiles), so the scatter does not read as a repeat."""
+    N = 16
+    T = 64
+    W = N * T
+    im = Image.new("RGB", (W, W), (206, 206, 202))
+    d = ImageDraw.Draw(im)
+    rr = random.Random(415)
+    cols = [(30, 28, 34)] * 4 + [(122, 24, 44)] * 3 + [(32, 86, 58), (236, 196, 40)]
+    picks = {}
+    tries = 0
+    while len(picks) < 14 and tries < 5000:
+        tries += 1
+        c = (rr.randrange(N), rr.randrange(N))
+        # no two squares touch, edge or corner (wrapping, as the tile repeats)
+        if any(((c[0] + dx) % N, (c[1] + dy) % N) in picks for dx in (-1, 0, 1) for dy in (-1, 0, 1)):
+            continue
+        picks[c] = cols[len(picks) % len(cols)]
+    for j in range(N):
+        for i in range(N):
+            c = picks.get((i, j), (246, 246, 242))
+            c = tuple(max(0, min(255, v + rr.randint(-4, 4))) for v in c)
+            d.rectangle([i * T + 2, j * T + 2, i * T + T - 2, j * T + T - 2], fill=c)
+            d.line([(i * T + 6, j * T + 8), (i * T + T - 10, j * T + 6)], fill=tuple(min(255, v + 8) for v in c), width=2)
+    save(F.noise(im, 1.5), "tile_sq")
+
+
+def pics():
+    """Four lit menu pictures (gacc 011-015, 146), invented: a stack of cookies, a decorated cookie cake,
+    a tray of brownies, a cookie sandwich; a coloured caption band each, no brand. 4 across."""
+    W, H = 2048, 552
+    im = Image.new("RGB", (W, H), (250, 248, 244))
+    d = ImageDraw.Draw(im)
+    rr = random.Random(146)
+    heads = ["FRESH BAKED", "COOKIE CAKES", "BROWNIES", "SANDWICHES"]
+    bgs = [(244, 232, 210), (122, 24, 44), (248, 240, 228), (40, 70, 150)]
+    for k in range(4):
+        x0 = k * 512
+        d.rectangle([x0 + 6, 6, x0 + 506, H - 6], fill=bgs[k])
+        cx, cy = x0 + 256, 250
+        if k == 0:
+            for j in range(5):
+                y = cy + 120 - j * 46
+                d.ellipse([cx - 130 + j * 6, y - 34, cx + 130 - j * 6, y + 34], fill=(206 - j * 6, 150 - j * 4, 84), outline=(150, 100, 50), width=3)
+                for _ in range(10):
+                    px = cx + rr.randint(-110, 110); py = y + rr.randint(-14, 14)
+                    d.ellipse([px - 6, py - 4, px + 6, py + 4], fill=(70, 40, 20))
+        elif k == 1:
+            d.ellipse([cx - 190, cy - 170, cx + 190, cy + 170], fill=(214, 168, 100))
+            for j in range(48):
+                a = j / 48 * 6.28
+                px, py = cx + math.cos(a) * 172, cy + math.sin(a) * 152
+                d.ellipse([px - 13, py - 13, px + 13, py + 13], fill=(250, 250, 250) if j % 2 else (230, 60, 100))
+            f = ImageFont.truetype(F.SERIFI, 64)
+            w = d.textlength("Celebrate!", font=f)
+            d.text((cx - w / 2, cy - 40), "Celebrate!", font=f, fill=(40, 80, 200))
+        elif k == 2:
+            for j in range(3):
+                for i in range(3):
+                    bx, by = cx - 170 + i * 115, cy - 140 + j * 100
+                    d.rectangle([bx, by, bx + 105, by + 90], fill=(78, 44, 26), outline=(50, 28, 16), width=4)
+                    d.line([(bx + 10, by + 30), (bx + 90, by + 24)], fill=(110, 70, 40), width=5)
+        else:
+            d.ellipse([cx - 170, cy - 30, cx + 170, cy + 70], fill=(206, 150, 84))
+            d.rectangle([cx - 160, cy - 60, cx + 160, cy - 10], fill=(250, 246, 236))
+            d.ellipse([cx - 170, cy - 120, cx + 170, cy - 30], fill=(214, 160, 90))
+            for _ in range(30):
+                px = cx + rr.randint(-150, 150); py = cy + rr.choice([-80, 30]) + rr.randint(-20, 20)
+                d.ellipse([px - 6, py - 6, px + 6, py + 6], fill=rr.choice([(230, 60, 80), (60, 120, 230), (250, 220, 40), (60, 180, 90)]))
+        band = (122, 24, 44) if k != 1 else (246, 210, 60)
+        d.rectangle([x0 + 6, H - 120, x0 + 506, H - 6], fill=band)
+        f = ImageFont.truetype(BOLD, 52)
+        w = d.textlength(heads[k], font=f)
+        d.text((x0 + 256 - w / 2, H - 100), heads[k], font=f, fill=(255, 255, 255) if k != 1 else (122, 24, 44))
+    save(F.noise(im, 1.5), "pics")
+
+
+def cake_top():
+    """The sheet cookie cake being piped on the prep table (gacc 071-126): a golden cookie, a
+    chocolate-and-white rosette border, piped lettering (invented), a small drawn trophy."""
+    W, H = 512, 384
+    im = Image.new("RGB", (W, H), (196, 140, 72))
+    d = ImageDraw.Draw(im)
+    rr = random.Random(98)
+    for _ in range(120):
+        px = rr.randint(10, W - 10); py = rr.randint(10, H - 10)
+        d.ellipse([px - 7, py - 5, px + 7, py + 5], fill=rr.choice([(70, 40, 20), (90, 52, 26), (170, 116, 58)]))
+    for j in range(22):
+        for (x, y) in ((14 + j * 23, 14), (14 + j * 23, H - 14)):
+            d.ellipse([x - 11, y - 11, x + 11, y + 11], fill=(60, 34, 20) if j % 2 else (250, 248, 244))
+    for j in range(16):
+        for (x, y) in ((14, 14 + j * 23), (W - 14, 14 + j * 23)):
+            d.ellipse([x - 11, y - 11, x + 11, y + 11], fill=(60, 34, 20) if j % 2 else (250, 248, 244))
+    f = ImageFont.truetype(F.SERIFI, 58)
+    d.text((70, 110), "Happy", font=f, fill=(250, 248, 244))
+    d.text((90, 190), "Birthday", font=f, fill=(40, 80, 200))
+    d.polygon([(390, 140), (450, 140), (440, 210), (400, 210)], fill=(250, 248, 244))
+    d.rectangle([405, 210, 435, 250], fill=(240, 200, 40))
+    save(F.noise(im, 2), "cake_top")
+
+
+def fountain():
+    """The drink fountain's lit panel: a generic fizzy-drink picture on red, 'ICE COLD' (no brand)."""
+    W, H = 512, 256
+    im = Image.new("RGB", (W, H), (200, 30, 40))
+    d = ImageDraw.Draw(im)
+    d.rectangle([12, 12, W - 12, H - 12], outline=(255, 255, 255), width=6)
+    d.polygon([(60, 50), (150, 50), (138, 220), (72, 220)], fill=(250, 250, 250))
+    d.rectangle([66, 110, 144, 160], fill=(40, 20, 16))
+    for k in range(8):
+        d.ellipse([90 + k * 5, 80 - k * 3, 98 + k * 5, 88 - k * 3], fill=(255, 255, 255))
+    f = ImageFont.truetype(BOLD, 64)
+    d.text((190, 70), "ICE", font=f, fill=(255, 255, 255))
+    d.text((190, 140), "COLD", font=f, fill=(255, 255, 255))
+    save(F.noise(im, 1.5), "fountain")
+
+
 if __name__ == "__main__":
     F.cookies(); F.cookie_cakes(); F.wave()
     dip(); slush(); menu(); rgb()
+    tile_sq(); pics(); cake_top(); fountain()
     print("wrote", sorted(os.listdir(OUT)))

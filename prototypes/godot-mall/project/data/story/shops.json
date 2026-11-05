@@ -320,6 +320,266 @@
      "ready_line_by": "PLACEHOLDER"
     }
    ]
+  },
+  {
+   "id": "great_american_cookie",
+   "store": "GREAT AMERICAN COOKIE CO",
+   "title": "Great American Cookie Co.",
+   "attendant": "great_american_cookie",
+   "years": [
+    1995
+   ],
+   "greeting": "Welcome to Great American Cookie Company. What can I get for you?",
+   "greeting_by": "PLACEHOLDER (Steven's pattern: 'Welcome to ... What can I get for you?')",
+   "_note": "ws/interiors (design/storefronts/great-american-cookie.md). The same store and case in both years; two entries because the prices and the attendant's spot differ by year (shop.gd has one price per entry).",
+   "items": [
+    {
+     "item": "standin_gac_choc_chip_cookie",
+     "price_cents": 99,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One chocolate-chip cookie coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "bl_gac_sugarcookie",
+     "price_cents": 89,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One sugar cookie coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)"
+    },
+    {
+     "item": "standin_gac_cake_slice",
+     "price_cents": 175,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One slice of cookie cake coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_gac_brownie",
+     "price_cents": 125,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One brownie coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_gac_fountain_drink",
+     "price_cents": 99,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One fountain drink coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    }
+   ]
+  },
+  {
+   "id": "great_american_cookie_2026",
+   "store": "GREAT AMERICAN COOKIES",
+   "title": "Great American Cookies",
+   "attendant": "great_american_cookie_2026",
+   "years": [
+    2026
+   ],
+   "greeting": "Welcome to Great American Cookies. What can I get for you?",
+   "greeting_by": "PLACEHOLDER (Steven's pattern: 'Welcome to ... What can I get for you?')",
+   "_note": "ws/interiors: the 2026 entry of the same store (see great_american_cookie); the sugar cookie is a 1995 item, so it is not on this list.",
+   "items": [
+    {
+     "item": "standin_gac_choc_chip_cookie",
+     "price_cents": 299,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One chocolate-chip cookie coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_gac_cake_slice",
+     "price_cents": 549,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One slice of cookie cake coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_gac_brownie",
+     "price_cents": 349,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One brownie coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_gac_fountain_drink",
+     "price_cents": 299,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One fountain drink coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    }
+   ]
+  },
+  {
+   "id": "auntie_annes",
+   "store": "AUNTIE ANNE'S",
+   "title": "Auntie Anne's",
+   "attendant": "auntie_annes",
+   "years": [
+    2026
+   ],
+   "greeting": "Welcome to Auntie Anne's. What can I get for you?",
+   "greeting_by": "PLACEHOLDER (Steven's pattern: 'Welcome to ... What can I get for you?')",
+   "_note": "ws/interiors (design/storefronts/auntie-annes.md).",
+   "items": [
+    {
+     "item": "standin_aa_original_pretzel",
+     "price_cents": 549,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One original pretzel coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_aa_cinnamon_pretzel",
+     "price_cents": 599,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One cinnamon sugar pretzel coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_aa_pretzel_bites",
+     "price_cents": 649,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One cup of pretzel bites coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_aa_lemonade",
+     "price_cents": 399,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One lemonade coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    }
+   ]
+  },
+  {
+   "id": "payless",
+   "store": "PAYLESS SHOES",
+   "title": "Payless ShoeSource",
+   "attendant": "payless",
+   "years": [
+    1995
+   ],
+   "greeting": "Welcome to Payless. What can I get for you?",
+   "greeting_by": "PLACEHOLDER (Steven's pattern: 'Welcome to ... What can I get for you?')",
+   "_note": "ws/interiors (design/storefronts/payless.md). The boxes on the shelves stay painted; these are sold at the cash counter.",
+   "items": [
+    {
+     "item": "standin_pay_sneakers",
+     "price_cents": 1499,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One pair of sneakers coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_pay_pumps",
+     "price_cents": 1299,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One pair of pumps coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_pay_sandals",
+     "price_cents": 999,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One pair of sandals coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_pay_boots",
+     "price_cents": 1999,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One pair of boots coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_pay_socks",
+     "price_cents": 399,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One pack of socks coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_pay_shoe_polish",
+     "price_cents": 199,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One tin of shoe polish coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    }
+   ]
+  },
+  {
+   "id": "spencers",
+   "store": "SPENCER'S",
+   "title": "Spencer's",
+   "attendant": "spencers",
+   "years": [
+    2026
+   ],
+   "greeting": "Welcome to Spencer's. What can I get for you?",
+   "greeting_by": "PLACEHOLDER (Steven's pattern: 'Welcome to ... What can I get for you?')",
+   "_note": "ws/interiors (design/storefronts/spencers.md). The lava lamp is the Gumballs prize's id (bl_gb_lavalamp, year both), also sold here (Steven, Nov 4).",
+   "items": [
+    {
+     "item": "standin_sp_tee",
+     "price_cents": 2499,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One tee coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_sp_mug",
+     "price_cents": 1499,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One mug coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_sp_plush",
+     "price_cents": 1999,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One plush coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "standin_sp_stickers",
+     "price_cents": 599,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One sticker pack coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)",
+     "standin": true
+    },
+    {
+     "item": "bl_gb_lavalamp",
+     "price_cents": 2999,
+     "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
+     "ready_line": "One lava lamp coming right up.",
+     "ready_line_by": "PLACEHOLDER (Steven's pattern)"
+    }
+   ]
   }
  ]
 }

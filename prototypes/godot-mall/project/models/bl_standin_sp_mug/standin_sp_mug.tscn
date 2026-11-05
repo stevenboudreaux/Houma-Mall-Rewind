@@ -1,0 +1,62 @@
+[gd_scene load_steps=7 format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.9490, 0.9490, 0.9333, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2"]
+material = SubResource("StandardMaterial3D_1")
+top_radius = 0.0420
+bottom_radius = 0.0420
+height = 0.1000
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3"]
+albedo_color = Color(0.9490, 0.9490, 0.9333, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="BoxMesh_4"]
+material = SubResource("StandardMaterial3D_3")
+size = Vector3(0.0120, 0.0600, 0.0300)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5"]
+albedo_color = Color(0.9098, 0.2275, 0.4706, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6"]
+material = SubResource("StandardMaterial3D_5")
+top_radius = 0.0430
+bottom_radius = 0.0430
+height = 0.0200
+radial_segments = 20
+rings = 1
+
+[node name="standin_sp_mug" type="Node3D"]
+metadata/item_id = "standin_sp_mug"
+metadata/item_name = "Mug"
+metadata/item_class = "hand"
+metadata/standin = true
+
+[node name="Part0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0500, 0.0000)
+mesh = SubResource("CylinderMesh_2")
+
+[node name="Part1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0500, 0.0500, 0.0000)
+mesh = SubResource("BoxMesh_4")
+
+[node name="Part2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0700, 0.0000)
+mesh = SubResource("CylinderMesh_6")
+
+[node name="StandInTag" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1300, 0)
+billboard = 1
+no_depth_test = true
+fixed_size = false
+pixel_size = 0.0004
+modulate = Color(1, 0.85, 0.15, 1)
+outline_size = 8
+font_size = 48
+text = "STAND-IN"

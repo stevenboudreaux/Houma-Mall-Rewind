@@ -1,0 +1,82 @@
+[gd_scene load_steps=9 format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.9647, 0.8863, 0.4784, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2"]
+material = SubResource("StandardMaterial3D_1")
+top_radius = 0.0420
+bottom_radius = 0.0420
+height = 0.1600
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3"]
+albedo_color = Color(0.1216, 0.1725, 0.4157, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4"]
+material = SubResource("StandardMaterial3D_3")
+top_radius = 0.0430
+bottom_radius = 0.0430
+height = 0.0500
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5"]
+albedo_color = Color(0.9725, 0.9725, 0.9647, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6"]
+material = SubResource("StandardMaterial3D_5")
+top_radius = 0.0460
+bottom_radius = 0.0460
+height = 0.0100
+radial_segments = 20
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7"]
+albedo_color = Color(0.1216, 0.2353, 0.7451, 1)
+roughness = 0.75
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_8"]
+material = SubResource("StandardMaterial3D_7")
+top_radius = 0.0040
+bottom_radius = 0.0040
+height = 0.0800
+radial_segments = 20
+rings = 1
+
+[node name="standin_aa_lemonade" type="Node3D"]
+metadata/item_id = "standin_aa_lemonade"
+metadata/item_name = "Lemonade"
+metadata/item_class = "hand"
+metadata/standin = true
+
+[node name="Part0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0800, 0.0000)
+mesh = SubResource("CylinderMesh_2")
+
+[node name="Part1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.0850, 0.0000)
+mesh = SubResource("CylinderMesh_4")
+
+[node name="Part2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0000, 0.1650, 0.0000)
+mesh = SubResource("CylinderMesh_6")
+
+[node name="Part3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0100, 0.2100, 0.0000)
+mesh = SubResource("CylinderMesh_8")
+
+[node name="StandInTag" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2800, 0)
+billboard = 1
+no_depth_test = true
+fixed_size = false
+pixel_size = 0.0004
+modulate = Color(1, 0.85, 0.15, 1)
+outline_size = 8
+font_size = 48
+text = "STAND-IN"

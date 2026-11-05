@@ -81,7 +81,7 @@ func _test_schema(db) -> void:
 		if line != "" and not line.begins_with("#"):
 			old.append(line.strip_edges())
 	var gone: Array = old.filter(func(i): return not db.items.has(i))
-	_check(old.size() == 135 and gone.is_empty(), "all %d int-51 ids are still items %s" % [old.size(), str(gone)])
+	_check(old.size() >= 135 and gone.is_empty(), "all %d int-51 ids (and the ones added since) are still items %s" % [old.size(), str(gone)])   # ws/interiors: >= (new ids are appended)
 	var added: Array = db.order.filter(func(i): return not old.has(i))
 	_check(added.is_empty(), "no new ids beside the int-51 ones (a new item is fine later: add it to the fixture) %s" % str(added))
 	# every reference into the item list resolves
