@@ -104,10 +104,15 @@ func _plan() -> void:
 					if gr.end.x > s.x + 1 or gr.end.y > s.y + 1 or gr.position.x < -1: over = true
 			_check(not over, "every creator control on screen at %dx%d" % [s.x, s.y])
 			_shot("creator-%dx%d" % [s.x, s.y]), 0.2)
-	_do(func(): av.creator._randomize(), 0.6)
+	_do(func(): if av.creator.has_method("_randomize"): av.creator._randomize(), 0.6)   # int-52: the char editor (ws/char-editor) has no Random
 	_do(func(): _shot("creator-random-844x390"); av.creator._done(), 0.6)
 	_do(func():
 		DisplayServer.window_set_size(Vector2i(1280, 720)); root.size = Vector2i(1280, 720)
+		# int-52: since MENU2 the creator opens inside the menu's MAIN, which keeps the player frozen
+		# until the menu itself closes (design/godot-menu.md); close it as a player would
+		var mn = player.get_node_or_null("Menu")
+		if mn and mn.is_open:
+			mn.close()
 		_check(av.creator == null and not player.frozen, "Done closes the creator and frees the player")
 		var saved = JSON.parse_string(str(Engine.get_meta("mall_avatar", "")))
 		_check(saved is Dictionary and saved.done and str(saved.body) == str(av.look.body), "the look is saved (%s)" % (saved.body if saved is Dictionary else "-"))

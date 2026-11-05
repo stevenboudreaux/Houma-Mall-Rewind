@@ -165,7 +165,7 @@ func _w2() -> bool:
 				step = 9; clock = 0.0
 		9:
 			if clock > 0.6:
-				_check(player.hud.visible and player.buttons[0].visible and player.jump_open_btn.offset_top == 168, "owner HUD: fps and toggles back")
+				_check(player.hud.visible and player.buttons[0].visible and player.jump_open_btn.offset_top == (40 if player.owner_hud_on else 8), "owner HUD: fps and toggles back")   # int-52: ws/owner-tools puts the toggles in the OWNER tab; Jump to tops the corner column
 				_shot("hud-owner")
 				return _done()
 	return false
