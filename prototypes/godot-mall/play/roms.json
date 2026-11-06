@@ -1,1 +1,11 @@
-{"cabinets": {}}
+{
+ "cabinets": {
+  "pc.video.33": {
+   "file": "roms/Super_mario_brothers3.nes",
+   "core": "nes",
+   "name": "Super_mario_brothers3.nes",
+   "title": "THUNDER DOJO",
+   "system": "nes"
+  }
+ }
+}
