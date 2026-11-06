@@ -1,0 +1,16 @@
+# This branch holds only the current Godot mall build (play/) and its lightmaps
+# (lightmaps/), as one commit that each publish replaces (force-push), so old builds never
+# pile up in the repository. A push here asks main's Pages workflow to redeploy the site.
+name: Redeploy site for a new Godot build
+on:
+  push:
+    branches: [godot-build]
+permissions:
+  actions: write
+jobs:
+  kick:
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh workflow run pages.yml --ref main -R "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}
