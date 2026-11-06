@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@1,900&family=Tinos:wght@400;700&display=swap" rel="stylesheet">
+		<title>Houma Mall Rewind</title>
+		<style>
+html, body, #canvas {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+body {
+	color: white;
+	background-color: black;
+	overflow: hidden;
+	touch-action: none;
+}
+
+#canvas {
+	display: block;
+}
+
+#canvas:focus {
+	outline: none;
+}
+
+#status, #status-splash, #status-progress {
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+#status, #status-splash {
+	top: 0;
+	bottom: 0;
+}
+
+#status {
+	background-color: #242424;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	visibility: hidden;
+}
+
+#status-splash {
+	max-height: 100%;
+	max-width: 100%;
+	margin: auto;
+}
+
+#status-splash.show-image--false {
+	display: none;
+}
+
+#status-splash.fullsize--true {
+	height: 100%;
+	width: 100%;
+	object-fit: contain;
+}
+
+#status-splash.use-filter--false {
+	image-rendering: pixelated;
+}
+
+#status-progress, #status-notice {
+	display: none;
+}
+/* Load screen: the 2D game's arch-and-sunburst title logo, redrawn for "Houma Mall Rewind" in a
+   1990s radio-banner palette (black, raspberry, gold). The logo is the decorative #load-logo
+   (inline SVG) because the wing-crossing code overwrites #load-title with "Wing 1"/"Wing 2". */
+:root {
+	--lr-black: #000000;
+	--lr-mag: #B42D53;
+	--lr-gold: #ECC144;
+	--lr-speck: #1F1906;
+	--lr-white: #ffffff;
+	--lr-dim: #9b9488;
+	--lr-logo: 'Kanit', 'Arial Black', 'Futura', Impact, sans-serif;
+	--lr-logo-style: italic;
+	--lr-logo-weight: 900;
+	--lr-logo-skew: -4deg;
+	--lr-logo-track: -0.02em;
+	--lr-serif: 'Tinos', 'Times New Roman', Times, serif;
+}
+#status { background: var(--lr-black); color: var(--lr-white); font-family: var(--lr-serif); }
+#load-card {
+	position: absolute; inset: 0; box-sizing: border-box;
+	display: flex; flex-direction: column; align-items: center; text-align: center;
+	padding: max(18px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+	container-type: size;
+}
+/* column, top to bottom: bubble area, logo, a smaller spacer, tip + bar.
+   The bubble area never shrinks below one bubble, so the logo doesn't jump when facts change. */
+#load-head { flex: none; width: 100%; display: flex; flex-direction: column; align-items: center; }
+#load-gap { flex: 0.6 1 0; min-height: 6px; }
+#load-sub { display: none; }
+#load-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: -1px; }
+
+/* the logo: as wide as the card allows, but leave room above it for a bubble (1.227 = SVG width / height) */
+#load-logo {
+	position: relative; flex: none; user-select: none; pointer-events: none;
+	width: min(100%, 760px, calc((100vh - 350px) * 1.227));
+	width: min(100%, 760px, calc((100cqh - 318px) * 1.227));
+	animation: lr-shake 0.3s 1.42s linear both;
+}
+#load-logo svg { display: block; width: 100%; height: auto; overflow: visible; }
+.lr-g { stroke: url(#lr-goldpaint); fill: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; }
+/* arch strokes draw on, from the bottom centre round to the top */
+.lr-arch { stroke-dasharray: 1; stroke-dashoffset: 1; animation: lr-draw 0.75s 0.05s cubic-bezier(.5, 0, .3, 1) both; }
+/* one seamless copy takes over when the two halves meet (no hairline at the joins) */
+.lr-arch-full { animation: lr-on 0.01s 0.8s step-end both; }
+@keyframes lr-on { from { opacity: 0; } to { opacity: 1; } }
+/* fan rays shoot out one after another, left to right, from the fan's point */
+.lr-ray { fill: var(--lr-mag); transform-box: view-box; transform-origin: 270px 236px; animation: lr-ray 0.34s cubic-bezier(.2, .9, .3, 1.35) both; }
+.lr-ray:nth-child(1) { animation-delay: 0.50s; } .lr-ray:nth-child(2) { animation-delay: 0.57s; }
+.lr-ray:nth-child(3) { animation-delay: 0.64s; } .lr-ray:nth-child(4) { animation-delay: 0.71s; }
+.lr-ray:nth-child(5) { animation-delay: 0.78s; } .lr-ray:nth-child(6) { animation-delay: 0.85s; }
+.lr-ray:nth-child(7) { animation-delay: 0.92s; }
+/* big H and A slam in, OUM pops, the rules draw out, then M-A-L-L drop in */
+.lr-big, .lr-oum, .lr-rule, .lr-mall { transform-box: fill-box; transform-origin: 50% 50%; }
+.lr-big { animation: lr-slam 0.32s 1.18s cubic-bezier(.5, 0, .7, 1.2) both; }
+.lr-big.lr-a2 { animation-delay: 1.26s; }
+.lr-oum { animation: lr-popin 0.3s 1.34s cubic-bezier(.2, .9, .3, 1.4) both; }
+.lr-rule { animation: lr-rule 0.26s 1.42s ease-out both; }
+.lr-mall { animation: lr-drop 0.32s cubic-bezier(.3, 1.5, .5, 1) both; }
+.lr-mall.m1 { animation-delay: 1.52s; } .lr-mall.m2 { animation-delay: 1.60s; }
+.lr-mall.m3 { animation-delay: 1.68s; } .lr-mall.m4 { animation-delay: 1.76s; }
+/* the Rewind badge: an HTML box over the SVG (left/top/width are viewBox 352,18 and 164 wide out of 540x440) */
+.lr-stamp { position: absolute; left: 65.19%; top: 4.09%; width: 30.37%; animation: lr-stamp 0.5s 1.72s cubic-bezier(.2, .8, .3, 1.2) both; }
+.lr-stamp-g { position: relative; animation: lr-glitch 0.36s 2.12s both; }
+.lr-stamp-g::after { content: ''; position: absolute; inset: 0; opacity: 0; pointer-events: none;
+	background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.55) 0 2px, transparent 2px 5px);
+	animation: lr-scan 0.36s 2.12s steps(1) both; }
+/* a VHS tracking band rolls down the whole logo while the badge glitches */
+.lr-band { position: absolute; left: -2%; right: -2%; top: 0; height: 9%; opacity: 0; pointer-events: none;
+	background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.22) 45%, rgba(236, 193, 68, 0.3) 55%, transparent);
+	animation: lr-band 0.42s 2.06s linear both; }
+@keyframes lr-draw { to { stroke-dashoffset: 0; } }
+@keyframes lr-ray { 0% { transform: scale(0); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes lr-slam { 0% { transform: scale(2.8); opacity: 0; } 60% { opacity: 1; } 75% { transform: scale(0.92); } 100% { transform: scale(1); opacity: 1; } }
+@keyframes lr-popin { 0% { transform: scale(0.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes lr-rule { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+@keyframes lr-drop { 0% { transform: translateY(-60px); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes lr-shake { 0%, 100% { transform: none; } 20% { transform: translate(-4px, 3px); } 40% { transform: translate(4px, -2px); } 60% { transform: translate(-2px, 1px); } 80% { transform: translate(1px, 0); } }
+@keyframes lr-stamp { 0% { transform: rotate(-420deg) scale(0); opacity: 0; } 55% { opacity: 1; } 70% { transform: rotate(12deg) scale(1.18); } 85% { transform: rotate(-3deg) scale(0.96); } 100% { transform: rotate(0) scale(1); opacity: 1; } }
+@keyframes lr-glitch {
+	0% { transform: none; filter: none; animation-timing-function: steps(1); }
+	12% { transform: translate(-7px, 0) skewX(-10deg); filter: drop-shadow(-5px 0 0 #00e5ff) drop-shadow(5px 0 0 #ff2a6d); animation-timing-function: steps(1); }
+	28% { transform: translate(6px, 2px); filter: drop-shadow(4px 0 0 #00e5ff) drop-shadow(-4px 0 0 #ff2a6d); animation-timing-function: steps(1); }
+	44% { transform: translate(-3px, -1px) skewX(6deg); filter: drop-shadow(-3px 0 0 #00e5ff) drop-shadow(3px 0 0 #ff2a6d); animation-timing-function: steps(1); }
+	62% { transform: translate(2px, 0); filter: drop-shadow(2px 0 0 #00e5ff) drop-shadow(-2px 0 0 #ff2a6d); animation-timing-function: steps(1); }
+	80%, 100% { transform: none; filter: none; }
+}
+@keyframes lr-scan { 0% { opacity: 0.9; } 50% { opacity: 0.5; } 80%, 100% { opacity: 0; } }
+@keyframes lr-band { 0% { top: -10%; opacity: 0; } 8% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+/* fact stage: every bubble sits in the same grid cell so old and new overlap while swapping */
+#load-fact {
+	flex: 1 1 0; min-height: 252px; width: 100%; max-width: 620px;
+	display: grid; place-items: end center; padding: 4px 0 2px; box-sizing: border-box;
+	--jx: min(1.6vw, 36px); --jy: 8px;
+}
+.lr-pop {
+	grid-area: 1 / 1; position: relative; box-sizing: border-box;
+	width: min(100% - 28px, 580px); margin-bottom: 34px;
+	transform: translate(calc(var(--dx, 0) * var(--jx)), calc(var(--dy, 0) * var(--jy))) rotate(var(--rot, 0deg));
+	transform-origin: var(--ox, 22%) 115%;
+	filter: drop-shadow(5px 6px 0 var(--lr-mag));
+	animation: lr-pop-in 0.42s cubic-bezier(.2, .9, .3, 1.25) both;
+	will-change: transform, opacity;
+}
+.lr-pop.out { animation: lr-pop-out 0.24s ease-in both; }
+.lr-body {
+	position: relative; background: #fff; color: #111; text-align: left;
+	border-radius: 30px / 26px; padding: 16px 20px 16px 22px;
+}
+.lr-badge {
+	position: absolute; left: -8px; top: -14px; width: 42px; height: 42px; border-radius: 50%;
+	background: var(--lr-gold); box-shadow: 0 0 0 3px #000; display: grid; place-items: center;
+	animation: lr-badge 0.5s 0.12s cubic-bezier(.2, .9, .3, 1.4) both;
+}
+.lr-badge svg { width: 24px; height: 24px; fill: #000; }
+.lr-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; padding-left: 26px; margin-bottom: 6px; }
+.lr-kick { font: 700 11px/1.2 var(--lr-serif); letter-spacing: 0.16em; text-transform: uppercase; color: #6a6258; }
+.lr-store { font-family: var(--lr-logo); font-style: var(--lr-logo-style); font-weight: var(--lr-logo-weight); font-size: clamp(17px, 0.8vw + 13px, 22px); line-height: 1.05; color: var(--lr-mag); letter-spacing: var(--lr-logo-track); }
+.lr-row { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 14px; }
+.lr-stat {
+	flex: none; font-family: var(--lr-logo); font-style: var(--lr-logo-style); font-weight: var(--lr-logo-weight);
+	font-size: clamp(34px, 2.6vw + 22px, 56px); line-height: 1; color: var(--lr-mag); letter-spacing: -0.02em;
+	transform: skewX(var(--lr-logo-skew)); padding-right: 0.06em;
+}
+.lr-text { flex: 1 1 200px; margin: 0; font: 700 clamp(16.5px, 0.3vw + 15px, 19.5px)/1.34 var(--lr-serif); color: #111; }
+/* thought-bubble tail: two white dots trailing off a lower corner */
+.lr-tail { position: absolute; background: #fff; border-radius: 50%; animation: lr-dot 0.3s cubic-bezier(.2, .9, .3, 1.5) both; }
+.lr-tail.t1 { width: 22px; height: 18px; bottom: -22px; left: var(--tx1, 16%); animation-delay: 0.1s; }
+.lr-tail.t2 { width: 12px; height: 10px; bottom: -36px; left: var(--tx2, 11%); animation-delay: 0.18s; }
+/* the "bloop": a gold ring that bursts out of the tail as the bubble lands */
+.lr-pop::after {
+	content: ''; position: absolute; left: var(--tx2, 11%); bottom: -40px; width: 14px; height: 14px; margin: -2px 0 0 -2px;
+	border: 3px solid var(--lr-gold); border-radius: 50%; opacity: 0; pointer-events: none;
+	animation: lr-bloop 0.55s 0.16s ease-out both;
+}
+.lr-pop.out::after { animation: none; }
+@keyframes lr-pop-in {
+	0% { opacity: 0; transform: translate(calc(var(--dx, 0) * var(--jx)), calc(var(--dy, 0) * var(--jy))) rotate(calc(var(--rot, 0deg) - 7deg)) scale(0.25); }
+	55% { opacity: 1; transform: translate(calc(var(--dx, 0) * var(--jx)), calc(var(--dy, 0) * var(--jy))) rotate(calc(var(--rot, 0deg) + 1.5deg)) scale(1.07); }
+	78% { transform: translate(calc(var(--dx, 0) * var(--jx)), calc(var(--dy, 0) * var(--jy))) rotate(var(--rot, 0deg)) scale(0.97); }
+	100% { opacity: 1; transform: translate(calc(var(--dx, 0) * var(--jx)), calc(var(--dy, 0) * var(--jy))) rotate(var(--rot, 0deg)) scale(1); }
+}
+@keyframes lr-pop-out {
+	0% { opacity: 1; transform: translate(calc(var(--dx, 0) * var(--jx)), calc(var(--dy, 0) * var(--jy))) rotate(var(--rot, 0deg)) scale(1); }
+	35% { opacity: 1; transform: translate(calc(var(--dx, 0) * var(--jx)), calc(var(--dy, 0) * var(--jy))) rotate(var(--rot, 0deg)) scale(1.06); }
+	100% { opacity: 0; transform: translate(calc(var(--dx, 0) * var(--jx)), calc(var(--dy, 0) * var(--jy))) rotate(calc(var(--rot, 0deg) + 4deg)) scale(0.2); }
+}
+@keyframes lr-badge { 0% { transform: scale(0) rotate(-40deg); } 100% { transform: scale(1) rotate(0); } }
+@keyframes lr-dot { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+@keyframes lr-bloop { 0% { opacity: 1; transform: scale(0.4); } 100% { opacity: 0; transform: scale(3.4); } }
+
+/* bottom strip: controls tip, then a small recessed bar, then #load-mb (errors only) */
+#load-foot { flex: none; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 9px; }
+#load-tip { font: 400 12px/1.45 var(--lr-serif); color: var(--lr-dim); max-width: 34em; }
+#load-tip b { color: #cfc8bb; }
+#load-tip .tip-touch, #load-tip .tip-keys { display: block; }
+@media (hover: hover) and (pointer: fine) { #load-tip .tip-touch { display: none; } }
+@media (pointer: coarse) { #load-tip .tip-keys { display: none; } }
+#load-track {
+	width: min(300px, 58vw); height: 5px; border-radius: 3px; overflow: hidden;
+	background: #111; box-shadow: inset 0 1px 2px #000, inset 0 0 0 1px #1c1c1c, 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+#load-bar { height: 100%; width: 0%; border-radius: 3px; background: linear-gradient(90deg, var(--lr-mag), var(--lr-gold)); transition: width 0.25s; }
+#load-mb { font: 700 12px/1.35 var(--lr-serif); color: var(--lr-gold); max-width: min(34em, 92vw); }
+#load-mb:empty { display: none; }
+
+/* crossing between the wings: same look, tighter */
+body.xfer #load-tip { display: none; }
+/* smaller logo, one quick 0.6 s entrance instead of the full sequence */
+body.xfer #load-logo { width: min(66%, 300px, calc((100vh - 420px) * 1.227)); width: min(66%, 300px, calc((100cqh - 400px) * 1.227)); animation: lr-quick 0.6s cubic-bezier(.2, .9, .3, 1.2) both; }
+body.xfer #load-logo *, body.xfer #load-logo *::after { animation: none !important; }
+body.xfer .lr-band { display: none; }
+body.xfer .lr-arch { stroke-dashoffset: 0; }
+body.xfer #load-title {
+	position: static; width: auto; height: auto; overflow: visible; clip: auto; margin: 0.45em 0 0; white-space: normal;
+	font: 700 clamp(26px, 2vw + 18px, 40px)/1.05 var(--lr-serif); color: var(--lr-white);
+}
+@keyframes lr-quick { 0% { transform: scale(0.82); opacity: 0; filter: drop-shadow(-6px 0 0 #00e5ff) drop-shadow(6px 0 0 #ff2a6d); } 60% { opacity: 1; filter: drop-shadow(-2px 0 0 #00e5ff) drop-shadow(2px 0 0 #ff2a6d); } 100% { transform: none; opacity: 1; filter: none; } }
+body.xfer #load-fact { max-width: 540px; }
+body.xfer .lr-pop { width: min(100% - 28px, 500px); }
+body.xfer .lr-stat { font-size: clamp(30px, 2vw + 20px, 46px); }
+body.xfer .lr-text { font-size: clamp(15.5px, 0.25vw + 14px, 18px); }
+
+@media (min-width: 900px) { #load-fact { --jx: 36px; } }
+@media (prefers-reduced-motion: reduce) {
+	.lr-pop { animation: lr-fade-in 0.35s ease both; }
+	.lr-pop.out { animation: lr-fade-out 0.3s ease both; }
+	.lr-badge, .lr-tail { animation: none; }
+	.lr-pop::after { display: none; }
+	#load-bar { transition: none; }
+	#load-logo, #load-logo *, #load-logo *::after, body.xfer #load-logo { animation: none !important; }
+	.lr-arch { stroke-dashoffset: 0; }
+	.lr-band { display: none; }
+}
+@keyframes lr-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lr-fade-out { from { opacity: 1; } to { opacity: 0; } }
+#status-progress { display: none !important; }
+/* VR headsets (scripts/vr.gd, design/godot-vr.md): shown only where the browser can do immersive VR */
+#vr-enter { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 900; display: none;
+	font: 600 22px/1 -apple-system, system-ui, sans-serif; color: #fbf6ea; background: #5b2a3a; border: 2px solid #efe6d3;
+	border-radius: 14px; padding: 18px 34px; cursor: pointer; box-shadow: 0 4px 18px rgba(0,0,0,0.5); }
+#vr-enter.big { bottom: 50%; transform: translate(-50%, 50%); font-size: 30px; padding: 26px 48px; }
+#vr-note { position: fixed; left: 0; right: 0; bottom: 96px; z-index: 900; display: none; text-align: center;
+	font: 15px/1.4 -apple-system, system-ui, sans-serif; color: #fbf6ea; text-shadow: 0 1px 3px #000; pointer-events: none; }
+
+#status-notice {
+	background-color: #5b3943;
+	border-radius: 0.5rem;
+	border: 1px solid #9b3943;
+	color: #e0e0e0;
+	font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+	line-height: 1.3;
+	margin: 0 2rem;
+	overflow: hidden;
+	padding: 1rem;
+	text-align: center;
+	z-index: 1;
+}
+/* MENU2 (Nov 3 2026, design/godot-menu.md "Time travel at the directory"): a trip between years
+   reloads the page into the other year's file; the vortex (#tt-veil, below) covers the reload in
+   place of the load screen, which stays for every other load. */
+#tt-veil { position: fixed; inset: 0; z-index: 2147483000; background: #000 center / 100% 100% no-repeat; pointer-events: none; transition: opacity 0.35s linear; }
+#tt-veil canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* the page's main thread is busy for seconds at a time while the game starts (rAF stops), so the
+   veil also turns on the compositor: a slow spin of a disc of the vortex that never stops */
+#tt-spin { position: absolute; left: 50%; top: 50%; width: 150vmax; height: 150vmax; margin: -75vmax 0 0 -75vmax; border-radius: 50%;
+	background: radial-gradient(circle, rgba(255,247,230,0.55) 0, rgba(255,247,230,0) 9%), repeating-conic-gradient(from 0deg, rgba(89,204,255,0.0) 0deg, rgba(89,204,255,0.22) 18deg, rgba(242,102,242,0.18) 36deg, rgba(255,184,77,0.2) 48deg, rgba(89,204,255,0.0) 60deg);
+	mix-blend-mode: screen; animation: tt-spin 2.4s linear infinite; will-change: transform; pointer-events: none; }
+#tt-spin.back { animation-direction: reverse; }
+@keyframes tt-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+html.tt, html.tt body { background: #05030a; }
+html.tt #load-card { display: none !important; }
+html.tt #status { opacity: 0 !important; }
+		</style>
+		<script>/* MENU2: a time-travel trip is landing: no load screen, from the first paint (#tt-veil below) */try { if (sessionStorage.getItem('mall-tt')) { document.documentElement.classList.add('tt'); } } catch (e) { /* ignore */ }</script>
+		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
+<link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
+
+	</head>
+	<body>
+		<canvas id="canvas">
+			Your browser does not support the canvas tag.
+		</canvas>
+
+		<button id="vr-enter" type="button">Enter VR</button>
+		<div id="vr-note"></div>
+
+		<noscript>
+			Your browser does not support JavaScript.
+		</noscript>
+
+		<div id="status">
+			<img id="status-splash" class="show-image--true fullsize--true use-filter--true" src="index.png" alt="" style="display:none">
+			<progress id="status-progress"></progress>
+	<div id="load-card">
+		<div id="load-fact" aria-live="polite"></div>
+		<div id="load-head">
+			<div id="load-logo" aria-hidden="true">
+				<svg id="lr-logo-svg" viewBox="0 0 540 440" focusable="false">
+					<defs>
+						<!-- gold paint with a pale band that sweeps across every few seconds (idle shimmer) -->
+						<linearGradient id="lr-goldpaint" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="540" y2="160" gradientTransform="translate(-700 0)">
+							<stop offset="0" stop-color="#ECC144"/><stop offset="0.44" stop-color="#ECC144"/>
+							<stop offset="0.5" stop-color="#FFF3C2"/><stop offset="0.56" stop-color="#ECC144"/><stop offset="1" stop-color="#ECC144"/>
+							<animateTransform attributeName="gradientTransform" type="translate" values="-700 0; 700 0; 700 0" keyTimes="0; 0.35; 1" dur="7s" begin="2.6s" repeatCount="indefinite"/>
+						</linearGradient>
+						<!-- dark specks on the big letters, sized for the logo's scale -->
+						<filter id="lr-speck" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+							<feTurbulence type="fractalNoise" baseFrequency="0.42" numOctaves="2" seed="11" result="n1"/>
+							<feColorMatrix in="n1" type="matrix" values="0 0 0 0 0.122  0 0 0 0 0.098  0 0 0 0 0.024  16 0 0 0 -10.6" result="s1"/>
+							<feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="3" seed="4" result="n2"/>
+							<feColorMatrix in="n2" type="matrix" values="0 0 0 0 0.122  0 0 0 0 0.098  0 0 0 0 0.024  22 0 0 0 -15.6" result="s2"/>
+							<feMerge result="s"><feMergeNode in="s1"/><feMergeNode in="s2"/></feMerge>
+							<feComposite in="s" in2="SourceGraphic" operator="in" result="sin"/>
+							<feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="sin"/></feMerge>
+						</filter>
+						<clipPath id="lr-cap-big"><rect x="0" y="313" width="540" height="120"/></clipPath>
+						<clipPath id="lr-cap-oum"><rect x="0" y="321" width="540" height="58"/></clipPath>
+						<clipPath id="lr-cap-mall"><rect x="0" y="394" width="540" height="31"/></clipPath>
+					</defs>
+					<!-- sunburst fan -->
+					<g>
+						<polygon class="lr-ray" points="270,236 180.1,192.2 191.2,174.4"/>
+						<polygon class="lr-ray" points="270,236 191.3,145.4 208.2,133.1"/>
+						<polygon class="lr-ray" points="270,236 217.6,106.2 240.9,99.1"/>
+						<polygon class="lr-ray" points="270,236 255.6,86.7 284.4,86.7"/>
+						<polygon class="lr-ray" points="270,236 299.1,99.1 322.4,106.2"/>
+						<polygon class="lr-ray" points="270,236 331.8,133.1 348.7,145.4"/>
+						<polygon class="lr-ray" points="270,236 348.8,174.4 359.9,192.2"/>
+					</g>
+					<!-- half-dome arch, two halves drawn from the bottom centre -->
+					<path class="lr-g lr-arch" stroke-width="8" pathLength="1" d="M270,287 H84 V233 A186,186 0 0 1 270,47"/>
+					<path class="lr-g lr-arch" stroke-width="8" pathLength="1" d="M270,287 H456 V233 A186,186 0 0 0 270,47"/>
+					<path class="lr-g lr-arch-full" stroke-width="8" d="M84,287 V233 A186,186 0 0 1 456,233 V287 Z"/>
+					<!-- big H -->
+					<g class="lr-big"><g clip-path="url(#lr-cap-big)" filter="url(#lr-speck)">
+						<path class="lr-g" stroke-width="14" d="M70,306 V440 M142,306 V440 M70,373 H142"/>
+					</g></g>
+					<!-- OUM -->
+					<g class="lr-oum"><g clip-path="url(#lr-cap-oum)">
+						<ellipse class="lr-g" stroke-width="7" cx="194" cy="350" rx="27.5" ry="25.5"/>
+						<path class="lr-g" stroke-width="7" d="M241.5,317 V354 A21.5,21.5 0 0 0 284.5,354 V317"/>
+						<path class="lr-g" stroke-width="7" d="M304.5,383 V317 L332,370 L359.5,317 V383"/>
+					</g></g>
+					<!-- rules and M A L L -->
+					<path class="lr-g lr-rule" stroke-width="3" d="M163,387.5 H363"/>
+					<path class="lr-g lr-rule" stroke-width="3" d="M163,431.5 H363"/>
+					<g clip-path="url(#lr-cap-mall)">
+						<path class="lr-g lr-mall m1" stroke-width="4.5" d="M174.25,429 V390 L188,419 L201.75,390 V429"/>
+						<path class="lr-g lr-mall m2" stroke-width="4.5" d="M225.5,429 L238,389 L250.5,429 M229.6,416 H246.4"/>
+						<path class="lr-g lr-mall m3" stroke-width="4.5" d="M282.25,390 V422.75 H298"/>
+						<path class="lr-g lr-mall m4" stroke-width="4.5" d="M332.25,390 V422.75 H348"/>
+					</g>
+					<!-- big A -->
+					<g class="lr-big lr-a2"><g clip-path="url(#lr-cap-big)" filter="url(#lr-speck)">
+						<path class="lr-g" stroke-width="14" d="M385,441 L427,305 L469,441"/>
+						<path class="lr-g" stroke-width="13" d="M399.2,395 H454.8"/>
+					</g></g>
+				</svg>
+				<div class="lr-stamp"><div class="lr-stamp-g">
+					<svg viewBox="0 0 164 166" focusable="false">
+						<defs><clipPath id="lr-tri"><polygon points="8,22 150,4 92,150"/></clipPath></defs>
+						<polygon points="20,34 162,16 104,162" fill="#ECC144"/>
+						<polygon points="8,22 150,4 92,150" fill="#B42D53"/>
+						<g clip-path="url(#lr-tri)" stroke="#D9577C" stroke-width="1" opacity="0.55">
+							<path d="M0,16H164M0,30H164M0,44H164M0,58H164M0,72H164M0,86H164M0,100H164M0,114H164M0,128H164M0,142H164"/>
+							<path d="M14,0V166M28,0V166M42,0V166M56,0V166M70,0V166M84,0V166M98,0V166M112,0V166M126,0V166M140,0V166"/>
+						</g>
+						<polygon points="8,22 150,4 92,150" fill="none" stroke="#000" stroke-width="3" stroke-linejoin="round"/>
+						<g transform="rotate(-7.2 80 60)">
+							<text x="79" y="58" text-anchor="middle" font-family="Kanit, 'Arial Black', Impact, sans-serif" font-style="italic" font-weight="900" font-size="31" fill="#fff" stroke="#000" stroke-width="5" stroke-linejoin="round" paint-order="stroke">Rewind</text>
+							<rect x="42" y="66" width="74" height="7" fill="#ECC144" stroke="#000" stroke-width="2"/>
+							<path d="M57,96 L79,84 V108 Z M79,96 L101,84 V108 Z" fill="#ECC144" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+						</g>
+					</svg>
+				</div></div>
+				<div class="lr-band"></div>
+			</div>
+			<h1 id="load-title">Houma Mall Rewind</h1>
+			<div id="load-sub"></div>
+		</div>
+		<div id="load-gap"></div>
+		<div id="load-foot">
+			<div id="load-tip"><span class="tip-touch">Left thumb walks · right thumb looks</span><span class="tip-keys">WASD or arrow keys walk · drag to look</span></div>
+			<div id="load-track"><div id="load-bar"></div></div>
+			<div id="load-mb"></div>
+		</div>
+	</div>
+			<div id="status-notice"></div>
+		</div>
+		<!-- MENU2 ---- the time-travel vortex over the reload (scripts/timetravel_trip.gd) -->
+		<script>
+// The trip from a mall directory (scripts/timetravel_trip.gd) leaves sessionStorage 'mall-tt' =
+// {start: wall-clock second the trip began, from, to, snap: a JPEG (base64) of the last frame}.
+// This page then shows no load screen: #tt-veil runs the same effect as scripts/timetravel.gdshader
+// (TT_FRAG is a copy of it in WebGL) on that picture, in step with the Godot side because every
+// value is a function of the time since the trip began (ttEnv = timetravel.gd env()). When the game
+// is ready (the load screen's own rule, lift() below) the veil fades into the game's own vortex,
+// which unwinds into the other year. Keep TT_FRAG and ttEnv the same as the Godot files.
+(function () {
+	var raw = '';
+	try { raw = sessionStorage.getItem('mall-tt') || ''; sessionStorage.removeItem('mall-tt'); } catch (e) { /* ignore */ }
+	if (!raw) { return; }
+	var info = null; try { info = JSON.parse(raw); } catch (e) { info = null; }
+	if (!info || !(info.start > 0) || Date.now() / 1000 - info.start > 120) { document.documentElement.classList.remove('tt'); return; }
+	window.__mallTT = raw;
+	document.documentElement.classList.add('tt');
+	var rm = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+	var veil = document.createElement('div');
+	veil.id = 'tt-veil';
+	var src = info.snap ? 'data:image/jpeg;base64,' + info.snap : '';
+	if (src) { veil.style.backgroundImage = 'url(' + src + ')'; }
+	document.body.appendChild(veil);
+	var cv = document.createElement('canvas');
+	veil.appendChild(cv);
+	if (!rm) { var spin = document.createElement('div'); spin.id = 'tt-spin'; if (info.to < info.from) { spin.className = 'back'; } veil.appendChild(spin); }
+	var gl = null;
+	try { gl = cv.getContext('webgl', { alpha: false, antialias: false, premultipliedAlpha: false }); } catch (e) { gl = null; }
+	var fwd = (info.to >= info.from) ? 1 : -1;
+	function pulse(t, at, w) { var d = (t - at) / w; return Math.exp(-d * d); }
+	function sm(a, b, x) { var t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); }
+	// = scripts/timetravel.gd env()
+	function ttEnv(t, u) {
+		if (rm) { var dk = 0.85 * sm(0, 0.5, t); if (u >= 0) { dk *= 1 - sm(0, 0.6, u); } return { amt: 0, ph: 0, flash: 0, vort: 0, dark: dk }; }
+		var ph = t / 1.5, amt = sm(0, 0.675, t), vort = 0.85 * sm(0.7, 1.7, t);
+		var flash = pulse(t, 0.21, 0.0525) * 0.7 + pulse(t, 0.54, 0.06) * 0.85 + pulse(t, 0.93, 0.09);
+		if (t > 1.4) { flash += 0.3 * Math.pow(0.5 + 0.5 * Math.sin((t - 1.4) * 2 * Math.PI / 1.6 - Math.PI * 0.5), 8); }
+		if (u >= 0) { var k = 1 - sm(0, 1.1, u); amt *= k; vort *= 1 - sm(0, 0.7, u); flash = Math.max(flash * k, pulse(u, 0.06, 0.14)); }
+		return { amt: amt, ph: ph, flash: flash, vort: vort, dark: 0 };
+	}
+	window.mallTTEnv = ttEnv;
+	var TT_VERT = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
+	// = scripts/timetravel.gdshader, SCREEN_UV / SCREEN_PIXEL_SIZE from the canvas
+	var TT_FRAG = [
+		'precision mediump float;',
+		'uniform sampler2D screen_tex; uniform vec2 res;',
+		'uniform float amt; uniform float ph; uniform float flash; uniform float vort; uniform float dark; uniform float forward;',
+		'const vec3 tint_a = vec3(1.0, 0.72, 0.30); const vec3 tint_b = vec3(0.35, 0.80, 1.00); const vec3 tint_c = vec3(0.95, 0.40, 0.95);',
+		'void main(){',
+		' vec2 uv = vec2(gl_FragCoord.x / res.x, 1.0 - gl_FragCoord.y / res.y);',
+		' vec2 c = uv - vec2(0.5);',
+		' float aspect = res.x / res.y;',
+		' vec2 cc = vec2(c.x / aspect, c.y);',
+		' float r = length(cc);',
+		' float wave = sin(r * 38.0 - ph * 40.0 * forward) * 0.012 * amt;',
+		' float ang = amt * 0.35 * (1.0 - r) * forward + vort * 1.2 * (1.0 - smoothstep(0.0, 0.6, r)) * forward;',
+		' mat2 rot = mat2(vec2(cos(ang), -sin(ang)), vec2(sin(ang), cos(ang)));',
+		' vec2 q = rot * c * (1.0 - 0.06 * amt - 0.25 * vort) + normalize(c + 1e-5) * wave + 0.5;',
+		' float split = 0.012 * amt;',
+		' vec3 col;',
+		' col.r = texture2D(screen_tex, q + normalize(c + 1e-5) * split).r;',
+		' col.g = texture2D(screen_tex, q).g;',
+		' col.b = texture2D(screen_tex, q - normalize(c + 1e-5) * split).b;',
+		' float cyc = fract(ph * 3.0 + r * 0.6 * forward);',
+		' vec3 wash = mix(mix(tint_a, tint_b, smoothstep(0.0, 0.5, cyc)), tint_c, smoothstep(0.5, 1.0, cyc));',
+		' col = mix(col, col * 0.4 + wash * 0.8, amt * 0.55);',
+		' float band = smoothstep(0.92, 1.0, sin((uv.y + ph * 3.0) * 60.0)) * amt * 0.35;',
+		' col += wash * band;',
+		' float a = atan(cc.y, cc.x);',
+		' float depth = 0.3 / (r + 0.06);',
+		' float tw = a / 6.2832 + depth * 0.2 * forward + ph * 0.3 * forward;',
+		' float s1 = 0.5 + 0.5 * sin(tw * 6.2832 * 6.0);',
+		' float s2 = 0.5 + 0.5 * sin((depth - ph * 2.4) * 6.2832);',
+		' float cyc2 = fract(depth * 0.35 - ph * 0.8);',
+		' vec3 wash2 = mix(mix(tint_a, tint_b, smoothstep(0.0, 0.5, cyc2)), tint_c, smoothstep(0.5, 1.0, cyc2));',
+		' vec3 vc = mix(tint_b * 0.12, wash2, s1 * 0.85) * (0.45 + 0.55 * s2) + wash2 * pow(s1 * s2, 6.0) * 0.8;',
+		' vc += vec3(1.0, 0.97, 0.9) * (1.0 - smoothstep(0.0, 0.12, r)) * 0.7;',
+		' col = mix(col, vc, clamp(vort * (0.3 + 0.7 * smoothstep(0.04, 0.32, r)), 0.0, 1.0));',
+		' col = mix(col, vec3(1.0, 0.97, 0.9), clamp(flash, 0.0, 1.0));',
+		' col *= 1.0 - smoothstep(0.35, 0.95, r) * max(amt, vort) * 0.8;',
+		' col *= 1.0 - dark;',
+		' gl_FragColor = vec4(col, 1.0);',
+		'}'].join('\n');
+	var U = {}, live = true;
+	if (gl) {
+		var sh = function (type, txt) { var o = gl.createShader(type); gl.shaderSource(o, txt); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) { console.warn('time travel shader:', gl.getShaderInfoLog(o)); return null; } return o; };
+		var vs = sh(gl.VERTEX_SHADER, TT_VERT), fs = sh(gl.FRAGMENT_SHADER, TT_FRAG);
+		var pg = vs && fs ? gl.createProgram() : null;
+		if (pg) { gl.attachShader(pg, vs); gl.attachShader(pg, fs); gl.linkProgram(pg); if (!gl.getProgramParameter(pg, gl.LINK_STATUS)) { pg = null; } }
+		if (!pg) { gl = null; } else {
+			gl.useProgram(pg);
+			var b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+			var loc = gl.getAttribLocation(pg, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+			['screen_tex', 'res', 'amt', 'ph', 'flash', 'vort', 'dark', 'forward'].forEach(function (n) { U[n] = gl.getUniformLocation(pg, n); });
+			var tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 255]));
+			if (src) { var im = new Image(); im.onload = function () { gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im); }; im.src = src; }
+			gl.uniform1i(U.screen_tex, 0);
+		}
+	}
+	window.__mallTTFrames = 0;
+	// the vortex is soft: drawn at most VEIL_W px wide and scaled up by the page, about 20 times a
+	// second, so it leaves the GPU to the game that is starting underneath it (its start-up makes many
+	// waiting GL calls, and a busy GPU stretches them out)
+	var VEIL_W = 360, VEIL_MS = 48;
+	var last = 0;
+	function frame(now) {
+		if (!live) { return; }
+		requestAnimationFrame(frame);
+		if (now && now - last < VEIL_MS) { return; }
+		last = now || 0;
+		var t = Date.now() / 1000 - info.start;
+		if (gl) {
+			var sc = Math.min(1, VEIL_W / Math.max(1, innerWidth));
+			var w = Math.max(1, Math.round(innerWidth * sc)), h = Math.max(1, Math.round(innerHeight * sc));
+			if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+			gl.viewport(0, 0, w, h);
+			var e = ttEnv(t, -1);
+			gl.uniform2f(U.res, w, h); gl.uniform1f(U.forward, fwd);
+			['amt', 'ph', 'flash', 'vort', 'dark'].forEach(function (n) { gl.uniform1f(U[n], e[n]); });
+			gl.drawArrays(gl.TRIANGLES, 0, 3);
+		} else {
+			veil.style.filter = 'hue-rotate(' + Math.round(t * 120) + 'deg) brightness(0.8)';
+		}
+		window.__mallTTFrames++;
+	}
+	frame(0);
+	// called by lift() when the game is ready: fade into the game's own vortex
+	window.mallTTLift = function () {
+		window.__mallTTLifted = 1;
+		veil.style.opacity = '0';
+		setTimeout(function () { live = false; if (veil.parentNode) { veil.parentNode.removeChild(veil); } document.documentElement.classList.remove('tt'); }, 400);
+	};
+}());
+		</script>
+		<!-- end MENU2 -->
+
+		<script>
+// Owner-editable signs (scripts/signs.gd): publishing the owner's sign edits to
+// play/signs.json on GitHub, the same way the main game's editor Publish writes files
+// (contents API, the token it keeps in this browser under "southland-gh"). Nothing secret
+// lives here: without a saved token it asks for one and does not keep it.
+// The playable arcade cabinets (scripts/signs.gd, play/emu.html): a full-window frame over the
+// game; emu.html posts "emu-close" to come back to the mall.
+window.mallRoms = {
+	frame: null,
+	open: function (url) {
+		if (this.frame) return;
+		var f = document.createElement('iframe');
+		f.src = url;
+		f.allow = 'autoplay; fullscreen; gamepad';
+		f.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;z-index:1000;background:#000';
+		document.body.appendChild(f);
+		this.frame = f;
+		if (window.mallVR) window.mallVR.show();
+	},
+	close: function () {
+		if (!this.frame) return;
+		this.frame.remove();
+		this.frame = null;
+		if (window.mallVR) window.mallVR.show();
+		var c = document.getElementById('canvas');
+		if (c) c.focus();
+	},
+	isOpen: function () { return this.frame ? '1' : '0'; }
+};
+window.addEventListener('message', function (e) { if (e.data === 'emu-close') window.mallRoms.close(); });
+// VR headsets (scripts/vr.gd, design/godot-vr.md). The game calls offer() when the browser can do
+// immersive VR and has set window.mallVREnter; the button's press starts the session. Crossing to
+// the other wing loads a new page, which ends the session: 'mall-vr' in sessionStorage remembers
+// it, the new page makes the button big, and where the browser hands the session over
+// ("sessiongranted", Meta Quest Browser) VR resumes without a press.
+// Tuning from the URL: ?vrscale=0.8 draws fewer pixels per eye, ?vrfov=0..1 sets how much the
+// edges of the view are drawn coarser (fixed foveation, default 1 = most).
+window.mallVR = {
+	offered: false, inSession: false, granted: false, session: null, state: 'none',
+	q: function (k) { try { return new URLSearchParams(location.search).get(k); } catch (e) { return null; } },
+	was: function () { try { return sessionStorage.getItem('mall-vr') === '1'; } catch (e) { return false; } },
+	remember: function (on) { try { if (on) sessionStorage.setItem('mall-vr', '1'); else sessionStorage.removeItem('mall-vr'); } catch (e) {} },
+	note: function (t) { var n = document.getElementById('vr-note'); n.textContent = t || ''; n.style.display = t ? 'block' : 'none'; },
+	show: function () {
+		var b = document.getElementById('vr-enter');
+		b.style.display = (this.offered && !this.inSession && !window.mallRoms.frame) ? 'block' : 'none';
+		b.classList.toggle('big', this.was());
+		b.textContent = this.was() ? 'Back into VR' : 'Enter VR';
+	},
+	offer: function () {
+		this.offered = true; this.state = 'offered';
+		this.show();
+		if (this.granted) this.enter();
+	},
+	enter: function () { this.note(''); if (window.mallVREnter && !this.inSession) window.mallVREnter(); },
+	started: function () { this.inSession = true; this.state = 'in'; this.remember(false); this.show(); },
+	ended: function () { this.inSession = false; this.state = 'out'; this.session = null; this.show(); },
+	failed: function (msg) { this.state = 'failed'; this.note('VR did not start: ' + msg); this.show(); },
+	tune: function (s) {
+		// coarser edges cost nothing you look at and save a lot of drawing; the layer exists a moment after the session
+		var want = parseFloat(this.q('vrfov')); if (!(want >= 0 && want <= 1)) want = 1;
+		var n = 0, t = setInterval(function () {
+			n++;
+			try {
+				// Godot draws into a WebXR projection layer (renderState.layers); older engines used baseLayer
+				var rs = s.renderState || {}, l = (rs.layers && rs.layers[0]) || rs.baseLayer;
+				if (l) { if ('fixedFoveation' in l) l.fixedFoveation = want; clearInterval(t); }
+			} catch (e) { clearInterval(t); }
+			if (n > 40) clearInterval(t);
+		}, 100);
+	}
+};
+(function () {
+	var V = window.mallVR;
+	document.getElementById('vr-enter').addEventListener('click', function () { V.enter(); });
+	if (!navigator.xr) return;
+	try {
+		var rs = navigator.xr.requestSession.bind(navigator.xr);
+		navigator.xr.requestSession = function (mode, opts) {
+			return rs(mode, opts).then(function (s) { V.session = s; V.tune(s); return s; });
+		};
+		navigator.xr.addEventListener('sessiongranted', function () { V.granted = true; if (V.offered) V.enter(); });
+		var sc = parseFloat(V.q('vrscale'));
+		if (sc > 0.3 && sc <= 1.5 && window.XRWebGLBinding && XRWebGLBinding.prototype.createProjectionLayer) {
+			var mk = XRWebGLBinding.prototype.createProjectionLayer;
+			XRWebGLBinding.prototype.createProjectionLayer = function (o) { o = Object.assign({}, o || {}); o.scaleFactor = sc; return mk.call(this, o); };
+		}
+	} catch (e) { console.warn('VR setup:', e); }
+	if (/OculusBrowser|Quest/.test(navigator.userAgent)) {
+		window.addEventListener('DOMContentLoaded', function () {
+			var tip = document.getElementById('load-tip');
+			if (tip) tip.innerHTML = 'When the mall appears, press <b>Enter VR</b><br>Left stick walks · right stick turns · B opens the menu';
+		});
+	}
+}());
+function mallPublisher(path, key, what) { return {
+	status: '',
+	path: path,
+	key: key,
+	what: what,
+	repo: function (cfg) {
+		if (cfg.repo) return cfg.repo;
+		var h = location.hostname, seg = location.pathname.split('/').filter(Boolean)[0];
+		if (/\.github\.io$/.test(h) && seg) return h.split('.')[0] + '/' + seg;
+		return 'stevenboudreaux/Houma-Mall-Rewind';
+	},
+	b64: function (str) {
+		var by = new TextEncoder().encode(str), s = '';
+		for (var i = 0; i < by.length; i += 0x8000) s += String.fromCharCode.apply(null, by.subarray(i, i + 0x8000));
+		return btoa(s);
+	},
+	publish: function (draftJson) {
+		var S = this;
+		S.status = 'busy';
+		var cfg = {};
+		try { cfg = JSON.parse(localStorage.getItem('southland-gh') || '{}'); } catch (e) {}
+		var repo = S.repo(cfg), br = cfg.branch || 'main', tok = cfg.token;
+		if (!tok) tok = prompt('GitHub token to publish the ' + S.what + ' (the one the mall editor uses). It is not saved.');
+		if (!tok) { S.status = 'error: no GitHub token'; return; }
+		var draft = JSON.parse(draftJson);
+		var H = { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github.object+json', 'X-GitHub-Api-Version': '2022-11-28' };
+		var u = 'https://api.github.com/repos/' + repo + '/contents/' + S.path.split('/').map(encodeURIComponent).join('/');
+		fetch(u + '?ref=' + encodeURIComponent(br), { headers: H, cache: 'no-store' }).then(function (r) {
+			if (r.status === 404) return null;
+			if (r.status === 401) throw 'the token was refused';
+			if (!r.ok) throw 'GitHub said ' + r.status;
+			return r.json();
+		}).then(function (cur) {
+			// merge into the live list so nothing published elsewhere is lost
+			var live = {};
+			if (cur && cur.content) {
+				try {
+					var bin = atob(cur.content.replace(/\n/g, '')), arr = new Uint8Array(bin.length);
+					for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+					live = JSON.parse(new TextDecoder().decode(arr));
+				} catch (e) { live = {}; }
+			}
+			var K = S.key;
+			live[K] = live[K] || {};
+			Object.keys(draft).forEach(function (k) {
+				var v = draft[k];
+				// text edits are partial (only the fields changed): merge them field by field
+				if (v && typeof v === 'object' && !Array.isArray(v)) live[K][k] = Object.assign({}, live[K][k] || {}, v);
+				else live[K][k] = v;
+			});
+			var body = { message: 'Update the ' + S.what + ' from the Godot mall', content: S.b64(JSON.stringify(live, null, 1) + '\n'), branch: br };
+			if (cur && cur.sha) body.sha = cur.sha;
+			return fetch(u, { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, H), body: JSON.stringify(body) });
+		}).then(function (r) {
+			if (r.ok) { S.status = 'ok'; return; }
+			if (r.status === 403 || r.status === 404) throw 'this token cannot write to ' + repo;
+			if (r.status === 409) throw 'someone else changed the ' + S.what + '; reload and publish again';
+			throw 'GitHub said ' + r.status;
+		}).catch(function (e) { S.status = 'error: ' + (typeof e === 'string' ? e : (e && e.message) || 'network error'); });
+	}
+}; }
+window.mallSigns = mallPublisher('prototypes/godot-mall/play/signs.json', 'signs', 'mall signs');
+// Pocket Change's prize words (scripts/prizes.gd): play/prize_text.json {"text": {id: {text, font, size, fill, outline}}}
+window.mallPrizeText = mallPublisher('prototypes/godot-mall/play/prize_text.json', 'text', 'prize words');
+// The words on Ch02's sweatshirt (scripts/npc_shirt.gd): play/shirt_text.json {"text": {"ch02": {text, font, size, fill, outline}}}
+window.mallShirtText = mallPublisher('prototypes/godot-mall/play/shirt_text.json', 'text', 'shirt words');
+// PICTURES-BEGIN (OWNER, design/godot-owner-mode.md "Pictures"; scripts/pictures.gd)
+// The owner's own pictures on posters and ad panels. pick(specJson) shows a dialog with a real file
+// input (so an iPhone's photo picker opens from the owner's own tap), shrinks the chosen picture to at
+// most spec.max px on its longer side as a JPEG, and leaves '{"data": dataURL, "w", "h"}',
+// '{"reset": 1}' or '{"cancel": 1}' for take(). publish(draftJson) uploads each new picture to
+// prototypes/godot-mall/play/posters/<id>-<hash>.jpg on main (GitHub contents API, the editor's token,
+// as signs.json), then merges play/posters.json ({"pictures": {id: {file, w, h}}}) with the live copy:
+// new pictures added, "reset" ones removed, everything published elsewhere kept. status: 'busy', 'ok'
+// or 'error: ...'; published: the merged list (JSON) after 'ok'.
+window.mallPictures = (function () {
+	var P = mallPublisher('prototypes/godot-mall/play/posters.json', 'pictures', 'poster pictures');
+	var DIR = 'prototypes/godot-mall/play/posters/';
+	var S = { status: '', result: '', published: '' };
+	S.take = function () { var r = S.result; S.result = ''; return r; };
+	S.safe = function (id) { return String(id).replace(/[^A-Za-z0-9._-]+/g, '_').replace(/_+/g, '_').slice(0, 80); };
+	S.hash = function (s) { var h = 0x811c9dc5; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return ('0000000' + h.toString(16)).slice(-8); };
+	// a picture file -> {data, w, h}: at most max px on the longer side, JPEG, under ~900 KB
+	S.shrink = function (file, max) {
+		return new Promise(function (ok, bad) {
+			var url = URL.createObjectURL(file), im = new Image();
+			im.onload = function () {
+				URL.revokeObjectURL(url);
+				var k = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight));
+				var c = document.createElement('canvas');
+				c.width = Math.max(1, Math.round(im.naturalWidth * k)); c.height = Math.max(1, Math.round(im.naturalHeight * k));
+				var g = c.getContext('2d'); g.imageSmoothingQuality = 'high';
+				g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height);
+				var q = [0.86, 0.8, 0.72, 0.62], d = '';
+				for (var i = 0; i < q.length; i++) { d = c.toDataURL('image/jpeg', q[i]); if (d.length < 1200000) break; }
+				ok({ data: d, w: c.width, h: c.height });
+			};
+			im.onerror = function () { URL.revokeObjectURL(url); bad("that file isn't a picture this browser can read"); };
+			im.src = url;
+		});
+	};
+	S.pick = function (specJson) {
+		var spec = JSON.parse(specJson), max = spec.max || 1024, got = null;
+		S.result = '';
+		var old = document.getElementById('pic-pick'); if (old) old.remove();
+		var el = function (tag, css, txt) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (txt != null) e.textContent = txt; return e; };
+		var wrap = el('div', 'position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font:15px system-ui,-apple-system,sans-serif');
+		wrap.id = 'pic-pick';
+		var box = el('div', 'background:#fbf6ea;color:#1e1a18;border:2px solid #c0141e;border-radius:10px;width:min(480px,calc(100% - 32px));max-height:calc(100% - 32px);overflow:auto;padding:14px 16px;box-sizing:border-box');
+		box.appendChild(el('div', 'font-weight:700;font-size:18px;margin-bottom:4px', 'Your picture on: ' + spec.title));
+		box.appendChild(el('div', 'font-size:13px;color:#6b5f4c;margin-bottom:10px', 'It shows here at once; Publish pictures (menu, OWNER) shows it to everyone. Pictures are shrunk to ' + max + ' px.'));
+		var lab = el('label', 'display:inline-block;background:#c0141e;color:#fff;border-radius:8px;padding:9px 14px;font-size:16px;cursor:pointer', 'Choose a picture');
+		var inp = el('input'); inp.type = 'file'; inp.accept = 'image/*'; inp.id = 'pic-file'; inp.style.cssText = 'position:absolute;left:-9999px';
+		lab.appendChild(inp); box.appendChild(lab);
+		var prev = el('img', 'display:none;max-width:100%;max-height:40vh;margin:10px auto 0;border:1px solid #d8cfbc');
+		var note = el('div', 'font-size:13px;color:#6b5f4c;margin-top:6px;min-height:18px');
+		box.appendChild(prev); box.appendChild(note);
+		var bar = el('div', 'display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px');
+		var close = function (res) { S.result = JSON.stringify(res); wrap.remove(); var cv = document.getElementById('canvas'); if (cv) cv.focus(); };
+		var btn = function (t, css, fn) { var b = el('button', 'font-size:16px;padding:8px 14px;border-radius:8px;border:1px solid #8a7a60;' + css, t); b.onclick = fn; bar.appendChild(b); return b; };
+		if (spec.custom) btn('Original picture', 'background:#fff;margin-right:auto', function () { close({ reset: 1 }); });
+		btn('Cancel', 'background:#fff', function () { close({ cancel: 1 }); });
+		var use = btn('Use this picture', 'background:#c0141e;color:#fff;border-color:#c0141e', function () { if (got) close(got); });
+		use.disabled = true; use.style.opacity = '0.5'; use.id = 'pic-use';
+		inp.onchange = function () {
+			var f = inp.files && inp.files[0]; if (!f) return;
+			note.textContent = 'Shrinking the picture...';
+			S.shrink(f, max).then(function (o) {
+				got = o; prev.src = o.data; prev.style.display = 'block';
+				note.textContent = o.w + ' × ' + o.h + ' px · ' + Math.round(o.data.length * 0.75 / 1024) + ' KB';
+				use.disabled = false; use.style.opacity = '1';
+			}).catch(function (e) { note.textContent = typeof e === 'string' ? e : "That picture couldn't be read."; });
+		};
+		box.appendChild(bar);
+		box.addEventListener('keydown', function (e) { e.stopPropagation(); });
+		box.addEventListener('keyup', function (e) { e.stopPropagation(); });
+		wrap.appendChild(box);
+		document.body.appendChild(wrap);
+	};
+	S.publish = function (draftJson) {
+		S.status = 'busy';
+		var cfg = {};
+		try { cfg = JSON.parse(localStorage.getItem('southland-gh') || '{}'); } catch (e) {}
+		var repo = P.repo(cfg), br = cfg.branch || 'main', tok = cfg.token;
+		if (!tok) tok = prompt('GitHub token to publish the poster pictures (the one the mall editor uses). It is not saved.');
+		if (!tok) { S.status = 'error: no GitHub token'; return Promise.resolve(); }
+		var draft = JSON.parse(draftJson), ids = Object.keys(draft), files = {};
+		var H = { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github.object+json', 'X-GitHub-Api-Version': '2022-11-28' };
+		var api = function (path) { return 'https://api.github.com/repos/' + repo + '/contents/' + path.split('/').map(encodeURIComponent).join('/'); };
+		var get = function (path) {
+			return fetch(api(path) + '?ref=' + encodeURIComponent(br), { headers: H, cache: 'no-store' }).then(function (r) {
+				if (r.status === 404) return null;
+				if (r.status === 401) throw 'the token was refused';
+				if (!r.ok) throw 'GitHub said ' + r.status;
+				return r.json();
+			});
+		};
+		var put = function (path, b64, msg, sha) {
+			var body = { message: msg, content: b64, branch: br };
+			if (sha) body.sha = sha;
+			return fetch(api(path), { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, H), body: JSON.stringify(body) }).then(function (r) {
+				if (r.ok) return r;
+				if (r.status === 401) throw 'the token was refused';
+				if (r.status === 403 || r.status === 404) throw 'this token cannot write to ' + repo;
+				if (r.status === 409) throw 'someone else changed the poster pictures; reload and publish again';
+				if (r.status === 413 || r.status === 422) throw 'GitHub refused a picture (too big?)';
+				throw 'GitHub said ' + r.status;
+			});
+		};
+		// one picture at a time (each write is a commit on the branch), then the list
+		var chain = Promise.resolve();
+		ids.forEach(function (id) {
+			var d = draft[id];
+			if (!d || !d.data) return;
+			var b64 = String(d.data).slice(String(d.data).indexOf(',') + 1);
+			var name = S.safe(id) + '-' + S.hash(b64) + '.jpg';
+			files[id] = { file: 'posters/' + name, w: d.w | 0, h: d.h | 0 };
+			chain = chain.then(function () {
+				return get(DIR + name).then(function (cur) {
+					if (cur && cur.sha) return null;        // the very same picture is already there
+					return put(DIR + name, b64, 'Add a poster picture from the Godot mall: ' + name);
+				});
+			});
+		});
+		return chain.then(function () { return get(P.path); }).then(function (cur) {
+			var live = {};
+			if (cur && cur.content) {
+				try {
+					var bin = atob(cur.content.replace(/\n/g, '')), arr = new Uint8Array(bin.length);
+					for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+					live = JSON.parse(new TextDecoder().decode(arr));
+				} catch (e) { live = {}; }
+			}
+			live.pictures = live.pictures || {};
+			ids.forEach(function (id) {
+				if (draft[id] && draft[id].reset) delete live.pictures[id];
+				else if (files[id]) live.pictures[id] = files[id];
+			});
+			S.published = JSON.stringify(live.pictures);
+			return put(P.path, P.b64(JSON.stringify(live, null, 1) + '\n'), 'Update the poster pictures from the Godot mall', cur && cur.sha);
+		}).then(function () { S.status = 'ok'; })
+			.catch(function (e) { S.status = 'error: ' + (typeof e === 'string' ? e : (e && e.message) || 'network error'); });
+	};
+	return S;
+}());
+// PICTURES-END
+// The owner's form for a prize's words: open(specJson) shows it; result becomes
+// '{"save": {id: fields}}', '{"reset": [ids]}' or '{"cancel": 1}' when it closes.
+window.mallPrizeEdit = {
+	result: '',
+	open: function (specJson) {
+		var S = this, spec = JSON.parse(specJson), fonts = { sans: 'Sans', sans_italic: 'Sans italic', serif: 'Serif', script: 'Script', forza: 'Forza-style' };
+		S.result = '';
+		var old = document.getElementById('pz-edit'); if (old) old.remove();
+		var el = function (tag, css, txt) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (txt != null) e.textContent = txt; return e; };
+		var wrap = el('div', 'position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;font:15px system-ui,-apple-system,sans-serif');
+		wrap.id = 'pz-edit';
+		var box = el('div', 'background:#fbf6ea;color:#1e1a18;border:2px solid #c0141e;border-radius:10px;width:min(520px,calc(100% - 32px));max-height:calc(100% - 32px);overflow:auto;padding:14px 16px;box-sizing:border-box');
+		box.appendChild(el('div', 'font-weight:700;font-size:18px;margin-bottom:8px', 'Words on: ' + spec.title));
+		var rows = [];
+		spec.fields.forEach(function (f) {
+			var fs = el('fieldset', 'border:1px solid #d8cfbc;border-radius:8px;margin:0 0 10px;padding:8px 10px');
+			fs.appendChild(el('legend', 'font-weight:600;padding:0 4px', f.label));
+			var r = { id: f.id };
+			if (f.text !== null) {
+				r.text = el('input', 'width:100%;box-sizing:border-box;font-size:16px;padding:6px;margin-bottom:6px');
+				r.text.value = f.text; fs.appendChild(r.text);
+			}
+			if (f.style) {
+				var line = el('div', 'display:flex;flex-wrap:wrap;gap:8px;align-items:center');
+				r.font = el('select', 'font-size:15px;padding:4px');
+				spec.fonts.forEach(function (k) { var o = el('option', null, fonts[k] || k); o.value = k; if (k === f.font) o.selected = true; r.font.appendChild(o); });
+				line.appendChild(r.font);
+				line.appendChild(el('span', null, 'size'));
+				r.size = el('input', 'width:64px;font-size:15px;padding:4px'); r.size.type = 'number'; r.size.min = 6; r.size.max = 200; r.size.value = f.size;
+				line.appendChild(r.size);
+				line.appendChild(el('span', null, 'colour'));
+				r.fill = el('input'); r.fill.type = 'color'; r.fill.value = f.fill; line.appendChild(r.fill);
+				var lab = el('label', 'display:flex;gap:4px;align-items:center');
+				r.ol = el('input'); r.ol.type = 'checkbox'; r.ol.checked = !!f.outline;
+				lab.appendChild(r.ol); lab.appendChild(el('span', null, 'outline'));
+				line.appendChild(lab);
+				r.olc = el('input'); r.olc.type = 'color'; r.olc.value = f.outline || '#000000'; line.appendChild(r.olc);
+				fs.appendChild(line);
+			}
+			rows.push(r); box.appendChild(fs);
+		});
+		var bar = el('div', 'display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:6px');
+		var close = function (res) { S.result = JSON.stringify(res); wrap.remove(); var cv = document.getElementById('canvas'); if (cv) cv.focus(); };
+		var btn = function (t, css, fn) { var b = el('button', 'font-size:16px;padding:8px 14px;border-radius:8px;border:1px solid #8a7a60;' + css, t); b.onclick = fn; bar.appendChild(b); };
+		btn('Restore originals', 'background:#fff;margin-right:auto', function () { close({ reset: rows.map(function (r) { return r.id; }) }); });
+		btn('Cancel', 'background:#fff', function () { close({ cancel: 1 }); });
+		btn('Save', 'background:#c0141e;color:#fff;border-color:#c0141e', function () {
+			var out = {};
+			rows.forEach(function (r) {
+				var o = {};
+				if (r.text) o.text = r.text.value;
+				if (r.font) { o.font = r.font.value; o.size = parseInt(r.size.value, 10) || 24; o.fill = r.fill.value; o.outline = r.ol.checked ? r.olc.value : ''; }
+				out[r.id] = o;
+			});
+			close({ save: out });
+		});
+		box.appendChild(bar);
+		box.addEventListener('keydown', function (e) { e.stopPropagation(); });
+		box.addEventListener('keyup', function (e) { e.stopPropagation(); });
+		wrap.appendChild(box);
+		document.body.appendChild(wrap);
+	}
+};
+// The owner's lighting panel (scripts/player.gd, scripts/lighting.json; Steven, Oct 15 2026): a
+// time-of-day slider and a brightness slider, shown only on the owner's browser. The game calls
+// show(hour, bright) once and set(hour, bright) when the Lighting button changes things; it reads
+// poll(), which returns '{"hour":h,"bright":b}' after the owner moves a slider and '' otherwise.
+// Nothing here is published: Steven reads the values off the panel and they become the default.
+window.mallLight = {
+	changed: '', hour: 22, bright: 1, def: null,
+	clock: function (h) { var m = Math.round(h * 60) % 1440, hh = Math.floor(m / 60), mm = m % 60, ap = hh < 12 ? 'am' : 'pm', h12 = hh % 12 || 12; return h12 + ':' + (mm < 10 ? '0' : '') + mm + ' ' + ap; },
+	text: function () { return 'Time ' + this.clock(this.hour) + ' (' + this.hour.toFixed(2) + ') · brightness ' + Math.round(this.bright * 100) + '%'; },
+	poll: function () { var c = this.changed; this.changed = ''; return c; },
+	set: function (h, b) {
+		this.hour = h; this.bright = b;
+		if (!this.el) return;
+		this.el.hr.value = h; this.el.br.value = Math.round(b * 100); this.sync();
+	},
+	sync: function () {
+		var E = this.el; if (!E) return;
+		E.hv.textContent = this.clock(this.hour); E.bv.textContent = Math.round(this.bright * 100) + '%';
+		E.pill.textContent = '☀ Lighting · ' + this.clock(this.hour) + ' · ' + Math.round(this.bright * 100) + '%';
+		E.out.textContent = this.text();
+	},
+	show: function (h, b, defJson) {
+		var S = this; S.hour = h; S.bright = b;
+		try { S.def = JSON.parse(defJson || 'null'); } catch (e) { S.def = null; }
+		if (S.el) { S.set(h, b); return; }
+		var el = function (tag, css, txt) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (txt != null) e.textContent = txt; return e; };
+		var root = el('div', 'position:fixed;left:10px;top:34px;z-index:900;font:14px system-ui,-apple-system,sans-serif;color:#1e1a18;touch-action:none');
+		root.id = 'light-panel';
+		var pill = el('button', 'font:600 14px system-ui,-apple-system,sans-serif;padding:6px 12px;border-radius:16px;border:1px solid #8a7a60;background:rgba(251,246,234,.92);color:#1e1a18;cursor:pointer');
+		var box = el('div', 'display:none;margin-top:6px;background:rgba(251,246,234,.96);border:2px solid #8a7a60;border-radius:10px;padding:10px 12px;width:min(320px,calc(100vw - 44px));box-sizing:border-box');
+		var row = function (label, min, max, step) {
+			var line = el('div', 'display:flex;justify-content:space-between;font-weight:600;margin-top:4px');
+			line.appendChild(el('span', null, label)); var v = el('span'); line.appendChild(v); box.appendChild(line);
+			var r = el('input', 'width:100%;margin:6px 0 4px;height:28px'); r.type = 'range'; r.min = min; r.max = max; r.step = step; box.appendChild(r);
+			return [r, v];
+		};
+		var a = row('Time of day', 5, 24, 0.25), c = row('Brightness', 40, 180, 1);
+		var tick = el('div', 'display:flex;justify-content:space-between;font-size:11px;color:#6b5f4c;margin:-4px 0 6px'); ['5am', 'noon', '6pm', 'midnight'].forEach(function (t) { tick.appendChild(el('span', null, t)); }); box.insertBefore(tick, box.children[2]);
+		var out = el('div', 'font-size:12px;color:#4a4033;margin:6px 0 8px;user-select:text');
+		box.appendChild(out);
+		var bar = el('div', 'display:flex;gap:8px;flex-wrap:wrap');
+		var btn = function (t, fn) { var b = el('button', 'font-size:14px;padding:6px 10px;border-radius:8px;border:1px solid #8a7a60;background:#fff;cursor:pointer', t); b.onclick = fn; bar.appendChild(b); return b; };
+		var cp = btn('Copy values', function () {
+			var t = 'Lighting: ' + S.text();
+			var done = function () { cp.textContent = 'Copied'; setTimeout(function () { cp.textContent = 'Copy values'; }, 1500); };
+			try { navigator.clipboard.writeText(t).then(done, function () { prompt('Copy this:', t); }); } catch (e) { prompt('Copy this:', t); }
+		});
+		btn('Midday default', function () { var d = S.def || {}; S.move(d.day_hour || 12, d.day_brightness || 1); });
+		btn('Night default', function () { var d = S.def || {}; S.move(d.night_hour || 22, d.night_brightness || 1); });
+		btn('Close', function () { box.style.display = 'none'; var cv = document.getElementById('canvas'); if (cv) cv.focus(); });
+		box.appendChild(bar);
+		box.appendChild(el('div', 'font-size:11px;color:#6b5f4c;margin-top:8px', 'Only you see this. The mall swaps to its night lighting before about 6:30 am and after about 6:45 pm. Send Claude the values to make them everyone’s default.'));
+		S.move = function (h, b) { S.hour = +h; S.bright = +b; S.el.hr.value = S.hour; S.el.br.value = Math.round(S.bright * 100); S.sync(); S.changed = JSON.stringify({ hour: S.hour, bright: S.bright }); };
+		a[0].addEventListener('input', function () { S.hour = parseFloat(a[0].value); S.sync(); S.changed = JSON.stringify({ hour: S.hour, bright: S.bright }); });
+		c[0].addEventListener('input', function () { S.bright = parseFloat(c[0].value) / 100; S.sync(); S.changed = JSON.stringify({ hour: S.hour, bright: S.bright }); });
+		var refocus = function () { var cv = document.getElementById('canvas'); if (cv) cv.focus(); };
+		a[0].addEventListener('change', refocus); c[0].addEventListener('change', refocus);
+		pill.onclick = function () { box.style.display = box.style.display === 'none' ? 'block' : 'none'; refocus(); };
+		['keydown', 'keyup'].forEach(function (k) { root.addEventListener(k, function (e) { if (e.target.tagName === 'INPUT') e.stopPropagation(); }); });
+		root.appendChild(pill); root.appendChild(box); document.body.appendChild(root);
+		S.el = { hr: a[0], hv: a[1], br: c[0], bv: c[1], out: out, pill: pill };
+		S.set(h, b);
+	}
+};
+		</script>
+		<script src="index.js"></script>
+		<script>
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":24401888,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_THREADS_ENABLED = false;
+// Two builds of the game, the same except for texture formats: "desktop" (S3TC and BPTC,
+// computer GPUs) and "mobile" (ETC2 and ASTC: phones, tablets, VR headsets). Each device
+// downloads only its own. tools/export_web.sh fills in the sizes. Override with ?pack=.
+// The mall ships as two wings (design/godot-wings.md), each its own pair of files:
+// w1.desktop.pck / w1.mobile.pck (Sears and the east halls, with Gumballs) and w2.* (the
+// Dillard's court, the Concourse, JCPenney). ?wing=1|2 picks the wing; the game sets it when you
+// cross the seam. While you walk one wing, the other wing's file is fetched into this browser's
+// cache (Cache Storage), so crossing over does not download it again.
+// ?year=2026: the mall as it is today (same building, today's stores), its own pair of files per
+// wing: w1y26.* / w2y26.* (scripts/player.gd's 1995 / 2026 switch sets it).
+const PACK_SIZES = {"w1": {"desktop": 87283664, "mobile": 87283664}, "w2": {"desktop": 91485980, "mobile": 91485980}, "w3": {"desktop": 48272292, "mobile": 48272292}, "w1y26": {"desktop": 49310512, "mobile": 49310512}, "w2y26": {"desktop": 70657044, "mobile": 70657044}, "w3y26": {"desktop": 30930500, "mobile": 30930500}, "w4": {"desktop": 42632880, "mobile": 42632880}, "w5": {"desktop": 43532624, "mobile": 43532624}, "w6": {"desktop": 24401888, "mobile": 24401888}, "w4y26": {"desktop": 96066496, "mobile": 96066496}, "w5y26": {"desktop": 38372296, "mobile": 38372296}, "w6y26": {"desktop": 24532020, "mobile": 24532020}}; // PACK_SIZES
+// CHARS (Nov 3 2026, design/godot-build-hosting.md "Shared packs"): packs shared by every wing instead of
+// copied into each wing pack: "items" (the Blender items, downloaded with the wing pack and mounted before
+// its scene loads: at "start") and "chars" / "chars_<map>" (the character bodies and pieces, fetched once
+// the mall runs: "later"). Each is <name>.<desktop|mobile>.pck next to the wing packs, kept in the same
+// cache. maps: "all" or the map names (w1, w2y26, ...) that use it. tools/export_web.sh fills this in
+// (tools/shared_packs.py); a size of 0 = not exported, skipped.
+const SHARED_PACKS = {"items": {"desktop": 72976888, "mobile": 72976888, "at": "start", "maps": "all"}, "chars": {"desktop": 53377972, "mobile": 53377972, "at": "later", "maps": "all"}, "chars_w1": {"desktop": 555888, "mobile": 555888, "at": "later", "maps": ["w1"]}, "chars_w2": {"desktop": 818920, "mobile": 818920, "at": "later", "maps": ["w2"]}, "chars_w2y26": {"desktop": 94688, "mobile": 94688, "at": "later", "maps": ["w2y26"]}}; // SHARED_PACKS
+// Workstream S (Nov 2 2026, design/godot-wings.md "Wings 4-6"): rooms that are wings of their own,
+// entered through a threshold in a mall wing: 4 = Sears (Lynn's in 2026), 5 = Dillard's level 1,
+// 6 = the Southland Cinema (a placeholder lobby). MALL_ROOM: each room wing's mall wing.
+const MALL_ROOM = {4: 1, 5: 2, 6: 1};
+const MALL_ROOM_NAME = {4: ['Sears', "Lynn's"], 5: ["Dillard's", "Dillard's"], 6: ['Southland Cinema', 'Southland Cinema']};
+function mallPackKind() {
+	try { const q = new URLSearchParams(location.search).get('pack'); if (q === 'desktop' || q === 'mobile') { return q; } } catch (e) { /* ignore */ }
+	try { const s = localStorage.getItem('southland-pack'); if (s === 'desktop' || s === 'mobile') { return s; } } catch (e) { /* ignore */ }
+	try {
+		const gl = document.createElement('canvas').getContext('webgl2');
+		if (gl) {
+			const has = (n) => !!gl.getExtension(n);
+			const desk = has('WEBGL_compressed_texture_s3tc') && has('EXT_texture_compression_bptc');
+			const mob = has('WEBGL_compressed_texture_etc') && has('WEBGL_compressed_texture_astc');
+			const lose = gl.getExtension('WEBGL_lose_context');
+			if (lose) { lose.loseContext(); }
+			if (desk) { return 'desktop'; }
+			if (mob) { return 'mobile'; }
+		}
+	} catch (e) { /* ignore */ }
+	return /iPhone|iPad|Android|Quest|OculusBrowser|Mobile/.test(navigator.userAgent) ? 'mobile' : 'desktop';
+}
+window.__mallPack = mallPackKind();
+window.__mallWing = (function () {
+	// wing 3 is the outside (design/godot-exterior.md): the lot round the building, both years since Nov 1
+	try { const w = new URLSearchParams(location.search).get('wing'); if (w === '2') { return 2; } if (w === '3') { return 3; } if (w === '4' || w === '5' || w === '6') { return +w; } } catch (e) { /* ignore */ }
+	return 1;
+}());
+window.__mallYear = (function () {
+	try { const q = new URLSearchParams(location.search); if (q.get('year') === '2026') { return 'y26'; } } catch (e) { /* ignore */ }
+	return '';
+}());
+// Two sites (Nov 3 2026, design/godot-build-hosting.md "Two sites"): a GitHub Pages site may hold
+// 1 GB and the build is more, so the computer packs are served by a second site,
+// stevenboudreaux.github.io/Houma-Mall-Rewind-desktop/. Every page under stevenboudreaux.github.io
+// is one origin, so fetching and Cache Storage work as before. Anywhere else (a local server,
+// tools/qa) every pack is next to this page.
+const MALL_DESKTOP_SITE = '/Houma-Mall-Rewind-desktop/';
+// Packs on R2 (Nov 4 2026, design/godot-build-hosting.md "Packs on R2"): a published build's packs, both
+// kinds, live in its own folder of the Cloudflare R2 bucket, builds/<id>/. tools/publish_build.sh writes the
+// id below. ?packs=<id> loads another build's packs (to try one before publishing it). It takes an id only,
+// never an address: a pack runs as code on this page, so a link must not be able to point it elsewhere.
+// No id (a local export, tools/qa): every pack next to this page, or the two sites above.
+const MALL_R2 = 'https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/';
+const MALL_R2_BUILD = (function () {
+	const set = '20261106-0332-76f5ee18'; // MALL_R2_BUILD
+	try { const q = new URLSearchParams(location.search).get('packs'); if (q && /^[a-z0-9][a-z0-9._-]{0,63}$/i.test(q)) { return q; } } catch (e) { /* ignore */ }
+	return set;
+}());
+const MALL_PACK_BASE = () => MALL_R2_BUILD ? MALL_R2 + MALL_R2_BUILD + '/'
+	: ((window.__mallPack === 'desktop' && /\.github\.io$/i.test(location.hostname)) ? MALL_DESKTOP_SITE : '');
+const MALL_PACK = (w) => MALL_PACK_BASE() + 'w' + w + window.__mallYear + '.' + window.__mallPack + '.pck';
+GODOT_CONFIG['mainPack'] = MALL_PACK(window.__mallWing);
+GODOT_CONFIG['fileSizes'] = GODOT_CONFIG['fileSizes'] || {};
+const mallSize = (w) => (PACK_SIZES['w' + w + window.__mallYear] || {})[window.__mallPack] || 0;
+if (mallSize(window.__mallWing)) { GODOT_CONFIG['fileSizes'][GODOT_CONFIG['mainPack']] = mallSize(window.__mallWing); }
+// one cache per build (the pack sizes change with every export), older ones are removed. Both
+// years share it: until Oct 28 the cache was per year and switching years threw the other year's
+// files away, so every 1995 <-> 2026 switch downloaded its wing again (a minute on a slow line).
+const mallSizeOf = (name) => (PACK_SIZES[name] || {})[window.__mallPack] || 0;
+const MALL_CACHE = 'mall-wings-' + ['w1', 'w2', 'w3', 'w1y26', 'w2y26', 'w3y26', 'w4', 'w5', 'w6', 'w4y26', 'w5y26', 'w6y26'].map(mallSizeOf).join('-')
+	+ Object.keys(SHARED_PACKS).map((n) => '-' + (SHARED_PACKS[n][window.__mallPack] || 0)).join('');   // CHARS: the shared packs too
+// CHARS: the shared packs this map uses (exported ones only), "start" or "later"
+const MALL_MAP = 'w' + window.__mallWing + window.__mallYear;
+const mallShared = (at) => Object.keys(SHARED_PACKS).filter((n) => {
+	const e = SHARED_PACKS[n];
+	return e.at === at && (e[window.__mallPack] || 0) > 0 && (e.maps === 'all' || (e.maps || []).indexOf(MALL_MAP) >= 0);
+}).map((n) => ({ name: n, group: n.split('_')[0], url: MALL_PACK_BASE() + n + '.' + window.__mallPack + '.pck', path: '/mall/' + n + '.pck', size: SHARED_PACKS[n][window.__mallPack] }));
+window.__mallMountNow = mallShared('start').map((s) => s.path);   // scripts/shared_packs.gd mounts these first
+mallShared('start').forEach((s) => { GODOT_CONFIG['fileSizes'][s.url] = s.size; });   // for the loading bar
+window.__mallLater = {};                                             // group -> [paths] | 'failed' (scripts/shared_packs.gd)
+const mallPackUrl = (w, year) => new URL(MALL_PACK_BASE() + 'w' + w + (year === undefined ? window.__mallYear : year) + '.' + window.__mallPack + '.pck', location.href).toString();
+if ('caches' in window) {
+	const netFetch = window.fetch.bind(window);
+	window.fetch = function (input, init) {
+		const url = typeof input === 'string' ? input : (input && input.url) || '';
+		// CHARS: a shared pack (items, chars, chars_<map>) is kept in the cache the first time it is fetched
+		const shared = /\/?([a-z0-9]+(_w[1-6](y26)?)?)\.(desktop|mobile)\.pck(\?|$)/.exec(url);
+		if (shared && SHARED_PACKS[shared[1]]) {
+			const abs = new URL(url, location.href).toString();
+			return caches.open(MALL_CACHE).then((c) => c.match(abs).then((r) => r || netFetch(input, init).then((resp) => {
+				if (resp && resp.ok) { c.put(abs, resp.clone()).catch(() => {}); }
+				return resp;
+			}))).catch(() => netFetch(input, init));
+		}
+		if (/w[1-6](y26)?\.(desktop|mobile)\.pck(\?|$)/.test(url)) {
+			const abs = new URL(url, location.href).toString();
+			return caches.open(MALL_CACHE).then((c) => c.match(abs)).then((r) => r || netFetch(input, init)).catch(() => netFetch(input, init));
+		}
+		return netFetch(input, init);
+	};
+}
+window.mallPrefetchOther = function () {
+	if (!('caches' in window)) { return; }
+	// While you walk, the files you are likely to need next are fetched into the cache, one after
+	// another, most likely first: the other inside wing (outside, wing 1, where most doors lead);
+	// then this wing in the other year (the Y key / "Visit 2026" button reloads the page with the
+	// other year's file); then the other wing in the other year. Outside (wing 3), the other year
+	// is the outside's own other year (w3 / w3y26) when that file exists.
+	// A line the browser marks as metered or "save data" only gets the other wing.
+	// a room wing (4-6): its mall wing first, then that wing as from there
+	const room = MALL_ROOM[window.__mallWing];
+	const other = room ? room : (window.__mallWing === 3 ? 1 : 3 - window.__mallWing);
+	const here = room ? room : (window.__mallWing === 3 ? 1 : window.__mallWing);
+	const otherYear = window.__mallYear ? '' : 'y26';
+	let wanted = [mallPackUrl(other)];
+	const conn = navigator.connection || {};
+	if (!conn.saveData && mallSizeOf('w1y26')) {
+		if (window.__mallWing === 3) { wanted = wanted.concat(mallSizeOf('w3y26') ? [mallPackUrl(3, otherYear)] : [], [mallPackUrl(1, otherYear)]); }
+		else { wanted = wanted.concat([mallPackUrl(here, otherYear), mallPackUrl(3 - here, otherYear)]); }
+	}
+	caches.keys().then((ks) => Promise.all(ks.filter((k) => k.indexOf('mall-wings-') === 0 && k !== MALL_CACHE).map((k) => caches.delete(k))))
+		.then(() => caches.open(MALL_CACHE))
+		.then((c) => wanted.reduce((p, u) => p.then(() => c.match(u)).then((r) => (r ? null : c.add(u))), Promise.resolve()))
+		.catch((e) => console.warn('could not keep the next files for later:', e));
+};
+// the game calls this when you cross the seam (scripts/player.gd _cross)
+window.mallGoWing = function (url) { if (window.mallVR.inSession) { window.mallVR.remember(true); } location.replace(url); };
+let mallXfer = '';
+try { mallXfer = sessionStorage.getItem('mall-xfer') || ''; } catch (e) { /* ignore */ }
+if (mallXfer) {
+	document.body.classList.add('xfer');
+	const roomName = MALL_ROOM_NAME[window.__mallWing];
+	document.getElementById('load-title').textContent = (roomName ? roomName[window.__mallYear ? 1 : 0] : (window.__mallWing === 3 ? 'Outside' : (window.__mallWing === 2 ? 'Wing 2' : 'Wing 1'))) + (window.__mallYear ? ' \u00b7 2026' : ' \u00b7 1990s');   // ws/items: the years as the player reads them, 1990s / 2026 (scripts/years.gd)
+	document.getElementById('load-sub').textContent = roomName ? '' : (window.__mallWing === 3 ? 'The parking lot' : (window.__mallWing === 2 ? "Dillard's & JCPenney" : 'Sears & the main entrance'));
+}
+// Fun facts on the load screen (first open and every wing crossing): one at random, then a
+// fresh one every few seconds until the mall appears. Source of truth: web/fun_facts.json;
+// tools/facts_to_shell.py rewrites the array below. Research: claude/fun-facts-southland-1995.md.
+// MALL_FACTS start (generated by tools/facts_to_shell.py from web/fun_facts.json)
+const MALL_FACTS = [
+{"s": "Southland Mall", "t": "Sears got here first. It opened standing alone on this lot in 1966. The mall was built onto it three years later."},
+{"s": "Southland Mall", "t": "The movies beat the mall too. The 600-seat Southland Cinema opened July 17, 1968, seven months before the mall's grand opening."},
+{"s": "Southland Mall", "t": "Southland opened in late February 1969 at the height of the oil boom. Old clippings can't agree on the day: Feb. 26 or Feb. 28."},
+{"s": "Southland Mall", "t": "The whole mall opened with just 14 stores, including Sears, K&B, Woolworth, Winn-Dixie and D.H. Holmes."},
+{"s": "Southland Mall", "t": "Grand-opening grand prize, 1969: an all-expenses-paid trip for two to Mexico City."},
+{"s": "Southland Mall", "t": "Houma's very first escalator was inside D.H. Holmes, around 1970. It was such an event that WWL-TV sent a crew."},
+{"s": "Southland Mall", "t": "Before Southland, Houma shoppers drove to Thibodaux, Morgan City, or all the way to New Orleans."},
+{"s": "Southland Mall", "t": "Before Houma had a civic center, the mall was the biggest room in town: orchid shows, book fairs and fashion shows with local girls as models."},
+{"s": "Southland Mall", "t": "For its first decade Southland had only 20 to 25 stores. The 1981 wing added JCPenney and room for 35 more."},
+{"s": "Southland Mall", "t": "The mall you're walking through got its look in 1994, when owner Sizeler remodeled it inside and out."},
+{"s": "Southland Mall", "t": "In 1996 the books valued Southland at about $41.8 million and it was 96% leased."},
+{"s": "Southland Mall", "t": "Connie Parr ran the mall's marketing for 15 years, 1981 to 1996, from the JCPenney wing through the big remodel."},
+{"s": "Southland Mall", "t": "Dillard's added a third floor in 1997, making it the only multi-level piece of an otherwise one-story mall."},
+{"s": "Southland Mall", "t": "At its 40th birthday in 2009 the mall covered 625,000 square feet on 29 acres, with about 1,500 people working inside."},
+{"s": "Southland Mall", "t": "The original anchor outlived the mall's first owner: Sears closed its 1966 building in July 2016, after 50 years."},
+{"s": "Southland Cinema", "t": "The first movie ever shown at Southland Cinema was El Dorado with John Wayne, in July 1968. The last, in 2000, was Gone in 60 Seconds."},
+{"s": "Southland Cinema", "t": "In 1995 the theater was the UA Southland Cinema 4, a four-screen run by United Artists since 1986."},
+{"s": "Southland Cinema", "t": "Two locals reopened the cinema as a $1.95 discount house in 2004. It closed for good in 2007 over a $40,000 air-conditioning repair."},
+{"s": "Dillard's", "t": "Before it was a Dillard's it was a D.H. Holmes, the New Orleans store founded on Canal Street in 1840. Dillard's bought the chain in 1989."},
+{"s": "Dillard's", "t": "\"Meet me under the clock\" was the D.H. Holmes catchphrase. A Confederacy of Dunces opens with Ignatius Reilly standing under it."},
+{"s": "Dillard's", "t": "William T. Dillard opened his first store on Feb. 12, 1938 in Nashville, Arkansas, at age 23, with $8,000 lent by his father."},
+{"s": "Dillard's", "t": "A week after Dillard bought a Tulsa department store in 1960, someone found a cigar box holding $150,000 in unpaid bills."},
+{"s": "JCPenney", "t": "JCPenney was downtown on Main Street before it was at the mall. It moved to Southland with the new wing in 1981."},
+{"s": "JCPenney", "t": "James Cash Penney opened his first store in 1902 in Kemmerer, Wyoming, a coal town full of saloons. First-day sales: $466. He lived upstairs."},
+{"s": "JCPenney", "t": "Sam Walton's first retail job was at a JCPenney in Des Moines in 1940."},
+{"s": "JCPenney", "t": "When Sears dropped its catalog in 1993, JCPenney became America's biggest catalog retailer overnight."},
+{"s": "Sears", "t": "Sears began in 1886 when a Minnesota railroad agent resold a shipment of watches a jeweler had refused. The first catalog was 80 pages of watches."},
+{"s": "Sears", "t": "Sears killed its big catalog on Jan. 25, 1993, two years before this mall is set. The same day it closed 113 stores and cut 50,000 jobs."},
+{"s": "Sears", "t": "The Sears catalog once sold 55,000 sets of Encyclopaedia Britannica in a single year, and about 70,000 mail-order houses between 1908 and 1940."},
+{"s": "Sears", "t": "\"Come see the softer side of Sears\" launched in 1993. Sears lost $3.9 billion in 1992 and made $1.8 billion in 1995."},
+{"s": "K&B", "t": "K&B stands for Katz and Besthoff, two druggists who opened the first store at 732 Canal Street in New Orleans in 1905."},
+{"s": "K&B", "t": "Why was K&B purple? Years ago the company bought a bulk lot of purple wrapping paper, and it stuck. Even the liquor labels went purple."},
+{"s": "K&B", "t": "K&B sold its ice cream as a loss leader, with more butterfat than the national brands. Creole cream cheese was a favorite flavor."},
+{"s": "K&B", "t": "K&B sold to Rite Aid in 1997. Rite Aid's first move was dropping Coca-Cola from the shelves, which went over badly in New Orleans."},
+{"s": "K&B", "t": "Sydney Besthoff's art collection became the sculpture garden at the New Orleans Museum of Art. The purple drugstore bought the sculptures."},
+{"s": "Woolworth", "t": "Woolworth was an opening-day tenant here in 1969. In July 1997 the company closed all 400 remaining U.S. Woolworths, ending the five-and-dime after 118 years."},
+{"s": "Woolworth", "t": "Frank Woolworth's first five-cent store failed in three months. The second, opened in Lancaster, Pennsylvania in June 1879, started a 118-year run."},
+{"s": "Woolworth", "t": "Woolworth paid cash for the Woolworth Building in 1913, then the tallest building in the world."},
+{"s": "Woolworth", "t": "When the last Woolworths closed in 1997, the lunch counters and soda fountains were sold off as collectibles."},
+{"s": "Corn Dog 7", "t": "Corn Dog 7 was started in 1978 by the McKinney family of Laurel, Mississippi. The first stand opened in 1981 at Sawmill Square Mall."},
+{"s": "Corn Dog 7", "t": "Why \"7\"? There were seven people in Stephen McKinney's family growing up."},
+{"s": "Corn Dog 7", "t": "Cheese on a stick is exactly what it sounds like: a block of American cheese dipped in corn dog batter and fried."},
+{"s": "Corn Dog 7", "t": "Corn Dog 7 once had stands in dozens of Southern malls. Today only three survive: two in Laurel, Mississippi and the one here at Southland."},
+{"s": "Chick-fil-A", "t": "Chick-fil-A was a mall-only restaurant for nearly 20 years. The first opened in 1967 in Atlanta's Greenbriar Mall in just 384 square feet."},
+{"s": "Chick-fil-A", "t": "Before there was a single Chick-fil-A, the sandwich was sold at the Houston Astrodome and licensed to Waffle House."},
+{"s": "Chick-fil-A", "t": "The capital A in Chick-fil-A is for Grade A. Truett Cathy picked a misspelled name because misspellings are easier to trademark."},
+{"s": "Chick-fil-A", "t": "The \"Eat Mor Chikin\" cows showed up on Atlanta billboards in 1995, the year this mall is set. The first one was a cow holding a paintbrush."},
+{"s": "Chick-fil-A", "t": "Closed on Sunday since 1946: the rule goes back to Truett Cathy's first diner, which took in $58.20 on its first day."},
+{"s": "Karmelkorn", "t": "Karmelkorn started in Casper, Wyoming, where the O'Sullivans patented their candy-coated popcorn in 1929. Within four years 535 shops sold it."},
+{"s": "Orange Julius", "t": "Orange Julius began as a 1926 Los Angeles juice stand making $20 a day. A secret frothing powder pushed it to $100 a day."},
+{"s": "Orange Julius", "t": "Orange Julius was the official drink of the 1964 World's Fair. Its devil mascot was retired after Arizona State fans said it looked like their Sparky."},
+{"s": "Great American Cookie Co", "t": "Great American Cookie opened in 1977 on $8,000. Landlords thought a cookie-only store was a joke; it did $30,000 in its first month."},
+{"s": "Great American Cookie Co", "t": "The Cookie Cake is a Great American Cookie invention."},
+{"s": "Cucos Border Cafe", "t": "Cucos was a Metairie chain that started in 1981. The Houma location opened in September 1992: 6,000 square feet and 148 seats."},
+{"s": "Cucos Border Cafe", "t": "Cucos slogans over the years: \"Alotta Enchilada\" and \"We Grill to Thrill.\" The Border Cafe name was trademarked in 1991."},
+{"s": "Pocket Change", "t": "The Pocket Change name was first used for coin-op arcades on April 1, 1989. Namco later bought the chain."},
+{"s": "Pocket Change", "t": "Southland's Pocket Change is still open today, outliving nearly every other mall arcade in the country."},
+{"s": "Kay-Bee Toys", "t": "Kay-Bee started in 1922 as Kaufman Brothers, a wholesale candy company in Massachusetts. K.B. is just the brothers' initials."},
+{"s": "Kay-Bee Toys", "t": "Kay-Bee got into toys by accident: a customer paid off his candy debt with a toy wholesaler, and wartime sugar rationing did the rest."},
+{"s": "Kay-Bee Toys", "t": "Around 1994 Kay-Bee pulled realistic toy guns and burned 300,000 of them, generating enough electricity to power 48 homes for a month."},
+{"s": "Babbage's", "t": "Babbage's was founded in Dallas in 1983 and named for Charles Babbage, the Victorian who imagined the computer. Ross Perot bankrolled it."},
+{"s": "Babbage's", "t": "The Babbage's you're looking at is a GameStop in disguise. It relaunched under the GameStop name in 1999."},
+{"s": "Blockbuster Music", "t": "Blockbuster Music was brand new in 1995: Blockbuster bought the Sound Warehouse chain for $185 million in 1992 and put its name on it."},
+{"s": "Blockbuster Music", "t": "A 1994 Blockbuster Music had dozens of headphone listening posts and a wall where you could sample the Top 20."},
+{"s": "B. Dalton Bookseller", "t": "B. Dalton is \"Dayton\" with one letter changed. Bruce Dayton of the department-store family started it in 1966."},
+{"s": "Radio Shack", "t": "Radio Shack is named after a literal shack: the wooden hut that housed a ship's radio. Two brothers started it in Boston in 1921."},
+{"s": "Radio Shack", "t": "Tandy, a Fort Worth leather company, bought the nine-store, nearly bankrupt Radio Shack in 1963 for $300,000."},
+{"s": "Radio Shack", "t": "For decades Radio Shack's Battery of the Month club gave you a free battery every month for showing a punch card."},
+{"s": "Felger's Footwear", "t": "Mark and Brenda Felger took over Felger's at its original Southland spot in 1991, a 1,000-square-foot children's shoe store."},
+{"s": "Duncan Sports", "t": "Duncan Sports was a family chain founded in Thibodaux in 1943. The last Houma store closed after Katrina."},
+{"s": "The Limited", "t": "Les Wexner opened the first Limited in 1963 with $5,000 borrowed from his aunt. It aimed for $100,000 its first year and did $162,000."},
+{"s": "The Limited", "t": "The Forenza label at The Limited credited its designer, Maria Pia. She didn't exist."},
+{"s": "Lerner Shop", "t": "Lerner Shops dates to 1918. Co-founder Joseph Lerner's son was Alan Jay Lerner, who wrote the words to My Fair Lady."},
+{"s": "Lane Bryant", "t": "Lane Bryant is a typo. Founder Lena Bryant opened her shop in 1904; a bank clerk wrote \"Lane\" on her account form and it stuck."},
+{"s": "Lane Bryant", "t": "No newspaper would print a maternity-clothes ad until Lane Bryant talked the New York Herald into one in 1911. The shop sold out the next day."},
+{"s": "Rave", "t": "Rave and Jean Nicole were both Petrie Stores banners. Petrie Retail went bankrupt on Oct. 12, 1995, so both shops were run out of a bankruptcy court."},
+{"s": "Merry-Go-Round", "t": "Merry-Go-Round was founded in 1968 by Leonard \"Boogie\" Weinglass, the real-life model for Mickey Rourke's Boogie in the movie Diner."},
+{"s": "Merry-Go-Round", "t": "Merry-Go-Round filed for bankruptcy in 1994 and liquidated in February 1996. In 1995 the Houma store was living on borrowed time."},
+{"s": "5-7-9", "t": "5-7-9 is named for junior dress sizes 5, 7 and 9."},
+{"s": "JW", "t": "JW is short for Jeans West, a pants chain Edison Brothers bought in 1968 as its first clothing store."},
+{"s": "Bakers", "t": "The five Edison brothers named their first shoe store Chandler's after a car so the family name wouldn't suffer if it flopped. Bakers followed in 1924."},
+{"s": "Bakers", "t": "In 1999 grandson Peter Edison bought Bakers for $8 million about an hour before it was to be liquidated."},
+{"s": "County Seat", "t": "County Seat was started in 1973 by the CEO of a grocery company, and the name is a pun on jeans. By 1993 jeans were more than half of its sales."},
+{"s": "Gadzooks", "t": "Gadzooks opened in 1983 in a former waterbed store in a Mesquite, Texas mall, after the founder's teenage sons couldn't find clothes they liked."},
+{"s": "Gadzooks", "t": "The VW Beetle in every Gadzooks started as filler to cover empty floor. Dozens of Beetles were later sawed in half for displays."},
+{"s": "Gadzooks", "t": "Gadzooks went public in October 1995 at around $13 a share and quadrupled to $61 in three months."},
+{"s": "Miller's Outpost", "t": "Miller's Outpost was founded in 1972 by Dave Miller, whose family surplus store in California was famous for Levi's. It became Anchor Blue in 2001."},
+{"s": "Foot Locker", "t": "Foot Locker, Lady Foot Locker, Champs, Footquarters and the Woolworth down the hall all had the same owner in 1995: F.W. Woolworth."},
+{"s": "Foot Locker", "t": "The first Foot Locker opened in 1974 at a California mall as a side project of Kinney Shoes. The referee stripes didn't arrive until 1988."},
+{"s": "Champs Sports", "t": "Champs Sports grew out of Robby's Sporting Goods, a Florida family chain that Woolworth bought in the late 1980s."},
+{"s": "Footaction USA", "t": "Footaction was founded in Texas in 1976 by a 57-year-old ex-WWII pilot. His first name for it was \"Webmit,\" for \"We Better Make It.\""},
+{"s": "Athlete's Foot", "t": "The Athlete's Foot opened in Pittsburgh in 1971 as the first store selling only athletic shoes. The founder thought of the name at 4 a.m. and woke his wife."},
+{"s": "Payless Shoes", "t": "Payless began in 1956 in a former Topeka supermarket, with managers building the shelves themselves. The average shoe cost under $3."},
+{"s": "Payless Shoes", "t": "A tornado flattened Payless's Topeka headquarters the very evening its first computerized inventory report was due."},
+{"s": "Naturalizer", "t": "Naturalizer, born in 1927, was the first shoe built on a woman's last rather than a scaled-down man's."},
+{"s": "The Shoe Dept", "t": "The Shoe Dept's parent began in 1960 when Robert Tucker, a former curb boy at his stepfather's tavern, opened one store in Kannapolis, North Carolina."},
+{"s": "Gordon's Jewelers", "t": "Gordon's was one of Southland's 14 opening-day stores in 1969, and it's still here on the 1995 map."},
+{"s": "Gordon's Jewelers", "t": "Gordon's started in Houston in 1905 as a general store where jewelry was a sideline. In 1968 it became the first jeweler on the New York Stock Exchange."},
+{"s": "Zales", "t": "Zales and Gordon's were rivals until 1989, when Zale bought Gordon's for $400 million. The debt helped push Zale into bankruptcy in 1992."},
+{"s": "Zales", "t": "Morris Zale's first shop was a corner of a Texas drugstore, where he blasted a Victrola out front to pull in customers."},
+{"s": "Zales", "t": "Zale's famous credit terms, from 1924: a penny down and a dollar a week."},
+{"s": "Claire's Boutiques", "t": "Claire's was built by a high-school dropout whose first company was the world's largest seller of fashion wigs. Ear piercing didn't start until 1978."},
+{"s": "Afterthoughts", "t": "Afterthoughts belonged to Woolworth. It had 809 stores in 1996 and was sold to Claire's in 1999."},
+{"s": "Wicks 'n' Sticks", "t": "Wicks 'n' Sticks was founded in Houston in 1968 with a stock of 23 scented candles. It peaked at 305 stores in 1988."},
+{"s": "Wicks 'n' Sticks", "t": "Wicks 'n' Sticks sold wax cheeseburgers so realistic that shoppers kept scratching them, so stores posted a sign: the candles don't itch."},
+{"s": "General Nutrition Center", "t": "GNC started in 1935 as \"Lackzoom,\" a Pittsburgh store that mostly sold yogurt. First-day sales: $35."},
+{"s": "General Nutrition Center", "t": "The GNC Gold Card cost $15 a year in 1996 and got you 20% off on the first Tuesday of every month. It had 2.4 million members."},
+{"s": "Regis Hairstylists", "t": "Regis and MasterCuts were the same company. Regis began in 1922 as Kunin Beauty Salons in Minneapolis and moved into malls in the 1960s."},
+{"s": "MasterCuts", "t": "MasterCuts launched in 1985 as Regis's no-frills brand for men and kids. By 1994 there were 257 of them."},
+{"s": "Glamour Shots", "t": "By 1995 Glamour Shots had 380 studios on three continents. A high-school grad package with hair, makeup and wardrobe ran $199."},
+{"s": "Glamour Shots", "t": "Only about 5% of Glamour Shots customers were men."}
+];
+// MALL_FACTS end
+// Fun-fact bubbles, after VH1's Pop-Up Video: every 7 s a new bubble pops in at a slightly
+// different spot and angle and the old one pops out. Data shape unchanged: {s: store, t: text}.
+(function () {
+	var rm = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+	var logo = document.getElementById('lr-logo-svg');
+	if (rm && logo && logo.pauseAnimations) { logo.pauseAnimations(); }
+	var el = document.getElementById('load-fact');
+	if (!el || !MALL_FACTS.length) { return; }
+	var order = MALL_FACTS.slice(), i = 0, last = 0;
+	for (var k = order.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)); var t = order[k]; order[k] = order[j]; order[j] = t; }
+	var NS = 'http://www.w3.org/2000/svg';
+	var GLYPH = {
+		bag: 'M7 8V7a5 5 0 0 1 10 0v1h3l-1 13H5L4 8h3zm2 0h6V7a3 3 0 0 0-6 0v1z',
+		food: 'M6 7h12l-1.6 14H7.6L6 7zm4-5h2l-1 4h-2l1-4zM5 5h14v1.5H5V5z',
+		film: 'M4 4h16v16H4V4zm2 2v2h2V6H6zm10 0v2h2V6h-2zM6 10v4h2v-4H6zm10 0v4h2v-4h-2zM6 16v2h2v-2H6zm10 0v2h2v-2h-2zm-6-6v4l4-2-4-2z',
+		play: 'M12 1.5a4 4 0 1 1 0 8a4 4 0 0 1 0-8zM10.8 9h2.4v6h-2.4zM4 15h16v6H4zm11 1.6a1.4 1.4 0 1 0 0 2.8a1.4 1.4 0 0 0 0-2.8z',
+		star: 'M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7.1L12 17.3 5.8 21l1.6-7.1L2 9.2l7.1-.6L12 2z'
+	};
+	function glyphFor(s) {
+		if (/cinema/i.test(s)) { return 'film'; }
+		if (/pocket change|arcade/i.test(s)) { return 'play'; }
+		if (/corn dog|chick|karmel|julius|cookie|cucos/i.test(s)) { return 'food'; }
+		if (/southland mall/i.test(s)) { return 'star'; }
+		return 'bag';
+	}
+	// the one number worth shouting: money, then a percent, then a big count, then a year
+	function statFor(t) {
+		var m = t.match(/\$\d[\d,.]*(\s(million|billion))?/);
+		if (m) { return m[0].replace(/\s?million/, 'M').replace(/\s?billion/, 'B'); }
+		m = t.match(/\d+(\.\d+)?%/); if (m) { return m[0]; }
+		m = t.match(/\b\d{1,3}(,\d{3})+\b/); if (m) { return m[0]; }
+		m = t.match(/\b(1[89]|20)\d\d\b/); if (m) { return m[0]; }
+		return '';
+	}
+	function add(parent, tag, cls, text) {
+		var n = document.createElement(tag); if (cls) { n.className = cls; }
+		if (text) { n.textContent = text; } parent.appendChild(n); return n;
+	}
+	function show() {
+		var f = order[i++ % order.length];
+		var old = el.querySelectorAll('.lr-pop:not(.out)');
+		for (var o = 0; o < old.length; o++) {
+			(function (b) {
+				b.classList.add('out');
+				var gone = function () { if (b.parentNode) { b.parentNode.removeChild(b); } };
+				b.addEventListener('animationend', function (e) { if (e.target === b) { gone(); } });
+				setTimeout(gone, 450);
+			}(old[o]));
+		}
+		var pop = add(el, 'div', 'lr-pop');
+		var side = Math.random() < 0.5 ? -1 : 1;
+		if (side === last) { side = Math.random() < 0.7 ? -side : side; } last = side;
+		pop.style.setProperty('--dx', (side * (0.35 + Math.random() * 0.65)).toFixed(2));
+		pop.style.setProperty('--dy', (Math.random() * 2 - 1).toFixed(2));
+		pop.style.setProperty('--rot', (side * (0.8 + Math.random() * 2)).toFixed(2) + 'deg');
+		// tail trails off the lower corner opposite the lean
+		var right = side < 0;
+		pop.style.setProperty('--tx1', right ? '78%' : '16%');
+		pop.style.setProperty('--tx2', right ? '85%' : '10%');
+		pop.style.setProperty('--ox', right ? '84%' : '14%');
+		var body = add(pop, 'div', 'lr-body');
+		var badge = add(body, 'span', 'lr-badge');
+		var svg = document.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('aria-hidden', 'true');
+		var p = document.createElementNS(NS, 'path'); p.setAttribute('d', GLYPH[glyphFor(f.s)]); svg.appendChild(p); badge.appendChild(svg);
+		var head = add(body, 'div', 'lr-head');
+		add(head, 'span', 'lr-kick', 'Did you know');
+		add(head, 'span', 'lr-store', f.s);
+		var row = add(body, 'div', 'lr-row');
+		var st = statFor(f.t);
+		if (st) { add(row, 'span', 'lr-stat', st).setAttribute('aria-hidden', 'true'); }
+		add(row, 'p', 'lr-text', f.t);
+		add(pop, 'span', 'lr-tail t1'); add(pop, 'span', 'lr-tail t2');
+	}
+	// the first bubble waits for the logo's entrance (2.5 s; 0.65 s on a wing crossing; none with reduced motion)
+	var wait = rm ? 0 : (document.body.classList.contains('xfer') ? 650 : 2500), timer = 0;
+	setTimeout(function () {
+		if (!document.body.contains(el)) { return; }
+		show();
+		timer = setInterval(function () { if (!document.body.contains(el)) { clearInterval(timer); return; } show(); }, 7000);
+	}, wait);
+}());
+const engine = new Engine(GODOT_CONFIG);
+// CHARS (design/godot-build-hosting.md "Shared packs"): the "start" shared packs download with the wing pack
+// (one loading bar, the engine's own retries) and are in the file system when the engine starts.
+(function () {
+	const start = mallShared('start');
+	if (!start.length) { return; }
+	const preload = engine.preloadFile.bind(engine);
+	engine.preloadFile = function (file, path) {
+		return Promise.all([preload(file, path)].concat(start.map((s) => preload(s.url, s.path)))).then((r) => r[0]);
+	};
+}());
+// CHARS: the "later" shared packs (the characters), one after another once the mall runs, into the file
+// system; window.__mallLater[group] tells scripts/shared_packs.gd when a group is all in.
+window.mallFetchLater = function () {
+	const later = mallShared('later');
+	const groups = {};
+	later.forEach((s) => { (groups[s.group] = groups[s.group] || []).push(s); });
+	return Object.keys(groups).reduce((p, g) => p.then(() => groups[g].reduce((q, s) => q.then((paths) => window.fetch(s.url)
+		.then((r) => { if (!r.ok) { throw new Error(s.url + ': ' + r.status); } return r.arrayBuffer(); })
+		.then((buf) => { engine.copyToFS(s.path, buf); return paths.concat([s.path]); })), Promise.resolve([]))
+		.then((paths) => { window.__mallLater[g] = paths; })
+		.catch((e) => { console.warn('could not fetch the shared pack(s) ' + g + ':', e); window.__mallLater[g] = 'failed'; })), Promise.resolve());
+};
+
+(function () {
+	const statusOverlay = document.getElementById('status');
+	const statusProgress = document.getElementById('status-progress');
+	const statusNotice = document.getElementById('status-notice');
+
+	let initializing = true;
+	let statusMode = '';
+
+	function setStatusMode(mode) {
+		if (statusMode === mode || !initializing) {
+			return;
+		}
+		if (mode === 'hidden') {
+			statusOverlay.remove();
+			initializing = false;
+			return;
+		}
+		statusOverlay.style.visibility = 'visible';
+		statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
+		statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
+		statusMode = mode;
+	}
+
+	function setStatusNotice(text) {
+		while (statusNotice.lastChild) {
+			statusNotice.removeChild(statusNotice.lastChild);
+		}
+		const lines = text.split('\n');
+		lines.forEach((line) => {
+			statusNotice.appendChild(document.createTextNode(line));
+			statusNotice.appendChild(document.createElement('br'));
+		});
+	}
+
+	function displayFailureNotice(err) {
+		console.error(err);
+		if (err instanceof Error) {
+			setStatusNotice(err.message);
+		} else if (typeof err === 'string') {
+			setStatusNotice(err);
+		} else {
+			setStatusNotice('An unknown error occurred.');
+		}
+		setStatusMode('notice');
+		initializing = false;
+	}
+
+	const missing = Engine.getMissingFeatures({
+		threads: GODOT_THREADS_ENABLED,
+	});
+
+	if (missing.length !== 0) {
+		if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
+			let serviceWorkerRegistrationPromise;
+			try {
+				serviceWorkerRegistrationPromise = navigator.serviceWorker.getRegistration();
+			} catch (err) {
+				serviceWorkerRegistrationPromise = Promise.reject(new Error('Service worker registration failed.'));
+			}
+			// There's a chance that installing the service worker would fix the issue
+			Promise.race([
+				serviceWorkerRegistrationPromise.then((registration) => {
+					if (registration != null) {
+						return Promise.reject(new Error('Service worker already exists.'));
+					}
+					return registration;
+				}).then(() => engine.installServiceWorker()),
+				// For some reason, `getRegistration()` can stall
+				new Promise((resolve) => {
+					setTimeout(() => resolve(), 2000);
+				}),
+			]).then(() => {
+				// Reload if there was no error.
+				window.location.reload();
+			}).catch((err) => {
+				console.error('Error while registering service worker:', err);
+			});
+		} else {
+			// Display the message as usual
+			const missingMsg = 'Error\nThe following features required to run Godot projects on the Web are missing:\n';
+			displayFailureNotice(missingMsg + missing.join('\n'));
+		}
+	} else {
+		setStatusMode('progress');
+		// If the engine dies while starting (iPhone Safari gives no console), say so on the loading screen.
+		const say = (t) => { const el = document.getElementById('load-mb'); if (el && initializing) { el.textContent = t; } };
+		window.addEventListener('error', (e) => { say('Could not start: ' + (e.message || e.error || 'unknown error')); });
+		window.addEventListener('unhandledrejection', (e) => { say('Could not start: ' + ((e.reason && e.reason.message) || e.reason || 'unknown error')); });
+		let startedAt = 0;
+		setInterval(() => {
+			if (initializing && startedAt && Date.now() - startedAt > 45000) {
+				say('Still starting after 45 s… if this stays, tell Steven: ' + (navigator.userAgent.match(/iPhone OS [\d_]+|Android [\d.]+|Chrome\/[\d.]+|Version\/[\d.]+ Safari/) || ['this browser'])[0]);
+				startedAt = 0;
+			}
+		}, 5000);
+		engine.startGame({
+			'onPrintError': function () { say('Engine error: ' + Array.prototype.slice.call(arguments).join(' ').slice(0, 220)); },
+			'onExit': function (code) { say('The engine stopped (code ' + code + ')'); },
+			'onProgress': function (current, total) {
+				// the last progress tick can land after the loading screen is removed
+				const lbar = document.getElementById('load-bar');
+				const lmb = document.getElementById('load-mb');
+				if (current > 0 && total > 0 && lbar && lmb) {
+					statusProgress.value = current;
+					statusProgress.max = total;
+					lbar.style.width = (100 * current / total).toFixed(1) + '%';
+					lmb.textContent = '';
+					if (current >= total && !startedAt) { startedAt = Date.now(); }
+				} else {
+					statusProgress.removeAttribute('value');
+					statusProgress.removeAttribute('max');
+				}
+			},
+		}).then(() => {
+			// ---- workstream H (Nov 1 2026, design/godot-performance.md): the card stays up while
+			// scripts/npc_warmup.gd loads and draws every shopper once. It sets window.__mallWarm to 0
+			// when it starts and 1 when done; a pack without shoppers never sets it (lift after 10
+			// frames). Never more than 30 s. window.__mallControlAt marks time-to-control for tools/qa.
+			window.__mallEngineAt = performance.now();
+			let frames = 0;
+			const lift = () => {
+				setStatusMode('hidden');
+				if (window.mallTTLift) { window.mallTTLift(); }   // MENU2: the time-travel veil fades into the game
+				window.__mallControlAt = performance.now();
+				// CHARS: the character packs first (this map needs them), then the other wing
+				// fetch the other wing once this one is running and has settled
+				window.mallFetchLater().then(() => setTimeout(window.mallPrefetchOther, 6000));
+			};
+			(function waitWarm() {
+				frames++;
+				const w = window.__mallWarm;
+				if (w === 1 || (w === undefined && frames > 10) || performance.now() - window.__mallEngineAt > 30000) { lift(); return; }
+				requestAnimationFrame(waitWarm);
+			}());
+			// ---- end workstream H
+		}, displayFailureNotice);
+	}
+}());
+		</script>
+	</body>
+</html>
+
