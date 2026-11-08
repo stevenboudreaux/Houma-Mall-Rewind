@@ -517,20 +517,20 @@ static func fill_mat(m, key, b):
 			K.emit_tex(m, 0.9)
 		"solid_red":
 			m.albedo_color = Color("#d0302a"); m.roughness = 0.35
-			# Nov 1: spatter-paint flecks (paint9_d.py), a satin sheen
-			m.albedo_texture = b.tex("w9/concepts_spatter.png"); m.uv1_triplanar = true; m.uv1_scale = Vector3(1.2, 1.2, 1.2); m.metallic_specular = 0.6
+			# Nov 8 (Steven, wsPACKS): smooth, flat colour with a satin sheen (the Nov 1 spatter flecks read as noise)
+			m.metallic_specular = 0.6
 		"solid_yellow":
 			m.albedo_color = Color("#f0c830"); m.roughness = 0.35
-			# Nov 1: spatter-paint flecks (paint9_d.py), a satin sheen
-			m.albedo_texture = b.tex("w9/concepts_spatter.png"); m.uv1_triplanar = true; m.uv1_scale = Vector3(1.2, 1.2, 1.2); m.metallic_specular = 0.6
+			# Nov 8 (Steven, wsPACKS): smooth, flat colour with a satin sheen (the Nov 1 spatter flecks read as noise)
+			m.metallic_specular = 0.6
 		"solid_blue":
 			m.albedo_color = Color("#2f62c8"); m.roughness = 0.35
-			# Nov 1: spatter-paint flecks (paint9_d.py), a satin sheen
-			m.albedo_texture = b.tex("w9/concepts_spatter.png"); m.uv1_triplanar = true; m.uv1_scale = Vector3(1.2, 1.2, 1.2); m.metallic_specular = 0.6
+			# Nov 8 (Steven, wsPACKS): smooth, flat colour with a satin sheen (the Nov 1 spatter flecks read as noise)
+			m.metallic_specular = 0.6
 		"solid_green":
 			m.albedo_color = Color("#30a868"); m.roughness = 0.35
-			# Nov 1: spatter-paint flecks (paint9_d.py), a satin sheen
-			m.albedo_texture = b.tex("w9/concepts_spatter.png"); m.uv1_triplanar = true; m.uv1_scale = Vector3(1.2, 1.2, 1.2); m.metallic_specular = 0.6
+			# Nov 8 (Steven, wsPACKS): smooth, flat colour with a satin sheen (the Nov 1 spatter flecks read as noise)
+			m.metallic_specular = 0.6
 		"uniforms":
 			m.albedo_texture = b.tex("w9/uniforms.png"); m.roughness = 0.7
 			K.emit_tex(m, 0.15)
