@@ -1602,19 +1602,10 @@ spot_angle = 40.0
 metadata/only = "night"
 
 [node name="@Label3D@8" type="Label3D" parent="." unique_id=1158746569]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 44.08, 6.3, 0)
-pixel_size = 0.005859375
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 50.21, 4.6, 0)
+pixel_size = 0.003515625
 double_sided = false
 modulate = Color(0.2901961, 0.22745098, 0.16470589, 1)
-text = "SOUTHLAND MALL"
-font = ExtResource("1_g0ktn")
-font_size = 128
-
-[node name="@Label3D@9" type="Label3D" parent="." unique_id=52923939]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 50.21, 4.6, 0)
-pixel_size = 0.003125
-double_sided = false
-modulate = Color(0.95686275, 0.9372549, 0.8901961, 1)
 text = "SOUTHLAND MALL"
 font = ExtResource("1_g0ktn")
 font_size = 128

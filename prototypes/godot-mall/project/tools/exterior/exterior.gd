@@ -586,8 +586,11 @@ static func main_entrance(b):
 		b.obst(["rect", p.x - 0.4, p.z - 0.4, p.x + 0.4, p.z + 0.4])
 	for i in 3:
 		b.tag(b.add_spot(a + t * (3.0 + i * 3.0) + n * 3.0 + UP * 4.25, -UP, 1.5, 7.0, 60.0, Color("#FFE6C2")), "night")
-	b.label("SOUTHLAND MALL", "serif", "#4a3a2a", a + t * 6.0 + UP * 6.3 + n * 0.08, n, 9.0, 0.75)
-	b.label("SOUTHLAND MALL", "serif", "#f4efe3", slab + n * 3.21 + UP * 0.0, n, 5.5, 0.4)
+	# SMALLFIX (Nov 8 2026): one sign, on the canopy's fascia. Until now a second, bigger
+	# "SOUTHLAND MALL" stood on the wall at 6.3 m behind the canopy, which cut it from the lot
+	# (d52-w3-1995-entrance-sign-doubled-baked.jpg). The kept one takes that one's dark bronze so it
+	# reads on the cream fascia (it was cream on cream).
+	b.label("SOUTHLAND MALL", "serif", "#4a3a2a", slab + n * 3.21 + UP * 0.0, n, 12.0, 0.45)
 
 ## The south entrance (s55, Bayou Gardens): a pavilion ~12 m wide in line with the wing wall's
 ## front (z 118), a deep loggia with the doors at its back (z 112), big square pilasters on the front
