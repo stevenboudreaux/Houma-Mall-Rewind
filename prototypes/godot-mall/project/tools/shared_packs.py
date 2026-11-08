@@ -8,10 +8,10 @@ wing pack and its 2026 twin carried its own copy of the Blender items. Now:
                      PRIZES (Nov 3) the prize counters' pictures prizes/* (both years' counters and the
                      prize items use them):
                      downloaded with the wing pack, mounted before the wing's scene loads;
-  - "chars"          the character bodies, wardrobe and clothed defaults (tools/chars/pack_list.py):
-                     fetched once the mall is running, then the attendants and the avatar put them on;
-  - "chars_<map>"    only the pieces that map's presets wear on top of "chars" (only maps that have any).
-The list of non-character packs is tools/shared_packs.json. Each pack is <name>.desktop.pck and
+CHAR-STRIP (Nov 8 2026, design/godot-avatar.md): the character packs ("chars", "chars_<map>", fetched once
+the mall was running) are gone with the editor and models/ubc/. The cast's files (data/cast.json) ship in
+every wing pack (tools/make_presets.py CAST) and are loaded behind the loading card.
+The list of packs is tools/shared_packs.json. Each pack is <name>.desktop.pck and
 <name>.mobile.pck, exported by tools/export_web.sh through the presets "Shared Desktop" / "Shared Mobile"
 (tools/make_presets.py), cached by the page like the wing packs (web/shell.html SHARED_PACKS) and mounted
 by scripts/shared_packs.gd (autoload SharedPacks). Every wing preset excludes these files.
@@ -30,16 +30,12 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "chars"))
-import pack_list  # noqa: E402  (tools/chars/pack_list.py: the character split)
-
 ROOT = os.getcwd()
 CFG = "export_presets.cfg"
-ALL_MAPS = [pack_list.map_name(f) for f in pack_list.FEATURE]
+ALL_MAPS = ["w1", "w2", "w3", "w1y26", "w2y26", "w3y26", "w4", "w5", "w6", "w4y26", "w5y26", "w6y26"]
 SKIP_EXT = (".import", ".uid", ".md", ".py", ".blend", ".blend1")
-# the patterns the wing presets exclude, so these files are only in the shared packs. characters.json
-# (int-52: models/ubc/ubc.json) stays in the wing packs (small; the game reads it before the character pack arrives).
-WING_EXCLUDES = ["models/bl_*", "models/characters/*.glb", "models/characters/*.png", "models/ubc/*.gltf", "models/ubc/*.bin", "models/ubc/*.png", "prizes/*"]   # prizes/*: PRIZES (Nov 3)
+# the patterns the wing presets exclude, so these files are only in the shared packs
+WING_EXCLUDES = ["models/bl_*", "prizes/*"]   # prizes/*: PRIZES (Nov 3)
 
 
 def project_files():
@@ -56,7 +52,7 @@ def project_files():
 
 
 def packs():
-    """[{name, files, maps, at}] in export order: the listed packs, then the character packs."""
+    """[{name, files, maps, at}] in export order (tools/shared_packs.json)."""
     cfg = json.load(open(os.path.join(ROOT, "tools/shared_packs.json")))
     every = None
     out = []
@@ -64,8 +60,6 @@ def packs():
         every = every or project_files()
         files = [f for f in every if any(fnmatch.fnmatch(f, g) or fnmatch.fnmatch(f, g.rstrip("*") + "*/*") for g in p["include"])]
         out.append({"name": p["name"], "files": files, "maps": p.get("maps", ALL_MAPS), "at": p.get("at", "start")})
-    for n, e in pack_list.split().items():
-        out.append({"name": n, "files": e["files"], "maps": e["maps"], "at": "later"})
     return out
 
 

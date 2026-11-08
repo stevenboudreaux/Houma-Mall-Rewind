@@ -23,13 +23,53 @@ The additions to the existing presets (also idempotent):
   - every existing preset excludes the room wings' generated data and lightmaps (gen/w4*/ ...,
     wing4* ...), which "*.json" and the lightmap names would otherwise pull in.
 """
+import glob
+import json
+import os
 import re
 import sys
 
 CFG = "export_presets.cfg"
 # CHARS (Nov 3 2026): files that ship in the shared packs, never in a wing pack (tools/shared_packs.py)
 # PRIZES (Nov 3 2026): the prize counters' pictures (prizes/*) moved into the items pack: both years' counters use them
-SHARED_EXCLUDES = ["models/bl_*", "models/characters/*.glb", "models/characters/*.png", "models/ubc/*.gltf", "models/ubc/*.bin", "models/ubc/*.png", "prizes/*"]
+SHARED_EXCLUDES = ["models/bl_*", "prizes/*"]
+# CHAR-STRIP (Nov 8 2026): the dead character patterns (models/characters/, models/ubc/, both deleted) are
+# dropped from every preset
+DEAD = ["models/characters/*.glb", "models/characters/*.png", "models/ubc/*.gltf", "models/ubc/*.bin", "models/ubc/*.png"]
+
+
+def cast_files():
+    """CHAR-STRIP (design/godot-avatar.md): every cast member's file (data/cast.json "glb" or "stub"),
+    shipped in every wing pack and loaded behind the loading card (no pack fetched later)."""
+    d = json.load(open("data/cast.json"))
+    out = []
+    for e in d["cast"].values():
+        f = e.get("glb", e.get("stub", ""))
+        if f.startswith("res://"):
+            f = f[len("res://"):]
+        if f and f not in out:
+            out.append(f)
+    return out
+
+
+def cast_filters(inc, exc):
+    """Every wing pack carries the cast's files: they are included (and "cast/*", CHAR-BUILD's baked
+    people), and an exclude that would drop one is narrowed (wing 3 2026 excludes npc/skins/*: it now
+    excludes every skin but the cast's)."""
+    files = cast_files()
+    stubs = [os.path.basename(f).split(".")[0] for f in files if f.startswith("npc/skins/")]
+    out = []
+    for x in exc:
+        if x == "npc/skins/*":
+            ids = sorted({os.path.basename(f).split(".")[0].split("_")[0] if os.path.basename(f).startswith("Ch") and not os.path.basename(f).startswith("Character") else None
+                          for f in glob.glob("npc/skins/*.scn")} - {None})
+            out += ["npc/skins/Character_*", "npc/skins/Remy*"] + ["npc/skins/%s*" % i for i in ids if i not in stubs]
+        elif any(x.startswith("npc/skins/%s" % st) for st in stubs):
+            continue
+        else:
+            out.append(x)
+    inc = list(inc) + [f for f in files + ["cast/*"] if f not in inc]
+    return inc, out
 SHARED_NAMES = ("Shared Desktop", "Shared Mobile")
 ROOMS = {4: {"mall": 1, "pics": True}, 5: {"mall": 2, "pics": True}, 6: {"mall": 1, "pics": False}}
 ALL = [1, 2, 3, 4, 5, 6]
@@ -189,7 +229,14 @@ def main():
     for p in keep + new:
         if p["name"].startswith("Wing "):
             p["main"] = drop_items(p["main"], "include_filter", lambda x: x.startswith("models/bl_") or x.startswith("prizes/"))
+            p["main"] = drop_items(p["main"], "exclude_filter", lambda x: x in DEAD)
             p["main"] = add_items(p["main"], "exclude_filter", SHARED_EXCLUDES)
+            # CHAR-STRIP: the cast's files in every wing pack
+            inc = getkey(p["main"], "include_filter").strip('"').split(",")
+            exc = getkey(p["main"], "exclude_filter").strip('"').split(",")
+            inc, exc = cast_filters(inc, exc)
+            p["main"] = setkey(p["main"], "include_filter", '"' + ",".join(inc) + '"')
+            p["main"] = setkey(p["main"], "exclude_filter", '"' + ",".join(exc) + '"')
     out = []
     for i, p in enumerate(keep + new):
         out.append("[preset.%d]" % i)
