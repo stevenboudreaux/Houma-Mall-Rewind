@@ -574,7 +574,7 @@ func _build_main(narrow: bool) -> void:
 			nl.text = Cast.display_name(cid)
 			nl.clip_text = true
 			nl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			nl.add_theme_font_size_override("font_size", 11 if tw < 90 else 13)
+			nl.add_theme_font_size_override("font_size", 10 if tw < 100 else 13)
 			nl.add_theme_color_override("font_color", AMBER if on else INK)
 			nl.position = Vector2(2, ph + 2)
 			nl.size = Vector2(tw - 4, 20)

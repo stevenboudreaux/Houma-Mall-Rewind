@@ -75,14 +75,13 @@ func show_cast(id: String) -> void:
 
 func _frame() -> void:
 	var h := float(Cast.entry(cast_id).get("height_m", 1.7)) if cast_id != "" else 1.7
-	var asp := float(vp.size.x) / maxf(float(vp.size.y), 1.0)
+	var asp := size.x / maxf(size.y, 1.0) if size.y > 0.0 else float(vp.size.x) / maxf(float(vp.size.y), 1.0)
 	var need := (h * 1.12) * 0.5 / tan(deg_to_rad(cam.fov * 0.5))
 	if asp < 0.55: need /= asp / 0.55
 	cam.position = Vector3(0, h * 0.53, need)
 
 func fit(sz: Vector2) -> void:
-	size = sz
-	vp.size = Vector2i(maxi(64, int(sz.x)), maxi(64, int(sz.y)))
+	size = sz          # stretch is on: the container sizes the viewport (setting vp.size only warned)
 	_frame()
 
 func _process(dt: float) -> void:

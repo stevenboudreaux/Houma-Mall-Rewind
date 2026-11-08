@@ -24,7 +24,8 @@ from playwright.sync_api import sync_playwright
 path, out = sys.argv[1], sys.argv[2]
 WING = int(os.environ.get("WING", "1"))
 OTHER = int(os.environ.get("OTHER", "2"))
-CAM = os.environ.get("CAM", "npcs=0&cam=-20,54,90,-8")
+CAMS = {1: "30,0,90,-8", 2: "-20,54,90,-8", 4: "0,0,0,-8", 6: "0,0,0,-8"}   # a hall spot per wing
+CAM = os.environ.get("CAM", "npcs=0")
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", "--disk-cache-size=1"]
 BASE = "http://127.0.0.1:8765/" + path
 fails, oks = [], 0
@@ -96,9 +97,9 @@ with sync_playwright() as p:
     pg = ctx.new_page(); logs = []
     pg.on("console", lambda m: logs.append(m.text))
     # 0. the old records, planted on the page's origin before the game runs
-    pg.goto(url(f"wing={WING}&view=third&debug=1&{CAM}&warm=0"), wait_until="commit")
+    pg.goto(url(f"wing={WING}&view=third&debug=1&{CAM}&cam={CAMS[WING]}&warm=0"), wait_until="commit")
     pg.evaluate(OLD)
-    pg.goto(url(f"wing={WING}&view=third&debug=1&{CAM}"))
+    pg.goto(url(f"wing={WING}&view=third&debug=1&{CAM}&cam={CAMS[WING]}"))
     print("load ready_s", ready(pg, logs), flush=True)
     pg.wait_for_timeout(4000)
     check(ls(pg, "mall-avatar-1") is None and ls(pg, "mall-avatar-preset-1") is None, "the old avatar records are deleted")
@@ -124,7 +125,7 @@ with sync_playwright() as p:
     one(logs, pg, "reload", "placeholder_2")
     # 4. a wing crossing, the game's own way (mallGoWing), frames all through it
     logs.clear()
-    target = url(f"wing={OTHER}&view=third&debug=1&{CAM}")
+    target = url(f"wing={OTHER}&view=third&debug=1&{CAM}&cam={CAMS[OTHER]}")
     for i in range(4):
         shot(pg, "crossing-%02d" % i); pg.wait_for_timeout(500)
     pg.evaluate(f"window.mallGoWing ? window.mallGoWing({json.dumps(target)}) : location.replace({json.dumps(target)})")
@@ -137,7 +138,7 @@ with sync_playwright() as p:
     one(logs, pg, f"wing crossing {WING} -> {OTHER}", "placeholder_2")
     # 5. year crossing
     logs.clear()
-    pg.goto(url(f"wing={OTHER}&year=2026&view=third&debug=1&{CAM}"))
+    pg.goto(url(f"wing={OTHER}&year=2026&view=third&debug=1&{CAM}&cam={CAMS[OTHER]}"))
     print("2026 ready_s", ready(pg, logs), flush=True)
     one(logs, pg, "year crossing to 2026", "placeholder_2")
     shot(pg, "y2026-third")
@@ -148,7 +149,7 @@ with sync_playwright() as p:
     ctx = b.new_context(viewport={"width": 390, "height": 844}, has_touch=True, is_mobile=True, device_scale_factor=2)
     pg = ctx.new_page(); logs = []
     pg.on("console", lambda m: logs.append(m.text))
-    pg.goto(url(f"wing={WING}&view=third&debug=1&pack=desktop&{CAM}"))
+    pg.goto(url(f"wing={WING}&view=third&debug=1&pack=desktop&{CAM}&cam={CAMS[WING]}"))
     print("phone ready_s", ready(pg, logs), flush=True)
     pg.wait_for_timeout(3000)
     pg.touchscreen.tap(31, 29); pg.wait_for_timeout(3000)
