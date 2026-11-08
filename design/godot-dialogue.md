@@ -174,7 +174,11 @@ clip's own head comes back smoothly when talk ends.
   After: walking camera back, lights hidden at 0, no mesh left on layer 20, no look node, rig look
   cleared, the eye material the original, and the counts of lights, cameras and talk-camera children the
   same after 10 cycles as after 1.
-- Still pass: `shop_test.gd` (204), `cucos_test.gd` (89), `dialogue_walk.gd` (67); web: see the report.
+- Still pass: `shop_test.gd` (204), `cucos_test.gd` (89), `dialogue_walk.gd` (67). Web (a scratch export of
+  wings 1 + 2 1995 and wing 1 2026, swiftshader): `shops_webtest.py ... both` **SHOPS WEB OK, 0 console
+  errors**; `cucos_webtest.py` all checks pass (1995 desktop, phone, the doubloon in 2026) with 0 errors in
+  the 1995 and phone runs. The 2026 run shows one console error: the page could not pre-cache wings missing
+  from the scratch build (404s), which is unrelated to talking.
 - Native shots, **baked** (the build branch's day lightmaps, opengl3, 1280 × 720), the same script on
   main and on this branch: `tools/qa/talk_shots.gd -- --npc=<id> --out=<file>` →
   `production/qa/evidence/wsTALK-<npc>-before.jpg` / `-after.jpg` for RadioShack, Great American Cookie
