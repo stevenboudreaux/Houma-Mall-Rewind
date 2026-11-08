@@ -222,13 +222,83 @@ static func V(a):
 	return Vector3(a[0], 0, a[1])
 
 ## A textured wall quad from a to b (ground level up to top), facing n; the texture covers 2 m.
+## Workstream LOT (Nov 8 2026): while DEFER is on (build()), walls are held back and drawn at the end by
+## flush_walls(), which leaves out the strips hidden behind the wainscots, base bands and doors laid flat
+## on them (COVERS). A wall face behind such a box has every lightmap texel inside geometry; the bake
+## marks them invalid and the denoiser smeared their black up the visible wall: the dark band Steven saw
+## along the foot of Dillard's and JCPenney.
 static func wall(b, g, mname, a, bb, n, y0, y1, scale = 0.5):
+	if DEFER:
+		PENDING.append([g, mname, a, bb, n, y0, y1, scale])
+		return
 	b.quad(g, mname, [a + UP * y0, bb + UP * y0, bb + UP * y1, a + UP * y1], n, [], false, scale)
 
 ## A box along a run: from u0 to u1 along t, y0..y1 high, standing `out` proud of the wall, `deep`.
-static func run_box(b, g, mname, a, t, n, u0, u1, y0, y1, out, deep, skip = []):
+## A box laid flat on the wall (out == deep) from the ground up is remembered as a cover (flush_walls).
+## dyn: unbaked (probe-lit) geometry that does not take part in the bake (thin scoring lines).
+static func run_box(b, g, mname, a, t, n, u0, u1, y0, y1, out, deep, skip = [], dyn = false):
 	var c = a + t * ((u0 + u1) * 0.5) + UP * ((y0 + y1) * 0.5) + n * (out - deep * 0.5)
-	b.box(g, mname, c, b.abs_size(t, u1 - u0, y1 - y0, deep, n), Transform3D.IDENTITY, skip)
+	b.box(g, mname, c, b.abs_size(t, u1 - u0, y1 - y0, deep, n), Transform3D.IDENTITY, skip, dyn)
+	if not dyn and abs(out - deep) < 0.005 and y0 <= 0.01 and y1 > 0.3:
+		COVERS.append([a + t * u0, a + t * u1, n, y1])
+
+static var DEFER = false
+static var PENDING = []
+static var COVERS = []
+
+## Draws the held-back walls, each cut where covers stand flat on it from the ground: per stretch of the
+## wall the visible quad starts at the highest cover's top. Stretches with no cover are drawn whole.
+static func flush_walls(b):
+	DEFER = false
+	var cut = 0
+	for w in PENDING:
+		var a = w[2]; var bb = w[3]; var n = w[4]; var y0 = w[5]; var y1 = w[6]
+		var L = a.distance_to(bb)
+		if L < 0.01:
+			continue
+		var t = (bb - a) / L
+		var iv = []
+		for cv in COVERS:
+			if cv[2].dot(n) < 0.99 or abs(n.dot(cv[0] - a)) > 0.03 or cv[3] <= y0 + 0.01:
+				continue
+			var s0 = t.dot(cv[0] - a); var s1 = t.dot(cv[1] - a)
+			if s0 > s1:
+				var tmp = s0; s0 = s1; s1 = tmp
+			s0 = max(s0, 0.0); s1 = min(s1, L)
+			if s1 - s0 > 0.05:
+				iv.append([s0, s1, min(cv[3], y1)])
+		if iv.is_empty():
+			b.quad(w[0], w[1], [a + UP * y0, bb + UP * y0, bb + UP * y1, a + UP * y1], n, [], false, w[7])
+			continue
+		var bp = [0.0, L]
+		for v in iv:
+			bp.append(v[0]); bp.append(v[1])
+		bp.sort()
+		var runs = []    # [s0, s1, ybottom], merged
+		for k in bp.size() - 1:
+			var sa = bp[k]; var sb = bp[k + 1]
+			if sb - sa < 0.001:
+				continue
+			var m = (sa + sb) * 0.5
+			var yb = y0
+			for v in iv:
+				if m > v[0] and m < v[1]:
+					yb = max(yb, v[2])
+			if not runs.is_empty() and abs(runs[-1][2] - yb) < 0.001 and abs(runs[-1][1] - sa) < 0.001:
+				runs[-1][1] = sb
+			else:
+				runs.append([sa, sb, yb])
+		for r in runs:
+			if r[2] >= y1 - 0.001:
+				cut += 1
+				continue
+			var pa = a + t * r[0]; var pb = a + t * r[1]
+			b.quad(w[0], w[1], [pa + UP * r[2], pb + UP * r[2], pb + UP * y1, pa + UP * y1], n, [], false, w[7])
+			if r[2] > y0:
+				cut += 1
+	print("exterior: walls drawn ", PENDING.size(), ", stretches cut behind base boxes ", cut)
+	PENDING = []
+	COVERS = []
 
 ## A box turned yaw radians about its own centre (build_mall.gd's box turns about the origin).
 static func rbox(b, g, mname, c, size, yaw):
@@ -484,7 +554,8 @@ static func shell(b):
 		if sk.get("eyebrow", false):
 			run_box(b, g, "ex_coping_dark", a, t, n, 0.0, Ln, 3.3, 3.6, 0.5, 0.5)
 		# coping
-		run_box(b, g, "ex_coping" if sk.mat != "ex_brick_red" else "ex_coping_dark", a, t, n, 0.0, Ln, h - 0.08, h + 0.1, 0.12, 0.6)
+		# LOT: 0.16 deep (was 0.6, which ran through the taller masses' faces 5 cm behind the wall)
+		run_box(b, g, "ex_coping" if sk.mat != "ex_brick_red" else "ex_coping_dark", a, t, n, 0.0, Ln, h - 0.08, h + 0.1, 0.12, 0.16)
 		if sk.has("panels"):
 			east_panels(b, g, a, t, n, Ln, h)
 		elif sk.mat == "ex_brick_tan" and h > 6.0:
@@ -544,7 +615,9 @@ static func masses(b):
 		var e = 0.05
 		var c = Vector3((m[1] + m[3]) * 0.5, (6.0 + m[5]) * 0.5, (m[2] + m[4]) * 0.5)
 		b.box(g, m[0], c, Vector3(m[3] - m[1] - e * 2.0, m[5] - 6.0, m[4] - m[2] - e * 2.0), Transform3D.IDENTITY, ["-y", "+y"])
-		b.quad("ex_roof", "ex_roof_grey", [Vector3(m[1], m[5], m[2]), Vector3(m[3], m[5], m[2]), Vector3(m[3], m[5], m[4]), Vector3(m[1], m[5], m[4])], UP, [], false, 0.1)
+		# LOT: inset like the box; the 5 cm overhang over the box's faces put their top texels under a
+		# backface (the black band on JCPenney's taller block in the Demo 52 bake)
+		b.quad("ex_roof", "ex_roof_grey", [Vector3(m[1] + e, m[5], m[2] + e), Vector3(m[3] - e, m[5], m[2] + e), Vector3(m[3] - e, m[5], m[4] - e), Vector3(m[1] + e, m[5], m[4] - e)], UP, [], false, 0.1)
 	# rooftop units
 	rng.seed = 7
 	for r in E.roofs:
@@ -965,7 +1038,9 @@ static func dillards(b):
 	for f in [[ea, et, en, 58.0], [sa, stt, sn, 82.0], [wa, wt, wn, 58.0]]:
 		var y = 5.2
 		while y < H_DILLARDS - 0.3:
-			run_box(b, "ex_shell", "ex_coping", f[0], f[1], f[2], 0.0, f[3], y - 0.02, y + 0.02, 0.0, 0.03)
+			# the ashlar scoring: a thin line 1 cm proud, unbaked (it was a box sunk flush into the face,
+			# coplanar with it: z-fighting, and invalid lightmap texels in strips all up the wall)
+			run_box(b, "ex_shell", "ex_coping", f[0], f[1], f[2], 0.0, f[3], y - 0.02, y + 0.02, 0.01, 0.01, [], true)
 			y += 1.2
 		run_box(b, "ex_shell", "ex_cream_pier", f[0], f[1], f[2], 0.0, f[3], 9.3, 9.8, 0.25, 0.25)
 		run_box(b, "ex_shell", "ex_cream_pier", f[0], f[1], f[2], 0.0, f[3], H_DILLARDS - 0.6, H_DILLARDS, 0.3, 0.3)
@@ -1848,6 +1923,9 @@ static func build(b):
 	rng.seed = 1995
 	trees = 0
 	FL.reset()
+	DEFER = true
+	PENDING = []
+	COVERS = []
 	b.cur_color = Color.WHITE
 	shell(b)
 	fronts(b)
@@ -1859,6 +1937,7 @@ static func build(b):
 	MON.build(b, YEAR)
 	if YEAR == 2026:
 		Y26.build(b, E.doors)
+	flush_walls(b)
 	# the building blocks the player: its footprint, in rectangles
 	for r in E.roofs:
 		b.obst(["rect", r[0], r[1], r[2], r[3]])

@@ -288,13 +288,15 @@ static func grass(b, at, hgt):
 static func planter(b, x0, z0, x1, z1, curb = "ex_curb", top = "ex_mulch", palm = false, plants = true):
 	count.planter += 1
 	var H = 0.10; var W = 0.30
-	var g = "ex_lot"
+	# unbaked (probe-lit): a baked bed 10 cm over the 1.6 m-texel ground put the ground texels under it
+	# inside geometry, and the bake drew them as black squares round every island (Demo 52)
+	var g = "ex_beds"
 	# the curb ring: four boxes (the corners overlap), the bed slightly below its top
-	b.box(g, curb, Vector3((x0 + x1) * 0.5, H * 0.5, z0 + W * 0.5), Vector3(x1 - x0, H, W), Transform3D.IDENTITY, ["-y"])
-	b.box(g, curb, Vector3((x0 + x1) * 0.5, H * 0.5, z1 - W * 0.5), Vector3(x1 - x0, H, W), Transform3D.IDENTITY, ["-y"])
-	b.box(g, curb, Vector3(x0 + W * 0.5, H * 0.5, (z0 + z1) * 0.5), Vector3(W, H, z1 - z0 - 2.0 * W), Transform3D.IDENTITY, ["-y", "-z", "+z"])
-	b.box(g, curb, Vector3(x1 - W * 0.5, H * 0.5, (z0 + z1) * 0.5), Vector3(W, H, z1 - z0 - 2.0 * W), Transform3D.IDENTITY, ["-y", "-z", "+z"])
-	b.quad(g, top, [Vector3(x0 + W, H - 0.02, z0 + W), Vector3(x1 - W, H - 0.02, z0 + W), Vector3(x1 - W, H - 0.02, z1 - W), Vector3(x0 + W, H - 0.02, z1 - W)], UP, [], false, 0.5)
+	b.box(g, curb, Vector3((x0 + x1) * 0.5, H * 0.5, z0 + W * 0.5), Vector3(x1 - x0, H, W), Transform3D.IDENTITY, ["-y"], true)
+	b.box(g, curb, Vector3((x0 + x1) * 0.5, H * 0.5, z1 - W * 0.5), Vector3(x1 - x0, H, W), Transform3D.IDENTITY, ["-y"], true)
+	b.box(g, curb, Vector3(x0 + W * 0.5, H * 0.5, (z0 + z1) * 0.5), Vector3(W, H, z1 - z0 - 2.0 * W), Transform3D.IDENTITY, ["-y", "-z", "+z"], true)
+	b.box(g, curb, Vector3(x1 - W * 0.5, H * 0.5, (z0 + z1) * 0.5), Vector3(W, H, z1 - z0 - 2.0 * W), Transform3D.IDENTITY, ["-y", "-z", "+z"], true)
+	b.quad(g, top, [Vector3(x0 + W, H - 0.02, z0 + W), Vector3(x1 - W, H - 0.02, z0 + W), Vector3(x1 - W, H - 0.02, z1 - W), Vector3(x0 + W, H - 0.02, z1 - W)], UP, [], true, 0.5)
 	b.obst(["rect", x0, z0, x1, z1])
 	if not plants and not palm:
 		return
