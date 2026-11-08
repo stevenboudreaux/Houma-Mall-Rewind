@@ -3,8 +3,9 @@
 ##
 ## Built from the Oct 23 2026 footage (refs/new/dillards_L1: IMG_4490 110-166 s, IMG_4491) and the
 ## in-store 3-level directory's first-level plan (refs/new/dillards_directory, IMG_4490 t136): men's
-## on the exterior-entrance side, cosmetics, accessories, handbags and women's shoes on the other,
-## the escalators in line with the mall entrance between the cosmetics blocks. The plan is drawn
+## on the east side, cosmetics, accessories, handbags and women's shoes on the other, the escalators
+## (since workstream SMALLFIX, Nov 8 2026) at the south end on the axis of the Bayou Gardens doors,
+## between cosmetics and fashion jewelry: a crisscross pair, the up unit's foot facing those doors. The plan is drawn
 ## with the mall entrance at the bottom; turned to the game's frame (mall entrance north), its
 ## "WEST ENTRANCE" is the east face (the cast-iron gallery side, the one Steven walked in through)
 ## and its "NORTH ENTRANCE" is the south face (Bayou Gardens).
@@ -30,19 +31,19 @@ const MOUTH_H = 3.4
 const AISLE_X = -4.0
 # aisles (travertine) [x0, z0, x1, z1]
 const AISLES = [
-	[-6.0, 80.3, -2.0, 104.0],      # main aisle from the mall to the escalators
+	[-6.0, 80.3, -2.0, 107.0],      # main aisle from the mall to the ring's south run (SMALLFIX: was to the escalators)
 	[-30.0, 86.0, 22.0, 89.0],      # ring, north run
 	[-30.0, 107.0, 22.0, 110.0],    # ring, south run
 	[-30.0, 89.0, -27.0, 107.0],    # ring, west run
 	[19.0, 89.0, 22.0, 107.0],      # ring, east run
 	[-2.0, 96.8, 19.0, 99.6],       # men's cross aisle
 	[22.0, 96.8, 26.5, 99.6],       # to the east (exterior) entrance
-	[-17.0, 110.0, -13.0, 114.5],   # to the south entrance
-	[-27.0, 96.8, -8.0, 99.6],      # women's cross aisle (west of the escalators)
+	[-21.0, 110.0, -9.0, 114.5],    # SMALLFIX: the plaza in front of the south doors and the escalators' foot
+	[-27.0, 96.8, -6.0, 99.6],      # women's cross aisle (to the main aisle)
 ]
 # coffers over the aisles (curved bulkheads on their long sides)
 const COFFERS = [
-	[-6.8, 80.3, -1.2, 104.5],
+	[-6.8, 80.3, -1.2, 106.3],
 	[-30.7, 85.3, 22.7, 89.7],
 	[-30.7, 106.3, 22.7, 110.7],
 	[-30.7, 89.7, -26.3, 106.3],
@@ -55,9 +56,11 @@ const PADS = [
 	[-2.0, 89.0, 19.0, 96.8, "men"], [-2.0, 99.6, 19.0, 107.0, "men"],
 	[22.0, 80.3, 30.0, 96.8, "men"], [22.0, 99.6, 30.0, 110.0, "men"],
 	[2.0, 80.3, 22.0, 86.0, "men"], [-2.0, 110.0, 30.0, 118.0, "men"],
-	[-27.0, 89.0, -17.0, 96.8, "carpet"], [-27.0, 99.6, -17.0, 107.0, "carpet"],
-	[-38.0, 80.3, -30.0, 118.0, "carpet"], [-30.0, 110.0, -17.0, 118.0, "carpet"],
-	[-13.0, 110.0, -2.0, 118.0, "carpet"],
+	[-27.0, 89.0, -17.0, 96.8, "carpet"], [-27.0, 99.6, -18.6, 107.0, "carpet"],
+	[-38.0, 80.3, -30.0, 118.0, "carpet"], [-30.0, 110.0, -21.0, 118.0, "carpet"],
+	[-9.0, 110.0, -2.0, 118.0, "carpet"],
+	# SMALLFIX: the two corners between the plaza and the south wall, beside the vestibule
+	[-21.0, 114.5, -18.0, 118.0, "carpet"], [-12.0, 114.5, -9.0, 118.0, "carpet"],
 ]
 # the departments (directory, first level), for the design note and the fixtures
 const DEPTS = [
@@ -70,24 +73,32 @@ const DEPTS = [
 	["Mens Clothing / Mens Sportswear", 2.0, 80.3, 22.0, 86.0],
 	["Mens Denim / Cremieux-type collection", -2.0, 110.0, 30.0, 118.0],
 	["Cosmetics", -15.0, 89.0, -6.0, 96.8],
-	["Cosmetics / Fashion Jewelry", -15.0, 99.6, -8.0, 107.0],
+	["Cosmetics", -11.4, 99.6, -6.0, 107.0],          # east of the escalators (the plan)
 	["Handbags / Womens Accessories", -27.0, 89.0, -17.0, 96.8],
-	["Fashion Jewelry", -27.0, 99.6, -17.0, 107.0],
+	["Fashion Jewelry", -27.0, 99.6, -18.6, 107.0],   # west of the escalators (the plan)
 	["Womens Shoes", -38.0, 80.3, -30.0, 118.0],
 	["Handbags / Sunglasses", -30.0, 80.3, -10.0, 86.0],
-	["Womens Shoes", -30.0, 110.0, -17.0, 118.0],
-	["Cosmetics", -13.0, 110.0, -2.0, 118.0],
+	["Womens Shoes", -30.0, 110.0, -21.0, 118.0],
+	["Cosmetics", -9.0, 110.0, -2.0, 118.0],
 ]
 const COLS_X = [-31.0, -22.0, -13.0, 5.0, 14.0, 25.0]
 const COLS_Z = [91.5, 103.0, 113.5]
 const COL = 0.8
-# the escalator bank: two units side by side rising south from the end of the main aisle into a
-# well in the ceiling (IMG_4490 t110_097-103)
-const ESC_X = [-6.6, -1.4]
-const ESC_Z0 = 104.5
+# the escalator bank (IMG_4490 t110_097-103): two units side by side. SMALLFIX (Nov 8 2026): moved
+# from the end of the main aisle to where the directory's first-level plan draws it, in line with the
+# plan's NORTH ENTRANCE (the game's south doors, x -17.4..-12.6) between cosmetics and fashion
+# jewelry. The plan draws the two units offset, each sticking out at the opposite end (its floor
+# landing), so they are a crisscross pair (Steven, Nov 8: one goes up, the other down): the east unit
+# (up) has its foot facing the south doors and rises north; the west unit (down) rises south and
+# lets out at its north foot onto the women's cross aisle.
+const ESC_X = [-17.6, -12.4]
+const ESC_UNITS = [   # [x0, x1, the foot's front edge z, the way it rises (+1 south, -1 north)]
+	[-14.9, -12.4, 111.0, -1.0],         # up, from the south doors
+	[-17.6, -15.1, 99.8, 1.0],           # down, to the cross aisle
+]
 const ESC_RISE = 5.2
 const ESC_RUN = 9.0
-const WELL = [-7.2, 103.2, -0.8, 114.0]
+const WELL = [-18.2, 98.5, -11.8, 112.3]    # 1.3 m past each foot
 const EAST_DOOR = [95.0, 101.4]          # the exterior entrance: vestibule x 26.5..30
 const VEST_X = 26.5
 const SOUTH_DOOR = [-17.4, -12.6]        # the south entrance: vestibule z 114.5..118
@@ -363,7 +374,7 @@ static func troffers(b):
 static func columns(b):
 	for cx in COLS_X:
 		for cz in COLS_Z:
-			if in_any(cx, cz, AISLES, 0.5):
+			if in_any(cx, cz, AISLES, 0.5) or in_rect(cx, cz, WELL, 0.6):   # (SMALLFIX: not in the escalators)
 				continue
 			var top = COFFER if in_any(cx, cz, COFFERS) else CEIL
 			b.box(chunk("dl_cols", cx, cz), "dl_mirror", Vector3(cx, top * 0.5, cz), Vector3(COL, top, COL), Transform3D.IDENTITY, ["+y", "-y"])
@@ -371,91 +382,88 @@ static func columns(b):
 			b.box("dl_trim", "vcolor", Vector3(cx, 0.06, cz), Vector3(COL + 0.03, 0.12, COL + 0.03), Transform3D.IDENTITY, [], true)
 			b.cur_color = Color.WHITE
 			block(b, cx - COL * 0.5, cz - COL * 0.5, cx + COL * 0.5, cz + COL * 0.5, 0.15)
-	# the drum column by the escalators (notes_E)
-	b.cyl("dl_cols", "dl_gyp", Vector3(-8.9, 0, 103.2), 0.6, 0.6, CEIL, 20, false, false)
-	block(b, -9.5, 102.6, -8.3, 103.8, 0.1)
+	# the drum column by the escalators (notes_E), on their west side (SMALLFIX)
+	b.cyl("dl_cols", "dl_gyp", Vector3(-19.8, 0, 104.0), 0.6, 0.6, CEIL, 20, false, false)
+	block(b, -20.4, 103.4, -19.2, 104.6, 0.1)
 
 # ------------------------------------------------------------------ escalators
-## Two units side by side rising south into a well; black steps, stainless decking, white glass
-## balustrades with black handrails. Closed: a chrome stanchion line with a black belt at the
-## bottom landing and a small sign (Steven: visible, not usable).
+## Two units side by side in a well, a crisscross pair (SMALLFIX, Nov 8 2026: until then both rose
+## south from the end of the main aisle); black steps, stainless decking, white glass balustrades
+## with black handrails, a white panel closing each truss's top end. Closed: a chrome stanchion line
+## with a black belt and a small sign at each foot (Steven: visible, not usable).
 static func escalators(b):
-	var x0 = ESC_X[0]
-	var x1 = ESC_X[1]
-	var xm = (x0 + x1) * 0.5
+	for u in ESC_UNITS:
+		esc_unit(b, u[0], u[1], u[2], u[3])
+	# the well: white shaft walls from the ceiling up, a lit lid, a downstand over each foot
+	var w = WELL
+	var top = ESC_RISE + 2.8
+	for sd in [[Vector2(w[0], w[1]), Vector2(w[2], w[1]), Vector3(0, 0, 1)], [Vector2(w[2], w[3]), Vector2(w[0], w[3]), Vector3(0, 0, -1)],
+			[Vector2(w[0], w[3]), Vector2(w[0], w[1]), Vector3(1, 0, 0)], [Vector2(w[2], w[1]), Vector2(w[2], w[3]), Vector3(-1, 0, 0)]]:
+		wall(b, "dl_well", "dl_gyp", sd[0], sd[1], CEIL, top, sd[2])
+	b.quad("dl_well", "dl_laytile", [Vector3(w[0], top, w[1]), Vector3(w[2], top, w[1]), Vector3(w[2], top, w[3]), Vector3(w[0], top, w[3])], Vector3.DOWN)
+	wall(b, "dl_well", "dl_gyp", Vector2(w[2], w[3] - 0.3), Vector2(w[0], w[3] - 0.3), CEIL - 0.3, CEIL, Vector3(0, 0, 1))
+	wall(b, "dl_well", "dl_gyp", Vector2(w[0], w[1] + 0.3), Vector2(w[2], w[1] + 0.3), CEIL - 0.3, CEIL, Vector3(0, 0, -1))
+	b.tag(b.add_omni(Vector3((w[0] + w[2]) * 0.5, ESC_RISE + 2.2, (w[1] + w[3]) * 0.5), 1.4, 7.0, Color(1.0, 0.95, 0.88)), "", 1.4, 1.4)
+
+## One escalator: lane x0..x1, its floor landing's front edge at zf, rising toward +z (dz = 1) or -z
+## (dz = -1) over ESC_RUN to ESC_RISE.
+static func esc_unit(b, x0, x1, zf, dz):
 	var G = "dl_esc"
 	var slope = ESC_RISE / ESC_RUN
-	var zl = ESC_Z0 + 1.2                 # bottom landing plate ends
-	var zt = zl + ESC_RUN                 # top of the incline
-	for u in [[x0, xm - 0.1], [xm + 0.1, x1]]:
-		var ua = u[0] + 0.25
-		var ub = u[1] - 0.25
-		# landing plate (stainless comb plate)
-		b.quad(G, "dl_steel", [Vector3(ua, 0.01, ESC_Z0), Vector3(ub, 0.01, ESC_Z0), Vector3(ub, 0.01, zl), Vector3(ua, 0.01, zl)], Vector3.UP)
-		# steps: a stair-stepped run in black
-		var steps = int(ESC_RUN / 0.4)
-		for i in steps:
-			var za = zl + ESC_RUN * i / steps
-			var zb = zl + ESC_RUN * (i + 1) / steps
-			var ya = ESC_RISE * i / steps
-			var yb = ESC_RISE * (i + 1) / steps
-			b.quad(G, "dl_step", [Vector3(ua, ya, za), Vector3(ub, ya, za), Vector3(ub, yb, za), Vector3(ua, yb, za)], Vector3(0, 0, -1))
-			b.quad(G, "dl_step", [Vector3(ua, yb, za), Vector3(ub, yb, za), Vector3(ub, yb, zb), Vector3(ua, yb, zb)], Vector3.UP)
-		# the truss's skirts and the white glass balustrades
-		for side in [[u[0], ua, Vector3(1, 0, 0)], [u[1], ub, Vector3(-1, 0, 0)]]:
-			var xs = side[0]
-			var xi = side[1]
-			# skirt: stainless sloping strip up the side
-			b.quad(G, "dl_steel", [Vector3(xi, 0.0, zl), Vector3(xi, ESC_RISE, zt), Vector3(xi, ESC_RISE + 0.12, zt), Vector3(xi, 0.12, zl)], side[2])
-			# deck: the sloping top of the truss side between skirt and balustrade
-			b.quad(G, "dl_steel", [Vector3(xs, 0.12, ESC_Z0), Vector3(xi, 0.12, ESC_Z0), Vector3(xi, ESC_RISE + 0.12, zt), Vector3(xs, ESC_RISE + 0.12, zt)], Vector3(0, 1, -slope).normalized())
-			# balustrade: white glass panel ~0.9 m, sloped, with a black handrail
-			var gb = Vector3(xs + (xi - xs) * 0.5, 0, 0)
-			b.quad("glass_esc", "dl_balus", [Vector3(gb.x, 0.12, ESC_Z0 + 0.3), Vector3(gb.x, ESC_RISE + 0.12, zt), Vector3(gb.x, ESC_RISE + 1.0, zt), Vector3(gb.x, 1.0, ESC_Z0 + 0.3)], side[2], [], true)
-		# outer truss cladding (white) below the incline, both outer sides
+	var F = Vector3(0, 0, -dz)            # the foot's front, away from the incline
+	var zl = zf + dz * 1.2                # the landing plate ends
+	var zt = zl + dz * ESC_RUN            # the top of the incline
+	var xm = (x0 + x1) * 0.5
+	var ua = x0 + 0.25
+	var ub = x1 - 0.25
+	# landing plate (stainless comb plate)
+	b.quad(G, "dl_steel", [Vector3(ua, 0.01, zf), Vector3(ub, 0.01, zf), Vector3(ub, 0.01, zl), Vector3(ua, 0.01, zl)], Vector3.UP)
+	# steps: a stair-stepped run in black
+	var steps = int(ESC_RUN / 0.4)
+	for i in steps:
+		var za = zl + dz * ESC_RUN * i / steps
+		var zb = zl + dz * ESC_RUN * (i + 1) / steps
+		var ya = ESC_RISE * i / steps
+		var yb = ESC_RISE * (i + 1) / steps
+		b.quad(G, "dl_step", [Vector3(ua, ya, za), Vector3(ub, ya, za), Vector3(ub, yb, za), Vector3(ua, yb, za)], F)
+		b.quad(G, "dl_step", [Vector3(ua, yb, za), Vector3(ub, yb, za), Vector3(ub, yb, zb), Vector3(ua, yb, zb)], Vector3.UP)
+	# skirts, decks and the white glass balustrades on both sides of the lane
+	for side in [[x0, ua, Vector3(1, 0, 0)], [x1, ub, Vector3(-1, 0, 0)]]:
+		var xs = side[0]
+		var xi = side[1]
+		b.quad(G, "dl_steel", [Vector3(xi, 0.0, zl), Vector3(xi, ESC_RISE, zt), Vector3(xi, ESC_RISE + 0.12, zt), Vector3(xi, 0.12, zl)], side[2])
+		b.quad(G, "dl_steel", [Vector3(xs, 0.12, zf), Vector3(xi, 0.12, zf), Vector3(xi, ESC_RISE + 0.12, zt), Vector3(xs, ESC_RISE + 0.12, zt)], Vector3(0, 1, -dz * slope).normalized())
+		var gx = xs + (xi - xs) * 0.5
+		b.quad("glass_esc", "dl_balus", [Vector3(gx, 0.12, zf + dz * 0.3), Vector3(gx, ESC_RISE + 0.12, zt), Vector3(gx, ESC_RISE + 1.0, zt), Vector3(gx, 1.0, zf + dz * 0.3)], side[2], [], true)
+	# the truss in white cladding, 1 m deep under the incline: its two sides, the sloped soffit under it
+	# (open floor below, as under a real crisscross pair) and its top end
+	var TD = 1.0
+	var zu = zl + dz * TD / slope         # where the soffit meets the floor
 	for side in [[x0, Vector3(-1, 0, 0)], [x1, Vector3(1, 0, 0)]]:
-		b.quad(G, "dl_gyp", [Vector3(side[0], 0, zl), Vector3(side[0], 0, zt), Vector3(side[0], ESC_RISE + 0.12, zt), Vector3(side[0], 0.12, zl)], side[1])
-	handrails(b)
-	# the well: white shaft walls from the ceiling up past the top landing, a lit lid
-	var w = WELL
-	for s in [[Vector2(w[0], w[1]), Vector2(w[2], w[1]), Vector3(0, 0, 1)], [Vector2(w[2], w[3]), Vector2(w[0], w[3]), Vector3(0, 0, -1)],
-			[Vector2(w[0], w[3]), Vector2(w[0], w[1]), Vector3(1, 0, 0)], [Vector2(w[2], w[1]), Vector2(w[2], w[3]), Vector3(-1, 0, 0)]]:
-		wall(b, "dl_well", "dl_gyp", s[0], s[1], CEIL, ESC_RISE + 2.8, s[2])
-	b.quad("dl_well", "dl_laytile", [Vector3(w[0], ESC_RISE + 2.8, w[1]), Vector3(w[2], ESC_RISE + 2.8, w[1]), Vector3(w[2], ESC_RISE + 2.8, w[3]), Vector3(w[0], ESC_RISE + 2.8, w[3])], Vector3.DOWN)
-	# the upper landing floor (level 2's edge) and a glass guard at the well's open sides
-	b.quad("dl_well", "dl_trav", [Vector3(w[0], ESC_RISE, zt), Vector3(w[2], ESC_RISE, zt), Vector3(w[2], ESC_RISE, w[3]), Vector3(w[0], ESC_RISE, w[3])], Vector3.UP, [], false, 1.0 / 2.4)
-	wall(b, "dl_well", "dl_gyp", Vector2(w[0], w[1] + 0.3), Vector2(w[2], w[1] + 0.3), CEIL - 0.3, CEIL, Vector3(0, 0, -1))
-	b.tag(b.add_omni(Vector3(xm, ESC_RISE + 2.2, zt - 2.0), 1.4, 7.0, Color(1.0, 0.95, 0.88)), "", 1.4, 1.4)
-	# closed: stanchions and a belt across the bottom landing, a small sign
+		b.quad(G, "dl_gyp", [Vector3(side[0], 0, zl), Vector3(side[0], 0, zu), Vector3(side[0], ESC_RISE - TD, zt), Vector3(side[0], ESC_RISE + 0.12, zt)], side[1])
+	b.quad(G, "dl_gyp", [Vector3(x0, 0, zu), Vector3(x1, 0, zu), Vector3(x1, ESC_RISE - TD, zt), Vector3(x0, ESC_RISE - TD, zt)], Vector3(0, -1, dz * slope).normalized())
+	b.quad(G, "dl_gyp", [Vector3(x0, ESC_RISE - TD, zt), Vector3(x1, ESC_RISE - TD, zt), Vector3(x1, ESC_RISE + 0.12, zt), Vector3(x0, ESC_RISE + 0.12, zt)], -F)
+	# black handrails along each balustrade's top, rotated to the incline, a flat run at the foot
+	b.cur_color = Color("#141414")
+	var basis = Basis(Vector3.RIGHT, -dz * atan2(ESC_RISE, ESC_RUN))
+	for xs in [x0 + 0.125, x1 - 0.125]:
+		var p0 = Vector3(xs, 1.0, zl)
+		var p1 = Vector3(xs, ESC_RISE + 1.0, zt)
+		b.box("dl_trim", "vcolor", Vector3.ZERO, Vector3(0.08, 0.07, p0.distance_to(p1)), Transform3D(basis, (p0 + p1) * 0.5), [], true)
+		b.box("dl_trim", "vcolor", Vector3(xs, 1.0, zf + dz * 0.75), Vector3(0.08, 0.07, 0.9), Transform3D.IDENTITY, [], true)
+	# closed: stanchions and a belt across the foot, a small sign facing out
 	b.cur_color = Color("#c9c9c9")
-	var zs = ESC_Z0 - 0.5
-	for xx in [x0 - 0.2, xm, x1 + 0.2]:
+	var zs = zf - dz * 0.5
+	for xx in [x0 - 0.1, xm, x1 + 0.1]:
 		b.cyl("dl_trim", "dl_steel", Vector3(xx, 0, zs), 0.17, 0.17, 0.03, 12, true, false, true)
 		b.cyl("dl_trim", "dl_steel", Vector3(xx, 0, zs), 0.03, 0.03, 0.95, 8, true, false, true)
 	b.cur_color = Color("#151515")
-	b.box("dl_trim", "vcolor", Vector3(xm, 0.88, zs), Vector3(x1 - x0 + 0.4, 0.05, 0.01), Transform3D.IDENTITY, [], true)
-	b.cur_color = Color("#151515")
-	b.box("dl_trim", "vcolor", Vector3(xm, 1.15, zs - 0.03), Vector3(0.62, 0.38, 0.02), Transform3D.IDENTITY, [], true)
+	b.box("dl_trim", "vcolor", Vector3(xm, 0.88, zs), Vector3(x1 - x0 + 0.2, 0.05, 0.01), Transform3D.IDENTITY, [], true)
+	b.box("dl_trim", "vcolor", Vector3(xm, 1.15, zs) + F * 0.03, Vector3(0.62, 0.38, 0.02), Transform3D.IDENTITY, [], true)
 	b.cur_color = Color.WHITE
-	b.label("Escalator closed", "serif", "#f2efe6", Vector3(xm, 1.15, zs - 0.05), Vector3(0, 0, -1), 0.55, 0.07)
-	block(b, x0 - 0.4, zs - 0.15, x1 + 0.4, zt + 0.2)
-
-## Black handrails along each balustrade's top: a thin box rotated to the incline.
-static func handrails(b):
-	var slope_a = atan2(ESC_RISE, ESC_RUN)
-	var zl = ESC_Z0 + 1.2
-	b.cur_color = Color("#141414")
-	var xm = (ESC_X[0] + ESC_X[1]) * 0.5
-	for u in [[ESC_X[0], xm - 0.1], [xm + 0.1, ESC_X[1]]]:
-		for xs in [u[0] + 0.125, u[1] - 0.125]:
-			var p0 = Vector3(xs, 1.0, zl)
-			var p1 = Vector3(xs, ESC_RISE + 1.0, zl + ESC_RUN)
-			var L = p0.distance_to(p1)
-			var basis = Basis(Vector3.RIGHT, -slope_a)
-			b.box("dl_trim", "vcolor", Vector3.ZERO, Vector3(0.08, 0.07, L), Transform3D(basis, (p0 + p1) * 0.5), [], true)
-			# the flat run at the bottom landing
-			b.box("dl_trim", "vcolor", Vector3(xs, 1.0, ESC_Z0 + 0.75), Vector3(0.08, 0.07, 0.9), Transform3D.IDENTITY, [], true)
-	b.cur_color = Color.WHITE
+	b.label("Escalator closed", "serif", "#f2efe6", Vector3(xm, 1.15, zs) + F * 0.05, F, 0.55, 0.07)
+	# the walk grid: the whole unit, from its top end to the stanchion line
+	block(b, x0 - 0.3, min(zs, zt) - 0.15, x1 + 0.3, max(zs, zt) + 0.15)
 
 # ------------------------------------------------------------------ entrances
 ## The exterior entrance on the east face (the gallery side; the one Steven walked in through):
