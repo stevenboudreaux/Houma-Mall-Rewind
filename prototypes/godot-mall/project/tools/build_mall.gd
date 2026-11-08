@@ -2896,7 +2896,8 @@ func finish():
 			s.index()
 			# the arcade's many small machine parts: compressed vertex attributes halve the download
 			# the traced sign letters too (Oct 7): dense outlines, the download crossed 100 MB without it
-			s.commit(am, Mesh.ARRAY_FLAG_COMPRESS_ATTRIBUTES if gname.begins_with("pc") or gname.contains("_sign") else 0)
+			# ws/lot (Nov 8 2026): the outside's unbaked plants, paint and beds too (wing 3's pack size)
+			s.commit(am, Mesh.ARRAY_FLAG_COMPRESS_ATTRIBUTES if gname.begins_with("pc") or gname.contains("_sign") or gname in ["ex_flora", "ex_paint", "ex_beds"] else 0)
 			am.surface_set_material(am.get_surface_count() - 1, mat(mname))
 		ResourceSaver.save(am, GEN + "dyn_" + gname + ".res")
 		var mi = MeshInstance3D.new()
