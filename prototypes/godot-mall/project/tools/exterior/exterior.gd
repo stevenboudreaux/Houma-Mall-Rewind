@@ -127,7 +127,7 @@ static func fill_mat(m, key, b):
 			m.albedo_color = Color("#fff0c8"); m.emission_enabled = true; m.emission = Color("#ffc46a")
 			m.emission_energy_multiplier = 3.0; m.set_meta("e_day", 0.0); m.set_meta("e_night", 3.0)
 		"curb_yellow": m.albedo_color = Color("#e4c52c"); m.roughness = 0.8
-		"curb": m.albedo_color = Color("#c8c4bc"); m.roughness = 0.9
+		"curb": m.albedo_color = Color("#9e9a91"); m.roughness = 0.92
 		"tank_white": m.albedo_color = Color("#e4e3df"); m.roughness = 0.7
 		"tank_rust": m.albedo_color = Color("#8d6b4a"); m.roughness = 0.9
 		"steel": m.albedo_color = Color("#6f6f6c"); m.roughness = 0.6
@@ -252,16 +252,15 @@ static func palm(b, at, hgt):
 static func shrub(b, at, mname, size):
 	FL.shrub(b, at, size * 0.65)
 
-## A raised curbed island (yellow curb in the lot, grey at the roads) with mulch or lawn on top.
-static func island(b, x0, z0, x1, z1, top = "ex_mulch", curb = "ex_curb_yellow"):
-	var c = Vector3((x0 + x1) * 0.5, 0.08, (z0 + z1) * 0.5)
-	b.box("ex_lot", curb, c, Vector3(x1 - x0, 0.16, z1 - z0), Transform3D.IDENTITY, ["-y", "+y"])
-	b.quad("ex_lot", top, [Vector3(x0 + 0.15, 0.16, z0 + 0.15), Vector3(x1 - 0.15, 0.16, z0 + 0.15), Vector3(x1 - 0.15, 0.16, z1 - 0.15), Vector3(x0 + 0.15, 0.16, z1 - 0.15)], UP, [], false, 0.5)
-	b.quad("ex_lot", curb, [Vector3(x0, 0.16, z0), Vector3(x1, 0.16, z0), Vector3(x1 - 0.15, 0.16, z0 + 0.15), Vector3(x0 + 0.15, 0.16, z0 + 0.15)], UP)
-	b.quad("ex_lot", curb, [Vector3(x0, 0.16, z1), Vector3(x0 + 0.15, 0.16, z1 - 0.15), Vector3(x1 - 0.15, 0.16, z1 - 0.15), Vector3(x1, 0.16, z1)], UP)
-	b.quad("ex_lot", curb, [Vector3(x0, 0.16, z0), Vector3(x0 + 0.15, 0.16, z0 + 0.15), Vector3(x0 + 0.15, 0.16, z1 - 0.15), Vector3(x0, 0.16, z1)], UP)
-	b.quad("ex_lot", curb, [Vector3(x1, 0.16, z0), Vector3(x1, 0.16, z1), Vector3(x1 - 0.15, 0.16, z1 - 0.15), Vector3(x1 - 0.15, 0.16, z0 + 0.15)], UP)
-	b.obst(["rect", x0, z0, x1, z1])
+## A curbed island. Workstream LOT (Nov 8 2026): a landscaped planter (flora.gd planter: a low, wide
+## 10 cm concrete curb, mulch, 3-5 shrubs / grass clumps with variation when `plants`, a sabal in the
+## big ones when `palm`) instead of the tall single-shrub box. The lot's curbs are grey in 1995 (a GUESS:
+## no period photo) and painted yellow in 2026, as filmed (4492 f060-066, 4487); callers that ask for
+## "ex_curb" (the roads' islands) stay grey in both years.
+static func island(b, x0, z0, x1, z1, top = "ex_mulch", curb = "ex_curb_yellow", plants = false, palm = false):
+	if curb == "ex_curb_yellow" and YEAR != 2026:
+		curb = "ex_curb"
+	FL.planter(b, x0, z0, x1, z1, curb, top, palm, plants)
 
 ## A painted line just above the lot. Workstream LOT (Nov 8 2026): worn paint (paint_lot.py), each line
 ## faded a little differently (vertex alpha) and laid with a hand's error (a centimetre or two), so the
@@ -706,9 +705,9 @@ static func south_entrance(b):
 		b.box(g, "ex_glass_dark", ea + Vector3(0, 1.2, 0.03), Vector3(1.9, 2.4, 0.04))
 	# the drop-off bulb: a curbed island out front, past the drive lane
 	island(b, -150.0, 127.0, -130.0, 131.0, "ex_grass", "ex_curb")
-	tree_oak(b, Vector3(-140.0, 0.16, 129.0), 4.5)
+	tree_oak(b, Vector3(-140.0, 0.08, 129.0), 4.5)
 	for xx in [-147.0, -133.0]:
-		shrub(b, Vector3(xx, 0.16, 129.0), "leafy", 1.1)
+		shrub(b, Vector3(xx, 0.08, 129.0), "leafy", 1.1)
 
 ## The cinema-wing exit (s41, the Sears hall's west end): brown exposed-aggregate precast fascia
 ## ~1 m deep, white soffit with cans, a 2-tier clear-anodized curtain wall with 2 door pairs; the
@@ -1321,12 +1320,12 @@ static func lot(b):
 		var px = -231.0 + i * 12.5
 		if px > BAYOU_DRIVE[0] - 1.0 and px < BAYOU_DRIVE[1] + 1.0:
 			continue
-		palm(b, Vector3(px, 0.16, fz), 7.0 + (i % 3))
+		palm(b, Vector3(px, 0.08, fz), 7.0 + (i % 3))
 	for i in 5:
 		var ox = -218.0 + i * 60.0
 		if ox > BAYOU_DRIVE[0] - 3.0 and ox < BAYOU_DRIVE[1] + 3.0:
 			ox += 10.0
-		tree_oak(b, Vector3(ox, 0.16, fz), 5.5)
+		tree_oak(b, Vector3(ox, 0.08, fz), 5.5)
 	MON.drive(b, BAYOU_DRIVE[0], BAYOU_DRIVE[1], fz - 2.0, ROAD_BAYOU - 5.5)
 	stop_sign(b, Vector3(BAYOU_DRIVE[1] + 1.0, 0, fz - 3.0), Vector3(0, 0, -1))
 	# the Armour Dr drive into the back lot (monuments.gd puts its sign by it)
@@ -1334,9 +1333,9 @@ static func lot(b):
 	stop_sign(b, Vector3(-13.0, 0, -238.5), Vector3(0, 0, 1))
 	# the lawn island with a magnolia and loblolly pines (the south lot's west end)
 	island(b, -234.0, 150.0, -206.0, 160.0, "ex_grass")
-	tree_oak(b, Vector3(-220.0, 0.16, 155.0), 5.0)
-	tree_pine(b, Vector3(-211.0, 0.16, 153.0), 16.0)
-	tree_pine(b, Vector3(-229.0, 0.16, 157.0), 15.0)
+	tree_oak(b, Vector3(-220.0, 0.08, 155.0), 5.0)
+	tree_pine(b, Vector3(-211.0, 0.08, 153.0), 16.0)
+	tree_pine(b, Vector3(-229.0, 0.08, 157.0), 15.0)
 	# curbs along the building: a 1.65 m concrete sidewalk round the mall between the wall and the curb
 	# (Workstream LOT: the lot is asphalt now, so the walk is its own surface), carried round the
 	# outside corners; the fire lane past it on the customer faces
@@ -1504,11 +1503,11 @@ static func entry_drive(b):
 	for sd in [-1.0, 1.0]:
 		island(b, x0 + 4.0, sd * 3.7 - (1.2 if sd < 0 else 0.0), x1 - 2.0, sd * 3.7 + (1.2 if sd > 0 else 0.0))
 		for i in 12:
-			palm(b, Vector3(x0 + 6.0 + i * ((x1 - x0 - 10.0) / 11.0), 0.16, sd * 4.3), 6.0 + (i % 3) * 0.8)
+			palm(b, Vector3(x0 + 6.0 + i * ((x1 - x0 - 10.0) / 11.0), 0.08, sd * 4.3), 6.0 + (i % 3) * 0.8)
 	for sd in [-1.0, 1.0]:
 		island(b, 46.5, sd * 8.0 - 1.5, 49.5, sd * 8.0 + 1.5)
 		for k in 3:
-			FL.shrub(b, Vector3(47.2 + k * 0.8, 0.16, sd * 8.0 + (k - 1) * 0.7), 0.6)
+			FL.shrub(b, Vector3(47.2 + k * 0.8, 0.08, sd * 8.0 + (k - 1) * 0.7), 0.6)
 	for sd in [-1.0, 1.0]:
 		stripe(b, Vector3(53.0, 0.012, sd * 0.3), Vector3(53.0, 0.012, sd * 3.5), 0.45, "ex_stripe_white")
 		stripe(b, Vector3(x1 - 3.0, 0.012, sd * 0.3), Vector3(x1 - 3.0, 0.012, sd * 3.5), 0.45, "ex_stripe_white")
@@ -1755,18 +1754,26 @@ static func lot_field(x0, z0, x1, z1, along_x, seed_ = 0):
 			stall_row(b_ref, p, t, i1 - i0 - 6.0)
 			for e in [[i0, i0 + 3.0], [i1 - 3.0, i1]]:
 				var ic = (e[0] + e[1]) * 0.5
-				if along_x:
-					island(b_ref, e[0], c - 1.8, e[1], c + 1.8)
-				else:
-					island(b_ref, c - 1.8, e[0], c + 1.8, e[1])
-				var at = Vector3(ic, 0.16, c) if along_x else Vector3(c, 0.16, ic)
-				if (row + seed_) % 2 == 0:
-					if e[0] == i0 or (i1 - i0) > 60.0:
-						lot_pole(b_ref, at, 0.0 if along_x else PI * 0.5, false)
-				elif (row + int(ic)) % 3 != 0:
+				var at = Vector3(ic, 0.08, c) if along_x else Vector3(c, 0.08, ic)
+				var ib = [e[0], c - 1.8, e[1], c + 1.8] if along_x else [c - 1.8, e[0], c + 1.8, e[1]]
+				var pole = (row + seed_) % 2 == 0 and (e[0] == i0 or (i1 - i0) > 60.0)
+				var kind = (row + int(ic)) % 3
+				island(b_ref, ib[0], ib[1], ib[2], ib[3], "ex_mulch", "ex_curb_yellow", not pole and kind == 2, not pole and kind == 1 and (i1 - i0) > 40.0)
+				if pole:
+					lot_pole(b_ref, at, 0.0 if along_x else PI * 0.5, false)
+					for sd in [-1.0, 1.0]:
+						var gp = at + (Vector3(0, 0, sd * 1.05) if along_x else Vector3(sd * 1.05, 0, 0))
+						FL.grass(b_ref, gp, 0.4)
+				elif kind == 0:
 					tree_oak(b_ref, at, 3.5)
-				else:
-					shrub(b_ref, at, "leafy", 1.0)
+					for sd in [-1.0, 1.0]:
+						var sp = at + (Vector3(0, 0, sd * 1.15) if along_x else Vector3(sd * 1.15, 0, 0))
+						FL.shrub(b_ref, sp, 0.5)
+						FL.grass(b_ref, sp + (Vector3(0.75, 0, 0) if along_x else Vector3(0, 0, 0.75)), 0.6)
+				elif kind == 1 and (i1 - i0) <= 40.0:
+					for sd in [-1.0, 0.0, 1.0]:
+						var sp = at + (Vector3(0, 0, sd * 1.05) if along_x else Vector3(sd * 1.05, 0, 0))
+						FL.shrub(b_ref, sp, 0.45) if sd != 0.0 else FL.grass(b_ref, sp, 0.6)
 			# a storm grate in the aisle beyond the row, every ~30 m
 			var k = i0 + 15.0
 			while k < i1 - 5.0:

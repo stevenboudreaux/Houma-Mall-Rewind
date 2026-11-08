@@ -173,17 +173,22 @@ static func live_oak(b, at, size):
 		_limb(b, top, top + d * (size * 0.55) + UP * (size * 0.45), size * 0.04)
 	b.cur_color = tint(Color(1.0, 1.0, 1.0), 0.12)
 	# the crown: clusters on a flattened ellipsoid shell, each a crossed pair of cards
-	var nc = int(18 + size * 3.0)
+	var nc = int(22 + size * 4.0)
 	for i in nc:
 		var yaw = rng.randf() * TAU
 		var el = rng.randf_range(-0.35, 1.0)
 		var d = Vector3(cos(yaw) * cos(el), sin(el) * 0.55, sin(yaw) * cos(el))
 		var c = cc + Vector3(d.x * size, d.y * size, d.z * size) * rng.randf_range(0.65, 0.95)
-		var cs = size * rng.randf_range(0.65, 0.95)
-		var t1 = Vector3(-d.z, 0, d.x).normalized()
-		card_at(b, "oak", c, t1, UP, cs, cs * 0.8, cc)
+		var cs = size * rng.randf_range(0.45, 0.7)
+		# each cluster a crossed pair turned at random, so no card faces the eye as a flat disc
+		var r1 = Vector3(rng.randf_range(-1, 1), rng.randf_range(-1, 1), rng.randf_range(-1, 1)).normalized()
+		var t1 = r1.cross(d).normalized()
+		if t1.length() < 0.1:
+			t1 = Vector3(-d.z, 0, d.x).normalized()
 		var t2 = d.cross(t1).normalized()
-		card_at(b, "oak", c, t1, t2, cs, cs * 0.9, cc)
+		card_at(b, "oak", c, t1, t2, cs, cs * 0.85, cc)
+		card_at(b, "oak", c, t1, d, cs, cs * 0.85, cc)
+		card_at(b, "oak", c, t2, d, cs * 0.9, cs * 0.8, cc)
 	b.cur_color = Color.WHITE
 	b.obst(["rect", at.x - 0.5, at.z - 0.5, at.x + 0.5, at.z + 0.5])
 
@@ -291,24 +296,24 @@ static func planter(b, x0, z0, x1, z1, curb = "ex_curb", top = "ex_mulch", palm 
 	b.box(g, curb, Vector3(x1 - W * 0.5, H * 0.5, (z0 + z1) * 0.5), Vector3(W, H, z1 - z0 - 2.0 * W), Transform3D.IDENTITY, ["-y", "-z", "+z"])
 	b.quad(g, top, [Vector3(x0 + W, H - 0.02, z0 + W), Vector3(x1 - W, H - 0.02, z0 + W), Vector3(x1 - W, H - 0.02, z1 - W), Vector3(x0 + W, H - 0.02, z1 - W)], UP, [], false, 0.5)
 	b.obst(["rect", x0, z0, x1, z1])
-	if not plants:
+	if not plants and not palm:
 		return
 	var ix0 = x0 + W + 0.35; var ix1 = x1 - W - 0.35
 	var iz0 = z0 + W + 0.35; var iz1 = z1 - W - 0.35
 	var long_x = (x1 - x0) >= (z1 - z0)
 	var L = max(ix1 - ix0, iz1 - iz0)
-	var n = clampi(int(L / 1.1), 3, 5) if L < 12.0 else int(L / 1.6)
+	var n = clampi(int(L / 0.8), 3, 5) if L < 12.0 else int(L / 1.6)
 	var cx = (x0 + x1) * 0.5; var cz = (z0 + z1) * 0.5
 	for i in n:
 		var f = (i + 0.5) / n + rng.randf_range(-0.12, 0.12) / n
 		var p = Vector3(lerp(ix0, ix1, f) if long_x else cx + rng.randf_range(-0.3, 0.3) * (ix1 - ix0) * 0.5,
 			H - 0.02, lerp(iz0, iz1, f) if not long_x else cz + rng.randf_range(-0.3, 0.3) * (iz1 - iz0) * 0.5)
-		if palm and Vector2(p.x - cx, p.z - cz).length() < 1.2:
-			continue
+		if palm and Vector2(p.x - cx, p.z - cz).length() < 0.6:
+			p += (Vector3(1, 0, 0) if long_x else Vector3(0, 0, 1)) * (0.8 if i * 2 < n else -0.8)
 		var r = rng.randf()
-		if r < 0.5:
-			shrub(b, p, rng.randf_range(0.45, 0.7))
+		if r < 0.55:
+			shrub(b, p, rng.randf_range(0.5, 0.8))
 		else:
-			grass(b, p, rng.randf_range(0.45, 0.75))
+			grass(b, p, rng.randf_range(0.55, 0.9))
 	if palm:
 		sabal(b, Vector3(cx, H - 0.02, cz), rng.randf_range(5.5, 7.5))

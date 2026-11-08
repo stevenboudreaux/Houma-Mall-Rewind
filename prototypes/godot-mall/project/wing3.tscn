@@ -23,14 +23,14 @@
 [ext_resource type="Script" path="res://scripts/mall_runtime.gd" id="21_xl2ly"]
 [ext_resource type="Script" path="res://scripts/signs.gd" id="22_endtk"]
 
-[node name="Mall" type="Node3D" unique_id=129433618]
+[node name="Mall" type="Node3D" unique_id=1991974417]
 metadata/wing = 3
 metadata/year = 1995
 metadata/gen = "res://gen/w3/"
 
-[node name="Lights" type="Node3D" parent="." unique_id=1245756418]
+[node name="Lights" type="Node3D" parent="." unique_id=1507455465]
 
-[node name="@SpotLight3D@2" type="SpotLight3D" parent="Lights" unique_id=1569288790]
+[node name="@SpotLight3D@2" type="SpotLight3D" parent="Lights" unique_id=1720527425]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 41, 3.6, -93.5)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
@@ -40,7 +40,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@3" type="SpotLight3D" parent="Lights" unique_id=646986526]
+[node name="@SpotLight3D@3" type="SpotLight3D" parent="Lights" unique_id=904497790]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 41, 3.6, -91)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
@@ -50,7 +50,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@4" type="SpotLight3D" parent="Lights" unique_id=1201531928]
+[node name="@SpotLight3D@4" type="SpotLight3D" parent="Lights" unique_id=1574772191]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 41, 3.6, -88.5)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
@@ -60,7 +60,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@5" type="SpotLight3D" parent="Lights" unique_id=1187422822]
+[node name="@SpotLight3D@5" type="SpotLight3D" parent="Lights" unique_id=1750538005]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 47, 4.25, -3)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
@@ -70,7 +70,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@6" type="SpotLight3D" parent="Lights" unique_id=760595410]
+[node name="@SpotLight3D@6" type="SpotLight3D" parent="Lights" unique_id=618019827]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 47, 4.25, 0)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
@@ -80,7 +80,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@7" type="SpotLight3D" parent="Lights" unique_id=670404479]
+[node name="@SpotLight3D@7" type="SpotLight3D" parent="Lights" unique_id=282662247]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 47, 4.25, 3)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
@@ -90,7 +90,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@10" type="SpotLight3D" parent="Lights" unique_id=2003568194]
+[node name="@SpotLight3D@10" type="SpotLight3D" parent="Lights" unique_id=1095825933]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -140, 4.5, 113.6)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
@@ -100,7 +100,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@11" type="SpotLight3D" parent="Lights" unique_id=993113969]
+[node name="@SpotLight3D@11" type="SpotLight3D" parent="Lights" unique_id=1317181290]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -140, 4.5, 116.4)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
@@ -110,7 +110,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@12" type="SpotLight3D" parent="Lights" unique_id=388384033]
+[node name="@SpotLight3D@12" type="SpotLight3D" parent="Lights" unique_id=1146149908]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -80.6, 3.55, -94)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -120,7 +120,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@13" type="SpotLight3D" parent="Lights" unique_id=592366038]
+[node name="@SpotLight3D@13" type="SpotLight3D" parent="Lights" unique_id=1172732483]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -80.6, 3.55, -91)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -130,7 +130,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@14" type="SpotLight3D" parent="Lights" unique_id=910091596]
+[node name="@SpotLight3D@14" type="SpotLight3D" parent="Lights" unique_id=1447275112]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -80.6, 3.55, -88)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -140,7 +140,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@15" type="SpotLight3D" parent="Lights" unique_id=162134346]
+[node name="@SpotLight3D@15" type="SpotLight3D" parent="Lights" unique_id=739351026]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 45.5, 4.05, -37)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_bake_mode = 1
@@ -149,7 +149,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@16" type="SpotLight3D" parent="Lights" unique_id=1084624433]
+[node name="@SpotLight3D@16" type="SpotLight3D" parent="Lights" unique_id=1227996670]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 45.5, 4.05, -35)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_bake_mode = 1
@@ -158,7 +158,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@17" type="SpotLight3D" parent="Lights" unique_id=1041397325]
+[node name="@SpotLight3D@17" type="SpotLight3D" parent="Lights" unique_id=1679733513]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 45.5, 4.05, -33)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_bake_mode = 1
@@ -167,7 +167,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@18" type="SpotLight3D" parent="Lights" unique_id=1281226711]
+[node name="@SpotLight3D@18" type="SpotLight3D" parent="Lights" unique_id=49663110]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 45.5, 4.05, -31)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_bake_mode = 1
@@ -176,7 +176,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@19" type="SpotLight3D" parent="Lights" unique_id=1471516408]
+[node name="@SpotLight3D@19" type="SpotLight3D" parent="Lights" unique_id=602342377]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 45.5, 4.05, -29)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_bake_mode = 1
@@ -185,7 +185,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@20" type="SpotLight3D" parent="Lights" unique_id=1327292954]
+[node name="@SpotLight3D@20" type="SpotLight3D" parent="Lights" unique_id=707882336]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 45.5, 4.05, -27)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_bake_mode = 1
@@ -194,7 +194,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@21" type="SpotLight3D" parent="Lights" unique_id=638249099]
+[node name="@SpotLight3D@21" type="SpotLight3D" parent="Lights" unique_id=1965631273]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 45.5, 4.05, -25)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_bake_mode = 1
@@ -203,7 +203,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@22" type="SpotLight3D" parent="Lights" unique_id=15194313]
+[node name="@SpotLight3D@22" type="SpotLight3D" parent="Lights" unique_id=328468993]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 45.5, 4.05, -23)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_bake_mode = 1
@@ -212,7 +212,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@23" type="SpotLight3D" parent="Lights" unique_id=1053789006]
+[node name="@SpotLight3D@23" type="SpotLight3D" parent="Lights" unique_id=303756532]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 45.5, 4.05, -21)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_bake_mode = 1
@@ -221,7 +221,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@24" type="SpotLight3D" parent="Lights" unique_id=1230702763]
+[node name="@SpotLight3D@24" type="SpotLight3D" parent="Lights" unique_id=1310839273]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 45.5, 4.05, -19)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_bake_mode = 1
@@ -230,7 +230,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@28" type="SpotLight3D" parent="Lights" unique_id=1218194304]
+[node name="@SpotLight3D@28" type="SpotLight3D" parent="Lights" unique_id=336012232]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 44.3, 5.25, -84.5)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 0.8
@@ -239,7 +239,7 @@ spot_attenuation = 0.9
 spot_angle = 70.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@29" type="SpotLight3D" parent="Lights" unique_id=1745223714]
+[node name="@SpotLight3D@29" type="SpotLight3D" parent="Lights" unique_id=401982658]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 44.3, 5.25, -79.3)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 0.8
@@ -248,7 +248,7 @@ spot_attenuation = 0.9
 spot_angle = 70.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@30" type="SpotLight3D" parent="Lights" unique_id=93463152]
+[node name="@SpotLight3D@30" type="SpotLight3D" parent="Lights" unique_id=897493541]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 44.3, 5.25, -74.1)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 0.8
@@ -257,7 +257,7 @@ spot_attenuation = 0.9
 spot_angle = 70.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@31" type="SpotLight3D" parent="Lights" unique_id=869608855]
+[node name="@SpotLight3D@31" type="SpotLight3D" parent="Lights" unique_id=1085820289]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 44.3, 5.25, -68.9)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 0.8
@@ -266,7 +266,7 @@ spot_attenuation = 0.9
 spot_angle = 70.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@32" type="SpotLight3D" parent="Lights" unique_id=229497591]
+[node name="@SpotLight3D@32" type="SpotLight3D" parent="Lights" unique_id=146699209]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 44.3, 5.25, -63.7)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 0.8
@@ -275,7 +275,7 @@ spot_attenuation = 0.9
 spot_angle = 70.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@33" type="SpotLight3D" parent="Lights" unique_id=1283758654]
+[node name="@SpotLight3D@33" type="SpotLight3D" parent="Lights" unique_id=1935423226]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 44.3, 5.25, -58.5)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_energy = 0.8
@@ -284,7 +284,7 @@ spot_attenuation = 0.9
 spot_angle = 70.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@34" type="SpotLight3D" parent="Lights" unique_id=473649012]
+[node name="@SpotLight3D@34" type="SpotLight3D" parent="Lights" unique_id=1578822996]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -215.5, 3.5, 49)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -294,7 +294,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@35" type="SpotLight3D" parent="Lights" unique_id=318658054]
+[node name="@SpotLight3D@35" type="SpotLight3D" parent="Lights" unique_id=1696652793]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -215.5, 3.5, 46)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -304,7 +304,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@36" type="SpotLight3D" parent="Lights" unique_id=77594476]
+[node name="@SpotLight3D@36" type="SpotLight3D" parent="Lights" unique_id=1776305336]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -215.5, 3.5, 43)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -314,85 +314,85 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@43" type="OmniLight3D" parent="Lights" unique_id=1599360359]
+[node name="@OmniLight3D@43" type="OmniLight3D" parent="Lights" unique_id=1342759835]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.2, 0.9, 84.5)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@44" type="OmniLight3D" parent="Lights" unique_id=785230650]
+[node name="@OmniLight3D@44" type="OmniLight3D" parent="Lights" unique_id=2115931630]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.2, 0.9, 94.5)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@45" type="OmniLight3D" parent="Lights" unique_id=1124275498]
+[node name="@OmniLight3D@45" type="OmniLight3D" parent="Lights" unique_id=1814452710]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.2, 0.9, 104.5)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@46" type="OmniLight3D" parent="Lights" unique_id=1531899827]
+[node name="@OmniLight3D@46" type="OmniLight3D" parent="Lights" unique_id=1693740920]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.2, 0.9, 114.5)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@47" type="OmniLight3D" parent="Lights" unique_id=2072849213]
+[node name="@OmniLight3D@47" type="OmniLight3D" parent="Lights" unique_id=1581079936]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.2, 0.9, 124.5)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@48" type="OmniLight3D" parent="Lights" unique_id=1717195221]
+[node name="@OmniLight3D@48" type="OmniLight3D" parent="Lights" unique_id=1581239661]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.2, 0.9, 134.5)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@50" type="OmniLight3D" parent="Lights" unique_id=1022511439]
+[node name="@OmniLight3D@50" type="OmniLight3D" parent="Lights" unique_id=326046140]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.5, 0.9, 143.2)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@51" type="OmniLight3D" parent="Lights" unique_id=472913128]
+[node name="@OmniLight3D@51" type="OmniLight3D" parent="Lights" unique_id=616547614]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.5, 0.9, 143.2)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@52" type="OmniLight3D" parent="Lights" unique_id=1852317182]
+[node name="@OmniLight3D@52" type="OmniLight3D" parent="Lights" unique_id=1022354747]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.799999, 0.9, 143.2)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@53" type="OmniLight3D" parent="Lights" unique_id=389600203]
+[node name="@OmniLight3D@53" type="OmniLight3D" parent="Lights" unique_id=862621871]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.200001, 0.9, 143.2)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@54" type="OmniLight3D" parent="Lights" unique_id=1599113791]
+[node name="@OmniLight3D@54" type="OmniLight3D" parent="Lights" unique_id=226996210]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.200001, 0.9, 143.2)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@55" type="OmniLight3D" parent="Lights" unique_id=174575033]
+[node name="@OmniLight3D@55" type="OmniLight3D" parent="Lights" unique_id=809928042]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.2, 0.9, 143.2)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@OmniLight3D@56" type="OmniLight3D" parent="Lights" unique_id=1722030872]
+[node name="@OmniLight3D@56" type="OmniLight3D" parent="Lights" unique_id=258416689]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.199997, 0.9, 143.2)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
 metadata/only = "night"
 
-[node name="@SpotLight3D@57" type="SpotLight3D" parent="Lights" unique_id=109184849]
+[node name="@SpotLight3D@57" type="SpotLight3D" parent="Lights" unique_id=2132455201]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -18, 6.35, 140.3)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
@@ -402,7 +402,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@58" type="SpotLight3D" parent="Lights" unique_id=51847381]
+[node name="@SpotLight3D@58" type="SpotLight3D" parent="Lights" unique_id=339727772]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -15, 6.35, 140.3)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
@@ -412,7 +412,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@59" type="SpotLight3D" parent="Lights" unique_id=1891525207]
+[node name="@SpotLight3D@59" type="SpotLight3D" parent="Lights" unique_id=1347781661]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -12, 6.35, 140.3)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.5
@@ -422,7 +422,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@62" type="SpotLight3D" parent="Lights" unique_id=1221566196]
+[node name="@SpotLight3D@62" type="SpotLight3D" parent="Lights" unique_id=99515010]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -75, 4.5, -105)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
@@ -431,7 +431,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@63" type="SpotLight3D" parent="Lights" unique_id=1602548400]
+[node name="@SpotLight3D@63" type="SpotLight3D" parent="Lights" unique_id=1966522657]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -75, 4.5, -111)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
@@ -440,7 +440,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@64" type="SpotLight3D" parent="Lights" unique_id=939473253]
+[node name="@SpotLight3D@64" type="SpotLight3D" parent="Lights" unique_id=203383852]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -75, 4.5, -117)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
@@ -449,7 +449,7 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@65" type="SpotLight3D" parent="Lights" unique_id=358734140]
+[node name="@SpotLight3D@65" type="SpotLight3D" parent="Lights" unique_id=980213183]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -75, 4.5, -123)
 light_color = Color(1, 0.8509804, 0.65882355, 1)
 light_bake_mode = 1
@@ -458,919 +458,919 @@ spot_attenuation = 0.9
 spot_angle = 60.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@73" type="OmniLight3D" parent="Lights" unique_id=1927747842]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.76, -234.5)
+[node name="@OmniLight3D@73" type="OmniLight3D" parent="Lights" unique_id=2015406394]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.68, -234.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@74" type="OmniLight3D" parent="Lights" unique_id=1452369393]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.76, -234.5)
+[node name="@OmniLight3D@74" type="OmniLight3D" parent="Lights" unique_id=2080069005]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.68, -234.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@75" type="OmniLight3D" parent="Lights" unique_id=881881903]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.76, -198.5)
+[node name="@OmniLight3D@75" type="OmniLight3D" parent="Lights" unique_id=130957240]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.68, -198.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@76" type="OmniLight3D" parent="Lights" unique_id=524586427]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.76, -198.5)
+[node name="@OmniLight3D@76" type="OmniLight3D" parent="Lights" unique_id=1540537253]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.68, -198.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@77" type="OmniLight3D" parent="Lights" unique_id=628344116]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.76, -162.5)
+[node name="@OmniLight3D@77" type="OmniLight3D" parent="Lights" unique_id=2121483248]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.68, -162.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@78" type="OmniLight3D" parent="Lights" unique_id=565628619]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.76, -162.5)
+[node name="@OmniLight3D@78" type="OmniLight3D" parent="Lights" unique_id=1135385432]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.68, -162.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@79" type="OmniLight3D" parent="Lights" unique_id=432678913]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.76, -126.5)
+[node name="@OmniLight3D@79" type="OmniLight3D" parent="Lights" unique_id=1944427532]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.68, -126.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@80" type="OmniLight3D" parent="Lights" unique_id=2100492642]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.76, -126.5)
+[node name="@OmniLight3D@80" type="OmniLight3D" parent="Lights" unique_id=306926803]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.68, -126.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@81" type="OmniLight3D" parent="Lights" unique_id=415350190]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 65.1, 10.76, -90.5)
+[node name="@OmniLight3D@81" type="OmniLight3D" parent="Lights" unique_id=1775062869]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 65.1, 10.68, -90.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@82" type="OmniLight3D" parent="Lights" unique_id=1406958693]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.9, 10.76, -90.5)
+[node name="@OmniLight3D@82" type="OmniLight3D" parent="Lights" unique_id=868157044]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 68.9, 10.68, -90.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@83" type="OmniLight3D" parent="Lights" unique_id=1693536178]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.76, -54.5)
+[node name="@OmniLight3D@83" type="OmniLight3D" parent="Lights" unique_id=104039996]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.68, -54.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@84" type="OmniLight3D" parent="Lights" unique_id=554261040]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.76, -54.5)
+[node name="@OmniLight3D@84" type="OmniLight3D" parent="Lights" unique_id=1344540314]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.68, -54.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@85" type="OmniLight3D" parent="Lights" unique_id=1689365485]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.76, -18.5)
+[node name="@OmniLight3D@85" type="OmniLight3D" parent="Lights" unique_id=1708440850]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.68, -18.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@86" type="OmniLight3D" parent="Lights" unique_id=967106382]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.76, -18.5)
+[node name="@OmniLight3D@86" type="OmniLight3D" parent="Lights" unique_id=65687311]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.68, -18.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@87" type="OmniLight3D" parent="Lights" unique_id=873874067]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.76, 17.5)
+[node name="@OmniLight3D@87" type="OmniLight3D" parent="Lights" unique_id=1483786773]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.68, 17.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@88" type="OmniLight3D" parent="Lights" unique_id=1945933313]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.76, 17.5)
+[node name="@OmniLight3D@88" type="OmniLight3D" parent="Lights" unique_id=1792185591]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.68, 17.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@89" type="OmniLight3D" parent="Lights" unique_id=525423343]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.76, 53.5)
+[node name="@OmniLight3D@89" type="OmniLight3D" parent="Lights" unique_id=924122462]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.68, 53.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@90" type="OmniLight3D" parent="Lights" unique_id=992695658]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.76, 53.5)
+[node name="@OmniLight3D@90" type="OmniLight3D" parent="Lights" unique_id=1614929953]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.68, 53.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@91" type="OmniLight3D" parent="Lights" unique_id=55748116]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.76, 89.5)
+[node name="@OmniLight3D@91" type="OmniLight3D" parent="Lights" unique_id=1923467845]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.68, 89.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@92" type="OmniLight3D" parent="Lights" unique_id=645229795]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.76, 89.5)
+[node name="@OmniLight3D@92" type="OmniLight3D" parent="Lights" unique_id=972353212]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.68, 89.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@93" type="OmniLight3D" parent="Lights" unique_id=757551371]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.76, 125.5)
+[node name="@OmniLight3D@93" type="OmniLight3D" parent="Lights" unique_id=1746114689]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.68, 125.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@94" type="OmniLight3D" parent="Lights" unique_id=1337011662]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.76, 125.5)
+[node name="@OmniLight3D@94" type="OmniLight3D" parent="Lights" unique_id=1796577848]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.68, 125.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@95" type="OmniLight3D" parent="Lights" unique_id=1178228709]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.76, 161.5)
+[node name="@OmniLight3D@95" type="OmniLight3D" parent="Lights" unique_id=1798049962]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.6, 10.68, 161.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@96" type="OmniLight3D" parent="Lights" unique_id=736802120]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.76, 161.5)
+[node name="@OmniLight3D@96" type="OmniLight3D" parent="Lights" unique_id=1923622023]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4, 10.68, 161.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@97" type="OmniLight3D" parent="Lights" unique_id=1002260547]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.5, 10.76, -198.5)
+[node name="@OmniLight3D@97" type="OmniLight3D" parent="Lights" unique_id=365817065]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.5, 10.68, -198.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@98" type="OmniLight3D" parent="Lights" unique_id=1624225476]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.5, 10.76, -194.70001)
+[node name="@OmniLight3D@98" type="OmniLight3D" parent="Lights" unique_id=883805523]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96.5, 10.68, -194.70001)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@99" type="OmniLight3D" parent="Lights" unique_id=300521648]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60.5, 10.76, -198.5)
+[node name="@OmniLight3D@99" type="OmniLight3D" parent="Lights" unique_id=1269726529]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60.5, 10.68, -198.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@100" type="OmniLight3D" parent="Lights" unique_id=1563808697]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60.5, 10.76, -194.70001)
+[node name="@OmniLight3D@100" type="OmniLight3D" parent="Lights" unique_id=488019689]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60.5, 10.68, -194.70001)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@101" type="OmniLight3D" parent="Lights" unique_id=1444971777]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 10.76, -228.2)
+[node name="@OmniLight3D@101" type="OmniLight3D" parent="Lights" unique_id=855241992]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 10.68, -228.2)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@102" type="OmniLight3D" parent="Lights" unique_id=1190279420]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 10.76, -224.40001)
+[node name="@OmniLight3D@102" type="OmniLight3D" parent="Lights" unique_id=1817757539]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 10.68, -224.40001)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@103" type="OmniLight3D" parent="Lights" unique_id=943770148]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 10.76, -161)
+[node name="@OmniLight3D@103" type="OmniLight3D" parent="Lights" unique_id=607698043]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 10.68, -161)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@104" type="OmniLight3D" parent="Lights" unique_id=1478465262]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 10.76, -157.20001)
+[node name="@OmniLight3D@104" type="OmniLight3D" parent="Lights" unique_id=595556089]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 10.68, -157.20001)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@105" type="OmniLight3D" parent="Lights" unique_id=555820878]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 10.76, -244.4)
+[node name="@OmniLight3D@105" type="OmniLight3D" parent="Lights" unique_id=1941173592]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 10.68, -244.4)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@106" type="OmniLight3D" parent="Lights" unique_id=2067187896]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 10.76, -240.6)
+[node name="@OmniLight3D@106" type="OmniLight3D" parent="Lights" unique_id=1846723449]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 10.68, -240.6)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@107" type="OmniLight3D" parent="Lights" unique_id=1036986389]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 10.76, -161)
+[node name="@OmniLight3D@107" type="OmniLight3D" parent="Lights" unique_id=1175341414]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 10.68, -161)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@108" type="OmniLight3D" parent="Lights" unique_id=788930447]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 10.76, -157.20001)
+[node name="@OmniLight3D@108" type="OmniLight3D" parent="Lights" unique_id=1398000909]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 10.68, -157.20001)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@109" type="OmniLight3D" parent="Lights" unique_id=1089784420]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.5, 10.76, -144.4)
+[node name="@OmniLight3D@109" type="OmniLight3D" parent="Lights" unique_id=988905708]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.5, 10.68, -144.4)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@110" type="OmniLight3D" parent="Lights" unique_id=1850136654]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.5, 10.76, -140.6)
+[node name="@OmniLight3D@110" type="OmniLight3D" parent="Lights" unique_id=379952614]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.5, 10.68, -140.6)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@111" type="OmniLight3D" parent="Lights" unique_id=785671703]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.5, 10.76, -42.100002)
+[node name="@OmniLight3D@111" type="OmniLight3D" parent="Lights" unique_id=1563093925]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.5, 10.68, -42.100002)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@112" type="OmniLight3D" parent="Lights" unique_id=880442816]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.5, 10.76, -38.3)
+[node name="@OmniLight3D@112" type="OmniLight3D" parent="Lights" unique_id=982745987]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.5, 10.68, -38.3)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@113" type="OmniLight3D" parent="Lights" unique_id=897443384]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -108.5, 10.76, -144.4)
+[node name="@OmniLight3D@113" type="OmniLight3D" parent="Lights" unique_id=1046215145]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -108.5, 10.68, -144.4)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@114" type="OmniLight3D" parent="Lights" unique_id=1659637655]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -108.5, 10.76, -140.6)
+[node name="@OmniLight3D@114" type="OmniLight3D" parent="Lights" unique_id=1329484298]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -108.5, 10.68, -140.6)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@115" type="OmniLight3D" parent="Lights" unique_id=533603499]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -108.5, 10.76, -42.100002)
+[node name="@OmniLight3D@115" type="OmniLight3D" parent="Lights" unique_id=1715142632]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -108.5, 10.68, -42.100002)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@116" type="OmniLight3D" parent="Lights" unique_id=555258173]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -108.5, 10.76, -38.3)
+[node name="@OmniLight3D@116" type="OmniLight3D" parent="Lights" unique_id=1008512423]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -108.5, 10.68, -38.3)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@117" type="OmniLight3D" parent="Lights" unique_id=246170315]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.76, -122.5)
+[node name="@OmniLight3D@117" type="OmniLight3D" parent="Lights" unique_id=1524440577]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.68, -122.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@118" type="OmniLight3D" parent="Lights" unique_id=60808759]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.76, -122.5)
+[node name="@OmniLight3D@118" type="OmniLight3D" parent="Lights" unique_id=1113015947]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.68, -122.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@119" type="OmniLight3D" parent="Lights" unique_id=1281569598]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.76, -122.5)
+[node name="@OmniLight3D@119" type="OmniLight3D" parent="Lights" unique_id=1966958463]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.68, -122.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@120" type="OmniLight3D" parent="Lights" unique_id=1281358716]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.76, -122.5)
+[node name="@OmniLight3D@120" type="OmniLight3D" parent="Lights" unique_id=876144801]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.68, -122.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@121" type="OmniLight3D" parent="Lights" unique_id=142572035]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.76, -86.5)
+[node name="@OmniLight3D@121" type="OmniLight3D" parent="Lights" unique_id=945634653]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.68, -86.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@122" type="OmniLight3D" parent="Lights" unique_id=1161199065]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.76, -86.5)
+[node name="@OmniLight3D@122" type="OmniLight3D" parent="Lights" unique_id=1942731495]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.68, -86.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@123" type="OmniLight3D" parent="Lights" unique_id=778949300]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.76, -86.5)
+[node name="@OmniLight3D@123" type="OmniLight3D" parent="Lights" unique_id=1135210565]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.68, -86.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@124" type="OmniLight3D" parent="Lights" unique_id=1656784898]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.76, -86.5)
+[node name="@OmniLight3D@124" type="OmniLight3D" parent="Lights" unique_id=2094371124]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.68, -86.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@125" type="OmniLight3D" parent="Lights" unique_id=1168029101]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.76, -50.5)
+[node name="@OmniLight3D@125" type="OmniLight3D" parent="Lights" unique_id=1236488369]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.68, -50.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@126" type="OmniLight3D" parent="Lights" unique_id=1945347440]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.76, -50.5)
+[node name="@OmniLight3D@126" type="OmniLight3D" parent="Lights" unique_id=250528641]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.68, -50.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@127" type="OmniLight3D" parent="Lights" unique_id=6773465]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.76, -50.5)
+[node name="@OmniLight3D@127" type="OmniLight3D" parent="Lights" unique_id=374121324]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.68, -50.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@128" type="OmniLight3D" parent="Lights" unique_id=1965310511]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.76, -50.5)
+[node name="@OmniLight3D@128" type="OmniLight3D" parent="Lights" unique_id=379128428]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.68, -50.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@129" type="OmniLight3D" parent="Lights" unique_id=544051776]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.76, -14.5)
+[node name="@OmniLight3D@129" type="OmniLight3D" parent="Lights" unique_id=1666013376]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.68, -14.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@130" type="OmniLight3D" parent="Lights" unique_id=1831216956]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.76, -14.5)
+[node name="@OmniLight3D@130" type="OmniLight3D" parent="Lights" unique_id=725714303]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.68, -14.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@131" type="OmniLight3D" parent="Lights" unique_id=326934810]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.76, -14.5)
+[node name="@OmniLight3D@131" type="OmniLight3D" parent="Lights" unique_id=1922651663]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.68, -14.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@132" type="OmniLight3D" parent="Lights" unique_id=772054230]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.76, -14.5)
+[node name="@OmniLight3D@132" type="OmniLight3D" parent="Lights" unique_id=25331272]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.68, -14.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@133" type="OmniLight3D" parent="Lights" unique_id=1326391067]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.76, 21.5)
+[node name="@OmniLight3D@133" type="OmniLight3D" parent="Lights" unique_id=459802189]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.68, 21.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@134" type="OmniLight3D" parent="Lights" unique_id=635314035]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.76, 21.5)
+[node name="@OmniLight3D@134" type="OmniLight3D" parent="Lights" unique_id=111368309]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.68, 21.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@135" type="OmniLight3D" parent="Lights" unique_id=273772951]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.76, 21.5)
+[node name="@OmniLight3D@135" type="OmniLight3D" parent="Lights" unique_id=1171232906]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.68, 21.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@136" type="OmniLight3D" parent="Lights" unique_id=2098838941]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.76, 21.5)
+[node name="@OmniLight3D@136" type="OmniLight3D" parent="Lights" unique_id=1124529325]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.68, 21.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@137" type="OmniLight3D" parent="Lights" unique_id=554572676]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.76, 57.5)
+[node name="@OmniLight3D@137" type="OmniLight3D" parent="Lights" unique_id=761576844]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.68, 57.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@138" type="OmniLight3D" parent="Lights" unique_id=207832898]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.76, 57.5)
+[node name="@OmniLight3D@138" type="OmniLight3D" parent="Lights" unique_id=31505041]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.68, 57.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@139" type="OmniLight3D" parent="Lights" unique_id=2085680366]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.76, 57.5)
+[node name="@OmniLight3D@139" type="OmniLight3D" parent="Lights" unique_id=1431855043]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.68, 57.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@140" type="OmniLight3D" parent="Lights" unique_id=452500218]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.76, 57.5)
+[node name="@OmniLight3D@140" type="OmniLight3D" parent="Lights" unique_id=577370158]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.68, 57.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@141" type="OmniLight3D" parent="Lights" unique_id=77618544]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.76, 93.5)
+[node name="@OmniLight3D@141" type="OmniLight3D" parent="Lights" unique_id=1459781573]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.68, 93.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@142" type="OmniLight3D" parent="Lights" unique_id=118797219]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.76, 93.5)
+[node name="@OmniLight3D@142" type="OmniLight3D" parent="Lights" unique_id=91839800]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.68, 93.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@143" type="OmniLight3D" parent="Lights" unique_id=262894625]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.76, 93.5)
+[node name="@OmniLight3D@143" type="OmniLight3D" parent="Lights" unique_id=117579873]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.68, 93.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@144" type="OmniLight3D" parent="Lights" unique_id=1410951690]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.76, 93.5)
+[node name="@OmniLight3D@144" type="OmniLight3D" parent="Lights" unique_id=96314954]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.68, 93.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@145" type="OmniLight3D" parent="Lights" unique_id=1510765519]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.76, 129.5)
+[node name="@OmniLight3D@145" type="OmniLight3D" parent="Lights" unique_id=1405782899]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.68, 129.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@146" type="OmniLight3D" parent="Lights" unique_id=1917897206]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.76, 129.5)
+[node name="@OmniLight3D@146" type="OmniLight3D" parent="Lights" unique_id=1739879913]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.68, 129.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@147" type="OmniLight3D" parent="Lights" unique_id=1900987999]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.76, 129.5)
+[node name="@OmniLight3D@147" type="OmniLight3D" parent="Lights" unique_id=1311721480]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.68, 129.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@148" type="OmniLight3D" parent="Lights" unique_id=551595631]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.76, 129.5)
+[node name="@OmniLight3D@148" type="OmniLight3D" parent="Lights" unique_id=509544224]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.68, 129.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@149" type="OmniLight3D" parent="Lights" unique_id=1058676983]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.76, 165.5)
+[node name="@OmniLight3D@149" type="OmniLight3D" parent="Lights" unique_id=1953163914]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -356.4, 10.68, 165.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@150" type="OmniLight3D" parent="Lights" unique_id=1389052936]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.76, 165.5)
+[node name="@OmniLight3D@150" type="OmniLight3D" parent="Lights" unique_id=359565483]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -352.6, 10.68, 165.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@151" type="OmniLight3D" parent="Lights" unique_id=1254274856]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.76, 165.5)
+[node name="@OmniLight3D@151" type="OmniLight3D" parent="Lights" unique_id=1275316119]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.59999, 10.68, 165.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@152" type="OmniLight3D" parent="Lights" unique_id=1886114124]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.76, 165.5)
+[node name="@OmniLight3D@152" type="OmniLight3D" parent="Lights" unique_id=715357677]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.8, 10.68, 165.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@153" type="OmniLight3D" parent="Lights" unique_id=54552320]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -230.5, 10.76, 115.6)
+[node name="@OmniLight3D@153" type="OmniLight3D" parent="Lights" unique_id=1440874866]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -230.5, 10.68, 115.6)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@154" type="OmniLight3D" parent="Lights" unique_id=213750584]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -230.5, 10.76, 119.4)
+[node name="@OmniLight3D@154" type="OmniLight3D" parent="Lights" unique_id=1625555573]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -230.5, 10.68, 119.4)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@155" type="OmniLight3D" parent="Lights" unique_id=421439481]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -230.5, 10.76, 196.3)
+[node name="@OmniLight3D@155" type="OmniLight3D" parent="Lights" unique_id=353176692]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -230.5, 10.68, 196.3)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@156" type="OmniLight3D" parent="Lights" unique_id=1875180123]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -230.5, 10.76, 200.09999)
+[node name="@OmniLight3D@156" type="OmniLight3D" parent="Lights" unique_id=754305129]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -230.5, 10.68, 200.09999)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@157" type="OmniLight3D" parent="Lights" unique_id=1055012702]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -194.5, 10.76, 115.6)
+[node name="@OmniLight3D@157" type="OmniLight3D" parent="Lights" unique_id=1082407074]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -194.5, 10.68, 115.6)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@158" type="OmniLight3D" parent="Lights" unique_id=2042750468]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -194.5, 10.76, 119.4)
+[node name="@OmniLight3D@158" type="OmniLight3D" parent="Lights" unique_id=692326673]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -194.5, 10.68, 119.4)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@159" type="OmniLight3D" parent="Lights" unique_id=54321085]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -194.5, 10.76, 196.3)
+[node name="@OmniLight3D@159" type="OmniLight3D" parent="Lights" unique_id=716892963]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -194.5, 10.68, 196.3)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@160" type="OmniLight3D" parent="Lights" unique_id=1784359714]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -194.5, 10.76, 200.09999)
+[node name="@OmniLight3D@160" type="OmniLight3D" parent="Lights" unique_id=592259525]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -194.5, 10.68, 200.09999)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@161" type="OmniLight3D" parent="Lights" unique_id=615918913]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -158.5, 10.76, 137.20001)
+[node name="@OmniLight3D@161" type="OmniLight3D" parent="Lights" unique_id=1114099397]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -158.5, 10.68, 137.20001)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@162" type="OmniLight3D" parent="Lights" unique_id=1983158143]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -158.5, 10.76, 141)
+[node name="@OmniLight3D@162" type="OmniLight3D" parent="Lights" unique_id=1319230387]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -158.5, 10.68, 141)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@163" type="OmniLight3D" parent="Lights" unique_id=1052054187]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -158.5, 10.76, 196.3)
+[node name="@OmniLight3D@163" type="OmniLight3D" parent="Lights" unique_id=971938573]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -158.5, 10.68, 196.3)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@164" type="OmniLight3D" parent="Lights" unique_id=1286345074]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -158.5, 10.76, 200.09999)
+[node name="@OmniLight3D@164" type="OmniLight3D" parent="Lights" unique_id=735222280]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -158.5, 10.68, 200.09999)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@165" type="OmniLight3D" parent="Lights" unique_id=2025913089]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -122.5, 10.76, 137.20001)
+[node name="@OmniLight3D@165" type="OmniLight3D" parent="Lights" unique_id=1776143311]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -122.5, 10.68, 137.20001)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@166" type="OmniLight3D" parent="Lights" unique_id=382609099]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -122.5, 10.76, 141)
+[node name="@OmniLight3D@166" type="OmniLight3D" parent="Lights" unique_id=1204345529]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -122.5, 10.68, 141)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@167" type="OmniLight3D" parent="Lights" unique_id=598501574]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -122.5, 10.76, 196.3)
+[node name="@OmniLight3D@167" type="OmniLight3D" parent="Lights" unique_id=1898593698]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -122.5, 10.68, 196.3)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@168" type="OmniLight3D" parent="Lights" unique_id=218647727]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -122.5, 10.76, 200.09999)
+[node name="@OmniLight3D@168" type="OmniLight3D" parent="Lights" unique_id=624896676]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -122.5, 10.68, 200.09999)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@169" type="OmniLight3D" parent="Lights" unique_id=89924059]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -86.5, 10.76, 126.4)
+[node name="@OmniLight3D@169" type="OmniLight3D" parent="Lights" unique_id=500602365]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -86.5, 10.68, 126.4)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@170" type="OmniLight3D" parent="Lights" unique_id=1929539252]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -86.5, 10.76, 130.2)
+[node name="@OmniLight3D@170" type="OmniLight3D" parent="Lights" unique_id=1200992194]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -86.5, 10.68, 130.2)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@171" type="OmniLight3D" parent="Lights" unique_id=1649827813]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -86.5, 10.76, 196.3)
+[node name="@OmniLight3D@171" type="OmniLight3D" parent="Lights" unique_id=1156855315]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -86.5, 10.68, 196.3)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@172" type="OmniLight3D" parent="Lights" unique_id=1064328898]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -86.5, 10.76, 200.09999)
+[node name="@OmniLight3D@172" type="OmniLight3D" parent="Lights" unique_id=1029182765]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -86.5, 10.68, 200.09999)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@173" type="OmniLight3D" parent="Lights" unique_id=1427904816]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50.5, 10.76, 153.40001)
+[node name="@OmniLight3D@173" type="OmniLight3D" parent="Lights" unique_id=288986804]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50.5, 10.68, 153.40001)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@174" type="OmniLight3D" parent="Lights" unique_id=1227446034]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50.5, 10.76, 157.2)
+[node name="@OmniLight3D@174" type="OmniLight3D" parent="Lights" unique_id=771898723]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50.5, 10.68, 157.2)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@175" type="OmniLight3D" parent="Lights" unique_id=1792476258]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 10.76, 156.1)
+[node name="@OmniLight3D@175" type="OmniLight3D" parent="Lights" unique_id=1433084833]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 10.68, 156.1)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@176" type="OmniLight3D" parent="Lights" unique_id=2056475391]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 10.76, 159.9)
+[node name="@OmniLight3D@176" type="OmniLight3D" parent="Lights" unique_id=1305312427]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 10.68, 159.9)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@177" type="OmniLight3D" parent="Lights" unique_id=1179990791]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 10.76, 148)
+[node name="@OmniLight3D@177" type="OmniLight3D" parent="Lights" unique_id=37421801]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 10.68, 148)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@178" type="OmniLight3D" parent="Lights" unique_id=1514172694]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 10.76, 151.79999)
+[node name="@OmniLight3D@178" type="OmniLight3D" parent="Lights" unique_id=1177470225]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 10.68, 151.79999)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@179" type="OmniLight3D" parent="Lights" unique_id=474114727]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.4, 10.76, -104.5)
+[node name="@OmniLight3D@179" type="OmniLight3D" parent="Lights" unique_id=534430156]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.4, 10.68, -104.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@180" type="OmniLight3D" parent="Lights" unique_id=832785707]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -232.6, 10.76, -104.5)
+[node name="@OmniLight3D@180" type="OmniLight3D" parent="Lights" unique_id=538778845]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -232.6, 10.68, -104.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@181" type="OmniLight3D" parent="Lights" unique_id=1916121652]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -155.7, 10.76, -104.5)
+[node name="@OmniLight3D@181" type="OmniLight3D" parent="Lights" unique_id=301981665]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -155.7, 10.68, -104.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@182" type="OmniLight3D" parent="Lights" unique_id=1280670646]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -151.90001, 10.76, -104.5)
+[node name="@OmniLight3D@182" type="OmniLight3D" parent="Lights" unique_id=1933374973]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -151.90001, 10.68, -104.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@183" type="OmniLight3D" parent="Lights" unique_id=253728478]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.4, 10.76, -68.5)
+[node name="@OmniLight3D@183" type="OmniLight3D" parent="Lights" unique_id=414914623]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -236.4, 10.68, -68.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@184" type="OmniLight3D" parent="Lights" unique_id=1304630493]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -232.6, 10.76, -68.5)
+[node name="@OmniLight3D@184" type="OmniLight3D" parent="Lights" unique_id=64924324]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -232.6, 10.68, -68.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@185" type="OmniLight3D" parent="Lights" unique_id=1517311317]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -155.7, 10.76, -68.5)
+[node name="@OmniLight3D@185" type="OmniLight3D" parent="Lights" unique_id=1149821125]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -155.7, 10.68, -68.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@OmniLight3D@186" type="OmniLight3D" parent="Lights" unique_id=1642485536]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -151.90001, 10.76, -68.5)
+[node name="@OmniLight3D@186" type="OmniLight3D" parent="Lights" unique_id=1526161868]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -151.90001, 10.68, -68.5)
 light_color = Color(1, 0.62352943, 0.27058825, 1)
 light_energy = 5.0
 light_bake_mode = 1
 omni_range = 30.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@196" type="SpotLight3D" parent="Lights" unique_id=479224932]
+[node name="@SpotLight3D@196" type="SpotLight3D" parent="Lights" unique_id=811083346]
 transform = Transform3D(1, 0, 0, 0, 0.80873615, -0.5881717, 0, 0.5881717, 0.80873615, 100, 0.3, -9.3)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -1380,7 +1380,7 @@ spot_attenuation = 0.9
 spot_angle = 40.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@197" type="SpotLight3D" parent="Lights" unique_id=1567929580]
+[node name="@SpotLight3D@197" type="SpotLight3D" parent="Lights" unique_id=1145778816]
 transform = Transform3D(-1, 0, 0, 0, 0.80873615, -0.5881717, 0, -0.5881717, -0.80873615, 100, 0.3, -13.7)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -1390,7 +1390,7 @@ spot_attenuation = 0.9
 spot_angle = 40.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@198" type="SpotLight3D" parent="Lights" unique_id=475537625]
+[node name="@SpotLight3D@198" type="SpotLight3D" parent="Lights" unique_id=2034092730]
 transform = Transform3D(0, 0.5881717, 0.80873615, 0, 0.80873615, -0.5881717, -1, 0, 0, -124.8, 0.3, 205.5)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -1400,7 +1400,7 @@ spot_attenuation = 0.9
 spot_angle = 40.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@199" type="SpotLight3D" parent="Lights" unique_id=547080911]
+[node name="@SpotLight3D@199" type="SpotLight3D" parent="Lights" unique_id=1975919688]
 transform = Transform3D(0, -0.5881717, -0.80873615, 0, 0.80873615, -0.5881717, 1, 0, 0, -129.2, 0.3, 205.5)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -1410,7 +1410,7 @@ spot_attenuation = 0.9
 spot_angle = 40.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@200" type="SpotLight3D" parent="Lights" unique_id=511827383]
+[node name="@SpotLight3D@200" type="SpotLight3D" parent="Lights" unique_id=1554832332]
 transform = Transform3D(0, 0.5881717, 0.80873615, 0, 0.80873615, -0.5881717, -1, 0, 0, -30.8, 0.3, -243)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -1420,7 +1420,7 @@ spot_attenuation = 0.9
 spot_angle = 40.0
 metadata/only = "night"
 
-[node name="@SpotLight3D@201" type="SpotLight3D" parent="Lights" unique_id=1548107474]
+[node name="@SpotLight3D@201" type="SpotLight3D" parent="Lights" unique_id=722447612]
 transform = Transform3D(0, -0.5881717, -0.80873615, 0, 0.80873615, -0.5881717, 1, 0, 0, -35.2, 0.3, -243)
 light_color = Color(1, 0.9019608, 0.7607843, 1)
 light_energy = 1.2
@@ -1430,7 +1430,7 @@ spot_attenuation = 0.9
 spot_angle = 40.0
 metadata/only = "night"
 
-[node name="@Label3D@8" type="Label3D" parent="." unique_id=819188779]
+[node name="@Label3D@8" type="Label3D" parent="." unique_id=427496714]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 44.08, 6.3, 0)
 pixel_size = 0.005859375
 double_sided = false
@@ -1439,7 +1439,7 @@ text = "SOUTHLAND MALL"
 font = ExtResource("1_g0ktn")
 font_size = 128
 
-[node name="@Label3D@9" type="Label3D" parent="." unique_id=824711453]
+[node name="@Label3D@9" type="Label3D" parent="." unique_id=1869673284]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 50.21, 4.6, 0)
 pixel_size = 0.003125
 double_sided = false
@@ -1448,7 +1448,7 @@ text = "SOUTHLAND MALL"
 font = ExtResource("1_g0ktn")
 font_size = 128
 
-[node name="@Label3D@25" type="Label3D" parent="." unique_id=1974995024]
+[node name="@Label3D@25" type="Label3D" parent="." unique_id=1579026835]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 44.17, 5.4, -28)
 pixel_size = 0.00625
 double_sided = false
@@ -1457,7 +1457,7 @@ text = "K&B"
 font = ExtResource("1_g0ktn")
 font_size = 128
 
-[node name="@Label3D@26" type="Label3D" parent="." unique_id=1342160460]
+[node name="@Label3D@26" type="Label3D" parent="." unique_id=211476169]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 44.16, 6.55, -73.25)
 pixel_size = 0.0046875
 double_sided = false
@@ -1466,7 +1466,7 @@ text = "Cucos"
 font = ExtResource("2_j8x0k")
 font_size = 128
 
-[node name="@Label3D@27" type="Label3D" parent="." unique_id=1592381538]
+[node name="@Label3D@27" type="Label3D" parent="." unique_id=735960369]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 44.16, 6.1, -73.25)
 pixel_size = 0.00171875
 double_sided = false
@@ -1475,7 +1475,7 @@ text = "MEXICAN CAFE"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@37" type="Label3D" parent="." unique_id=765900392]
+[node name="@Label3D@37" type="Label3D" parent="." unique_id=666252106]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -214.08, 5.4, 76)
 pixel_size = 0.00859375
 double_sided = false
@@ -1484,7 +1484,7 @@ text = "JCPenney"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@38" type="Label3D" parent="." unique_id=397055417]
+[node name="@Label3D@38" type="Label3D" parent="." unique_id=683161157]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -176, 5.4, 106.08)
 pixel_size = 0.00859375
 double_sided = false
@@ -1493,7 +1493,7 @@ text = "JCPenney"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@39" type="Label3D" parent="." unique_id=372502517]
+[node name="@Label3D@39" type="Label3D" parent="." unique_id=617562745]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -162, 4.25, -14.05)
 pixel_size = 0.003125
 double_sided = false
@@ -1502,7 +1502,7 @@ text = "1"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@40" type="Label3D" parent="." unique_id=1398301026]
+[node name="@Label3D@40" type="Label3D" parent="." unique_id=1695336040]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -168, 4.25, -14.05)
 pixel_size = 0.003125
 double_sided = false
@@ -1511,7 +1511,7 @@ text = "2"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@41" type="Label3D" parent="." unique_id=575519320]
+[node name="@Label3D@41" type="Label3D" parent="." unique_id=1078515501]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -193, 3.8, -15.62)
 pixel_size = 0.002734375
 double_sided = false
@@ -1520,7 +1520,7 @@ text = "Package Pick-up"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@42" type="Label3D" parent="." unique_id=1487678266]
+[node name="@Label3D@42" type="Label3D" parent="." unique_id=343777992]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -179, 7.6, -14.08)
 pixel_size = 0.0078125
 double_sided = false
@@ -1529,7 +1529,7 @@ text = "JCPenney"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@49" type="Label3D" parent="." unique_id=1220919679]
+[node name="@Label3D@49" type="Label3D" parent="." unique_id=1980026203]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 44.08, 11.6, 109)
 pixel_size = 0.0125
 double_sided = false
@@ -1538,7 +1538,7 @@ text = "Dillard's"
 font = ExtResource("1_g0ktn")
 font_size = 128
 
-[node name="@Label3D@60" type="Label3D" parent="." unique_id=1231168282]
+[node name="@Label3D@60" type="Label3D" parent="." unique_id=81681958]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 7.3, 142.66)
 pixel_size = 0.00859375
 double_sided = false
@@ -1547,7 +1547,7 @@ text = "Dillard's"
 font = ExtResource("1_g0ktn")
 font_size = 128
 
-[node name="@Label3D@61" type="Label3D" parent="." unique_id=1170570426]
+[node name="@Label3D@61" type="Label3D" parent="." unique_id=322839640]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 11.6, 138.08)
 pixel_size = 0.0125
 double_sided = false
@@ -1556,7 +1556,7 @@ text = "Dillard's"
 font = ExtResource("1_g0ktn")
 font_size = 128
 
-[node name="@Label3D@66" type="Label3D" parent="." unique_id=1206358522]
+[node name="@Label3D@66" type="Label3D" parent="." unique_id=384242633]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -72.08, 6.6, -134)
 pixel_size = 0.0125
 double_sided = false
@@ -1565,7 +1565,7 @@ text = "Sears"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@67" type="Label3D" parent="." unique_id=1968555802]
+[node name="@Label3D@67" type="Label3D" parent="." unique_id=947406247]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 44.08, 6.6, -134)
 pixel_size = 0.0125
 double_sided = false
@@ -1574,7 +1574,7 @@ text = "Sears"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@68" type="Label3D" parent="." unique_id=633435581]
+[node name="@Label3D@68" type="Label3D" parent="." unique_id=84183534]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -20, 6.6, -146.08)
 pixel_size = 0.0125
 double_sided = false
@@ -1583,7 +1583,7 @@ text = "Sears"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@69" type="Label3D" parent="." unique_id=1064470656]
+[node name="@Label3D@69" type="Label3D" parent="." unique_id=1299617305]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33, 2.85, 70.05)
 pixel_size = 0.00140625
 double_sided = false
@@ -1592,7 +1592,7 @@ text = "3026"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@70" type="Label3D" parent="." unique_id=714188692]
+[node name="@Label3D@70" type="Label3D" parent="." unique_id=288699877]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29, 2.85, 70.05)
 pixel_size = 0.00140625
 double_sided = false
@@ -1601,7 +1601,7 @@ text = "3027"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@71" type="Label3D" parent="." unique_id=1202576362]
+[node name="@Label3D@71" type="Label3D" parent="." unique_id=1641526419]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 2.85, 70.05)
 pixel_size = 0.00140625
 double_sided = false
@@ -1610,7 +1610,7 @@ text = "3028"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@72" type="Label3D" parent="." unique_id=1086255987]
+[node name="@Label3D@72" type="Label3D" parent="." unique_id=1283106627]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.5, 2.85, 70.05)
 pixel_size = 0.00140625
 double_sided = false
@@ -1619,7 +1619,7 @@ text = "3029"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@187" type="Label3D" parent="." unique_id=1038470137]
+[node name="@Label3D@187" type="Label3D" parent="." unique_id=1133746262]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -133, 2.45, 202.94)
 pixel_size = 0.00140625
 double_sided = false
@@ -1628,7 +1628,7 @@ text = "STOP"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@188" type="Label3D" parent="." unique_id=1851202156]
+[node name="@Label3D@188" type="Label3D" parent="." unique_id=915768823]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 2.45, -238.44)
 pixel_size = 0.00140625
 double_sided = false
@@ -1637,7 +1637,7 @@ text = "STOP"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@189" type="Label3D" parent="." unique_id=392097268]
+[node name="@Label3D@189" type="Label3D" parent="." unique_id=877947174]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -430.93002, 38.5, 60)
 pixel_size = 0.0031939163
 double_sided = false
@@ -1646,7 +1646,7 @@ text = "NORTH TERREBONNE"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@190" type="Label3D" parent="." unique_id=1795075142]
+[node name="@Label3D@190" type="Label3D" parent="." unique_id=1237388002]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 8.2, -273.65)
 pixel_size = 0.0078125
 double_sided = false
@@ -1655,7 +1655,7 @@ text = "Kirschman's"
 font = ExtResource("1_g0ktn")
 font_size = 128
 
-[node name="@Label3D@191" type="Label3D" parent="." unique_id=1034466714]
+[node name="@Label3D@191" type="Label3D" parent="." unique_id=179358061]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 7.3, -273.65)
 pixel_size = 0.0028125
 double_sided = false
@@ -1664,7 +1664,7 @@ text = "FURNITURE"
 font = ExtResource("3_jmw5f")
 font_size = 128
 
-[node name="@Label3D@192" type="Label3D" parent="." unique_id=966707910]
+[node name="@Label3D@192" type="Label3D" parent="." unique_id=1603330548]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 133.52, 8.5, 232)
 pixel_size = 0.003515625
 double_sided = false
@@ -1673,7 +1673,7 @@ text = "Ground Pat'i"
 font = ExtResource("2_j8x0k")
 font_size = 128
 
-[node name="@Label3D@193" type="Label3D" parent="." unique_id=206201532]
+[node name="@Label3D@193" type="Label3D" parent="." unique_id=1712289818]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 130.48, 8.5, 232)
 pixel_size = 0.003515625
 double_sided = false
@@ -1682,7 +1682,7 @@ text = "Ground Pat'i"
 font = ExtResource("2_j8x0k")
 font_size = 128
 
-[node name="@Label3D@194" type="Label3D" parent="." unique_id=1994063711]
+[node name="@Label3D@194" type="Label3D" parent="." unique_id=148009128]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 132, 8.5, 233.52)
 pixel_size = 0.003515625
 double_sided = false
@@ -1691,7 +1691,7 @@ text = "Ground Pat'i"
 font = ExtResource("2_j8x0k")
 font_size = 128
 
-[node name="@Label3D@195" type="Label3D" parent="." unique_id=991486063]
+[node name="@Label3D@195" type="Label3D" parent="." unique_id=1631477709]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 132, 8.5, 230.48)
 pixel_size = 0.003515625
 double_sided = false
@@ -1700,7 +1700,7 @@ text = "Ground Pat'i"
 font = ExtResource("2_j8x0k")
 font_size = 128
 
-[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1026006721]
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=369011174]
 transform = Transform3D(-0.83604795, -0.35191518, 0.42092705, 0, 0.76719606, 0.6414127, -0.5486564, 0.5362517, -0.6414127, 0, 0, 0)
 light_color = Color(1, 0.95, 0.86, 1)
 light_energy = 1.1
@@ -1709,81 +1709,81 @@ light_bake_mode = 1
 shadow_enabled = true
 metadata/only = "day"
 
-[node name="Env" type="WorldEnvironment" parent="." unique_id=1062765667]
+[node name="Env" type="WorldEnvironment" parent="." unique_id=1764232997]
 environment = ExtResource("4_8j2rw")
 
-[node name="Static" type="Node3D" parent="." unique_id=557775772]
+[node name="Static" type="Node3D" parent="." unique_id=460445069]
 
-[node name="ex_shell" type="MeshInstance3D" parent="Static" unique_id=1599817053]
+[node name="ex_shell" type="MeshInstance3D" parent="Static" unique_id=938119006]
 mesh = ExtResource("5_1homq")
 
-[node name="ex_roof" type="MeshInstance3D" parent="Static" unique_id=1419007444]
+[node name="ex_roof" type="MeshInstance3D" parent="Static" unique_id=584940986]
 mesh = ExtResource("6_14yat")
 
-[node name="ex_entry" type="MeshInstance3D" parent="Static" unique_id=278746271]
+[node name="ex_entry" type="MeshInstance3D" parent="Static" unique_id=1484332698]
 mesh = ExtResource("7_oefx5")
 
-[node name="ex_props" type="MeshInstance3D" parent="Static" unique_id=1490779919]
+[node name="ex_props" type="MeshInstance3D" parent="Static" unique_id=1415381148]
 mesh = ExtResource("8_ha7vv")
 
-[node name="ex_lot" type="MeshInstance3D" parent="Static" unique_id=2086154919]
+[node name="ex_lot" type="MeshInstance3D" parent="Static" unique_id=822433300]
 mesh = ExtResource("9_hu374")
 
-[node name="ex_glass" type="MeshInstance3D" parent="Static" unique_id=1552887680]
+[node name="ex_glass" type="MeshInstance3D" parent="Static" unique_id=104548542]
 mesh = ExtResource("10_oloas")
 
-[node name="ex_ground" type="MeshInstance3D" parent="Static" unique_id=1162710042]
+[node name="ex_ground" type="MeshInstance3D" parent="Static" unique_id=1941967679]
 mesh = ExtResource("11_l5y2e")
 
-[node name="ex_walks" type="MeshInstance3D" parent="Static" unique_id=354483796]
+[node name="ex_walks" type="MeshInstance3D" parent="Static" unique_id=894220699]
 mesh = ExtResource("12_h4421")
 
-[node name="ex_far" type="MeshInstance3D" parent="Static" unique_id=2143384197]
+[node name="ex_far" type="MeshInstance3D" parent="Static" unique_id=987591232]
 mesh = ExtResource("13_as2cb")
 
-[node name="ex_signs" type="MeshInstance3D" parent="Static" unique_id=644222420]
+[node name="ex_signs" type="MeshInstance3D" parent="Static" unique_id=79680098]
 mesh = ExtResource("14_nur6p")
 
-[node name="Dynamic" type="Node3D" parent="." unique_id=1036141584]
+[node name="Dynamic" type="Node3D" parent="." unique_id=2130550607]
 
-[node name="dyn_ex_glass" type="MeshInstance3D" parent="Dynamic" unique_id=235462549]
+[node name="dyn_ex_glass" type="MeshInstance3D" parent="Dynamic" unique_id=414290040]
 cast_shadow = 0
 gi_mode = 2
 mesh = ExtResource("15_2s8sm")
 
-[node name="dyn_ex_cucos_neon" type="MeshInstance3D" parent="Dynamic" unique_id=1890941683]
+[node name="dyn_ex_cucos_neon" type="MeshInstance3D" parent="Dynamic" unique_id=1240931195]
 cast_shadow = 0
 gi_mode = 2
 mesh = ExtResource("16_bgsev")
 
-[node name="dyn_ex_cucos_neon_glow" type="MeshInstance3D" parent="Dynamic" unique_id=969167942]
+[node name="dyn_ex_cucos_neon_glow" type="MeshInstance3D" parent="Dynamic" unique_id=1083350113]
 cast_shadow = 0
 gi_mode = 2
 mesh = ExtResource("17_m8ne2")
 
-[node name="dyn_ex_flora" type="MeshInstance3D" parent="Dynamic" unique_id=256699257]
+[node name="dyn_ex_flora" type="MeshInstance3D" parent="Dynamic" unique_id=280011100]
 cast_shadow = 0
 gi_mode = 2
 mesh = ExtResource("18_g32kt")
 
-[node name="dyn_ex_paint" type="MeshInstance3D" parent="Dynamic" unique_id=1156231639]
+[node name="dyn_ex_paint" type="MeshInstance3D" parent="Dynamic" unique_id=1741881426]
 cast_shadow = 0
 gi_mode = 2
 mesh = ExtResource("19_em073")
 
-[node name="LightmapGI" type="LightmapGI" parent="." unique_id=1371215051]
+[node name="LightmapGI" type="LightmapGI" parent="." unique_id=1943547390]
 quality = 3
 denoiser_strength = 0.25
 max_texture_size = 4096
 generate_probes_subdiv = 1
 
-[node name="Player" type="Node3D" parent="." unique_id=525010570]
+[node name="Player" type="Node3D" parent="." unique_id=794221930]
 script = ExtResource("20_o2bjb")
-obstacles = [["rect", -85.0, -236.0, -57.0, -207.0], ["rect", 49.1, -5.800000095367432, 49.9, -5.000000095367431], ["rect", 49.1, 5.000000095367431, 49.9, 5.800000095367432], ["rect", -146.03, 112.0, -144.8, 118.0], ["rect", -135.2, 112.0, -133.97, 118.0], ["rect", -146.1, 117.7, -144.70000000000002, 118.6], ["rect", -135.29999999999998, 117.7, -133.9, 118.6], ["rect", -143.95000610351562, 112.65, -143.25000610351563, 113.35], ["rect", -136.74999389648437, 112.65, -136.04999389648438, 113.35], ["rect", -152.9, 110.5000015258789, -149.1, 111.30000152587891], ["rect", -150.0, 127.0, -130.0, 131.0], ["rect", -140.5, 128.5, -139.5, 129.5], ["rect", -81.30000152587891, -99.9, -80.5000015258789, -96.1], ["rect", -81.35, -84.94999847412109, -80.65, -84.2499984741211], ["rect", -82.0, -70.5, -81.2, -56.0], ["rect", -215.35, 52.65, -214.65, 53.35], ["rect", -215.7499969482422, 101.45, -214.64999694824218, 102.55], ["rect", -215.8, 101.4, -214.6, 102.6], ["rect", -215.7499969482422, 95.95, -214.64999694824218, 97.05], ["rect", -215.8, 95.9, -214.6, 97.1], ["rect", -215.7499969482422, 90.45, -214.64999694824218, 91.55], ["rect", -215.8, 90.4, -214.6, 91.6], ["rect", -215.7499969482422, 84.95, -214.64999694824218, 86.05], ["rect", -215.8, 84.9, -214.6, 86.1], ["rect", -215.7499969482422, 79.45, -214.64999694824218, 80.55], ["rect", -215.8, 79.4, -214.6, 80.6], ["rect", -215.7499969482422, 73.95, -214.64999694824218, 75.05], ["rect", -215.8, 73.9, -214.6, 75.1], ["rect", -215.7499969482422, 68.45, -214.64999694824218, 69.55], ["rect", -215.8, 68.4, -214.6, 69.6], ["rect", -215.7499969482422, 62.95, -214.64999694824218, 64.05], ["rect", -215.8, 62.9, -214.6, 64.1], ["rect", -215.7499969482422, 57.45, -214.64999694824218, 58.55], ["rect", -215.8, 57.4, -214.6, 58.6], ["rect", -206.4, 108.6, -205.6, 109.4], ["rect", -202.9, 108.6, -202.1, 109.4], ["rect", -199.4, 108.6, -198.6, 109.4], ["rect", -195.9, 108.6, -195.1, 109.4], ["rect", -192.4, 108.6, -191.6, 109.4], ["rect", -190.85, 106.65, -190.15, 107.35], ["rect", -190.0, 106.3, -156.0, 107.7], ["rect", -172.0, -16.0, -158.0, -14.0], ["rect", -177.6, -20.0, -174.4, -14.0], ["rect", -226.0, -30.0, -214.0, -20.0], ["rect", -223.4, -27.4, -222.6, -26.6], ["rect", -218.4, -25.9, -217.6, -25.1], ["rect", -221.4, -22.9, -220.6, -22.1], ["rect", -212.8, -21.3, -212.2, -20.7], ["rect", 47.15, 80.75, 47.65, 81.25], ["rect", 47.15, 84.48333, 47.65, 84.98333], ["rect", 47.15, 88.21667, 47.65, 88.71667], ["rect", 47.15, 91.95, 47.65, 92.45], ["rect", 47.15, 95.683334, 47.65, 96.183334], ["rect", 47.15, 99.416664, 47.65, 99.916664], ["rect", 47.15, 103.15, 47.65, 103.65], ["rect", 47.15, 106.88333, 47.65, 107.38333], ["rect", 47.15, 110.61667, 47.65, 111.11667], ["rect", 47.15, 114.35, 47.65, 114.85], ["rect", 47.15, 118.08333, 47.65, 118.58333], ["rect", 47.15, 121.816666, 47.65, 122.316666], ["rect", 47.15, 125.55, 47.65, 126.05], ["rect", 47.15, 129.28333, 47.65, 129.78333], ["rect", 47.15, 133.01666, 47.65, 133.51666], ["rect", 47.15, 136.75, 47.65, 137.25], ["rect", 49.050000762939455, 84.35, 49.35000076293945, 84.65], ["rect", 49.050000762939455, 94.35, 49.35000076293945, 94.65], ["rect", 49.050000762939455, 104.35, 49.35000076293945, 104.65], ["rect", 49.050000762939455, 114.35, 49.35000076293945, 114.65], ["rect", 49.050000762939455, 124.35, 49.35000076293945, 124.65], ["rect", 49.050000762939455, 134.35, 49.35000076293945, 134.65], ["rect", -37.25, 141.15, -36.75, 141.65], ["rect", -33.425, 141.15, -32.925, 141.65], ["rect", -29.6, 141.15, -29.1, 141.65], ["rect", -25.775, 141.15, -25.275, 141.65], ["rect", -21.95, 141.15, -21.45, 141.65], ["rect", -33.65, 143.04999694824218, -33.35, 143.3499969482422], ["rect", -23.65, 143.04999694824218, -23.35, 143.3499969482422], ["rect", -8.549999, 141.15, -8.049999, 141.65], ["rect", -4.8857155, 141.15, -4.3857155, 141.65], ["rect", -1.2214279, 141.15, -0.7214279, 141.65], ["rect", 2.4428558, 141.15, 2.9428558, 141.65], ["rect", 6.1071434, 141.15, 6.6071434, 141.65], ["rect", 9.771427, 141.15, 10.271427, 141.65], ["rect", 13.435715, 141.15, 13.935715, 141.65], ["rect", 17.099998, 141.15, 17.599998, 141.65], ["rect", 20.764286, 141.15, 21.264286, 141.65], ["rect", 24.42857, 141.15, 24.92857, 141.65], ["rect", 28.092857, 141.15, 28.592857, 141.65], ["rect", 31.757141, 141.15, 32.25714, 141.65], ["rect", 35.421425, 141.15, 35.921425, 141.65], ["rect", 39.085716, 141.15, 39.585716, 141.65], ["rect", 42.75, 141.15, 43.25, 141.65], ["rect", -4.949999237060547, 143.04999694824218, -4.6499992370605465, 143.3499969482422], ["rect", 5.050000762939453, 143.04999694824218, 5.3500007629394535, 143.3499969482422], ["rect", 15.050000762939453, 143.04999694824218, 15.350000762939453, 143.3499969482422], ["rect", 25.050000762939455, 143.04999694824218, 25.35000076293945, 143.3499969482422], ["rect", 35.04999694824219, 143.04999694824218, 35.349996948242186, 143.3499969482422], ["rect", -21.05, 138.0000030517578, -19.55, 142.60000305175782], ["rect", -10.450001, 138.0000030517578, -8.950001, 142.60000305175782], ["rect", -22.14999923706055, 138.8499969482422, -21.449999237060545, 139.54999694824218], ["rect", -50.0, 141.0, -43.0, 147.0], ["rect", -46.0, 120.0, -38.0, 134.0], ["rect", -65.8, 123.7, -50.2, 126.3], ["rect", -59.3, 128.7, -56.7, 135.3], ["rect", -79.8, -101.2, -79.4, -100.8], ["rect", -79.8, -113.7, -79.4, -113.3], ["rect", -79.8, -126.2, -79.4, -125.8], ["rect", -75.0, -126.0, -72.0, -101.0], ["rect", -95.0, -118.45, -75.0, -117.95], ["rect", -95.0, -101.05, -75.0, -100.55], ["rect", -85.89999847412109, -112.3, -73.89999694824219, -109.7], ["rect", 44.85000076293945, -113.7500015258789, 45.550000762939455, -113.05000152587891], ["rect", -78.2, 6.0, -74.0, 14.0], ["rect", 38.0, -46.5, 40.7, -43.1], ["rect", -400.0, -247.5, -120.0, -150.0], ["rect", -400.0, -247.5, -362.0, 210.5], ["rect", 52.0, -236.3, 55.0, -232.7], ["rect", 53.0, -235.0, 54.0, -234.0], ["rect", 100.30000000000005, -236.3, 103.30000000000005, -232.7], ["rect", 52.0, -218.3, 55.0, -214.7], ["rect", 100.30000000000005, -218.3, 103.30000000000005, -214.7], ["rect", 52.0, -200.3, 55.0, -196.7], ["rect", 53.0, -199.0, 54.0, -198.0], ["rect", 100.30000000000005, -200.3, 103.30000000000005, -196.7], ["rect", 52.0, -182.3, 55.0, -178.7], ["rect", 53.0, -181.0, 54.0, -180.0], ["rect", 100.30000000000005, -182.3, 103.30000000000005, -178.7], ["rect", 101.3, -181.0, 102.3, -180.0], ["rect", 52.0, -164.3, 55.0, -160.7], ["rect", 53.0, -163.0, 54.0, -162.0], ["rect", 100.30000000000005, -164.3, 103.30000000000005, -160.7], ["rect", 52.0, -146.3, 55.0, -142.7], ["rect", 53.0, -145.0, 54.0, -144.0], ["rect", 100.30000000000005, -146.3, 103.30000000000005, -142.7], ["rect", 101.3, -145.0, 102.3, -144.0], ["rect", 52.0, -128.3, 55.0, -124.7], ["rect", 53.0, -127.0, 54.0, -126.0], ["rect", 100.30000000000005, -128.3, 103.30000000000005, -124.7], ["rect", 52.0, -110.3, 55.0, -106.7], ["rect", 100.30000000000005, -110.3, 103.30000000000005, -106.7], ["rect", 65.50000000000001, -92.3, 68.50000000000001, -88.7], ["rect", 66.5, -91.0, 67.5, -90.0], ["rect", 100.30000000000005, -92.3, 103.30000000000005, -88.7], ["rect", 52.0, -74.3, 55.0, -70.7], ["rect", 53.0, -73.0, 54.0, -72.0], ["rect", 57.10000000000001, -74.3, 60.10000000000001, -70.7], ["rect", 58.1, -73.0, 59.1, -72.0], ["rect", 52.0, -56.3, 55.0, -52.7], ["rect", 53.0, -55.0, 54.0, -54.0], ["rect", 57.10000000000001, -56.3, 60.10000000000001, -52.7], ["rect", 52.0, -38.3, 55.0, -34.7], ["rect", 53.0, -37.0, 54.0, -36.0], ["rect", 100.30000000000005, -38.3, 103.30000000000005, -34.7], ["rect", 101.3, -37.0, 102.3, -36.0], ["rect", 52.0, -20.3, 55.0, -16.7], ["rect", 53.0, -19.0, 54.0, -18.0], ["rect", 100.30000000000005, -20.3, 103.30000000000005, -16.7], ["rect", 52.0, 15.7, 55.0, 19.3], ["rect", 53.0, 17.0, 54.0, 18.0], ["rect", 100.30000000000005, 15.7, 103.30000000000005, 19.3], ["rect", 52.0, 33.7, 55.0, 37.3], ["rect", 53.0, 35.0, 54.0, 36.0], ["rect", 100.30000000000005, 33.7, 103.30000000000005, 37.3], ["rect", 101.3, 35.0, 102.3, 36.0], ["rect", 52.0, 51.7, 55.0, 55.3], ["rect", 53.0, 53.0, 54.0, 54.0], ["rect", 100.30000000000005, 51.7, 103.30000000000005, 55.3], ["rect", 52.0, 69.7, 55.0, 73.3], ["rect", 53.0, 71.0, 54.0, 72.0], ["rect", 100.30000000000005, 69.7, 103.30000000000005, 73.3], ["rect", 101.3, 71.0, 102.3, 72.0], ["rect", 52.0, 87.7, 55.0, 91.3], ["rect", 53.0, 89.0, 54.0, 90.0], ["rect", 100.30000000000005, 87.7, 103.30000000000005, 91.3], ["rect", 52.0, 105.7, 55.0, 109.3], ["rect", 100.30000000000005, 105.7, 103.30000000000005, 109.3], ["rect", 52.0, 123.7, 55.0, 127.3], ["rect", 53.0, 125.0, 54.0, 126.0], ["rect", 100.30000000000005, 123.7, 103.30000000000005, 127.3], ["rect", 52.0, 141.7, 55.0, 145.3], ["rect", 53.0, 143.0, 54.0, 144.0], ["rect", 100.30000000000005, 141.7, 103.30000000000005, 145.3], ["rect", 101.3, 143.0, 102.3, 144.0], ["rect", 52.0, 159.7, 55.0, 163.3], ["rect", 53.0, 161.0, 54.0, 162.0], ["rect", 100.30000000000005, 159.7, 103.30000000000005, 163.3], ["rect", 52.0, 177.7, 55.0, 181.3], ["rect", 53.0, 179.0, 54.0, 180.0], ["rect", 100.30000000000005, 177.7, 103.30000000000005, 181.3], ["rect", 101.3, 179.0, 102.3, 180.0], ["rect", -98.3, -198.1000000000002, -94.7, -195.1000000000002], ["rect", -97.0, -197.1, -96.0, -196.1], ["rect", -98.3, -160.60000000000036, -94.7, -157.60000000000036], ["rect", -80.3, -198.1000000000002, -76.7, -195.1000000000002], ["rect", -79.0, -197.1, -78.0, -196.1], ["rect", -80.3, -160.60000000000036, -76.7, -157.60000000000036], ["rect", -79.0, -159.6, -78.0, -158.6], ["rect", -62.3, -198.1000000000002, -58.7, -195.1000000000002], ["rect", -61.0, -197.1, -60.0, -196.1], ["rect", -62.3, -160.60000000000036, -58.7, -157.60000000000036], ["rect", -44.3, -244.0, -40.7, -241.0], ["rect", -43.0, -243.0, -42.0, -242.0], ["rect", -44.3, -160.60000000000036, -40.7, -157.60000000000036], ["rect", -43.0, -159.6, -42.0, -158.6], ["rect", -26.3, -227.80000000000007, -22.7, -224.80000000000007], ["rect", -25.0, -226.8, -24.0, -225.8], ["rect", -26.3, -160.60000000000036, -22.7, -157.60000000000036], ["rect", -25.0, -159.6, -24.0, -158.6], ["rect", -8.3, -244.0, -4.7, -241.0], ["rect", -7.0, -243.0, -6.0, -242.0], ["rect", -8.3, -174.1000000000003, -4.7, -171.1000000000003], ["rect", -7.0, -173.1, -6.0, -172.1], ["rect", 9.7, -244.0, 13.3, -241.0], ["rect", 11.0, -243.0, 12.0, -242.0], ["rect", 9.7, -160.60000000000036, 13.3, -157.60000000000036], ["rect", 11.0, -159.6, 12.0, -158.6], ["rect", 27.7, -244.0, 31.3, -241.0], ["rect", 27.7, -160.60000000000036, 31.3, -157.60000000000036], ["rect", 29.0, -159.6, 30.0, -158.6], ["rect", -146.3, -144.0, -142.7, -141.0], ["rect", -145.0, -143.0, -144.0, -142.0], ["rect", -146.3, -41.69999999999996, -142.7, -38.69999999999996], ["rect", -145.0, -40.7, -144.0, -39.7], ["rect", -128.3, -144.0, -124.7, -141.0], ["rect", -128.3, -41.69999999999996, -124.7, -38.69999999999996], ["rect", -110.3, -144.0, -106.7, -141.0], ["rect", -109.0, -143.0, -108.0, -142.0], ["rect", -110.3, -41.69999999999996, -106.7, -38.69999999999996], ["rect", -109.0, -40.7, -108.0, -39.7], ["rect", -356.0, -124.3, -353.0, -120.7], ["rect", -355.0, -123.0, -354.0, -122.0], ["rect", -240.2000000000005, -124.3, -237.2000000000005, -120.7], ["rect", -239.2, -123.0, -238.2, -122.0], ["rect", -356.0, -106.3, -353.0, -102.7], ["rect", -355.0, -105.0, -354.0, -104.0], ["rect", -240.2000000000005, -106.3, -237.2000000000005, -102.7], ["rect", -239.2, -105.0, -238.2, -104.0], ["rect", -356.0, -88.3, -353.0, -84.7], ["rect", -355.0, -87.0, -354.0, -86.0], ["rect", -240.2000000000005, -88.3, -237.2000000000005, -84.7], ["rect", -239.2, -87.0, -238.2, -86.0], ["rect", -356.0, -70.3, -353.0, -66.7], ["rect", -355.0, -69.0, -354.0, -68.0], ["rect", -240.2000000000005, -70.3, -237.2000000000005, -66.7], ["rect", -356.0, -52.3, -353.0, -48.7], ["rect", -355.0, -51.0, -354.0, -50.0], ["rect", -240.2000000000005, -52.3, -237.2000000000005, -48.7], ["rect", -239.2, -51.0, -238.2, -50.0], ["rect", -356.0, -34.3, -353.0, -30.7], ["rect", -240.2000000000005, -34.3, -237.2000000000005, -30.7], ["rect", -239.2, -33.0, -238.2, -32.0], ["rect", -356.0, -16.3, -353.0, -12.7], ["rect", -355.0, -15.0, -354.0, -14.0], ["rect", -240.2000000000005, -16.3, -237.2000000000005, -12.7], ["rect", -239.2, -15.0, -238.2, -14.0], ["rect", -356.0, 1.7, -353.0, 5.3], ["rect", -355.0, 3.0, -354.0, 4.0], ["rect", -240.2000000000005, 1.7, -237.2000000000005, 5.3], ["rect", -239.2, 3.0, -238.2, 4.0], ["rect", -356.0, 19.7, -353.0, 23.3], ["rect", -355.0, 21.0, -354.0, 22.0], ["rect", -240.2000000000005, 19.7, -237.2000000000005, 23.3], ["rect", -239.2, 21.0, -238.2, 22.0], ["rect", -356.0, 37.7, -353.0, 41.3], ["rect", -355.0, 39.0, -354.0, 40.0], ["rect", -240.2000000000005, 37.7, -237.2000000000005, 41.3], ["rect", -356.0, 55.7, -353.0, 59.3], ["rect", -355.0, 57.0, -354.0, 58.0], ["rect", -240.2000000000005, 55.7, -237.2000000000005, 59.3], ["rect", -239.2, 57.0, -238.2, 58.0], ["rect", -356.0, 73.7, -353.0, 77.3], ["rect", -240.2000000000005, 73.7, -237.2000000000005, 77.3], ["rect", -239.2, 75.0, -238.2, 76.0], ["rect", -356.0, 91.7, -353.0, 95.3], ["rect", -355.0, 93.0, -354.0, 94.0], ["rect", -240.2000000000005, 91.7, -237.2000000000005, 95.3], ["rect", -239.2, 93.0, -238.2, 94.0], ["rect", -356.0, 109.7, -353.0, 113.3], ["rect", -355.0, 111.0, -354.0, 112.0], ["rect", -240.2000000000005, 109.7, -237.2000000000005, 113.3], ["rect", -239.2, 111.0, -238.2, 112.0], ["rect", -356.0, 127.7, -353.0, 131.3], ["rect", -355.0, 129.0, -354.0, 130.0], ["rect", -240.2000000000005, 127.7, -237.2000000000005, 131.3], ["rect", -239.2, 129.0, -238.2, 130.0], ["rect", -356.0, 145.7, -353.0, 149.3], ["rect", -355.0, 147.0, -354.0, 148.0], ["rect", -240.2000000000005, 145.7, -237.2000000000005, 149.3], ["rect", -356.0, 163.7, -353.0, 167.3], ["rect", -355.0, 165.0, -354.0, 166.0], ["rect", -240.2000000000005, 163.7, -237.2000000000005, 167.3], ["rect", -239.2, 165.0, -238.2, 166.0], ["rect", -356.0, 181.7, -353.0, 185.3], ["rect", -240.2000000000005, 181.7, -237.2000000000005, 185.3], ["rect", -239.2, 183.0, -238.2, 184.0], ["rect", -232.3, 116.0, -228.7, 119.0], ["rect", -231.0, 117.0, -230.0, 118.0], ["rect", -232.3, 196.6999999999997, -228.7, 199.6999999999997], ["rect", -231.0, 197.7, -230.0, 198.7], ["rect", -214.3, 116.0, -210.7, 119.0], ["rect", -213.0, 117.0, -212.0, 118.0], ["rect", -214.3, 196.6999999999997, -210.7, 199.6999999999997], ["rect", -213.0, 197.7, -212.0, 198.7], ["rect", -196.3, 116.0, -192.7, 119.0], ["rect", -195.0, 117.0, -194.0, 118.0], ["rect", -196.3, 196.6999999999997, -192.7, 199.6999999999997], ["rect", -195.0, 197.7, -194.0, 198.7], ["rect", -178.3, 116.0, -174.7, 119.0], ["rect", -178.3, 196.6999999999997, -174.7, 199.6999999999997], ["rect", -160.3, 137.59999999999997, -156.7, 140.59999999999997], ["rect", -159.0, 138.6, -158.0, 139.6], ["rect", -160.3, 196.6999999999997, -156.7, 199.6999999999997], ["rect", -159.0, 197.7, -158.0, 198.7], ["rect", -142.3, 137.59999999999997, -138.7, 140.59999999999997], ["rect", -142.3, 175.0999999999998, -138.7, 178.0999999999998], ["rect", -141.0, 176.1, -140.0, 177.1], ["rect", -124.3, 137.59999999999997, -120.7, 140.59999999999997], ["rect", -123.0, 138.6, -122.0, 139.6], ["rect", -124.3, 196.6999999999997, -120.7, 199.6999999999997], ["rect", -123.0, 197.7, -122.0, 198.7], ["rect", -106.3, 126.80000000000001, -102.7, 129.8], ["rect", -106.3, 196.6999999999997, -102.7, 199.6999999999997], ["rect", -105.0, 197.7, -104.0, 198.7], ["rect", -88.3, 126.80000000000001, -84.7, 129.8], ["rect", -87.0, 127.8, -86.0, 128.8], ["rect", -88.3, 196.6999999999997, -84.7, 199.6999999999997], ["rect", -87.0, 197.7, -86.0, 198.7], ["rect", -70.3, 153.7999999999999, -66.7, 156.7999999999999], ["rect", -69.0, 154.8, -68.0, 155.8], ["rect", -70.3, 196.6999999999997, -66.7, 199.6999999999997], ["rect", -52.3, 153.7999999999999, -48.7, 156.7999999999999], ["rect", -51.0, 154.8, -50.0, 155.8], ["rect", -52.3, 196.6999999999997, -48.7, 199.6999999999997], ["rect", -34.3, 153.7999999999999, -30.7, 156.7999999999999], ["rect", -33.0, 154.8, -32.0, 155.8], ["rect", -34.3, 196.6999999999997, -30.7, 199.6999999999997], ["rect", -33.0, 197.7, -32.0, 198.7], ["rect", -16.3, 156.4999999999999, -12.7, 159.4999999999999], ["rect", -15.0, 157.5, -14.0, 158.5], ["rect", -16.3, 196.6999999999997, -12.7, 199.6999999999997], ["rect", 1.7, 148.39999999999992, 5.3, 151.39999999999992], ["rect", 1.7, 196.6999999999997, 5.3, 199.6999999999997], ["rect", 3.0, 197.7, 4.0, 198.7], ["rect", 19.7, 148.39999999999992, 23.3, 151.39999999999992], ["rect", 21.0, 149.4, 22.0, 150.4], ["rect", 19.7, 196.6999999999997, 23.3, 199.6999999999997], ["rect", 37.7, 148.39999999999992, 41.3, 151.39999999999992], ["rect", 39.0, 149.4, 40.0, 150.4], ["rect", 37.7, 196.6999999999997, 41.3, 199.6999999999997], ["rect", -236.0, -124.3, -233.0, -120.7], ["rect", -235.0, -123.0, -234.0, -122.0], ["rect", -155.30000000000035, -124.3, -152.30000000000035, -120.7], ["rect", -154.3, -123.0, -153.3, -122.0], ["rect", -236.0, -106.3, -233.0, -102.7], ["rect", -235.0, -105.0, -234.0, -104.0], ["rect", -155.30000000000035, -106.3, -152.30000000000035, -102.7], ["rect", -154.3, -105.0, -153.3, -104.0], ["rect", -236.0, -88.3, -233.0, -84.7], ["rect", -155.30000000000035, -88.3, -152.30000000000035, -84.7], ["rect", -236.0, -70.3, -233.0, -66.7], ["rect", -235.0, -69.0, -234.0, -68.0], ["rect", -155.30000000000035, -70.3, -152.30000000000035, -66.7], ["rect", -154.3, -69.0, -153.3, -68.0], ["rect", -236.0, -52.3, -233.0, -48.7], ["rect", -235.0, -51.0, -234.0, -50.0], ["rect", -155.30000000000035, -52.3, -152.30000000000035, -48.7], ["rect", -154.3, -51.0, -153.3, -50.0], ["rect", 54.0, -4.9, 103.5, -3.7], ["rect", 55.65, -4.650000190734863, 56.35, -3.950000190734863], ["rect", 59.786363983154295, -4.650000190734863, 60.4863639831543, -3.950000190734863], ["rect", 63.92272796630859, -4.650000190734863, 64.62272796630859, -3.950000190734863], ["rect", 68.05908813476563, -4.650000190734863, 68.75908813476562, -3.950000190734863], ["rect", 72.1954559326172, -4.650000190734863, 72.89545593261718, -3.950000190734863], ["rect", 76.33181610107422, -4.650000190734863, 77.03181610107421, -3.950000190734863], ["rect", 80.46818389892579, -4.650000190734863, 81.16818389892578, -3.950000190734863], ["rect", 84.60454406738282, -4.650000190734863, 85.3045440673828, -3.950000190734863], ["rect", 88.74091186523438, -4.650000190734863, 89.44091186523437, -3.950000190734863], ["rect", 92.87727203369141, -4.650000190734863, 93.5772720336914, -3.950000190734863], ["rect", 97.01363983154297, -4.650000190734863, 97.71363983154296, -3.950000190734863], ["rect", 101.15, -4.650000190734863, 101.85, -3.950000190734863], ["rect", 54.0, 3.7, 103.5, 4.9], ["rect", 55.65, 3.950000190734863, 56.35, 4.650000190734863], ["rect", 59.786363983154295, 3.950000190734863, 60.4863639831543, 4.650000190734863], ["rect", 63.92272796630859, 3.950000190734863, 64.62272796630859, 4.650000190734863], ["rect", 68.05908813476563, 3.950000190734863, 68.75908813476562, 4.650000190734863], ["rect", 72.1954559326172, 3.950000190734863, 72.89545593261718, 4.650000190734863], ["rect", 76.33181610107422, 3.950000190734863, 77.03181610107421, 4.650000190734863], ["rect", 80.46818389892579, 3.950000190734863, 81.16818389892578, 4.650000190734863], ["rect", 84.60454406738282, 3.950000190734863, 85.3045440673828, 4.650000190734863], ["rect", 88.74091186523438, 3.950000190734863, 89.44091186523437, 4.650000190734863], ["rect", 92.87727203369141, 3.950000190734863, 93.5772720336914, 4.650000190734863], ["rect", 97.01363983154297, 3.950000190734863, 97.71363983154296, 4.650000190734863], ["rect", 101.15, 3.950000190734863, 101.85, 4.650000190734863], ["rect", 46.5, -9.5, 49.5, -6.5], ["rect", 46.5, 6.5, 49.5, 9.5], ["rect", 106.2, -6.3, 106.8, -5.7], ["rect", 106.2, 5.7, 106.8, 6.3], ["rect", -236.0, 204.0, -150.0, 208.0], ["rect", -134.0, 204.0, 60.0, 208.0], ["rect", -231.35, 205.65, -230.65, 206.35], ["rect", -218.85, 205.65, -218.15, 206.35], ["rect", -206.35, 205.65, -205.65, 206.35], ["rect", -193.85, 205.65, -193.15, 206.35], ["rect", -181.35, 205.65, -180.65, 206.35], ["rect", -168.85, 205.65, -168.15, 206.35], ["rect", -156.35, 205.65, -155.65, 206.35], ["rect", -131.35, 205.65, -130.65, 206.35], ["rect", -118.85, 205.65, -118.15, 206.35], ["rect", -106.35, 205.65, -105.65, 206.35], ["rect", -93.85, 205.65, -93.15, 206.35], ["rect", -81.35, 205.65, -80.65, 206.35], ["rect", -68.85, 205.65, -68.15, 206.35], ["rect", -56.35, 205.65, -55.65, 206.35], ["rect", -43.85, 205.65, -43.15, 206.35], ["rect", -31.35, 205.65, -30.65, 206.35], ["rect", -18.85, 205.65, -18.15, 206.35], ["rect", -6.35, 205.65, -5.65, 206.35], ["rect", 6.15, 205.65, 6.85, 206.35], ["rect", 18.65, 205.65, 19.35, 206.35], ["rect", 31.15, 205.65, 31.85, 206.35], ["rect", 43.65, 205.65, 44.35, 206.35], ["rect", 56.15, 205.65, 56.85, 206.35], ["rect", -218.5, 205.5, -217.5, 206.5], ["rect", -158.5, 205.5, -157.5, 206.5], ["rect", -98.5, 205.5, -97.5, 206.5], ["rect", -38.5, 205.5, -37.5, 206.5], ["rect", 21.5, 205.5, 22.5, 206.5], ["rect", -133.15, 202.85, -132.85, 203.15], ["rect", -13.15, -238.65, -12.85, -238.35], ["rect", -234.0, 150.0, -206.0, 160.0], ["rect", -220.5, 154.5, -219.5, 155.5], ["rect", -211.4, 152.6, -210.6, 153.4], ["rect", -229.4, 156.6, -228.6, 157.4], ["rect", 64.0, -78.0, 98.0, -50.0], ["rect", 85.2, -64.45, 85.8, -63.55], ["rect", 88.2, -64.45, 88.8, -63.55], ["rect", 91.2, -64.45, 91.8, -63.55], ["rect", 94.2, -64.45, 94.8, -63.55], ["rect", 68.0, -73.0, 84.0, -55.0], ["rect", -119.3, -8.3, -118.7, -7.7], ["rect", -141.0, -32.0, -121.0, -9.0], ["rect", -351.0, 161.0, -329.0, 173.0], ["rect", -356.0, 182.0, -352.0, 186.0], ["rect", -322.0, 99.0, -302.0, 156.0], ["rect", 96.29999995231628, -13.049999952316284, 103.70000004768372, -9.950000047683716], ["rect", -128.54999995231628, 201.79999995231628, -125.45000004768372, 209.20000004768372], ["rect", -34.549999952316284, -246.70000004768372, -31.450000047683716, -239.29999995231628], ["rect", -92.0, -245.0, -88.0, -241.0], ["rect", -72.0, -146.0, 44.0, -100.0], ["rect", -80.0, -100.0, 44.0, -96.0], ["rect", -80.0, -96.0, 40.0, -86.0], ["rect", -80.0, -86.0, 44.0, -50.0], ["rect", -80.0, -50.0, 38.0, -42.0], ["rect", -52.0, -42.0, 44.0, -14.0], ["rect", -214.0, -14.0, -154.0, -6.0], ["rect", -74.0, -14.0, 44.0, 20.0], ["rect", -228.0, -6.0, -154.0, 20.0], ["rect", -228.0, 20.0, 44.0, 32.0], ["rect", -214.0, 32.0, 44.0, 70.0], ["rect", -214.0, 70.0, -36.0, 72.0], ["rect", -20.0, 70.0, 44.0, 80.0], ["rect", -214.0, 72.0, -42.0, 106.0], ["rect", -38.0, 80.0, 44.0, 138.0], ["rect", -154.0, 106.0, -42.0, 110.0], ["rect", -146.0, 110.0, -42.0, 112.0], ["rect", -134.0, 112.0, -42.0, 118.0]]
+obstacles = [["rect", -85.0, -236.0, -57.0, -207.0], ["rect", 49.1, -5.800000095367432, 49.9, -5.000000095367431], ["rect", 49.1, 5.000000095367431, 49.9, 5.800000095367432], ["rect", -146.03, 112.0, -144.8, 118.0], ["rect", -135.2, 112.0, -133.97, 118.0], ["rect", -146.1, 117.7, -144.70000000000002, 118.6], ["rect", -135.29999999999998, 117.7, -133.9, 118.6], ["rect", -143.95000610351562, 112.65, -143.25000610351563, 113.35], ["rect", -136.74999389648437, 112.65, -136.04999389648438, 113.35], ["rect", -152.9, 110.5000015258789, -149.1, 111.30000152587891], ["rect", -150.0, 127.0, -130.0, 131.0], ["rect", -140.5, 128.5, -139.5, 129.5], ["rect", -81.30000152587891, -99.9, -80.5000015258789, -96.1], ["rect", -81.35, -84.94999847412109, -80.65, -84.2499984741211], ["rect", -82.0, -70.5, -81.2, -56.0], ["rect", -215.35, 52.65, -214.65, 53.35], ["rect", -215.7499969482422, 101.45, -214.64999694824218, 102.55], ["rect", -215.8, 101.4, -214.6, 102.6], ["rect", -215.7499969482422, 95.95, -214.64999694824218, 97.05], ["rect", -215.8, 95.9, -214.6, 97.1], ["rect", -215.7499969482422, 90.45, -214.64999694824218, 91.55], ["rect", -215.8, 90.4, -214.6, 91.6], ["rect", -215.7499969482422, 84.95, -214.64999694824218, 86.05], ["rect", -215.8, 84.9, -214.6, 86.1], ["rect", -215.7499969482422, 79.45, -214.64999694824218, 80.55], ["rect", -215.8, 79.4, -214.6, 80.6], ["rect", -215.7499969482422, 73.95, -214.64999694824218, 75.05], ["rect", -215.8, 73.9, -214.6, 75.1], ["rect", -215.7499969482422, 68.45, -214.64999694824218, 69.55], ["rect", -215.8, 68.4, -214.6, 69.6], ["rect", -215.7499969482422, 62.95, -214.64999694824218, 64.05], ["rect", -215.8, 62.9, -214.6, 64.1], ["rect", -215.7499969482422, 57.45, -214.64999694824218, 58.55], ["rect", -215.8, 57.4, -214.6, 58.6], ["rect", -206.4, 108.6, -205.6, 109.4], ["rect", -202.9, 108.6, -202.1, 109.4], ["rect", -199.4, 108.6, -198.6, 109.4], ["rect", -195.9, 108.6, -195.1, 109.4], ["rect", -192.4, 108.6, -191.6, 109.4], ["rect", -190.85, 106.65, -190.15, 107.35], ["rect", -190.0, 106.3, -156.0, 107.7], ["rect", -172.0, -16.0, -158.0, -14.0], ["rect", -177.6, -20.0, -174.4, -14.0], ["rect", -226.0, -30.0, -214.0, -20.0], ["rect", -223.4, -27.4, -222.6, -26.6], ["rect", -218.4, -25.9, -217.6, -25.1], ["rect", -221.4, -22.9, -220.6, -22.1], ["rect", -212.8, -21.3, -212.2, -20.7], ["rect", 47.15, 80.75, 47.65, 81.25], ["rect", 47.15, 84.48333, 47.65, 84.98333], ["rect", 47.15, 88.21667, 47.65, 88.71667], ["rect", 47.15, 91.95, 47.65, 92.45], ["rect", 47.15, 95.683334, 47.65, 96.183334], ["rect", 47.15, 99.416664, 47.65, 99.916664], ["rect", 47.15, 103.15, 47.65, 103.65], ["rect", 47.15, 106.88333, 47.65, 107.38333], ["rect", 47.15, 110.61667, 47.65, 111.11667], ["rect", 47.15, 114.35, 47.65, 114.85], ["rect", 47.15, 118.08333, 47.65, 118.58333], ["rect", 47.15, 121.816666, 47.65, 122.316666], ["rect", 47.15, 125.55, 47.65, 126.05], ["rect", 47.15, 129.28333, 47.65, 129.78333], ["rect", 47.15, 133.01666, 47.65, 133.51666], ["rect", 47.15, 136.75, 47.65, 137.25], ["rect", 49.050000762939455, 84.35, 49.35000076293945, 84.65], ["rect", 49.050000762939455, 94.35, 49.35000076293945, 94.65], ["rect", 49.050000762939455, 104.35, 49.35000076293945, 104.65], ["rect", 49.050000762939455, 114.35, 49.35000076293945, 114.65], ["rect", 49.050000762939455, 124.35, 49.35000076293945, 124.65], ["rect", 49.050000762939455, 134.35, 49.35000076293945, 134.65], ["rect", -37.25, 141.15, -36.75, 141.65], ["rect", -33.425, 141.15, -32.925, 141.65], ["rect", -29.6, 141.15, -29.1, 141.65], ["rect", -25.775, 141.15, -25.275, 141.65], ["rect", -21.95, 141.15, -21.45, 141.65], ["rect", -33.65, 143.04999694824218, -33.35, 143.3499969482422], ["rect", -23.65, 143.04999694824218, -23.35, 143.3499969482422], ["rect", -8.549999, 141.15, -8.049999, 141.65], ["rect", -4.8857155, 141.15, -4.3857155, 141.65], ["rect", -1.2214279, 141.15, -0.7214279, 141.65], ["rect", 2.4428558, 141.15, 2.9428558, 141.65], ["rect", 6.1071434, 141.15, 6.6071434, 141.65], ["rect", 9.771427, 141.15, 10.271427, 141.65], ["rect", 13.435715, 141.15, 13.935715, 141.65], ["rect", 17.099998, 141.15, 17.599998, 141.65], ["rect", 20.764286, 141.15, 21.264286, 141.65], ["rect", 24.42857, 141.15, 24.92857, 141.65], ["rect", 28.092857, 141.15, 28.592857, 141.65], ["rect", 31.757141, 141.15, 32.25714, 141.65], ["rect", 35.421425, 141.15, 35.921425, 141.65], ["rect", 39.085716, 141.15, 39.585716, 141.65], ["rect", 42.75, 141.15, 43.25, 141.65], ["rect", -4.949999237060547, 143.04999694824218, -4.6499992370605465, 143.3499969482422], ["rect", 5.050000762939453, 143.04999694824218, 5.3500007629394535, 143.3499969482422], ["rect", 15.050000762939453, 143.04999694824218, 15.350000762939453, 143.3499969482422], ["rect", 25.050000762939455, 143.04999694824218, 25.35000076293945, 143.3499969482422], ["rect", 35.04999694824219, 143.04999694824218, 35.349996948242186, 143.3499969482422], ["rect", -21.05, 138.0000030517578, -19.55, 142.60000305175782], ["rect", -10.450001, 138.0000030517578, -8.950001, 142.60000305175782], ["rect", -22.14999923706055, 138.8499969482422, -21.449999237060545, 139.54999694824218], ["rect", -50.0, 141.0, -43.0, 147.0], ["rect", -46.0, 120.0, -38.0, 134.0], ["rect", -65.8, 123.7, -50.2, 126.3], ["rect", -59.3, 128.7, -56.7, 135.3], ["rect", -79.8, -101.2, -79.4, -100.8], ["rect", -79.8, -113.7, -79.4, -113.3], ["rect", -79.8, -126.2, -79.4, -125.8], ["rect", -75.0, -126.0, -72.0, -101.0], ["rect", -95.0, -118.45, -75.0, -117.95], ["rect", -95.0, -101.05, -75.0, -100.55], ["rect", -85.89999847412109, -112.3, -73.89999694824219, -109.7], ["rect", 44.85000076293945, -113.7500015258789, 45.550000762939455, -113.05000152587891], ["rect", -78.2, 6.0, -74.0, 14.0], ["rect", 38.0, -46.5, 40.7, -43.1], ["rect", -400.0, -247.5, -120.0, -150.0], ["rect", -400.0, -247.5, -362.0, 210.5], ["rect", 52.0, -236.3, 55.0, -232.7], ["rect", 53.0, -235.0, 54.0, -234.0], ["rect", 100.30000000000005, -236.3, 103.30000000000005, -232.7], ["rect", 52.0, -218.3, 55.0, -214.7], ["rect", 53.0, -217.0, 54.0, -216.0], ["rect", 100.30000000000005, -218.3, 103.30000000000005, -214.7], ["rect", 101.3, -217.0, 102.3, -216.0], ["rect", 52.0, -200.3, 55.0, -196.7], ["rect", 53.0, -199.0, 54.0, -198.0], ["rect", 100.30000000000005, -200.3, 103.30000000000005, -196.7], ["rect", 101.45000305175782, -198.85, 102.1500030517578, -198.15], ["rect", 52.0, -182.3, 55.0, -178.7], ["rect", 100.30000000000005, -182.3, 103.30000000000005, -178.7], ["rect", 52.0, -164.3, 55.0, -160.7], ["rect", 53.0, -163.0, 54.0, -162.0], ["rect", 100.30000000000005, -164.3, 103.30000000000005, -160.7], ["rect", 101.3, -163.0, 102.3, -162.0], ["rect", 52.0, -146.3, 55.0, -142.7], ["rect", 53.15, -144.85, 53.85, -144.15], ["rect", 100.30000000000005, -146.3, 103.30000000000005, -142.7], ["rect", 101.45000305175782, -144.85, 102.1500030517578, -144.15], ["rect", 52.0, -128.3, 55.0, -124.7], ["rect", 53.0, -127.0, 54.0, -126.0], ["rect", 100.30000000000005, -128.3, 103.30000000000005, -124.7], ["rect", 52.0, -110.3, 55.0, -106.7], ["rect", 53.0, -109.0, 54.0, -108.0], ["rect", 100.30000000000005, -110.3, 103.30000000000005, -106.7], ["rect", 101.3, -109.0, 102.3, -108.0], ["rect", 65.50000000000001, -92.3, 68.50000000000001, -88.7], ["rect", 66.5, -91.0, 67.5, -90.0], ["rect", 100.30000000000005, -92.3, 103.30000000000005, -88.7], ["rect", 52.0, -74.3, 55.0, -70.7], ["rect", 57.10000000000001, -74.3, 60.10000000000001, -70.7], ["rect", 52.0, -56.3, 55.0, -52.7], ["rect", 53.0, -55.0, 54.0, -54.0], ["rect", 57.10000000000001, -56.3, 60.10000000000001, -52.7], ["rect", 52.0, -38.3, 55.0, -34.7], ["rect", 53.15, -36.85, 53.85, -36.15], ["rect", 100.30000000000005, -38.3, 103.30000000000005, -34.7], ["rect", 101.45000305175782, -36.85, 102.1500030517578, -36.15], ["rect", 52.0, -20.3, 55.0, -16.7], ["rect", 53.0, -19.0, 54.0, -18.0], ["rect", 100.30000000000005, -20.3, 103.30000000000005, -16.7], ["rect", 52.0, 15.7, 55.0, 19.3], ["rect", 53.0, 17.0, 54.0, 18.0], ["rect", 100.30000000000005, 15.7, 103.30000000000005, 19.3], ["rect", 101.45000305175782, 17.15, 102.1500030517578, 17.85], ["rect", 52.0, 33.7, 55.0, 37.3], ["rect", 100.30000000000005, 33.7, 103.30000000000005, 37.3], ["rect", 52.0, 51.7, 55.0, 55.3], ["rect", 53.0, 53.0, 54.0, 54.0], ["rect", 100.30000000000005, 51.7, 103.30000000000005, 55.3], ["rect", 101.3, 53.0, 102.3, 54.0], ["rect", 52.0, 69.7, 55.0, 73.3], ["rect", 53.15, 71.15, 53.85, 71.85], ["rect", 100.30000000000005, 69.7, 103.30000000000005, 73.3], ["rect", 101.45000305175782, 71.15, 102.1500030517578, 71.85], ["rect", 52.0, 87.7, 55.0, 91.3], ["rect", 53.0, 89.0, 54.0, 90.0], ["rect", 100.30000000000005, 87.7, 103.30000000000005, 91.3], ["rect", 52.0, 105.7, 55.0, 109.3], ["rect", 53.0, 107.0, 54.0, 108.0], ["rect", 100.30000000000005, 105.7, 103.30000000000005, 109.3], ["rect", 101.3, 107.0, 102.3, 108.0], ["rect", 52.0, 123.7, 55.0, 127.3], ["rect", 53.0, 125.0, 54.0, 126.0], ["rect", 100.30000000000005, 123.7, 103.30000000000005, 127.3], ["rect", 101.45000305175782, 125.15, 102.1500030517578, 125.85], ["rect", 52.0, 141.7, 55.0, 145.3], ["rect", 100.30000000000005, 141.7, 103.30000000000005, 145.3], ["rect", 52.0, 159.7, 55.0, 163.3], ["rect", 53.0, 161.0, 54.0, 162.0], ["rect", 100.30000000000005, 159.7, 103.30000000000005, 163.3], ["rect", 101.3, 161.0, 102.3, 162.0], ["rect", 52.0, 177.7, 55.0, 181.3], ["rect", 53.15, 179.15, 53.85, 179.85], ["rect", 100.30000000000005, 177.7, 103.30000000000005, 181.3], ["rect", 101.45000305175782, 179.15, 102.1500030517578, 179.85], ["rect", -98.3, -198.1000000000002, -94.7, -195.1000000000002], ["rect", -97.0, -197.1, -96.0, -196.1], ["rect", -98.3, -160.60000000000036, -94.7, -157.60000000000036], ["rect", -80.3, -198.1000000000002, -76.7, -195.1000000000002], ["rect", -80.3, -160.60000000000036, -76.7, -157.60000000000036], ["rect", -62.3, -198.1000000000002, -58.7, -195.1000000000002], ["rect", -61.0, -197.1, -60.0, -196.1], ["rect", -62.3, -160.60000000000036, -58.7, -157.60000000000036], ["rect", -61.0, -159.6, -60.0, -158.6], ["rect", -44.3, -244.0, -40.7, -241.0], ["rect", -44.3, -160.60000000000036, -40.7, -157.60000000000036], ["rect", -26.3, -227.80000000000007, -22.7, -224.80000000000007], ["rect", -25.0, -226.8, -24.0, -225.8], ["rect", -26.3, -160.60000000000036, -22.7, -157.60000000000036], ["rect", -25.0, -159.6, -24.0, -158.6], ["rect", -8.3, -244.0, -4.7, -241.0], ["rect", -8.3, -174.1000000000003, -4.7, -171.1000000000003], ["rect", 9.7, -244.0, 13.3, -241.0], ["rect", 11.0, -243.0, 12.0, -242.0], ["rect", 9.7, -160.60000000000036, 13.3, -157.60000000000036], ["rect", 11.0, -159.6, 12.0, -158.6], ["rect", 27.7, -244.0, 31.3, -241.0], ["rect", 29.0, -243.0, 30.0, -242.0], ["rect", 27.7, -160.60000000000036, 31.3, -157.60000000000036], ["rect", -146.3, -144.0, -142.7, -141.0], ["rect", -145.0, -143.0, -144.0, -142.0], ["rect", -146.3, -41.69999999999996, -142.7, -38.69999999999996], ["rect", -145.0, -40.7, -144.0, -39.7], ["rect", -128.3, -144.0, -124.7, -141.0], ["rect", -127.0, -143.0, -126.0, -142.0], ["rect", -128.3, -41.69999999999996, -124.7, -38.69999999999996], ["rect", -127.0, -40.7, -126.0, -39.7], ["rect", -110.3, -144.0, -106.7, -141.0], ["rect", -109.0, -143.0, -108.0, -142.0], ["rect", -110.3, -41.69999999999996, -106.7, -38.69999999999996], ["rect", -109.0, -40.7, -108.0, -39.7], ["rect", -356.0, -124.3, -353.0, -120.7], ["rect", -355.0, -123.0, -354.0, -122.0], ["rect", -240.2000000000005, -124.3, -237.2000000000005, -120.7], ["rect", -239.2, -123.0, -238.2, -122.0], ["rect", -356.0, -106.3, -353.0, -102.7], ["rect", -240.2000000000005, -106.3, -237.2000000000005, -102.7], ["rect", -356.0, -88.3, -353.0, -84.7], ["rect", -355.0, -87.0, -354.0, -86.0], ["rect", -240.2000000000005, -88.3, -237.2000000000005, -84.7], ["rect", -239.2, -87.0, -238.2, -86.0], ["rect", -356.0, -70.3, -353.0, -66.7], ["rect", -240.2000000000005, -70.3, -237.2000000000005, -66.7], ["rect", -239.2, -69.0, -238.2, -68.0], ["rect", -356.0, -52.3, -353.0, -48.7], ["rect", -355.0, -51.0, -354.0, -50.0], ["rect", -240.2000000000005, -52.3, -237.2000000000005, -48.7], ["rect", -239.2, -51.0, -238.2, -50.0], ["rect", -356.0, -34.3, -353.0, -30.7], ["rect", -355.0, -33.0, -354.0, -32.0], ["rect", -240.2000000000005, -34.3, -237.2000000000005, -30.7], ["rect", -356.0, -16.3, -353.0, -12.7], ["rect", -355.0, -15.0, -354.0, -14.0], ["rect", -240.2000000000005, -16.3, -237.2000000000005, -12.7], ["rect", -239.2, -15.0, -238.2, -14.0], ["rect", -356.0, 1.7, -353.0, 5.3], ["rect", -240.2000000000005, 1.7, -237.2000000000005, 5.3], ["rect", -356.0, 19.7, -353.0, 23.3], ["rect", -355.0, 21.0, -354.0, 22.0], ["rect", -240.2000000000005, 19.7, -237.2000000000005, 23.3], ["rect", -239.2, 21.0, -238.2, 22.0], ["rect", -356.0, 37.7, -353.0, 41.3], ["rect", -240.2000000000005, 37.7, -237.2000000000005, 41.3], ["rect", -239.2, 39.0, -238.2, 40.0], ["rect", -356.0, 55.7, -353.0, 59.3], ["rect", -355.0, 57.0, -354.0, 58.0], ["rect", -240.2000000000005, 55.7, -237.2000000000005, 59.3], ["rect", -239.2, 57.0, -238.2, 58.0], ["rect", -356.0, 73.7, -353.0, 77.3], ["rect", -355.0, 75.0, -354.0, 76.0], ["rect", -240.2000000000005, 73.7, -237.2000000000005, 77.3], ["rect", -356.0, 91.7, -353.0, 95.3], ["rect", -355.0, 93.0, -354.0, 94.0], ["rect", -240.2000000000005, 91.7, -237.2000000000005, 95.3], ["rect", -239.2, 93.0, -238.2, 94.0], ["rect", -356.0, 109.7, -353.0, 113.3], ["rect", -240.2000000000005, 109.7, -237.2000000000005, 113.3], ["rect", -356.0, 127.7, -353.0, 131.3], ["rect", -355.0, 129.0, -354.0, 130.0], ["rect", -240.2000000000005, 127.7, -237.2000000000005, 131.3], ["rect", -239.2, 129.0, -238.2, 130.0], ["rect", -356.0, 145.7, -353.0, 149.3], ["rect", -240.2000000000005, 145.7, -237.2000000000005, 149.3], ["rect", -239.2, 147.0, -238.2, 148.0], ["rect", -356.0, 163.7, -353.0, 167.3], ["rect", -355.0, 165.0, -354.0, 166.0], ["rect", -240.2000000000005, 163.7, -237.2000000000005, 167.3], ["rect", -239.2, 165.0, -238.2, 166.0], ["rect", -356.0, 181.7, -353.0, 185.3], ["rect", -355.0, 183.0, -354.0, 184.0], ["rect", -240.2000000000005, 181.7, -237.2000000000005, 185.3], ["rect", -232.3, 116.0, -228.7, 119.0], ["rect", -231.0, 117.0, -230.0, 118.0], ["rect", -232.3, 196.6999999999997, -228.7, 199.6999999999997], ["rect", -231.0, 197.7, -230.0, 198.7], ["rect", -214.3, 116.0, -210.7, 119.0], ["rect", -212.85, 117.15, -212.15, 117.85], ["rect", -214.3, 196.6999999999997, -210.7, 199.6999999999997], ["rect", -212.85, 197.8499969482422, -212.15, 198.54999694824218], ["rect", -196.3, 116.0, -192.7, 119.0], ["rect", -195.0, 117.0, -194.0, 118.0], ["rect", -196.3, 196.6999999999997, -192.7, 199.6999999999997], ["rect", -195.0, 197.7, -194.0, 198.7], ["rect", -178.3, 116.0, -174.7, 119.0], ["rect", -177.0, 117.0, -176.0, 118.0], ["rect", -178.3, 196.6999999999997, -174.7, 199.6999999999997], ["rect", -177.0, 197.7, -176.0, 198.7], ["rect", -160.3, 137.59999999999997, -156.7, 140.59999999999997], ["rect", -159.0, 138.6, -158.0, 139.6], ["rect", -160.3, 196.6999999999997, -156.7, 199.6999999999997], ["rect", -159.0, 197.7, -158.0, 198.7], ["rect", -142.3, 137.59999999999997, -138.7, 140.59999999999997], ["rect", -141.0, 138.6, -140.0, 139.6], ["rect", -142.3, 175.0999999999998, -138.7, 178.0999999999998], ["rect", -140.85, 176.25000610351563, -140.15, 176.95000610351562], ["rect", -124.3, 137.59999999999997, -120.7, 140.59999999999997], ["rect", -123.0, 138.6, -122.0, 139.6], ["rect", -124.3, 196.6999999999997, -120.7, 199.6999999999997], ["rect", -123.0, 197.7, -122.0, 198.7], ["rect", -106.3, 126.80000000000001, -102.7, 129.8], ["rect", -105.0, 127.8, -104.0, 128.8], ["rect", -106.3, 196.6999999999997, -102.7, 199.6999999999997], ["rect", -104.85, 197.8499969482422, -104.15, 198.54999694824218], ["rect", -88.3, 126.80000000000001, -84.7, 129.8], ["rect", -87.0, 127.8, -86.0, 128.8], ["rect", -88.3, 196.6999999999997, -84.7, 199.6999999999997], ["rect", -87.0, 197.7, -86.0, 198.7], ["rect", -70.3, 153.7999999999999, -66.7, 156.7999999999999], ["rect", -70.3, 196.6999999999997, -66.7, 199.6999999999997], ["rect", -69.0, 197.7, -68.0, 198.7], ["rect", -52.3, 153.7999999999999, -48.7, 156.7999999999999], ["rect", -51.0, 154.8, -50.0, 155.8], ["rect", -52.3, 196.6999999999997, -48.7, 199.6999999999997], ["rect", -50.85, 197.8499969482422, -50.15, 198.54999694824218], ["rect", -34.3, 153.7999999999999, -30.7, 156.7999999999999], ["rect", -32.85, 154.95000305175782, -32.15, 155.6500030517578], ["rect", -34.3, 196.6999999999997, -30.7, 199.6999999999997], ["rect", -16.3, 156.4999999999999, -12.7, 159.4999999999999], ["rect", -15.0, 157.5, -14.0, 158.5], ["rect", -16.3, 196.6999999999997, -12.7, 199.6999999999997], ["rect", -15.0, 197.7, -14.0, 198.7], ["rect", 1.7, 148.39999999999992, 5.3, 151.39999999999992], ["rect", 3.0, 149.4, 4.0, 150.4], ["rect", 1.7, 196.6999999999997, 5.3, 199.6999999999997], ["rect", 3.15, 197.8499969482422, 3.85, 198.54999694824218], ["rect", 19.7, 148.39999999999992, 23.3, 151.39999999999992], ["rect", 21.0, 149.4, 22.0, 150.4], ["rect", 19.7, 196.6999999999997, 23.3, 199.6999999999997], ["rect", 37.7, 148.39999999999992, 41.3, 151.39999999999992], ["rect", 37.7, 196.6999999999997, 41.3, 199.6999999999997], ["rect", 39.0, 197.7, 40.0, 198.7], ["rect", -236.0, -124.3, -233.0, -120.7], ["rect", -155.30000000000035, -124.3, -152.30000000000035, -120.7], ["rect", -236.0, -106.3, -233.0, -102.7], ["rect", -235.0, -105.0, -234.0, -104.0], ["rect", -155.30000000000035, -106.3, -152.30000000000035, -102.7], ["rect", -154.3, -105.0, -153.3, -104.0], ["rect", -236.0, -88.3, -233.0, -84.7], ["rect", -235.0, -87.0, -234.0, -86.0], ["rect", -155.30000000000035, -88.3, -152.30000000000035, -84.7], ["rect", -154.3, -87.0, -153.3, -86.0], ["rect", -236.0, -70.3, -233.0, -66.7], ["rect", -235.0, -69.0, -234.0, -68.0], ["rect", -155.30000000000035, -70.3, -152.30000000000035, -66.7], ["rect", -154.3, -69.0, -153.3, -68.0], ["rect", -236.0, -52.3, -233.0, -48.7], ["rect", -155.30000000000035, -52.3, -152.30000000000035, -48.7], ["rect", 54.0, -4.9, 103.5, -3.7], ["rect", 55.65, -4.650000190734863, 56.35, -3.950000190734863], ["rect", 59.786363983154295, -4.650000190734863, 60.4863639831543, -3.950000190734863], ["rect", 63.92272796630859, -4.650000190734863, 64.62272796630859, -3.950000190734863], ["rect", 68.05908813476563, -4.650000190734863, 68.75908813476562, -3.950000190734863], ["rect", 72.1954559326172, -4.650000190734863, 72.89545593261718, -3.950000190734863], ["rect", 76.33181610107422, -4.650000190734863, 77.03181610107421, -3.950000190734863], ["rect", 80.46818389892579, -4.650000190734863, 81.16818389892578, -3.950000190734863], ["rect", 84.60454406738282, -4.650000190734863, 85.3045440673828, -3.950000190734863], ["rect", 88.74091186523438, -4.650000190734863, 89.44091186523437, -3.950000190734863], ["rect", 92.87727203369141, -4.650000190734863, 93.5772720336914, -3.950000190734863], ["rect", 97.01363983154297, -4.650000190734863, 97.71363983154296, -3.950000190734863], ["rect", 101.15, -4.650000190734863, 101.85, -3.950000190734863], ["rect", 54.0, 3.7, 103.5, 4.9], ["rect", 55.65, 3.950000190734863, 56.35, 4.650000190734863], ["rect", 59.786363983154295, 3.950000190734863, 60.4863639831543, 4.650000190734863], ["rect", 63.92272796630859, 3.950000190734863, 64.62272796630859, 4.650000190734863], ["rect", 68.05908813476563, 3.950000190734863, 68.75908813476562, 4.650000190734863], ["rect", 72.1954559326172, 3.950000190734863, 72.89545593261718, 4.650000190734863], ["rect", 76.33181610107422, 3.950000190734863, 77.03181610107421, 4.650000190734863], ["rect", 80.46818389892579, 3.950000190734863, 81.16818389892578, 4.650000190734863], ["rect", 84.60454406738282, 3.950000190734863, 85.3045440673828, 4.650000190734863], ["rect", 88.74091186523438, 3.950000190734863, 89.44091186523437, 4.650000190734863], ["rect", 92.87727203369141, 3.950000190734863, 93.5772720336914, 4.650000190734863], ["rect", 97.01363983154297, 3.950000190734863, 97.71363983154296, 4.650000190734863], ["rect", 101.15, 3.950000190734863, 101.85, 4.650000190734863], ["rect", 46.5, -9.5, 49.5, -6.5], ["rect", 46.5, 6.5, 49.5, 9.5], ["rect", 106.2, -6.3, 106.8, -5.7], ["rect", 106.2, 5.7, 106.8, 6.3], ["rect", -236.0, 204.0, -150.0, 208.0], ["rect", -134.0, 204.0, 60.0, 208.0], ["rect", -231.35, 205.65, -230.65, 206.35], ["rect", -218.85, 205.65, -218.15, 206.35], ["rect", -206.35, 205.65, -205.65, 206.35], ["rect", -193.85, 205.65, -193.15, 206.35], ["rect", -181.35, 205.65, -180.65, 206.35], ["rect", -168.85, 205.65, -168.15, 206.35], ["rect", -156.35, 205.65, -155.65, 206.35], ["rect", -131.35, 205.65, -130.65, 206.35], ["rect", -118.85, 205.65, -118.15, 206.35], ["rect", -106.35, 205.65, -105.65, 206.35], ["rect", -93.85, 205.65, -93.15, 206.35], ["rect", -81.35, 205.65, -80.65, 206.35], ["rect", -68.85, 205.65, -68.15, 206.35], ["rect", -56.35, 205.65, -55.65, 206.35], ["rect", -43.85, 205.65, -43.15, 206.35], ["rect", -31.35, 205.65, -30.65, 206.35], ["rect", -18.85, 205.65, -18.15, 206.35], ["rect", -6.35, 205.65, -5.65, 206.35], ["rect", 6.15, 205.65, 6.85, 206.35], ["rect", 18.65, 205.65, 19.35, 206.35], ["rect", 31.15, 205.65, 31.85, 206.35], ["rect", 43.65, 205.65, 44.35, 206.35], ["rect", 56.15, 205.65, 56.85, 206.35], ["rect", -218.5, 205.5, -217.5, 206.5], ["rect", -158.5, 205.5, -157.5, 206.5], ["rect", -98.5, 205.5, -97.5, 206.5], ["rect", -38.5, 205.5, -37.5, 206.5], ["rect", 21.5, 205.5, 22.5, 206.5], ["rect", -133.15, 202.85, -132.85, 203.15], ["rect", -13.15, -238.65, -12.85, -238.35], ["rect", -234.0, 150.0, -206.0, 160.0], ["rect", -220.5, 154.5, -219.5, 155.5], ["rect", -211.4, 152.6, -210.6, 153.4], ["rect", -229.4, 156.6, -228.6, 157.4], ["rect", 64.0, -78.0, 98.0, -50.0], ["rect", 85.2, -64.45, 85.8, -63.55], ["rect", 88.2, -64.45, 88.8, -63.55], ["rect", 91.2, -64.45, 91.8, -63.55], ["rect", 94.2, -64.45, 94.8, -63.55], ["rect", 68.0, -73.0, 84.0, -55.0], ["rect", -119.3, -8.3, -118.7, -7.7], ["rect", -141.0, -32.0, -121.0, -9.0], ["rect", -351.0, 161.0, -329.0, 173.0], ["rect", -356.0, 182.0, -352.0, 186.0], ["rect", -322.0, 99.0, -302.0, 156.0], ["rect", 96.29999995231628, -13.049999952316284, 103.70000004768372, -9.950000047683716], ["rect", -128.54999995231628, 201.79999995231628, -125.45000004768372, 209.20000004768372], ["rect", -34.549999952316284, -246.70000004768372, -31.450000047683716, -239.29999995231628], ["rect", -92.0, -245.0, -88.0, -241.0], ["rect", -72.0, -146.0, 44.0, -100.0], ["rect", -80.0, -100.0, 44.0, -96.0], ["rect", -80.0, -96.0, 40.0, -86.0], ["rect", -80.0, -86.0, 44.0, -50.0], ["rect", -80.0, -50.0, 38.0, -42.0], ["rect", -52.0, -42.0, 44.0, -14.0], ["rect", -214.0, -14.0, -154.0, -6.0], ["rect", -74.0, -14.0, 44.0, 20.0], ["rect", -228.0, -6.0, -154.0, 20.0], ["rect", -228.0, 20.0, 44.0, 32.0], ["rect", -214.0, 32.0, 44.0, 70.0], ["rect", -214.0, 70.0, -36.0, 72.0], ["rect", -20.0, 70.0, 44.0, 80.0], ["rect", -214.0, 72.0, -42.0, 106.0], ["rect", -38.0, 80.0, 44.0, 138.0], ["rect", -154.0, 106.0, -42.0, 110.0], ["rect", -146.0, 110.0, -42.0, 112.0], ["rect", -134.0, 112.0, -42.0, 118.0]]
 walk_rows = PackedStringArray()
 
-[node name="Runtime" type="Node" parent="." unique_id=1544635259]
+[node name="Runtime" type="Node" parent="." unique_id=1184089101]
 script = ExtResource("21_xl2ly")
 
-[node name="Signs" type="Node" parent="." unique_id=1784266992]
+[node name="Signs" type="Node" parent="." unique_id=643863072]
 script = ExtResource("22_endtk")

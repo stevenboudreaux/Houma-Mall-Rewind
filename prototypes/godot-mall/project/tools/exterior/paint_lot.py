@@ -210,7 +210,7 @@ def foliage():
     fan = np.asarray(im, np.float32)
     A[0:C, 0:C] = fan
     # the live oak's cluster: many small dark glossy leaves
-    A[0:C, C:2 * C] = leaf_cluster(C, rng, 2600, 22, (58, 84, 40), 9, dense_core=0.30)
+    A[0:C, C:2 * C] = leaf_cluster(C, rng, 2200, 22, (58, 84, 40), 9, dense_core=0.16)
     # the clipped shrub: smaller, lighter leaves, a dense core
     A[C:2 * C, 0:C] = leaf_cluster(C, rng, 3200, 16, (72, 104, 52), 10, dense_core=0.34)
     # grass / liriope: blades from the bottom centre
