@@ -1,11 +1,11 @@
 # Rocketbox (MIT, github.com/microsoft/Microsoft-Rocketbox) facial FBX -> one .glb for the Godot mall's
-# NpcBody / NpcRig. Workstream CHAR-SOURCES, design/godot-characters-sources.md. DEV ONLY: nothing in the
-# game loads its output yet; the .glb files stay out of the repo until Steven picks a source.
-#   pip install bpy==5.2.3 numpy   (Python 3.13; use `uv venv` if pip stalls), Pillow on the system python
-#   git clone --filter=blob:none --no-checkout https://github.com/microsoft/Microsoft-Rocketbox rb
-#   (cd rb && git sparse-checkout set /Assets/Avatars/Adults/Male_Adult_08/ && git checkout)
-#   [HEAVY=1.0] python rb2glb.py rb/Assets/Avatars/Adults/Male_Adult_08 /abs/out/rb_male08.glb
-# Prints STATS (tris, materials, morphs, hips height in m: pass it as --hips to the QA scripts).
+# NpcBody / NpcRig: the cast source Steven chose (Nov 8 2026). Usage, licence and known faults:
+# design/godot-characters-sources.md "The converter". Run from the Godot project root:
+#   python tools/blender/cast/rocketbox/rb2glb.py <rocketbox>/Assets/Avatars/Adults/Male_Adult_08 /abs/out/rb_male08.glb
+#   HEAVY=1.0 python ... (heavier build); ANIMS_JSON=<path> (default: the project's npc/anims.json)
+# Needs bpy 5.2.3 + numpy (Python 3.13) and Pillow on /usr/bin/python3. Prints STATS (tris, materials,
+# morphs, hips_z = hips height in m for NpcBody's "hips") and WROTE <glb>; also writes <out>.blend and
+# <out dir>/<Avatar>_tex/*.png beside it.
 # 1. bones renamed Bip01 -> mixamorig:* (eyes -> LeftEye/RightEye, jaw -> Jaw)
 # 2. re-posed to a Mixamo-style T-pose and that pose applied as rest (shape keys carried through)
 # 3. only the ARKit 52 (AK_*) + 15 visemes (AA_VI_*) shape keys kept, renamed without prefix
@@ -138,7 +138,7 @@ bpy.ops.object.mode_set(mode='OBJECT')
 # nothing to fix and every reader of the un-retargeted pose (TALK's eye_point, look) sees a Mixamo skin
 import json
 from mathutils import Quaternion
-ANIMS = os.environ.get('ANIMS_JSON', os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../npc/anims.json'))
+ANIMS = os.environ.get('ANIMS_JSON', os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../../npc/anims.json'))
 REST = json.load(open(ANIMS))['rest']
 C = Matrix(((1, 0, 0), (0, 0, -1), (0, 1, 0)))     # Godot (Y up) -> Blender (Z up)
 bpy.context.view_layer.objects.active = arm

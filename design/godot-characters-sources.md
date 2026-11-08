@@ -5,6 +5,9 @@ options A–D, pipeline B recommended) and `design/research/character-pipeline-2
 there and **not re-evaluated**: Quaternius / Kenney, VRoid, MetaHuman, raw Mixamo faces.
 Evidence: `production/qa/evidence/wsSRC-sidebyside.jpg`, `wsSRC-rocketbox-sheet.jpg`.
 
+**Decision (Steven, Nov 8 2026): Rocketbox.** The converter lives at
+`prototypes/godot-mall/project/tools/blender/cast/rocketbox/rb2glb.py` (usage: "The converter" below).
+
 ## The recommendation in five lines
 
 1. **Use Microsoft Rocketbox (MIT) as the source for talk-close people.** It is the only candidate that was
@@ -41,7 +44,7 @@ uniform. Every 1995 outfit is a repaint at least.
 
 ## The proof (what was built and looked at)
 
-- **Converter** `tools/blender/cast_sources/rb2glb.py` (headless `bpy` 5.2.3): Rocketbox `_facial.fbx` →
+- **Converter** `tools/blender/cast/rocketbox/rb2glb.py` (headless `bpy` 5.2.3): Rocketbox `_facial.fbx` →
   bones renamed Bip01 → `mixamorig:*` (eyes `LeftEye`/`RightEye`, jaw `Jaw`); arms, fingers and legs
   re-posed to a T-pose and applied as rest, with every shape key carried through; **every Mixamo-named bone
   given Ch01's rest orientation** from `npc/anims.json` (worst error 0.04°), so `NpcRig` has nothing to fix
@@ -75,6 +78,70 @@ game's clips without retarget fix-ups. The heavier build reads in profile; the f
 - The `HEAVY` push opens the shirt hem a little at the waist and leaves the face thin; a full heavy person
   needs a cheek/neck fill as well.
 
+## The converter (`tools/blender/cast/rocketbox/rb2glb.py`)
+
+Our own script (Steven's repo); it carries no Rocketbox content. It reads one Rocketbox avatar folder and writes
+one `.glb` that `NpcBody.set_skin` loads like any Mixamo skin. Paths below are from the Godot project root
+(`prototypes/godot-mall/project`).
+
+**Setup (once per machine, ~3 min; the cloud box or the Mac):**
+```bash
+# Blender as a Python module (Python 3.13). On the cloud box plain `pip` stalled; uv works.
+uv venv -p 3.13 ~/bv && uv pip install -p ~/bv/bin/python bpy==5.2.3 numpy
+python3 -c "import PIL"            # Pillow on the system python (textures go through it)
+# Rocketbox, only the people you need (each ~90 MB of TGA textures):
+git clone --filter=blob:none --no-checkout https://github.com/microsoft/Microsoft-Rocketbox ~/rocketbox
+cd ~/rocketbox && git sparse-checkout init --no-cone
+git sparse-checkout set '/Assets/Avatars/*/*/*.png'        # the 115 thumbnails, to choose people
+git sparse-checkout add /Assets/Avatars/Adults/Male_Adult_08/ /Assets/Avatars/Professions/Business_Female_01/
+git checkout
+```
+
+**Convert one person (~20 s):**
+```bash
+~/bv/bin/python tools/blender/cast/rocketbox/rb2glb.py ~/rocketbox/Assets/Avatars/Adults/Male_Adult_08 /abs/path/rb_male08.glb
+HEAVY=1.0 ~/bv/bin/python tools/blender/cast/rocketbox/rb2glb.py <avatar dir> /abs/path/rb_male08h.glb   # heavier build
+```
+- Input: `<avatar dir>/Export/<Name>_facial.fbx` and `<avatar dir>/Textures/*_{body,head,opacity}_{color,normal}.tga`.
+  Use the `_facial` FBX (the plain one has no face shapes); every Rocketbox person has one.
+- Output: the `.glb`; beside it `<out>.blend` (for looking in Blender) and `<Name>_tex/*.png`.
+- It prints `STATS tris=… mats=… keys=… hips_z=…`. **`hips_z` is the hips height in metres**: pass it as
+  `"hips"` in the skin entry (`NpcBody.set_skin({"id", "scn", "hips"})`) or `--hips=` to the QA scripts, so
+  `NpcRig` scales the clips' hip motion correctly.
+- Env: `HEAVY=<k>` (0 = off; 1.0 = the evidence's heavier man; the trunk, hips, thighs and upper arms are pushed out along
+  smoothed normals by skin weight, every morph moved with it); `ANIMS_JSON=<path>` (default: the project's
+  `npc/anims.json`, whose `rest` gives the Ch01 bone orientations to copy).
+
+**What the file contains:** one skinned mesh in 3 surfaces (body, head, hair/lashes with alpha), an 80-bone
+skeleton: the Mixamo-named body bones in Ch01's rest orientation (T-pose), `mixamorig:LeftEye` / `RightEye` /
+`Jaw`, and Rocketbox's other face bones (`Bip01 …`, unanimated). 67 morph targets: the ARKit 52 by their ARKit
+names (`EyeBlinkLeft`, `JawOpen`, `MouthSmileLeft`, …) and 15 visemes (`viseme_Sil`, `viseme_PP`, … `viseme_aa`,
+`viseme_O`, `viseme_U`). Textures: head colour 2048², the rest 1024².
+
+**Check it in Godot** (copy the `.glb` under the project, e.g. a git-ignored `cast_preview/`, and run
+`godot --headless --path . --import` once):
+```bash
+xvfb-run -a -s "-screen 0 1600x1000x24" godot --path . --rendering-driver opengl3 --resolution 480x720 \
+  --script res://tools/qa/cast_turntable.gd -- --cast=res://cast_preview/rb_male08.glb --hips=0.895 --out=/tmp/t/m08
+# at the RadioShack counter under TALK's camera (needs ws/talk's TalkCamera merged):
+xvfb-run -a -s "-screen 0 1600x1000x24" godot --path . --rendering-driver opengl3 --resolution 1280x720 \
+  --script res://tools/qa/cast_preview_shots.gd -- --npc=radioshack --unbaked --nobox \
+  --cast=res://cast_preview/rb_male08.glb --hips=0.895 [--face=JawOpen:0.35,MouthSmileLeft:0.5] --out=/tmp/t/rs.png
+```
+
+**Known faults to fix next (the cast build, not the converter's job yet):** the mouth interior shows dark blue
+when open; `EyeBlink*` at 1.0 leaves a slit; the hair surface needs alpha scissor/hash in Godot (a dark seam at
+Male_Adult_08's parting); `HEAVY` opens the shirt hem slightly and leaves the face thin; clothes are as shipped
+(2010s), so 1995 outfits need a repaint step; TALK's blink and lip flap don't drive morphs yet (`npc_look.gd`).
+
+**How it was made to work (so nobody re-learns it):** the FBX carries object animation that re-applies a 0.01
+scale after any transform apply (cleared on import); 3ds Max bones don't point along the limb, so the T-pose aims
+each bone at its child joint; Blender bone axes export with a −90° X twist relative to Godot's, which the rest
+copy compensates; several colour TGAs don't load in Blender, hence Pillow.
+
+**Licence:** Rocketbox is MIT (Copyright (c) 2020 Microsoft). Converted files may be committed and shipped; the
+game's credits must carry the MIT notice. The converter itself is ours.
+
 ## What each candidate would mean for CHAR-BUILD and CHAR-STRIP
 
 | Candidate | CHAR-BUILD (pipeline B) | CHAR-STRIP |
@@ -87,14 +154,14 @@ game's clips without retarget fix-ups. The heavier build reads in profile; the f
 ## Licence and repo notes
 
 - Rocketbox is MIT: the converted `.glb` files may be committed and shipped with the MIT notice in the credits.
-  They were **not** committed here (11–15 MB each, nothing in the game loads them yet). They live in the
-  session's `cast_preview/` (git-ignored locally) and are rebuilt by the converter in seconds.
+  The converter is committed; the `.glb` files are **not** (11–15 MB each, nothing in the game loads them yet).
+  They are rebuilt in seconds; where they live in the project (a cast pack?) is the cast build's decision.
 - Nothing paid was bought. No Sketchfab, RPM or MakeHuman-community asset was downloaded.
 
 ## Open questions for Steven
 
-1. **Go with Rocketbox for the talk-close cast?** If yes, which person per line (`refs`-style contact sheet on request):
-   RadioShack = Male_Adult_08 heavier? GAC = Business_Female_01 repainted?
+1. ~~Go with Rocketbox?~~ **Yes (Nov 8).** Still open: which person per line. Proposed: RadioShack =
+   Male_Adult_08 heavier, GAC = Business_Female_01 repainted (contact sheet of all 115 on request).
 2. **The MakeHuman test (#2):** download "MakeHuman system assets" + "skins 01/02" (CC0) and, if wanted,
    Hair 01 (CC0) from static.makehumancommunity.org/assets/assetpacks.html and push the zips to the `refs`
    branch (`refs/new/makehuman/`), or allow that host in the environment. Then the hm08 RadioShack person can be
