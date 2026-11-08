@@ -472,3 +472,17 @@ pan-sized cookie cake: so a pan cake is a 2010s shape, kept because the case is 
 Still visible: the heart cake's top edge shows a dark sliver at the cusp in Blender's close renders (not in Godot,
 where it leans on the maroon back); the cakes are darker than the old self-lit picture (the window's own small
 light only).
+
+**Corn Dog 7 (item 3, both years).** `bl_cd7_corndog` (the hand item) has a new cornmeal crust (`batter_mat()`:
+cornmeal grain, fryer blisters with browner rims, broad golden-to-brown colour, a dry crust with oily highlights;
+it read as a smooth glazed sausage before); same mesh (4,296 tris), 1024 px. The case's plain tapered cylinders and
+the yellow block are replaced by the kit `bl_cd7_case` (`corn_dog_7.gd case_food()`): per glass case, 14 corn dogs
+standing batter-down in the holder in two rows of seven (sunk 35 mm into it; about a quarter lean 7-15°; these
+cast shadows, the only food that does), and a 1/4 steam-table pan of six cheese-on-a-stick where the yellow block
+was. The cheese on a stick is a **guess** (a period corn-dog-stand item; Corn Dog 7's 1990s menu is not known), so
+it is not sold or added to the menu box: Steven's call.
+
+| Model | Class | Tris | Tex | Where | Guessed |
+|---|---|---|---|---|---|
+| `bl_cd7_corndog` (crust redone) | hand | 4,296 | 1024 | unchanged (the counter's display / pick-up) | the crust's look (no photo of the food) |
+| `bl_cd7_case` (kit: dog / cheese / pan) | small_fixture (kit) | 596: 296 / 192 / 108 (≤ 800 each) | 1024 (one atlas; the pan flat steel) | each glass case on Corn Dog 7's counter | cheese on a stick, the pan |

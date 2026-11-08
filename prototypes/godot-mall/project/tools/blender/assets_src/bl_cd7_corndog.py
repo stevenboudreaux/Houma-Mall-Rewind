@@ -1,4 +1,4 @@
-"""A corn dog from Corn Dog 7 (Steven's test item). Hand item, year "both": the same tenant in 1995 and 2026.
+"""A corn dog from Corn Dog 7 (Steven's test item; FOOD3D, Nov 8 2026: the cornmeal crust, batter_mat()). Hand item, year "both": the same tenant in 1995 and 2026.
 
 References: refs/derived/signs/corndog_IMG_4461_f005.jpg and refs/derived/frames/IMG_4461 f004-f006 show the
 stand (yellow awning, navy tile), not the food; design/storefronts/corn-dog-7.md, tools/stores/corn_dog_7.gd.
@@ -26,7 +26,7 @@ LUMP_DEPTH = 0.0034         # displacement strength
 BEND = 3.0                  # degrees the dog leans off the stick axis (hand-dipped, not machine-straight)
 MUSTARD_R = 0.0024
 MUSTARD_ZIGS = 6
-BATTER = ["#6a360c", "#a45c17", "#c88024", "#dc9f3e"]   # dark crust -> pale cornmeal (ramp)
+BATTER = ["#6e360c", "#a85a14", "#cc8020", "#e0a03a"]   # dark crust -> pale cornmeal (ramp)
 CRACK = "#7a400f"
 
 META = {
@@ -46,27 +46,48 @@ META = {
 }
 
 
-def batter_mat():
-    m = mats.M("batter", BATTER[2], 0.55)
+def batter_mat(name="batter"):
+    """FOOD3D (Nov 8 2026): a cornmeal crust, not a glaze. Broad golden-to-brown fryer colour; cornmeal grain
+    (fine dark and pale specks); fryer bubbles (small round blisters, browner rims); a few cracks; dry and
+    matte with oily highlights on the high points. All baked (albedo, ORM, normal)."""
+    m = mats.M(name, BATTER[2], 0.62)
     tc = m.coords()
-    big = m.noise(55.0, 5.0, 0.55, coord=tc)
-    col = m.ramp(big.outputs["Fac"], [(0.30, BATTER[0]), (0.45, BATTER[1]), (0.60, BATTER[2]), (0.75, BATTER[3])])
+    big = m.noise(40.0, 6.0, 0.6, coord=tc)
+    mid = m.noise(140.0, 4.0, 0.55, coord=tc)
+    t = m.math("ADD", big.outputs["Fac"], m.math("MULTIPLY", m.math("SUBTRACT", mid.outputs["Fac"], 0.5), 0.45))
+    col = m.ramp(t, [(0.25, BATTER[0]), (0.39, BATTER[1]), (0.52, BATTER[2]), (0.68, BATTER[3])])
+    # cornmeal grain: dense small cells, some darker (toasted), some paler (raw meal)
+    gr = m.node("ShaderNodeTexVoronoi", Scale=1500.0)
+    m.link(tc, gr.inputs["Vector"])
+    gsep = m.node("ShaderNodeSeparateColor")
+    m.link(gr.outputs["Color"], gsep.inputs[0])
+    dark = m.math("LESS_THAN", gsep.outputs[0], 0.18)
+    pale = m.math("GREATER_THAN", gsep.outputs[0], 0.86)
+    col = m.mix(m.math("MULTIPLY", dark, 0.35), col, "#6a3410")
+    col = m.mix(m.math("MULTIPLY", pale, 0.5), col, "#f0c770")
+    # fryer bubbles: small round blisters with browner rims
+    bub = m.node("ShaderNodeTexVoronoi", Scale=260.0)
+    m.link(tc, bub.inputs["Vector"])
+    bd = bub.outputs["Distance"]
+    blister = m.math("LESS_THAN", bd, 0.32)
+    rim = m.math("MULTIPLY", m.math("GREATER_THAN", bd, 0.26), blister)
+    col = m.mix(m.math("MULTIPLY", rim, 0.45), col, BATTER[0])
+    # cracks: only some cell edges
     vor = m.node("ShaderNodeTexVoronoi", Scale=38.0)
     vor.feature = "DISTANCE_TO_EDGE"
     m.link(tc, vor.inputs["Vector"])
-    crack = m.ramp(vor.outputs["Distance"], [(0.0, "#404040"), (0.03, "#ffffff")])   # 0 in the cracks
-    # only some cell edges crack: mask by a second noise
-    mask = m.noise(25.0, 2.0, coord=tc)
-    sel = m.math("GREATER_THAN", mask.outputs["Fac"], 0.6)
-    inv = m.math("SUBTRACT", 1.0, crack)
-    cr = m.math("MULTIPLY", inv, sel)
-    final = m.mix(cr, col, CRACK)
-    m.link(final, m.bsdf.inputs["Base Color"])
-    fine = m.noise(320.0, 3.0, 0.6, coord=tc)
-    h = m.math("SUBTRACT", fine.outputs["Fac"], cr)
-    m.bump(h, 0.55, 0.0006)
-    rough = m.math("MULTIPLY_ADD", big.outputs["Fac"], 0.3)       # a little oily sheen on the pale bits
-    m.nt.nodes[rough.node.name].inputs[2].default_value = 0.35
+    crack = m.ramp(vor.outputs["Distance"], [(0.0, "#404040"), (0.03, "#ffffff")])
+    sel = m.math("GREATER_THAN", m.noise(25.0, 2.0, coord=tc).outputs["Fac"], 0.62)
+    cr = m.math("MULTIPLY", m.math("SUBTRACT", 1.0, crack), sel)
+    col = m.mix(cr, col, CRACK)
+    m.link(col, m.bsdf.inputs["Base Color"])
+    # height: blisters up, grain, cracks down
+    h = m.math("ADD", m.math("MULTIPLY", m.math("SUBTRACT", 0.32, m.math("MINIMUM", bd, 0.32)), 2.2),
+               m.math("MULTIPLY", m.noise(700.0, 2.0, coord=tc).outputs["Fac"], 0.35))
+    h = m.math("SUBTRACT", h, m.math("MULTIPLY", cr, 0.8))
+    m.bump(h, 0.7, 0.0007)
+    # dry crust, oily on the high, pale points
+    rough = m.math("SUBTRACT", 0.78, m.math("MULTIPLY", m.math("GREATER_THAN", big.outputs["Fac"], 0.62), 0.3))
     m.link(rough, m.bsdf.inputs["Roughness"])
     return m.mat
 
