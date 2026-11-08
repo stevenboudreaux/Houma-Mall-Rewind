@@ -130,8 +130,7 @@ this session, not in the repo):
   attendants dressed. **No error and no warning about the missing meshes**: a release web build loads the
   scene through the path fallback and leaves the MeshInstance3D empty without a word. That is why Demo 52's web
   tests ("0 errors") passed: the check has to look inside the packs.
-- Shot: `wsPACKS-live-d52-w1-console.jpg` (unbaked browser, baked lightmaps; the Woolworth fascia at left shows
-  no letters, only the baked shadow of where they were).
+- Shot: `wsPACKS-live-d52-w1-console.jpg` (the probe's view after load; Demo 52's baked lightmaps).
 
 ## After the fix (stage 2, same day)
 - `tools/fix_stale_uids.gd` removed 91 stale UIDs (the lightmap ones resolve once the lightmaps are imported).
@@ -146,3 +145,24 @@ this session, not in the repo):
   now include them (`tools/make_presets.py`).
 - `.unwrap_cache` files (gitignored importer caches; 7 in the items pack of this box's export, none in Demo 52's)
   are left out of the comparison: whether they exist depends on the machine.
+
+## Stage 3: the stores (before = live Demo 52; after = this branch's export with Demo 52's bake, same cameras)
+
+Every store on Steven's list except Concepts was the delivery bug: no store file needed a change, the meshes
+were built and in the scenes, only left out of the packs. Their "after" is the re-export.
+
+| Store | Was | After | Evidence |
+|---|---|---|---|
+| Champs Sports | rods, no badge (lightmap ghost of the letters) | blue CHAMPS badge on its rods | `wsPACKS-champs-before/after.jpg` |
+| Babbage's | bare white fascia | pink neon "Babbage's" | `wsPACKS-babbages-before/after.jpg` |
+| 579 | empty pink walls and racks | outfits on the walls | `wsPACKS-579-before/after.jpg` (JW's neon and Foot Locker's sign back too) |
+| Sports Avenue | blank blue fascia | SPORTS AVENUE marquee | `wsPACKS-sportsave-before/after.jpg` (Great American Cookie's lettering sharp again) |
+| Sears / Lynn's | inside: the exit glass blank; 2026 outside: a crosswalk to a blank wall; the Sears hall's exit doors blank | the lot and sky through the glass; Lynn's 2026 entrance doors; the hall's doors show the lot | `wsPACKS-sears-before/after.jpg` (4 views), `wsPACKS-sears-hall-doors-before-after.jpg` |
+| Concepts | speckled solids (Nov 1 spatter, in Demo 51 too) | flat satin colour (`wave9.gd`, own commit) | `wsPACKS-concepts-before-preview-unbaked.jpg` / `-after-preview-unbaked.jpg`; the export shot still shows the spatter until wing 2 is rebuilt |
+| Others in the wing walk | the table above (Cinema, Duncan, Foot Action, K&B, Lady Foot Locker, Radio Shack, Coach House, GNC, MasterCuts, Sound Shop, Jean Nicole, Orange Julius, Cucos, Claire's, the optical shop, Tee Tai, the bank, Rave, Solarium, Woolworth, Gumballs, Kay-Bee, The Limited, Afterthoughts, Great American Cookie, Merry-Go-Round, Shoe Dept., Foot Locker, Payless, Athlete's Foot, Blockbuster Music, B. Dalton, Karmelkorn, Zales, Chick-fil-A, Pocket Change, Saadi, Country Fair; 2026: lease cards, 13 stores' letters, Cinnamonster, the outside's entrances and monuments; Dillard's outside doors) | all restored by the same re-export (contents check: every file Demo 52 lacked is in this export) | `wsPACKS-signs-before-after.jpg` (Sports Avenue, Babbage's + Country Fair, Concepts, wing 1 hall) |
+
+Not walked shot by shot: every store front of both years. The pack check proves the files are there; the shots
+above sample each kind (sign letters, neon, stock, outside views, the 2026 outside).
+
+`publish_build.sh` dry run (`R2=0 DRY_RUN=1`): Demo 52's packs are refused at the contents check; this branch's
+export passes every check.
