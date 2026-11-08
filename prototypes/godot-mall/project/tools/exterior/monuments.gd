@@ -61,9 +61,7 @@ static func monument(b, at: Vector3, n: Vector3, face: String):
 	b.box("ex_lot", "ex_curb", Vector3.ZERO, Vector3(bx * 2.0, 0.12, bz * 2.0), Transform3D(Basis(t, UP, n), at + UP * 0.059), ["+y", "-y"])
 	for s in [-1.0, 1.0]:
 		for k in [-1.0, 1.0]:
-			b.force_dyn = true
-			b.bush(at + t * (s * (W * 0.5 + 0.5)) + n * (k * (D * 0.5 + 0.55)) + UP * 0.12, "leafy", 0.55, 3)
-			b.force_dyn = false
+			load("res://tools/exterior/flora.gd").grass(b, at + t * (s * (W * 0.5 + 0.5)) + n * (k * (D * 0.5 + 0.55)) + UP * 0.12, 0.5)
 	var ext = W * 0.5 + 1.2
 	var ex = (t * ext).abs() + (n * bz).abs()
 	b.obst(["rect", at.x - ex.x, at.z - ex.z, at.x + ex.x, at.z + ex.z])

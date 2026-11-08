@@ -16,6 +16,7 @@ const UP = Vector3.UP
 const CU = preload("res://tools/stores/signs/cucos_sign.gd")
 const MON = preload("res://tools/exterior/monuments.gd")
 const Y26 = preload("res://tools/exterior/exterior_2026.gd")
+const FL = preload("res://tools/exterior/flora.gd")   # Workstream LOT: trees, shrubs, planters
 
 # ---- heights (parapets, metres): the report's table
 const H_DEFAULT = 6.5     # store backs, the east facade
@@ -213,7 +214,7 @@ static func fill_mat(m, key, b):
 			m.albedo_color = Color("#ff4060"); m.emission_enabled = true; m.emission = Color("#ff3050")
 			m.emission_energy_multiplier = 2.0
 		_:
-			return false
+			return FL.fill_mat(m, key, b)
 	return true
 
 # ------------------------------------------------------------------ helpers
@@ -234,29 +235,22 @@ static func rbox(b, g, mname, c, size, yaw):
 	var bs = Basis(UP, yaw)
 	b.box(g, mname, c, size, Transform3D(bs, c - bs * c))
 
+## Workstream LOT (Nov 8 2026): the trees and shrubs are flora.gd's (live oak, sabal, pine, shrub);
+## the old ones borrowed the interior's potted palm (a 7 cm trunk) and the card bush with its flat top.
 static func tree_oak(b, at, size):
 	trees += 1
-	b.cyl("ex_props", "ex_trunk", at, 0.28, 0.2, size * 0.9, 8, false, false, true)
-	b.force_dyn = true
-	b.bush(at + UP * (size * 0.55), "leafy", size, 4)
-	b.force_dyn = false
-	b.obst(["rect", at.x - 0.5, at.z - 0.5, at.x + 0.5, at.z + 0.5])
+	FL.live_oak(b, at, size)
 
 static func tree_pine(b, at, hgt):
 	trees += 1
-	b.cyl("ex_props", "ex_trunk", at, 0.2, 0.12, hgt * 0.45, 6, false, false, true)
-	b.cyl("ex_props", "ex_pine", at + UP * (hgt * 0.3), hgt * 0.17, 0.05, hgt * 0.7, 8, false, true, true)
-	b.obst(["rect", at.x - 0.4, at.z - 0.4, at.x + 0.4, at.z + 0.4])
+	FL.pine(b, at, hgt)
 
 static func palm(b, at, hgt):
 	trees += 1
-	b.palm(at, hgt)
-	b.obst(["rect", at.x - 0.3, at.z - 0.3, at.x + 0.3, at.z + 0.3])
+	FL.sabal(b, at, hgt)
 
 static func shrub(b, at, mname, size):
-	b.force_dyn = true
-	b.bush(at, "leafy", size, 3)
-	b.force_dyn = false
+	FL.shrub(b, at, size * 0.65)
 
 ## A raised curbed island (yellow curb in the lot, grey at the roads) with mulch or lawn on top.
 static func island(b, x0, z0, x1, z1, top = "ex_mulch", curb = "ex_curb_yellow"):
@@ -899,7 +893,7 @@ static func jcpenney(b):
 		var u = 4.0 + i * 5.5
 		if u > 52.0:
 			break
-		b.cyl("ex_props", "ex_podocarpus", a + t * u + n * 1.2, 0.6, 0.3, 3.5, 7, true, false, true)
+		FL.column(b, a + t * u + n * 1.2, 0.55, 1.6)   # clipped podocarpus columns, ~1.6 m (4488 f020)
 		b.obst(["rect", a.x - 1.8, a.z - u - 0.6, a.x - 0.6, a.z - u + 0.6])
 	# the rear block's roll-up receiving door (x -228, z ~28)
 	var ra = Vector3(-228, 0, 32)
@@ -924,9 +918,7 @@ static func jcpenney(b):
 	# the hedge along the south wall (dead brown today, 4489 f010-020)
 	for i in 14:
 		var hp = sa + stt * (25.0 + i * 2.4) + sn * 1.0
-		b.force_dyn = true
-		b.bush(hp + UP * 0.1, "leafy", 0.9, 2)
-		b.force_dyn = false
+		FL.shrub(b, hp, 0.75, Color(0.75, 0.62, 0.45) if YEAR == 2026 else Color(0.85, 1.0, 0.85))
 	b.obst(["rect", sa.x + 24.0, sa.z + 0.3, sa.x + 58.0, sa.z + 1.7])
 	# ---- north face z = -14, x -214..-154 (u runs west from x -154): docks 1-2 under the red canopy,
 	# the compactor, the Package Pick-up recess under the coral ribbed fascia
@@ -1515,9 +1507,8 @@ static func entry_drive(b):
 			palm(b, Vector3(x0 + 6.0 + i * ((x1 - x0 - 10.0) / 11.0), 0.16, sd * 4.3), 6.0 + (i % 3) * 0.8)
 	for sd in [-1.0, 1.0]:
 		island(b, 46.5, sd * 8.0 - 1.5, 49.5, sd * 8.0 + 1.5)
-		b.force_dyn = true
-		b.bush(Vector3(48.0, 0.16, sd * 8.0), "poinsettia", 1.6, 3)
-		b.force_dyn = false
+		for k in 3:
+			FL.shrub(b, Vector3(47.2 + k * 0.8, 0.16, sd * 8.0 + (k - 1) * 0.7), 0.6)
 	for sd in [-1.0, 1.0]:
 		stripe(b, Vector3(53.0, 0.012, sd * 0.3), Vector3(53.0, 0.012, sd * 3.5), 0.45, "ex_stripe_white")
 		stripe(b, Vector3(x1 - 3.0, 0.012, sd * 0.3), Vector3(x1 - 3.0, 0.012, sd * 3.5), 0.45, "ex_stripe_white")
@@ -1824,6 +1815,7 @@ static func build(b):
 	YEAR = int(b.YEAR)
 	rng.seed = 1995
 	trees = 0
+	FL.reset()
 	b.cur_color = Color.WHITE
 	shell(b)
 	fronts(b)
@@ -1838,6 +1830,6 @@ static func build(b):
 	# the building blocks the player: its footprint, in rectangles
 	for r in E.roofs:
 		b.obst(["rect", r[0], r[1], r[2], r[3]])
-	print("exterior: ", E.segments.size(), " wall runs, ", E.doors.size(), " doors, ", trees, " trees")
+	print("exterior: ", E.segments.size(), " wall runs, ", E.doors.size(), " doors, ", trees, " trees, flora ", FL.count)
 	# the player starts on the main entrance's walk, looking at the doors
 	return {"spawn": [52.0, 0.0, 90.0, 2.0], "walk": E.walk, "doors": E.doors, "origin": E.get("origin", [148, 100])}

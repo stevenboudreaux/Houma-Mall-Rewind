@@ -241,8 +241,9 @@ def foliage():
     W, H = 256, 512
     t = 108 + pnoise(H, W, 6, rng) * 10
     y, x = np.mgrid[0:H, 0:W]
-    lat = (np.sin((x / W * 6.283 * 7) + (y / H * 6.283 * 6)) > 0.6) | (np.sin((x / W * 6.283 * 7) - (y / H * 6.283 * 6)) > 0.6)
-    t = np.where(lat, t * 0.72, t) + (np.sin(y / H * 6.283 * 18) * 6)
+    lat = (np.sin((x / W * 6.283 * 9) + (y / H * 6.283 * 9)) > 0.75) | (np.sin((x / W * 6.283 * 9) - (y / H * 6.283 * 9)) > 0.75)
+    lat = np.asarray(Image.fromarray((lat * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.5)), np.float32) / 255.0
+    t = t * (1.0 - lat * 0.12) + (np.sin(y / H * 6.283 * 22) * 4) + pnoise(H, W, 2, rng) * 5
     save("ex_palm_bark", np.dstack([t * 1.0, t * 0.92, t * 0.80]))
 
 
