@@ -166,3 +166,14 @@ above sample each kind (sign letters, neon, stock, outside views, the 2026 outsi
 
 `publish_build.sh` dry run (`R2=0 DRY_RUN=1`): Demo 52's packs are refused at the contents check; this branch's
 export passes every check.
+
+## Tests on this branch (Nov 8)
+The brief's list was "production/session-handoff-2026-11-04-noon-READ-FIRST.md"; no such file is on main, int-51,
+int-52, integration or ws/r2-hosting, so the suites are the first eight of the int-52 handoff's table.
+Native (headless, unbaked): bake_quality_test BAKE QUALITY OK; items_test OK (49); shop_interiors_test OK (179);
+shop_test OK (204); dialogue_walk OK (67); corner_walk_test OK 1995 and 2026; wsS_thresholds_test OK 1995 and 2026;
+int_d49_test OK. Web (this branch's full export, desktop packs, swiftshader, one browser at a time; Python
+Playwright is not installed here, so the Node ports): shared_webtest.js all 12 maps SHARED WEB OK, 0 console errors;
+char_webtest.js (wing 1) CHAR WEB OK desktop and phone; movetest.js (wing 1 hall) MOVED, 0 errors;
+tests/unit/hosting/pack_base_test.js PACK BASE OK. New: packcontents_test.py all passed;
+`packcontents.py check` passes on this export and fails on Demo 52.
