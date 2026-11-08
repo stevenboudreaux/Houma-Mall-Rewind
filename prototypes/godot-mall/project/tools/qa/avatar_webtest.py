@@ -153,7 +153,7 @@ with sync_playwright() as p:
     pg.wait_for_timeout(3000)
     pg.touchscreen.tap(31, 29); pg.wait_for_timeout(3000)
     shot(pg, "phone-menu-main")
-    rows = os.environ.get("PHONE_ROW", "")   # "x,y" of the third portrait (from tools/qa/ui_offscreen_test.gd RECT lines)
+    rows = os.environ.get("PHONE_ROW", "244,569")   # "x,y" of the third portrait (from tools/qa/ui_offscreen_test.gd RECT lines)
     if rows:
         x, y = [float(v) for v in rows.split(",")]
         pg.touchscreen.tap(x, y); pg.wait_for_timeout(4000)

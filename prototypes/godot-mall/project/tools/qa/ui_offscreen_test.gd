@@ -135,7 +135,7 @@ func _plan() -> void:
 	_do(func():
 		menu = player.get_node("Menu")
 		var tucked: Array = menu.corner_buttons()
-		_check(tucked.size() >= 5, "five corner buttons found: Jump to, year, Bag, View, Avatar (%d)" % tucked.size())
+		_check(tucked.size() >= 4, "four corner buttons found: Jump to, year, Bag, View (CHAR-STRIP: no Avatar button) (%d)" % tucked.size())
 		var hidden := true
 		for b in tucked:
 			if b.is_visible_in_tree():

@@ -150,6 +150,9 @@ All numbers are in **`data/story/talk_camera.json`**; per-NPC overrides go under
 
 ### The look (`scripts/npc_look.gd`)
 **Eye bones: none of the rigs has them.**
+> **CHAR-STRIP (Nov 8 2026, design/godot-avatar.md):** the UBC bodies and presets are deleted; every attendant is
+> now a Mixamo skin (`"look": "mixamo"`) or a cast member (`"look": "cast"`) made by `Cast.body`. The UBC eye path
+> below no longer finds a body to act on (head look only) until CHAR-BUILD's cast files bring eye bones.
 - **UBC bodies** (`models/ubc`: every attendant, `"look": "preset"`): the eyes are one mesh skinned
   to the head, with a fisheye-mapped iris texture (front at uv 0.496, 0.501; the two eyes are mirrored
   in u; read from the mesh, both sexes share it). There are no eyelids and no blink shapes. While
