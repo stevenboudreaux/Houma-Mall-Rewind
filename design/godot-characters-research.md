@@ -105,8 +105,8 @@ Measured in this repo (glTF accessors and `npc/skins.json`; nothing measured on 
 - **Per character on iPhone:** 6–10k tris as is, plus a new head of about 3–5k. One or two textures, 2–3 draw calls. The cheapest option.
 - **Clothes / hair:** baked per character. Mixamo clothes are part of the body mesh, so a new outfit means
   remodelling the torso.
-- **Face rig:** **none.** Mixamo characters ship without blend shapes or eye bones (only `mixamorig:Head`, and
-  on some `HeadTop_End`). Every face shape would be sculpted by hand on 19 different topologies.
+- **Face rig:** **none.** The baked skins in `npc/skins/*.scn` carry no blend shapes, and only Remy's has an eye
+  node (`RightEye`; checked with `strings`). Every face shape would be sculpted by hand on 19 different topologies.
 - **NPC / player:** same files and rig as the crowd. The player picks one of the cast.
 - **Claude in the cloud:** feasible for repainting. A head swap means cutting at the neck seam and re-weighting on
   every body, each one different. Slow to iterate and hard to check by script.
