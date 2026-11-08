@@ -68,7 +68,9 @@ static func fill_mat(m, key, b):
 	var tx = func(f, rough): m.albedo_texture = b.tex("ex/" + f + ".png"); m.roughness = rough
 	match key:
 		"brick_cream": tx.call("brick_cream", 0.85)
-		"brick_salmon": tx.call("brick_salmon", 0.85)
+		"brick_salmon":
+			tx.call("brick_salmon", 0.85)
+			m.albedo_color = Color(0.76, 0.8, 0.8)   # EXT-LAYOUT: the dusty rose of 4486 f016-f030, not orange
 		"brick_tan": tx.call("brick_tan", 0.9)
 		"brick_red": tx.call("brick_red", 0.9)
 		"brick_brown": tx.call("brick_brown", 0.9)
@@ -941,18 +943,19 @@ static func cinema_box(b):
 		b.cyl(g, "ex_gold", fdc + t * (sd * 0.13) - UP * 0.25, 0.05, 0.05, 0.16, 8, true)
 	b.box(g, "ex_pipe_grey", a + t * 13.2 + n * 0.2 + UP * 0.9, b.abs_size(t, 1.2, 0.08, 0.08, n))
 	b.cyl(g, "ex_pipe_grey", a + t * 13.8 + n * 0.12, 0.05, 0.05, 1.0, 8, true)
-	# the raised walk: 0.45 m up, 1.45 m wide, steps at u 16..17.05, level to u 33, a 1:12 ramp to u 38.4
+	# the raised walk: 0.45 m up, 1.45 m wide, steps at u 15..16.05 just past the FDC pilaster (f022), level to
+	# u 33, a 1:12 ramp to u 38.4
 	var hp = 0.45; var w = 1.45
-	var u0 = 17.05; var u1 = 33.0; var u2 = u1 + hp * 12.0
+	var u0 = 16.05; var u1 = 33.0; var u2 = u1 + hp * 12.0
 	for i in 3:
-		run_box(b, g, "ex_walk", a, t, n, 16.0 + i * 0.35, u0, 0.0, (i + 1) * 0.15, w, w)
+		run_box(b, g, "ex_walk", a, t, n, 15.0 + i * 0.35, u0, 0.0, (i + 1) * 0.15, w, w)
 	run_box(b, g, "ex_walk", a, t, n, u0, u1, 0.0, hp, w, w)
 	var r0 = a + t * u1; var r1 = a + t * u2
 	b.quad(g, "ex_walk", [r0 + UP * hp, r0 + n * w + UP * hp, r1 + n * w + UP * 0.02, r1 + UP * 0.02], (UP * 12.0 + t).normalized())
 	b.quad(g, "ex_walk", [r0 + n * w, r0 + n * w + UP * hp, r1 + n * w + UP * 0.02, r1 + n * w], n)
 	# the knee wall at the curb (0.25 thick, 0.95 over the lot) from the steps to the ramp's foot, and
 	# the galvanized two-rail pipe rail on it; the rail carries on down the ramp
-	run_box(b, g, "ex_peach_pier", a, t, n, 16.0, u1, 0.0, 0.95, w + 0.25, 0.25)
+	run_box(b, g, "ex_peach_pier", a, t, n, 15.0, u1, 0.0, 0.95, w + 0.25, 0.25)
 	var kw0 = a + t * u1 + n * (w + 0.125); var kw1 = a + t * u2 + n * (w + 0.125)
 	b.quad(g, "ex_peach_pier", [kw0 + n * 0.125, kw1 + n * 0.125, kw1 + n * 0.125 + UP * 0.4, kw0 + n * 0.125 + UP * 0.95], n)
 	b.quad(g, "ex_peach_pier", [kw0 - n * 0.125 + UP * hp, kw1 - n * 0.125 + UP * 0.02, kw1 - n * 0.125 + UP * 0.4, kw0 - n * 0.125 + UP * 0.95], -n)
@@ -960,11 +963,11 @@ static func cinema_box(b):
 	b.quad(g, "ex_peach_pier", [kw1 - n * 0.125, kw1 + n * 0.125, kw1 + n * 0.125 + UP * 0.4, kw1 - n * 0.125 + UP * 0.4], t)
 	var rl = n * (w - 0.05)
 	for y in [hp + 1.05, hp + 0.55]:
-		b.box(g, "ex_pipe_grey", a + t * ((16.6 + u1) * 0.5) + rl + UP * y, b.abs_size(t, u1 - 16.6, 0.045, 0.045, n))
+		b.box(g, "ex_pipe_grey", a + t * ((15.6 + u1) * 0.5) + rl + UP * y, b.abs_size(t, u1 - 15.6, 0.045, 0.045, n))
 		var p0 = a + t * u1 + rl + UP * y; var p1 = a + t * u2 + rl + UP * (y - hp + 0.02)
 		b.box(g, "ex_pipe_grey", Vector3.ZERO, Vector3(0.045, 0.045, p0.distance_to(p1)), Transform3D(Basis.looking_at(p1 - p0, UP), (p0 + p1) * 0.5))
 	var posts = []
-	var pu = 16.6
+	var pu = 15.6
 	while pu < u1 - 0.5:
 		posts.append(pu); pu += 2.0
 	posts += [u1, u1 + (u2 - u1) * 0.5, u2]
@@ -973,7 +976,7 @@ static func cinema_box(b):
 		b.cyl(g, "ex_pipe_grey", a + t * q + rl + UP * yb, 0.024, 0.024, 1.07, 6, false)
 	cinema_door(b, g, a, t, n, 26.0, 1, hp)                        # on the raised walk (f028-f030)
 	cinema_door(b, g, a, t, n, 41.5, 1)                            # past the ramp (f037, a GUESS)
-	b.obst(["rect", x0 - w - 0.3, -86.0 + 16.0, x0, -86.0 + u2])
+	b.obst(["rect", x0 - w - 0.3, -86.0 + 15.0, x0, -86.0 + u2])
 
 ## A cream flush steel exit door (single or double) on the cinema box, set on its sill `y0` up, a wall
 ## pack over it and a small drip cap (4486 f001, f016, f028).

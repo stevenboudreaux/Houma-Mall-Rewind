@@ -516,6 +516,24 @@ the same geometry a Blender sweep would give, no import step, baked with the out
 Evidence: `wsEXTL-exit-frame.jpg`, `wsEXTL-exit-render-{1995,2026}-unbaked.jpg`, `wsEXTL-exit-sbs-{f002,f005,f014}-*`,
 `wsEXTL-rack-frame.jpg`, `wsEXTL-rack-render-1995-unbaked.jpg`, `wsEXTL-rack-sbs-*`.
 
+### 2. The cinema's west wall and north face (`exterior.gd cinema_box`, `cinema_door`; 4486 f001, f014-f040)
+What each frame proved, and what changed:
+| Frame | Shows | Built |
+|---|---|---|
+| f001, f014 | the north face (the channel's south side): a cream flush **double** door ~10 m out from the glass, red curb, no ladder | double door at x -90.5 with a wall pack; red curb (was: no north face at all) |
+| f016 | the NW corner; a cream **single** door 1.5 m from it on the north face; the curb wraps the corner; the pink ladder starts on the west side | single door at x -96.4; the ladder 2026 on the west face only |
+| f016-f021 | one flush west run, shallow pilasters ~8 m apart, peach, a light base course | pilasters 0.6 m wide, 0.1 m proud, peach-painted brick with a peach cap, at 6, 14, 22, 30, 38 m from the NW corner; base course 0.45 m (was 6 pilasters at ~9 m, 0.18 proud, a 0.6 m base) |
+| f022-f024 | the brass FDC on its pipe left of a pilaster, the steps right past it | FDC at 12.6 m, steps from 15 m |
+| f025-f030 | three steps up to a raised walk along the wall, the peach knee wall at the curb, a galvanized two-rail pipe rail, a cream single door with a light on the walk | the walk 0.45 m up, 1.45 m wide, from 15 to 33 m, the door at 26 m (was a 12 m ramp-only box with one rail) |
+| f031-f037 | the knee wall dropping toward the south: the ramp down to the lot, i.e. rising toward the exit; a door at grade further south | the 1:12 ramp 33-38.4 m with its rail; a single door at 41.5 m (GUESS: f037 shows it far off) |
+| all | the wall is 6.3-6.7 m (against the 2.1 m doors), the brick a dusty rose | 6.8 m (was 9); the salmon brick tinted down (`brick_salmon` albedo 0.76 / 0.8 / 0.8; it rendered orange) |
+Count: the brief's "two cream flush doors (one double, one single)" are the north face's two (f001, f016); the west face
+has the walk's single door and the far one. Was: five hooded doors on the west face, none on the north. Red curb both
+years; the pink fire-lane hatching only in 2026 (1995 had a GUESSED yellow one: removed on the cinema).
+Brick at 50 m: no swirl (LOT's mipmaps hold, `wsEXTL-cinema-wall-50m-*`), so the UV tiling was left as it is.
+Evidence: `wsEXTL-cinema-wall-frame.jpg`, `wsEXTL-cinema-wall-render-{1995,2026}-unbaked.jpg`,
+`wsEXTL-cinema-wall-sbs-{f016,f017,f022,f028,f034}-{1995,2026}-unbaked.jpg`.
+
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).
