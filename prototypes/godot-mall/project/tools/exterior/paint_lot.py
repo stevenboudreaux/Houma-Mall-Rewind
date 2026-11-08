@@ -3,7 +3,10 @@ outside's foliage atlas, painted into tex/ex/ex_*.png (design/godot-exterior.md 
 
   ex_asphalt_alb.png   2048 px, 8 m: binder + exposed aggregate, mottling, tiles seamlessly (FFT noise)
   ex_asphalt_rgh.png   1024 px: roughness (binder ~0.93, worn stones ~0.80)
-  ex_asphalt_nrm.png   1024 px: a subtle normal map from the aggregate's height
+  ex_asphalt_nrm.png   1024 px: a subtle normal map from the aggregate's height (the roads and drives)
+  ex_concrete_alb.png  2048 px, one 6 m lot panel: exposed aggregate, weathering, a half sealed joint on
+                       every edge (so a panel can turn any way and its neighbour completes the joint)
+  ex_concrete_rgh.png, ex_concrete_nrm.png  512 px: its roughness and the joints' shallow groove
   ex_lot_decals.png    1024 px RGBA, 2 x 2 cells: sealed crack, alligator cracks, a patch, an oil stain
   ex_paint_worn.png    64 x 1024 RGBA: a stripe's worn paint mask (white; the material tints it)
   ex_foliage.png       1024 px RGBA, the trees' and shrubs' cards (cells listed at FOL below)
@@ -71,6 +74,46 @@ def asphalt():
     l = np.sqrt(nx * nx + ny * ny + nz * nz)
     nrm = np.stack([nx / l, ny / l, nz / l], -1) * 0.5 + 0.5
     save("ex_asphalt_nrm", nrm * 255.0)
+
+
+# ------------------------------------------------------------------ concrete (the lot, Steven Nov 8)
+def concrete():
+    """One 6 m panel of the lot's jointed exposed-aggregate concrete (4487 f034, 4492 f060), 2048 px
+    (~3 mm/px). Half a joint (6 mm of dark grey sealant, a little spalling) on each edge."""
+    rng = np.random.default_rng(1971)
+    N = 2048
+    fine = pnoise(N, N, 2.0, rng)
+    fine2 = pnoise(N, N, 3.2, rng)
+    stones = np.clip((fine - 0.7) * 2.0, 0, 1)
+    dark = np.clip((fine2 - 1.4) * 2.0, 0, 1)
+    tone = pnoise(N, N, 5.0, rng)
+    paste = 168.0 + rng.standard_normal((N, N)) * 5.0
+    mott = pnoise(N, N, 60.0, rng)
+    big = pnoise(N, N, 380.0, rng)
+    lum = paste + mott * 3.5 + big * 6.0 + stones * (14.0 + tone * 10.0) - dark * 28.0
+    # weathering: tyre-dark bands and drips of grime
+    grime = np.clip(pnoise(N, N, 140.0, rng) - 0.5, 0, 2) * 7.0
+    lum -= grime
+    y, x = np.mgrid[0:N, 0:N]
+    e = np.minimum.reduce([x, y, N - 1 - x, N - 1 - y]).astype(np.float32)
+    jw = 2.0 + np.clip(pnoise(N, N, 12.0, rng), -1, 1) * 0.8          # half joint ~6 mm, ragged
+    joint = e < jw
+    spall = (e < jw + 3.0) & (pnoise(N, N, 4.0, rng) > 1.2)
+    lum = np.where(spall, lum * 0.8, lum)
+    lum = np.where(joint, 62.0 + rng.standard_normal((N, N)) * 6.0, lum)
+    img = np.stack([lum * 1.0, lum * 0.985, lum * 0.95], -1)
+    warm = np.clip(tone - 0.8, 0, 1) * stones
+    img[..., 0] += warm * 10.0; img[..., 2] -= warm * 6.0
+    save("ex_concrete_alb", img)
+    h = (stones * 0.6 - dark * 0.3 - joint * 1.5 - spall * 0.5).astype(np.float32)
+    h = h.reshape(512, 4, 512, 4).mean((1, 3))
+    rough = 0.88 - np.clip(h, 0, 1) * 0.08 + np.clip(-h, 0, 1) * 0.05
+    save("ex_concrete_rgh", np.repeat((rough * 255.0)[..., None], 3, -1))
+    gx = (np.roll(h, -1, 1) - np.roll(h, 1, 1)) * 0.5
+    gy = (np.roll(h, -1, 0) - np.roll(h, 1, 0)) * 0.5
+    nx = -gx * 0.8; ny = gy * 0.8; nz = np.ones_like(nx)
+    l = np.sqrt(nx * nx + ny * ny + nz * nz)
+    save("ex_concrete_nrm", np.stack([nx / l, ny / l, nz / l], -1) * 127.5 + 127.5)
 
 
 # ------------------------------------------------------------------ decals
@@ -249,6 +292,7 @@ def foliage():
 
 if __name__ == "__main__":
     asphalt()
+    concrete()
     decals()
     paint()
     foliage()

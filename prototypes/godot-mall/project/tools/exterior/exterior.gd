@@ -73,6 +73,17 @@ static func fill_mat(m, key, b):
 		"stucco_tan": tx.call("stucco_tan", 0.85)
 		"aggregate": tx.call("aggregate", 0.95)
 		"concrete": tx.call("concrete_panel", 0.9)
+		"concrete_lot":
+			# Steven (Nov 8): the lot is concrete in both years, as filmed (4487 f034, 4492 f060): jointed
+			# exposed-aggregate panels, 6 m. paint_lot.py concrete(); the joints are thin sealed lines that
+			# the mipmaps fade with distance (the old 'tile lines' were thick black joints with no mipmaps).
+			m.albedo_texture = b.tex("ex/ex_concrete_alb.png")
+			m.roughness_texture = b.tex("ex/ex_concrete_rgh.png"); m.roughness = 1.0; m.metallic = 0.0
+			m.normal_enabled = true; m.normal_texture = b.tex("ex/ex_concrete_nrm.png"); m.normal_scale = 0.6
+			m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+			m.vertex_color_use_as_albedo = true
+			# 1995 younger and cleaner; 2026 weathered, a shade darker and warmer
+			m.albedo_color = Color(0.74, 0.73, 0.71) if YEAR != 2026 else Color(0.66, 0.64, 0.61)
 		"asphalt", "asphalt_lot":
 			# Workstream LOT (Nov 8 2026): the lot is asphalt with exposed aggregate (paint_lot.py), the
 			# roads the same mix a little darker; the lot's ground carries a slow vertex-colour mottle that
@@ -96,9 +107,9 @@ static func fill_mat(m, key, b):
 			m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 		"lot_decal":
 			m.albedo_texture = b.tex("ex/ex_lot_decals.png"); m.roughness = 0.8; m.metallic = 0.0
-			# tinted like the year's asphalt, so a patch is the lot's own grain a shade darker
-			var dl = 0.64 if YEAR == 2026 else 0.50
-			m.albedo_color = Color(dl, dl, dl * 1.01)
+			# tinted a little with the year's weathering (cracks and oil read dark on the concrete)
+			var dl = 0.85 if YEAR == 2026 else 0.95
+			m.albedo_color = Color(dl, dl, dl * 0.98)
 			m.vertex_color_use_as_albedo = true
 			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
@@ -1354,8 +1365,8 @@ static func lot(b):
 	b_ref = b
 	var g = "ex_ground"
 	var M = E.map
-	# the ground: asphalt out past the roads (Workstream LOT, Nov 8 2026: was 6 m concrete panels with
-	# black tar joints, Steven's "tile lines")
+	# the ground: jointed concrete panels out past the roads (Workstream LOT, Nov 8 2026: Steven, concrete in
+	# both years; the "tile lines" were the old texture's thick black joints aliasing without mipmaps)
 	var x0 = M[0] - 30.0; var z0 = M[1] - 30.0; var x1 = M[2] + 30.0; var z1 = M[3] + 30.0
 	lot_ground(b, LOT_WEST - 4.0, z0, x1, z1)
 	# the roads: West Park Ave (east, 4 lanes), Bayou Gardens Blvd (south), Armour Dr (north)
@@ -1433,7 +1444,7 @@ static func lot(b):
 		# wear near the building: a sealed crack or a patch every 10-25 m along the face, out in the lane
 		var u = rng.randf_range(4.0, 12.0)
 		while u < L - 2.0:
-			var cell = [0, 0, 1, 2][rng.randi() % 4]
+			var cell = [0, 0, 1][rng.randi() % 3]
 			var at = a + t * u + n * rng.randf_range(3.0, 14.0)
 			if not kept(at.x - 0.1, at.z - 0.1, at.x + 0.1, at.z + 0.1) or rng.randf() < 0.5:
 				lot_decal(b, at, t.rotated(UP, rng.randf_range(-0.6, 0.6)), cell, rng.randf_range(1.6, 3.4) if cell != 2 else rng.randf_range(1.8, 3.0), rng.randf_range(0.6, 1.0) if YEAR == 2026 else rng.randf_range(0.3, 0.6))
@@ -1447,23 +1458,30 @@ static func lot(b):
 		stripe(b, Vector3(46.0, 0.013, zz), Vector3(50.0, 0.013, zz + 1.6), 0.18, "ex_stripe_yellow")
 	bank_pad(b)
 
-## The lot's asphalt ground in 8 m cells, each corner carrying a slow mottle in its vertex colour
-## (two noise octaves, ~50 m and ~14 m) so the 8 m texture never reads as a repeat from eye height.
+## The lot's ground: 6 m concrete panels (Steven, Nov 8: concrete, both years), one per cell, each turned
+## a random quarter turn (the texture has half a joint on every edge, so neighbours always complete the
+## joint) and tinted on its own: a slow two-octave mottle (~50 m, ~14 m) times a per-panel shade, with
+## about one panel in twelve a lighter replacement (4487: "lighter replacement panels").
 static func lot_ground(b, x0, z0, x1, z1):
 	var nz = FastNoiseLite.new(); nz.seed = 1969; nz.frequency = 1.0 / 50.0
 	var nz2 = FastNoiseLite.new(); nz2.seed = 2026; nz2.frequency = 1.0 / 14.0
-	var s = b.st("ex_ground", "ex_asphalt_lot")
-	var C = 8.0
+	var pr = RandomNumberGenerator.new(); pr.seed = 6
+	var s = b.st("ex_ground", "ex_concrete_lot")
+	var C = 6.0
 	var nx = int(ceil((x1 - x0) / C)); var nzc = int(ceil((z1 - z0) / C))
-	var col = func(x, z):
-		var v = 1.0 + 0.10 * nz.get_noise_2d(x, z) + 0.045 * nz2.get_noise_2d(x, z)
-		var w = 0.02 * nz.get_noise_2d(z + 500.0, x)   # a little warmer / cooler
+	var col = func(x, z, k):
+		var v = (1.0 + 0.06 * nz.get_noise_2d(x, z) + 0.03 * nz2.get_noise_2d(x, z)) * k
+		var w = 0.015 * nz.get_noise_2d(z + 500.0, x)   # a little warmer / cooler
 		return Color(v * (1.0 + w), v, v * (1.0 - w))
 	for i in nx:
 		for j in nzc:
 			var xa = x0 + i * C; var xb = min(x1, xa + C)
 			var za = z0 + j * C; var zb = min(z1, za + C)
-			# no asphalt under the building (its texels would be dark and bleed out at 1.6 m a texel)
+			var k = pr.randf_range(0.94, 1.04)
+			if pr.randf() < 0.08:
+				k = pr.randf_range(1.08, 1.14)
+			var rot = pr.randi() % 4
+			# no ground under the building (its texels would be dark and bleed out at 1.6 m a texel)
 			var inside = false
 			for r in E.roofs:
 				if xa >= r[0] and xb <= r[2] and za >= r[1] and zb <= r[3]:
@@ -1471,12 +1489,17 @@ static func lot_ground(b, x0, z0, x1, z1):
 			if inside:
 				continue
 			var p = [Vector3(xa, 0, za), Vector3(xb, 0, za), Vector3(xb, 0, zb), Vector3(xa, 0, zb)]
+			var uv = []
 			var cs = []
 			for q in p:
-				cs.append(col.call(q.x, q.z))
+				cs.append(col.call(q.x, q.z, k))
+				var u = (q.x - (x0 + i * C)) / C; var v = (q.z - (z0 + j * C)) / C
+				for _r in rot:
+					var t = u; u = 1.0 - v; v = t
+				uv.append(Vector2(u, v))
 			for tri in [[0, 1, 2], [0, 2, 3]]:
-				for k in tri:
-					s.set_color(cs[k]); s.set_normal(UP); s.set_uv(Vector2(p[k].x, p[k].z) / 8.0); s.add_vertex(p[k])
+				for kk in tri:
+					s.set_color(cs[kk]); s.set_normal(UP); s.set_uv(uv[kk]); s.add_vertex(p[kk])
 
 ## True when the corner at p (a wall run's end, the run's outward normal n, `along` pointing off the
 ## run's end) is an outside corner: the square diagonally out from it is clear of every footprint.
@@ -1575,7 +1598,7 @@ static func road(b, a, bb, w):
 static func entry_drive(b):
 	var g = "ex_ground"
 	var x0 = 50.0; var x1 = ROAD_WEST_PARK - 6.5
-	b.quad(g, "ex_asphalt", [Vector3(x0, 0.015, -3.7), Vector3(x1, 0.015, -3.7), Vector3(x1, 0.015, 3.7), Vector3(x0, 0.015, 3.7)], UP, [], false, 0.1)
+	# the drive itself is the lot's concrete (4492 f060: jointed panels between the palms; LOT, Nov 8)
 	stripe(b, Vector3(x0, 0.01, -0.12), Vector3(x1, 0.01, -0.12), 0.1, "ex_stripe_yellow")
 	stripe(b, Vector3(x0, 0.01, 0.12), Vector3(x1, 0.01, 0.12), 0.1, "ex_stripe_yellow")
 	for sd in [-1.0, 1.0]:
