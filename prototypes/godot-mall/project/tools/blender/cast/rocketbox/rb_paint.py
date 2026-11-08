@@ -54,7 +54,49 @@ def recolour(c, mask, target, detail=1.0, ref=None):
     return out
 
 
+def repaint_map(tex, region, spec):
+    """Garments by colour: every non-skin texel of the trunk, legs and feet goes to the nearest of the
+    data file's source colours ("map": [{"from": hex, "to": hex or absent = keep, "detail": k}]) and is
+    recoloured from its own light. Skin = the hands region only ("skin_by": "region"), or by colour too."""
+    skin = (region == 4)
+    if spec.get("skin_by", "colour") != "region":
+        skin = skin | classify(tex, region)
+    out = tex.copy()
+    cloth = ~skin & (region >= 1) & (region <= 3)
+    if spec.get("by_uv"):                    # the entries' rectangles decide; regions only exclude hands
+        cloth = ~skin & (region != 4)
+    def feat(c):
+        L = lum(c)[..., None]
+        return np.concatenate([c / np.maximum(L, 0.05) * float(spec.get("chroma_w", 1.0)), L], -1)
+    F = feat(tex)
+    ents = spec["map"]
+    seeds = np.stack([feat(hexrgb(e["from"])[None, None])[0, 0] for e in ents])
+    d = np.linalg.norm(F[..., None, :] - seeds[None, None], axis=-1)
+    # an entry only competes in its regions ("regions": ["top", "legs", "feet"], default all)
+    code = {"top": 1, "legs": 2, "feet": 3}
+    for i, e in enumerate(ents):
+        if e.get("regions"):
+            ok = np.isin(region, [code[r] for r in e["regions"]])
+            d[..., i] = np.where(ok, d[..., i], 1e9)
+        if e.get("uv"):                      # and only inside its texture rectangle(s) (image coords)
+            H, W = region.shape
+            rects = e["uv"] if isinstance(e["uv"][0], list) else [e["uv"]]
+            ok = np.zeros(region.shape, bool)
+            for x0, y0, x1, y1 in rects:
+                ok[int(y0 * H):int(y1 * H), int(x0 * W):int(x1 * W)] = True
+            d[..., i] = np.where(ok, d[..., i], 1e9)
+    near = np.where(d.min(-1) < 1e8, d.argmin(-1), -1)      # -1: no entry may touch this texel
+    for i, e in enumerate(ents):
+        if not e.get("to"):
+            continue
+        m = cloth & (near == i)
+        out = recolour(out, m, hexrgb(e["to"]), float(e.get("detail", 1.0)))
+    return out, skin
+
+
 def repaint_body(tex, region, spec):
+    if "map" in spec:
+        return repaint_map(tex, region, spec)
     """tex (H,W,3) float; region (H,W) str-coded int: 0 none, 1 top, 2 legs, 3 feet, 4 hands/skin areas.
     spec: the data file's "repaint" {top: hex, legs: hex, feet: hex, legs_detail, top_detail, prints: [...]}"""
     skin = classify(tex, region) | (region == 4)

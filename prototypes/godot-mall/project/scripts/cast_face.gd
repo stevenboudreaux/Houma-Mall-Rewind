@@ -13,7 +13,7 @@ const EYE_NAMES := ["eye.L", "eye.R"]
 const BLINK := {"L": ["blink_L", "EyeBlinkLeft"], "R": ["blink_R", "EyeBlinkRight"]}
 ## Rocketbox's ARKit blink leaves a slit at 1.0; a little squint closes it (CHAR-SOURCES "faults").
 const SQUINT := {"L": ["EyeSquintLeft"], "R": ["EyeSquintRight"]}
-const SQUINT_K := 0.3
+const SQUINT_K := 0.55
 
 ## Eye bone indices ([] when the rig has none).
 static func eye_bones(sk: Skeleton3D) -> Array:

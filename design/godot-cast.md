@@ -77,6 +77,11 @@ only; `eyes`: iris scaled up and brightened, a catchlight) → named morphs → 
 surfaces, with morphs) from body → LOD1 (both joined, no morphs, collapse-decimated to `lod1_tris`) → export.
 Eye bones are renamed `eye.L` / `eye.R`, the jaw `jaw` (the cast's contract; CastFace also accepts `*LeftEye`).
 
+**Godot keeps textures it extracted from a `.glb`** (beside it, `cast/<id>_*.png`) and does not refresh them
+when the `.glb` changes; `rb_cast.py` deletes them before export so the next import extracts fresh ones.
+The hair/lash material is patched to alpha MASK after export (see RadioShack).
+**Blink:** `blink_L/R` = `EyeBlink*` + `EyeSquint*` 0.55 (minus the resting `EyeWide*`), so the lids close.
+
 **Hidden-face removal:** Rocketbox bodies are modelled clothed (no skin under the clothes), so there is nothing
 to remove; the step stays in the MakeHuman path (`delete_verts`).
 **Hair / brow / lash atlas:** Rocketbox's own `opacity` texture, 1024² (the 1024 rule), alpha-scissored.
@@ -155,7 +160,7 @@ loading card); TALK: `Cast.set_mouth`, `Cast.set_morph`, `NpcLook` (eye bones + 
 
 ## People
 
-### 1. RadioShack (1995) — `radioshack_1995` — PROPOSAL (Rocketbox), waiting for Steven's okay
+### 1. RadioShack (1995) — `radioshack_1995` — **APPROVED** (Steven, Nov 8)
 * **Steven:** "25-year-old overweight white man." Picked Rocketbox **Male_Adult_08**.
 * **Proposed:** HEAVY 1.0 + face fill 7 mm + `CheekPuff` 0.35 in the resting face; lids `EyeWide` 0.3; his
   light-blue button shirt repainted white (worn untucked, sleeves rolled, as modelled), jeans repainted charcoal
@@ -166,12 +171,25 @@ loading card); TALK: `Cast.set_mouth`, `Cast.set_morph`, `NpcLook` (eye bones + 
 * Evidence: `production/qa/evidence/wsCAST-radioshack_1995-sheet.jpg` (Godot turntable + faces beside the
   research render), `wsCAST-radioshack_1995-ingame.jpg` (wing 1, unbaked). The earlier MakeHuman sheet is in
   this branch's history (commit 09dce16).
-* Known: the face is still slimmer than the pushed body (Rocketbox has no heavy faces); hair cards read darker
-  under the wing's unbaked light.
+* Known: the face is still slimmer than the pushed body (Rocketbox has no heavy faces).
+* **Steven's okay (Nov 8):** approved; "soften the hair's dark read if it's a material setting, else leave it
+  for the bake". It was a material setting: Blender 5's glTF exporter wrote the hair/lash material as alpha
+  BLEND, which Godot draws blended with a depth pre-pass (cards mis-sorted, muddy and dark). `rb_cast.py` now
+  patches it to alpha MASK at 0.35 (Godot: scissor): `production/qa/evidence/wsCAST-radioshack_1995-hair.jpg`.
+  Raw ARKit 52 stay out (20 named + 15 visemes stand).
 
-### 2. Cuco's owner (1995) — Rocketbox Male_Adult_07 — not started (after RadioShack's okay)
-### 3. Great American Cookie (1995) — Female_Party_02 — not started (her curly hair is long: Steven's
-"long style" case; recolour/trim to be proposed)
+### 2. Cuco's owner (1995) — `cucos_owner_1995` — PROPOSAL, waiting for Steven's okay
+* **Steven:** "35-year-old white man, average build. The TALK close-up." Picked Rocketbox **Male_Adult_07**.
+* **Proposed:** his build as made (average); his grey sport coat kept; his rust shirt repainted a cream
+  open-collar dress shirt; jeans repainted khaki trousers (denim detail at 35 %); his brown belt and tan shoes
+  kept. No tie or badge (he's the owner). Eyes: iris ×1.3, brighter, catchlight; lids `EyeWide` 0.25. Skin
+  warmed a touch. His own short dark hair. Standing on the bartender's side of the bar (x 22.55, z −75.4,
+  facing the room; the counter spans x 23.15–23.75).
+* **Can't change (Rocketbox's UVs):** the shirt collar keeps its rust (the collar is textured from the same texels
+  as his neck skin) and the shoes stay tan (the shoe uppers share the hands' texels).
+* **Guessed:** a 1995 restaurant owner's dress (sport coat, open collar, khakis).
+* Evidence: `wsCAST-cucos_owner_1995-sheet.jpg`, `wsCAST-cucos_owner_1995-ingame.jpg` (wing 1, unbaked).
+### 3. Great American Cookie (1995) — Female_Party_02 — not started (her long curly hair kept as-is: Steven)
 ### 4. Auntie Anne's (2026) — Male_Adult_16 — not started (hair recoloured red, freckles as tone detail)
-### 5. Spencer's (2026) — Female_Adult_11 — not started (plus size by `heavy` + face fill; Medical_Female_01
-shares her head)
+### 5. Spencer's (2026) — **Business_Female_01** (Steven's change, Nov 8) — not started: pushed heavier, her suit
+repainted as a black Spencer's staff tee and dark trousers

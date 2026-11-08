@@ -35,8 +35,8 @@ PY = sys.executable
 
 # the cast's morph names (same names as the MakeHuman path, person.MORPHS) from ARKit shapes
 NAMED = [
-    ("blink_L", {"EyeBlinkLeft": 1.0, "EyeSquintLeft": 0.3}),
-    ("blink_R", {"EyeBlinkRight": 1.0, "EyeSquintRight": 0.3}),
+    ("blink_L", {"EyeBlinkLeft": 1.0, "EyeSquintLeft": 0.55}),
+    ("blink_R", {"EyeBlinkRight": 1.0, "EyeSquintRight": 0.55}),
     ("squint_L", {"EyeSquintLeft": 1.0}), ("squint_R", {"EyeSquintRight": 1.0}),
     ("eyes_wide", {"EyeWideLeft": 1.0, "EyeWideRight": 1.0}),
     ("smile", {"MouthSmileLeft": 1.0, "MouthSmileRight": 1.0}),
@@ -198,6 +198,14 @@ def main(pid):
     A = np.concatenate([P[tri[bm_]], code[tri[bm_]][..., None]], 2)
     img, cov = raster.raster(cuv[bm_], A, BH)
     region = np.where(cov, np.rint(img[..., 3]).astype(int), 0)
+    # texels the raster missed (slivers, UV padding) take their nearest covered neighbour's region
+    for _ in range(24):
+        z = region == 0
+        if not z.any():
+            break
+        for dy, dx in ((0, 1), (0, -1), (1, 0), (-1, 0)):
+            nbr = np.roll(np.roll(region, dy, 0), dx, 1)
+            region = np.where((region == 0) & (nbr > 0), nbr, region)
     body2, skin_b = rb_paint.repaint_body(body, region, data.get("repaint", {}))
     head = rb_paint.load(head_png); HH = head.shape[0]
     hm = mat == mats["head"]
@@ -323,12 +331,17 @@ def main(pid):
     # ---- export
     os.makedirs(OUT, exist_ok=True)
     glb = os.path.join(OUT, pid + ".glb")
+    # Godot extracts a .glb's embedded textures beside it once and never refreshes them: drop the old ones
+    import glob as _g
+    for f in _g.glob(os.path.join(OUT, pid + "_*.png")) + _g.glob(os.path.join(OUT, pid + "_*.png.import")):
+        os.remove(f)
     bpy.ops.object.select_all(action="DESELECT")
     for o in (arm, bodyo, face, lod1):
         o.select_set(True)
     bpy.ops.export_scene.gltf(filepath=glb, export_format="GLB", use_selection=True, export_animations=False,
                               export_morph=True, export_morph_normal=False, export_skins=True, export_apply=False,
                               export_yup=True, export_image_format="AUTO")
+    patch_alpha(glb, "opacity", float(data.get("alpha_cut", 0.35)))
     tris = {}
     for o in (bodyo, face, lod1):
         o.data.calc_loop_triangles(); tris[o.name] = len(o.data.loop_triangles)
@@ -350,6 +363,23 @@ def main(pid):
     print("CAST %s lod0: %d tris (%s), %d surfaces; lod1: %d tris; %d morphs; %.1f MB glb" % (
         pid, meta["lod0"]["tris"], meta["lod0"]["parts"], meta["lod0"]["surfaces"], meta["lod1"]["tris"],
         len(morphs), meta["glb_bytes"] / 1e6))
+
+
+def patch_alpha(glb, key, cut):
+    """Blender 5's exporter writes the hair/lash material as alpha BLEND (Godot: blended with a depth
+    pre-pass, cards sorted badly and the hair reads dark); make it alpha MASK at `cut` (Godot: scissor)."""
+    import struct
+    b = open(glb, "rb").read()
+    jl = struct.unpack("<I", b[12:16])[0]
+    j = json.loads(b[20:20 + jl])
+    rest = b[20 + jl:]
+    for m in j.get("materials", []):
+        if m.get("name", "").endswith(key):
+            m["alphaMode"] = "MASK"; m["alphaCutoff"] = cut; m["doubleSided"] = True
+    js = json.dumps(j, separators=(",", ":")).encode()
+    js += b" " * ((4 - len(js) % 4) % 4)
+    out = struct.pack("<III", 0x46546C67, 2, 12 + 8 + len(js) + len(rest)) + struct.pack("<II", len(js), 0x4E4F534A) + js + rest
+    open(glb, "wb").write(out)
 
 
 def add_pieces(extra, me, arm, names, mat_index):
