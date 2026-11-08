@@ -5,7 +5,9 @@
 ## one ("mall-player-2"), and MAIN's portrait shows the same id. A watcher counts every frame in between,
 ## crossings included: never two bodies, not even for a frame. The old records ("mall-avatar-1",
 ## "mall-avatar-preset-1") are planted first and must be read for the name and deleted.
-## Native, unbaked (LightmapGI removed), small scenes (wing 6, the cinema lobby; wing 4, Sears / Lynn's):
+## Counter attendants hang under the Player node (Story > Attendant, group "talker") and are not counted.
+## Native, unbaked (LightmapGI removed), small scenes (wing 6, the cinema lobby; wing 4, Sears / Lynn's),
+## then wing 1 (attendants):
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 \
 ##     --script res://tools/qa/cast_count_test.gd -- --out=<prefix>
 ## Prints CAST COUNT OK (n checks) or the failures, and one line per step for wsSTRIP-count-test.md;
@@ -70,6 +72,14 @@ func _in_subviewport(n: Node) -> bool:
 		c = c.get_parent()
 	return false
 
+## A counter attendant's body (Player > Story > Attendant, group "talker"): not the player's.
+func _in_attendant(n: Node) -> bool:
+	var c := n.get_parent()
+	while c:
+		if c.is_in_group("talker"): return true
+		c = c.get_parent()
+	return false
+
 ## Skeletons under the player group: under the player node(s) and the player body(ies). world_only: not
 ## the ones on a SubViewport stage (the open menu's portraits, which live under the player's Menu node).
 func _player_skeletons(world_only := false) -> Array:
@@ -80,6 +90,8 @@ func _player_skeletons(world_only := false) -> Array:
 				continue
 			for sk in n.find_children("*", "Skeleton3D", true, false):
 				if world_only and _in_subviewport(sk):
+					continue
+				if _in_attendant(sk):
 					continue
 				if not sk.is_queued_for_deletion() and not (sk in outs):
 					outs.append(sk)
@@ -190,5 +202,12 @@ func _run() -> void:
 	await _secs(4.0)       # the vortex's outro
 	_check(int(player.year) == 1995, "time travel arrived in 1995")
 	await _count("time-travel")
+	# a wing with counter attendants (wing 1): they hang under the Player node (Story), and are not the player
+	await _load("res://wing1.tscn")
+	var att := 0
+	for t in get_nodes_in_group("talker"):
+		att += t.find_children("*", "Skeleton3D", true, false).size()
+	_check(att > 0, "wing 1: the attendants' bodies are there (%d skeletons, not counted as the player's)" % att)
+	await _count("wing1-attendants")
 	watch_on = false
 	_check(max_seen == 1, "the per-frame watcher never saw two player skeletons in the world (%d frames, max %d)" % [frames_watched, max_seen])
