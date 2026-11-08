@@ -149,7 +149,11 @@ reload, a **wing crossing** (`player._go_to_wing(4, ...)`, the game's own path),
 (wing 4 2026) and a **time-travel trip** back to 1995 (`timetravel_trip.gd`). Each time: exactly one
 `Skeleton3D` under the player group (`mall_player` + `mall_player_body`), it is the avatar's body, its
 `cast` meta is the saved id, MAIN's portrait shows the same id. A per-frame watcher counts all the way
-through, crossings included. Results: `production/qa/evidence/wsSTRIP-count-test.md`.
+through, crossings included; a last step loads wing 1. **Not counted:** the story NPCs, which the story
+machinery hangs under the Player node (Player > Story: counter attendants, the Cuco's patrons), and the
+menu's portrait stages while it is open (the closed menu frees them). The web half is
+`tools/qa/avatar_webtest.py` (`?debug=1` prints `CASTCOUNT` / `CASTPORTRAIT`). Results (CAST COUNT OK 48,
+AVATAR WEB OK 27): `production/qa/evidence/wsSTRIP-count-test.md`.
 
 ## Not done / open (for Steven)
 - **Who the cast is.** Four PLACEHOLDER members on crowd skins; names, looks and how many (3 or 4) are
