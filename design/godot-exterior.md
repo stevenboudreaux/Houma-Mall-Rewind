@@ -6,6 +6,8 @@
 > **Since Nov 8, 2026 (Workstream LOT, branch `ws/lot`) the lot is asphalt, the trees, shrubs and planters
 > are `tools/exterior/flora.gd`'s and the bank pad is 7,758 SF:** see "Workstream LOT" near the end; it wins
 > over "The lot" below.
+> **Since Nov 8, 2026 (Workstream EXT-LAYOUT, branch `ws/ext-layout`) the exit s41 stands at the end of a channel,
+> the cinema box's west face is x -98 and Lynn's x -84:** see "Nov 8 refinements" near the end.
 
 **Asked for (Steven, Oct 23–24):** the exterior phase — the parking lot and the building as seen
 from it, built from the Oct 23 site visit (the report's shared exterior table), with the Cucos
@@ -452,6 +454,67 @@ attributes).
 2. Check the facade fixes in the bake at Dillard's, JCPenney (west fascia, south parapet) and Lynn's.
 3. `tools/capture_standin.sh 3` and `3 2026` (the door pictures of wings 1, 2, 4, 5 look out on the lot).
 4. Wings 1, 2, 4, 5 need no rebake.
+
+## Nov 8 refinements (Workstream EXT-LAYOUT, branch `ws/ext-layout`): the cinema side, frame by frame
+
+Branch `ws/ext-layout` from `ws/lot`. Brief: Steven (Nov 8), "the Dillard's side to the front entrance is good; the
+cinema side is still incorrect". Every face named below was compared with the Oct 23 frames at the same viewpoint;
+evidence `production/qa/evidence/wsEXTL-*.jpg` (frame | render, renders **unbaked**, `tools/exterior/exshots.gd`).
+Frames: `refs/derived/frames/IMG_4416/fNNN.jpg`, `IMG_4486/fNNN.jpg`, photos `IMG_4417`, `IMG_4418`.
+Plan: `design/exterior/site-plan-annotated-2026-11-08.png` (Steven's labels).
+
+### 0. What the frames proved about the footprint (the main fix)
+The exit's glass is **not** flush with the cinema's west wall. It stands at the end of a **channel 10 m wide and ~20 m
+deep** between Lynn's SW corner (white, north side) and the cinema box's north face (salmon, south side):
+- **4486 f014** (from the lot, looking east): the white Sears mass left, the long salmon wall right with a cream door,
+  the fascia and glass small at the far end of the channel. The decisive frame.
+- **4486 f016**: the cinema's NW corner, a cream single door on the north face 1.5 m from the corner, the west wall
+  running south with its pilasters. **4486 f001** (from the recess, looking west): the north face with a cream
+  **double** door and the single one by the corner.
+- **4416 f005**: past the recess the salmon wall faces north (its red curb runs out toward the camera), i.e. it is the
+  channel's side, not a wall in line with the glass.
+- **Site plan** (Steven's "Southland Cinema Mall Entrance"): the hall's end sits between Lynn's (north) and the cinema
+  box (south); the cinema's NW corner is ~22 m west of the storefront line, Lynn's west face ~6 m west of it (x scale
+  2.9 px/m on the annotated plan, checked on the dock rectangle: 24 m = canopy 8 + truck well 16, as EXT-B).
+
+Built (`wall_fixes.py` FILLS, `exterior.gd` `SEARS_W`, `CINEMA_W`), the glass staying at the walkable hall's end:
+| | Was (EXT-B) | Now | From |
+|---|---|---|---|
+| Exit glass (s41) | x -80, flush | **x -78**, 2 m under the soffit; the fascia's face x -80.2 | 4416 f002-f005 |
+| Lynn's / Sears west face | x -72 (box 115 x 50) | **x -84** (box 128 x 50); the dock, truck well, truck and the "Sears" / "Lynn's" west signs move with it | plan; 4486 f014 (the white mass left of the channel) |
+| The white rack block ("SEARS RETURN") | -80..-71, -100..-96, 6.5 m | **-88..-84, -100..-96, 4.2 m**, painted brick, at Lynn's SW corner, its south face the channel's north side | 4486 f002-f003, f006-f008, f014 (the low white box in front of Lynn's) |
+| Cinema box | -80..-52 x -86..-42, 9 m | **-98..-52 x -86..-42, 6.8 m** | 4486 f001, f014, f016 (wall 6.3-6.7 m against the 2.1 m doors) |
+The walk grid opens the 2 m recess (`wall_fixes.WALK_OPEN`, read by `make_exterior.py`), so the player can walk up to
+the glass; s41's outside spot is unchanged (-81.5, -91), its outside face is x -78 (`DOOR_MOVES`).
+*Note for Steven:* the brief says "one flush run from the exit"; the frames above say the exit is set back in a
+channel and the cinema's flush west wall starts 20 m out. Built as filmed. The channel's depth is the least certain
+number (20 m; the plan says ~22, a perspective estimate off f001 / f014 14-25 m): one constant, `CINEMA_W`.
+
+### 1. The cinema-wing exit, s41 (`exterior.gd cinema_exit`; 4416 f001-f007, 4486 f001-f003, 4417, 4418)
+Proportions measured off 4416 f002 (the glass plane, ~121 px/m against the 2.1 m doors) and f005:
+| Part | Built | Measured |
+|---|---|---|
+| Doors | two pairs, 1.8 m each (0.9 m leaves), 2.12 m high in 0.1 m clear-anodized stiles; a push bar at 1.0 m on the inside, stainless panic / pull plates at the meeting stiles | pair 1.74 m wide, bars at ~1.03 m |
+| Storefront | x -78, 10 m (z -96..-86): 3 fixed bays 1.4 m (north), the two pairs, 2 sidelights 1.1 m with rails at 0.9 / 1.27 m; transom bar 2.18-2.3 m, transom glass to the soffit | transom ~2.27 m over the door head |
+| Soffit | white, **4.4 m**, 2 m deep (x -79.6..-78), 2 rows of 4 recessed cans | 4.4 m (door + transom) |
+| Fascia | brown exposed-aggregate precast, **1.3 m** (4.4-5.7 m), 0.6 m thick, 0.2 m proud of the walls, white metal cap | 1.2-1.4 m (perspective) |
+| North side | the white painted brick of Lynn's SW corner / the rack block | f002 left, f001 |
+| South side | buff brick under the soffit with the **poster case** (aluminium frame, dark glass, 1.2 x 0.9 m at 1.0-1.9 m), a rusty steel pipe post at the fascia's corner, a 0.9 m buff pier rising to 7 m, then the salmon brick | f004, f005, 4417 |
+| Apron | a flush dark slab, no curb across the recess; the red curb comes along the cinema's north face and stops at the recess corner | f002, f005 |
+| Behind the glass | a 5 m vestibule (dark tile, white ceiling at 3.2 m with cans, the inner pairs as dark glass): wing 3 had nothing behind the glass, so it showed the lot through the building | 4416 f002, 4418 |
+*Note for Steven:* "a red-painted curb across the recess" in the brief: in f002 / f005 the red curb is along the
+cinema's north face and ends at the recess corner; the recess itself is a flush apron. Built as filmed.
+"No return wall on the south side": no perpendicular wall is built there; the salmon brick of the cinema's north face
+runs from 0.9 m past the recess, the buff strip being the recess's own side and the pier (f005).
+
+**The bike rack** (`tools/exterior/wave_rack.gd`, new; also used at the south pavilion): one bent 48 mm pipe swept
+along its centre line: the two end legs into the slab, three inverted-U loops 0.8 m high, two low U bends between,
+legs 0.36 m apart: **1.8 m long, 0.8 m tall, 736 triangles** (budget 800), black paint chipped to rust as a vertex-colour
+mottle (material `ex_rack`, roughness 0.55). It stands lengthwise on the rack block's west face (x -88.5, z -98.1),
+0.5 m off the wall, parallel to the doors (4416 f009-f011, 4486 f002-f003). Procedural GDScript rather than Blender:
+the same geometry a Blender sweep would give, no import step, baked with the outside's props.
+Evidence: `wsEXTL-exit-frame.jpg`, `wsEXTL-exit-render-{1995,2026}-unbaked.jpg`, `wsEXTL-exit-sbs-{f002,f005,f014}-*`,
+`wsEXTL-rack-frame.jpg`, `wsEXTL-rack-render-1995-unbaked.jpg`, `wsEXTL-rack-sbs-*`.
 
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the

@@ -264,6 +264,11 @@ def main(src, out_path):
         for ty in range(int(r[1] / S + OY2), int(r[3] / S + OY2)):
             for tx in range(int(r[0] / S + OX2), int(r[2] / S + OX2)):
                 walk[ty][tx] = "0"
+    # EXT-LAYOUT (Nov 8 2026): recesses under canopies the player can stand in (wall_fixes.WALK_OPEN)
+    for r in getattr(WF, "WALK_OPEN", []):
+        for ty in range(int(r[1] / S + OY2), int(r[3] / S + OY2)):
+            for tx in range(int(r[0] / S + OX2), int(r[2] / S + OX2)):
+                walk[ty][tx] = "1"
     walk = ["".join(r) for r in walk]
     standalone = [dict(name=sa["name"], rect=sa["rect"]) for sa in WF.STANDALONE]
 
