@@ -128,21 +128,45 @@ def pretzel(d, cx, cy, r, col, wd):
 
 
 def front():
-    """The warmer's base front (the clip, aa_t000_001-031; f025): royal blue, the tenant's pretzel mark in
-    gold with its halo, a white strip of invented words over it. 1.5 x 0.85 m."""
-    W, H = 768, 436
-    im = Image.new("RGB", (W, H), ROYAL)
+    """The warmer's base front (the clip, aa_t000_001-031; f025): royal blue, the tenant's pretzel mark with its
+    halo and ring, a navy strip of invented words over it. 1.5 x 0.85 m, 1024 px wide.
+    FOOD3D (Nov 8 2026, Steven: match the sign above): the pretzel is the sign's own traced shape
+    (tools/stores/signs/y26/src/auntie_pretzel_mask.png, the channel-letter pretzel on the fascia) in the sign's
+    yellow (face #f4b80a, trim #d99f00), with a halo over it in the same yellow, on a navy disc (the fascia's
+    #24316b) inside a ring in the letters' blue (#1f3fff, lit edge #2a4bff). The store wordmark is not repeated."""
+    W, H = 1024, 580
+    SY, ST = (244, 184, 10), (217, 159, 0)
+    FASCIA, LBLUE, LGLOW = (36, 49, 107), (31, 63, 255), (42, 75, 255)
+    S = 4                                   # paint at 4x, then downsample: clean edges
+    im = Image.new("RGB", (W * S, H * S), ROYAL)
     d = ImageDraw.Draw(im)
-    d.rectangle([0, 0, W, 64], fill=NAVY)
-    f = ImageFont.truetype(BOLD, 34)
-    t = "HOT  •  FRESH  •  ROLLED BY HAND"
+    d.rectangle([0, 0, W * S, 86 * S], fill=NAVY)
+    f = ImageFont.truetype(BOLD, 46 * S)
+    t = "HOT  \u2022  FRESH  \u2022  ROLLED BY HAND"
     w = d.textlength(t, font=f)
-    d.text((W / 2 - w / 2, 14), t, font=f, fill=(255, 255, 255))
-    cx, cy = W / 2, 248
-    d.ellipse([cx - 150, cy - 140, cx + 150, cy + 150], fill=(150, 210, 240))
-    d.ellipse([cx - 138, cy - 128, cx + 138, cy + 138], fill=ROYAL)
-    pretzel(d, cx, cy + 10, 105, GOLD, 26)
-    d.ellipse([cx - 80, cy - 150, cx + 80, cy - 112], outline=GOLD, width=10)
+    d.text((W * S / 2 - w / 2, 18 * S), t, font=f, fill=(255, 255, 255))
+    cx, cy, R0 = W * S / 2, 340 * S, 205 * S
+    d.ellipse([cx - R0, cy - R0, cx + R0, cy + R0], fill=LGLOW)
+    d.ellipse([cx - R0 + 8 * S, cy - R0 + 8 * S, cx + R0 - 8 * S, cy + R0 - 8 * S], fill=LBLUE)
+    d.ellipse([cx - R0 + 26 * S, cy - R0 + 26 * S, cx + R0 - 26 * S, cy + R0 - 26 * S], fill=FASCIA)
+    # the sign's pretzel: its traced mask, trim colour grown 3 px under the face colour
+    mp = os.path.join(HERE, "..", "signs", "y26", "src", "auntie_pretzel_mask.png")
+    mask = Image.open(mp).convert("L")
+    bb = mask.getbbox()
+    mask = mask.crop(bb)
+    ph = int(215 * S)
+    pw = int(mask.width * ph / mask.height)
+    mask = mask.resize((pw, ph), Image.LANCZOS)
+    px, py = int(cx - pw / 2), int(cy - ph / 2 + 30 * S)
+    trim = mask.filter(ImageFilter.MaxFilter(2 * 3 * S + 1))
+    im.paste(Image.new("RGB", trim.size, ST), (px, py), trim)
+    im.paste(Image.new("RGB", mask.size, SY), (px, py), mask)
+    # the halo over it, the same yellow and trim
+    hw, hh, ht = 170 * S, 46 * S, 9 * S
+    hy = py - 34 * S
+    d.ellipse([cx - hw / 2 - 3 * S, hy - hh / 2 - 3 * S, cx + hw / 2 + 3 * S, hy + hh / 2 + 3 * S], outline=ST, width=ht + 6 * S)
+    d.ellipse([cx - hw / 2, hy - hh / 2, cx + hw / 2, hy + hh / 2], outline=SY, width=ht)
+    im = im.resize((W, H), Image.LANCZOS)
     save(noise(im, 1.0), "front")
 
 

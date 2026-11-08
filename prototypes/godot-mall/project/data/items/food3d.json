@@ -12,6 +12,18 @@
    "year": "both",
    "store": "GREAT AMERICAN COOKIE CO",
    "model_from": "FOOD3D: the case's chocolate-chip cookie (bl_gac_cookies 'cc') at hand detail; the model standin_gac_choc_chip_cookie waits for (data/story/shops.json still sells the stand-in: the integration session swaps the id)"
+  },
+  {
+   "id": "aa_pretzel_nuggets",
+   "name": "Cup of pretzel nuggets",
+   "category": "food",
+   "subcategory": "snack",
+   "class": "hand",
+   "scene": "res://models/bl_aa_nugget_cup/bl_aa_nugget_cup.glb",
+   "icon": "res://models/bl_aa_nugget_cup/bl_aa_nugget_cup_icon.png",
+   "year": 2026,
+   "store": "AUNTIE ANNE'S",
+   "model_from": "FOOD3D: the open cup of the warmer (bl_aa_nugget_cup_case without the spill); the model standin_aa_pretzel_bites waits for (data/story/shops.json still sells the stand-in: the integration session swaps the id)"
   }
  ]
 }

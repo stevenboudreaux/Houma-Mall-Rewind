@@ -154,3 +154,4 @@ standin_sp_mug
 standin_sp_plush
 standin_sp_stickers
 gac_choc_chip_cookie
+aa_pretzel_nuggets

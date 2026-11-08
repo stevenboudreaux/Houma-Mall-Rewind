@@ -486,3 +486,18 @@ it is not sold or added to the menu box: Steven's call.
 |---|---|---|---|---|---|
 | `bl_cd7_corndog` (crust redone) | hand | 4,296 | 1024 | unchanged (the counter's display / pick-up) | the crust's look (no photo of the food) |
 | `bl_cd7_case` (kit: dog / cheese / pan) | small_fixture (kit) | 596: 296 / 192 / 108 (≤ 800 each) | 1024 (one atlas; the pan flat steel) | each glass case on Corn Dog 7's counter | cheese on a stick, the pan |
+
+**Auntie Anne's (item 4, 2026).** (a) The counter mark under the warmer (`tex/aa/front.png`, painted by
+`tools/stores/auntie_annes/paint.py front()`, now 1024 x 580 for the 1.5 x 0.85 m panel): the sign's own pretzel
+(its traced mask `tools/stores/signs/y26/src/auntie_pretzel_mask.png`) in the sign's yellow (#f4b80a, trim
+#d99f00) with a halo in the same yellow, on a navy disc (the fascia's #24316b) in a ring of the letters' blue
+(#1f3fff); it was a hand-drawn knot in gold with a pale-blue ring. The HOT • FRESH • ROLLED BY HAND strip stays.
+(b) The cups: the warmer's closed cups with a lump on the lid are gone (`bl_aa_warmer.py CUPS = False`, rebuilt:
+5,176 tris, so wing 2 2026 needs a rebake); eight open cups of nuggets stand where they were
+(`auntie_annes/store.gd`, instanced, with shadows).
+
+| Model | Class | Tris | Tex | Where | Guessed |
+|---|---|---|---|---|---|
+| `bl_aa_nugget_cup` (item `aa_pretzel_nuggets`) | hand | 1,504 | 1024 | sold at the counter (the shop lists `standin_aa_pretzel_bites`; the integration session swaps the id) | the white band and inside, the nugget count |
+| `bl_aa_nugget_cup_case` | hand (fixture use) | 1,728 | 1024 | x 8 on the warmer's front tier | the spill |
+| `bl_aa_warmer` (cups removed) | small_fixture | 5,176 | 1024 | unchanged | |
