@@ -24,6 +24,8 @@ static func box(b, g, m, o, r, f, x, y, z, w, h, d, c = "", dyn = false):
 
 ## The white tile with scattered coloured squares (gac/tile_sq.png: 2.4 x 2.4 m, 16 x 16 tiles), on a
 ## wall from x0 to x1 (local), y0..y1, facing -f (towards the customer side of the frame).
+static var TILE = "gac_tile_sq"   # FOOD3D: wave7.gd sets the 1995 finish (gac/front95.gd) around build_1995
+
 static func tile_wall(b, g, o, r, f, x0, x1, y0, y1, z = 0.0):
 	var nrm = -f
 	var p = [L(o, r, f, x0, y0, z), L(o, r, f, x1, y0, z), L(o, r, f, x1, y1, z), L(o, r, f, x0, y1, z)]
@@ -32,7 +34,7 @@ static func tile_wall(b, g, o, r, f, x0, x1, y0, y1, z = 0.0):
 	var ub = x1 / 2.4
 	if flip:
 		ua = -ua; ub = -ub
-	b.quad(g, "gac_tile_sq", p, nrm, [Vector2(ua, -y0 / 2.4), Vector2(ub, -y0 / 2.4), Vector2(ub, -y1 / 2.4), Vector2(ua, -y1 / 2.4)])
+	b.quad(g, TILE, p, nrm, [Vector2(ua, -y0 / 2.4), Vector2(ub, -y0 / 2.4), Vector2(ub, -y1 / 2.4), Vector2(ua, -y1 / 2.4)])
 
 ## The row of lit menu pictures on a white valance with downlights (gacc 011-015, 146): `n` panels
 ## 1.15 x 0.62 m from x0, bottom at y, standing `z` out from the wall (they face -f).

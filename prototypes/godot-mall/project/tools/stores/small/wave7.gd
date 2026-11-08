@@ -294,7 +294,10 @@ static func cookie(b, a, t, n, W, D, rng):
 	CH.build(b, "w7kf_sign", "res://tools/stores/signs/gac_script_logo.json", P(a, t, n, W * 0.5, head + 0.98, -0.28), n, "sg_gac_neon", "sg_gac_neon_ret", "", 0.03, 0.03, 0.0, "sg_gac_glow")
 	CH.build(b, "w7kf_sign", "res://tools/stores/signs/gac_name_logo.json", P(a, t, n, W * 0.5, head + 0.3, -0.28), n, "sg_gac_white", "sg_gac_white_ret", "", 0.02, 0.07, 0.0, "sg_gac_name_glow")
 	# ws/interiors: the walls in the video's white tile with scattered coloured squares (gac/kitchen.gd)
-	M2.shell2(b, "w7k_shell", a, t, n, W, D, 3.0, 0.0, "wl_floor", 1.22, "gac_tile_sq", "kb_ceiling", [1.6, 4.0], 1.0)
+	# FOOD3D (Nov 8 2026): the 1990s finish instead of the 2026 scattered-square tile (gac/front95.gd)
+	var F95 = load("res://tools/stores/gac/front95.gd")
+	M2.shell2(b, "w7k_shell", a, t, n, W, D, 3.0, 0.0, "wl_floor", 1.22, F95.wall_mat(), "kb_ceiling", [1.6, 4.0], 1.0)
+	F95.trim(b, F, a, t, n, W, head)
 	M2.soffit(b, F, a, t, n, W, head, "w7_cream")
 	# the red check course round the walls at counter height
 	for w in [[SIDE + 0.01, t], [W - SIDE - 0.01, -t]]:
@@ -310,7 +313,10 @@ static func cookie(b, a, t, n, W, D, rng):
 	K.ob(b, P(a, t, n, W - 0.6, 0, 2.6), P(a, t, n, W - SIDE, 0, 3.4), 0.0)
 	# ws/interiors (Nov 4): the work area from the tour video Steven chose (tools/stores/gac/kitchen.gd):
 	# the tiled menu wall with the back counter and the lit pictures, the kitchen behind its doorway
-	load("res://tools/stores/gac/kitchen.gd").build_1995(b, G, "w7k_small", a, t, n, W, D, SIDE)
+	var KI = load("res://tools/stores/gac/kitchen.gd")
+	KI.TILE = F95.wall_mat()   # FOOD3D: the menu wall in the 1990s finish too
+	KI.build_1995(b, G, "w7k_small", a, t, n, W, D, SIDE)
+	KI.TILE = "gac_tile_sq"
 	K.ob(b, P(a, t, n, SIDE, 0, 3.4), P(a, t, n, W - SIDE, 0, D - SIDE), 0.0)
 
 # ------------------------------------------------------------------ Regis

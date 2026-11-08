@@ -102,3 +102,24 @@ Evidence (unbaked): `wsFOOD3D-gac-cookies-sheet.jpg`, `wsFOOD3D-gac-cookies-inga
 No rebake for the food (dynamic); the window's back changed from the lit cake picture to plain maroon in the
 baked mesh, so wing 2 (both years) picks that up at its next bake.
 Question for Steven: the pan cake is a 2010s shape (the chain's first pan cake, 2012); drop it from 1995?
+
+## FOOD3D: the 1990s front (Nov 8, 2026; 1995 map only)
+Steven (Nov 7): the white tile with scattered red/black/yellow squares is the 2026 look; the 1990s store was
+"more traditional". **Research:** the chain's own history online (Wikipedia via search results, Mashed, Tasting
+Table, the Rockland Report's 1991 Nanuet Mall throwback) gives the names (the 1977 "Original Great American
+Chocolate Chip Cookie Company"; "Great American Cookie Company" 1985-1997 per Logopedia's list) but no
+description or picture of a period store that could be read from the cloud (the wikis and the throwback page are
+blocked here). The one period picture of a store is Steven's own (`refs/great-american-cookie-case.jpg`): cream
+tile walls, burgundy lower panels on the case and the walls, red-and-cream checkerboard bands, a row of lit menu
+pictures; its sign is already the 1995 sign (the record's).
+**Two options** (`tools/stores/gac/front95.gd`, walls painted by `gac/paint95.py`; evidence
+`production/qa/evidence/wsFOOD3D-gac-1990s-options.jpg`):
+- **A, burgundy and checker (built: the default, the better-sourced):** from Steven's photo: a burgundy laminate
+  wainscot to 1.0 m with a brass cap rail, cream 15 cm tile above, a two-row red-and-cream checkerboard band at
+  1.95-2.25 m; burgundy returns at the opening's sides and a brass bar under the sign box.
+- **B, dark oak and brass:** a period type with no photo of this chain: a stained oak raised-panel wainscot,
+  an oak chair rail with a brass strip, cream plaster, a burgundy pinstripe, an oak crown.
+`front95.gd STYLE` picks one ("a"); `GAC95=b tools/qa/preview.sh "store:GREAT AMERICAN COOKIE CO" ...` previews B.
+The menu wall and the kitchen take the same finish (`kitchen.gd TILE`, set by `wave7.gd` around `build_1995`).
+Unchanged: the sign, the case, the record's red check course, the 2026 store. **Guessed:** the heights, the panel
+widths, the brass. **Question for Steven:** A or B (A is built)? **Rebake:** wing 2 (1995).

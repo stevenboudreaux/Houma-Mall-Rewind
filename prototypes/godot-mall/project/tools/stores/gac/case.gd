@@ -346,6 +346,8 @@ static func fill_mat(m, key, b):
 		"rgb":
 			m.albedo_texture = b.tex("gac/rgb.png")
 			K.emit_tex(m, 1.2)
+		"wall95":   # FOOD3D: the 1995 walls (gac/front95.gd)
+			return load("res://tools/stores/gac/front95.gd").fill_mat(m, b)
 		"led":
 			m.albedo_color = Color("#fff8ea")
 			K.emit(m, Color("#fff4dc"), 2.0)
