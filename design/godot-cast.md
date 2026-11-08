@@ -1,182 +1,177 @@
-# The cast: fixed people built by script (workstream CHAR-BUILD, Nov 8 2026)
+# The cast: fixed people, one file each (workstream CHAR-BUILD, Nov 8 2026)
 
-Branch `ws/char-build` (from `main` f96a04b). Spec: `design/godot-characters-research.md` §3 (branch
-`ws/char-research`), pipeline B. Steven's decisions (Nov 8): pipeline B; the player picks one of 3–4 cast
-members (no editor); short hair first; shirt words stay on the crowd. **Mid-session (Nov 8) Steven:** *"Stop
-painting the skin and hair by formula. Use the MakeHuman CC0 asset library (skins, eyebrows, eyelashes, hair
-meshes, clothes) as the base and only adjust tone and detail in paint."* The build now does that (below).
+Branch `ws/char-build` (from `main` f96a04b). Specs: `design/godot-characters-research.md` §3 (pipeline B,
+branch `ws/char-research`) and `design/godot-characters-sources.md` (branch `ws/char-sources`, the Rocketbox
+converter). Paths are under `prototypes/godot-mall/project/` unless they start with `design/` or `production/`.
 
-Paths are under `prototypes/godot-mall/project/` unless they start with `design/` or `production/`.
+## Steven's decisions (Nov 8, in order)
 
-## What a cast member is
+1. Pipeline B; the player picks one of 3–4 cast members (no editor); short hair first; shirt words stay on the crowd.
+2. "Stop painting the skin and hair by formula. Use the MakeHuman CC0 asset library … as the base and only adjust
+   tone and detail in paint." → done (the MakeHuman path below, now the fallback).
+3. RadioShack (MakeHuman version) "approved as a proposal, pending a side-by-side with the CHAR-SOURCES job".
+   Changes for it and the Cuco's owner: eyes with a visible iris, a catchlight and slightly more open lids; hair
+   with a softer silhouette than short02's block; skin warmed a touch with subtle variation (cheeks, nose).
+   "Use the 1.2 system asset pack … from the makehumancommunity GitHub repos." → see "MakeHuman 1.2 pack".
+4. **4 PM: switch the body source to Microsoft Rocketbox (MIT)**, using CHAR-SOURCES' converter approach; keep
+   everything that isn't the mesh (one data file + one `.glb` per person, `Cast.body(id)`, LOD0/LOD1, the morph
+   naming, hidden-face removal, the 1024 hair/brow atlas rule); pick the closest Rocketbox person, convert,
+   repaint clothes to the uniform (no logos), build edits along normals where his line asks, then tone tweaks.
+   MakeHuman path kept as a fallback module. Show 2–3 candidates per role first; add Rocketbox to the credits.
+5. Picks (from `production/qa/evidence/wsCAST-rocketbox-candidates.jpg`): RadioShack **Male_Adult_08**,
+   Cuco's owner **Male_Adult_07**, Great American Cookie **Female_Party_02**, Auntie Anne's **Male_Adult_16**,
+   Spencer's **Female_Adult_11**.
+6. TALK's `scripts/npc_look.gd`: prefer eye bones and blink morphs when a body has them, fall back to the
+   iris-texture slide; keep TALK's limits and timing → done (below).
 
-One data file → one baked file. Nothing is assembled, dressed, fitted or baked at runtime.
+## What a cast member is (unchanged by the source)
 
 | File | What |
 |---|---|
-| `tools/blender/cast/<id>.json` | the person: macro body, face targets, skin, eyes, brows, lashes, hair, garments, period, what Steven said, what is proposed |
-| `cast/<id>.glb` | skeleton + `<id>_lod0` + `<id>_lod1` (each one mesh, 3 surfaces) |
-| `cast/<id>_{skin,clothes,hair}_{albedo,normal,orm}.png` | the three texture sets (hair has no ORM) |
-| `cast/<id>.json` | the build record the loader reads: `hips`, `height_m`, `morphs`, `jaw_open_deg`, `eyes`, `lod_switch_m`, tri/vert counts, texture sizes |
+| `tools/blender/cast/<id>.json` | the person: source (Rocketbox person + build edits, or MakeHuman macros), uniform repaint, generated pieces, tone, what Steven said, what is proposed |
+| `cast/<id>.glb` | skeleton + `<id>_lod0` (+ `<id>_lod0_face` on Rocketbox people) + `<id>_lod1`; textures embedded (Rocketbox) or beside it (MakeHuman) |
+| `cast/<id>.json` | the build record the loader reads: `hips`, `height_m`, `morphs`, `jaw_open_deg`, `eyes`, `lod_switch_m`, counts |
 
-**The loader:** `scripts/cast.gd`, `Cast.body(id) -> NpcBody`, is the only way any view makes a cast person
-(research §3 rule 2). Unknown/missing id → `null` + an error, never a stand-in (rule 4). Helpers:
-`Cast.set_morph(body, name, v)`, `Cast.set_mouth(body, v)` (morph + jaw bone together),
-`Cast.aim_eyes(body, world_point)`, `Cast.eye_dir`, `Cast.lod_mesh`, `Cast.skeleton`, `Cast.ids()`, `Cast.meta(id)`.
+**The loader:** `scripts/cast.gd`. `Cast.body(id) -> NpcBody` is the only way any view makes a cast person;
+unknown id → `null` + error, never a stand-in. `Cast.set_morph`, `Cast.set_mouth` (morph + jaw bone by the
+recorded angle; 0° on Rocketbox, whose `JawOpen` already moves the jaw), `Cast.aim_eyes`, `Cast.eye_dir`,
+`Cast.lod_meshes` / `Cast.lod_mesh` (the LOD's morph-carrying mesh), `Cast.ids`, `Cast.meta`.
+Eye / jaw bones are composed with their rest (Rocketbox's eye rests are not identity).
 
-## The data format (`tools/blender/cast/<id>.json`)
+**Morphs (both sources, same names):** `blink_L`, `blink_R`, `squint_L`, `squint_R`, `eyes_wide`, `smile`,
+`jaw_open`, `brow_up`, `brow_down`, `brow_inner_up`, `brow_up_L`, `brow_up_R`, `mouth_pucker`, `mouth_press`,
+`mouth_wide`, `mouth_funnel`, `frown`, `lip_upper_up`, `lips_part`, `sneer`. Rocketbox people also keep the 15
+visemes (`viseme_Sil` … `viseme_U`) for lip sync. The raw 52 ARKit shapes are folded into the 20 names and not
+shipped: Godot stores blend shapes densely, so every shape costs memory per vertex; the face mesh carries them,
+the body none. (Steven: say if TALK wants the raw ARKit set back; it is one line in `rb_cast.py`.)
 
-```jsonc
-{
- "id": "radioshack_1995", "store": "RADIO SHACK", "period": 1995, "status": "proposal",   // "approved" once Steven says so
- "steven": "his line, verbatim", "proposed": "what Claude proposes on top of it",
- "macro": {"sex": "male", "age_years": 25, "weight": 0.86, "muscle": 0.42, "height": 0.52, "proportions": 0.45,
-           "ethnicity": {"caucasian": 1.0}},            // african / asian / caucasian, any mix (normalised)
- "face": {"head/head-fat-incr": 0.55, "...": 0},       // any hm08 target (targets/**), incl. expression units as a resting face
- "skin": {"base": "young_lightskinned_male_diffuse",    // a MakeHuman skin texture (the base)
-          "tone": "#d6a487",                             // the face's mean colour after the tone match
-          "stubble": 0.18, "stubble_color": "#4a3a2c", "flush": 0.3, "lips": "#b27566", "freckles": 0},
- "eyes":   {"asset": "eyes/low-poly", "texture": "brown_eye", "iris": "#5e4430"},
- "brows":  {"asset": "eyebrows/eyebrow001", "color": "#4a3424", "under": 0.35},   // under = painted tone below the card
- "lashes": {"asset": "eyelashes/eyelashes01", "color": "#3a2c22"},
- "hair":   {"asset": "hair/short02", "color": "#4a3426", "scalp": 0.6, "line_shift": -4},  // scalp = painted scalp tone under the mesh
- "shoe_sole_m": 0.004,
- "garments": [
-  {"type": "mh", "asset": "clothes/male_casualsuit06", "role": "top", "color": "#f1f0ea", "bottom_color": "#3a3b40",
-   "bottom_detail": 0.25, "placket": true, "paint_out": [[0.40, 0.10, 0.64, 0.215]]},   // paint_out: prints to remove (asset UV, image coords)
-  {"type": "mh", "asset": "clothes/shoes03", "cell": "shoes", "color": "#1a1a1a"},
-  {"type": "tie", "color": "#1f2a44", "end_y": 0.04},
-  {"type": "nametag", "color": "#161616", "border": "#9a9a9a", "side": 1}      // side 1 = the person's left
- ]
-}
-```
-
-Generated pieces available beside MakeHuman clothes: `collar` (automatic on a `role: top` garment unless
-`"neck": "crew"`), `tie`, `nametag` (always blank), `belt`, `visor`, `cap`. The older formula garments
-(`shirt`/`polo`/`tee`/`trousers`/`shoes` shells cut from the skin) and the formula hair shell are still in the
-code for anything the library lacks, but per Steven's Nov 8 note the library is the base.
-
-## Build steps
+## Source 1 (default): Rocketbox — `tools/blender/cast/rocketbox/`
 
 ```bash
-# once per workspace
-python3 -m venv /home/claude/bvenv && /home/claude/bvenv/bin/pip install bpy numpy pillow
-tools/blender/characters/fetch_mh.sh          # hm08 + targets + rig + weights (MPFB2 data, CC0)
-tools/blender/cast/fetch_mhassets.sh          # MakeHuman 1.1.1 asset library (Ubuntu package; see Licences)
-/home/claude/bvenv/bin/python tools/blender/cast/skinmap.py                 # skin LOD maps
-/home/claude/bvenv/bin/python tools/blender/cast/assetmap.py clothes/male_casualsuit06 0.40 0.13 \
-    clothes/shoes03 0.15 0.07 hair/short02 0.72 0.25 eyebrows/eyebrow001 1 1 eyelashes/eyelashes01 1 1 eyes/low-poly 1 1
-# per person (≈ 65 s, numpy + PIL)
-python3 tools/blender/cast/build.py radioshack_1995
-/home/claude/bvenv/bin/python tools/blender/cast/sheet.py radioshack_1995      # -> production/qa/evidence/wsCAST-<id>-sheet.jpg
-godot --headless --path . --import
-godot --headless --path . --script res://tools/qa/cast_test.gd                  # CAST TEST OK
-xvfb-run -a -s "-screen 0 1600x1000x24" godot --path . --rendering-driver opengl3 --resolution 1280x800 \
-  --script res://tools/qa/cast_shot.gd -- --id=radioshack_1995 --wing=1 --at=8.2,32.95,180 \
-  "--cams=far:8.2,28.6,1.65,8.2,1.2,32.95,50;talk:8.2,31.55,1.64,8.2,1.58,32.95,38" --look_cam --out=/tmp/rs
-#   (--studio instead of --wing: a 2 s look in the game's renderer without loading a wing)
+# once: Blender module (see design/godot-characters-sources.md "The converter") and the Rocketbox people
+git clone --filter=blob:none --no-checkout https://github.com/microsoft/Microsoft-Rocketbox .scratch/rocketbox
+cd .scratch/rocketbox && git sparse-checkout init --no-cone \
+  && git sparse-checkout set '/Assets/Avatars/*/*/*.png' /LICENSE.md /Assets/Avatars/Adults/Male_Adult_08/ && git checkout
+# per person (~40 s)
+/home/claude/bvenv/bin/python tools/blender/cast/rocketbox/rb_cast.py radioshack_1995
+godot --headless --path . --import && godot --headless --path . --script res://tools/qa/cast_test.gd
+xvfb-run -a -s "-screen 0 1600x1000x24" godot --path . --rendering-driver opengl3 --resolution 480x720 \
+  --script res://tools/qa/cast_turntable.gd -- --id=radioshack_1995 --out=/tmp/tt/rs        # sheet frames
+xvfb-run ... --script res://tools/qa/cast_shot.gd -- --id=radioshack_1995 --wing=1 --at=8.2,32.95,180 \
+  "--cams=far:8.2,28.6,1.65,8.2,1.2,32.95,50;talk:8.2,31.55,1.66,8.2,1.6,32.95,38" --look_cam --out=/tmp/rs
 ```
+Source: `github.com/microsoft/Microsoft-Rocketbox`, commit `0943055db6ec570bcef9f2c8b41c9e5467c808f9`,
+`LICENSE.md` (MIT, "Copyright (c) 2020 Microsoft"). Only the people used are checked out; nothing from
+Rocketbox is committed except the converted, repainted `.glb` (allowed by MIT with the notice, which is in
+`CREDITS.md`).
 
-What `build.py` does:
-1. **Body** (`person.py`): hm08 + MakeHuman's macro rules (`characters/mh.py`) + the face targets → positions;
-   soles at `shoe_sole_m`, hips over x = z = 0. MPFB's Mixamo weights, **normalised per vertex** (MPFB's file
-   isn't: a foot vertex is Foot 0.2 + ToeBase 0.2).
-2. **Skeleton:** B1's rule (copied here; CHAR-STRIP deletes `tools/blender/characters/body.py`): glTF node TRS =
-   Ch01's T-pose rotations (the clips' skeleton, `npc/anims.json` rest) so `NpcRig` finds nothing to retarget;
-   inverse bind matrices = hm08's A-pose. Plus `eye.L` / `eye.R` (hm08's eye joint cubes) and `jaw` under
-   `mixamorig_Head`. **The jaw pivot is fitted, not taken from `joint-jaw`** (that cube sits at the chin):
-   the rigid rotation about X that best reproduces what the CC0 mouth-open unit does to the lower teeth
-   (RadioShack: 26.6°, 0.8 mm error). Lower teeth (and tongue, when used) ride the jaw bone; the
-   `jaw_open` morph moves lips, chin and cheeks; `Cast.set_mouth` drives both by the same 0..1.
-3. **Morphs** (`person.MORPHS`, 20): `blink_L`, `blink_R`, `squint_L`, `squint_R`, `eyes_wide`, `smile`,
-   `jaw_open`, `brow_up`, `brow_down`, `brow_inner_up`, `brow_up_L`, `brow_up_R`, `mouth_pucker`,
-   `mouth_press`, `mouth_wide`, `mouth_funnel`, `frown`, `lip_upper_up`, `lips_part`, `sneer`: MakeHuman's 34
-   CC0 expression units mixed by the person's ethnicity, on the skin and carried onto brows, lashes and hair
-   through their MHCLO refs. Normal deltas on the skin. LOD0 only.
-4. **Skin surface:** hm08 decimated once per LOD by zone (`skinmap.py`: face kept 85 %, head 30 %, hands
-   13 %, feet 15 %, body 34 %; LOD1 17/12/5/7/15 %), every low vertex stored as barycentrics on hm08, so the
-   map serves every person, weight and morph. Skin under clothes removed from MakeHuman's own `delete_verts`.
-5. **MakeHuman assets** (`mhasset.py`, numpy only): compiled meshes (`.npz`), MHCLO fitting
-   (w1·c1 + w2·c2 + w3·c3 + offset·scale) on this body, weights through the same refs; decimated by a per-asset
-   map (`assetmap.py`, same barycentric trick). Eyes on the eye bones.
-6. **Generated pieces** (`clothes.py`): the collar from the top's neckline loop, the tie and badge placed by
-   ray-casting onto the top.
-7. **Textures** (`paint.py`): every texel rasterised to its 3D point, its hm08 UV and its asset UV, so
-   MakeHuman's textures are **resampled** into the atlases, then only tone and detail are painted:
-   * skin 2048: MakeHuman's skin texture, per-channel gain so the face's mean = `tone`; painted stubble, a
-     light flush, a lip tint, a soft brow tone under the brow card, the scalp's hair tone under the hair mesh;
-     MakeHuman's eye texture in the eye disc (iris re-toned). **Face-first layout:** hm08's head island
-     (warped so the face is magnified) fills the left half; hands/forearms/neck the top right.
-   * clothes 1024: the garment textures resampled into cells (top+trousers 1024×768, shoes, collar, tie,
-     badge, belt, headwear); the top re-coloured from its own light and folds; trousers re-coloured with the
-     denim detail flattened (`bottom_detail`); prints painted out (high-frequency marks + `paint_out`
-     rectangles, filled from the surrounding cloth in the albedo, AO and normal maps).
-   * hair 1024: hair mesh, brows and lashes textures (RGBA), re-coloured to the person's colours.
-8. **Write** the glTF (`gltf.py`, B1's writer: exact skeleton, sparse morphs, PNGs by URI) and `cast/<id>.json`.
+`rb_cast.py` order (Steven's): **convert** with `rb2glb.py` (unchanged from CHAR-SOURCES: Mixamo names, T-pose,
+Ch01 rests, ARKit + visemes, `heavy` push of trunk/hips/thighs/upper arms along smoothed normals) →
+**repaint the clothes** (`rb_paint.repaint_body`: garments found by colour, seeded by body region so a shirt
+tail weighted to the hips stays shirt; each recoloured from its own light and folds, `*_detail` flattens e.g.
+denim) → **generated pieces** on the shirt (tie, blank badge: `clothes.py`, ray-cast onto the shirt, skinned like
+it, textured in a free block of the hair/lash atlas so they add no draw call) → **build edits** (`resting_face`:
+ARKit shapes baked into the rest face, e.g. lids `EyeWide*` 0.3, `CheekPuff`; `face_fill_m`: jaw, cheeks and
+neck pushed out along normals for heavier people) → **tone tweaks** last (`tone`: warm, cheeks, nose on the skin
+only; `eyes`: iris scaled up and brightened, a catchlight) → named morphs → split face (head + hair/lash
+surfaces, with morphs) from body → LOD1 (both joined, no morphs, collapse-decimated to `lod1_tris`) → export.
+Eye bones are renamed `eye.L` / `eye.R`, the jaw `jaw` (the cast's contract; CastFace also accepts `*LeftEye`).
 
-## Budgets (measured, RadioShack)
+**Hidden-face removal:** Rocketbox bodies are modelled clothed (no skin under the clothes), so there is nothing
+to remove; the step stays in the MakeHuman path (`delete_verts`).
+**Hair / brow / lash atlas:** Rocketbox's own `opacity` texture, 1024² (the 1024 rule), alpha-scissored.
 
-| | budget (research) | radioshack_1995 |
-|---|---|---|
-| LOD0 tris | ≤ 15,000 | **14,826** (skin 7,402 · suit 2,866 · hair 2,406 · shoes 616 · collar 464 · lashes 368 · brows 192 · eyes 172 · teeth 192 · tie 136 · badge 12) |
-| LOD1 tris | ≤ 6,000 | **4,540** (no morphs, lashes, teeth or collar) |
-| draw calls | 2–3 | **3** per LOD (skin · clothes · hair), only one LOD drawn at a time (switch at 9 m) |
-| textures | skin 2048, clothes 1024, hair 512 | skin 2048 · clothes 1024 · **hair 1024** (see below) |
-| `.glb` | — | 1.2 MB (+ 5 MB PNGs in the repo; Godot imports them compressed) |
+## Source 2 (fallback): MakeHuman hm08 + asset library — `tools/blender/cast/build.py`
 
-**Deviation: hair 1024, not 512.** With MakeHuman's hair cards and brow/lash cards in one alpha-scissored
-atlas, 512 lost the brows almost completely in Godot (the cards thin out at the cut-off). 1024 keeps them.
-Steven's call if 512 must hold (then the brows would move into the skin texture).
+For people Rocketbox can't cover (CHAR-SOURCES lists: Houma Nation / Native American faces, heavy bodies,
+older women, children, teenagers). Data files live in `tools/blender/cast/mh_fallback/`
+(`radioshack_1995_mh.json` is the superseded MakeHuman RadioShack, kept as the worked example; not built
+into `cast/`). How it works, unchanged: hm08 + macros + face targets (`person.py`), Ch01-rest skeleton with
+`eye.L`/`eye.R`/`jaw` (pivot fitted from the mouth-open unit), the 20 morphs from the 34 CC0 units, barycentric
+LOD maps (`skinmap.py`, `assetmap.py`), MakeHuman assets fitted by MHCLO (`mhasset.py`), hidden skin removed by
+the clothes' `delete_verts`, textures resampled into a face-first 2048 skin / 1024 clothes / 1024 hair atlas with
+tone and detail paint only (`paint.py`). Build: `skinmap.py`, `assetmap.py <asset> <r0> <r1>`, `build.py <id>`.
 
-## Licences
+### MakeHuman 1.2 pack (Steven's request, superseded the same day by Rocketbox)
+Tried from the makehumancommunity GitHub org: `makehuman-assets` (the repo MakeHuman 1.2's downloader clones,
+`download_assets_git.py`) answers as private / not found, as do `makehuman-system-assets`, `system-assets`,
+`makehuman-data`, `mpfb2-assets`, `assets`. The org's public repos (listed with GitHub search):
+`makehuman`, `mpfb2`, `makehuman2`, `makehuman-static-website` (the static.makehumancommunity.org sources,
+365 MB), `communityassets-wip` and plugins. A blob-less look into `makehuman-static-website` / `makehuman2` for
+the 1.2 asset packs was started and stopped when the Rocketbox decision arrived. **The fallback still uses
+Ubuntu's `makehuman-data 1.1.1`** (`fetch_mhassets.sh`, sha256 881a79c3…; upstream `LICENSE.md` §C states the
+assets CC0; the 1.1.1 file headers say AGPL). If the fallback is ever used for a shipped person: either finish
+the search in those two repos, or Steven downloads the 1.2 system assets on the Mac and pushes them to the
+`refs` branch.
 
-* hm08, targets, expression units, Mixamo rig and weights: MPFB2 `src/mpfb/data`, CC0 (`LICENSE.ASSETS.md`),
-  pinned commit 6ff1eb35 (`characters/fetch_mh.sh`). MPFB's GPL code is not used.
-* The asset library: Ubuntu's `makehuman-data 1.1.1` (sha256 881a79c3…, `fetch_mhassets.sh`), because the
-  MakeHuman asset server and the `makehuman-assets` GitHub repository are not reachable from the cloud.
-  **MakeHuman's upstream `LICENSE.md` (makehumancommunity/makehuman, section C) states the bundled assets —
-  base mesh and proxies, targets, textures, MHCLO clothes — are released under CC0 1.0.** The 1.1.1 files' own
-  headers (2016) still say AGPLv3, and the Debian copyright file says AGPL-3 for `Files: *`. Read as: the
-  copyright holders' current statement relicenses the same system assets CC0. **Steven: please confirm you're
-  happy relying on that statement** (or say so and the build switches to the 1.2 asset pack once it can be
-  downloaded on the Mac).
-* No asset source (MakeHuman download, Blender venv) is committed: fetch scripts only. The baked person
-  (`cast/`) is our output.
-* MPFB's separate viseme / ARKit shape-key packs: **not used** (the 34 CC0 units cover the 20 morphs).
+## TALK: eye bones and blink morphs (`scripts/cast_face.gd`, `scripts/npc_look.gd`)
 
-## Rules that keep the old bugs out (research §1, §3)
+`CastFace`: `eye_bones(sk)` (`eye.L`/`eye.R`, `*LeftEye`/`*RightEye`), `turn_eyes(sk, bones, yaw, pitch)`
+(head-relative degrees, applied about the head's current axes, **from the eye's rest** each time),
+`blink_shapes(root)` (`blink_L/R`, ARKit `EyeBlinkLeft/Right` + `EyeSquint*` 0.3: Rocketbox's ARKit blink alone
+leaves a slit), `set_blink(shapes, v)`.
 
-One person = one data file + one `.glb` + one id. One loader. No fallback body. The headless test
-(`tools/qa/cast_test.gd`) asserts per file: loads through `Cast.body`; exactly one `Skeleton3D`; every bone
-`npc_rig.gd` retargets is present and the rest matches the clips (`NpcRig._fix` empty); eye.L / eye.R / jaw under
-the head; walk_m, idle and talk play and move bones; each morph exists, moves vertices > 1 mm and drives
-0 → 1 → 0; LOD budgets; LOD1 has no morphs; the eyes hit a target within 3° with the body turned; `set_mouth`
-turns the jaw with the morph; an unknown id gives `null`. RadioShack: **CAST TEST OK (33 checks)**.
+`npc_look.gd` is **TALK's file from `ws/talk` (79f3377b) with a small hunk**: it uses `CastFace` for bodies with
+eye bones and/or blink morphs and keeps the iris-texture slide (`spatial_npc_eye.gdshader`) for the rest; the
+limits (`head_yaw/pitch`, `eye_yaw/pitch`) and timing (`head_tau`, `eye_tau`, saccades, `blink_s`, `blink_len`,
+`blend_s`) are untouched. It also fixes TALK's own eye-bone branch, which multiplied onto the current pose every
+frame (eye bones aren't animated, so the turn would build up). **Merge note:** both branches add this file;
+merge `ws/talk` first, then take `ws/char-build`'s version (TALK's 79f3377b + the hunk) if TALK hasn't changed it
+since, otherwise re-apply the hunk (search `CastFace` in the file: five places). It needs `ws/talk`'s
+`NpcRig.look_weight` and shader to compile; on `ws/char-build` alone it is not loaded by anything.
+Checked here: `cast_test.gd` drives `CastFace` on the cast file (eye turn exact, no build-up, blink closes).
+**Not yet run:** TALK's own talk test on a merge of the two branches (that needs the merged project imported).
+
+## Budgets (measured)
+
+| | budget | radioshack_1995 (Rocketbox) | MakeHuman version (fallback, for reference) |
+|---|---|---|---|
+| LOD0 tris | ≤ 15,000 | **7,512** (body 4,022 · face + hair + tie + badge 3,490) | 14,826 |
+| LOD1 tris | ≤ 6,000 | **5,599** | 4,540 |
+| draw calls | 2–3 | **3** (body · head · hair/lashes/tie/badge), one LOD at a time | 3 |
+| morphs | — | 35 on the face mesh (3,490 tris) only | 20 on the whole LOD0 |
+| textures | head 2048, body 1024, hair 1024 | head 2048 · body 1024 · hair/lash 1024 · normals 1024 | skin 2048 · clothes 1024 · hair 1024 |
+| `.glb` | — | 9.8 MB (textures embedded) | 1.2 MB + 5 MB PNGs |
+
+## Credits
+`CREDITS.md` (project root) is new: the game had no credits list. It carries the Rocketbox MIT notice in full
+and lists the MakeHuman/MPFB CC0 data; the repo's other licence files are listed for their owners to fold in.
+A credits screen in the menu is not built (menu is CHAR-STRIP's / M's).
+
+## Tests and tools
+* `tools/qa/cast_test.gd` (headless): every `cast/*.json` through `Cast.body`: one skeleton; every bone
+  `npc_rig.gd` retargets (leaf `*_End`/`*4` bones excepted: unanimated, Rocketbox has none) with rests matching
+  the clips; `eye.L`/`eye.R`/`jaw` under the head; walk_m / idle / talk move bones; morphs exist, move > 1 mm
+  (`viseme_Sil` excepted: the neutral viseme) and drive 0→1→0; LOD budgets and ≤ 3 surfaces per LOD; LOD1 has no
+  morphs; `aim_eyes` hits a target within 3° with the body turned; `CastFace` turn / blink; `set_mouth` matches
+  the record; unknown id → null. RadioShack: **CAST TEST OK (37 checks)**.
+* `tools/qa/cast_shot.gd`: a person in a wing (unbaked) or `--studio`; `tools/qa/cast_turntable.gd`
+  (CHAR-SOURCES' dev sheet, plus `--id=` through `Cast.body` and the cast's morph names).
 
 ## For CHAR-STRIP (not wired here, by the brief)
-
-* Make every view call `Cast.body(id)`; store the player's choice as `mall-player-2 = {"cast": "<id>"}`.
-* Attendants: `"look": "cast", "cast": "<id>"` in `data/story/attendants.json`; the attendant script stands
-  the body where it stands today's (RadioShack: `--at=8.2,32.95,180` in the shot is that spot).
-* Packs: `cast/` must be in the pack a wing loads (or a shared pack awaited behind the loading card). The
-  export presets were not touched.
-* TALK: `Cast.set_mouth`, `Cast.set_morph("blink_L"…)`, `Cast.aim_eyes(body, camera.global_position)` each
-  frame while talking (eye bones aren't animated by the clips, so the aim stays until changed).
+Every view calls `Cast.body(id)`; the player's choice is `mall-player-2 = {"cast": "<id>"}`; attendants get
+`"look": "cast", "cast": "<id>"`; `cast/` goes in the pack a wing loads (or a shared pack awaited behind the
+loading card); TALK: `Cast.set_mouth`, `Cast.set_morph`, `NpcLook` (eye bones + blinks via `CastFace`).
 
 ## People
 
-### 1. RadioShack (1995) — `radioshack_1995` — **PROPOSAL, waiting for Steven's okay**
-* **Steven:** "RadioShack (1990s): 25-year-old overweight white man."
-* **Proposed:** short side-swept mid-brown hair (MakeHuman `short02`), brown eyes, light stubble, a round full
-  face; a white short-sleeve top (MakeHuman `male_casualsuit06`, its print removed, a button placket painted)
-  under a generated dress collar and a plain dark navy tie, its trousers re-coloured charcoal, black dress
-  shoes (`shoes03`), a blank black name badge on his left chest (invented; no words, no logo). Worn untucked,
-  as the asset is modelled; a tucked dress shirt would need a new garment.
-* **Guessed:** 1995 RadioShack staff dress (white shirt + tie, dark trousers) from general memory of the era;
-  no reference photo of Southland's RadioShack staff in `refs/` was checked by this session.
-* Evidence: `production/qa/evidence/wsCAST-radioshack_1995-sheet.jpg`, `wsCAST-radioshack_1995-ingame.jpg`
-  (wing 1, unbaked).
-* **Steven's okay:** pending.
+### 1. RadioShack (1995) — `radioshack_1995` — PROPOSAL (Rocketbox), waiting for Steven's okay
+* **Steven:** "25-year-old overweight white man." Picked Rocketbox **Male_Adult_08**.
+* **Proposed:** HEAVY 1.0 + face fill 7 mm + `CheekPuff` 0.35 in the resting face; lids `EyeWide` 0.3; his
+  light-blue button shirt repainted white (worn untucked, sleeves rolled, as modelled), jeans repainted charcoal
+  (denim detail at 35 %), shoes black; a plain dark navy tie and a blank black name badge on his left chest
+  (invented; no words, no logo). Eyes: iris ×1.3, brighter, a catchlight. Skin warmed a touch, cheek and nose
+  colour. His own hair (Rocketbox cards; a softer silhouette than MakeHuman's short02).
+* **Guessed:** 1995 RadioShack staff dress (white shirt + tie, dark trousers) from general memory of the era.
+* Evidence: `production/qa/evidence/wsCAST-radioshack_1995-sheet.jpg` (Godot turntable + faces beside the
+  research render), `wsCAST-radioshack_1995-ingame.jpg` (wing 1, unbaked). The earlier MakeHuman sheet is in
+  this branch's history (commit 09dce16).
+* Known: the face is still slimmer than the pushed body (Rocketbox has no heavy faces); hair cards read darker
+  under the wing's unbaked light.
 
-### 2–5
-Not started: the brief stops for Steven's okay on RadioShack's face and look first.
+### 2. Cuco's owner (1995) — Rocketbox Male_Adult_07 — not started (after RadioShack's okay)
+### 3. Great American Cookie (1995) — Female_Party_02 — not started (her curly hair is long: Steven's
+"long style" case; recolour/trim to be proposed)
+### 4. Auntie Anne's (2026) — Male_Adult_16 — not started (hair recoloured red, freckles as tone detail)
+### 5. Spencer's (2026) — Female_Adult_11 — not started (plus size by `heavy` + face fill; Medical_Female_01
+shares her head)

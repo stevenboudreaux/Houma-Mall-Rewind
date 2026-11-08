@@ -131,7 +131,10 @@ def eyeball(seg=16, rings=11):
 class Builder:
     def __init__(self, pid, full=False):
         self.id = pid
-        self.data = json.load(open(os.path.join(HERE, pid + ".json")))
+        p = os.path.join(HERE, pid + ".json")
+        if not os.path.exists(p):
+            p = os.path.join(HERE, "mh_fallback", pid + ".json")     # MakeHuman people kept as the fallback
+        self.data = json.load(open(p))
         self.P = person.Person(self.data)
         self.b = self.P.b
         self.coords = self.P.v

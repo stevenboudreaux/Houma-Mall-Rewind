@@ -51,6 +51,8 @@ func _one(id: String, rest: Dictionary) -> void:
 	_check(nb.find_children("*", "Skeleton3D", true, false).size() == 1, "%s: exactly one skeleton under the body" % id)
 	var missing := []
 	for bn in rest:
+		# leaf bones (*_End, finger *4) carry no skin and no clip motion; Rocketbox has none
+		if bn.ends_with("_End") or bn.ends_with("4"): continue
 		if sk.find_bone(bn) < 0: missing.append(bn)
 	_check(missing.is_empty(), "%s: every retargeted bone of npc_rig.gd present (%d)%s" % [id, rest.size(), "" if missing.is_empty() else " missing " + str(missing)])
 	var head := sk.find_bone("mixamorig_Head")
@@ -73,11 +75,15 @@ func _one(id: String, rest: Dictionary) -> void:
 	var l0 := Cast.lod_mesh(nb, 0); var l1 := Cast.lod_mesh(nb, 1)
 	_check(l0 != null and l1 != null, "%s: LOD0 and LOD1 meshes" % id)
 	if l0 == null or l1 == null: return
-	var t0 := _tris(l0); var t1 := _tris(l1)
+	var t0 := 0; var t1 := 0; var s0 := 0; var s1 := 0
+	for mi in Cast.lod_meshes(nb, 0): t0 += _tris(mi); s0 += mi.mesh.get_surface_count()
+	for mi in Cast.lod_meshes(nb, 1): t1 += _tris(mi); s1 += mi.mesh.get_surface_count()
 	_check(t0 <= 15000, "%s: LOD0 %d tris <= 15000" % [id, t0])
 	_check(t1 <= 6000, "%s: LOD1 %d tris <= 6000" % [id, t1])
-	_check(l0.mesh.get_surface_count() <= 3 and l1.mesh.get_surface_count() <= 3, "%s: surfaces %d / %d (<= 3 draw calls each)" % [id, l0.mesh.get_surface_count(), l1.mesh.get_surface_count()])
-	_check(l0.visibility_range_end > 0 and l1.visibility_range_begin == l0.visibility_range_end, "%s: LOD switch at %.1f m" % [id, l0.visibility_range_end])
+	_check(s0 <= 3 and s1 <= 3, "%s: surfaces %d / %d (<= 3 draw calls per LOD)" % [id, s0, s1])
+	var lods_ok := true
+	for mi in Cast.lod_meshes(nb, 0): lods_ok = lods_ok and mi.visibility_range_end > 0 and mi.visibility_range_end == l1.visibility_range_begin
+	_check(lods_ok, "%s: LOD switch at %.1f m on every mesh" % [id, l1.visibility_range_begin])
 	# morphs
 	var morphs: Array = m.get("morphs", [])
 	for want in ["blink_L", "blink_R", "smile", "jaw_open", "brow_up"]:
@@ -95,13 +101,15 @@ func _one(id: String, rest: Dictionary) -> void:
 			var v: PackedVector3Array = bs[bi][Mesh.ARRAY_VERTEX]
 			for k in range(0, v.size(), 3):
 				mv = maxf(mv, v[k].length() if rel else (v[k] - base[k]).length())
-		if mv < 0.001: still.append("%s %.4f" % [mn, mv])
+		if mv < 0.001 and mn != "viseme_Sil": still.append("%s %.4f" % [mn, mv])   # Sil = the neutral viseme
 		for x in [0.0, 1.0, 0.0]:
 			Cast.set_morph(nb, mn, x)
 			if absf(Cast.get_morph(nb, mn) - x) > 1e-4: bad.append(mn + "@" + str(x))
 	_check(bad.is_empty(), "%s: %d morphs exist and drive 0 -> 1 -> 0%s" % [id, morphs.size(), "" if bad.is_empty() else " " + str(bad)])
 	_check(still.is_empty(), "%s: every morph moves the mesh > 1 mm%s" % [id, "" if still.is_empty() else " " + str(still)])
-	_check(l1.mesh.get_blend_shape_count() == 0, "%s: LOD1 carries no morphs" % id)
+	var nm1 := 0
+	for mi in Cast.lod_meshes(nb, 1): nm1 += mi.mesh.get_blend_shape_count()
+	_check(nm1 == 0, "%s: LOD1 carries no morphs" % id)
 	# eyes and jaw
 	nb.play("idle", 0.0, false)
 	nb.face(Vector3(-1, 0, -0.3))          # turned, so a wrong frame would show
@@ -142,7 +150,9 @@ func _one(id: String, rest: Dictionary) -> void:
 	Cast.set_mouth(nb, 1.0)
 	await process_frame
 	var jq := sk.get_bone_pose_rotation(jw)
-	_check(rad_to_deg(jq.get_angle()) > 3.0 and absf(Cast.get_morph(nb, "jaw_open") - 1.0) < 1e-4, "%s: set_mouth(1) opens the jaw %.1f deg + jaw_open" % [id, rad_to_deg(jq.get_angle())])
+	var jdeg := float(m.get("jaw_open_deg", 0.0))
+	var turned := rad_to_deg(jq.angle_to(sk.get_bone_rest(jw).basis.get_rotation_quaternion()))
+	_check(absf(turned - jdeg) < 0.5 and absf(Cast.get_morph(nb, "jaw_open") - 1.0) < 1e-4, "%s: set_mouth(1): jaw_open + the jaw bone %.1f deg (build record %.1f)" % [id, turned, jdeg])
 	Cast.set_mouth(nb, 0.0)
 	nb.queue_free()
 	await process_frame

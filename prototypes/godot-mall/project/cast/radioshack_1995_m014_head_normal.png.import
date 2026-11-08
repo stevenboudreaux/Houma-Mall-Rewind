@@ -2,16 +2,19 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b0y2g3gi61do"
-path="res://.godot/imported/radioshack_1995_clothes_albedo.png-85d50d0a8a30b2c2bc6316533c83fdce.ctex"
+uid="uid://cnee5aimmlj8k"
+path="res://.godot/imported/radioshack_1995_m014_head_normal.png-5ef5f0db42bf24e337ded44caafc54d9.ctex"
 metadata={
 "vram_texture": false
+}
+generator_parameters={
+"md5": "0cdbb1794c53ad3fbbdf9e802dd2d449"
 }
 
 [deps]
 
-source_file="res://cast/radioshack_1995_clothes_albedo.png"
-dest_files=["res://.godot/imported/radioshack_1995_clothes_albedo.png-85d50d0a8a30b2c2bc6316533c83fdce.ctex"]
+source_file="res://cast/radioshack_1995_m014_head_normal.png"
+dest_files=["res://.godot/imported/radioshack_1995_m014_head_normal.png-5ef5f0db42bf24e337ded44caafc54d9.ctex"]
 
 [params]
 
@@ -23,7 +26,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

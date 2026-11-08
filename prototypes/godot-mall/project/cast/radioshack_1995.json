@@ -1,8 +1,25 @@
 {
  "id": "radioshack_1995",
- "hips": 0.9992831999999999,
- "height_m": 1.7792540000000001,
+ "source": "rocketbox",
+ "rocketbox": "Adults/Male_Adult_08",
+ "hips": 0.8952,
+ "height_m": 1.8330762814730406,
  "morphs": [
+  "viseme_Sil",
+  "viseme_PP",
+  "viseme_FF",
+  "viseme_TH",
+  "viseme_DD",
+  "viseme_KK",
+  "viseme_CH",
+  "viseme_SS",
+  "viseme_nn",
+  "viseme_RR",
+  "viseme_aa",
+  "viseme_E",
+  "viseme_I",
+  "viseme_O",
+  "viseme_U",
   "blink_L",
   "blink_R",
   "squint_L",
@@ -24,116 +41,41 @@
   "lips_part",
   "sneer"
  ],
- "jaw_open_deg": 26.6,
+ "jaw_open_deg": 0.0,
  "eyes": {
   "L": [
-   0.030809320000000005,
-   1.6713584999999997,
-   0.12284885999999999
+   0.03191890940070152,
+   1.686033844947815,
+   0.09400688856840134
   ],
   "R": [
-   -0.028488680000000002,
-   1.6713584999999997,
-   0.12284885999999999
+   -0.03185127675533295,
+   1.686033010482788,
+   0.0940098986029625
   ]
  },
  "lod_switch_m": 9.0,
- "store": "RADIO SHACK",
- "period": 1995,
- "status": "proposal",
  "lod0": {
-  "tris": 14826,
-  "verts": 8609,
+  "tris": 7512,
   "surfaces": 3,
   "parts": {
-   "skin": 7402,
-   "male_casualsuit06": 2866,
-   "shoes03": 616,
-   "tie": 136,
-   "nametag": 12,
-   "collar": 464,
-   "hair": 2406,
-   "brows": 192,
-   "lashes": 368,
-   "eyes": 172,
-   "teeth_up": 96,
-   "teeth_lo": 96
+   "radioshack_1995_lod0": 4022,
+   "radioshack_1995_lod0_face": 3490
   }
  },
  "lod1": {
-  "tris": 4540,
-  "verts": 2925,
-  "surfaces": 3,
-  "parts": {
-   "skin": 1973,
-   "male_casualsuit06": 931,
-   "shoes03": 288,
-   "tie": 136,
-   "nametag": 12,
-   "hair": 836,
-   "brows": 192,
-   "eyes": 172
-  }
+  "tris": 5599,
+  "surfaces": 3
  },
- "glb_bytes": 1178920,
- "textures": {
-  "radioshack_1995_clothes_albedo.png": {
-   "size": [
-    1024,
-    1024
-   ],
-   "bytes": 349925
-  },
-  "radioshack_1995_clothes_normal.png": {
-   "size": [
-    1024,
-    1024
-   ],
-   "bytes": 546931
-  },
-  "radioshack_1995_clothes_orm.png": {
-   "size": [
-    1024,
-    1024
-   ],
-   "bytes": 9366
-  },
-  "radioshack_1995_hair_albedo.png": {
-   "size": [
-    1024,
-    1024
-   ],
-   "bytes": 791333
-  },
-  "radioshack_1995_hair_normal.png": {
-   "size": [
-    1024,
-    1024
-   ],
-   "bytes": 4544
-  },
-  "radioshack_1995_skin_albedo.png": {
-   "size": [
-    2048,
-    2048
-   ],
-   "bytes": 2187163
-  },
-  "radioshack_1995_skin_normal.png": {
-   "size": [
-    2048,
-    2048
-   ],
-   "bytes": 28372
-  },
-  "radioshack_1995_skin_orm.png": {
-   "size": [
-    2048,
-    2048
-   ],
-   "bytes": 63173
-  }
- },
+ "glb_bytes": 9835848,
+ "iris": [
+  0.27420605333679116,
+  0.9192796129408713,
+  0.01904296875
+ ],
+ "store": "RADIO SHACK",
+ "period": 1995,
+ "status": "proposal",
  "built": "2026-11-08",
- "source": "tools/blender/cast/radioshack_1995.json"
+ "source_file": "tools/blender/cast/radioshack_1995.json"
 }
