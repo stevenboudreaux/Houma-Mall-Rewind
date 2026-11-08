@@ -65,6 +65,11 @@ done
 # must stay under GitHub's 100 MiB file limit; the shared packs listed in index.html must be in the export.
 SHARED=$(python3 -c "import re,sys,json; s=open(sys.argv[1]).read(); m=re.search(r'const SHARED_PACKS = (.*); // SHARED_PACKS', s); d=json.loads(m.group(1)) if m else {}; print(' '.join(n for n,e in d.items() if e.get('desktop')))" "$SRC/index.html")
 for n in $SHARED; do for k in desktop mobile; do [ -s "$SRC/$n.$k.pck" ] || { echo "index.html lists the shared pack $n, the export has no $n.$k.pck"; exit 1; }; done; done
+# PACKS (Nov 8 2026, design/godot-build-hosting.md "Pack contents"): look inside the packs. Every res:// path a
+# scene or resource names must ship in a pack its map loads (Demo 52 shipped scenes without 81 of their
+# meshes), and each pack's files must equal tools/qa/pack_manifest/<pack>.txt. A build that adds or drops
+# files: python3 tools/qa/packcontents.py write <builddir>, review the diff, commit it, publish.
+python3 tools/qa/packcontents.py check "$SRC" || { echo "the packs' contents differ from tools/qa/pack_manifest (above): not published"; exit 1; }
 # Packs on R2 (Nov 4 2026, design/godot-build-hosting.md "Packs on R2"), the default: every pack (both kinds)
 # and the page go to the Cloudflare R2 bucket under builds/<id>/; godot-build keeps the page (with that id
 # written in), the lightmaps and the stand-ins, no packs. No Pages size limit applies to the packs any more.

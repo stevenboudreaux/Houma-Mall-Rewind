@@ -132,3 +132,17 @@ this session, not in the repo):
   tests ("0 errors") passed: the check has to look inside the packs.
 - Shot: `wsPACKS-live-d52-w1-console.jpg` (unbaked browser, baked lightmaps; the Woolworth fascia at left shows
   no letters, only the baked shadow of where they were).
+
+## After the fix (stage 2, same day)
+- `tools/fix_stale_uids.gd` removed 91 stale UIDs (the lightmap ones resolve once the lightmaps are imported).
+- Full export with the patched `export_web.sh` (`.scratch/builds/packs`, Demo 52's baked lightmaps and stand-ins):
+  `packcontents: 12 wing + 5 shared packs, every reference shipped`. Compared with Demo 52's packs only files were
+  added: w1 +40, w2 +34, w1y26 +12, w2y26 +45, w3y26 +92, w4 +1, w5 +1, w4y26 +1, w5y26 +3; w3, w6, w6y26 and the
+  shared packs unchanged. Sizes (MB): w1 94.36, w2 99.28, w1y26 51.58, w2y26 82.79, w3y26 34.07, w4 42.64,
+  w5 43.54, w4y26 96.07, w5y26 38.74 (w2 is near GitHub's old 100 MiB file limit; R2 has none).
+- `python3 tools/qa/packcontents.py check` on the downloaded Demo 52 build fails with exactly the files above.
+- **One older gap the new check found:** the 2026 outside (`w3y26`) never shipped the pocket-item icons
+  (`tex/items/*`, 82 files; also absent in Demo 51), so a carried item would show no icon there. Its two presets
+  now include them (`tools/make_presets.py`).
+- `.unwrap_cache` files (gitignored importer caches; 7 in the items pack of this box's export, none in Demo 52's)
+  are left out of the comparison: whether they exist depends on the machine.

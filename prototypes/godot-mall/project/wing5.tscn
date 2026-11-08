@@ -2,7 +2,7 @@
 
 [ext_resource type="FontFile" uid="uid://ben4k8s2bfllr" path="res://fonts/sans.otf" id="1_6woax"]
 [ext_resource type="FontFile" uid="uid://dcnghf3fxs8al" path="res://fonts/serif.ttf" id="2_m8a18"]
-[ext_resource type="Environment" uid="uid://vf7piov86y3w" path="res://gen/env_day.tres" id="3_m8a18"]
+[ext_resource type="Environment" path="res://gen/env_day.tres" id="3_m8a18"]
 [ext_resource type="ArrayMesh" path="res://gen/w5/C1.res" id="4_j3s6t"]
 [ext_resource type="ArrayMesh" path="res://gen/w5/H1a.res" id="5_2jkia"]
 [ext_resource type="ArrayMesh" path="res://gen/w5/H1b.res" id="6_q6avl"]
@@ -61,7 +61,7 @@
 [ext_resource type="ArrayMesh" path="res://gen/w5/dyn_fixtures.res" id="59_15loq"]
 [ext_resource type="ArrayMesh" path="res://gen/w5/dyn_dl_trim.res" id="60_jge1d"]
 [ext_resource type="ArrayMesh" path="res://gen/w5/dyn_glass_esc.res" id="61_a7eux"]
-[ext_resource type="ArrayMesh" uid="uid://cc2ptprcb5plf" path="res://gen/w5/dyn_dl_out.res" id="62_5f45i"]
+[ext_resource type="ArrayMesh" path="res://gen/w5/dyn_dl_out.res" id="62_5f45i"]
 [ext_resource type="ArrayMesh" path="res://gen/w5/dyn_dl_fix.res" id="63_7ob2f"]
 [ext_resource type="ArrayMesh" path="res://gen/w5/dyn_standin.res" id="64_lra0a"]
 [ext_resource type="ArrayMesh" path="res://gen/w5/dyn_info.res" id="65_s3oh6"]

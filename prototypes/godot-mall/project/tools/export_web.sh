@@ -18,6 +18,12 @@ rm -rf "$T"; mkdir -p "$OUT" "$T"
 # YEARS: "1995 2026" (default when the 2026 wings are built: wing1_2026.tscn), or "1995".
 # 2026 (tools/make_layout_2026.py) writes w1y26.* / w2y26.* from the "Wing <n> <Kind> 2026" presets.
 YEARS=${YEARS:-$( [ -f wing1_2026.tscn ] && echo "1995 2026" || echo "1995")}
+# PACKS (Nov 8 2026, design/godot-build-hosting.md "Pack contents"): a uid="…" in a wing scene that this
+# project does not know makes the export leave that file out of the pack (Demo 52 lost 81 meshes: signs,
+# letters, stock). Drop such uids first (the path stays; nothing else in the scene changes).
+timeout 600 godot --headless --path . --script res://tools/fix_stale_uids.gd > "$T/fix_stale_uids.log" 2>&1 \
+  || { cat "$T/fix_stale_uids.log"; echo "tools/fix_stale_uids.gd failed"; exit 1; }
+grep "stale uid" "$T/fix_stale_uids.log" | grep -v " 0 stale" || true
 for y in $YEARS; do
 for w in $WINGS; do
   # the 2026 outside (Workstream F, Nov 1 2026) exports once wing3_2026.tscn is built
@@ -31,6 +37,7 @@ for w in $WINGS; do
     mkdir -p "$T/$NAME$k"
     timeout 600 godot --headless --path . --export-release "$PRE" "$T/$NAME$k/index.html" > "$T/$NAME-$k.log" 2>&1 || true
     [ -s "$T/$NAME$k/index.pck" ] || { echo "export failed ($PRE), see $T/$NAME-$k.log"; exit 1; }
+    ! grep -m3 "invalid UID" "$T/$NAME-$k.log" || { echo "export of $PRE met unknown UIDs (above): files are missing from the pack"; exit 1; }
     cp "$T/$NAME$k/index.pck" "$OUT/$NAME.$k.pck"
   done
 done
@@ -82,6 +89,8 @@ open(p, "w").write(s[:i] + line + s[j:])
 PY
 # GitHub refuses a file over 100 MiB (design/godot-build-hosting.md): warn from 95 MB, tools/publish_build.sh refuses
 for f in "$OUT"/*.pck; do [ "$(stat -c %s "$f")" -lt 95000000 ] || echo "WARNING: $(basename "$f") is $(stat -c %s "$f") bytes, near GitHub's 100 MiB file limit"; done
+# every res:// path a scene or resource in a wing pack names must ship in a pack that map loads
+python3 tools/qa/packcontents.py refs "$OUT" || { echo "the export is missing referenced files (above): not usable"; exit 1; }
 rm -rf "$T"
 echo "wing1 desktop $S1D mobile $S1M  wing2 desktop $S2D mobile $S2M  outside $S3D/$S3M  2026: wing1 $Y1D/$Y1M wing2 $Y2D/$Y2M outside $Y3D/$Y3M"
 echo "room wings (desktop/mobile): sears $(sz w4 desktop)/$(sz w4 mobile) dillards $(sz w5 desktop)/$(sz w5 mobile) cinema $(sz w6 desktop)/$(sz w6 mobile)  2026: $(sz w4y26 desktop)/$(sz w4y26 mobile) $(sz w5y26 desktop)/$(sz w5y26 mobile) $(sz w6y26 desktop)/$(sz w6y26 mobile)"
