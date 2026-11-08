@@ -101,7 +101,8 @@ leaning on a maroon back, 16 in round, heart and pan cookie cakes with piped bor
 Evidence (unbaked): `wsFOOD3D-gac-cookies-sheet.jpg`, `wsFOOD3D-gac-cookies-ingame-1995.jpg`, `-2026.jpg`.
 No rebake for the food (dynamic); the window's back changed from the lit cake picture to plain maroon in the
 baked mesh, so wing 2 (both years) picks that up at its next bake.
-Question for Steven: the pan cake is a 2010s shape (the chain's first pan cake, 2012); drop it from 1995?
+**Pan cake: 2026 only** (Steven, Nov 8: the chain's first pan cookie cake was in 2012): the 1995 window shows the
+rounds and the heart in turn (`case.gd cakes3d`, by `b.YEAR`). Evidence: `wsFOOD3D-gac-cakes-1995-no-pan-unbaked.jpg`.
 
 ## FOOD3D: the 1990s front (Nov 8, 2026; 1995 map only)
 Steven (Nov 7): the white tile with scattered red/black/yellow squares is the 2026 look; the 1990s store was

@@ -128,7 +128,8 @@ static func case_run(b, g, gs, o, r, f, w):
 # ------------------------------------------------------------------ FOOD3D (Nov 8 2026)
 ## The cookie cakes (Steven, Nov 8: the big ones in the lower window are cookie cakes): three per 1.4 m
 ## section leaning on the maroon back between lo and hi, lettering upright toward the customer. Pieces of
-## the bl_gac_cookies kit (tools/blender/assets_src/bl_gac_cookies.py), instanced by food3d/kit.gd.
+## the bl_gac_cookies kit (tools/blender/assets_src/bl_gac_cookies.py), instanced by food3d/kit.gd. 1995 shows
+## the rounds and the heart only; the pan cake is 2026 only (Steven, Nov 8).
 static func cakes3d(b, o, r, f, w, lo, hi):
 	var M = FK.meshes(COOKIES)
 	var up_pl = (f * 0.09 + UP * (hi - lo)).normalized()      # up the leaning back
@@ -138,6 +139,9 @@ static func cakes3d(b, o, r, f, w, lo, hi):
 	var rng = RandomNumberGenerator.new()
 	rng.seed = 7
 	var order = ["cake_bday", "cake_love", "cake_congrats", "cake_team"]
+	# Steven, Nov 8: the pan cake is 2026 only (the chain's first pan cookie cake was in 2012)
+	if int(b.get("YEAR")) != 2026:
+		order = ["cake_bday", "cake_love", "cake_congrats"]
 	var n = max(1, int(round(w / SEC))) * 3
 	var pitch = w / n
 	var by = {}

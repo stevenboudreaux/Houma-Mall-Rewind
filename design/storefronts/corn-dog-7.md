@@ -74,7 +74,6 @@ Frame: `u` runs along the frontage from the store's north end (the mall viewer's
 ## FOOD3D: Blender corn dogs in the case (Nov 8, 2026; both years)
 The cases' tapered cylinders on sticks become the Blender corn dog (`bl_cd7_case` kit, the hand item's new cornmeal
 crust): 14 per case standing batter-down in the steel holder, a few leaning; the yellow block becomes a steel pan of
-cheese on a stick (a **guess**: not on the menu box, not sold; question for Steven: cheese on a stick or a nacho
-cheese tray, and should it be sold?). Placement: `corn_dog_7.gd case_food()` (instanced, dynamic: no rebake; the
+cheese on a stick (a guess; **Steven, Nov 8: keep it, display only, not sold**; not on the menu box). Placement: `corn_dog_7.gd case_food()` (instanced, dynamic: no rebake; the
 old cylinders were in the baked mesh, so wing 2's next bake drops their shadows). Evidence (unbaked):
 `wsFOOD3D-cd7-case-sheet.jpg`, `wsFOOD3D-cd7-case-ingame.jpg`, `wsFOOD3D-bl_cd7_corndog-sheet.jpg`.

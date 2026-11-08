@@ -10,8 +10,8 @@ split into pieces the counter cases instance (tools/stores/corn_dog_7.gd, food3d
 
 References: as bl_cd7_corndog (the stand only: refs/derived/signs/corndog_IMG_4461_f005.jpg; no photo of the
 food); design/storefronts/corn-dog-7.md (cases 0.5 m tall, 0.55 m deep). Guessed: cheese on a stick at all (a
-period corn-dog-stand item; Corn Dog 7's 1990s menu is not documented, so it is not added to the menu box or
-sold: Steven's call), the pan, the sizes (dog as the hand item: 0.165 m of batter on a 0.2 m stick).
+period corn-dog-stand item; Corn Dog 7's 1990s menu is not documented, so it is not added to the menu box;
+Steven, Nov 8: keep it, display only, not sold), the pan, the sizes (dog as the hand item: 0.165 m of batter on a 0.2 m stick).
 Origins: dog = the batter's bottom tip, stick up (+Z); cheese = bottom centre lying along X; pan = bottom centre.
 """
 import math

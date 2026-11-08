@@ -470,8 +470,7 @@ cookie, a piped rosette border in two alternating icing colours, piped writing (
 simple icing drawings. If the kit's .glb is missing, the case falls back to the painted pictures.
 Sources (searched Nov 8; fan wikis and the 1991 Nanuet Mall throwback page are blocked from the cloud):
 QSR Magazine "Great American Cookies offers heart-shaped cookie cakes"; Franchising.com Jan 2012 (the first
-pan-sized cookie cake: so a pan cake is a 2010s shape, kept because the case is one model for both years:
-**question for Steven**: drop the pan cake from 1995?); Franchising.com May 2010 (dozens of catalogue designs).
+pan-sized cookie cake: so the pan cake is **2026 only**, Steven Nov 8; the 1995 window shows the rounds and the heart); Franchising.com May 2010 (dozens of catalogue designs).
 
 Still visible: the heart cake's top edge shows a dark sliver at the cusp in Blender's close renders (not in Godot,
 where it leans on the maroon back); the cakes are darker than the old self-lit picture (the window's own small
@@ -484,7 +483,7 @@ the yellow block are replaced by the kit `bl_cd7_case` (`corn_dog_7.gd case_food
 standing batter-down in the holder in two rows of seven (sunk 35 mm into it; about a quarter lean 7-15°; these
 cast shadows, the only food that does), and a 1/4 steam-table pan of six cheese-on-a-stick where the yellow block
 was. The cheese on a stick is a **guess** (a period corn-dog-stand item; Corn Dog 7's 1990s menu is not known), so
-it is not sold or added to the menu box: Steven's call.
+it is not sold or added to the menu box. **Steven (Nov 8): keep it, display only, not sold.**
 
 | Model | Class | Tris | Tex | Where | Guessed |
 |---|---|---|---|---|---|
