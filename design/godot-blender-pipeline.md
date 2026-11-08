@@ -519,3 +519,24 @@ No reference photo of Southland's cans (`refs/INDEX.md`): the type and every det
 | Model | Class | Tris | Tex | Where | Guessed |
 |---|---|---|---|---|---|
 | `bl_mall_trashcan` | small_fixture (≤ 1,500 asked) | 1,404 | 1024 | every `trash()` spot: halls (one lane out from each bench group) and court corners, both years | everything (type, colour kept near the old grey, flaps, liner) |
+
+**Packs, measured (Nov 8; `tools/export_web.sh` wings 1-2, both years; "before" = `main`'s files in the same
+workspace, the new model folders moved aside; desktop and mobile packs are byte-identical here):**
+
+| Pack | Before | After | Change |
+|---|---|---|---|
+| `items` (shared, "start") | 74,610,168 | 82,373,872 | +7.76 MB (the six new model folders, 1024 px maps, ~12 MB of PNG in the repo) |
+| `w1` (1995) | 94,359,280 | 94,367,776 | +8 KB (the trash cans' node) |
+| `w1y26` | 51,580,092 | 51,588,588 | +8 KB |
+| `w2` (1995) | 99,278,280 | 98,384,640 | −0.89 MB (the painted cookie and cake sheets and the scattered-square tile leave the 1995 store; the food meshes are embedded, small) |
+| `w2y26` | 82,793,328 | 82,957,928 | +0.16 MB |
+
+Every wing pack stays under GitHub's 100 MiB file limit (`w2` was the closest: 99.3 MB before, 98.4 MB after).
+
+**Tests (Nov 8):** SHOP TEST OK (204), ITEMS TEST OK (49, with `gac_choc_chip_cookie` and `aa_pretzel_nuggets`
+appended to `tools/qa/fixtures/item_ids_int51.txt`), INVENTORY TEST OK (45), SHOP INTERIORS TEST OK (180). The
+brief's "FOOD" suite does not exist in `tools/qa/` (no test file names it): **not run**. Movetests on the web export
+(`tools/qa/movetest.py`, unbaked): wing 1 and wing 2, 1995 and 2026: every camera 0 errors, the touch walk moved.
+The trash cans are hidden by default ("Benches & plants"), and the movetest could not press that button, so their
+in-game evidence is the probe-lit preview (`wsFOOD3D-trashcan-ingame-preview.jpg`); the rest is from the game
+itself (`wsFOOD3D-game-*.jpg`).
