@@ -1,9 +1,10 @@
 ## Workstream LOT tree options sheet (design/godot-exterior.md "Tree options"): the palm drive with
-## option A (flora.gd, as built), B (a CC0 pack's palm) or C (the Blender-built sabal) standing at the
-## drive's 24 palm spots, unbaked, the same sun as exshots.gd.
+## option A (flora.gd, as built; Steven's pick, Nov 8 2026) or C (the Blender-built sabal sketch, the later
+## upgrade path) standing at the drive's 24 palm spots, unbaked, the same sun as exshots.gd. Option B (a CC0
+## pack) was dropped; its files were never in the repo.
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --script res://tools/exterior/options/option_shot.gd -- \
-##     --option=B --model=res://_lotopt/PalmTree_1.fbx --scale=1.0 --out=DIR --cams="x,y,z,yaw,pitch:name;..."
-## For B the pack's leaf / trunk textures are put on by material name (the FBX carries no paths).
+##     --option=C --model=res://<dir>/sabal_c.glb --scale=1.0 --out=DIR --cams="x,y,z,yaw,pitch:name;..."
+## (the .glb from bl_sabal_option.py, copied into a non-hidden folder of the project so Godot imports it)
 extends SceneTree
 var frames := 0
 var out := "/tmp"
@@ -51,14 +52,11 @@ func _initialize() -> void:
 				var s = scl * (h / 6.5)
 				inst.scale = Vector3(s, s, s)
 				scn.add_child(inst)
-				if option == "B":
-					_skin(inst)
-				else:
-					for mi in inst.find_children("*", "MeshInstance3D", true, false):
-						var m := StandardMaterial3D.new()
-						m.vertex_color_use_as_albedo = true; m.roughness = 0.85; m.albedo_color = Color(2.4, 2.4, 2.4)   # the sketch's vertex colours are linear
-						m.cull_mode = BaseMaterial3D.CULL_DISABLED
-						mi.material_override = m
+				for mi in inst.find_children("*", "MeshInstance3D", true, false):
+					var m := StandardMaterial3D.new()
+					m.vertex_color_use_as_albedo = true; m.roughness = 0.85; m.albedo_color = Color(2.4, 2.4, 2.4)   # the sketch's vertex colours are linear
+					m.cull_mode = BaseMaterial3D.CULL_DISABLED
+					mi.material_override = m
 	var env := Environment.new()
 	var sky := Sky.new(); var sm := ProceduralSkyMaterial.new()
 	sky.sky_material = sm
@@ -79,21 +77,6 @@ func _initialize() -> void:
 	cam = Camera3D.new(); cam.fov = 70.0; cam.far = 900.0
 	vp.add_child(cam); root.add_child(vp); cam.current = true
 	_place()
-
-func _skin(n: Node) -> void:
-	for mi in n.find_children("*", "MeshInstance3D", true, false):
-		for s in mi.mesh.get_surface_count():
-			var src = mi.mesh.surface_get_material(s)
-			var nm = src.resource_name if src else ""
-			var m := StandardMaterial3D.new()
-			if nm.to_lower().contains("leaves"):
-				m.albedo_texture = load("res://_lotopt/PalmTree_Leaves.png")
-				m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR; m.alpha_scissor_threshold = 0.5
-				m.cull_mode = BaseMaterial3D.CULL_DISABLED
-			else:
-				m.albedo_texture = load("res://_lotopt/PalmTree_Trunk.png")
-			m.roughness = 0.9
-			mi.set_surface_override_material(s, m)
 
 func _place() -> void:
 	var v = cams[i][0].split(",")

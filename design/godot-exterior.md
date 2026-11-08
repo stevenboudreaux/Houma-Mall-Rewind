@@ -361,13 +361,16 @@ Branch `ws/lot` from `main` (f96a04b). Brief: Steven's six complaints about the 
   and the cores still hold most of the crown). No impostor was needed, so no cull distance was raised.
 - Cost: every plant outside together is ~18.5k triangles, one draw call for the leaves; `dyn_ex_flora.res`
   1.2 MB with compressed attributes (`build_mall.gd`, one line).
-- **Tree options, Steven's choice pending** (`wsLOT-tree-options.jpg`, near and far at the palm drive):
+- **Tree options. Decided (Steven, Nov 8): option A**, the procedural sabals, live oaks and shrubs of flora.gd
+  (as built). B (the Quaternius pack) is dropped: none of its files were committed. C (the Blender sabal sketch)
+  stays in `tools/exterior/options/` as a later upgrade path. The sheet (`wsLOT-tree-options.jpg`, near and far at
+  the palm drive):
   | Option | What | Licence | Cost |
   |---|---|---|---|
-  | A (built) | flora.gd, procedural, this branch | ours | 18.5k tris all plants; atlas 1024 (~1 MB) |
-  | B | Quaternius "Ultimate Stylized Nature" PalmTree_1 (also bushes, oaks) | CC0 1.0 (quaternius.com; fetched here from the MIT-wrapped GitHub mirror walterpalladino/godot-quaternius-ultimate-stylized-nature since quaternius.com is blocked from the cloud) | 760 tris/palm; trunk texture 4096 px, must be cut to 1024; a stylised **coconut** palm, not a sabal |
-  | C | a Blender-built sabal, every leaflet geometry (`tools/exterior/options/bl_sabal_option.py`, a sketch) | ours | 14.5k tris/palm, ~680k for the palms: needs an LOD or impostor first; ~1.1 MB a variant |
-  Shots: `tools/exterior/options/option_shot.gd`. Poly Haven and Kenney were not reachable from the cloud.
+  | **A (chosen, built)** | flora.gd, procedural, this branch | ours | 18.5k tris all plants; atlas 1024 (~1 MB) |
+  | B (dropped) | Quaternius "Ultimate Stylized Nature" PalmTree_1 (also bushes, oaks) | CC0 1.0 (quaternius.com; fetched here from the MIT-wrapped GitHub mirror walterpalladino/godot-quaternius-ultimate-stylized-nature since quaternius.com is blocked from the cloud) | 760 tris/palm; trunk texture 4096 px, must be cut to 1024; a stylised **coconut** palm, not a sabal |
+  | C (later upgrade path) | a Blender-built sabal, every leaflet geometry (`tools/exterior/options/bl_sabal_option.py`, a sketch) | ours | 14.5k tris/palm, ~680k for the palms: needs an LOD or impostor first; ~1.1 MB a variant |
+  Shots: `tools/exterior/options/option_shot.gd` (A and C). Poly Haven and Kenney were not reachable from the cloud.
 
 ### 4. Planters
 - Every curbed island is `flora.gd planter`: a **low (10 cm), wide (30 cm)** concrete curb, mulch, 3-5 shrubs and
