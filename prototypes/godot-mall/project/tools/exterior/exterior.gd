@@ -819,8 +819,8 @@ static func south_entrance(b):
 ## with mid rails, transom glass to the soffit); the recess's north side the white painted brick of the
 ## Sears return, its south side buff brick with the poster case (4417) and a rusty pipe post at the
 ## corner (4416 f004); past a 0.9 m buff pier the salmon cinema brick runs south. The 3-loop wave rack
-## stands on the low white block's west face at the channel's mouth (x -88), lengthwise, 0.5 m off the
-## wall (4416 f009-f011, 4486 f002-f003). The exit is the end of a 10 m wide, 20 m deep channel between
+## stands along the channel's north wall (the low white block's south face, z -96), 0.5 m off it, on the
+## left as you face the doors (Steven, Nov 8; 4416 f009-f011, 4486 f002-f003). The exit is the end of a 10 m wide, 20 m deep channel between
 ## Lynn's SW corner and the cinema's north face (4486 f014; cinema_box()).
 const EXIT_X = -80.0      # the outer plane (the fascia, the returns, the cinema's west wall)
 const EXIT_GLASS = -78.0  # the storefront
@@ -905,7 +905,9 @@ static func cinema_exit(b):
 	for i in 3:
 		b.cyl(g, "ex_can", Vector3(xg + 2.5, 3.19, z0 + 2.5 + i * 2.5), 0.09, 0.09, 0.01, 10, false, true)
 	# the wave bike rack on the white return's west face (z -100..-96), lengthwise, 0.5 m off the wall
-	RACK.build(b, Vector3(SEARS_W - 4.0 - 0.5, 0, -98.1), Vector3(0, 0, 1))
+	# Steven (Nov 8): on the white wall to the LEFT of the entrance (the channel's north side, facing
+	# south), along it, not on the west face parallel to the doors; 0.5 m off the rack block's south face
+	RACK.build(b, Vector3(SEARS_W - 2.3, 0, z0 + 0.5), Vector3(1, 0, 0))
 	trash_can(b, Vector3(EXIT_X - 0.9, 0, z0 + 0.8))
 
 ## The cinema box: windowless salmon brick (EXT-LAYOUT, Nov 8 2026; 4486 f001-f040, 4416 f005-f007,

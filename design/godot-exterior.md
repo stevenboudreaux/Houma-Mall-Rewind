@@ -509,8 +509,9 @@ runs from 0.9 m past the recess, the buff strip being the recess's own side and 
 **The bike rack** (`tools/exterior/wave_rack.gd`, new; also used at the south pavilion): one bent 48 mm pipe swept
 along its centre line: the two end legs into the slab, three inverted-U loops 0.8 m high, two low U bends between,
 legs 0.36 m apart: **1.8 m long, 0.8 m tall, 736 triangles** (budget 800), black paint chipped to rust as a vertex-colour
-mottle (material `ex_rack`, roughness 0.55). It stands lengthwise on the rack block's west face (x -88.5, z -98.1),
-0.5 m off the wall, parallel to the doors (4416 f009-f011, 4486 f002-f003). Procedural GDScript rather than Blender:
+mottle (material `ex_rack`, roughness 0.55). **Steven (Nov 8, after the first render):** it belongs on the white wall
+to the **left of the entrance** (the channel's north side), not on the west face parallel to the doors. Now it runs
+along the rack block's south face (z -96), 0.5 m off it, centred x -86.3 (4416 f009-f011, 4486 f002-f003). Procedural GDScript rather than Blender:
 the same geometry a Blender sweep would give, no import step, baked with the outside's props.
 Evidence: `wsEXTL-exit-frame.jpg`, `wsEXTL-exit-render-{1995,2026}-unbaked.jpg`, `wsEXTL-exit-sbs-{f002,f005,f014}-*`,
 `wsEXTL-rack-frame.jpg`, `wsEXTL-rack-render-1995-unbaked.jpg`, `wsEXTL-rack-sbs-*`.
