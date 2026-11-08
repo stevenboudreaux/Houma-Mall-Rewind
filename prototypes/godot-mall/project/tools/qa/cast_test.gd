@@ -121,6 +121,23 @@ func _one(id: String, rest: Dictionary) -> void:
 	var miss := rad_to_deg(Cast.eye_dir(nb).angle_to(near - eye_w))
 	_check(miss < 3.0, "%s: eye.L looks at a point in front within 3 deg (%.1f)" % [id, miss])
 	Cast.aim_eyes(nb, Vector3.INF)
+	# CastFace (what npc_look.gd uses): head-relative yaw lands where asked, twice gives the same pose
+	var eb := CastFace.eye_bones(sk)
+	_check(eb.size() == 2, "%s: CastFace finds 2 eye bones" % id)
+	var d0 := Cast.eye_dir(nb)
+	CastFace.turn_eyes(sk, eb, 12.0, 0.0)
+	var q1 := sk.get_bone_pose_rotation(eb[0])
+	CastFace.turn_eyes(sk, eb, 12.0, 0.0)
+	var d1 := Cast.eye_dir(nb)
+	var side := d1.dot(nb.global_basis.x) - d0.dot(nb.global_basis.x)
+	_check(absf(rad_to_deg(d0.angle_to(d1)) - 12.0) < 1.0 and side > 0 and sk.get_bone_pose_rotation(eb[0]).is_equal_approx(q1),
+		"%s: CastFace.turn_eyes 12 deg toward the body's +x, no build-up (%.1f deg)" % [id, rad_to_deg(d0.angle_to(d1))])
+	CastFace.turn_eyes(sk, eb, 0.0, 0.0)
+	var bl := CastFace.blink_shapes(nb.skin)
+	_check(bl.size() >= 2, "%s: CastFace finds the blink morphs (%d)" % [id, bl.size()])
+	CastFace.set_blink(bl, 1.0)
+	_check(absf(Cast.get_morph(nb, "blink_L") - 1.0) < 1e-4, "%s: CastFace.set_blink closes blink_L" % id)
+	CastFace.set_blink(bl, 0.0)
 	var jw := sk.find_bone("jaw")
 	Cast.set_mouth(nb, 1.0)
 	await process_frame
