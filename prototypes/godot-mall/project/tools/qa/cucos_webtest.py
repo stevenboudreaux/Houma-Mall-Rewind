@@ -99,7 +99,7 @@ with sync_playwright() as p:
     ctx, pg, logs = page(b, 1280, 720)
     pg.goto(url("year=1995"))
     ready(pg, 60)
-    pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped'); localStorage.setItem('mall-avatar-1', JSON.stringify({v: 1, done: true, view: 'first'}))")   # past the opening (MENU)
+    pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped'); localStorage.setItem('mall-player-2', JSON.stringify({v: 2, cast: 'placeholder_1', view: 'first'}))")   # past the opening (MENU)
     pg.reload()
     check(ready(pg), "lady: loaded")
     # she wanders: where another prompt owns the action button (the cinema doors, a seam door) E can't
@@ -173,7 +173,7 @@ with sync_playwright() as p:
     ctx, pg, logs = page(b, 390, 844, touch=True)
     pg.goto(url("year=1995"))
     ready(pg, 60)
-    pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped'); localStorage.setItem('mall-avatar-1', JSON.stringify({v: 1, done: true, view: 'first'}))")
+    pg.evaluate("localStorage.setItem('mall-opening-1', 'skipped'); localStorage.setItem('mall-player-2', JSON.stringify({v: 2, cast: 'placeholder_1', view: 'first'}))")
     pg.reload()
     check(ready(pg), "phone: loaded")
     for attempt in range(4):       # she walks on between frames at ~1 fps: try again until E reaches her

@@ -1,109 +1,83 @@
-# The avatar and first / third person (Godot mall, workstream V, Nov 1 2026)
+# The player's character and first / third person (Godot mall)
 
-**Asked for (Steven, Nov 1):** a basic avatar creator when the game starts (and from a button later):
-body from the Mixamo characters the shoppers use, skin tone, hair, top and bottom colours, the shirt
-words; 1995 clothes on the 1995 map, anything plausible in 2026; saved in localStorage across reloads
-and wing loads; skippable with one tap. A first / third person switch (key, gamepad, touch): in third
-person the avatar walks with the NPC walk clip at ground speed and idles when still, under a camera
-that doesn't go through walls or store glass and works in tight stores and the arcade; first person
-exactly as before. Reuse the NPC body and `npc_rig.gd`; the held item (B+C) in the right hand; phones
-keep the two-thumb controls; VR stays first person. The 2D game's character creator (index.html
-`lk-engine`: skin, hair, clothes, as swatches and choices) is the model for the creator's spirit.
+Rewritten Nov 8 2026 by **CHAR-STRIP** (branch `ws/char-strip`, from `ws/talk`). Workstream V (Nov 1) made
+the avatar and the third-person view; B2 / CHAR-EDITOR (Nov 2-4) added a second avatar system and a
+character editor. Both avatar systems and the editor are gone; what V built for walking, the camera and the
+held item stays. The research behind it: `design/godot-characters-research.md` (branch `ws/char-research`)
+§1 (why there were two bodies) and §3 (the rules below). `design/godot-character-editor.md` is superseded.
 
-Built on `ws/bc-interaction` (the interaction system, the bag, the owner-only HUD).
+## Steven's decisions (Nov 8 2026)
+- The editor goes: no sliders, no colours, no edit, for the player or the owner (K is gone too).
+- The player **picks one of 3-4 cast members** from a simple row in the menu: a portrait and a name each.
+- Shirt words on the crowd shoppers stay (`scripts/npc_shirt.gd`).
+- Keep the rig, the clips, the crowd, the warm-up, and the third-person camera and gaits.
+
+## The five rules (research note §3) and where each lives
+1. **One person = one id + one file.** `data/cast.json` lists the cast: `name`, `sex`, `height_m`, `hips`,
+   and the file. CHAR-BUILD bakes each person into `cast/<id>.glb` (`"glb"`). Until it delivers, the cast is
+   **four PLACEHOLDER members on Mixamo crowd skins** (`"stub"`: Ch01, Ch37, Ch23, Ch27; not Ch02, which is
+   the football lady). The stub is chosen in the data, never by asking at runtime whether a file exists.
+   When a `.glb` lands, its entry gets `"glb"` and loses `"stub"`; nothing else changes.
+2. **One loader.** `scripts/cast.gd` (class `Cast`): `Cast.body(id) -> NpcBody` is the only way any view
+   makes a person: the world's body (`scripts/avatar.gd`), the menu's portrait and Character row
+   (`scripts/menu/portrait.gd` `show_cast(id)`), and the counter attendants
+   (`scripts/attendants/attendant.gd` via `Cast.attendant_body`). The talk camera frames the attendant's
+   body, so it gets the loader's body too; TALK's camera and lights are untouched. The body is an
+   `NpcBody` (the shoppers' clips through `NpcRig`), meta `"cast"` = its id, idle from its first frame.
+3. **One saved record**: `localStorage["mall-player-2"] = {"v": 2, "cast": "<id>", "view": "first"|"third"}`
+   (Engine metadata off the web). The name stays where it was, `mall.player_name`, and the money in
+   `mall.money` (`scripts/inventory.gd`, `scripts/bank.gd`): the arcade pages read both
+   (`play/lib/mallbank.js`), so they are not copied into the record (a second copy would be a second
+   record). **A guess against the brief, which put name and money inside `mall-player-2`; Steven to
+   confirm.** On the first run `Cast.migrate()` reads the old `mall-avatar-1` and `mall-avatar-preset-1`
+   once, for the name only (only the preset ever had one), sets `mall.player_name` if it is empty, and
+   deletes both, and the owner's old `mall-char-*` edits.
+4. **No fallback body.** The cast's files ship **in every wing pack** (`tools/make_presets.py`
+   `cast_files()`: the stub skins, and `cast/*` for CHAR-BUILD's files; wing 3 2026, which shipped no skins,
+   now ships the four) and are warmed behind the loading card with the shoppers (`npc_warmup.gd`
+   `skin_paths()` adds `Cast.paths()`). `avatar.gd` makes the body at `_ready`, before the first frame.
+   A missing file: `Cast.body` returns null and logs an error; the person is not shown (the camera, the view
+   and the held item still work). The "later" character packs that the page fetched once the mall was
+   running (`chars`, `chars_<map>`, `char_pack.gd`, `window.__mallLater`) are deleted; nothing about a
+   person arrives after the card lifts.
+5. **The counting test**: `tools/qa/cast_count_test.gd` (below).
+
+Attendants: `data/story/attendants.json` and the Cuco's bartender (`data/story/cucos/cucos.json`) say
+`"look": "mixamo"` (their Mixamo `skin`) until each has a cast member; then `"look": "cast", "cast": "<id>"`.
+Any other `look` is an error (no attendant). The crowd stays Mixamo, made by `npcs.gd` as before.
 
 ## Files
 | File | What |
 |---|---|
-| `scripts/avatar.gd` | In the mall: the avatar's body in the world, the third-person camera, gaits, the view switch, the held item, the View / Avatar buttons, opening the creator. Made by `player.gd` as its child `Avatar`, after `Interact`. |
-| `scripts/avatar_creator.tscn`, `scripts/avatar_creator.gd` | The creator (a CanvasLayer, layer 40): a turning preview and the rows. |
-| `scripts/avatar_body.gd` | The avatar's body: `extends NpcBody` (the shoppers' body, clips and `NpcRig`, unchanged), plus the recoloured mesh, the shirt words and a right-hand holder. |
-| `scripts/avatar_look.gd` | The look as data: palettes per year, the default, sanitising, localStorage. |
-| `scripts/avatar_recolor.gdshader` | Skin, hair, top and bottom colours over the body's own texture. |
-| `scripts/avatar_bodies.json` | Generated: the bodies, their islands and colours, the chest point. |
-| `tools/avatar/analyze_bodies.gd` | Writes `avatar_bodies.json` (native, it decompresses textures). Rerun after the NPC skins are rebaked. |
-| `tools/qa/avatar_sheet.gd` | Every body in its own colours and recoloured, one sheet (native). |
-| `tools/qa/avatar_test.gd` | Native, unbaked: creator at three sizes, third person walking / idle per spot, the camera clear, first person unchanged, the held item, the fps cost. |
-| `tools/qa/avatar_webtest.py` | The web build: creator on first visit (desktop, phone portrait / landscape), Done / Skip, V, the touch View button, a touch walk in third person, the reload, a `?cam=` link. |
+| `data/cast.json` | The cast (PLACEHOLDER until Steven describes it and CHAR-BUILD bakes it). |
+| `scripts/cast.gd` | `Cast`: roster, `body(id)`, `attendant_body(entry)`, the player's record, `migrate()`. |
+| `scripts/avatar.gd` | The player's body (`choose(id)` remakes it), first / third person, the boom camera, gaits, the held item. Group `mall_player_body`. |
+| `scripts/menu/portrait.gd` | A cast member on a small lit stage (`show_cast(id)`); turning on MAIN, still in the row. |
+| `scripts/menu/menu.gd` | MAIN: portrait, NAME (tap to type), MONEY, TICKETS, the **Character row**, View, Jump to. |
+| `tools/qa/cast_count_test.gd` | The counting test. |
 
-Shared files, small hunks marked `V`:
-- `scripts/player.gd`: `var avatar`, `var move_scale` (1.0 = as before; the walking step is multiplied
-  by it), making `Avatar` after `Interact`.
-- `scripts/signs.gd` `_near_check()`: an arcade cabinet's Play is judged from the player's eye
-  (`player.cam`), not the view camera, which in third person is behind the avatar. The player is
-  found through the group `mall_player` (added by `avatar.gd`).
-- `export_presets.cfg`: the four 2026 presets and the two outside presets now ship `npc/anims.res` and
-  the crowd's Mixamo skins (`npc/skins/Ch*`, `npc/skins/Remy*`, minus Ch06, Ch17, Ch36, which the
-  avatar doesn't offer); they used to exclude `npc/*`. Pack cost: see "Phones".
+Deleted: `scripts/chars/*` (with `char_pack.gd`: the cast does not ship as a pack), `char_body.gd`,
+`avatar_creator.*`, `avatar_look.gd`, `avatar_body.gd`, `avatar_bodies.json`, `avatar_recolor.gdshader`,
+`spatial_char_region.gdshader`, `data/characters/`, `models/ubc/` (54 MB), `models/characters/`,
+`tools/blender/ubc/`, `tools/blender/characters/` except `mh.py` and `fetch_mh.sh` (kept for CHAR-BUILD),
+`tools/avatar/`, `tools/chars/`, and the editor's QA tools (`char_*_test.gd`, `char_*` shots,
+`char_webtest.js`, `avatar_sheet.gd`, `ubc_sheet.gd`).
 
-## The creator
-Opens by itself on a visitor's first load (nothing in localStorage `mall-avatar-1`), except when the
-address has `?cam=` (tests, shared spots, and every wing / year crossing, which only happens after the
-first load anyway). `?avatar=1` opens it whatever is saved. Later: the **Avatar (C)** button, **C**,
-or a gamepad's **Start**.
-
-| Row | Choices |
-|---|---|
-| Body | < n of 16 >: the crowd's bodies (`npcs.json` groups with weight, minus its `exclude`: Ch01, Ch02, Ch08, Ch12, Ch13, Ch21, Ch22, Ch23, Ch26, Ch27, Ch28, Ch37, Ch38, Ch41, Ch42, Remy). Each brings its own face, hairstyle and cut of clothes. |
-| Skin | its own (•), then 7 tones, light to deep |
-| Hair | its own (•), then natural colours (2026 adds a pink dye). Greyed for a body without hair (Ch01). |
-| Top | its own (•), then the year's palette |
-| Bottom | its own (•), then the year's palette |
-| Words | < > through a few (none, HOUMA, BAYOU, …) or **Type** (the browser's text box, so a phone's keyboard works), up to 12 letters, upper case |
-| | **Random** · **Skip** (first time; **Back** later) · **Done** |
-
-Layout: the preview left (a third of the width) on a wide screen, on top (36 %) on a tall one; rows
-sized from the height, so it fits a phone held either way (checked at 390×844, 844×390, 1280×720).
-Drag the preview to turn it. Input: mouse; touch (tapped by hand: the project turns mouse emulation
-off); keyboard ↑↓ rows, ←→ change, Enter Done, Esc Skip / Back, R Random; gamepad d-pad, A Done,
-B Skip / Back, X Random. The player is frozen while it is open.
-
-**Skip** saves the default (Ch01 in his own clothes, first person) and doesn't ask again. **Done** on
-the first visit switches to third person (you just made it: see it); later Done keeps the view.
-
-### Period clothes (guesses, `scripts/avatar_look.gd`)
-Clothes and words are kept per year (`y1995`, `y2026`), so a 2026 colour never shows in 1995.
-- **1995 tops:** white, black, heather grey, teal, plum, hunter green, burgundy, mustard, navy, red.
-  **Bottoms:** light stonewash, mid denim, dark denim, black, khaki, olive, off-white.
-  **Words:** HOUMA, BAYOU, CAJUN, TERREBONNE, LOUISIANA.
-- **2026 tops:** white, black, charcoal, oatmeal, sage, rust, navy, lavender, red.
-  **Bottoms:** light wash, dark indigo, black, tan, olive, grey. **Words:** HOUMA, BAYOU, GEAUX, 985, LOUISIANA.
-- The bodies' **cuts** are the Mixamo models' own (hoodies, a suit, a chef-style jacket, shorts): the
-  creator changes colours, not cuts. A couple of cuts read modern (Ch13's chef jacket, Ch42's slim
-  joggers); they are the same bodies the 1995 crowd already wears. The "own" swatch keeps a body's
-  original colours, which include a few prints (Ch42's red graphic tee, Ch37's stripes); **none of
-  the bodies carry a real logo** (checked on the sheet), and typed words are the player's own.
-- No real brand words in the presets (IP rule).
-
-## How the colours are painted
-The bodies are Mixamo characters with photo-like textures, one UV island per piece, and Mixamo names
-each piece's mesh (`Ch21_Shirt`, `Ch21_Pants`, `Ch21_Hair`, `Ch21_Body`, …). `analyze_bodies.gd`
-sorts every island once, offline:
-- by its mesh's name: hair / beard → **hair**; shirt, hoodie, suit, coat, top → **top**; pants,
-  shorts, bottoms → **bottom**; shoes, sneakers, heels, socks, belt, zipper, eyelashes → kept;
-- in the Body mesh: the face (its biggest island), every island near the face's colour, and any
-  warm, skin-like island (Remy's limbs are lighter than his face) → **skin** (eyes, teeth, brows
-  stay); body islands under the clothes (painted white or grey) follow the clothes by body part;
-- a mesh that holds everything (Ch12) or both garments (Ch02's "Cloth"): by the bone that moves the
-  island most (head / torso and arms / hands / hips and legs / feet) and its colour against the face.
-It writes each island's class and mean colour, and per vertex its island (base64 uint16), so the
-browser never decodes a texture. At load, `avatar_body.gd` copies the mesh with the island's mean
-colour in COLOR.rgb and class in COLOR.a; the shader repaints a changed class at the texel's own
-brightness against its island's mean (multiplied for dark colours, added in sRGB for light ones, so a
-white top keeps its folds), and skin per channel, only where a texel is close to its island's colour
-(the eyes and lips painted into the face keep theirs). Unchanged classes ("own") are untouched.
-
-**The shirt words** are a Label3D (the Forza face of Ch02's HOUMA) on a BoneAttachment3D riding
-Spine2, at the chest point (sternum height, 74.5 % of standing height, front-most spine vertex),
-shrunk to the chest's width, dark ink on a light top and light on a dark one. They don't wrap round a
-curved chest; on the bodies they read flat and sit on the cloth (the sheet).
+## The Character row (menu MAIN)
+Under NAME / MONEY / TICKETS: the word CHARACTER and one button per cast member (`data/cast.json`
+`"player"`, 3-4), each a still portrait (the loader's body, idle, facing out) with the name under it; the
+current one has an amber border. Tap, click, or d-pad + A. Picking one saves `mall-player-2`, makes the world's
+body anew through the loader (the old one leaves the tree in the same call: never two), and rebuilds MAIN so
+the big portrait shows the same id. Buttons are 64-120 px wide (phone-tappable at 390 px). Nothing is written
+on the game screen. C (and a gamepad's Start) opens the menu on MAIN; there is no Avatar button.
 
 ## Third person
 | | Keyboard / mouse | Gamepad | Touch |
 |---|---|---|---|
-| First / third person | **V** | right-stick click | **View** button (top right, under Bag) |
-| The creator | **C** | **Start** | **Avatar** button |
-Saved with the look (`view`). `?view=third|first` sets it for one load (tests).
+| First / third person | **V** | right-stick click | MAIN: **View** |
+| The Character row | **C** (MAIN) | Start (MAIN) | the menu icon, MAIN |
+
+Saved in `mall-player-2` (`view`). `?view=third|first` sets it for one load (tests).
 
 - **The body** stands at the player's position, turns (smoothly) to the way it walks, keeps its
   facing when still. It is an `NpcBody`, so it plays the shoppers' clips through the same `NpcRig`
@@ -113,7 +87,7 @@ Saved with the look (`view`). `?view=third|first` sets it for one load (tests).
   **3.0 m/s** at full stick (first person stays 4.0, untouched: `player.move_scale` is 1.0 there);
   running (X / Shift / the right mouse button, ×2.2) is **6.6 m/s**. V had 2.0 / 4.4 (a guess: "4 m/s is
   a jog"). Touch keeps the 46 px full stick and the 0.05 deadzone; a gamepad's full stick is 3.0.
-- **Gaits** (WALK retune): walk below 3.4 m/s (`walk_m` / `walk_f` by the body's sex in `npcs.json`),
+- **Gaits** (WALK retune): walk below 3.4 m/s (`walk_m` / `walk_f` by the cast member's `sex` in `data/cast.json`),
   jog to 4.6, run to 6.0, sprint above, with 0.25 m/s of hysteresis (V: 2.4 / 3.6 / 5.4; a plain speed
   change alone would have made the full-stick walk a jog). **Playback = ground speed / the clip's own
   speed** from `npc/anims.json`: `walk_m` 1.616 m/s, `walk_f` 1.623, `jog` 2.512, `run` 4.555, `sprint`
@@ -148,7 +122,7 @@ Saved with the look (`view`). `?view=third|first` sets it for one load (tests).
   prize counter's zones and closer look (`prizes.gd`, from `player.cam`), an arcade cabinet's Play
   (`signs.gd`, patched), the seam and door prompts. The floor reflection and the Runner's "seen"
   test use the view camera, as they should.
-- **Frozen moments** (the prize counter's closer look, the creator) hide the avatar and leave the
+- **Frozen moments** (the prize counter's closer look, the menu) hide the avatar and leave the
   camera to whoever froze the player; the third-person camera takes over again after.
 
 **The held item** (B+C `interact.gd` `hand_item`) moves into the avatar's right hand in third person
@@ -157,109 +131,31 @@ first-person hand in first person. The swing's turn is copied onto it. The fuzzy
 fist (`wsV-tp-hand-unbaked.jpg`).
 
 ## Phones
-- The creator fits an iPhone held either way; touch works by hand-tapping (as the rest of the HUD).
-- Third person keeps the two thumbs (left drag walks, right drag looks); the View and Avatar buttons
-  are under Bag in the top-right column.
-- **The cost of one more skinned character** (`tools/qa/avatar_test.gd`, the same view with the
-  body shown and hidden, native and unbaked): the avatar adds **7.6k–15.6k triangles and 5–20 draw
-  calls** (its body's surfaces, by body) to frames of 0.29–1.43 M triangles and 1.5–4.7k draw calls,
-  about **1 %**. Frame time on the cloud's software renderer (llvmpipe): +0.2 % to +4 %, within its
-  noise (one run measured it faster with the body shown). It is one skinned mesh (skinned on the GPU
-  in the Compatibility renderer) plus one `NpcRig` retarget per frame on the CPU; in 1995 it joins up
-  to 17 shoppers (1 in 18 of the skinned load), in 2026 it is the only person. **Not measured on an
-  iPhone** (no device in the cloud): check with the owner's fps readout, standing in a busy 1995 hall,
-  V on and off. If it costs, the levers: hide it beyond the first metre of boom, or a lighter body
-  list for phones.
-- **Pack sizes:** the 2026 packs now carry the bodies and clips: `w1y26` 20.7 → 37.9 MB, `w2y26`
-  51.6 → 68.8 MB (+17.2 MB each, desktop and mobile alike); 1995 packs +0.5 MB (`avatar_bodies.json`
-  and the scripts); the outside (wing 3) gets the same +17 MB when exported. **A decision for
-  Steven:** keep that, or later move the bodies and clips into one shared pack loaded once and
-  cached across wings and years.
+- The Character row's buttons are at least 64 px wide and ~100 px tall on a 390 px-wide phone; MAIN's
+  portrait takes the top 40 % of a tall screen.
+- **Cost:** the player's body is one Mixamo skin (5.8k-10.5k triangles, 1-3 draw calls) while the cast is
+  stubbed; the menu adds up to five small SubViewports while it is open (the game behind it is frozen).
+  The 22-26k-triangle UBC bodies are gone. CHAR-BUILD's budget: a talk-close person 15k tris, 2-3 draw calls.
 
 ## VR (design/godot-vr.md)
 Always first person in VR: the avatar is hidden and its camera never made current while `vr_on`;
 V / the View button do nothing; the buttons hide. Leaving VR restores the saved view. The flat
 `player.cam` that VR hands back to is untouched.
 
-## Checks (Nov 1, on `ws/v-avatar`)
-- Native, unbaked (`xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 --script
-  res://tools/qa/avatar_test.gd -- --wing=… [--year=2026] --out=… --spots="name:x,z,yaw,pitch;…"`):
-  wing 1 (Kay-Bee aisle `-13,-56.2,90,-8`, hall `30,0,90,-8`) **27 checks OK**; wing 2 (hall
-  `-20,54,90,-8`, Pocket Change aisle `-105,69,180,-10`, the dice in hand, VR) **31 OK**; wing 2 2026
-  (games, inc. `-114,64,180,-10`, hall `-60,54,90,-8`, VR) **29 OK**. Each: walking plays the walk
-  clip at ground speed (2.00 m/s / 1.616 = ×1.24 for `walk_m`, / 1.623 = ×1.23 for `walk_f`), idle
-  standing, camera current and clear of walls and glass and under 1.95 m, first person = the eye
-  camera at 1.62 m with speed ×1 and no body, the creator's controls on screen at 1280×720, 390×844 and
-  844×390, a new body animated (not its T-pose).
-- Web (`tools/export_web.sh`, both years, wings 1–2; `CHROMIUM=/opt/pw-browsers/chromium python3
-  tools/qa/avatar_webtest.py "<build>/index.html?wing=2" <out>`): **AVATAR WEB OK (12 checks), 0
-  console errors**: the creator on a first visit (desktop, phone portrait, phone landscape), Enter =
-  Done → third person, V → first person saved, a reload keeps both, Escape = Skip → the default in
-  first person, a tap on View, a touch-drag walk in third person, a `?cam=` link without the creator.
-- `tools/qa/movetest.py` on `?wing=2&view=third`: hall and arcade load with **0 errors**, the touch walk
-  moves (MOVED).
-- `tools/qa/vrtest.py` (IWER Quest 2 emulator) with `view=third` added to every load: **ALL OK** (25):
-  VR enters, walks, turns, jumps, plays a machine and crosses wings as before, in first person.
-- `tools/qa/avatar_sheet.gd`: every body in its own colours and recoloured (`wsV-bodies-sheet.jpg`).
+## The counting test (rule 5)
+`tools/qa/cast_count_test.gd`, native under xvfb, unbaked: plants both old records, loads wing 6, then
+counts after: the load, menu open / close twice, a pick in the Character row (by the row's own button), a
+reload, a **wing crossing** (`player._go_to_wing(4, ...)`, the game's own path), a **year crossing**
+(wing 4 2026) and a **time-travel trip** back to 1995 (`timetravel_trip.gd`). Each time: exactly one
+`Skeleton3D` under the player group (`mall_player` + `mall_player_body`), it is the avatar's body, its
+`cast` meta is the saved id, MAIN's portrait shows the same id. A per-frame watcher counts all the way
+through, crossings included. Results: `production/qa/evidence/wsSTRIP-count-test.md`.
 
-**Evidence** (`production/qa/evidence/`): `wsV-*-unbaked.jpg` native without a lightmap;
-`wsV-web-*` / `wsV-movetest-*` the web build with the current published lightmaps (nothing baked
-changed, so **no rebake is needed** for this workstream).
-- Creator: `wsV-web-creator-desktop`, `wsV-web-creator-phone-portrait`, `wsV-web-creator-phone-landscape`
-  (and the `-native` ones after Random).
-- Third person: `wsV-tp-hall-walk-unbaked`, `wsV-tp-hall-idle-unbaked`, `wsV-tp-store-kaybee-unbaked`,
-  `wsV-tp-arcade-pocketchange-unbaked`, `wsV-tp-arcade-gamesinc-2026-unbaked`, `wsV-tp-hall-2026-unbaked`,
-  `wsV-tp-hand-dice-unbaked`, `wsV-web-tp-hall-desktop`, `wsV-web-tp-phone-walk`, `wsV-web-tp-phone-portrait`,
-  `wsV-movetest-tp-hall`, `wsV-movetest-tp-arcade`.
-- First person unchanged: `wsV-fp-hall-unchanged-unbaked`, `wsV-fp-arcade-unchanged-unbaked`,
-  `wsV-web-fp-hall-desktop`, `wsV-web-fp-camlink-unchanged`.
-
-## Checks (Nov 3 2026, workstream WALK, on `ws/walk-speed`)
-Same tools, retuned for the new pace; nothing baked changed, so **no rebake is needed**. All shots
-are unbaked (native) or the web build with the published lightmaps.
-- Native, unbaked (`tools/qa/avatar_test.gd`, now also running back the way it came): wing 2
-  (hall `-20,54,90,-8`, Pocket Change aisle `-105,69,180,-10`, the dice in hand, VR) **43 checks
-  OK**; wing 1 (hall `30,0,90,-8`, Kay-Bee aisle `-13,-56.2,90,-8`) **41 OK**; wing 2 2026 (hall
-  `-60,54,90,-8`, Games Inc. `-114,56,180,-10`) **41 OK**. Each spot: walking at **3.00 m/s** plays
-  `walk_m` / `walk_f` at ×1.86 / ×1.85; running at **6.60 m/s** plays `sprint` at ×1.10; the camera's
-  pivot is on the player (0.35 m, the shoulder; 0.00-0.02 m in a tight aisle, where the boom is 0
-  and the avatar hidden as before) and the camera 2.38 m behind in a hall; the runner always ends on
-  free floor; letting go goes to `idle`; first person unchanged (eye camera 1.62 m, speed ×1, no body).
-- Web (`tools/export_web.sh`, wings 1-2 both years; `tools/qa/walk_webtest.py`, `?warm=0`, the
-  default avatar): **WALK WEB OK** in all four, 25 / 16 / 16 / 16 checks, 0 console errors. Ground
-  speed over the game's own clock **3.0 m per game second walking and 6.6 running** (keyboard W and
-  W+X), `walk_m` ×1.86 and `sprint` ×1.10, the camera 2.34-2.40 m behind the player at both speeds
-  (walk and run alike: it no longer trails), the player always on free floor, idle after the run.
-  Wing 2 1995 also walks and runs at a 0.2 m glass pane (`-132.25,71.5` facing +z, the pane at
-  z = 73.0): the position reaches 72.95 and never crosses, in frames of up to 1.3 s. A phone
-  (844×390, touch): a full-stick drag walks at 3.0 m/s with `walk_m`. (The headless renderer draws
-  a frame every 3-8 s, so the "frame sequences" are consecutive-ish game frames 0.5-1 game-second
-  apart, labelled with the game clock and the position; where a shopper crosses the hall it can
-  stand between the camera and the avatar for a frame.)
-- Found on the way, fixed here: a stop from jog / run / sprint never returned to idle
-  (`NpcBody.set_speed(0)` only knows the walk clips; on a long frame the speed drops straight to 0,
-  so it showed in the headless tests at once; on a phone it would have shown as a run-in-place after
-  a hard stop). The native test now dismisses the "You received" card (R) before VR and runs back
-  the way it came (6.6 m on from Pocket Change's spot is the prize counter's closer look).
-
-**Evidence** (`production/qa/evidence/wsWALK-*`): native `tp-hall-walk-unbaked`,
-`tp-hall-run-unbaked`, `tp-hall-idle-after-run-unbaked`, `tp-arcade-pocketchange-run-unbaked`,
-`tp-store-kaybee-walk-unbaked`, `tp-store-kaybee-run-unbaked`, `tp-hall-2026-run-unbaked`,
-`tp-arcade-gamesinc-2026-run-unbaked`; web frame strips `web-w2-hall-walk-frames`,
-`web-w2-hall-run-frames`, `web-w2-hall-idle-after-run`, `web-w2-glass-run-frames`,
-`web-w2-phone-touch-walk`, `web-w2-2026-hall-walk-frames`, `web-w2-2026-hall-run-frames`,
-`web-w1-hall-walk-frames`, `web-w1-hall-run-frames`, `web-w1-2026-hall-walk-frames`,
-`web-w1-2026-hall-run-frames`.
-
-## Not done / open
-- Hair **style** is the body's (16 hairstyles across the bodies, Ch01 bald); only its colour changes.
-- The words are flat on the chest; on a body leaning forward they can float a few millimetres.
-- The arm swing doesn't hold the item differently: the walk clip's right arm swings with it.
-- In a crowd the avatar can pass through a shopper (no physics, as before in first person).
-- The palettes are guesses for Steven to tune (`avatar_look.gd`). The pace is WALK's 3.0 / 6.6 m/s
-  (`avatar.gd` `TP_WALK`, `player.gd` `RUN`); if the ×1.86 walk reads too hurried, the lever is the jog
-  threshold (`GAITS`): at 3.0 the `jog` clip would play at ×1.19 instead.
-- First-visit creator for a shared `?cam=` link is skipped on purpose; the button is there.
-- The Top row's 11 swatches are ~28 px on a 390 px-wide phone, under Apple's 44 pt guideline; they
-  tap fine in the test, but a two-row palette may be kinder.
-- Entering VR with the creator open closes it (Skip on a first visit); the headset can't show it.
+## Not done / open (for Steven)
+- **Who the cast is.** Four PLACEHOLDER members on crowd skins; names, looks and how many (3 or 4) are
+  Steven's. The crowd also wears these skins, so a shopper can look like the player until the cast is real.
+- **Name and money in `mall-player-2`?** Kept in their own keys (above); say if they must move.
+- The UBC eye code in TALK's `npc_look.gd` / `talk_camera.json` "eyes_ubc" no longer finds a UBC body (none
+  left); left for TALK / CHAR-BUILD to replace with the cast's eye bones.
+- First person stays the default for a new player (as since ws/items).
+- The arm swing doesn't hold the item differently; in a crowd the body can pass through a shopper.

@@ -148,6 +148,8 @@ func _process(dt: float) -> void:
 		return
 	if body != null and not is_instance_valid(body):
 		body = null
+	if player.get("debug") == true:
+		_count_report(dt)
 	var tp: bool = third and not player.vr_on
 	var hide: bool = player.frozen or player.leaving
 	# walking speed: third person walks at a walking pace (the first person's 4 m/s is untouched)
@@ -182,6 +184,27 @@ func _process(dt: float) -> void:
 		tp_cam.current = true
 	if player.get("debug") == true:
 		_dbg_report(dt)
+
+## CHAR-STRIP: ?debug=1 reports, once a second, the player skeletons in the world (under the groups
+## mall_player and mall_player_body, not on a SubViewport stage), whose body it is and the saved id, for
+## tools/qa/avatar_webtest.py (the web half of the counting test, design/godot-avatar.md).
+var _cnt_t := 0.0
+func _count_report(dt: float) -> void:
+	_cnt_t += dt
+	if _cnt_t < 1.0:
+		return
+	_cnt_t = 0.0
+	var sks := []
+	for g in ["mall_player", GROUP]:
+		for n in get_tree().get_nodes_in_group(g):
+			for sk in n.find_children("*", "Skeleton3D", true, false):
+				var c: Node = sk.get_parent()
+				var on_stage := false
+				while c:
+					if c is SubViewport: on_stage = true
+					c = c.get_parent()
+				if not on_stage and not sk.is_queued_for_deletion() and not (sk in sks): sks.append(sk)
+	print("CASTCOUNT skel=%d body=%s saved=%s third=%d" % [sks.size(), body.get_meta("cast", "-") if body else "-", Cast.player_id(), int(third)])
 
 ## WALK: ?debug=1 (player.debug) reports the gait, its playback and where the camera is, twice a
 ## second, for tools/qa/walk_webtest.py (the web build has no other way to read them). After the

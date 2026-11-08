@@ -26,7 +26,7 @@ MAIN_VIEW = {"390x844": (201, 596), "844x390": (476, 287), "1280x720": (645, 525
 INV_TAB = {"390x844": (170, 26), "844x390": (397, 28), "1280x720": (640, 28)}
 ICON = (31, 29)
 INIT = """try{localStorage.setItem('mall-opening-1','skipped');
-if(!localStorage.getItem('mall-avatar-1'))localStorage.setItem('mall-avatar-1',JSON.stringify({v:1,done:true,view:'first'}))}catch(e){}"""
+if(!localStorage.getItem('mall-player-2'))localStorage.setItem('mall-player-2',JSON.stringify({v:2,cast:'placeholder_1',view:'first'}))}catch(e){}"""
 
 def url(extra=""):
     return BASE + ("&" if "?" in BASE else "?") + extra if extra else BASE
@@ -48,7 +48,7 @@ def ready(pg, logs, t=300):
 
 def view(pg):
     try:
-        return json.loads(pg.evaluate("localStorage.getItem('mall-avatar-1')") or "{}").get("view")
+        return json.loads(pg.evaluate("localStorage.getItem('mall-player-2')") or "{}").get("view")   # CHAR-STRIP
     except Exception:
         return None
 

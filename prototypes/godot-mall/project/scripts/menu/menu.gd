@@ -148,6 +148,7 @@ func close() -> void:
 	_stop_typing(true)
 	_capture = {}
 	is_open = false
+	_drop_page()      # CHAR-STRIP: no portrait body (it lives under the player) outlives the open menu
 	_layer.visible = false
 	if _froze:
 		player.frozen = false
@@ -327,8 +328,7 @@ func _first_key(id: String, fallback: String) -> String:
 func _build() -> void:
 	var vs := get_viewport().get_visible_rect().size
 	_built_for = vs
-	if _root:
-		_root.queue_free()
+	_drop_page()
 	_hits = []
 	_nav = []
 	_scroll = null
@@ -379,6 +379,21 @@ func _build() -> void:
 		"owner": _build_owner(narrow)
 	_sel.x = clampi(_sel.x, 0, maxi(0, _nav.size() - 1))
 	_paint_sel()
+
+## The current page leaves the tree now (with its portraits' bodies) and is freed.
+func _drop_page() -> void:
+	if _root and is_instance_valid(_root):
+		if _root.get_parent():
+			_root.get_parent().remove_child(_root)
+		_root.queue_free()
+	_root = null
+	_hits = []
+	_nav = []
+	_scroll = null
+	_msg = null
+	_name_lbl = null
+	_name_box = null
+	_hover = null
 
 func _button(parent: Control, t: String, r: Rect2, fs: int, cb: Callable) -> Button:
 	var b := Button.new()
@@ -478,6 +493,8 @@ func _build_main(narrow: bool) -> void:
 	var av = player.avatar
 	var cur: String = av.cast_id if av and "cast_id" in av and str(av.cast_id) != "" else Cast.player_id()
 	por.show_cast(cur)
+	if player.get("debug") == true:
+		print("CASTPORTRAIT id=%s" % por.cast_id)     # tools/qa/avatar_webtest.py (CHAR-STRIP)
 	var col := VBoxContainer.new()
 	col.position = ir.position
 	col.size = ir.size
