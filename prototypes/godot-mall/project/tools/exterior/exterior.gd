@@ -1706,7 +1706,7 @@ static func lot_keepouts():
 	keep_out([-141.0, -32.0, -121.0, -9.0], 4.0)          # the Horton tank's yard
 	keep_out([44.0, -10.0, ROAD_WEST_PARK, 10.0])           # the palm drive and its islands
 	keep_out([44.0, -100.0, 64.0, -82.0])                   # the east entrance's walk
-	keep_out([62.0, -80.0, 100.0, -48.0])                   # the bank pad (§5 #11)
+	keep_out(BANK, 3.0)                                     # the bank pad (§5 #11; LOT: 7,758 SF)
 	keep_out([-100.0, -128.0, -72.0, -92.0])                # the Sears dock and truck well
 	keep_out([-68.0, 114.0, -36.0, 152.0])                  # Dillard's dock, roll-off, flag island
 	keep_out([-160.0, 110.0, -122.0, 136.0])                # the south entrance's drop-off bulb
@@ -1796,24 +1796,49 @@ static func stop_sign(b, at, n):
 	b.obst(["rect", at.x - 0.15, at.z - 0.15, at.x + 0.15, at.z + 0.15])
 
 ## The bank pad on West Park opposite K&B / Cucos (Steven, Nov 3: "a bank in 1995, not Chase"; the
-## site plan's NOT A PART pad): a generic one-storey brick bank with a drive-thru canopy over three
-## lanes toward the road, its own curbed lawn. No name or brand (IP rule; the 1995 bank is unknown).
+## Morguard site plan's "#3000 CHASE BANK ... NOT A PART" pad). Workstream LOT (Nov 8 2026), Steven: keep
+## it (he had first asked for it to go), shrink it to the pad's 7,758 SF, one storey, brick and nameless in
+## both years, the drive-thru canopy on the lot side. Read as: everything (building, canopy, drive lanes,
+## lawn) inside a 28.0 x 25.75 m pad (= 721 m2 = 7,758 SF); the building 14 x 14 m, one storey (4.2 m, a
+## thin coping); a flat canopy over three drive-thru lanes on its west side, facing the mall's lot. Was a
+## 34 x 28 m pad with a 16 x 18 m building, a roof box to 6.4 m and the canopy on the road side.
+const BANK = [67.0, -76.875, 95.0, -51.125]       # the pad, x0 z0 x1 z1 (28.0 x 25.75 m)
+
 static func bank_pad(b):
 	var g = "ex_far"
-	island(b, 64.0, -78.0, 98.0, -50.0, "ex_grass", "ex_curb")
-	var c = Vector3(76.0, 0.16, -64.0)
-	b.box(g, "ex_brick_brown", c + UP * 2.4, Vector3(16.0, 4.8, 18.0), Transform3D.IDENTITY, ["-y"])
-	b.box(g, "ex_coping", c + UP * 5.0, Vector3(16.6, 0.4, 18.6))
-	b.box(g, "ex_roof_dark", c + UP * 5.6, Vector3(12.0, 0.8, 14.0))
+	var x0 = BANK[0]; var z0 = BANK[1]; var x1 = BANK[2]; var z1 = BANK[3]
+	var zc = (z0 + z1) * 0.5
+	# the lawn round the building (east of the lanes), a grey curb
+	island(b, 79.0, z0, x1, z1, "ex_grass", "ex_curb")
+	# the building: one storey of brick, a thin coping, dark windows to the lot and to the road
+	var c = Vector3(87.0, 0.08, zc)
+	b.box(g, "ex_brick_brown", c + UP * 2.1, Vector3(14.0, 4.2, 14.0), Transform3D.IDENTITY, ["-y"])
+	b.box(g, "ex_coping", c + UP * 4.3, Vector3(14.4, 0.25, 14.4))
 	for k in 3:
-		b.box(g, "ex_glass_dark", c + Vector3(-8.03, 1.6, -5.0 + k * 5.0), Vector3(0.05, 2.0, 2.6))
-	# the drive-thru canopy on the east side, lanes running north-south
-	var dc = Vector3(90.0, 0.16, -64.0)
-	b.box(g, "ex_cream_pier", dc + UP * 4.6, Vector3(10.0, 0.7, 12.0))
-	for k in 4:
-		b.box(g, "ex_cream_pier", dc + Vector3(-4.5 + k * 3.0, 2.15, 0), Vector3(0.6, 4.3, 0.9))
-		b.obst(["rect", dc.x - 4.8 + k * 3.0, dc.z - 0.45, dc.x - 4.2 + k * 3.0, dc.z + 0.45])
-	b.obst(["rect", c.x - 8.0, c.z - 9.0, c.x + 8.0, c.z + 9.0])
+		b.box(g, "ex_glass_dark", c + Vector3(-7.03, 1.5, -4.5 + k * 4.5), Vector3(0.05, 1.8, 2.4))
+	for k in 2:
+		b.box(g, "ex_glass_dark", c + Vector3(7.03, 1.5, -3.0 + k * 6.0), Vector3(0.05, 1.8, 2.4))
+	b.box(g, "ex_glass_dark", c + Vector3(0, 1.3, 7.03), Vector3(2.0, 2.4, 0.05))   # the door, south face
+	# the drive-thru on the lot side: a flat white canopy on square piers over three north-south lanes,
+	# the two islands between them with a tube kiosk each
+	var dc = Vector3(73.5, 0.0, zc)
+	b.box(g, "ex_cream_pier", dc + UP * 4.15, Vector3(10.0, 0.5, 11.0))
+	b.quad(g, "ex_soffit_white", [dc + Vector3(-5.0, 3.89, -5.5), dc + Vector3(5.0, 3.89, -5.5), dc + Vector3(5.0, 3.89, 5.5), dc + Vector3(-5.0, 3.89, 5.5)], -UP)
+	for k in 2:
+		var px = dc.x - 1.5 + k * 3.0
+		b.box(g, "ex_curb", Vector3(px, 0.08, zc), Vector3(0.9, 0.16, 7.0))
+		for e in [-3.2, 3.2]:
+			b.box(g, "ex_cream_pier", Vector3(px, 2.0, zc + e), Vector3(0.6, 4.0, 0.6))
+		b.box(g, "ex_steel", Vector3(px, 0.75, zc), Vector3(0.6, 1.2, 0.5))
+		b.obst(["rect", px - 0.45, zc - 3.5, px + 0.45, zc + 3.5])
+	for e in [-3.2, 3.2]:
+		b.box(g, "ex_cream_pier", Vector3(dc.x + 4.7, 2.0, zc + e), Vector3(0.6, 4.0, 0.6))
+	# the lanes' dividing lines out to the pad's ends
+	for k in 2:
+		var lx = dc.x - 1.5 + k * 3.0
+		stripe(b, Vector3(lx, 0.0, z0 + 0.5), Vector3(lx, 0.0, zc - 3.6), 0.1, "ex_stripe_white")
+		stripe(b, Vector3(lx, 0.0, zc + 3.6), Vector3(lx, 0.0, z1 - 0.5), 0.1, "ex_stripe_white")
+	b.obst(["rect", c.x - 7.0, c.z - 7.0, c.x + 7.0, c.z + 7.0])
 
 # ------------------------------------------------------------------ build
 ## Called by build_mall.gd for --wing=3. Returns the wing.json fields (spawn, walk, doors).
