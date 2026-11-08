@@ -3,7 +3,7 @@
 > **Since Nov 4, 2026 (Workstream EXT-B, branch `ws/exterior`) the footprint, the roads, the lot and the
 > outparcels are at their real places** (design/exterior-sequence.md §5 with Steven's §9 decisions).
 > Where the older sections below give other numbers, the "Workstream EXT-B" section near the end wins.
-> **Since Nov 8, 2026 (Workstream LOT, branch `ws/lot`) the lot is asphalt, the trees, shrubs and planters
+> **Since Nov 8, 2026 (Workstream LOT, branch `ws/lot`) the lot is jointed concrete with fine joints, the trees, shrubs and planters
 > are `tools/exterior/flora.gd`'s and the bank pad is 7,758 SF:** see "Workstream LOT" near the end; it wins
 > over "The lot" below.
 > **Since Nov 8, 2026 (Workstream EXT-LAYOUT, branch `ws/ext-layout`) the exit s41 stands at the end of a channel,
@@ -317,29 +317,28 @@ door. Wing 3 now: 64 wall runs, 107 trees, 170 lights (1995) / 173 (2026), +45 %
 Branch `ws/lot` from `main` (f96a04b). Brief: Steven's six complaints about the outside, both years. Evidence
 `production/qa/evidence/wsLOT-*.jpg` (all **unbaked** unless named `-baked`; the cloud does not bake).
 
-### 1. The lot is asphalt (Steven: "tile lines", "it looks like Roblox / Minecraft")
-- The 6 m concrete panels with black tar joints are gone. `tools/exterior/paint_lot.py` paints the asphalt set
-  into `tex/ex/`: `ex_asphalt_alb.png` (2048 px over 8 m: binder, exposed aggregate, warm/cool stones, mottling;
-  tileable by FFT noise), `ex_asphalt_rgh.png` and `ex_asphalt_nrm.png` (a subtle normal), both imported at 512.
-  Material `ex_asphalt_lot` (exterior.gd `fill_mat`); the roads use the same set a shade darker (`ex_asphalt`).
-- The repeat is hidden by the ground itself: `lot_ground` lays the lot in 8 m cells whose corners carry a two-octave
-  vertex-colour mottle (~50 m and ~14 m). No ground under the building any more.
-- 1995 is a younger, darker surface (albedo 0.50) than 2026's faded grey (0.64).
-- Stall paint: `stripe()` uses `ex_paint_worn.png` (a worn mask; the stones show through), each line faded a
-  little differently and laid with a centimetre or two of hand error. **Yellow in both years**: Steven (the 1990s
-  lot was yellow); 2026 as filmed (4487 f034: fresh yellow), plus the faint **white ghost grid** half a stall off
-  (notes_D). *Note for Steven:* the brief said 2026 might be white stalls; the footage shows yellow over a white
-  ghost grid, so that is what is built.
-- Wear: `ex_lot_decals.png` (sealed crack, alligator cracks, a patch in the lot's own grain, an oil stain); cracks
-  and patches every 8-22 m along each face out in the lane, oil stains in ~28 % of the stalls. Patches are tinted
-  with the year's asphalt.
-- A 1.65 m **concrete sidewalk** (`ex_walk`, its own mesh `ex_walks` at a finer lightmap texel) now runs between
-  each wall and its curb and round the outside corners (`outside_corner`), so the walk is no longer "the same
-  concrete" as the lot.
-- **Footage check (open question):** the Oct 23 footage shows the lot as **jointed exposed-aggregate concrete**
-  in both the back lot (4487 f034) and the front drive (4492 f060), with asphalt only as an overlay along
-  JCPenney's rear block. The brief (Steven) says asphalt in both years, so asphalt is built. If the real 1995 lot
-  was concrete, a concrete set without black joints is the other way to fix the "tile lines".
+### 1. The lot: concrete without the "tile lines" (Steven: "it looks like Roblox / Minecraft")
+- **Decided (Steven, Nov 8): the lot is concrete**, both years, as filmed (4487 f034, 4492 f060): jointed
+  exposed-aggregate panels. The brief first asked for asphalt and this branch built it; Steven corrected it. The
+  asphalt set (`ex_asphalt_*`) now covers only the roads and the Bayou Gardens / Armour drives; the palm drive is
+  the lot's concrete (4492 f060). The asphalt albedo imports at 1024 px.
+- The "tile lines" were the old panel texture's thick black tar joints, imported with no mipmaps, so they aliased
+  into a hard grid. `paint_lot.py concrete()` paints one 6 m panel at 2048 px (`ex_concrete_alb.png`, ~3 mm/px):
+  exposed aggregate, weathering, and half a thin (~6 mm) dark-grey sealed joint on every edge, so the joint is
+  ~12 mm between panels and fades with distance through the mipmaps. Roughness and a shallow-groove normal at 512.
+- `lot_ground` lays one panel per 6 m cell, each turned a random quarter turn (the half joints on every edge keep
+  the joints whole), tinted by a slow two-octave mottle and its own shade; about one panel in twelve is a lighter
+  replacement (notes_D). 1995 is cleaner and lighter, 2026 weathered and a shade darker and warmer. No ground
+  under the building.
+- Stall paint: worn yellow in both years (Steven: the 1990s lot was yellow; **2026 fresh yellow over the ghost
+  white grid, from the footage, confirmed by Steven Nov 8**), each line faded a little differently and laid with a
+  centimetre or two of hand error (`ex_paint_worn.png`).
+- Wear: sealed and alligator cracks along each face out in the lane, oil stains in ~28 % of the stalls
+  (`ex_lot_decals.png`; its patch cell is no longer used on the lot).
+- A 1.65 m **concrete sidewalk** (`ex_walk`, its own mesh `ex_walks` at a finer lightmap texel) runs between each
+  wall and its curb and round the outside corners.
+- Evidence: `wsLOT-lot-concrete.jpg` (current); `wsLOT-asphalt-before.jpg` / `-after.jpg` show the superseded
+  asphalt pass.
 
 ### 2. No rainbow sheen
 - The "oil slick" was **moire**, not specular: all 30 textures in `tex/ex/` were imported lossless **without
@@ -378,7 +377,7 @@ Branch `ws/lot` from `main` (f96a04b). Brief: Steven's six complaints about the 
 - Every curbed island is `flora.gd planter`: a **low (10 cm), wide (30 cm)** concrete curb, mulch, 3-5 shrubs and
   grass clumps with size and tint variation. Lot row ends alternate: a pole with liriope round its pedestal, a
   live oak with shrubs and grasses, a sabal with shrubs (rows over 40 m), shrubs and grasses.
-- Curb colour: **grey in 1995** (a GUESS, no period photo), **painted yellow in 2026** as filmed (4492 f060-066, the
+- Curb colour: **grey in 1995** (a GUESS, no period photo; accepted by Steven, Nov 8), **painted yellow in 2026** as filmed (4492 f060-066, the
   palm drive's medians; 4487 the lot's islands). The roads' islands stay grey.
 - The beds are unbaked meshes (`ex_beds`, see item 6).
 
@@ -391,7 +390,7 @@ Branch `ws/lot` from `main` (f96a04b). Brief: Steven's six complaints about the 
   (4.2 m, thin coping, no roof box), a lawn, and a flat white canopy over three north-south lanes on its **west** side
   (toward the mall's lot) with two kiosk islands. It was a 34 x 28 m pad, a 16 x 18 m box to 6.4 m, the canopy on
   the road side. *Read as:* 7,758 SF is the whole pad, not the building alone (a 7,758 SF building would be larger
-  than the old one, not smaller). Steven to confirm.
+  than the old one, not smaller). **Confirmed (Steven, Nov 8).**
 
 ### 6. Facade smears (the bake)
 Read off the Demo 52 bake (`wsLOT-facade-before-baked.jpg`) and the geometry; **not yet confirmed by a bake**.
@@ -423,13 +422,13 @@ Read off the Demo 52 bake (`wsLOT-facade-before-baked.jpg`) and the geometry; **
 ### Pack size and bake (before = main f96a04b, exported here; after = this branch)
 | | Before | After |
 |---|---|---|
-| `w3` pack (desktop = mobile) | 48.27 MB | 57.34 MB (+9.1) |
-| `w3y26` pack | 30.93 MB | 42.53 MB (+11.6) |
+| `w3` pack (desktop = mobile) | 48.27 MB | 59.52 MB (+11.3) |
+| `w3y26` pack | 30.93 MB | 44.71 MB (+13.8) |
 | `gen/w3` / `gen/w3y26` meshes | 4.36 / 3.80 MB | 5.42 / 5.02 MB |
 | wing 3 lightmap texels (sum of the static meshes' size hints) | 2.95 M | 3.15 M (+7 %) |
 | wing 3 2026 lightmap texels | 2.86 M | 3.04 M (+6 %) |
-Most of the pack growth is textures: the new asphalt set and atlases (~5.5 MB VRAM) and the old `tex/ex/` textures
-now VRAM-compressed **with mipmaps** (they were small lossless PNGs). Levers if Steven wants it smaller: the asphalt
+Most of the pack growth is textures: the concrete and asphalt sets and the atlases (~6 MB VRAM) and the old `tex/ex/` textures
+now VRAM-compressed **with mipmaps** (they were small lossless PNGs). Levers if Steven wants it smaller: the concrete
 albedo at 1024 (-2.1 MB), the old outside textures lossless with mipmaps instead of VRAM. The bake is the same kind
 of job (+~7 % texels).
 
