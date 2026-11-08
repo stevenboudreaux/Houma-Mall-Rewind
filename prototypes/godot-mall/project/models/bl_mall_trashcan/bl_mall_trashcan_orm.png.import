@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ce5b1wnyv51wl"
-path="res://.godot/imported/wall95_a.png-374d4cabaeaa33faf38a4aec89e4a253.ctex"
+uid="uid://7y5m0luevhdr"
+path="res://.godot/imported/bl_mall_trashcan_orm.png-7bd489af0fdbe7a5275fc2290040949f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tex/gac/wall95_a.png"
-dest_files=["res://.godot/imported/wall95_a.png-374d4cabaeaa33faf38a4aec89e4a253.ctex"]
+source_file="res://models/bl_mall_trashcan/bl_mall_trashcan_orm.png"
+dest_files=["res://.godot/imported/bl_mall_trashcan_orm.png-7bd489af0fdbe7a5275fc2290040949f.ctex"]
 
 [params]
 

@@ -1,7 +1,7 @@
 ## Workstream FOOD3D (Nov 8 2026; design/godot-blender-pipeline.md "FOOD3D"): Blender food and counter props
 ## placed by the store build scripts. A kit .glb (tools/blender/assets_src/_kit.py) holds one node per piece,
 ## each with its own mesh on the kit's one atlas; `multi()` instances one piece many times (a MultiMesh per
-## kind: one draw call for a tray-full case). Everything goes under the mall's "Food3D" node, dynamic GI
+## kind: one draw call for a tray-full case; built at run time by scripts/food3d_multi.gd). Everything goes under the mall's "Food3D" node, dynamic GI
 ## (probe-lit, like the hand items) and no shadows, so placing food needs no rebake.
 
 const UP = Vector3.UP
@@ -33,14 +33,14 @@ static func holder(b, name := "Food3D") -> Node3D:
 static func multi(b, mesh, xf: Array, label := "food", shadow := false):
 	if b.mall == null or mesh == null or xf.is_empty():
 		return null
-	var mm = MultiMesh.new()
-	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.mesh = mesh
-	mm.instance_count = xf.size()
-	for i in xf.size():
-		mm.set_instance_transform(i, xf[i])
+	# scripts/food3d_multi.gd builds the MultiMesh at run time (the headless build cannot store its transforms)
 	var mi = MultiMeshInstance3D.new()
-	mi.multimesh = mm
+	mi.set_script(load("res://scripts/food3d_multi.gd"))
+	mi.piece = mesh
+	var arr: Array[Transform3D] = []
+	for x in xf:
+		arr.append(x)
+	mi.xforms = arr
 	mi.gi_mode = GeometryInstance3D.GI_MODE_DYNAMIC
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON if shadow else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var h = holder(b)

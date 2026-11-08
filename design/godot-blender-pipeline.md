@@ -446,7 +446,11 @@ keeps the layout offset, so the .glb still shows the laid-out kit) and fails wit
 more than `META["kit"]["max_tris"]`. Run it after `run.sh <id>`. `build.py` is unchanged.
 
 **Placing (new, `tools/stores/food3d/kit.gd`).** `meshes(path)` reads a kit's pieces; `multi(b, mesh, xforms)` puts
-one MultiMeshInstance3D per kind under the mall's `Food3D` node; `one(b, path, xf)` a single .glb. All dynamic GI
+one MultiMeshInstance3D per kind under the mall's `Food3D` node. **Its MultiMesh is built at run time** by
+`scripts/food3d_multi.gd` (the node saves the piece and its transforms as plain properties): the wing build runs
+headless on Godot's dummy renderer, which does not keep a MultiMesh's instance transforms, so a MultiMesh made in
+the build saves every copy at the origin (found in the first export: the cases were empty in the game while the
+probe-lit preview, a real renderer, showed them); `one(b, path, xf)` a single .glb. All dynamic GI
 (probe-lit like the hand items) with no shadows, so food placed this way needs no rebake.
 
 | Model | Class | Tris | Tex | Where | Based on | Guessed |
@@ -501,3 +505,17 @@ it is not sold or added to the menu box: Steven's call.
 | `bl_aa_nugget_cup` (item `aa_pretzel_nuggets`) | hand | 1,504 | 1024 | sold at the counter (the shop lists `standin_aa_pretzel_bites`; the integration session swaps the id) | the white band and inside, the nugget count |
 | `bl_aa_nugget_cup_case` | hand (fixture use) | 1,728 | 1024 | x 8 on the warmer's front tier | the spill |
 | `bl_aa_warmer` (cups removed) | small_fixture | 5,176 | 1024 | unchanged | |
+
+**The mall trash can (item 5, both years, every wing with halls or courts).** `bl_mall_trashcan`: a round
+painted-steel receptacle of the 1980s-90s mall type: a dark kick ring, a slightly tapered body in warm grey enamel
+(orange-peel bump, scuffs low down), a rolled brushed-steel rim band, a dome lid in the same enamel with two push
+openings opposite each other, each with a swing flap pushed in, the dark inside and the black liner bag's rolled
+edge visible. Same size as the old cylinders (0.58 m across the rim, 0.99 m tall), so `trash()`'s floor obstacle is
+unchanged. `build_mall.gd trash()` now records each spot (yaw from its position) and `build()` puts one
+MultiMeshInstance3D (`trash_cans`, `scripts/food3d_multi.gd`) under `Dynamic/dyn_fixtures`, so the "Benches &
+plants" button still shows and hides the cans with the benches; the old cylinders come back if the model is missing.
+No reference photo of Southland's cans (`refs/INDEX.md`): the type and every detail are guessed.
+
+| Model | Class | Tris | Tex | Where | Guessed |
+|---|---|---|---|---|---|
+| `bl_mall_trashcan` | small_fixture (≤ 1,500 asked) | 1,404 | 1024 | every `trash()` spot: halls (one lane out from each bench group) and court corners, both years | everything (type, colour kept near the old grey, flaps, liner) |

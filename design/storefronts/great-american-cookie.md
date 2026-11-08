@@ -114,12 +114,14 @@ tile walls, burgundy lower panels on the case and the walls, red-and-cream check
 pictures; its sign is already the 1995 sign (the record's).
 **Two options** (`tools/stores/gac/front95.gd`, walls painted by `gac/paint95.py`; evidence
 `production/qa/evidence/wsFOOD3D-gac-1990s-options.jpg`):
-- **A, burgundy and checker (built: the default, the better-sourced):** from Steven's photo: a burgundy laminate
+- **A, burgundy and checker (shown, not chosen):** from Steven's photo: a burgundy laminate
   wainscot to 1.0 m with a brass cap rail, cream 15 cm tile above, a two-row red-and-cream checkerboard band at
   1.95-2.25 m; burgundy returns at the opening's sides and a brass bar under the sign box.
-- **B, dark oak and brass:** a period type with no photo of this chain: a stained oak raised-panel wainscot,
+- **B, dark oak and brass (Steven's pick, Nov 8: built, the only finish now):** a period type with no photo of this chain: a stained oak raised-panel wainscot,
   an oak chair rail with a brass strip, cream plaster, a burgundy pinstripe, an oak crown.
-`front95.gd STYLE` picks one ("a"); `GAC95=b tools/qa/preview.sh "store:GREAT AMERICAN COOKIE CO" ...` previews B.
+Steven (Nov 8) picked B; the switch between them (`STYLE`, the `GAC95` preview variable) and option A's painter
+and texture are removed: `front95.gd` and `paint95.py` make B only. The brass bar under the sign box and oak returns
+at the opening's sides go with it.
 The menu wall and the kitchen take the same finish (`kitchen.gd TILE`, set by `wave7.gd` around `build_1995`).
 Unchanged: the sign, the case, the record's red check course, the 2026 store. **Guessed:** the heights, the panel
-widths, the brass. **Question for Steven:** A or B (A is built)? **Rebake:** wing 2 (1995).
+widths, the brass. **Rebake:** wing 2 (1995).

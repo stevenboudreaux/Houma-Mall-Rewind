@@ -1,14 +1,10 @@
-"""Great American Cookie Co., 1995 walls (workstream FOOD3D item 2, Nov 8 2026): Steven, Nov 7: the white tile with
-scattered red/black/yellow squares is the 2026 look; the 1990s store was "more traditional". Two options, each a
-1024 px picture of 3.0 m of wall from the floor up (world triplanar, 3.0 m repeat: the floor is y = 0), written to
-tex/gac/wall95_a.png and wall95_b.png. design/storefronts/great-american-cookie.md "FOOD3D: the 1990s front".
-
-A "burgundy and checker" (from Steven's own 1990s photo of a Great American Cookie Co., design/storefronts/refs/
-   great-american-cookie-case.jpg): a burgundy laminate wainscot with a brass cap rail, cream 15 cm tile above,
-   a two-row red-and-cream checkerboard band at 1.95-2.25 m.
-B "dark oak and brass" (a period type for a late-1980s mall bakery; no photo of this chain in it): a stained oak
-   raised-panel wainscot with an oak chair rail and a brass strip, cream plaster above, a thin burgundy pinstripe
-   and an oak crown.
+"""Great American Cookie Co., 1995 walls (workstream FOOD3D item 2, Nov 8 2026). Steven, Nov 7: the white tile with
+scattered red/black/yellow squares is the 2026 look; the 1990s store was "more traditional". Two options were shown
+(production/qa/evidence/wsFOOD3D-gac-1990s-options.jpg); Steven picked B (Nov 8), so only B is painted here:
+"dark oak and brass" (a period type for a late-1980s mall bakery; no photo of this chain in it): a stained oak
+raised-panel wainscot with an oak chair rail and a brass strip, cream plaster above, a thin burgundy pinstripe and
+an oak crown. One 1024 px picture of 3.0 m of wall from the floor up (world triplanar, 3.0 m repeat: the floor is
+y = 0): tex/gac/wall95_b.png. design/storefronts/great-american-cookie.md "FOOD3D: the 1990s front".
 """
 import os
 import random
@@ -49,29 +45,6 @@ def tile(d, y0, y1, base, grout, size=0.15):
         yy += size
 
 
-def option_a():
-    im = Image.new("RGB", (PX, PX), (239, 230, 210))
-    d = ImageDraw.Draw(im)
-    tile(d, 1.04, 3.0, (240, 232, 214), (205, 196, 178))
-    # the checkerboard band, two rows of 15 cm squares
-    s = 0.15
-    for row in range(2):
-        for k in range(int(3.0 / s) + 1):
-            if (k + row) % 2 == 0:
-                x0 = int(k * s * M)
-                d.rectangle((x0, Y(1.95 + (row + 1) * s), x0 + int(s * M), Y(1.95 + row * s)), fill=(176, 28, 40))
-    # burgundy laminate wainscot: panels 0.6 m wide with a dark reveal, a black kick, a brass cap rail
-    d.rectangle((0, Y(1.0), PX, Y(0.0)), fill=(110, 22, 38))
-    x = 0.0
-    while x <= 3.0:
-        d.rectangle((int(x * M), Y(0.92), int(x * M) + 3, Y(0.12)), fill=(70, 12, 24))
-        x += 0.6
-    d.rectangle((0, Y(0.10), PX, Y(0.0)), fill=(26, 20, 20))
-    d.rectangle((0, Y(1.045), PX, Y(1.0)), fill=(184, 145, 58))
-    d.line((0, Y(1.03), PX, Y(1.03)), fill=(236, 206, 120), width=2)
-    return noise(im.filter(ImageFilter.GaussianBlur(0.6)), 4, 1)
-
-
 def option_b():
     im = Image.new("RGB", (PX, PX), (236, 226, 204))
     d = ImageDraw.Draw(im)
@@ -106,6 +79,5 @@ def option_b():
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
-    option_a().save(os.path.join(OUT, "wall95_a.png"), optimize=True)
     option_b().save(os.path.join(OUT, "wall95_b.png"), optimize=True)
-    print("wrote tex/gac/wall95_a.png, wall95_b.png")
+    print("wrote tex/gac/wall95_b.png")
