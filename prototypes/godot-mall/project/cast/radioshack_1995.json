@@ -1,0 +1,139 @@
+{
+ "id": "radioshack_1995",
+ "hips": 0.9992831999999999,
+ "height_m": 1.7792540000000001,
+ "morphs": [
+  "blink_L",
+  "blink_R",
+  "squint_L",
+  "squint_R",
+  "eyes_wide",
+  "smile",
+  "jaw_open",
+  "brow_up",
+  "brow_down",
+  "brow_inner_up",
+  "brow_up_L",
+  "brow_up_R",
+  "mouth_pucker",
+  "mouth_press",
+  "mouth_wide",
+  "mouth_funnel",
+  "frown",
+  "lip_upper_up",
+  "lips_part",
+  "sneer"
+ ],
+ "jaw_open_deg": 26.6,
+ "eyes": {
+  "L": [
+   0.030809320000000005,
+   1.6713584999999997,
+   0.12284885999999999
+  ],
+  "R": [
+   -0.028488680000000002,
+   1.6713584999999997,
+   0.12284885999999999
+  ]
+ },
+ "lod_switch_m": 9.0,
+ "store": "RADIO SHACK",
+ "period": 1995,
+ "status": "proposal",
+ "lod0": {
+  "tris": 14826,
+  "verts": 8609,
+  "surfaces": 3,
+  "parts": {
+   "skin": 7402,
+   "male_casualsuit06": 2866,
+   "shoes03": 616,
+   "tie": 136,
+   "nametag": 12,
+   "collar": 464,
+   "hair": 2406,
+   "brows": 192,
+   "lashes": 368,
+   "eyes": 172,
+   "teeth_up": 96,
+   "teeth_lo": 96
+  }
+ },
+ "lod1": {
+  "tris": 4540,
+  "verts": 2925,
+  "surfaces": 3,
+  "parts": {
+   "skin": 1973,
+   "male_casualsuit06": 931,
+   "shoes03": 288,
+   "tie": 136,
+   "nametag": 12,
+   "hair": 836,
+   "brows": 192,
+   "eyes": 172
+  }
+ },
+ "glb_bytes": 1178920,
+ "textures": {
+  "radioshack_1995_clothes_albedo.png": {
+   "size": [
+    1024,
+    1024
+   ],
+   "bytes": 349925
+  },
+  "radioshack_1995_clothes_normal.png": {
+   "size": [
+    1024,
+    1024
+   ],
+   "bytes": 546931
+  },
+  "radioshack_1995_clothes_orm.png": {
+   "size": [
+    1024,
+    1024
+   ],
+   "bytes": 9366
+  },
+  "radioshack_1995_hair_albedo.png": {
+   "size": [
+    1024,
+    1024
+   ],
+   "bytes": 791333
+  },
+  "radioshack_1995_hair_normal.png": {
+   "size": [
+    1024,
+    1024
+   ],
+   "bytes": 4544
+  },
+  "radioshack_1995_skin_albedo.png": {
+   "size": [
+    2048,
+    2048
+   ],
+   "bytes": 2187163
+  },
+  "radioshack_1995_skin_normal.png": {
+   "size": [
+    2048,
+    2048
+   ],
+   "bytes": 28372
+  },
+  "radioshack_1995_skin_orm.png": {
+   "size": [
+    2048,
+    2048
+   ],
+   "bytes": 63173
+  }
+ },
+ "built": "2026-11-08",
+ "source": "tools/blender/cast/radioshack_1995.json"
+}
