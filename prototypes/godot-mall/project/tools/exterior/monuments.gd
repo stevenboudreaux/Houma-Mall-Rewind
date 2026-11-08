@@ -95,7 +95,10 @@ static func drive(b, x0: float, x1: float, z0: float, z1: float):
 	var xm = (x0 + x1) * 0.5
 	for dx in [-0.12, 0.12]:
 		var a = Vector3(xm + dx, 0.02, z0); var e = Vector3(xm + dx, 0.02, z1)
-		b.quad("ex_paint", "ex_stripe_yellow", [a - Vector3(0.05, 0, 0), e - Vector3(0.05, 0, 0), e + Vector3(0.05, 0, 0), a + Vector3(0.05, 0, 0)], UP, [], true)
+		# worn paint: u across the line, v along it (paint_lot.py ex_paint_worn covers 8 m)
+		var L = abs(z1 - z0) / 8.0
+		b.quad("ex_paint", "ex_stripe_yellow", [a - Vector3(0.05, 0, 0), e - Vector3(0.05, 0, 0), e + Vector3(0.05, 0, 0), a + Vector3(0.05, 0, 0)], UP,
+			[Vector2(0, 0), Vector2(0, L), Vector2(1, L), Vector2(1, 0)], true)
 
 ## Everything above, for the year being built. Called from exterior.gd's build().
 static func build(b, year: int):

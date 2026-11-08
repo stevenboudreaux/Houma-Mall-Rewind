@@ -69,7 +69,39 @@ static func fill_mat(m, key, b):
 		"stucco_tan": tx.call("stucco_tan", 0.85)
 		"aggregate": tx.call("aggregate", 0.95)
 		"concrete": tx.call("concrete_panel", 0.9)
-		"asphalt": tx.call("asphalt", 0.95)
+		"asphalt", "asphalt_lot":
+			# Workstream LOT (Nov 8 2026): the lot is asphalt with exposed aggregate (paint_lot.py), the
+			# roads the same mix a little darker; the lot's ground carries a slow vertex-colour mottle that
+			# hides the 8 m repeat (lot_ground). 1995 is a younger, darker surface than today's faded grey.
+			m.albedo_texture = b.tex("ex/ex_asphalt_alb.png")
+			m.roughness_texture = b.tex("ex/ex_asphalt_rgh.png"); m.roughness = 1.0; m.metallic = 0.0
+			m.normal_enabled = true; m.normal_texture = b.tex("ex/ex_asphalt_nrm.png"); m.normal_scale = 0.7
+			m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+			var lum = (0.64 if YEAR == 2026 else 0.50) * (0.82 if key == "asphalt" else 1.0)
+			m.albedo_color = Color(lum, lum, lum * 1.01)
+			if key == "asphalt_lot":
+				m.vertex_color_use_as_albedo = true
+		"stripe_white", "stripe_yellow", "stripe_ghost":
+			# worn stall paint (paint_lot.py ex_paint_worn: alpha = paint left, the stones show through);
+			# the stripe's vertex alpha fades each line a little differently
+			m.albedo_texture = b.tex("ex/ex_paint_worn.png")
+			m.albedo_color = {"stripe_white": Color("#ecebe4"), "stripe_yellow": Color("#e0b92c"), "stripe_ghost": Color(0.92, 0.92, 0.9, 0.22)}[key]
+			m.vertex_color_use_as_albedo = true
+			m.roughness = 0.85; m.metallic = 0.0
+			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+		"lot_decal":
+			m.albedo_texture = b.tex("ex/ex_lot_decals.png"); m.roughness = 0.8; m.metallic = 0.0
+			# tinted like the year's asphalt, so a patch is the lot's own grain a shade darker
+			var dl = 0.64 if YEAR == 2026 else 0.50
+			m.albedo_color = Color(dl, dl, dl * 1.01)
+			m.vertex_color_use_as_albedo = true
+			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+		"walk":
+			# the sidewalks round the building: broom-finished concrete in ~1.65 m panels (concrete_panel's
+			# joints at walk scale)
+			tx.call("concrete_panel", 0.9); m.albedo_color = Color(1.04, 1.03, 1.0)
 		"mulch": tx.call("mulch", 1.0)
 		"grass": tx.call("grass", 1.0)
 		"chainlink":
@@ -93,8 +125,6 @@ static func fill_mat(m, key, b):
 		"lamp":
 			m.albedo_color = Color("#fff0c8"); m.emission_enabled = true; m.emission = Color("#ffc46a")
 			m.emission_energy_multiplier = 3.0; m.set_meta("e_day", 0.0); m.set_meta("e_night", 3.0)
-		"stripe_white": m.albedo_color = Color("#f4f2ec"); m.roughness = 0.9
-		"stripe_yellow": m.albedo_color = Color("#e2c232"); m.roughness = 0.9
 		"curb_yellow": m.albedo_color = Color("#e4c52c"); m.roughness = 0.8
 		"curb": m.albedo_color = Color("#c8c4bc"); m.roughness = 0.9
 		"tank_white": m.albedo_color = Color("#e4e3df"); m.roughness = 0.55; m.metallic = 0.4
@@ -241,24 +271,56 @@ static func island(b, x0, z0, x1, z1, top = "ex_mulch", curb = "ex_curb_yellow")
 	b.quad("ex_lot", curb, [Vector3(x1, 0.16, z0), Vector3(x1, 0.16, z1), Vector3(x1 - 0.15, 0.16, z1 - 0.15), Vector3(x1 - 0.15, 0.16, z0 + 0.15)], UP)
 	b.obst(["rect", x0, z0, x1, z1])
 
-## A white stall stripe (the 1995 striping under today's yellow) painted just above the lot.
-static func stripe(b, a, bb, w = 0.1, mname = ""):
+## A painted line just above the lot. Workstream LOT (Nov 8 2026): worn paint (paint_lot.py), each line
+## faded a little differently (vertex alpha) and laid with a hand's error (a centimetre or two), so the
+## stalls stop reading as a perfect grid. Stall paint: yellow in both years (Steven: the 1990s lot was
+## yellow; 2026 fresh yellow over a ghost white grid, 4487 f034, notes_D).
+static func stripe(b, a, bb, w = 0.1, mname = "", fade = -1.0):
 	if mname == "":
-		# 1995: the white grid (the ghost lines under today's paint); 2026: fresh yellow (4487 f034)
-		mname = "ex_stripe_yellow" if YEAR == 2026 else "ex_stripe_white"
+		mname = "ex_stripe_yellow"
+	if fade < 0.0:
+		fade = rng.randf_range(0.70, 0.95) if YEAR == 2026 else rng.randf_range(0.55, 0.85)
 	var t = (bb - a).normalized()
 	var s = Vector3(-t.z, 0, t.x) * (w * 0.5)
-	b.quad("ex_paint", mname, [a - s + UP * 0.012, bb - s + UP * 0.012, bb + s + UP * 0.012, a + s + UP * 0.012], UP, [], true)
+	var j = Vector3(-t.z, 0, t.x) * rng.randf_range(-0.015, 0.015)
+	var L = a.distance_to(bb)
+	var v0 = rng.randf() * 8.0
+	var y = UP * (0.012 if mname != "ex_stripe_ghost" else 0.010)
+	b.cur_color = Color(1, 1, 1, fade)
+	b.quad("ex_paint", mname, [a - s + y, bb - s + y + j, bb + s + y + j, a + s + y], UP,
+		[Vector2(0, v0 / 8.0), Vector2(0, (v0 + L) / 8.0), Vector2(1, (v0 + L) / 8.0), Vector2(1, v0 / 8.0)], true)
+	b.cur_color = Color.WHITE
 
 ## A double row of stalls: the row runs from p along t for `len` metres; stalls either side,
-## 2.7 m wide, 5.5 m deep (two rows back to back = 11 m).
+## 2.7 m wide, 5.5 m deep (two rows back to back = 11 m). 2026 also shows the faint white grid the
+## yellow was painted over (4487 f034), half a stall off. An oil stain in about one stall in four.
 static func stall_row(b, p, t, len):
 	var s = Vector3(-t.z, 0, t.x)
 	var n = int(len / 2.7)
 	for i in n + 1:
 		var q = p + t * (i * 2.7)
 		stripe(b, q - s * 5.5, q + s * 5.5)
+		if YEAR == 2026 and i < n:
+			var g = q + t * 1.2
+			stripe(b, g - s * 5.3, g + s * 5.3, 0.1, "ex_stripe_ghost", rng.randf_range(0.5, 1.0))
 	stripe(b, p, p + t * (n * 2.7), 0.12)
+	for i in n:
+		for side in [-1.0, 1.0]:
+			if rng.randf() < 0.28:
+				var c = p + t * (i * 2.7 + 1.35) + s * (side * rng.randf_range(2.2, 3.4))
+				lot_decal(b, c, t, 3, rng.randf_range(0.9, 1.5), rng.randf_range(0.35, 0.8))
+
+## A wear decal on the asphalt (paint_lot.py ex_lot_decals cells: 0 sealed crack, 1 alligator cracks,
+## 2 a patch, 3 an oil stain), `size` metres across, turned to t, faded by `fade`.
+static func lot_decal(b, c, t, cell, size, fade = 1.0):
+	var u0 = 0.5 * (cell % 2); var v0 = 0.5 * int(cell / 2)
+	var s = Vector3(-t.z, 0, t.x)
+	var h = size * 0.5
+	var y = UP * 0.007
+	b.cur_color = Color(1, 1, 1, fade)
+	b.quad("ex_paint", "ex_lot_decal", [c - t * h - s * h + y, c + t * h - s * h + y, c + t * h + s * h + y, c - t * h + s * h + y], UP,
+		[Vector2(u0, v0 + 0.5), Vector2(u0 + 0.5, v0 + 0.5), Vector2(u0 + 0.5, v0), Vector2(u0, v0)], true)
+	b.cur_color = Color.WHITE
 
 ## A lot light: a white tapered pole ~11 m on a square yellow pedestal, twin shoebox heads
 ## (the 2026 LED poles stand on the same pedestals; period heads here).
@@ -1225,9 +1287,10 @@ static func lot(b):
 	b_ref = b
 	var g = "ex_ground"
 	var M = E.map
-	# the ground: concrete panels 6 x 6 m over the lot (one texture per panel), out past the roads
+	# the ground: asphalt out past the roads (Workstream LOT, Nov 8 2026: was 6 m concrete panels with
+	# black tar joints, Steven's "tile lines")
 	var x0 = M[0] - 30.0; var z0 = M[1] - 30.0; var x1 = M[2] + 30.0; var z1 = M[3] + 30.0
-	b.quad(g, "ex_concrete", [Vector3(LOT_WEST - 4.0, 0, z0), Vector3(x1, 0, z0), Vector3(x1, 0, z1), Vector3(LOT_WEST - 4.0, 0, z1)], UP, [], false, 1.0 / 6.0)
+	lot_ground(b, LOT_WEST - 4.0, z0, x1, z1)
 	# the roads: West Park Ave (east, 4 lanes), Bayou Gardens Blvd (south), Armour Dr (north)
 	road(b, Vector3(ROAD_WEST_PARK, 0, z0 - 80.0), Vector3(ROAD_WEST_PARK, 0, z1 + 80.0), 13.0)
 	road(b, Vector3(x0 - 140.0, 0, ROAD_BAYOU), Vector3(ROAD_WEST_PARK - 6.5, 0, ROAD_BAYOU), 11.0)
@@ -1284,16 +1347,30 @@ static func lot(b):
 	tree_oak(b, Vector3(-220.0, 0.16, 155.0), 5.0)
 	tree_pine(b, Vector3(-211.0, 0.16, 153.0), 16.0)
 	tree_pine(b, Vector3(-229.0, 0.16, 157.0), 15.0)
-	# curbs along the building: a 1.5 m sidewalk round the mall (the walk is the same concrete; the
-	# kerb is the only line), the fire lane past it on the customer faces
+	# curbs along the building: a 1.65 m concrete sidewalk round the mall between the wall and the curb
+	# (Workstream LOT: the lot is asphalt now, so the walk is its own surface), carried round the
+	# outside corners; the fire lane past it on the customer faces
 	for seg in E.segments:
 		var a = V(seg.a); var bb = V(seg.b); var n = V(seg.n)
 		var t = (bb - a).normalized()
+		var L = a.distance_to(bb)
 		var fl = fire_lane_face(seg)
 		var cm = "ex_curb"
 		if fl:
 			cm = "ex_curb_red" if YEAR == 2026 else "ex_curb_yellow"
-		run_box(b, "ex_lot", cm, a, t, n, 0.0, a.distance_to(bb), 0.0, 0.14, 1.65, 0.15)
+		var e0 = 1.8 if outside_corner(a, n, -t) else 0.0
+		var e1 = 1.8 if outside_corner(bb, n, t) else 0.0
+		var w0 = a - t * min(e0, 1.65); var w1 = bb + t * min(e1, 1.65)
+		b.quad("ex_walks", "ex_walk", [w0 + UP * 0.004, w1 + UP * 0.004, w1 + n * 1.65 + UP * 0.004, w0 + n * 1.65 + UP * 0.004], UP, [], false, 1.0 / 1.65)
+		run_box(b, "ex_lot", cm, a, t, n, -e0, L + e1, 0.0, 0.14, 1.8, 0.15)
+		# wear near the building: a sealed crack or a patch every 10-25 m along the face, out in the lane
+		var u = rng.randf_range(4.0, 12.0)
+		while u < L - 2.0:
+			var cell = [0, 0, 1, 2][rng.randi() % 4]
+			var at = a + t * u + n * rng.randf_range(3.0, 14.0)
+			if not kept(at.x - 0.1, at.z - 0.1, at.x + 0.1, at.z + 0.1) or rng.randf() < 0.5:
+				lot_decal(b, at, t.rotated(UP, rng.randf_range(-0.6, 0.6)), cell, rng.randf_range(1.6, 3.4) if cell != 2 else rng.randf_range(1.8, 3.0), rng.randf_range(0.6, 1.0) if YEAR == 2026 else rng.randf_range(0.3, 0.6))
+			u += rng.randf_range(8.0, 22.0)
 		if fl:
 			fire_lane(b, a, t, n, a.distance_to(bb))
 	# the loading lane in front of the facade between the Shoe Dept box and Dillard's (4492 f096-099):
@@ -1302,6 +1379,51 @@ static func lot(b):
 		var zz = 70.0 + k * 1.0
 		stripe(b, Vector3(46.0, 0.013, zz), Vector3(50.0, 0.013, zz + 1.6), 0.18, "ex_stripe_yellow")
 	bank_pad(b)
+
+## The lot's asphalt ground in 8 m cells, each corner carrying a slow mottle in its vertex colour
+## (two noise octaves, ~50 m and ~14 m) so the 8 m texture never reads as a repeat from eye height.
+static func lot_ground(b, x0, z0, x1, z1):
+	var nz = FastNoiseLite.new(); nz.seed = 1969; nz.frequency = 1.0 / 50.0
+	var nz2 = FastNoiseLite.new(); nz2.seed = 2026; nz2.frequency = 1.0 / 14.0
+	var s = b.st("ex_ground", "ex_asphalt_lot")
+	var C = 8.0
+	var nx = int(ceil((x1 - x0) / C)); var nzc = int(ceil((z1 - z0) / C))
+	var col = func(x, z):
+		var v = 1.0 + 0.10 * nz.get_noise_2d(x, z) + 0.045 * nz2.get_noise_2d(x, z)
+		var w = 0.02 * nz.get_noise_2d(z + 500.0, x)   # a little warmer / cooler
+		return Color(v * (1.0 + w), v, v * (1.0 - w))
+	for i in nx:
+		for j in nzc:
+			var xa = x0 + i * C; var xb = min(x1, xa + C)
+			var za = z0 + j * C; var zb = min(z1, za + C)
+			# no asphalt under the building (its texels would be dark and bleed out at 1.6 m a texel)
+			var inside = false
+			for r in E.roofs:
+				if xa >= r[0] and xb <= r[2] and za >= r[1] and zb <= r[3]:
+					inside = true
+			if inside:
+				continue
+			var p = [Vector3(xa, 0, za), Vector3(xb, 0, za), Vector3(xb, 0, zb), Vector3(xa, 0, zb)]
+			var cs = []
+			for q in p:
+				cs.append(col.call(q.x, q.z))
+			for tri in [[0, 1, 2], [0, 2, 3]]:
+				for k in tri:
+					s.set_color(cs[k]); s.set_normal(UP); s.set_uv(Vector2(p[k].x, p[k].z) / 8.0); s.add_vertex(p[k])
+
+## True when the corner at p (a wall run's end, the run's outward normal n, `along` pointing off the
+## run's end) is an outside corner: the square diagonally out from it is clear of every footprint.
+static func outside_corner(p, n, along):
+	var q = p + n * 0.8 + along * 0.8
+	for r in E.roofs:
+		if q.x > r[0] and q.x < r[2] and q.z > r[1] and q.z < r[3]:
+			return false
+	# a neighbouring run that carries on in the same line is not a corner
+	var q2 = p + along * 0.8 - n * 0.8
+	for r in E.roofs:
+		if q2.x > r[0] and q2.x < r[2] and q2.z > r[1] and q2.z < r[3]:
+			return false
+	return true
 
 ## Which faces carry the fire lane: the customer faces round the lots (the east facade, Dillard's
 ## east and south, JCPenney, the south faces, the cinema's west wall: 4416, 4486 f014-037,
