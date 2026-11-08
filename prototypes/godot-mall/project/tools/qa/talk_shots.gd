@@ -85,6 +85,9 @@ func _process(dt: float) -> bool:
 			var cam := root.get_viewport().get_camera_3d()
 			var eye: Vector3 = att.face_point()
 			printerr("TALK SHOT OK %s  cam %s fov %.1f  eye(face_point) %s  dist %.2f" % [out, cam.global_position, cam.fov, eye, cam.global_position.distance_to(eye)])
+			var tcn = scn.get_node_or_null("TalkCamera")      # ws/talk only
+			if tcn and tcn.look:
+				printerr("  look: head %s eyes %s weight %.2f  eye_point %s  eye shader %s" % [tcn.look.head, tcn.look.eyes, tcn.look.weight, tcn.look.eye_point(att.body), tcn.look._eye_mat != null])
 			quit(0)
 			return true
 	return false

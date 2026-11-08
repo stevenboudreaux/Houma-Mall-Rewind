@@ -171,7 +171,7 @@ func _swap_eyes() -> void:
 			# the head's bind pose in this mesh's skin
 			var h := head_bone(_sk)
 			for k in range(mi.skin.get_bind_count()):
-				var bb := mi.skin.get_bind_bone(k)
+				var bb: int = mi.skin.get_bind_bone(k)
 				if bb < 0: bb = _sk.find_bone(str(mi.skin.get_bind_name(k)))
 				if bb == h:
 					_eye_bind = mi.skin.get_bind_pose(k)
@@ -247,7 +247,7 @@ static func eye_point(b: NpcBody) -> Vector3:
 	if h < 0:
 		return b.eye_pos()
 	var key := "talk_eye_off_%d" % b.skin.get_instance_id()
-	var off = b.get_meta(key, null)
+	var off = b.get_meta(key) if b.has_meta(key) else null
 	if off == null:
 		off = _eye_offset(b, sk, h)
 		b.set_meta(key, off)
@@ -264,7 +264,7 @@ static func _eye_offset(b: NpcBody, sk: Skeleton3D, h: int) -> Vector3:
 		if not is_eye: continue
 		var c: Vector3 = mi.get_aabb().get_center()
 		for k in range(mi.skin.get_bind_count()):
-			var bb := mi.skin.get_bind_bone(k)
+			var bb: int = mi.skin.get_bind_bone(k)
 			if bb < 0: bb = sk.find_bone(str(mi.skin.get_bind_name(k)))
 			if bb == h:
 				return mi.skin.get_bind_pose(k) * c

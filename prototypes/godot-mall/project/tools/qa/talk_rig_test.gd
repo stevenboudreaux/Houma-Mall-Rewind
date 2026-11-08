@@ -21,9 +21,10 @@ func _check(ok: bool, what: String) -> void:
 	if ok: oks += 1
 	else: errors.append(what)
 
+## n frames, at least n / 60 seconds (headless frames run uncapped; the camera moves take 0.5 s).
 func _frames(n: int) -> void:
-	for i in n:
-		await process_frame
+	await create_timer(n / 60.0).timeout
+	await process_frame
 
 func _initialize() -> void:
 	Engine.set_meta("mall_state_1995", "")
