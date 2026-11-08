@@ -47,6 +47,9 @@ const ROAD_WEST_PARK = 112.0     # x of West Park Ave's centreline (curb ~106)
 const ROAD_BAYOU = 216.0         # z of Bayou Gardens Blvd (curb ~210)
 const ROAD_ARMOUR = -252.0       # z of Armour Dr (curb ~-247.5)
 const LOT_WEST = -360.0          # the west lot's edge (the parcel line is -383)
+## Ground Pat'i's x across Bayou Gardens (Steven, Nov 8: directly across from the mall). Opposite Dillard's
+## (x -38..44) from 4492 f105-107; Steven to confirm against the south pavilion (x ~ -140) or JCPenney (~ -184).
+const GROUND_PATI = 20.0
 ## The apartments' land: nothing of the mall's north of z -150 west of x -120 (site plan)
 const APTS = [-400.0, -290.0, -120.0, -150.0]
 
@@ -1662,8 +1665,11 @@ static func water_tower(b):
 ## the 870 SF drive-thru bank with the lattice cell tower and the 1-storey strip centre at the far
 ## SW; Kirschman's (1995, Steven: "Kirschman's", the strip already there) / Big Lots (2026) across
 ## Armour Dr straight out of Lynn's side exit (4413 f005-007: gable sign, 3-arch loggia, standing-
-## seam hoods); Ground Pat'i across both roads at the SE corner (West Park x Bayou Gardens; 4489
-## f078-082, 4492 f106-107: the 4-sided cube pole sign, brown brick, rust standing-seam mansards);
+## seam hoods); Ground Pat'i on Bayou Gardens Blvd directly across from the mall, opposite Dillard's
+## (GROUND_PATI; Steven, Nov 8: "directly across the street from the mall, not across West Park at the
+## intersection corner"; 4492 f105-107, walking south down the east facade, show it just past Dillard's
+## corner across the road; 4489 f078-082 zoom on it from Dillard's west end; the 4-sided cube pole sign,
+## brown brick, rust standing-seam mansards);
 ## the charcoal apartments behind a wood fence on their land north-west of the lot; the soccer
 ## fields behind a black picket fence and St. Bernadette's cream building with the green roof to the
 ## west.
@@ -1715,16 +1721,23 @@ static func outparcels(b):
 		b.label("Kirschman's", "serif", "#4a2e1e", Vector3(bl.x, 8.2, fz + 0.35), Vector3(0, 0, 1), 9.0, 1.0)
 		b.label("FURNITURE", "sans", "#4a2e1e", Vector3(bl.x, 7.3, fz + 0.35), Vector3(0, 0, 1), 4.0, 0.36)
 	b.quad("ex_ground", "ex_asphalt", [Vector3(bl.x - 40.0, 0.03, fz), Vector3(bl.x + 40.0, 0.03, fz), Vector3(bl.x + 40.0, 0.03, ROAD_ARMOUR - 4.5), Vector3(bl.x - 40.0, 0.03, ROAD_ARMOUR - 4.5)], UP, [], false, 0.1)
-	# Ground Pat'i across both roads at the SE corner
-	var gp = Vector3(146.0, 0, 244.0)
-	b.box(g, "ex_brick_brown", gp + UP * 2.2, Vector3(16.0, 4.4, 12.0), Transform3D.IDENTITY, ["-y"])
-	b.box(g, "ex_roof_rust", gp + UP * 5.0, Vector3(18.0, 1.4, 14.0))
-	b.box(g, "ex_roof_rust", gp + UP * 6.2, Vector3(15.0, 1.0, 11.0))
-	var sp = gp + Vector3(-14.0, 0, -12.0)
+	# Ground Pat'i across Bayou Gardens, facing the mall (north, -z): the restaurant set back behind its own
+	# small lot, the cube pole sign at the road's edge, the low yellow monument with the grinder beside it
+	var gp = Vector3(GROUND_PATI, 0, ROAD_BAYOU + 26.0)
+	b.box(g, "ex_brick_brown", gp + UP * 2.2, Vector3(18.0, 4.4, 12.0), Transform3D.IDENTITY, ["-y"])
+	b.box(g, "ex_roof_rust", gp + UP * 5.0, Vector3(20.0, 1.4, 14.0))
+	b.box(g, "ex_roof_rust", gp + UP * 6.2, Vector3(16.0, 1.0, 10.0))
+	for k in 3:
+		b.box(g, "ex_glass_dark", gp + Vector3(-5.0 + k * 5.0, 1.5, -6.03), Vector3(2.6, 1.8, 0.05))
+	b.quad("ex_ground", "ex_asphalt", [Vector3(gp.x - 20.0, 0.03, ROAD_BAYOU + 5.5), Vector3(gp.x + 20.0, 0.03, ROAD_BAYOU + 5.5), Vector3(gp.x + 20.0, 0.03, gp.z - 6.0), Vector3(gp.x - 20.0, 0.03, gp.z - 6.0)], UP, [], false, 0.1)
+	var sp = Vector3(gp.x - 14.0, 0, ROAD_BAYOU + 7.5)
 	b.cyl(g, "ex_steel", sp, 0.2, 0.2, 7.0, 8, false)
 	b.box(g, "ex_ivory", sp + UP * 8.5, Vector3(3.0, 3.0, 3.0))
 	for d in [Vector3(1, 0, 0), Vector3(-1, 0, 0), Vector3(0, 0, 1), Vector3(0, 0, -1)]:
 		b.label("Ground Pat'i", "script", "#8a2a1a", sp + UP * 8.5 + d * 1.52, d, 2.7, 0.45)
+	var ms = Vector3(gp.x + 12.0, 0, ROAD_BAYOU + 7.5)
+	b.box(g, "ex_pipe_yellow", ms + UP * 0.9, Vector3(2.6, 1.4, 0.4))
+	b.label("Ground Pat'i", "script", "#8a2a1a", ms + UP * 0.9 + Vector3(0, 0, -0.21), Vector3(0, 0, -1), 2.2, 0.32)
 	# the apartments on their land north-west of the lot, behind a wood fence
 	fence(b, "ex_fence_wood", [Vector3(LOT_WEST, 0, APTS[3]), Vector3(APTS[2], 0, APTS[3]), Vector3(APTS[2], 0, ROAD_ARMOUR + 5.0)], 1.9)
 	for i in 6:

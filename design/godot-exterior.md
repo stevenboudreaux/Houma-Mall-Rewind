@@ -248,7 +248,7 @@ build session. No build branch was ever pushed. This is that build: §5's mismat
 | 8 | Wing wall, pavilion | the wing wall z 118 from x −134 to −42; the pavilion −146..−134 solid to z 112, the loggia to z 118; the link off JCPenney −154..−146 to z 110 | Steven: "from JCPenney to the Dillard's side, at least 3/4" — 92 m of ~108 m. The doors at the loggia's back (z 112); the bike rack on the link; the drop-off bulb moved out to z 127–131 |
 | — | East facade between the Shoe Dept box and Dillard's | 30, 50, 44, 80 filled flush | the plan's flush block; 2026 the blank white ACM wall (4492 f081-108) with the yellow-hatched loading lane in front; 1995 the facade's panels (**decided**, Steven, Nov 4) |
 | 9 | The map | −390..130 × −270..240 (was −296..106 × −200..202) | West Park Ave x 112 (4 lanes, curb ~106), Bayou Gardens z 216, Armour z −252, the west lot to x −360; the apartments' land north-west (x < −120, z < −150) is lawn behind a wood fence with 6 charcoal blocks; the soccer fields and St. Bernadette's beyond the west edge |
-| 10 | Ground Pat'i | (146, 244), across both roads at the SE corner | the cube pole sign faces the intersection |
+| 10 | Ground Pat'i | ~~(146, 244), across both roads at the SE corner~~ **moved Nov 8 (Workstream LOT): across Bayou Gardens opposite Dillard's, (20, 242)** | see "Workstream LOT" 7 |
 | 11 | Bank pad | 64, −78, 98, −50 on West Park opposite K&B / Cucos | both years, brick, a 3-lane drive-thru canopy, **no name** (Steven: "a bank in 1995, not Chase") |
 | 12 | East entrance recess | not changed (4 m) | the Sears box is flush now, so the recess reads; a 10 m recess would cut into wing 1's vestibule. **Decided** (Steven, Nov 4): stays 4 m |
 | 13 | Sun | wing 3's sun from the game's N / NE, ~40° up (`build_mall.gd`, `exshots.gd`) | Steven: switch to the afternoon. Only wing 3; the inside wings keep theirs |
@@ -404,6 +404,19 @@ Read off the Demo 52 bake (`wsLOT-facade-before-baked.jpg`) and the geometry; **
 - **Ground:** no ground under the building; walks with their own texel; planter beds unbaked, so the 1.6 m ground
   texels under them stop baking black squares round the islands (seen in the Demo 52 bake).
 - Texel density was not the cause (the walls' 0.4 m texel is unchanged).
+
+### 7. Ground Pat'i across Bayou Gardens (Steven, Nov 8)
+- Steven: Ground Pat'i is on Bayou Gardens Blvd **directly across the street from the mall**, not across West Park at
+  the intersection corner. Re-checked the frames: in 4492 f105-107 the camera walks south down the east facade past
+  the Shoe Dept box and the restaurant's rust mansards and both its signs sit just past Dillard's corner, across
+  the road; 4489 f078-082 zoom on the cube sign from Dillard's west end over the south lot. Both put it **opposite
+  Dillard's**.
+- Built (`outparcels`, `GROUND_PATI = 20.0`, x of its centre): the brown-brick restaurant with its rust mansards
+  set back across Bayou Gardens at z 242, facing the mall, behind its own small asphalt lot; the cube pole sign
+  at the road's edge and the low yellow monument sign beside it (4489 f079). Evidence
+  `wsLOT-groundpati-moved.jpg` (unbaked).
+- **Steven to confirm** opposite Dillard's (built) vs the south pavilion (x ~ -140) or JCPenney (x ~ -184): a
+  one-number change.
 
 ### Pack size and bake (before = main f96a04b, exported here; after = this branch)
 | | Before | After |
