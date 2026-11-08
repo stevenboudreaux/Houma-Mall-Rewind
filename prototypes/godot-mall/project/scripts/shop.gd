@@ -43,10 +43,6 @@ var _stick_latch := false
 var _touch_at := Vector2.ZERO
 var _touch_moved := false
 var _touch_live := false
-var _cam: Camera3D
-var _from_cam: Camera3D
-var _from_xf := Transform3D()
-var _from_fov := 70.0
 var bought := 0              # purchases made (tests)
 var _opened_at := -1         # the frame it opened: the press that opened it doesn't also buy
 
@@ -211,52 +207,23 @@ func close() -> void:
 	attendant = null
 
 # ------------------------------------------------------------------ the camera (as in a conversation)
+# TALK (design/godot-dialogue.md "The talk camera"): scripts/story/talk_camera.gd's standard shot, lights
+# and look, turned so the face sits in the part of the screen the list leaves free (left on a wide
+# screen, top on a tall one).
 func _camera_in() -> void:
 	if player == null or not attendant.has_method("face_point"):
 		return
-	_from_cam = get_viewport().get_camera_3d()
-	if _from_cam == null:
-		_from_cam = player.cam
-	_from_xf = _from_cam.global_transform
-	_from_fov = _from_cam.fov
-	if _cam == null:
-		_cam = Camera3D.new()
-		_cam.name = "ShopCam"
-		_cam.near = 0.03
-		_cam.far = 200.0
-		player.get_parent().add_child(_cam)
-	_cam.global_transform = _from_xf
-	_cam.fov = _from_fov
-	_cam.current = true
-	var to := _shot()
-	var tw := create_tween().set_parallel(true).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	tw.tween_method(func(t: float): _cam.global_transform = _from_xf.interpolate_with(to, t), 0.0, 1.0, CAM_T)
-	tw.tween_property(_cam, "fov", DialogueUI.CAM_FOV, CAM_T)
-
-## The face shot, turned so the face sits in the part of the screen the list leaves free (left on a wide
-## screen, top on a tall one).
-func _shot() -> Transform3D:
-	var xf := DialogueUI.face_shot(attendant.face_point(), player.global_position)
 	var vp := get_viewport().get_visible_rect().size
-	if vp.x > vp.y * 1.2:
-		xf.basis = xf.basis.rotated(Vector3.UP, deg_to_rad(-17.0))   # look right of the face: it lands left
-	else:
-		xf.basis = xf.basis * Basis(Vector3.RIGHT, deg_to_rad(-8.0))
-	return xf
+	var bias := {"yaw_bias": -17.0} if vp.x > vp.y * 1.2 else {"pitch_bias": -8.0}
+	TalkCamera.for_player(player).begin(attendant, bias)
 
 func _camera_out() -> void:
-	if _cam == null or not _cam.current:
+	if player == null:
 		return
-	var from := _cam.global_transform
-	var back := _from_cam.global_transform if is_instance_valid(_from_cam) else _from_xf
-	var tw := create_tween().set_parallel(true).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	tw.tween_method(func(t: float): _cam.global_transform = from.interpolate_with(back, t), 0.0, 1.0, CAM_T)
-	tw.tween_property(_cam, "fov", _from_fov, CAM_T)
-	await tw.finished
-	if is_open:
-		return
-	if is_instance_valid(_from_cam):
-		_from_cam.current = true
+	var tc := TalkCamera.for_player(player)
+	if tc.active and tc.npc == attendant:
+		await tc.end()
+# --- end TALK
 
 # ------------------------------------------------------------------ stock on show
 ## Items with "display": {"runtime": true, "wing", "year", "pos", "yaw"} stand at that spot as plain

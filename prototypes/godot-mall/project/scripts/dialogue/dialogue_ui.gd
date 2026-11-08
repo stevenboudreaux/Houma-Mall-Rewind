@@ -4,8 +4,8 @@
 ## talk(npc, path, cue):
 ##  1. the player stops (player.frozen), the HUD hides (every other CanvasLayer), the NPC stops,
 ##     turns to the player and plays its idle (npc.talk_begin);
-##  2. a camera of our own tweens (CAM_T s) from wherever the view is to FACE_DIST m in front of the
-##     NPC's eyes, looking LOOK_DROP m below them, so the face sits front and centre above the box;
+##  2. the talk camera (scripts/story/talk_camera.gd, TALK) eases from wherever the view is to a
+##     medium close-up of the NPC, lights the face and has the NPC look at it;
 ##  3. the box at the bottom: the speaker's name, the line typed out (CPS characters a second; a
 ##     press finishes it), then "continue" (E / X / A / Enter / Space / a click / a tap); one line
 ##     per screen;
@@ -19,10 +19,8 @@ extends CanvasLayer
 const Runner = preload("res://scripts/dialogue/dialogue_runner.gd")
 const State = preload("res://scripts/dialogue/dialogue_state.gd")
 
-const CAM_T := 0.5           # s, the camera's move in and out
-const FACE_DIST := 0.85      # m in front of the eyes
-const LOOK_DROP := 0.12      # m below the eyes the camera aims (puts the face above the box)
-const CAM_FOV := 45.0        # degrees (vertical); the walking camera is 70
+const CAM_T := 0.5           # s, the camera's move in and out (TALK: talk_camera.json shot.ease_s)
+const CAM_FOV := 45.0        # degrees; TALK: unused here now (the FOV follows talk_camera.json frame_h)
 const CPS := 50.0            # typing speed, characters per second
 const BOX_MAX_W := 900.0
 
@@ -39,10 +37,6 @@ var typing := false
 var sel := 0
 var _shown := 0.0
 var _hidden: Array = []      # CanvasLayers we hid
-var _cam: Camera3D
-var _from_cam: Camera3D
-var _from_xf := Transform3D()
-var _from_fov := 70.0
 var _froze := false
 var _busy := false           # waiting on the next line
 
@@ -125,50 +119,22 @@ func _freeze(on: bool) -> void:
 			_froze = false
 
 # ------------------------------------------------------------------ the camera
-## Where the face camera goes for an NPC: in front of its eyes on the line to the player.
+## Where the face camera goes for an NPC (TALK: the standard shot of scripts/story/talk_camera.gd).
 static func face_shot(eye: Vector3, toward: Vector3) -> Transform3D:
-	var f := Vector3(toward.x - eye.x, 0, toward.z - eye.z)
-	f = f.normalized() if f.length() > 0.01 else Vector3.FORWARD
-	var at := eye + f * FACE_DIST
-	var look := eye - Vector3(0, LOOK_DROP, 0)
-	return Transform3D(Basis.looking_at(look - at, Vector3.UP), at)
+	return TalkCamera.shot(eye, toward, TalkCamera.config().get("shot", {})).xf
 
 func _eye() -> Vector3:
 	if npc and npc.has_method("face_point"):
 		return npc.face_point()
 	return npc.global_position + Vector3(0, 1.6, 0) if npc else Vector3.ZERO
 
+# TALK (design/godot-dialogue.md "The talk camera"): the shot, its lights and the NPC's look are
+# scripts/story/talk_camera.gd's, shared with the shop list; data/story/talk_camera.json.
 func _camera_in() -> void:
-	_from_cam = get_viewport().get_camera_3d()
-	if _from_cam == null:
-		_from_cam = player.cam
-	_from_xf = _from_cam.global_transform
-	_from_fov = _from_cam.fov
-	if _cam == null:
-		_cam = Camera3D.new()
-		_cam.name = "TalkCam"
-		_cam.near = 0.03
-		_cam.far = 200.0
-		player.get_parent().add_child(_cam)
-	_cam.global_transform = _from_xf
-	_cam.fov = _from_fov
-	_cam.current = true
-	var to := face_shot(_eye(), player.global_position)
-	var tw := create_tween().set_parallel(true).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	tw.tween_method(func(t: float): _cam.global_transform = _from_xf.interpolate_with(to, t), 0.0, 1.0, CAM_T)
-	tw.tween_property(_cam, "fov", CAM_FOV, CAM_T)
+	TalkCamera.for_player(player).begin(npc)
 
 func _camera_out() -> void:
-	if _cam == null:
-		return
-	var from := _cam.global_transform
-	var back := _from_cam.global_transform if is_instance_valid(_from_cam) else _from_xf
-	var tw := create_tween().set_parallel(true).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	tw.tween_method(func(t: float): _cam.global_transform = from.interpolate_with(back, t), 0.0, 1.0, CAM_T)
-	tw.tween_property(_cam, "fov", _from_fov, CAM_T)
-	await tw.finished
-	if is_instance_valid(_from_cam):
-		_from_cam.current = true
+	await TalkCamera.for_player(player).end()
 
 # ------------------------------------------------------------------ lines
 func _next(id: String) -> void:
