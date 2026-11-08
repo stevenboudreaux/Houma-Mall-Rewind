@@ -89,3 +89,16 @@ clamps the width to the front's length. Wicks checked: `interiors-gac-1995-wicks
 years, the attendant behind the case: a chocolate-chip cookie (a new Blender item; `bl_gac_sugarcookie`
 already exists as a 1995 pick-up and would become stock on display), a cookie-cake slice, a brownie, a
 fountain drink. Prices for Steven. The cookie cake on the prep table is a fixture, not an item.
+
+## FOOD3D: 3D cookies and cookie cakes in the case, both years (Nov 8, 2026)
+Steven: replace the flat pictures of cookies with 3D cookies on trays; "the items in the bottom of the case are
+COOKIE CAKES, not cookies". `gac/case.gd` now instances the Blender kit `bl_gac_cookies` (one 1024 atlas):
+aluminium sheet pans on all three tiers with chocolate chip, double chocolate, candy-coated (invented colours),
+sugar, white chocolate macadamia, snickerdoodle, peanut butter cookies and fudge brownies; in the lower window,
+leaning on a maroon back, 16 in round, heart and pan cookie cakes with piped borders, "Happy Birthday", "Love You",
+"Congrats", "Go Team" and icing drawings. Same case both years (Steven, Nov 7). Details, sources and guesses:
+`design/godot-blender-pipeline.md` "FOOD3D". Hand item: `gac_choc_chip_cookie` (`data/items/food3d.json`).
+Evidence (unbaked): `wsFOOD3D-gac-cookies-sheet.jpg`, `wsFOOD3D-gac-cookies-ingame-1995.jpg`, `-2026.jpg`.
+No rebake for the food (dynamic); the window's back changed from the lit cake picture to plain maroon in the
+baked mesh, so wing 2 (both years) picks that up at its next bake.
+Question for Steven: the pan cake is a 2010s shape (the chain's first pan cake, 2012); drop it from 1995?

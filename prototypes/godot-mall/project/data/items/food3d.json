@@ -1,0 +1,17 @@
+{
+ "_": "Workstream FOOD3D (Nov 8 2026; design/godot-blender-pipeline.md \"FOOD3D\"): the hand-held food from the Blender food and counter props. One item schema for every file here: design/godot-items.md. Never change an id.",
+ "items": [
+  {
+   "id": "gac_choc_chip_cookie",
+   "name": "Chocolate-chip cookie",
+   "category": "food",
+   "subcategory": "sweet",
+   "class": "hand",
+   "scene": "res://models/bl_gac_choc_chip_cookie/bl_gac_choc_chip_cookie.glb",
+   "icon": "res://models/bl_gac_choc_chip_cookie/bl_gac_choc_chip_cookie_icon.png",
+   "year": "both",
+   "store": "GREAT AMERICAN COOKIE CO",
+   "model_from": "FOOD3D: the case's chocolate-chip cookie (bl_gac_cookies 'cc') at hand detail; the model standin_gac_choc_chip_cookie waits for (data/story/shops.json still sells the stand-in: the integration session swaps the id)"
+  }
+ ]
+}

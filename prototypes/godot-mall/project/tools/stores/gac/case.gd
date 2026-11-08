@@ -18,6 +18,8 @@
 ## machines under three menu screens.
 
 const K = preload("res://tools/stores/media/kit.gd")
+const FK = preload("res://tools/stores/food3d/kit.gd")     # FOOD3D (Nov 8 2026): the 3D cookies and cakes
+const COOKIES = "res://models/bl_gac_cookies/bl_gac_cookies.glb"
 const UP = Vector3.UP
 const DEPTH = 0.95        # customer face to the staff-side doors
 const TOP_Y = 1.32
@@ -59,8 +61,15 @@ static func case_run(b, g, gs, o, r, f, w):
 	if n_cake.dot(nrm_front) < 0.0:
 		n_cake = -n_cake
 	var reps = w / SEC
-	b.quad(g, "gac_cakes", [cake_back0, cake_back0 + r * w, cake_back1 + r * w, cake_back1], n_cake,
-		[Vector2(0, 1), Vector2(reps, 1), Vector2(reps, 0), Vector2(0, 0)])
+	# FOOD3D: a plain maroon back with the 3D cookie cakes leaning on it (cakes3d); the painted cakes if the kit is missing
+	if FK.meshes(COOKIES).is_empty() or b.mall == null:
+		b.quad(g, "gac_cakes", [cake_back0, cake_back0 + r * w, cake_back1 + r * w, cake_back1], n_cake,
+			[Vector2(0, 1), Vector2(reps, 1), Vector2(reps, 0), Vector2(0, 0)])
+	else:
+		b.cur_color = Color("#6e1626")
+		b.quad(g, "vcolor_matte", [cake_back0, cake_back0 + r * w, cake_back1 + r * w, cake_back1], n_cake)
+		b.cur_color = Color.WHITE
+		cakes3d(b, o, r, f, w, lo, hi)
 	b.quad("glass", "glass", [L(o, r, f, 0.0, lo, 0.03), L(o, r, f, w, lo, 0.03), L(o, r, f, w, hi, 0.12), L(o, r, f, 0.0, hi, 0.12)], n_cake, [], true)
 	var ll = b.add_omni(L(o, r, f, w * 0.5, hi - 0.05, 0.12), 0.08, 0.9, Color(1.0, 0.95, 0.85))
 	b.tag(ll, "", 0.06, 0.08)
@@ -79,8 +88,9 @@ static func case_run(b, g, gs, o, r, f, w):
 		var p0 = L(o, r, f, 0.05, y + 0.004, T[1])
 		var dd = T[2] - T[1]
 		var ux = (w - 0.1) / (SEC * 0.5)
-		b.quad(gs, "gac_cookies", [p0, p0 + r * (w - 0.1), p0 + r * (w - 0.1) + f * dd, p0 + f * dd], UP,
-			[Vector2(ti * 0.25, 0.0), Vector2(ti * 0.25 + ux * 0.25, 0.0), Vector2(ti * 0.25 + ux * 0.25, 0.5), Vector2(ti * 0.25, 0.5)], true)
+		if FK.meshes(COOKIES).is_empty() or b.mall == null:   # FOOD3D: the painted trays only without the kit
+			b.quad(gs, "gac_cookies", [p0, p0 + r * (w - 0.1), p0 + r * (w - 0.1) + f * dd, p0 + f * dd], UP,
+				[Vector2(ti * 0.25, 0.0), Vector2(ti * 0.25 + ux * 0.25, 0.0), Vector2(ti * 0.25 + ux * 0.25, 0.5), Vector2(ti * 0.25, 0.5)], true)
 		# a second tray row: the lower half of the sheet, offset so the kinds alternate
 		b.cur_color = Color("#fbfbf8")
 		var x = 0.12
@@ -88,6 +98,7 @@ static func case_run(b, g, gs, o, r, f, w):
 			box(b, gs, "vcolor", o, r, f, x, y + 0.002, T[1] - 0.008, 0.07, 0.04, 0.004, [], true)
 			x += 0.35
 		b.cur_color = Color.WHITE
+	trays3d(b, o, r, f, w, tiers)   # FOOD3D: sheet pans of 3D cookies on every tier
 	# the curved front glass, the flat top, the lit strip under it
 	var seg = 10
 	for i in seg:
@@ -113,6 +124,82 @@ static func case_run(b, g, gs, o, r, f, w):
 		var x = w * k / ns
 		frame(b, g, o, r, f, clamp(x - 0.02, 0.0, w - 0.04), 0.04 if (k == 0 or k == ns) else 0.03)
 	K.ob(b, L(o, r, f, 0, 0, 0), L(o, r, f, w, 0, DEPTH), 0.05)
+
+# ------------------------------------------------------------------ FOOD3D (Nov 8 2026)
+## The cookie cakes (Steven, Nov 8: the big ones in the lower window are cookie cakes): three per 1.4 m
+## section leaning on the maroon back between lo and hi, lettering upright toward the customer. Pieces of
+## the bl_gac_cookies kit (tools/blender/assets_src/bl_gac_cookies.py), instanced by food3d/kit.gd.
+static func cakes3d(b, o, r, f, w, lo, hi):
+	var M = FK.meshes(COOKIES)
+	var up_pl = (f * 0.09 + UP * (hi - lo)).normalized()      # up the leaning back
+	var nrm = r.cross(up_pl).normalized()
+	if nrm.dot(-f) < 0.0:
+		nrm = -nrm
+	var rng = RandomNumberGenerator.new()
+	rng.seed = 7
+	var order = ["cake_bday", "cake_love", "cake_congrats", "cake_team"]
+	var n = max(1, int(round(w / SEC))) * 3
+	var pitch = w / n
+	var by = {}
+	for i in n:
+		var k = order[i % order.size()]
+		var c = L(o, r, f, pitch * (i + 0.5), (lo + hi) * 0.5 + 0.01, 0.145) + nrm * 0.004
+		var bas = Basis(nrm.cross(-up_pl), nrm, -up_pl).rotated(nrm, rng.randf_range(-0.04, 0.04))
+		if not by.has(k):
+			by[k] = []
+		by[k].append(Transform3D(bas, c))
+	for k in by:
+		FK.multi(b, M.get(k), by[k], "gac_" + k)
+
+## Bare aluminium sheet pans across each tier (one row on the two narrow steps, two on the top one), each
+## with one kind: a front row of three cookies lying flat and a back row of three leaning on them, or
+## eight brownies. Random yaw and +-5% size so the trays read hand-filled. The last front slot of the
+## deck stays empty: the sugar cookie on show (data/items, shop.gd) sits there in 1995.
+static func trays3d(b, o, r, f, w, tiers):
+	var M = FK.meshes(COOKIES)
+	if M.is_empty() or b.mall == null:
+		return
+	var kinds = ["cc", "sugar", "dchoc", "candy", "snick", "wcm", "pb", "brownie", "cc", "candy"]
+	var rng = RandomNumberGenerator.new()
+	rng.seed = 11
+	var xf = {"tray": []}
+	var slot = 0
+	var TW = 0.315
+	var TD = 0.155
+	var zr = r.cross(UP)          # the pan's +Z (its model is laid out along r)
+	for ti in tiers.size():
+		var y = tiers[ti][0]
+		var d0 = tiers[ti][1]
+		var d1 = tiers[ti + 1][1] if ti + 1 < tiers.size() else tiers[ti][2]
+		var rows = max(1, int((d1 - d0) / TD))
+		var n = int((w - 0.08) / TW)
+		var x0 = (w - n * TW) * 0.5 + TW * 0.5
+		for row in rows:
+			for k in n:
+				if ti == 0 and row == 0 and k == n - 1:
+					continue
+				var kind = kinds[(slot * 3 + ti) % kinds.size()]
+				slot += 1
+				var tc = L(o, r, f, x0 + k * TW, y, d0 + 0.004 + TD * 0.5 + row * TD)
+				xf["tray"].append(Transform3D(Basis(r, UP, zr), tc))
+				if not xf.has(kind):
+					xf[kind] = []
+				var fl = tc + UP * 0.002
+				if kind == "brownie":
+					for bi in 4:
+						for bj in 2:
+							var p = fl + r * (-0.105 + 0.07 * bi) + f * (-0.035 + 0.07 * bj)
+							xf[kind].append(Transform3D(FK.flat(rng.randf_range(-0.12, 0.12), rng.randf_range(0.96, 1.03)), p))
+					continue
+				for ci in 3:
+					var p = fl + r * (-0.098 + 0.098 * ci + rng.randf_range(-0.004, 0.004)) - f * 0.03
+					xf[kind].append(Transform3D(FK.flat(rng.randf() * TAU, rng.randf_range(0.95, 1.05)), p))
+				for ci in 3:
+					var p = fl + r * (-0.075 + 0.075 * ci + rng.randf_range(-0.006, 0.006)) + f * 0.035 + UP * 0.022
+					var tilt = Basis(r, -0.25 + rng.randf_range(-0.05, 0.05))     # leaning down toward the customer
+					xf[kind].append(Transform3D(tilt * FK.flat(rng.randf() * TAU, rng.randf_range(0.95, 1.05)), p))
+	for k in xf:
+		FK.multi(b, M.get(k), xf[k], "gac_" + k)
 
 ## A profile frame at x (thickness th along r): the curve's outline as a strip from the deck to the
 ## top, and the back post.
