@@ -105,31 +105,31 @@ static func fill_mat(m, key, b):
 		"mulch": tx.call("mulch", 1.0)
 		"grass": tx.call("grass", 1.0)
 		"chainlink":
-			m.albedo_texture = b.tex("ex/chainlink.png"); m.roughness = 0.5; m.metallic = 0.4
+			m.albedo_texture = b.tex("ex/chainlink.png"); m.roughness = 0.7; m.metallic = 0.0
 			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR; m.alpha_scissor_threshold = 0.5
 			m.cull_mode = BaseMaterial3D.CULL_DISABLED
 		"coping": m.albedo_color = Color("#e8e4dc"); m.roughness = 0.6
-		"coping_dark": m.albedo_color = Color("#4a4642"); m.roughness = 0.5; m.metallic = 0.3
+		"coping_dark": m.albedo_color = Color("#4a4642"); m.roughness = 0.7
 		"soldier": m.albedo_color = Color("#3b2e28"); m.roughness = 0.8
-		"peach_pier": m.albedo_color = Color("#e3b89a"); m.roughness = 0.8
-		"cream_pier": m.albedo_color = Color("#efe6d2"); m.roughness = 0.75
-		"white_wainscot": m.albedo_color = Color("#f2efe8"); m.roughness = 0.6
-		"beige_door": m.albedo_color = Color("#c9bda4"); m.roughness = 0.5; m.metallic = 0.3
-		"wall_pack": m.albedo_color = Color("#8a8580"); m.roughness = 0.5; m.metallic = 0.5
+		"peach_pier": m.albedo_color = Color("#e3b89a"); m.roughness = 0.88
+		"cream_pier": m.albedo_color = Color("#efe6d2"); m.roughness = 0.85
+		"white_wainscot": m.albedo_color = Color("#f2efe8"); m.roughness = 0.85
+		"beige_door": m.albedo_color = Color("#c9bda4"); m.roughness = 0.6
+		"wall_pack": m.albedo_color = Color("#8a8580"); m.roughness = 0.6
 		"bollard_yellow": m.albedo_color = Color("#e9c21d"); m.roughness = 0.5
-		"pipe_yellow": m.albedo_color = Color("#f0c419"); m.roughness = 0.4; m.metallic = 0.5
-		"pipe_grey": m.albedo_color = Color("#9a9a96"); m.roughness = 0.45; m.metallic = 0.6
-		"pole_white": m.albedo_color = Color("#eceae4"); m.roughness = 0.4; m.metallic = 0.3
+		"pipe_yellow": m.albedo_color = Color("#f0c419"); m.roughness = 0.6
+		"pipe_grey": m.albedo_color = Color("#9a9a96"); m.roughness = 0.65
+		"pole_white": m.albedo_color = Color("#eceae4"); m.roughness = 0.55
 		"pedestal": m.albedo_color = Color("#d9c23a"); m.roughness = 0.8
-		"shoebox": m.albedo_color = Color("#3a3a38"); m.roughness = 0.5; m.metallic = 0.5
+		"shoebox": m.albedo_color = Color("#3a3a38"); m.roughness = 0.6
 		"lamp":
 			m.albedo_color = Color("#fff0c8"); m.emission_enabled = true; m.emission = Color("#ffc46a")
 			m.emission_energy_multiplier = 3.0; m.set_meta("e_day", 0.0); m.set_meta("e_night", 3.0)
 		"curb_yellow": m.albedo_color = Color("#e4c52c"); m.roughness = 0.8
 		"curb": m.albedo_color = Color("#c8c4bc"); m.roughness = 0.9
-		"tank_white": m.albedo_color = Color("#e4e3df"); m.roughness = 0.55; m.metallic = 0.4
-		"tank_rust": m.albedo_color = Color("#8d6b4a"); m.roughness = 0.8; m.metallic = 0.2
-		"steel": m.albedo_color = Color("#6f6f6c"); m.roughness = 0.5; m.metallic = 0.7
+		"tank_white": m.albedo_color = Color("#e4e3df"); m.roughness = 0.7
+		"tank_rust": m.albedo_color = Color("#8d6b4a"); m.roughness = 0.9
+		"steel": m.albedo_color = Color("#6f6f6c"); m.roughness = 0.6
 		"bronze": m.albedo_color = Color("#4a3a2a"); m.roughness = 0.4; m.metallic = 0.6
 		"canopy_brown": m.albedo_color = Color("#3e2a1e"); m.roughness = 0.6
 		"canopy_cream": m.albedo_color = Color("#f1ead8"); m.roughness = 0.75
@@ -162,10 +162,10 @@ static func fill_mat(m, key, b):
 		"holly": m.albedo_color = Color("#2e5a2f"); m.roughness = 0.9
 		"podocarpus": m.albedo_color = Color("#3a6a3a"); m.roughness = 0.9
 		"fence_wood": m.albedo_texture = b.tex("wood_dark.png"); m.roughness = 0.8; m.albedo_color = Color(1.1, 1.0, 0.9)
-		"fence_black": m.albedo_color = Color("#1e1e1e"); m.roughness = 0.5; m.metallic = 0.4
+		"fence_black": m.albedo_color = Color("#1e1e1e"); m.roughness = 0.6
 		"roof_grey": m.albedo_color = Color("#8f8b84"); m.roughness = 0.95
 		"roof_dark": m.albedo_color = Color("#4a4744"); m.roughness = 0.9
-		"roof_rust": m.albedo_color = Color("#7a3f28"); m.roughness = 0.6; m.metallic = 0.3
+		"roof_rust": m.albedo_color = Color("#7a3f28"); m.roughness = 0.75
 		"signal": m.albedo_color = Color("#2a2a28"); m.roughness = 0.5
 		"signal_red": m.albedo_color = Color("#ff2a1a"); m.emission_enabled = true; m.emission = Color("#ff3020"); m.emission_energy_multiplier = 2.0
 		"cream_green_roof": m.albedo_color = Color("#2f6b45"); m.roughness = 0.6
@@ -181,11 +181,9 @@ static func fill_mat(m, key, b):
 			var f = {"lace": "lace_frieze", "lace_bracket": "lace_bracket", "firelane_pink": "firelane_pink",
 				"firelane_yellow": "firelane_yellow", "ada": "ada_symbol", "tactile_mat": "tactile"}[key]
 			m.albedo_texture = b.tex("ex/" + f + ".png"); m.roughness = 0.6 if key.begins_with("lace") else 0.9
-			if key.begins_with("lace"):
-				m.metallic = 0.4
 			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR; m.alpha_scissor_threshold = 0.5
 			m.cull_mode = BaseMaterial3D.CULL_DISABLED
-		"acm_white": tx.call("acm_white", 0.35); m.metallic = 0.2
+		"acm_white": tx.call("acm_white", 0.45)
 		"eifs_peach": tx.call("eifs_panel", 0.85); m.albedo_color = Color("#f2d3c4")
 		"eifs_salmon": tx.call("eifs_panel", 0.85); m.albedo_color = Color("#e8b7a6")
 		"eifs_tan": tx.call("eifs_panel", 0.85); m.albedo_color = Color("#d6bf98")
@@ -201,7 +199,7 @@ static func fill_mat(m, key, b):
 		"tile_dark": m.albedo_color = Color("#5e5650"); m.roughness = 0.4
 		"tile_light": m.albedo_color = Color("#d9d2c4"); m.roughness = 0.4
 		"stainless": m.albedo_color = Color("#c9cbcc"); m.roughness = 0.3; m.metallic = 0.8
-		"black_steel": m.albedo_color = Color("#1c1c1e"); m.roughness = 0.5; m.metallic = 0.5
+		"black_steel": m.albedo_color = Color("#1c1c1e"); m.roughness = 0.6
 		"navy": m.albedo_color = Color("#1d2a4a"); m.roughness = 0.7
 		"magenta": m.albedo_color = Color("#e20074"); m.roughness = 0.5
 		"red_seal": m.albedo_color = Color("#b3202a"); m.roughness = 0.6
