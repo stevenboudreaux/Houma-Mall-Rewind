@@ -47,13 +47,21 @@ var done := false
 
 signal finished
 
-## The skins worth warming: every manifest skin whose scene this pack carries.
+## The skins worth warming: every manifest skin whose scene this pack carries, and (CHAR-STRIP, Nov 8
+## 2026) every cast file (scripts/cast.gd Cast.paths(): the player's body, the menu's portraits, cast
+## attendants), so those are loaded and drawn once behind the card too: no body appears half-made.
 static func skin_paths() -> Array[String]:
 	var out: Array[String] = []
 	for e in NpcBody.manifest().get("skins", []):
 		var p := str(e.get("scn", ""))
 		if p != "" and ResourceLoader.exists(p) and (only.is_empty() or p in only):   # M: only
 			out.append(p)
+	for p in Cast.paths():
+		if not (p in out):
+			if ResourceLoader.exists(p):
+				out.append(p)
+			else:
+				push_error("npc_warmup: cast file %s is not in this pack" % p)
 	return out
 
 func _ready() -> void:

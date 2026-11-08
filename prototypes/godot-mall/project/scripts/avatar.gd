@@ -1,31 +1,31 @@
-## Workstream V (design/godot-avatar.md): the player's avatar in the mall, and the first / third
+## Workstream V (design/godot-avatar.md): the player's body in the mall, and the first / third
 ## person switch. Made by scripts/player.gd as its child "Avatar" (every wing, both years), after
 ## "Interact".
 ##
-## - The look (scripts/avatar_look.gd) is read from localStorage "mall-avatar-1" at start. A visitor
-##   who has never made one starts in the mall with the default body and first person (ws/items, Nov 4
-##   2026: no opening, no creator by itself). The "Avatar (C)" button, C, a gamepad's Start or MAIN's
-##   Edit opens the creator; ?avatar=1 opens it at start whatever the saved state.
-## - View: V, a gamepad's right-stick click, or the "View" button switches first / third person; the
-##   choice is saved with the look. ?view=third / ?view=first sets it for one load (tests).
+## CHAR-STRIP (Nov 8 2026; design/godot-avatar.md, design/godot-characters-research.md): the body is the
+## player's cast member, made by the one loader, Cast.body(Cast.player_id()) (scripts/cast.gd). This
+## script never chooses, dresses or swaps a body on its own: it makes one at _ready and again only when
+## the player picks another cast member in the menu (rebuild()), freeing the old one in the same frame.
+## The body joins the group "mall_player_body" (tools/qa/cast_count_test.gd counts it). No body (a missing
+## cast file) = no body shown and an error logged; the camera, view switch and held item still work.
+## - View: V, a gamepad's right-stick click, or MAIN's View switches first / third person; the choice is
+##   saved in the player's record ("mall-player-2" "view"). ?view=third / ?view=first sets it for one load.
 ##   First person is the game exactly as before (player.gd's camera, speed, hand item).
-##   Third person: the avatar (scripts/avatar_body.gd) stands where the player stands, turns to
-##   the way it walks, walks / jogs / runs with the shoppers' clips played at the ground speed
-##   (playback = speed / the clip's own m/s from npc/anims.json, so the feet don't slide), idles
-##   when still. The camera rides a boom behind and over the right shoulder; the boom is tested
-##   against the same walk grid and obstacle list the player walks on (walls, store glass, the
-##   arcade's machines), pulled in at once when something is in the way, let out slowly; very close
-##   in, the avatar is hidden so the view is never from inside its head. Walking in third person is
-##   at a brisk walking pace (TP_WALK m/s; running x2.2 as in first person), the walk clip played
-##   quicker to match (WALK: Steven, Nov 3 2026, "a faster cadence", about 50 % faster than V's 2.0).
-## - In VR (design/godot-vr.md) the view is always first person and the avatar is hidden.
-## - A held item (B+C, scripts/interact.gd) is moved into the avatar's right hand in third person and
+##   Third person: the body stands where the player stands, turns to the way it walks, walks / jogs /
+##   runs with the shoppers' clips played at the ground speed (playback = speed / the clip's own m/s
+##   from npc/anims.json, so the feet don't slide), idles when still. The camera rides a boom behind and
+##   over the right shoulder; the boom is tested against the same walk grid and obstacle list the player
+##   walks on (walls, store glass, the arcade's machines), pulled in at once when something is in the
+##   way, let out slowly; very close in, the body is hidden so the view is never from inside its head.
+##   Walking in third person is at a brisk walking pace (TP_WALK m/s; running x2.2 as in first person),
+##   the walk clip played quicker to match (WALK: Steven, Nov 3 2026, "a faster cadence").
+## - C (and a gamepad's Start, as before) opens the menu on MAIN, where the Character row is.
+## - In VR (design/godot-vr.md) the view is always first person and the body is hidden.
+## - A held item (B+C, scripts/interact.gd) is moved into the body's right hand in third person and
 ##   back to the first-person hand after; a swing turns it there too.
 extends Node
 
-const Look = preload("res://scripts/avatar_look.gd")
-const AvatarBody = preload("res://scripts/avatar_body.gd")
-const CREATOR := "res://scripts/avatar_creator.tscn"
+const GROUP := "mall_player_body"
 
 const TP_WALK := 3.0          # m/s at full stick in third person (first person stays 4.0); running x player.RUN
                               # (2.2) = 6.6 m/s. WALK (Nov 3 2026): up from V's 2.0 / 4.4 by half
@@ -47,12 +47,11 @@ const GAIT_HYST := 0.25       # m/s under a gait's threshold before it drops bac
 const GAIT_MAX := 2.0         # playback cap (and 0.3 the floor)
 
 var player: Node3D
-var look := {}
-var body                   # B2: an AvatarChar (a B1 body, the player's preset) or V's AvatarBody
+var body: NpcBody             # the player's cast member (Cast.body), or null when its file is missing
+var cast_id := ""             # whose body it is
+var hand: Node3D              # the right-hand holder on the body (third person's held item)
 var tp_cam: Camera3D
 var third := false            # the saved choice
-var creator: Node = null
-var _froze := false           # the creator froze the player
 var _boom := BOOM
 var _last := Vector3.INF
 var _speed := 0.0
@@ -64,58 +63,92 @@ var _dbg_t := 0.0             # WALK: the ?debug=1 gait report's timer, and its 
 var _dbg_gt := 0.0
 # ui
 var view_btn: Button
-var make_btn: Button
 
 func _ready() -> void:
 	player.add_to_group("mall_player")
-	look = Look.load_look()
-	third = look.view == "third"
-	var force_open := false
+	var rec := Cast.player()      # also migrates the old avatar records once (the name only)
+	_name_from_migration()
+	third = rec.view == "third"
 	if OS.has_feature("web"):
 		var vq := str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('view') || ''"))
 		if vq == "third" or vq == "first": third = vq == "third"
-		force_open = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('avatar') || ''")) == "1"
-	else:
-		if Engine.has_meta("avatar_view"): third = str(Engine.get_meta("avatar_view")) == "third"
-		force_open = bool(Engine.get_meta("avatar_open", false))
-	# B2 (design/godot-character-editor.md): the B1 body from the player's preset when this pack ships it
-	# (qa_late_chars: tools/qa/char_avatar_test.gd --late=1 starts on V's body, as the web does before the
-	# character pack arrives)
-	body = AvatarChar.new() if AvatarChar.available() and not Engine.has_meta("qa_late_chars") else AvatarBody.new()
-	body.name = "Avatar"
-	player.get_parent().add_child.call_deferred(body)
-	body.ready.connect(func():
-		_wear_body()
-		body.visible = false, CONNECT_ONE_SHOT)
+	elif Engine.has_meta("avatar_view"):
+		third = str(Engine.get_meta("avatar_view")) == "third"
 	tp_cam = Camera3D.new()
 	tp_cam.name = "ThirdPersonCam"
 	tp_cam.fov = player.cam.fov
 	tp_cam.near = 0.05
 	tp_cam.far = player.cam.far
 	player.get_parent().add_child.call_deferred(tp_cam)
+	_make_body(str(rec.cast))
 	_build_ui()
-	# ws/items (Steven, Nov 4 2026: "the game just starts in the mall"): no creator by itself on a first
-	# visit any more (the default body, first person); MAIN's Edit, C or the Avatar button open it, ?avatar=1 too
-	if force_open:
-		open_creator.call_deferred()
+
+## Cast.migrate() may have found a name in the old records after the mall read its own (empty) one.
+func _name_from_migration() -> void:
+	var m = player.get("mall")
+	if m == null or not ("player_name" in m) or str(m.player_name) != "":
+		return
+	var n = Cast._kv_get(Cast.NAME_KEY)
+	if n != null and str(n) != "":
+		m.player_name = str(n)
+
+## The body of cast member `id`, through the one loader, in the player's group; the old one (if any)
+## leaves the tree now, so there is never a frame with two.
+func _make_body(id: String) -> void:
+	var at := player.position
+	var yaw_was := 0.0
+	var vis := false
+	if body != null and is_instance_valid(body):
+		_unhand()
+		at = body.position
+		yaw_was = body.yaw
+		vis = body.visible
+		if body.get_parent():
+			body.get_parent().remove_child(body)
+		body.queue_free()
+	body = null
+	hand = null
+	cast_id = id
+	body = Cast.body(id)
+	if body == null:
+		return            # Cast logged the error: nobody is shown
+	body.name = "PlayerBody"
+	body.add_to_group(GROUP)
+	body.visible = vis
+	body.position = at
+	body.yaw = yaw_was
+	body.rotation.y = yaw_was
+	body.walk_clip = "walk_f" if str(Cast.entry(id).get("sex", "m")) == "f" else "walk_m"
+	_tint = Color(1, 1, 1)
+	var parent: Node = player.get_parent()
+	if parent.is_node_ready():
+		parent.add_child(body)
+	else:
+		parent.add_child.call_deferred(body)
+
+## The menu's Character row picked `id`: save it and make the new body through the loader.
+func choose(id: String) -> void:
+	if not Cast.has(id):
+		push_error("avatar: no cast member " + id)
+		return
+	Cast.set_player_id(id)
+	if id != cast_id or body == null:
+		_make_body(id)
 
 # ------------------------------------------------------------------ the view
 func toggle_view() -> void:
-	if player.vr_on or creator != null:
+	if player.vr_on:
 		return
 	third = not third
-	look.view = "third" if third else "first"
-	Look.save_look(look)
+	Cast.set_view("third" if third else "first")
 	_say("Third person" if third else "First person")
 
 func _process(dt: float) -> void:
-	if body == null or not body.is_inside_tree() or tp_cam == null or not tp_cam.is_inside_tree():
+	if tp_cam == null or not tp_cam.is_inside_tree():
 		return
-	# entering VR with the creator open (a first visit on a headset): the 2D creator isn't drawn in
-	# the headset, so it closes as Skip / Back rather than leave the player frozen
-	if creator != null and player.vr_on:
-		creator._skip()
-	var tp: bool = third and not player.vr_on and creator == null
+	if body != null and not is_instance_valid(body):
+		body = null
+	var tp: bool = third and not player.vr_on
 	var hide: bool = player.frozen or player.leaving
 	# walking speed: third person walks at a walking pace (the first person's 4 m/s is untouched)
 	if "move_scale" in player:
@@ -126,15 +159,24 @@ func _process(dt: float) -> void:
 			player.cam.current = true
 		_last = Vector3.INF
 	_ui_sync()
-	_hand_sync(tp)
+	var have: bool = body != null and body.is_inside_tree()
+	_hand_sync(tp and have)
 	if not tp:
-		body.visible = false
+		if have: body.visible = false
 		return
-	_move_body(dt)
+	if have:
+		_move_body(dt)
 	_place_cam(dt)
-	if body.mats.size() > 0 and _tint != NpcBody.tint:
-		_tint = NpcBody.tint     # the shoppers' day colour (scripts/npcs.gd sets it after we dress)
-		for m in body.mats: m.set_shader_parameter("tint", _tint)
+	if not have:
+		if not player.frozen and not tp_cam.current:
+			tp_cam.current = true
+		return
+	if _tint != NpcBody.tint:
+		_tint = NpcBody.tint     # the shoppers' day colour (scripts/npcs.gd sets it once the lights are known)
+		for mi in body.find_children("*", "MeshInstance3D", true, false):
+			for i in range((mi as MeshInstance3D).mesh.get_surface_count()):
+				var mat = (mi as MeshInstance3D).mesh.surface_get_material(i)
+				if mat is StandardMaterial3D: mat.albedo_color = _tint
 	body.visible = not hide and _boom > HIDE_UNDER and not has_meta("qa_hide")   # qa_hide: tools/qa/avatar_test.gd fps
 	if not player.frozen and not tp_cam.current:
 		tp_cam.current = true
@@ -152,6 +194,8 @@ func _dbg_report(dt: float) -> void:
 	if _dbg_t < 0.5:
 		return
 	_dbg_t = 0.0
+	if body == null:
+		return
 	var ps: float = body.ap.speed_scale if body.ap else 0.0
 	var cd := Vector2(tp_cam.global_position.x - player.position.x, tp_cam.global_position.z - player.position.z).length()
 	# other bodies (shoppers, the Runner) within 3 m: a figure in a test frame can be one of them
@@ -183,7 +227,7 @@ func _move_body(dt: float) -> void:
 		var g := _pick_gait(_speed)
 		var clip := g
 		if g == "walk":
-			clip = "walk_f" if str(body.info.get("sex", "m")) == "f" else "walk_m"
+			clip = "walk_f" if str(Cast.entry(cast_id).get("sex", "m")) == "f" else "walk_m"
 		body.walk_clip = clip
 		body.set_speed(_speed)
 		if body.ap and body.clip == clip:
@@ -329,59 +373,51 @@ const GRIP_ROT := Vector3(deg_to_rad(-90), 0, deg_to_rad(180))
 const GRIP_AT := Vector3(0.0, 0.08, 0.03)
 
 func _grip() -> Node3D:
-	if body == null or body.hand == null:
+	if body == null or body.skin == null:
 		return null
-	var g := body.hand.get_node_or_null("Grip") as Node3D
+	if hand == null or not is_instance_valid(hand):
+		hand = null
+		var sk: Skeleton3D = body.skin.find_child("Skeleton3D", true, false)
+		if sk == null:
+			return null
+		var bi := -1
+		for i in sk.get_bone_count():
+			if sk.get_bone_name(i).ends_with("RightHand"):
+				bi = i
+				break
+		if bi < 0:
+			return null
+		var ba := BoneAttachment3D.new()
+		ba.name = "Hand"
+		ba.bone_idx = bi
+		sk.add_child(ba)
+		hand = ba
+	var g := hand.get_node_or_null("Grip") as Node3D
 	if g == null:
 		g = Node3D.new()
 		g.name = "Grip"
 		g.position = GRIP_AT
 		g.rotation = GRIP_ROT
-		body.hand.add_child(g)
+		hand.add_child(g)
 	return g
 
-# ------------------------------------------------------------------ the creator
-func open_creator() -> void:
-	# M (design/godot-menu.md): the creator lives in the menu's AVATAR tab now (scripts/menu/menu.gd)
-	if player.get("menu") != null and player.menu.has_method("request_creator"):
-		player.menu.request_creator()
-		return
-	if creator != null or player.vr_on or player.leaving:
-		return
-	if player.frozen:
-		return
-	var ps: PackedScene = load(CREATOR)
-	creator = ps.instantiate()
-	creator.year = player.year
-	creator.look = look.duplicate(true)
-	creator.first_time = not look.done
-	creator.closed.connect(_creator_closed)
-	add_child(creator)
-	player.frozen = true
-	_froze = true
-	player.move_vec = Vector2.ZERO
-	player.move_touch = -1
-	player.stick.visible = false
+## A held item in the body's hand goes back to the first-person hand (before the body is freed).
+func _unhand() -> void:
+	var it = player.interact if player else null
+	if it and "hand_item" in it and it.hand_item and is_instance_valid(it.hand_item) and body and body.is_ancestor_of(it.hand_item):
+		var item: Node3D = it.hand_item
+		item.reparent(it.hand_root, false)
+		item.transform = _hand_xf.get(item.get_instance_id(), item.transform)
 
-func _creator_closed(L: Dictionary, how: String) -> void:
-	if how == "done" or how == "skip":
-		look = L
-		look.done = true
-		if how == "done" and creator.first_time:
-			third = true            # you just made it: see it
-		look.view = "third" if third else "first"
-		Look.save_look(look)
-		_wear_body()
-	creator.queue_free()
-	creator = null
-	if _froze:
-		player.frozen = false
-		_froze = false
+# ------------------------------------------------------------------ the menu
+## C / a gamepad's Start: the menu on MAIN (the Character row).
+func open_menu() -> void:
+	if player.get("menu") != null and player.menu.has_method("open_tab"):
+		player.menu.open_tab("main")
 
 # ------------------------------------------------------------------ ui
 func _build_ui() -> void:
 	view_btn = _btn("View: 1st person (V)", toggle_view)
-	make_btn = _btn("Avatar (C)", open_creator)
 
 func _btn(text: String, cb: Callable) -> Button:
 	var b := Button.new()
@@ -403,31 +439,26 @@ func _ui_sync() -> void:
 	for b in cands:
 		if b and b.visible:
 			top = maxf(top, b.offset_bottom + 8.0)
-	var show: bool = not player.vr_on and creator == null and not (player.frozen and not _froze)
-	view_btn.visible = show
-	make_btn.visible = show
+	view_btn.visible = not player.vr_on and not player.frozen
 	view_btn.offset_top = top; view_btn.offset_bottom = top + 32
-	make_btn.offset_top = top + 40; make_btn.offset_bottom = top + 72
 	view_btn.text = "View: %s (V)" % ("3rd person" if third else "1st person")
 
 func _input(e: InputEvent) -> void:
-	if creator != null:
-		return
 	if player.frozen or player.leaving:
 		return
 	if e is InputEventKey and e.pressed and not e.echo:
 		if e.physical_keycode == KEY_V:
 			toggle_view(); get_viewport().set_input_as_handled()
 		elif e.physical_keycode == KEY_C:
-			open_creator(); get_viewport().set_input_as_handled()
+			open_menu(); get_viewport().set_input_as_handled()
 	elif e is InputEventJoypadButton and e.pressed:
 		if e.button_index == JOY_BUTTON_RIGHT_STICK:
 			toggle_view(); get_viewport().set_input_as_handled()
 		elif e.button_index == JOY_BUTTON_START:
-			open_creator(); get_viewport().set_input_as_handled()
+			open_menu(); get_viewport().set_input_as_handled()
 	elif e is InputEventScreenTouch and e.pressed:
 		# touches skip mouse emulation (project setting), so the buttons are tapped here
-		for pair in [[view_btn, toggle_view], [make_btn, open_creator]]:
+		for pair in [[view_btn, toggle_view]]:
 			var b: Button = pair[0]
 			if b.is_visible_in_tree() and b.get_global_rect().has_point(e.position):
 				get_viewport().set_input_as_handled()
@@ -437,50 +468,3 @@ func _input(e: InputEvent) -> void:
 func _say(t: String) -> void:
 	if player.has_method("_say"):
 		player._say(t)
-
-## B2: the character pack is mounted (scripts/chars/char_pack.gd): V's body gives way to the player's
-## preset body (a held item moves with the hand on the next frame).
-func chars_ready() -> void:
-	if body is AvatarChar or not AvatarChar.available():
-		return
-	var was_visible: bool = body.visible
-	var old = body
-	body = AvatarChar.new()
-	body.name = "AvatarB2"
-	old.get_parent().add_child(body)
-	_wear_body()
-	body.position = old.position
-	body.rotation = old.rotation
-	body.visible = was_visible
-	var it = player.interact
-	if it and "hand_item" in it and it.hand_item and is_instance_valid(it.hand_item) and old.is_ancestor_of(it.hand_item):
-		var item: Node3D = it.hand_item
-		item.reparent(it.hand_root, false)
-		item.transform = _hand_xf.get(item.get_instance_id(), item.transform)
-	old.queue_free()
-
-## CHAR-EDITOR (Nov 4): the editor's Save (player mode) re-dresses the avatar at once and keeps the
-## editor open; a first visit's Save shows the new character in third person (as V's Done did).
-func _preset_saved(L: Dictionary) -> void:
-	look = L
-	look.done = true
-	if creator != null and "first_time" in creator and creator.first_time:
-		third = true
-		creator.first_time = false
-	look.view = "third" if third else "first"
-	Look.save_look(look)
-	_wear_body()
-
-## B2: dress the avatar (an AvatarChar wears the player's preset; V's body its look).
-func _wear_body() -> void:
-	# CHAR-EDITOR: a held item in the avatar's hand goes back to the first-person hand first (re-dressing
-	# makes a new skeleton and frees the old one with whatever hangs on it); _hand_sync moves it back
-	var it = player.interact if player else null
-	if it and "hand_item" in it and it.hand_item and is_instance_valid(it.hand_item) and body and body.is_ancestor_of(it.hand_item):
-		var item: Node3D = it.hand_item
-		item.reparent(it.hand_root, false)
-		item.transform = _hand_xf.get(item.get_instance_id(), item.transform)
-	if body is AvatarChar:
-		(body as AvatarChar).wear_look(look, player.year)
-	elif body is AvatarBody:
-		(body as AvatarBody).wear(look, player.year)

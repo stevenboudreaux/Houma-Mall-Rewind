@@ -13,7 +13,7 @@
 		{"id": "tab_prev", "label": "Menu: previous tab", "kind": "menu", "keys": ["Q"], "pad": [9], "also_pad": "LT", "touch": "Swipe right, or tap a tab"},
 		{"id": "tab_next", "label": "Menu: next tab", "kind": "menu", "keys": ["E"], "pad": [10], "also_pad": "RT", "touch": "Swipe left, or tap a tab"},
 		{"id": "view", "label": "First / third person", "kind": "event", "keys": ["V"], "pad": [8], "touch": "Menu: MAIN, View"},
-		{"id": "avatar", "label": "Avatar (menu: MAIN, Edit)", "kind": "event", "keys": ["C"], "pad": [], "touch": "Menu: MAIN, Edit"},
+		{"id": "avatar", "label": "Character (menu: MAIN)", "kind": "event", "keys": ["C"], "pad": [], "touch": "Menu: MAIN, Character"},
 		{"id": "inventory", "label": "Inventory (menu: INVENTORY)", "kind": "event", "keys": ["I"], "pad": [4], "touch": "Menu: INVENTORY"},
 		{"id": "jump", "label": "Jump to", "kind": "event", "keys": ["J"], "pad": [3], "touch": "Menu: MAIN, Jump to"},
 		{"id": "put_away", "label": "Put the held item away", "kind": "event", "keys": ["R"], "pad": [], "touch": "INVENTORY tab"},

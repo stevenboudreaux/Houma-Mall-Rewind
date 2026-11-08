@@ -7,7 +7,6 @@
 ## Prints ITEMS SHOTS OK (n checks) or the failures; writes <out>-<name>.png.
 extends SceneTree
 
-const Look = preload("res://scripts/avatar_look.gd")
 var out := "/tmp/items/w2"
 var scn: Node
 var player: Node3D
@@ -26,7 +25,7 @@ func _initialize() -> void:
 	DirAccess.make_dir_recursive_absolute(out.get_base_dir())
 	Engine.set_meta("mall_state_1995", "")
 	Engine.set_meta("mall_player_name", "")
-	Engine.set_meta("mall_avatar", "")        # a first visit: no avatar made, no name
+	Cast._kv_del(Cast.KEY)                    # a first visit: no character record (CHAR-STRIP), no name
 	scn = load("res://wing%d.tscn" % wing).instantiate()
 	root.add_child(scn)
 	current_scene = scn
@@ -56,7 +55,7 @@ func _plan() -> void:
 	_do(func(): pass, 20.0)
 	_do(func():
 		menu = player.get_node("Menu")
-		_check(not menu.is_open and not player.frozen and player.avatar.creator == null, "a first visit starts in the mall: no opening, no menu, no creator")
+		_check(not menu.is_open and not player.frozen and not ("creator" in player.avatar), "a first visit starts in the mall: no opening, no menu, no creator")
 		if wing == 2:   # at Corn Dog 7's counter, looking at it
 			player.position = Vector3(-131.2, 0, 74.4); player.yaw = deg_to_rad(90); player.pitch = deg_to_rad(-12); player._apply_rot()
 		_shot("start-no-opening"), 2.0)

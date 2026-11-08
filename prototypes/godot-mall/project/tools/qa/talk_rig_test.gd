@@ -1,6 +1,6 @@
 ## Headless: the talk camera's light rig and the NPC look go on and off cleanly (workstream TALK,
-## design/godot-dialogue.md "The talk camera"). Wing 1 1995 (RadioShack, a UBC preset body; the Cuco's
-## bartender, a Mixamo skin), ten conversations each through the conversation screen and the shop path:
+## design/godot-dialogue.md "The talk camera"). Wing 1 1995 (RadioShack and the Cuco's bartender, Mixamo skins
+## through scripts/cast.gd since CHAR-STRIP), ten conversations each through the conversation screen and the shop path:
 ##  - in talk: the camera is current, both lights visible and lighting layer 20 only, the NPC's meshes
 ##    on that layer and nothing else's, an NpcLook running, the head look set, the UBC eye shader on;
 ##  - after: the walking camera is current, the lights hidden at 0, no mesh left on the layer, no
@@ -83,7 +83,7 @@ func _cycles(who: Node3D, story) -> void:
 		_check(lit.size() > 0 and lit.size() == mine.size(), "%s #%d: only the NPC is on the light layer (%d of %d)" % [nm, c, mine.size(), lit.size()])
 		_check(tc.look != null and is_instance_valid(tc.look), "%s #%d: the look runs" % [nm, c])
 		_check(who.body.rig.look != Vector3.INF and who.body.rig.look_weight > 0.5, "%s #%d: the head looks (w %.2f)" % [nm, c, who.body.rig.look_weight])
-		if who.body is CharBody:
+		if tc.look._eye_mi != null:     # CHAR-STRIP: a body with a separate eye mesh (none since the UBC bodies went)
 			_check(tc.look._eye_mat != null, "%s #%d: the eye shader is on" % [nm, c])
 		if via_ui:
 			story.ui._end()

@@ -2,8 +2,7 @@
 ## "Menu" (every wing, both years), after Avatar.
 ##
 ## MENU2 (Steven, Nov 3 2026): tabs, left to right: MAIN (the current character, their name, money
-## and tickets; Edit opens the avatar editing inside MAIN: the NAME field, mall.player_name, and the
-## creator, scripts/avatar_creator.gd), INVENTORY (the TICKETS count and the carried items with HELD /
+## and tickets, and the Character row; CHAR-STRIP, Nov 8 2026, below), INVENTORY (the TICKETS count and the carried items with HELD /
 ## PUT AWAY and Drop) and CONTROLS (every action with its keyboard key, gamepad button and touch
 ## control, read from the InputMap; click a key or button to remap it: scripts/menu/controls.gd).
 ## There is no YEAR tab: the year changes only at a mall directory (scripts/timetravel_trip.gd).
@@ -11,7 +10,7 @@
 ##
 ## Open / close: Tab (remappable), a gamepad's Start, the Menu button; Esc and B close too. Tabs: Q / E,
 ## LB / RB (and the triggers LT / RT), a swipe, or a tap on the tab. The old ways in still work and
-## open their tab: I and the Bag button (INVENTORY), C and the Avatar button (MAIN, editing). The
+## open their tab: I and the Bag button (INVENTORY), C (MAIN). The
 ## player is frozen while it is open. Not in VR (a flat overlay isn't seen in the headset).
 ##
 ## Input: one catcher node sits last under the root, so it sees every event before anything else;
@@ -20,10 +19,14 @@
 ## layer re-send remapped keys (controls.gd filter()).
 ##
 ## No opening (ws/items, Steven Nov 4 2026: the placeholder intro is gone; the game just starts in the mall).
+##
+## CHAR-STRIP (Steven, Nov 8 2026; design/godot-avatar.md): the character editor is gone (no Edit, no
+## sliders, no colours). MAIN's Character row shows the 3-4 cast members of data/cast.json, each a small
+## portrait and its name; picking one saves it (Cast, "mall-player-2") and makes the world's body anew
+## through the one loader (scripts/avatar.gd choose()). The NAME is typed on MAIN (tap the NAME field).
 extends Node
 
 const Controls = preload("res://scripts/menu/controls.gd")
-const CREATOR := "res://scripts/avatar_creator.tscn"
 ## MENU2 (Steven, Nov 3): MAIN, INVENTORY, CONTROLS. A later "journal" (JOURNAL) goes last; not built.
 const TABS := ["main", "inventory", "controls"]
 const TAB_NAMES := {"main": "MAIN", "controls": "CONTROLS", "inventory": "INVENTORY", "owner": "OWNER"}
@@ -37,7 +40,6 @@ var player: Node3D
 var controls: Controls
 var is_open := false
 var tab := "main"
-var editing := false             # MAIN: the avatar editing (NAME + the creator) is shown
 var _trig := {}                  # trigger axis -> held (LT / RT change tabs once per pull)
 
 var _layer: CanvasLayer
@@ -52,12 +54,11 @@ var _content := Rect2()
 var _scroll: ScrollContainer = null
 var _msg: Label = null
 var _capture := {}               # {"id", "kind": "key" | "pad"} while waiting for a key / button
-var _creator: Node = null
 var _name_lbl: Label = null
 var _name_box: PanelContainer = null
 var _typing := false
 var _caret_t := 0.0
-var _touch := {}                 # touch index -> {"at": Vector2, "scroll": int, "moved": bool, "creator": bool}
+var _touch := {}                 # touch index -> {"at": Vector2, "scroll": int, "moved": bool}
 var _menu_btn: Button
 var _built_for := Vector2.ZERO
 var _input_kind := "kb"
@@ -96,13 +97,9 @@ func _mall():
 	return player.mall if player and "mall" in player else null
 
 # ------------------------------------------------------------------ open / close
-## Open the menu on tab t (one of TABS), or switch to it when open. "avatar" (the old tab's name,
-## still used by the creator's ways in) opens MAIN with the editing shown; "year" (gone) opens MAIN.
+## Open the menu on tab t (one of TABS), or switch to it when open. "avatar" and "year" (gone) open MAIN.
 func open_tab(t: String) -> void:
-	if t == "avatar":
-		editing = true
-		t = "main"
-	elif t == "year":
+	if t == "avatar" or t == "year":
 		t = "main"
 	if not (t in tabs()):
 		t = tab
@@ -127,35 +124,29 @@ func open_tab(t: String) -> void:
 		_stop_typing(true)
 		_capture = {}
 	tab = t
-	_sel = Vector2i(1, 0) if _editing() else Vector2i.ZERO   # editing: the creator's rows (0 = NAME)
+	_sel = Vector2i.ZERO
 	_build()
-
-## The avatar's "open the creator" (avatar.gd open_creator: C, the Avatar button, a first visit).
-func request_creator() -> void:
-	open_tab("avatar")
 
 ## The tabs this visitor gets: TABS, and for the owner OWNER last (design/godot-owner-mode.md).
 func tabs() -> Array:
 	return TABS + ["owner"] if is_owner() else TABS.duplicate()
 
-func _editing() -> bool:
-	return tab == "main" and editing
-
-## MAIN's Edit: the avatar editing, inside MAIN.
-func edit_avatar() -> void:
-	editing = true
-	_sel = Vector2i(1, 0)
-	_build()
+## The Character row picked cast member `id` (CHAR-STRIP): saved, and the world's body made anew
+## through the loader (scripts/avatar.gd choose()); MAIN is rebuilt so its portrait shows the same id.
+func choose_cast(id: String) -> void:
+	var av = player.avatar
+	if av and av.has_method("choose"):
+		av.choose(id)
+	else:
+		Cast.set_player_id(id)
+	if is_open and tab == "main":
+		_build()
 
 func close() -> void:
 	if not is_open:
 		return
-	editing = false
 	_stop_typing(true)
 	_capture = {}
-	if _creator != null and is_instance_valid(_creator):
-		_creator._done()      # closing keeps what was made (the creator's Done)
-	_drop_creator()
 	is_open = false
 	_layer.visible = false
 	if _froze:
@@ -232,14 +223,14 @@ const OFFSCREEN := "OffscreenHud"
 
 ## UI-OFFSCREEN: the old corner buttons go into a hidden holder beside them. They keep working
 ## (their code still sets .visible, lays out round them and reads them), but nothing draws them and
-## a tap can't reach them (every hit test checks is_visible_in_tree()). MAIN: Jump to, View, Edit
-## (Avatar); INVENTORY: the Bag.
+## a tap can't reach them (every hit test checks is_visible_in_tree()). MAIN: Jump to, View;
+## INVENTORY: the Bag.
 func corner_buttons() -> Array:
 	var out: Array = []
 	var it = player.interact
 	var av = player.avatar
 	for b in [player.jump_open_btn, player.year_btn, it.bag_btn if it and "bag_btn" in it else null,
-			av.view_btn if av and "view_btn" in av else null, av.make_btn if av and "make_btn" in av else null]:
+			av.view_btn if av and "view_btn" in av else null]:
 		if b != null and is_instance_valid(b):
 			out.append(b)
 	return out
@@ -351,7 +342,7 @@ func _build() -> void:
 	var narrow := vs.x < 600.0
 	var bar_h := 44.0
 	var pad := 8.0 if narrow else 12.0
-	# the background: the whole screen except the creator's own area (it draws its own)
+	# the background
 	var bg := ColorRect.new()
 	bg.color = BG
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -382,14 +373,11 @@ func _build() -> void:
 		foot.add_theme_color_override("font_color", Color(GOLD, 0.8))
 		_root.add_child(foot)
 	match tab:
-		"main": _build_avatar(narrow) if editing else _build_main(narrow)
+		"main": _build_main(narrow)
 		"controls": _build_controls(narrow)
 		"inventory": _build_inventory(narrow)
 		"owner": _build_owner(narrow)
-	if not _editing() and _creator != null:
-		_creator.visible = false
-	if not _editing():
-		_sel.x = clampi(_sel.x, 0, maxi(0, _nav.size() - 1))
+	_sel.x = clampi(_sel.x, 0, maxi(0, _nav.size() - 1))
 	_paint_sel()
 
 func _button(parent: Control, t: String, r: Rect2, fs: int, cb: Callable) -> Button:
@@ -469,39 +457,38 @@ func money_text() -> String:
 	return "$%.2f" % float(money().value)
 
 ## MAIN: the current character turning on the left (on top on a tall screen), and beside it their
-## name, money and tickets, and Edit (the avatar editing, inside MAIN).
+## name (tap to type), money and tickets, the Character row (CHAR-STRIP), View and Jump to.
 func _build_main(narrow: bool) -> void:
 	var tall := _content.size.y > _content.size.x
 	var pr: Rect2
 	var ir: Rect2
 	if tall:
-		var ph := clampf(_content.size.y * 0.5, 160.0, 420.0)
+		var ph := clampf(_content.size.y * 0.4, 150.0, 380.0)
 		pr = Rect2(_content.position, Vector2(_content.size.x, ph))
-		ir = Rect2(_content.position + Vector2(0, ph + 10.0), Vector2(_content.size.x, _content.size.y - ph - 10.0))
+		ir = Rect2(_content.position + Vector2(0, ph + 8.0), Vector2(_content.size.x, _content.size.y - ph - 8.0))
 	else:
-		var pw := clampf(minf(_content.size.x * 0.4, _content.size.y * 0.8), 140.0, 420.0)
+		var pw := clampf(minf(_content.size.x * 0.34, _content.size.y * 0.7), 140.0, 380.0)
 		pr = Rect2(_content.position, Vector2(pw, _content.size.y))
 		ir = Rect2(_content.position + Vector2(pw + 18.0, 0), Vector2(_content.size.x - pw - 18.0, _content.size.y))
 	var por := Portrait.new()
+	por.name = "MainPortrait"
 	por.position = pr.position
 	_root.add_child(por)
 	por.fit(pr.size)
 	var av = player.avatar
-	if av and "look" in av:
-		por.wear(av.look, int(player.year))
+	var cur: String = av.cast_id if av and "cast_id" in av and str(av.cast_id) != "" else Cast.player_id()
+	por.show_cast(cur)
 	var col := VBoxContainer.new()
 	col.position = ir.position
 	col.size = ir.size
 	col.alignment = BoxContainer.ALIGNMENT_CENTER if not tall else BoxContainer.ALIGNMENT_BEGIN
-	col.add_theme_constant_override("separation", 6 if narrow else 10)
+	col.add_theme_constant_override("separation", 4 if narrow else 8)
 	_root.add_child(col)
-	var m = _mall()
-	var nm: String = m.player_name if m else ""
 	# a short screen (a phone held sideways): each label beside its value, one line each
-	var compact := ir.size.y < 420.0
+	var compact := ir.size.y < 520.0
 	var fs_l := 13 if narrow or compact else 15
-	var fs_v := 22 if compact else (24 if narrow else 32)
-	for row in [["NAME", nm if nm != "" else "—"], ["MONEY", money_text()], ["TICKETS", str(tickets())]]:
+	var fs_v := 20 if compact else (24 if narrow else 30)
+	for row in [["NAME", ""], ["MONEY", money_text()], ["TICKETS", str(tickets())]]:
 		var holder: Control = col
 		if compact:
 			var hb := HBoxContainer.new()
@@ -510,14 +497,78 @@ func _build_main(narrow: bool) -> void:
 			holder = hb
 		var l := _label(holder, row[0], fs_l, Color(GOLD, 0.8))
 		l.custom_minimum_size = Vector2(80 if compact else 0, 16)
-		var v := _label(holder, row[1], fs_v, INK if row[0] == "NAME" else GOLD)
+		var vw := minf(ir.size.x - (92.0 if compact else 0.0), 420.0)
+		if row[0] == "NAME":
+			# the NAME field (mall.player_name): tap / Enter types it
+			_name_box = PanelContainer.new()
+			_name_box.name = "MainName"
+			_name_box.custom_minimum_size = Vector2(minf(vw, 320.0), fs_v + 14)
+			_name_box.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+			holder.add_child(_name_box)
+			_name_lbl = Label.new()
+			_name_lbl.add_theme_font_size_override("font_size", fs_v - 2)
+			_name_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			_name_lbl.clip_text = true
+			_name_box.add_child(_name_lbl)
+			_hits.append([_name_box, _name_tapped])
+			_nav.append([[_name_box, _name_tapped]])
+			_name_text()
+			continue
+		var v := _label(holder, row[1], fs_v, GOLD)
 		v.clip_text = true
-		v.custom_minimum_size = Vector2(minf(ir.size.x - (92.0 if compact else 0.0), 420.0), fs_v + 8)
+		v.custom_minimum_size = Vector2(vw, fs_v + 8)
 		v.name = "Main" + String(row[0]).capitalize()
+	# CHAR-STRIP: the Character row, one portrait + name per cast member (data/cast.json "player")
+	var ids := Cast.player_ids()
+	if not ids.is_empty():
+		var cl := _label(col, "CHARACTER", fs_l, Color(GOLD, 0.8))
+		cl.custom_minimum_size.y = 18
+		var crow := HBoxContainer.new()
+		crow.name = "MainCharacters"
+		crow.add_theme_constant_override("separation", 8)
+		col.add_child(crow)
+		var n := ids.size()
+		var tw := clampf((minf(ir.size.x, 560.0) - 8.0 * (n - 1)) / n, 64.0, 120.0)
+		var room_h := ir.size.y - (3 * (fs_v + 18) if not compact else 3 * (fs_v + 12)) - 18 - 50 - 30
+		var ph := clampf(minf(tw * 1.3, room_h - 24.0), 70.0, 160.0)
+		var nr: Array = []
+		for id in ids:
+			var cid := str(id)
+			var cb := _button(crow, "", Rect2(), 12, choose_cast.bind(cid))
+			cb.name = "Cast_" + cid
+			cb.tooltip_text = Cast.display_name(cid)
+			cb.custom_minimum_size = Vector2(tw, ph + 24)
+			cb.clip_text = false
+			var on := cid == cur
+			_paint(cb, Color(0.2, 0.16, 0.12), INK)
+			if on:
+				for st in ["normal", "hover", "pressed", "focus"]:
+					var sb: StyleBoxFlat = cb.get_theme_stylebox(st).duplicate()
+					sb.set_border_width_all(3)
+					sb.border_color = AMBER
+					cb.add_theme_stylebox_override(st, sb)
+			var th := Portrait.new()
+			th.spin = false
+			th.position = Vector2(4, 4)
+			cb.add_child(th)
+			th.fit(Vector2(tw - 8, ph - 4))
+			th.show_cast(cid)
+			var nl := Label.new()
+			nl.text = Cast.display_name(cid)
+			nl.clip_text = true
+			nl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			nl.add_theme_font_size_override("font_size", 11 if tw < 90 else 13)
+			nl.add_theme_color_override("font_color", AMBER if on else INK)
+			nl.position = Vector2(2, ph + 2)
+			nl.size = Vector2(tw - 4, 20)
+			nl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			cb.add_child(nl)
+			nr.append([cb, choose_cast.bind(cid)])
+		_nav.append(nr)
 	var gap := Control.new()
-	gap.custom_minimum_size.y = 2 if compact else (4 if narrow else 10)
+	gap.custom_minimum_size.y = 2 if compact else (4 if narrow else 8)
 	col.add_child(gap)
-	# UI-OFFSCREEN: Edit (was the Avatar corner button), View and Jump to (were corner buttons too)
+	# UI-OFFSCREEN: View and Jump to (were corner buttons)
 	var fl := HFlowContainer.new()
 	fl.add_theme_constant_override("h_separation", 8)
 	fl.add_theme_constant_override("v_separation", 8)
@@ -525,10 +576,6 @@ func _build_main(narrow: bool) -> void:
 	col.add_child(fl)
 	var fs_b := 16 if narrow or compact else 18
 	var bh := 42.0 if compact else 46.0
-	var eb := _button(fl, "Edit" + _hint("avatar", "C"), Rect2(), fs_b, edit_avatar)
-	eb.name = "MainEdit"
-	eb.custom_minimum_size = Vector2(110, bh)
-	_paint(eb, AMBER, Color(0.1, 0.07, 0.04))
 	var third: bool = player.avatar != null and bool(player.avatar.third)
 	var vb := _button(fl, "View: %s%s" % ["3rd person" if third else "1st person", _hint("view", "V")], Rect2(), fs_b, menu_view)
 	vb.name = "MainView"
@@ -539,93 +586,15 @@ func _build_main(narrow: bool) -> void:
 	jb.custom_minimum_size = Vector2(120, bh)
 	jb.disabled = not _jump_ok()
 	_paint(jb, Color(0.2, 0.16, 0.12), INK)
-	for b in [eb, vb, jb]:
+	for b in [vb, jb]:
 		b.clip_text = false       # grow to fit (the key hint, "3rd person")
-	var nr: Array = [[eb, edit_avatar], [vb, menu_view]]
+	var br: Array = [[vb, menu_view]]
 	if not jb.disabled:
-		nr.append([jb, menu_jump])
-	_nav.append(nr)
+		br.append([jb, menu_jump])
+	_nav.append(br)
 	var mm = _mall()
 	if mm and not mm.changed.is_connected(_inv_changed):
 		mm.changed.connect(_inv_changed)
-
-# ------------------------------------------------------------------ AVATAR (MAIN, editing)
-func _build_avatar(narrow: bool) -> void:
-	var name_h := 44.0
-	var row := HBoxContainer.new()
-	row.position = _content.position
-	row.size = Vector2(_content.size.x, name_h)
-	row.add_theme_constant_override("separation", 10)
-	_root.add_child(row)
-	var nl := _label(row, "NAME", 16, GOLD)
-	nl.custom_minimum_size = Vector2(60, name_h)
-	_name_box = PanelContainer.new()
-	_name_box.custom_minimum_size = Vector2(minf(_content.size.x - 80.0, 360.0), name_h - 4.0)
-	_name_box.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(_name_box)
-	_name_lbl = Label.new()
-	_name_lbl.add_theme_font_size_override("font_size", 18)
-	_name_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_name_lbl.clip_text = true
-	_name_box.add_child(_name_lbl)
-	_hits.append([_name_box, _name_tapped])
-	_nav.append([[_name_box, _name_tapped]])
-	_name_text()
-	# the creator below, in its own layer, inside the frame we give it
-	var fr := Rect2(_content.position + Vector2(0, name_h + 6.0), _content.size - Vector2(0, name_h + 6.0))
-	if _creator == null or not is_instance_valid(_creator):
-		_make_creator()
-	if _creator:
-		_creator.visible = true
-		_creator.frame = fr
-		_creator._built_for = Vector2.ZERO
-		_creator._layout()
-
-func _make_creator() -> void:
-	var av = player.avatar
-	if av == null:
-		return
-	# B2 (design/godot-character-editor.md): the character editor in its player mode replaces V's
-	# creator here when the pack ships the B1 bodies (same contract: frame, embedded, feed, sel, closed)
-	if AvatarChar.available():
-		_creator = load("res://scripts/chars/char_editor.gd").new()
-		_creator.setup("player", AvatarChar.preset_for(av.look, player.year))
-	else:
-		var ps: PackedScene = load(CREATOR)
-		_creator = ps.instantiate()
-	_creator.year = player.year
-	_creator.look = av.look.duplicate(true)
-	_creator.first_time = not bool(av.look.get("done", false))
-	_creator.embedded = true
-	_creator.closed.connect(_creator_closed)
-	if _creator.has_signal("saved"):      # CHAR-EDITOR: Save re-dresses the avatar, the editor stays
-		_creator.saved.connect(func(L): if av and is_instance_valid(av): av._preset_saved(L))
-	# avatar.gd owns what happens to the look (save, wear, first-time third person)
-	av.creator = _creator
-	add_child(_creator)
-	_creator.layer = 46     # over the menu (45), after its _ready (which sets 40); it covers only its frame
-
-func _creator_closed(look: Dictionary, how: String) -> void:
-	var av = player.avatar
-	var c := _creator
-	_creator = null
-	if av and av.creator == c:
-		av._creator_closed(look, how)      # saves and wears it; frees the creator
-	elif c and is_instance_valid(c):
-		c.queue_free()
-	# MENU2: Done / Skip goes back to MAIN (the character, as made)
-	editing = false
-	if is_open and tab == "main":
-		_sel = Vector2i.ZERO
-		_build()
-
-func _drop_creator() -> void:
-	if _creator != null and is_instance_valid(_creator):
-		var av = player.avatar
-		if av and av.creator == _creator:
-			av.creator = null
-		_creator.queue_free()
-	_creator = null
 
 func _name_text() -> void:
 	if _name_lbl == null:
@@ -647,7 +616,7 @@ func _name_text() -> void:
 var _name_buf := ""
 
 func _name_tapped() -> void:
-	# a phone: the browser's own text box, so its keyboard comes up (as the creator's "Type")
+	# a phone: the browser's own text box, so its keyboard comes up
 	if _input_kind == "touch" and OS.has_feature("web"):
 		var m = _mall()
 		var cur: String = m.player_name if m else ""
@@ -858,7 +827,7 @@ func _build_inventory(narrow: bool) -> void:
 		_nav.append(nav_row)
 
 func _inv_changed() -> void:
-	if is_open and (tab == "inventory" or (tab == "main" and not editing)):
+	if is_open and (tab == "inventory" or (tab == "main" and not _typing)):
 		(func():
 			var keep := _sel
 			_build()
@@ -977,13 +946,6 @@ func _menu_input(e: InputEvent) -> void:
 			_next_tab(-1); return
 		if _is(e, "tab_next"):
 			_next_tab(1); return
-		if _editing() and _creator and _sel.x != 0:
-			if e.keycode == KEY_UP and _creator.sel == 0:
-				_sel.x = 0; _paint_sel(); return
-			_creator.feed(e)
-			return
-		if _editing() and e.keycode == KEY_DOWN and _creator:
-			_sel.x = 1; _paint_sel(); return
 		match e.keycode:
 			KEY_UP, KEY_W: _move_sel(-1, 0)
 			KEY_DOWN, KEY_S: _move_sel(1, 0)
@@ -998,13 +960,6 @@ func _menu_input(e: InputEvent) -> void:
 			_next_tab(-1); return
 		if _is(e, "tab_next"):
 			_next_tab(1); return
-		if _editing() and _creator and _sel.x != 0:
-			if e.button_index == JOY_BUTTON_DPAD_UP and _creator.sel == 0:
-				_sel.x = 0; _paint_sel(); return
-			_creator.feed(e)
-			return
-		if _editing() and e.button_index == JOY_BUTTON_DPAD_DOWN and _creator:
-			_sel.x = 1; _paint_sel(); return
 		match e.button_index:
 			JOY_BUTTON_DPAD_UP: _move_sel(-1, 0)
 			JOY_BUTTON_DPAD_DOWN: _move_sel(1, 0)
@@ -1014,21 +969,11 @@ func _menu_input(e: InputEvent) -> void:
 		return
 	if e is InputEventMouseButton:
 		if e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
-			if _hit(e.position):
-				return
-			if _creator_has(e.position):
-				_creator_click(e)
-		elif not e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
-			if _creator:
-				_creator.feed(e)
-		elif e.pressed and tab == "avatar" and _creator and (e.button_index == MOUSE_BUTTON_WHEEL_UP or e.button_index == MOUSE_BUTTON_WHEEL_DOWN):
-			_creator.feed(e)      # B2: the editor's zoom / list scroll
+			_hit(e.position)
 		elif e.pressed and _scroll and (e.button_index == MOUSE_BUTTON_WHEEL_UP or e.button_index == MOUSE_BUTTON_WHEEL_DOWN):
 			_scroll.scroll_vertical += -48 if e.button_index == MOUSE_BUTTON_WHEEL_UP else 48
 		return
 	if e is InputEventMouseMotion:
-		if _creator and _editing():
-			_creator.feed(e)
 		var h: Control = null
 		for p in _hits:
 			var c: Control = p[0]
@@ -1045,9 +990,6 @@ func _menu_input(e: InputEvent) -> void:
 		var t = _touch.get(e.index)
 		if t == null:
 			return
-		if t.creator:
-			_creator.feed(e)
-			return
 		var d: Vector2 = e.position - t.at
 		if d.length() > 14.0:
 			t.moved = true
@@ -1056,17 +998,11 @@ func _menu_input(e: InputEvent) -> void:
 
 func _touch_input(e: InputEventScreenTouch) -> void:
 	if e.pressed:
-		var in_creator := _editing() and _creator != null and _creator_has(e.position) and not _over_menu(e.position)
-		_touch[e.index] = {"at": e.position, "scroll": _scroll.scroll_vertical if _scroll else 0, "moved": false, "creator": in_creator}
-		if in_creator:
-			_creator.feed(e)
+		_touch[e.index] = {"at": e.position, "scroll": _scroll.scroll_vertical if _scroll else 0, "moved": false}
 		return
 	var t = _touch.get(e.index)
 	_touch.erase(e.index)
 	if t == null:
-		return
-	if t.creator:
-		_creator.feed(e)
 		return
 	var d: Vector2 = e.position - t.at
 	# a sideways swipe changes the tab (left: next, right: previous)
@@ -1097,15 +1033,3 @@ func _hit(p: Vector2) -> bool:
 			(_hits[i][1] as Callable).call()
 			return true
 	return false
-
-func _creator_has(p: Vector2) -> bool:
-	return _creator != null and is_instance_valid(_creator) and _creator.visible and _creator.root and _creator.root.get_global_rect().has_point(p)
-
-## A mouse click in the creator: its buttons (it lists them for touches), else the preview drag.
-func _creator_click(e: InputEventMouseButton) -> void:
-	for i in range(_creator.hits.size() - 1, -1, -1):
-		var c: Control = _creator.hits[i][0]
-		if is_instance_valid(c) and c.is_visible_in_tree() and not (c is BaseButton and c.disabled) and c.get_global_rect().has_point(e.position):
-			(_creator.hits[i][1] as Callable).call()
-			return
-	_creator.feed(e)

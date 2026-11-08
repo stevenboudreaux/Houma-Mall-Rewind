@@ -45,24 +45,15 @@ func setup(p: Node3D, st: Node, e: Dictionary) -> bool:
 	position = Vector3(float(t[0]), 0, float(t[1]))
 	add_to_group("interactable")
 	add_to_group("talker")
-	# --- B2 (design/godot-character-editor.md): "look": "preset" = a B1 body dressed from
-	# data/characters/<preset>.json (baked); "legacy" (or none) = the Mixamo skin below, as before.
-	if str(e.get("look", "legacy")) == "preset" and AvatarChar.available() and _make_preset_body():
-		return true
-	# --- end B2
-	# the body: a skin from npc/skins.json (the pack must ship it)
-	var skin := {}
-	for s in NpcBody.manifest().get("skins", []):
-		if str(s.id) == str(e.get("skin", "")):
-			skin = s
-	if skin.is_empty() or not ResourceLoader.exists(str(skin.get("scn", ""))):
-		push_warning("attendant %s: skin %s not in this pack" % [e.get("id"), e.get("skin")])
+	# CHAR-STRIP (Nov 8 2026, design/godot-avatar.md): the body comes from the one loader. "look":
+	# "cast" + "cast": "<id>" = that cast member (data/cast.json); "look": "mixamo" = the Mixamo skin
+	# the entry names (attendants with no cast member yet; written in the data, never a runtime test).
+	# A missing file = no attendant (Cast logs the error), never a stand-in.
+	body = Cast.attendant_body(e)
+	if body == null:
 		return false
-	body = NpcBody.new()
 	body.top_level = true
 	add_child(body)
-	body.set_skin(skin)
-	body.walk_clip = str(e.get("walk", "walk_f" if str(e.get("sex", "m")) == "f" else "walk_m"))
 	body.play(str(e.get("idle", "idle")))
 	var c := area.get_center()
 	body.global_position = Vector3(c.x, 0, c.y)
@@ -141,44 +132,3 @@ func _process(dt: float) -> void:
 	if _wait <= 0.0 and not near:
 		_wait = _rng.randf_range(WANDER_S.x, WANDER_S.y)
 		_goal = Vector3(_rng.randf_range(area.position.x, area.end.x), 0, _rng.randf_range(area.position.y, area.end.y))
-
-# ------------------------------------------------------------------ B2: a preset body
-## The preset id this attendant wears ("" for a Mixamo skin).
-func preset_id() -> String:
-	return str(entry.get("preset", "")) if str(entry.get("look", "legacy")) == "preset" else ""
-
-## Build (or rebuild) the body from the preset: this browser's saved edit, else the repo file.
-## p: a preset to wear instead (the owner's editor, "view in place": live, not baked).
-func _make_preset_body(p := {}, live := false) -> bool:
-	if p.is_empty():
-		p = CharPreset.get_preset(str(entry.get("preset", "")))
-	if p.is_empty():
-		push_warning("attendant %s: no preset %s" % [entry.get("id"), entry.get("preset")])
-		return false
-	var at := Vector3(area.get_center().x, 0, area.get_center().y)
-	var yaw_was := 0.0
-	if body:
-		at = body.global_position
-		yaw_was = body.yaw
-		body.queue_free()
-	body = CharPreset.body_for(p, not live)
-	body.top_level = true
-	add_child(body)
-	body.walk_clip = "walk_f" if str(p.body) == "female" else "walk_m"
-	body.play(str(entry.get("idle", "idle")))
-	body.global_position = at
-	body.face(face_dir if yaw_was == 0.0 else Vector3(sin(yaw_was), 0, cos(yaw_was)))
-	_goal = body.global_position
-	_rng.randomize()
-	_wait = _rng.randf_range(WANDER_S.x, WANDER_S.y)
-	return true
-
-## The character pack was mounted after this attendant was made (the web: scripts/chars/char_pack.gd):
-## swap the Mixamo fallback for the preset body.
-func chars_ready() -> void:
-	if str(entry.get("look", "legacy")) == "preset" and not (body is CharBody):
-		_make_preset_body()
-
-## The owner's editor saved (or previews) a new look: wear it now.
-func wear_preset(p: Dictionary, live := false) -> void:
-	_make_preset_body(p, live)

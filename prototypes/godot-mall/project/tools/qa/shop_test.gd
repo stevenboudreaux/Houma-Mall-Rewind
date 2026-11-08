@@ -65,13 +65,10 @@ func _test_data(db) -> void:
 		var a: Dictionary = att.get(str(s.attendant), {})
 		_check(not a.is_empty() and str(a.get("shop", "")) == id, "%s: its attendant names it" % id)
 		_check(str(a.get("name", "")) == "PLACEHOLDER", "%s: the attendant is named PLACEHOLDER" % id)
-		_check(str(a.get("look", "")) == "preset" and FileAccess.file_exists("res://data/characters/%s.json" % a.get("preset", "?")),
-			"%s: the attendant wears a preset (%s)" % [id, a.get("preset", "?")])
+		_check(((str(a.get("look", "")) == "cast" and Cast.has(str(a.get("cast", "")))) or (str(a.get("look", "")) == "mixamo" and ResourceLoader.exists("res://npc/skins/%s.scn" % a.get("skin", "?")))),
+			"%s: the attendant's body comes through the loader (CHAR-STRIP: look %s, %s)" % [id, a.get("look", "?"), a.get("cast", a.get("skin", "?"))])
 		_check(str(a.get("store", "")) == want_store[id] and int(a.get("wing", 0)) == want_wing[id] and _years(a) == [1995],
 			"%s: %s, wing %d, 1995 only" % [id, want_store[id], want_wing[id]])
-		var pr = _json("res://data/characters/%s.json" % a.get("preset", "?"))
-		_check(pr is Dictionary and str(pr.get("name", "")) == "PLACEHOLDER" and (pr.outfit.has("full") or (pr.outfit.has("bottom") and (pr.outfit.has("top") or pr.outfit.has("outer")))),
-			"%s: the preset is PLACEHOLDER and clothed" % id)
 		_check(_years(s) == [1995] and str(s.get("greeting", "")) != "", "%s: 1995, a greeting" % id)
 		var st := Shop.read_stock(s, db, 1995)
 		_check(st.size() == s.items.size() and st.size() > 0, "%s: every entry is an item of 1995 (%d of %d)" % [id, st.size(), s.items.size()])

@@ -290,11 +290,6 @@ func tools() -> Array:
 	var sw = scn.get_node_or_null("ShirtWords") if scn else null
 	if sw and sw.get("is_owner") and sw.has_method("_open_dialog"):
 		out.append(["Shirt words (Ch02's sweatshirt)", "", [["Edit", _t_close_first.bind(sw._open_dialog), true]]])
-	var co = p.get_node_or_null("CharOwner")
-	if co and co.has_method("open"):
-		var near: bool = not co.nearest().is_empty()
-		out.append(["Character editor (K, by a shopper in a preset)", "a shopper is close" if near else "nobody close",
-			[["Open", _t_close_first.bind(co.open), near]]])
 	if p.buttons.size() > 2:
 		out.append(["Reflections", "on" if p.buttons[0].button_pressed else "off",
 			[["Turn " + ("off" if p.buttons[0].button_pressed else "on"), _t_toggle.bind(0), true]]])

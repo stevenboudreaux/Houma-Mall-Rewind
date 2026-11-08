@@ -1,14 +1,18 @@
-## MENU2 (design/godot-menu.md "MAIN"): the current character, turning slowly, for the menu's MAIN
-## tab. The same lit stage as the creator's preview (scripts/avatar_creator.gd _make_preview), in a
-## SubViewport shown by a SubViewportContainer (this node). wear(look, year) dresses it.
+## MENU2 (design/godot-menu.md "MAIN"): a cast member, turning slowly, on a small lit stage, for the
+## menu's MAIN tab (the player's character) and its Character row (one per cast member), in a
+## SubViewport shown by a SubViewportContainer (this node).
+## CHAR-STRIP (Nov 8 2026, design/godot-avatar.md): show_cast(id) makes the body through the one loader,
+## Cast.body(id) (scripts/cast.gd), the same call the world's body uses; this node never picks a body
+## class of its own. A missing cast file leaves the stage empty (Cast logs the error).
 extends SubViewportContainer
 
-const AvatarBody = preload("res://scripts/avatar_body.gd")
-
 var vp: SubViewport
-var body: NpcBody          # CHAR-EDITOR: an AvatarChar (the player's preset) when the pack ships the bodies, else V's AvatarBody
+var body: NpcBody
+var cast_id := ""
 var cam: Camera3D
 var yaw := 0.4
+var spin := true           # false: stands facing the camera (the chooser's thumbnails)
+var _w: Node3D
 
 func _init() -> void:
 	stretch = true
@@ -20,6 +24,7 @@ func _init() -> void:
 	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	add_child(vp)
 	var w := Node3D.new()
+	_w = w
 	vp.add_child(w)
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
@@ -52,24 +57,24 @@ func _init() -> void:
 	cam.fov = 30.0
 	w.add_child(cam)
 	cam.current = true
-	# CHAR-EDITOR (Nov 4, the "default bald avatar" bug): MAIN showed V's body in V's look (Ch01, bald,
-	# by default) whatever the player had made in the character editor. Now it is the same body the
-	# mall shows: the player's preset on a B1 body when this pack ships them.
-	body = AvatarChar.new() if AvatarChar.available() else AvatarBody.new()
-	body.name = "PortraitBody"
-	w.add_child(body)
 
-func wear(look: Dictionary, year: int) -> void:
-	if body is AvatarChar:
-		(body as AvatarChar).wear_look(look, year)
-	else:
-		(body as AvatarBody).wear(look, year)
-	body.clip = ""
-	body.play("idle", 0.0, false)
+## Stand cast member `id` on the stage (the loader's body, idle).
+func show_cast(id: String) -> void:
+	if body != null and is_instance_valid(body):
+		body.get_parent().remove_child(body)
+		body.queue_free()
+	body = null
+	cast_id = id
+	body = Cast.body(id)
+	if body == null:
+		return
+	body.name = "PortraitBody"
+	_w.add_child(body)
+	body.rotation.y = yaw if spin else 0.0
 	_frame()
 
 func _frame() -> void:
-	var h := float(body.info.get("height_m", 1.7))
+	var h := float(Cast.entry(cast_id).get("height_m", 1.7)) if cast_id != "" else 1.7
 	var asp := float(vp.size.x) / maxf(float(vp.size.y), 1.0)
 	var need := (h * 1.12) * 0.5 / tan(deg_to_rad(cam.fov * 0.5))
 	if asp < 0.55: need /= asp / 0.55
@@ -81,6 +86,7 @@ func fit(sz: Vector2) -> void:
 	_frame()
 
 func _process(dt: float) -> void:
-	yaw += dt * 0.5
+	if spin:
+		yaw += dt * 0.5
 	if body:
-		body.rotation.y = yaw
+		body.rotation.y = yaw if spin else 0.0

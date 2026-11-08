@@ -370,20 +370,11 @@ func _pick(list: Array, fallback := "idle") -> String:
 
 ## A body for a skin, dressed with its sex's walk and idle and a gesture hook.
 func _make_body(e: Dictionary, s: Shopper = null) -> NpcBody:
-	# B2 (design/godot-character-editor.md): npcs.json "presets" {skin id: preset id} swaps a
-	# shopper's Mixamo skin for a B1 body dressed from data/characters/<preset>.json (baked).
-	# Empty (today) = every shopper keeps its Mixamo skin.
-	var b: NpcBody = null
-	var pid := str(cfg.get("presets", {}).get(str(e.id), ""))
-	var pre := CharPreset.get_preset(pid) if pid != "" else {}
-	if not pre.is_empty():
-		b = CharPreset.body_for(pre, true)
-		b.add_to_group("char_preset_npc")     # the owner's editor finds it (scripts/chars/char_owner.gd)
-	else:
-		b = NpcBody.new()
-		b.set_skin(e)
+	# the crowd stays Mixamo (CHAR-STRIP, Nov 8 2026: B2's per-shopper presets went with the editor)
+	var b := NpcBody.new()
+	b.set_skin(e)
 	add_child(b)
-	var sx := _sex(str(e.id)) if pre.is_empty() else ("f" if str(pre.body) == "female" else "m")
+	var sx := _sex(str(e.id))
 	b.walk_clip = _pick(cfg.walks.get(sx, ["walk_m"]), "walk_m")
 	b.play(_pick(cfg.idles.get(sx, ["idle"])))
 	if s:

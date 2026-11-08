@@ -50,6 +50,6 @@ func _process(d):
 		_who = Attendant.new()
 		root.add_child(_who)
 		var ok = _who.setup(null, null, _att)
-		printerr("SHOP PANEL: attendant %s %s, in tree %s, preset bodies %s, body %s at %s" % [_att.id, "made" if ok else "FAILED",
-			_who.is_inside_tree(), AvatarChar.available(), _who.body, _who.body.global_position if _who.body else Vector3.ZERO])
+		printerr("SHOP PANEL: attendant %s %s, in tree %s, look %s, body %s at %s" % [_att.id, "made" if ok else "FAILED",
+			_who.is_inside_tree(), _att.get("look", "?"), _who.body, _who.body.global_position if _who.body else Vector3.ZERO])
 	return super._process(d)

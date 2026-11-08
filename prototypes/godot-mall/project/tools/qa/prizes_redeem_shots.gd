@@ -26,10 +26,8 @@ func _initialize() -> void:
 	DirAccess.make_dir_recursive_absolute(out.get_base_dir())
 	Engine.set_meta("mall_state_1995", "")
 	Engine.set_meta("mall_state_2026", "")
-	var L: Dictionary = load("res://scripts/avatar_look.gd").default_look()
-	L.done = true
-	L.view = "first"
-	Engine.set_meta("mall_avatar", JSON.stringify(L))
+	# CHAR-STRIP: the player's record (scripts/cast.gd), first person, the default cast member
+	Cast.save_player({"cast": str(Cast.roster().default), "view": "first"})
 	# standing at the first case's front, facing it (+x in both years' wing 2)
 	var at := Vector3(-113.05, 0, 62.4) if year == 2026 else Vector3(-104.8, 0, 64.2)
 	Engine.set_meta("mall_xfer", {"x": at.x, "z": at.z, "yaw": deg_to_rad(-90.0), "pitch": deg_to_rad(-20.0)})

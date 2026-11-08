@@ -1,7 +1,8 @@
 ## Workstream M (design/godot-menu.md): the menu, a first start straight into the mall (ws/items, Nov 4: no
 ## opening), the remap layer, HELD / PUT AWAY, the
 ## time-travel transition and 2026's shoppers, natively and unbaked (no lightmap).
-## MENU2 (Nov 3): tabs MAIN / INVENTORY / CONTROLS, Edit inside MAIN, no Y / YEAR, and the trip from
+## MENU2 (Nov 3): tabs MAIN / INVENTORY / CONTROLS, no Y / YEAR (CHAR-STRIP, Nov 8: MAIN's Character row,
+## no editor), and the trip from
 ## a mall directory's year toggle (scripts/timetravel_trip.gd) to its twin in 2026 (wing 2's kiosk
 ## at the JCPenney court, or wing 1's on H2).
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 \
@@ -9,7 +10,6 @@
 ## Prints MENU TEST OK (n checks) or the failures; writes <out>-<name>.png.
 extends SceneTree
 
-const Look = preload("res://scripts/avatar_look.gd")
 var out := "/tmp/m"
 var wing := 2
 var scn: Node
@@ -38,9 +38,8 @@ func _initialize() -> void:
 	Engine.set_meta("mall_player_name", "")
 	Engine.set_meta("mall_controls", "")
 	Engine.set_meta("menu_opening", true)       # a first start (ws/items: ignored now; no opening)
-	var L := Look.default_look()
-	L.done = true; L.body = "Ch21"; L.view = "first"
-	Engine.set_meta("mall_avatar", JSON.stringify(L))
+	# CHAR-STRIP: the player's record (scripts/cast.gd), first person, the default cast member
+	Cast.save_player({"cast": str(Cast.roster().default), "view": "first"})
 	if only == "2026":
 		Engine.set_meta("menu_opening", false)
 		Engine.set_meta("mall_player_name", "TESTER")
@@ -132,61 +131,66 @@ func _plan() -> void:
 		_check(menu != null, "player has its Menu node")
 		_check(not ("opening" in menu) and not menu.is_open and not player.frozen, "a first start is in the mall: no opening, no menu, the player free")
 		_shot("first-start-1280x720"), 0.3)
-	_do(func(): menu.open_tab("avatar"); menu._sel = Vector2i.ZERO; menu._paint_sel(); menu.start_typing(), 0.6)   # what START did
+	_do(func(): menu.open_tab("main"); menu._sel = Vector2i.ZERO; menu._paint_sel(); menu._nav[0][0][1].call(), 0.6)   # MAIN's NAME field
 	_do(func():
-		_check(menu.is_open and menu.tab == "main" and menu.editing, "MAIN's Edit opens the avatar editing")
-		_check(menu._typing, "the NAME field is focused")
-		_check(menu._creator != null and menu._creator.visible, "the creator is inside the tab"), 0.1)
+		_check(menu.is_open and menu.tab == "main", "the menu opens on MAIN")
+		_check(menu._typing, "the NAME field (MAIN, CHAR-STRIP) is focused"), 0.1)
 	_do(func():
 		for ch in "TESTER":
 			_key(OS.find_keycode_from_string(ch), true, ch.unicode_at(0)); _key(OS.find_keycode_from_string(ch), false)
 		, 0.3)
-	_do(func(): _shot("main-edit-typing-1280x720"); _key(KEY_ENTER); _key(KEY_ENTER, false), 0.3)
+	_do(func(): _shot("main-name-typing-1280x720"); _key(KEY_ENTER); _key(KEY_ENTER, false), 0.3)
 	_do(func():
 		_check(player.mall.player_name == "TESTER", "the name is mall.player_name (%s)" % player.mall.player_name)
 		_check(str(Engine.get_meta("mall_player_name", "")) == "TESTER", "the name is saved"), 0.1)
-	# ---- MAIN: the character, money, tickets, Edit inside MAIN
+	# ---- MAIN: the character, money, tickets, the Character row (CHAR-STRIP)
 	_do(func():
 		menu.close()
 		player.mall.tickets = 140; player.mall.save()
 		menu.open_tab("main"), 0.6)
 	_do(func():
 		_check(menu.TABS == ["main", "inventory", "controls"], "tabs: MAIN, INVENTORY, CONTROLS (%s)" % [menu.TABS])
-		_check(menu.is_open and menu.tab == "main" and not menu.editing, "MAIN shows the character (not editing)")
-		var por := _find(menu._root, "SubViewportContainer")
-		_check(por != null, "MAIN has the character's portrait")
-		var mn: Label = menu._root.find_child("MainName", true, false)
+		_check(menu.is_open and menu.tab == "main" and not ("editing" in menu), "MAIN shows the character (no editor)")
+		var por = menu._root.find_child("MainPortrait", true, false)
+		_check(por != null and str(por.cast_id) == Cast.player_id(), "MAIN has the character's portrait, the saved cast id (%s)" % (por.cast_id if por else "-"))
+		var mn: Label = menu._name_lbl
 		var mm: Label = menu._root.find_child("MainMoney", true, false)
 		var mt: Label = menu._root.find_child("MainTickets", true, false)
 		_check(mn != null and mn.text == "TESTER", "MAIN: the name (%s)" % (mn.text if mn else "-"))
 		var mo: Dictionary = menu.money()
 		_check(mm != null and mm.text == "$%.2f" % float(mo.value), "MAIN: the money, mall.money%s (%s)" % [" (stub: ECON not merged)" if mo.stub else "", mm.text if mm else "-"])
 		_check(mt != null and mt.text == "140", "MAIN: the tickets, mall.tickets (%s)" % (mt.text if mt else "-"))
+		var row = menu._root.find_child("MainCharacters", true, false)
+		_check(row != null and row.get_child_count() == Cast.player_ids().size() and row.get_child_count() >= 3,
+			"MAIN's Character row: one portrait per cast member (%d)" % (row.get_child_count() if row else 0))
+		_check(menu._root.find_child("MainEdit", true, false) == null, "no Edit button (the editor is gone)")
 		_shot("main-1280x720")
-		menu._nav[0][0][1].call(), 0.6)      # Edit
+		# pick the second cast member by the pad / keys row
+		var ids := Cast.player_ids()
+		for r in menu._nav:
+			for it in r:
+				if str((it[0] as Control).name) == "Cast_" + str(ids[1]):
+					(it[1] as Callable).call()
+		pass, 0.6)
 	_do(func():
-		_check(menu.tab == "main" and menu.editing and menu._creator != null and menu._creator.visible, "Edit opens the avatar editing inside MAIN")
-		_check(menu._name_box != null, "the NAME field is in MAIN's editing")
-		_shot("main-edit-1280x720")
-		menu._creator._done(), 0.6)
-	_do(func():
-		_check(menu.is_open and menu.tab == "main" and not menu.editing, "Done goes back to MAIN, the menu still open"); menu.close(), 0.2)
+		var ids := Cast.player_ids()
+		var por = menu._root.find_child("MainPortrait", true, false)
+		_check(Cast.player_id() == str(ids[1]), "picking a cast member saves it (%s)" % Cast.player_id())
+		_check(player.avatar.cast_id == str(ids[1]) and player.avatar.body != null and player.avatar.body.get_meta("cast", "") == str(ids[1]), "the world's body is the picked member")
+		_check(por != null and str(por.cast_id) == str(ids[1]), "MAIN's portrait is the picked member")
+		_check(get_nodes_in_group("mall_player_body").size() == 1, "exactly one player body after the pick")
+		_shot("main-picked-1280x720")
+		menu.choose_cast(str(ids[0])), 0.6)
+	_do(func(): _check(Cast.player_id() == str(Cast.player_ids()[0]), "picked back"); menu.close(), 0.2)
 	# ---- every tab at three sizes
 	for s in sizes:
 		var sz: Vector2i = s
-		for t in ["main", "edit", "inventory", "controls"]:
+		for t in ["main", "inventory", "controls"]:
 			var tt: String = t
-			var want := "main" if tt == "edit" else tt
-			_do(func(): _size(sz); menu.close(); menu.open_tab("avatar" if tt == "edit" else tt), 0.7)
+			_do(func(): _size(sz); menu.close(); menu.open_tab(tt), 0.7)
 			_do(func():
-				_check(menu.is_open and menu.tab == want and menu.editing == (tt == "edit"), "tab %s open at %dx%d" % [tt, sz.x, sz.y])
+				_check(menu.is_open and menu.tab == tt, "tab %s open at %dx%d" % [tt, sz.x, sz.y])
 				_check(_on_screen(sz), "every %s control on screen at %dx%d" % [tt, sz.x, sz.y])
-				if tt == "edit" and menu._creator:
-					var over := false
-					for h in menu._creator.hits:
-						var r: Rect2 = (h[0] as Control).get_global_rect()
-						if r.end.x > sz.x + 1 or r.end.y > sz.y + 1: over = true
-					_check(not over, "the creator fits the tab at %dx%d" % [sz.x, sz.y])
 				_shot("%s-%dx%d" % [tt, sz.x, sz.y]), 0.1)
 	_do(func(): _size(Vector2i(1280, 720)); menu.close(); menu.open_tab("main"), 0.5)
 	# ---- tab switching keys, buttons and triggers
@@ -204,7 +208,7 @@ func _plan() -> void:
 	_do(func(): _check(not menu.is_open, "B closes the menu"); _key(KEY_I); _key(KEY_I, false), 0.4)
 	_do(func(): _check(menu.is_open and menu.tab == "inventory", "I opens the INVENTORY tab"); menu.close(), 0.2)
 	_do(func(): _key(KEY_C); _key(KEY_C, false), 0.4)
-	_do(func(): _check(menu.is_open and menu.tab == "main" and menu.editing, "C opens MAIN's avatar editing"); menu.close(), 0.2)
+	_do(func(): _check(menu.is_open and menu.tab == "main", "C opens MAIN (the Character row)"); menu.close(), 0.2)
 	_do(func(): _key(KEY_Y); _key(KEY_Y, false), 0.4)
 	_do(func():
 		_check(not menu.is_open and player.year == 1995 and root.get_node_or_null("TimeTravelTrip") == null, "Y does nothing (no year switch on the player's keys)")
