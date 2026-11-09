@@ -72,3 +72,14 @@ Pictures (all unbaked):
 - `wsSTRIP-menu-character-row-web-unbaked.jpg`: MAIN with the Character row, desktop 1280×720 and phone 390×844.
 - `wsSTRIP-world-portrait-match-web-unbaked.jpg`: the world body after the pick and MAIN's portrait, the same
   member (placeholder_2). The selected thumbnail is brighter: the keyboard selection's tint.
+
+## The other suites on ws/char-strip (Nov 8-9 2026, unbaked)
+Native: shop_test 200, shop_interiors_test 179, talk_rig_test 224, dialogue_walk 67, items_test 49,
+cucos_test 89, int_d49_test OK, owner_test 45 (wing 6), menu_test 80 (wing 2), interact_test 8 (wing 1),
+avatar_test 23 (wing 2), ui_offscreen_test 36 (wing 6): all OK.
+Web (same export, one browser at a time): SHOPS WEB OK (attendants through Cast), cucos_webtest all 21 ok
+(0 console errors in 1995, 2026 and phone), UI OFFSCREEN WEB OK (25), MENU WEB OK (8).
+Updated for the strip (they drove the editor or wrote the old records): menu_test, ui_offscreen_test,
+owner_test, avatar_test, items_shots, shop_test, shop_interiors_test, talk_rig_test, the shots scripts,
+menu_webtest, ui_offscreen_webtest, cucos_webtest, shared_webtest (not run: no change in its subject but the
+removed character-pack checks), avatar_webtest (rewritten as the web counting test).
