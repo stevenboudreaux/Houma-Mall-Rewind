@@ -101,7 +101,8 @@ const DOOR_NEAR := 2.8
 const DOOR_NAMES := {"s39": "the main entrance", "s43": "the Sears hall entrance", "s41": "the cinema-side exit", "s55": "the south entrance"}
 ## Workstream E (Nov 1): the anchors' own outside doors (tools/make_exterior.py); "Sears" reads
 ## "Lynn's" in 2026 (_door_name).
-const DOOR_NAMES_E := {"s1x": "the Sears side exit", "s1e": "the Sears customer entrance", "s2e": "Dillard's east entrance", "s2s": "Dillard's south entrance"}
+const DOOR_NAMES_E := {"s1x": "the Sears side exit", "s1e": "the Sears customer entrance", "s2e": "Dillard's east entrance", "s2s": "Dillard's south entrance",
+	"s1n": "the Sears north entrance"}   # EXT-LAYOUT (Nov 8 2026): the north-face customer entrance (design/godot-sears.md)
 
 func _door_name(d) -> String:
 	var k := str(d.get("store", ""))

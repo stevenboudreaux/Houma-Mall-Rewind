@@ -45,13 +45,18 @@ FILLS += [
     # #1 Sears / Lynn's: 115 x 50 m, flush with the east facade, its west face ~10 m east of the
     # cinema-side exit (4486 f002-010, 4406 f031-035, site plan 76,335 SF). Workstream E's walkable
     # Sears (wing 4, to z -146) now sits inside its own shell.
-    dict(rect=[-71, -146, 44, -96], owner="s1", name="SEARS"),
-    # the white painted-brick return north of the cinema-side exit's glass, where the 3-loop bike
-    # rack stands (4416 f009-011, 4486 f002-003)
-    dict(rect=[-80, -99, -71, -96], owner="", name="SEARS RETURN"),
-    # #2 the cinema box: one straight 45 m salmon-brick wall south from the exit, then the south face
-    # (4486 f014-037, "overall elevation about 60 m")
-    dict(rect=[-80, -86, -52, -41], owner="s40", name="SOUTHLAND CINEMA"),
+    # EXT-LAYOUT (Nov 8 2026): the west face is at x -84, 6 m west of the cinema-wing exit's glass
+    # (x -78), not 7 m east of it: the exit stands at the end of a 10 m wide channel between Lynn's SW
+    # corner (white, left) and the cinema's north face (salmon, right) (4486 f014, f001, 4416 f002; the
+    # site plan: the channel's north side ~6 m, its south side ~22 m)
+    dict(rect=[-84, -146, 44, -96], owner="s1", name="SEARS"),
+    # the low white painted-brick block at Lynn's SW corner, the bike rack on its west face, a door on
+    # its north face toward the dock (4416 f009-011, 4486 f002-003, f006-008)
+    dict(rect=[-88, -100, -84, -96], owner="", name="SEARS RETURN"),
+    # #2 the cinema box. EXT-LAYOUT (Nov 8 2026): its west face is x -98, 20 m west of the exit's glass
+    # (4486 f014, f016: the NW corner with a door on the north face; f001: the north face from the exit;
+    # site plan ~22 m), then 44 m south to its south face (4486 f016-f037)
+    dict(rect=[-98, -86, -52, -42], owner="s40", name="SOUTHLAND CINEMA"),
     # #5 JCPenney: 60 x 120 m to z -14 (docks 1-2 and the Package Pick-up on the north face, 4486
     # f103-116, 4487), the tall rear block on the west (4487 f011-054), the south face at z 106
     dict(rect=[-214, -14, -154, 32], owner="s6", name="JCPENNEY"),
@@ -84,7 +89,10 @@ BAY = [38, -50, 44, -42]
 # directory map show only parking and the soccer fields. Unitech is NORTH of Lynn's (old Sears), by
 # Armour Dr (site plan "UNITECH 15,600 SF"; directory map "UNITECH" north-west of Lynn's; 4486 f010:
 # "that building back there", looking north from the cinema-side exit).
-STANDALONE = [dict(name="UNITECH", rect=[-85.0, -236.0, -57.0, -207.0])]   # EXT-B #3: by Armour Dr
+# EXT-LAYOUT (Nov 8 2026, Steven): Unitech at the site plan's footprint, x -122..-82 (its east edge about in line
+# with Lynn's west face) by Armour Dr, 15,600 SF (40 x 36.2 m = 1,448 m2). "Old Sears Hardware" per Steven's
+# annotated plan; unsigned in both years until the mall historian settles what it read in the 1990s.
+STANDALONE = [dict(name="UNITECH", rect=[-122.0, -232.2, -82.0, -196.0])]   # was EXT-B #3: -85, -236, -57, -207
 
 # EXT-B: map blocks left out of the building altogether (n2 would join JCPenney's rear block)
 DROP = ["n2"]
@@ -106,7 +114,14 @@ DOOR_MOVES = {
     # Dillard's gallery entrance on the east face (x 44) and the portal on the south face (z 138)
     "s2e": dict(a=[44.0, 95.0], b=[44.0, 101.4], depth=0.3),
     "s2s": dict(a=[-17.4, 138.0], b=[-12.6, 138.0], depth=0.3),
+    # EXT-LAYOUT (Nov 8 2026): the cinema-wing exit's glass stands 2 m back under the fascia's soffit
+    # (4416 f002-f005), x -78; the out spot stays at x -81.5, just past the fascia
+    "s41": dict(a=[-78.0, -96.0], b=[-78.0, -86.0], depth=1.3),
 }
+
+# EXT-LAYOUT (Nov 8 2026): building tiles the walk grid opens again (x0, z0, x1, z1): the 2 m recess
+# under the cinema-wing exit's fascia, so the player can walk up to the glass (4416 f002)
+WALK_OPEN = [[-80.0, -96.0, -78.0, -86.0]]
 
 # Where Workstream E (the walkable old Sears) can put Sears's own exterior doors: the east face, by
 # the Lynn's script sign and black awning (4406 f031-035) and the side exit with Big Lots across the
@@ -116,3 +131,15 @@ DOOR_MOVES = {
 # and DOOR_MOVES); the side exit is on the north face (4413 f004: the afternoon sun shines in), not
 # the east one. Nothing left here.
 DOOR_SPOTS = []
+
+# EXT-LAYOUT (Nov 8 2026; Steven's annotated site plan "Sears Entrance"): a customer entrance on Lynn's /
+# Sears's north face toward the Armour Dr lot, kept beside the east-face doors (s1e) and the shutter side
+# exit (s1x). On the plan the entrance's bump sits at x -39..-12 on the north face (mapped between Lynn's
+# corners, -84 and 44): centred x -24, an 8 m storefront. Inside it lands at the north end of the walkable
+# Sears's main aisle at first; since Steven's Nov 8 follow-up it lands in its own vestibule inside the north
+# wall (tools/stores/sears/store.gd north_entry), facing south into the store.
+# Appended after the other doors so door_view.gd's atlas rows stay as they are.
+NEW_DOORS = [
+    dict(store="s1n", kind="exit", a=[-28.0, -146.0], b=[-20.0, -146.0], n=[0, 1], depth=1.3, wing=4,
+         inside=[-24.0, -143.5]),
+]

@@ -42,7 +42,8 @@ const CORBEL = 0.24
 # The partitioned rooms (Steven assigns the 1995 departments; sizes in design/godot-sears.md).
 # [name, x0, z0, x1, z1]
 const ROOMS = [
-	["R1 northwest (navy back corner)", -40.0, -146.0, -17.5, -128.0],
+	# EXT-LAYOUT (Nov 8 2026): R1 shrunk from x -17.5 to -28 for the north entrance's vestibule and its lobby
+	["R1 northwest (navy back corner)", -40.0, -146.0, -28.0, -128.0],
 	["R2 west", -40.0, -128.0, -26.5, -110.0],
 	["R3 northeast (mattress gallery, pipe columns)", 9.5, -146.0, 30.0, -128.0],
 	["R4 mint-door room", -17.5, -146.0, -8.5, -137.0],
@@ -52,8 +53,10 @@ const ROOMS = [
 # [[from, to] along the run]. Their orientation follows the column lines, as Steven said they
 # have "always been in the same orientation"; the exact openings are a guess.
 const PARTS = [
-	[-40.0, -128.0, -17.5, -128.0, [[-31.0, -24.0]]],       # R1 / R2 line (z = -128)
-	[-17.5, -146.0, -17.5, -128.0, [[-136.0, -131.0]]],     # R1 east side (x = -17.5)
+	[-40.0, -128.0, -28.0, -128.0, [[-35.5, -30.5]]],       # R1 / R2 line (z = -128); EXT-LAYOUT: to x -28
+	[-28.0, -146.0, -28.0, -128.0, [[-136.0, -131.0]]],     # R1 east side; EXT-LAYOUT: moved from x -17.5
+	[-17.5, -146.0, -17.5, -137.0, []],                      # R4 west side (was R1's east side)
+	[-20.0, -146.0, -20.0, -140.0, []],                      # EXT-LAYOUT: the north vestibule's east side
 	[-26.5, -128.0, -26.5, -110.0, [[-122.0, -116.0]]],     # R2 east side
 	[-40.0, -110.0, -26.5, -110.0, []],                      # R2 south side
 	[-17.5, -137.0, -8.5, -137.0, []],                       # R4 south side
@@ -64,6 +67,13 @@ const PARTS = [
 	[9.5, -128.0, 30.0, -128.0, [[13.0, 21.0]]],             # R3 south side
 ]
 const MINT_DOOR = [-8.5, -142.4, -140.6]
+# EXT-LAYOUT (Nov 8 2026; design/godot-sears.md "The north entrance s1n"): the customer entrance on the
+# north wall toward Armour Dr (Steven's plan "Sears Entrance"), x -28..-20, with a 6 m vestibule to an
+# inner glass front at z -140; the strip x -28..-17.5 north of the R1 / R2 line is its lobby, open south
+# onto the sales floor. Outside: tools/exterior/exterior.gd sears_north_entrance(); door s1n.
+const NORTH_ENTRY = [-28.0, -20.0]
+const VEST_Z = -140.0
+const NORTH_ENTRY_H = 3.2
 const SIDE_EXIT = [-5.05, -2.95]        # the north wall's glass doors, on the aisle axis (IMG_4413 f001-013)
 const SIDE_EXIT_H = 3.0
 const STOREFRONT = [-121.0, -115.0]     # the east wall's customer storefront (IMG_4413 f033; notes_A)
@@ -82,6 +92,7 @@ static func build(b, g, e, a, bb, n, t, Ln, sd):
 	columns(b)
 	partitions(b)
 	side_exit(b)
+	north_entry(b)     # EXT-LAYOUT: the north entrance's vestibule
 	storefront(b)
 	if b.YEAR == 2026:
 		dress_2026(b)
@@ -172,7 +183,8 @@ static func shell(b):
 	panel_face(b, Vector2(X0, Z_BACK), Vector2(X0, zf), Vector3(1, 0, 0))
 	# north (back) wall, west of R4 and east of R5: panels; R4..R5 is the aisle end with the side
 	# exit, cream with picture-frame mouldings (side_exit())
-	panel_face(b, Vector2(X0, Z_BACK), Vector2(-17.5, Z_BACK), Vector3(0, 0, 1))
+	panel_face(b, Vector2(X0, Z_BACK), Vector2(NORTH_ENTRY[0], Z_BACK), Vector3(0, 0, 1))
+	panel_face(b, Vector2(NORTH_ENTRY[1], Z_BACK), Vector2(-17.5, Z_BACK), Vector3(0, 0, 1))   # EXT-LAYOUT: the vestibule between
 	panel_face(b, Vector2(-17.5, Z_BACK), Vector2(-8.5, Z_BACK), Vector3(0, 0, 1))
 	panel_face(b, Vector2(9.5, Z_BACK), Vector2(X1, Z_BACK), Vector3(0, 0, 1), CEIL, false)
 	# east wall: panels, with the storefront cut out (storefront()) and R3's window band
@@ -534,6 +546,53 @@ static func side_exit(b):
 	outside_view(b, Vector3((e0 + e1) * 0.5, 0, Z_BACK), Vector3(0, 0, -1), dw + 2.0)
 	block(b, e0 - 0.2, Z_BACK - 0.4, e1 + 0.2, Z_BACK + 0.15)
 
+## EXT-LAYOUT (Nov 8 2026): the north entrance's vestibule (door s1n). The outer storefront in the north
+## wall: dark bronze frames, three glass door pairs between 1 m sidelights under a transom, plain wall
+## above (outside it matches exterior.gd sears_north_entrance); 6 m in, an inner glass front at z -140
+## with one open pair in the middle; a dark walk-off mat; the side walls are partitions (PARTS). A GUESS
+## after 1970s-80s Sears entrances: the north face is not filmed.
+static func north_entry(b):
+	var G = "sr_wall_exit"
+	var x0 = NORTH_ENTRY[0]; var x1 = NORTH_ENTRY[1]; var H = NORTH_ENTRY_H
+	var bronze = Color("#3b2f25")
+	# the outer front
+	var z = Z_BACK + 0.002
+	var nrm = Vector3(0, 0, 1)
+	wall(b, G, "sr_paint", Vector2(x0, z), Vector2(x1, z), H + 0.14, CEIL, nrm)
+	b.cur_color = bronze
+	var cuts = [x0, x0 + 1.0, x0 + 3.0, x0 + 5.0, x1 - 1.0, x1]
+	for xx in cuts:
+		b.box("sr_trim", "vcolor", Vector3(xx, (H + 0.14) * 0.5, z + 0.06), Vector3(0.12, H + 0.14, 0.14), Transform3D.IDENTITY, [], true)
+	for k in 3:
+		b.box("sr_trim", "vcolor", Vector3(x0 + 2.0 + k * 2.0, 1.2, z + 0.06), Vector3(0.06, 2.4, 0.14), Transform3D.IDENTITY, [], true)
+		for sd in [-1.0, 1.0]:
+			b.box("sr_trim", "vcolor", Vector3(x0 + 2.0 + k * 2.0 + sd * 0.5, 1.0, z + 0.16), Vector3(0.5, 0.05, 0.05), Transform3D.IDENTITY, [], true)
+	for yy in [0.05, 2.45, H + 0.08]:
+		b.box("sr_trim", "vcolor", Vector3((x0 + x1) * 0.5, yy, z + 0.06), Vector3(x1 - x0, 0.1, 0.14), Transform3D.IDENTITY, [], true)
+	b.cur_color = Color.WHITE
+	b.quad("glass", "glass", [Vector3(x0, 0.05, z), Vector3(x1, 0.05, z), Vector3(x1, H + 0.1, z), Vector3(x0, H + 0.1, z)], nrm, [], true)
+	b.box("sr_trim", "exit_sign", Vector3((x0 + x1) * 0.5, CEIL - 0.25, z + 0.05), Vector3(0.36, 0.16, 0.06), Transform3D.IDENTITY, [], true)
+	outside_view(b, Vector3((x0 + x1) * 0.5, 0, Z_BACK), Vector3(0, 0, -1), x1 - x0 + 2.0)
+	block(b, x0, Z_BACK - 0.4, x1, Z_BACK + 0.15)
+	# the inner glass front at z -140: fixed glass either side of an open pair (x -25..-23)
+	var zi = VEST_Z
+	var d0 = (x0 + x1) * 0.5 - 1.0; var d1 = (x0 + x1) * 0.5 + 1.0
+	wall(b, G, "sr_paint", Vector2(x1, zi - 0.001), Vector2(x0, zi - 0.001), 2.9, CEIL, Vector3(0, 0, -1))
+	wall(b, G, "sr_paint", Vector2(x0, zi + 0.001), Vector2(x1, zi + 0.001), 2.9, CEIL, nrm)
+	b.cur_color = Color("#c9ccd0")
+	for xx in [x0 + 0.06, x0 + 1.5, d0, (d0 + d1) * 0.5, d1, x1 - 1.5, x1 - 0.06]:
+		b.box("sr_trim", "vcolor", Vector3(xx, 1.45, zi), Vector3(0.08, 2.9, 0.12), Transform3D.IDENTITY, [], true)
+	for yy in [0.05, 2.85]:
+		b.box("sr_trim", "vcolor", Vector3((x0 + x1) * 0.5, yy, zi), Vector3(x1 - x0, 0.08, 0.12), Transform3D.IDENTITY, [], true)
+	b.cur_color = Color.WHITE
+	for seg in [[x0, d0], [d1, x1]]:
+		b.quad("glass", "glass", [Vector3(seg[0], 0.05, zi), Vector3(seg[1], 0.05, zi), Vector3(seg[1], 2.85, zi), Vector3(seg[0], 2.85, zi)], nrm, [], true)
+		block(b, seg[0], zi - 0.1, seg[1], zi + 0.1)
+	# the walk-off mat
+	b.cur_color = Color("#3a3c3e")
+	b.quad("sr_floor_front", "vcolor_matte", [Vector3(x0 + 0.3, 0.004, Z_BACK + 0.3), Vector3(x1 - 0.3, 0.004, Z_BACK + 0.3), Vector3(x1 - 0.3, 0.004, zi - 0.3), Vector3(x0 + 0.3, 0.004, zi - 0.3)], Vector3.UP)
+	b.cur_color = Color.WHITE
+
 static func frame(b, c, w, h):
 	for s in [[Vector3(0, h * 0.5, 0), Vector3(w, 0.03, 0.015)], [Vector3(0, -h * 0.5, 0), Vector3(w, 0.03, 0.015)],
 			[Vector3(w * 0.5, 0, 0), Vector3(0.03, h, 0.015)], [Vector3(-w * 0.5, 0, 0), Vector3(0.03, h, 0.015)]]:
@@ -586,7 +645,8 @@ static func lights(b):
 			b.tag(l, "", 2.4, 2.4)
 			z -= 9.0
 		x += 9.0
-	for p in [[Vector3((SIDE_EXIT[0] + SIDE_EXIT[1]) * 0.5, 2.2, Z_BACK + 1.5), "day"], [Vector3(X1 - 1.5, 2.2, (STOREFRONT[0] + STOREFRONT[1]) * 0.5), "day"]]:
+	for p in [[Vector3((SIDE_EXIT[0] + SIDE_EXIT[1]) * 0.5, 2.2, Z_BACK + 1.5), "day"], [Vector3(X1 - 1.5, 2.2, (STOREFRONT[0] + STOREFRONT[1]) * 0.5), "day"],
+			[Vector3((NORTH_ENTRY[0] + NORTH_ENTRY[1]) * 0.5, 2.2, Z_BACK + 2.0), "day"]]:   # EXT-LAYOUT: the north vestibule
 		b.tag(b.add_omni(p[0], 1.2, 7.0, Color("#dfe9ff")), p[1])
 
 # ------------------------------------------------------------------ 2026 dressing

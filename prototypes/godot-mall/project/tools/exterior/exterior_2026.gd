@@ -11,7 +11,7 @@
 ##   - the truncated-dome mats at the doors' curb ramps
 ## exterior.gd itself switches the rest by year: The Red Seal's colours on Cucos, the two-tone EIFS
 ## wing wall, the south pavilion's EIFS and tile bands, pink fire lanes on red curbs, yellow stall
-## lines, the LED twin-arm poles, JCPenney's magenta letters, the Unitech sign; monuments.gd the
+## lines, the LED twin-arm poles, JCPenney's magenta letters (Unitech unsigned since EXT-LAYOUT); monuments.gd the
 ## monument faces (and no United Artists marquee).
 const UP = Vector3.UP
 
@@ -168,12 +168,13 @@ static func hypervelocity(b, a, t, n, Ln):
 
 ## Lynn's Interiors on the old Sears box (the 2026 directory, IMG_4406 f031-035: the script sign with
 ## a black awning on the east face).
-## EXT-B (Nov 4 2026): the box is flush with the facade (x 44) and runs to z -146 / x -72.
+## EXT-B (Nov 4 2026): the box is flush with the facade (x 44) and runs to z -146 / x -72 (x -84 since EXT-LAYOUT).
 static func lynns(b):
 	b.label("Lynn's", "script", "#1c1c1e", Vector3(44.08, 6.6, -118.0), Vector3(1, 0, 0), 9.0, 1.6)
 	b.label("INTERIORS", "sans", "#1c1c1e", Vector3(44.08, 5.3, -118.0), Vector3(1, 0, 0), 5.0, 0.4)
-	b.label("Lynn's", "script", "#1c1c1e", Vector3(-20.0, 6.6, -146.08), Vector3(0, 0, -1), 9.0, 1.6)
-	b.label("Lynn's", "script", "#1c1c1e", Vector3(-72.08, 6.6, -134.0), Vector3(-1, 0, 0), 9.0, 1.6)
+	b.label("Lynn's", "script", "#1c1c1e", Vector3(-24.0, 6.6, -146.08), Vector3(0, 0, -1), 9.0, 1.6)   # EXT-LAYOUT: over the north entrance (s1n)
+	# EXT-LAYOUT (Nov 8 2026): the west face is at x -84 (exterior.gd SEARS_W)
+	b.label("Lynn's", "script", "#1c1c1e", Vector3(-84.08, 6.6, -134.0), Vector3(-1, 0, 0), 9.0, 1.6)
 
 ## The yellow truncated-dome mats at the curb ramps in front of every door (4492 t104, 4493 f001-004).
 static func tactile(b, doors):

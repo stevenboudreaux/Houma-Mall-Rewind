@@ -9,6 +9,9 @@
 ## into their own albedo (META ao). Each piece is also a walk obstacle (its footprint, from "size").
 
 const PLACEMENTS = "res://data/lynns/placements.json"
+## EXT-LAYOUT (Nov 8 2026): R1 ends at x -28 now; east of it are the north entrance's vestibule and lobby
+## (store.gd NORTH_ENTRY). Pieces placed there (the ends of zone Z5's recliner runs, its curtain) are left out.
+const FREED = [-28.9, -146.0, -17.5, -128.0]
 
 static var _data = null
 
@@ -54,6 +57,8 @@ static func place(b):
 			# a 5th value is a height: the piece stands on another one (a lamp on an end table)
 			var y = float(it[4]) if it.size() > 4 else 0.0
 			var at = Vector3(float(it[1]), y, float(it[2]))
+			if at.x > FREED[0] and at.x < FREED[2] and at.z > FREED[1] and at.z < FREED[3]:
+				continue
 			# the footprint as an obstacle (rotated half-sizes); rugs (walk) and pieces on top are not obstacles
 			if y == 0.0 and not m.get("walk", false):
 				var hw = m.size[0] * 0.5
