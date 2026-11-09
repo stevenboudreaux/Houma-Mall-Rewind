@@ -19,6 +19,7 @@ var hands := {}:                # "Left"/"Right" -> world target
 		hands = v
 		_avg = {}               # a fresh grip: the running mean starts over
 var look := Vector3.INF
+var look_weight := 1.0          # TALK (scripts/npc_look.gd): blends the look in and out of the clip's own head
 var ratio := 1.0
 var _fix := []                  # [bone, A, B]
 var _hips := -1
@@ -140,7 +141,7 @@ func _look(sk: Skeleton3D) -> void:
 		var want: Vector3 = (inv * look - g.origin).normalized()
 		if fwd.angle_to(want) > deg_to_rad(60.0): return
 		var q := Quaternion(fwd.normalized(), want)
-		_rot(sk, b, Quaternion().slerp(q, float(k[1])))
+		_rot(sk, b, Quaternion().slerp(q, float(k[1]) * look_weight))   # TALK: * look_weight
 
 ## Rotate bone `i` so the skeleton-space direction `from` becomes `to` (shortest arc).
 func _turn(sk: Skeleton3D, i: int, from: Vector3, to: Vector3) -> void:

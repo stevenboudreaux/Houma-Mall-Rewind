@@ -76,10 +76,8 @@ func _test_data(db) -> void:
 		var ar: Array = a.get("area", [])
 		var ta: Array = a.get("talk_at", [])
 		_check(ar.size() == 4 and float(ar[0]) < float(ar[2]) and float(ar[1]) < float(ar[3]) and ta.size() == 2, "%s: an area behind the counter and a talk spot" % id)
-		var pr = _json("res://data/characters/%s.json" % a.get("preset", "?"))
-		_check(str(a.get("look", "")) == "preset" and pr is Dictionary and str(pr.get("name", "")) == "PLACEHOLDER"
-			and (pr.outfit.has("full") or (pr.outfit.has("bottom") and (pr.outfit.has("top") or pr.outfit.has("outer")))),
-			"%s: the attendant wears a PLACEHOLDER, clothed preset" % id)
+		_check(((str(a.get("look", "")) == "cast" and Cast.has(str(a.get("cast", "")))) or (str(a.get("look", "")) == "mixamo" and ResourceLoader.exists("res://npc/skins/%s.scn" % a.get("skin", "?")))),
+			"%s: the attendant's body comes through the loader (CHAR-STRIP: look %s, %s)" % [id, a.get("look", "?"), a.get("cast", a.get("skin", "?"))])
 		var st := Shop.read_stock(s, db, int(want[1][0]))
 		_check(st.size() == s.items.size() and st.size() == want[2], "%s: all %d things are items of %d (%d)" % [id, want[2], want[1][0], st.size()])
 		for x in s.items:

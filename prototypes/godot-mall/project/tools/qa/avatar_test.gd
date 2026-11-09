@@ -1,6 +1,6 @@
 ## Workstream V (design/godot-avatar.md): the avatar and the first / third person switch, natively,
 ## unbaked (no lightmap). In one wing:
-##   - the creator: opened, shot at desktop and phone sizes (portrait and landscape), Random, Done;
+##   - CHAR-STRIP (Nov 8 2026): the body is the saved cast member (scripts/cast.gd), animated, one of it;
 ##   - for each spot: third person walking (TP_WALK m/s, the walk clip at ground speed) and running
 ##     back the way it came (TP_WALK x RUN, the sprint clip at ground speed, the camera pivot on the
 ##     player, not trailing; WALK, Nov 3 2026) and standing (idle), the camera kept inside the walk
@@ -15,7 +15,6 @@
 ## Prints AVATAR TEST OK (n checks) or the failures; writes <out>-<name>.png.
 extends SceneTree
 
-const Look = preload("res://scripts/avatar_look.gd")
 var out := "/tmp/av"
 var wing := 2
 var year := 1995
@@ -42,13 +41,8 @@ func _initialize() -> void:
 				if kv.size() == 2: spots.append([kv[0], kv[1].split(",")])
 	DirAccess.make_dir_recursive_absolute(out.get_base_dir())
 	Engine.set_meta("mall_state_%d" % year, "")
-	# a made avatar, so the creator doesn't open by itself; the test opens it
-	var L := Look.default_look()
-	L.done = true; L.body = "Ch21"; L.skin = "#b47a52"; L.hair = "#151210"
-	L.y1995 = {"top": "#1f6f6a", "bottom": "#8fb0d3", "words": "HOUMA"}
-	L.y2026 = {"top": "#8fa38a", "bottom": "#151517", "words": "985"}
-	L.view = "third"
-	Engine.set_meta("mall_avatar", JSON.stringify(L))
+	# the player's record (CHAR-STRIP, scripts/cast.gd): the second cast member, third person
+	Cast.save_player({"cast": str(Cast.player_ids()[1]), "view": "third"})
 	var path := ("res://wing%d_2026.tscn" if year == 2026 else "res://wing%d.tscn") % wing
 	scn = load(path).instantiate()
 	root.add_child(scn)
@@ -83,43 +77,13 @@ func _plan() -> void:
 	_do(func():
 		av = player.get_node_or_null("Avatar")
 		_check(av != null, "player has its Avatar node")
-		_check(av.creator == null, "a saved avatar: no creator at start")
-		_check(av.body != null and av.body.is_inside_tree() and av.body.skin != null, "avatar body built (%s)" % (av.body.id if av.body else "-"))
+		_check(av.body != null and av.body.is_inside_tree() and av.body.skin != null, "body built (%s)" % (av.body.id if av.body else "-"))
+		_check(av.cast_id == str(Cast.player_ids()[1]) and av.body.get_meta("cast", "") == av.cast_id, "the body is the saved cast member (%s)" % av.cast_id)
+		_check(get_nodes_in_group("mall_player_body").size() == 1, "exactly one player body")
 		_check(av.third, "saved view third person is read"), 0.5)
-	# the creator at three sizes
-	for sz in [Vector2i(1280, 720), Vector2i(390, 844), Vector2i(844, 390)]:
-		var s: Vector2i = sz
-		_do(func():
-			DisplayServer.window_set_size(s)
-			root.size = s
-			if av.creator == null: av.open_creator(), 1.2)
-		_do(func():
-			_check(av.creator != null and player.frozen, "creator open and the player frozen (%dx%d)" % [s.x, s.y])
-			var r: Rect2 = av.creator.root.get_global_rect() if av.creator else Rect2()
-			var over := false
-			if av.creator:
-				for h in av.creator.hits:
-					var c: Control = h[0]
-					var gr := c.get_global_rect()
-					if gr.end.x > s.x + 1 or gr.end.y > s.y + 1 or gr.position.x < -1: over = true
-			_check(not over, "every creator control on screen at %dx%d" % [s.x, s.y])
-			_shot("creator-%dx%d" % [s.x, s.y]), 0.2)
-	_do(func(): if av.creator.has_method("_randomize"): av.creator._randomize(), 0.6)   # int-52: the char editor (ws/char-editor) has no Random
-	_do(func(): _shot("creator-random-844x390"); av.creator._done(), 0.6)
-	_do(func():
-		DisplayServer.window_set_size(Vector2i(1280, 720)); root.size = Vector2i(1280, 720)
-		# int-52: since MENU2 the creator opens inside the menu's MAIN, which keeps the player frozen
-		# until the menu itself closes (design/godot-menu.md); close it as a player would
-		var mn = player.get_node_or_null("Menu")
-		if mn and mn.is_open:
-			mn.close()
-		_check(av.creator == null and not player.frozen, "Done closes the creator and frees the player")
-		var saved = JSON.parse_string(str(Engine.get_meta("mall_avatar", "")))
-		_check(saved is Dictionary and saved.done and str(saved.body) == str(av.look.body), "the look is saved (%s)" % (saved.body if saved is Dictionary else "-"))
-		av.third = true, 0.5)
 	_do(func():
 		var b = av.body
-		_check(b.ap != null and b.ap.is_playing() and str(b.ap.current_animation) != "", "the new body is animated, not in its T-pose (%s: %s)" % [b.id, b.ap.current_animation if b.ap else "-"]), 0.0)
+		_check(b.ap != null and b.ap.is_playing() and str(b.ap.current_animation) != "", "the body is animated, not in its T-pose (%s: %s)" % [b.id, b.ap.current_animation if b.ap else "-"]), 0.0)
 	for sp in spots:
 		var nm: String = sp[0]
 		var v: Array = sp[1]

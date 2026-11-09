@@ -61,7 +61,7 @@ done
 # Two sites (Nov 3 2026, design/godot-build-hosting.md "Two sites"): a Pages site may hold 1 GB. The main
 # site carries the phone packs and the rest of play/, the second site the computer packs; each must fit
 # (0.95 GB here, for main's own files and headroom).
-# CHARS (Nov 3 2026, "Shared packs"): the shared packs (items, chars, chars_<map>) count too, and every pack
+# CHARS (Nov 3 2026, "Shared packs"): the shared packs (items; CHAR-STRIP: no character packs) count too, and every pack
 # must stay under GitHub's 100 MiB file limit; the shared packs listed in index.html must be in the export.
 SHARED=$(python3 -c "import re,sys,json; s=open(sys.argv[1]).read(); m=re.search(r'const SHARED_PACKS = (.*); // SHARED_PACKS', s); d=json.loads(m.group(1)) if m else {}; print(' '.join(n for n,e in d.items() if e.get('desktop')))" "$SRC/index.html")
 for n in $SHARED; do for k in desktop mobile; do [ -s "$SRC/$n.$k.pck" ] || { echo "index.html lists the shared pack $n, the export has no $n.$k.pck"; exit 1; }; done; done

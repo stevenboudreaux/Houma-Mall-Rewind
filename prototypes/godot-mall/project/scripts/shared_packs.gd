@@ -1,13 +1,12 @@
 ## Shared packs (workstream CHARS, Nov 3 2026; design/godot-build-hosting.md "Shared packs"): files
-## that ship once for the whole mall instead of inside each wing pack (the Blender items, the
-## character bodies and pieces; tools/shared_packs.py). Autoload "SharedPacks".
+## that ship once for the whole mall instead of inside each wing pack (the Blender items and the prize
+## pictures; tools/shared_packs.py). Autoload "SharedPacks".
 ##
-## On the web the page (web/shell.html) downloads them and copies them into the engine's file system:
-##   - "start" packs (the items) with the wing pack, before the engine runs: their paths are in
-##     window.__mallMountNow and are mounted here, in _init, before the wing's scene loads (scenes and
-##     data/items refer to them by res:// path);
-##   - "later" packs (the characters) once the mall runs: window.__mallLater[group] becomes a list of
-##     paths when they are all in, or "failed"; scripts/chars/char_pack.gd asks later_paths("chars").
+## On the web the page (web/shell.html) downloads them with the wing pack, before the engine runs,
+## and copies them into the engine's file system; their paths are in window.__mallMountNow and are
+## mounted here, in _init, before the wing's scene loads (scenes and data/items refer to them by
+## res:// path). CHAR-STRIP (Nov 8 2026): the "later" packs (the character bodies, fetched after the
+## mall was running) are gone with the editor; nothing is fetched or mounted once the card has lifted.
 ## Off the web (native runs, tests, the editor) every file is in res:// already and nothing is mounted.
 ## Packs are mounted with replace_files = false: a file the wing pack has wins over a shared copy.
 extends Node
@@ -32,14 +31,6 @@ func mount(path: String) -> bool:
 	else:
 		push_warning("shared_packs: could not mount %s" % path)
 	return ok
-
-## A "later" group's state on the web: null while it is still coming, an Array of pack paths when all
-## of it is in the file system, "failed" when it could not be fetched. Off the web: [] (nothing to do).
-func later_paths(group: String) -> Variant:
-	if not OS.has_feature("web"):
-		return []
-	var v = JSON.parse_string(str(JavaScriptBridge.eval("JSON.stringify((window.__mallLater || {})[%s] || null)" % JSON.stringify(group))))
-	return v
 
 func _js_list(expr: String) -> Array:
 	var v = JSON.parse_string(str(JavaScriptBridge.eval("JSON.stringify(%s)" % expr)))

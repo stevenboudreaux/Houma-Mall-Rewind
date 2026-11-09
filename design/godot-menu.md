@@ -1,5 +1,12 @@
 # The menu, the time-travel transition, the opening and the player's name (Godot mall, workstream M, Nov 2 2026)
 
+> **CHAR-STRIP, Nov 8 2026 (branch `ws/char-strip`; design/godot-avatar.md):** the character editor is gone.
+> MAIN has no **Edit** and there is no avatar editing or creator: MAIN shows the portrait (the player's cast
+> member, through `Cast.body`), **NAME** (tap / Enter to type, on MAIN itself), MONEY, TICKETS, the
+> **Character row** (3-4 cast portraits with names: pick = save + the world's body remade) and View / Jump to.
+> C opens MAIN. The OWNER tab lost the character editor (K); the owner's corner buttons lost Avatar.
+> The sections "MAIN" and "Avatar editing" below describe the editor as it was; read them as history.
+
 > **MENU2, Nov 3 2026 (branch `ws/menu2`): this note is updated for Steven's Nov 3 decisions.**
 > 1. Tabs, left to right: **MAIN, INVENTORY, CONTROLS** (L2 / R2 = LB / RB as before, and now the
 >    triggers too). YEAR and the separate AVATAR tab are gone. Room is left for a later JOURNAL tab

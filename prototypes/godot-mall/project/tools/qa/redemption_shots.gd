@@ -23,12 +23,8 @@ func _initialize() -> void:
 		if a.begins_with("--out="): out = a.substr(6)
 	DirAccess.make_dir_recursive_absolute(out.get_base_dir())
 	Engine.set_meta("mall_state_1995", "")
-	# a made avatar (as tools/qa/avatar_test.gd), so third person shows a body and the creator stays shut
-	var L: Dictionary = load("res://scripts/avatar_look.gd").default_look()
-	L.done = true; L.body = "Ch21"; L.skin = "#b47a52"; L.hair = "#151210"
-	L.y1995 = {"top": "#1f6f6a", "bottom": "#8fb0d3", "words": "HOUMA"}
-	L.view = "first"
-	Engine.set_meta("mall_avatar", JSON.stringify(L))
+	# CHAR-STRIP: the player's record (scripts/cast.gd), first person, the default cast member
+	Cast.save_player({"cast": str(Cast.roster().default), "view": "first"})
 	Engine.set_meta("mall_xfer", {"x": -108.6, "z": 71.5, "yaw": deg_to_rad(-42.0), "pitch": deg_to_rad(-22.0)})
 	scn = load("res://wing2.tscn").instantiate()
 	root.add_child(scn)

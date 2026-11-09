@@ -62,8 +62,8 @@ done
 sed -i "s|^const PACK_SIZES = {.*}; // PACK_SIZES|const PACK_SIZES = {$PS}; // PACK_SIZES|" "$OUT/index.html"
 grep -q "\"desktop\": $S1D" "$OUT/index.html" || { echo "could not write pack sizes into index.html"; exit 1; }
 # CHARS (Nov 3 2026, design/godot-build-hosting.md "Shared packs"): the packs every wing shares instead of
-# carrying its own copy (tools/shared_packs.py: "items", the Blender items; "chars" / "chars_<map>", the
-# characters), each <name>.desktop.pck / .mobile.pck, through the presets "Shared Desktop" / "Shared Mobile";
+# carrying its own copy (tools/shared_packs.py: "items", the Blender items and prize pictures; CHAR-STRIP,
+# Nov 8 2026: no character packs), each <name>.desktop.pck / .mobile.pck, through "Shared Desktop" / "Shared Mobile";
 # their sizes go into index.html's SHARED_PACKS line. SHARED=0 skips them (a quick wing-only export keeps
 # the shared packs already in <outdir>).
 if [ "${SHARED:-1}" = "1" ]; then

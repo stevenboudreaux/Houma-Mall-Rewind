@@ -7,7 +7,6 @@
 ## Prints PICTURES TEST OK (n checks) or the failures; writes <out>-<name>.png.
 extends SceneTree
 
-const Look = preload("res://scripts/avatar_look.gd")
 var out := "/tmp/pic/w"
 var wing := 1
 var year := 1995
@@ -37,9 +36,8 @@ func _initialize() -> void:
 	Engine.set_meta("mall_controls", "")
 	Engine.set_meta("menu_opening", false)
 	Engine.set_meta("mall_pictures_draft", "")
-	var L := Look.default_look()
-	L.done = true; L.body = "Ch21"; L.view = "first"
-	Engine.set_meta("mall_avatar", JSON.stringify(L))
+	# CHAR-STRIP: the player's record (scripts/cast.gd), first person, the default cast member
+	Cast.save_player({"cast": str(Cast.roster().default), "view": "first"})
 	_plan()
 
 func _load(owner: bool) -> void:

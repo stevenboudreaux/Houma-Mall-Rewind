@@ -29,9 +29,8 @@ func _initialize() -> void:
 		if a.begins_with("--out="): out = a.substr(6)
 	DirAccess.make_dir_recursive_absolute(out.get_base_dir())
 	Engine.set_meta("mall_state_1995", "")
-	var L: Dictionary = load("res://scripts/avatar_look.gd").default_look()
-	L.done = true; L.view = "first"
-	Engine.set_meta("mall_avatar", JSON.stringify(L))
+	# CHAR-STRIP: the player's record (scripts/cast.gd), first person, the default cast member
+	Cast.save_player({"cast": str(Cast.roster().default), "view": "first"})
 	Engine.set_meta("mall_xfer", {"x": -104.8, "z": 64.2, "yaw": deg_to_rad(-90.0), "pitch": deg_to_rad(-18.0)})
 	scn = load("res://wing2.tscn").instantiate()
 	root.add_child(scn)

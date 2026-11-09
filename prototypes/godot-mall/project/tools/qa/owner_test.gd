@@ -1,6 +1,6 @@
 ## OWNER (design/godot-owner-mode.md): owner mode vs a visitor, natively, unbaked. A visitor's game
 ## screen keeps only the menu icon (UI-OFFSCREEN) and the menu has no OWNER tab; the owner gets every
-## old corner button back (labelled Menu, Jump to, the year switch, Bag, View, Avatar), the loose owner
+## old corner button back (labelled Menu, Jump to, the year switch, Bag, View; CHAR-STRIP: no Avatar button), the loose owner
 ## tools tucked into the menu's OWNER tab, the owner directory (store list, jump question, jump, year
 ## keys) and the tools. Ends with the owner's year switch (Y) loading the other year's scene.
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --resolution 1280x720 \
@@ -8,7 +8,6 @@
 ## Prints OWNER TEST OK (n checks) or the failures; writes <out>-<name>.png.
 extends SceneTree
 
-const Look = preload("res://scripts/avatar_look.gd")
 var out := "/tmp/ow/w"
 var wing := 6
 var scn: Node
@@ -33,9 +32,8 @@ func _initialize() -> void:
 	Engine.set_meta("mall_controls", "")
 	Engine.set_meta("menu_opening", false)
 	Engine.set_meta("mall_owner_hud", true)
-	var L := Look.default_look()
-	L.done = true; L.body = "Ch21"; L.view = "first"
-	Engine.set_meta("mall_avatar", JSON.stringify(L))
+	# CHAR-STRIP: the player's record (scripts/cast.gd), first person, the default cast member
+	Cast.save_player({"cast": str(Cast.roster().default), "view": "first"})
 	_plan()
 
 func _load(owner: bool, path := "") -> void:
@@ -95,7 +93,7 @@ func _on_screen(c: Control, s: Vector2i) -> bool:
 func _corner() -> Array:
 	var it = player.interact
 	var av = player.avatar
-	return [["Jump to", player.jump_open_btn], ["year", player.year_btn], ["Bag", it.bag_btn], ["View", av.view_btn], ["Avatar", av.make_btn]]
+	return [["Jump to", player.jump_open_btn], ["year", player.year_btn], ["Bag", it.bag_btn], ["View", av.view_btn]]
 
 func _plan() -> void:
 	# ------------------------------------------------ a visitor
@@ -127,7 +125,7 @@ func _plan() -> void:
 		var missing: Array = []
 		for c in _corner():
 			if not _on_screen(c[1], s): missing.append(c[0])
-		_check(missing.is_empty(), "owner: every corner button on screen: Jump to, the year, Bag, View, Avatar (missing %s)" % [missing])
+		_check(missing.is_empty(), "owner: every corner button on screen: Jump to, the year, Bag, View (missing %s)" % [missing])
 		_check(player.year_btn.text.contains("2026"), "owner: the year button reads '%s'" % player.year_btn.text)
 		_check(menu._menu_btn.text.begins_with("Menu ("), "owner: the labelled Menu button ('%s')" % menu._menu_btn.text)
 		_check(player.hud.visible, "owner: the fps line is shown")

@@ -8,7 +8,6 @@
 ## Prints UI OFFSCREEN TEST OK (n checks) or the failures; writes <out>-<name>.png.
 extends SceneTree
 
-const Look = preload("res://scripts/avatar_look.gd")
 var out := "/tmp/uo/w"
 var wing := 2
 var year := 1995
@@ -35,9 +34,8 @@ func _initialize() -> void:
 	Engine.set_meta("mall_controls", "")
 	Engine.set_meta("menu_opening", false)
 	Engine.set_meta("mall_owner", false)
-	var L := Look.default_look()
-	L.done = true; L.body = "Ch21"; L.view = "first"
-	Engine.set_meta("mall_avatar", JSON.stringify(L))
+	# CHAR-STRIP: the player's record (scripts/cast.gd), first person, the default cast member
+	Cast.save_player({"cast": str(Cast.roster().default), "view": "first"})
 	scn = load("res://wing%d%s.tscn" % [wing, "_2026" if year == 2026 else ""]).instantiate()
 	root.add_child(scn)
 	current_scene = scn
@@ -99,7 +97,7 @@ func _texts(n: Node, acc: Array) -> Array:
 		return acc
 	if n is CanvasLayer and not (n as CanvasLayer).visible:
 		return acc
-	if n == menu._layer or (menu._creator != null and n == menu._creator):
+	if n == menu._layer:
 		return acc
 	if (n is Label or n is Button) and (n as Control).is_visible_in_tree():
 		var t: String = n.text
@@ -137,7 +135,7 @@ func _plan() -> void:
 	_do(func():
 		menu = player.get_node("Menu")
 		var tucked: Array = menu.corner_buttons()
-		_check(tucked.size() >= 5, "five corner buttons found: Jump to, year, Bag, View, Avatar (%d)" % tucked.size())
+		_check(tucked.size() >= 4, "four corner buttons found: Jump to, year, Bag, View (CHAR-STRIP: no Avatar button) (%d)" % tucked.size())
 		var hidden := true
 		for b in tucked:
 			if b.is_visible_in_tree():
@@ -183,7 +181,9 @@ func _plan() -> void:
 		_do(func():
 			_check(menu.is_open and menu.tab == "main", "%dx%d: a tap on the icon opens MAIN" % [s.x, s.y])
 			var ok := true
-			for n in ["MainEdit", "MainView", "MainJump"]:
+			var names := ["MainView", "MainJump"]
+			for id in Cast.player_ids(): names.append("Cast_" + str(id))
+			for n in names:
 				var b := _main_btn(n)
 				if b == null or not b.is_visible_in_tree():
 					ok = false; continue
@@ -191,7 +191,7 @@ func _plan() -> void:
 				print("RECT %dx%d %s %s centre %s" % [s.x, s.y, n, r, r.get_center()])
 				if r.end.x > s.x + 1 or r.end.y > s.y + 1 or r.position.x < -1 or r.position.y < -1:
 					ok = false
-			_check(ok, "%dx%d: MAIN shows Edit, View and Jump to, on screen" % [s.x, s.y])
+			_check(ok, "%dx%d: MAIN shows the Character row, View and Jump to, on screen" % [s.x, s.y])
 			_shot("menu-main-%dx%d" % [s.x, s.y])
 			menu.open_tab("inventory"), 0.5)
 		_do(func():
@@ -223,10 +223,11 @@ func _plan() -> void:
 	_do(func():
 		_check(not menu.is_open and bool(player.avatar.third) != was_third, "MAIN's View (mouse click)")
 		_pad(JOY_BUTTON_START), 0.4)
-	_do(func(): _pad(JOY_BUTTON_DPAD_RIGHT), 0.2)
+	_do(func(): _pad(JOY_BUTTON_DPAD_DOWN), 0.2)     # NAME -> the Character row (CHAR-STRIP)
+	_do(func(): _pad(JOY_BUTTON_DPAD_DOWN), 0.2)     # -> View, Jump to
 	_do(func(): _pad(JOY_BUTTON_A), 0.5)
 	_do(func():
-		_check(not menu.is_open and bool(player.avatar.third) == was_third, "MAIN's View by the pad (Start, d-pad right, A)")
+		_check(not menu.is_open and bool(player.avatar.third) == was_third, "MAIN's View by the pad (Start, d-pad down twice, A)")
 		menu.open_tab("main"), 0.4)
 	# ---- MAIN's Jump to; J still works
 	_do(func(): _tap(_centre(_main_btn("MainJump"))), 0.5)
@@ -240,14 +241,17 @@ func _plan() -> void:
 	_do(func():
 		_check(player.jump_panel.visible, "J still opens the jump panel")
 		_key(KEY_J), 0.4)
-	# ---- MAIN's Edit (Avatar); C and I still work
+	# ---- MAIN's Character row (CHAR-STRIP: the editor is gone); C and I still work
 	_do(func(): menu.open_tab("main"), 0.4)
-	_do(func(): _tap(_centre(_main_btn("MainEdit"))), 0.6)
+	_do(func(): _tap(_centre(_main_btn("Cast_" + str(Cast.player_ids()[1])))), 0.6)
 	_do(func():
-		_check(menu.is_open and menu.editing, "MAIN's Edit opens the avatar editing")
+		_check(menu.is_open and Cast.player_id() == str(Cast.player_ids()[1]) and player.avatar.cast_id == Cast.player_id(), "a tap on a Character portrait picks that cast member")
+		_tap(_centre(_main_btn("Cast_" + str(Cast.player_ids()[0])))), 0.6)
+	_do(func():
+		_check(Cast.player_id() == str(Cast.player_ids()[0]), "and back")
 		menu.close(), 0.4)
 	_do(func(): _key(KEY_C), 0.5)
-	_do(func(): _check(menu.is_open and menu.tab == "main" and menu.editing, "C still opens the avatar editing"); menu.close(), 0.4)
+	_do(func(): _check(menu.is_open and menu.tab == "main", "C opens MAIN"); menu.close(), 0.4)
 	_do(func(): _key(KEY_I), 0.5)
 	_do(func(): _check(menu.is_open and menu.tab == "inventory", "I still opens INVENTORY (the old Bag)"); menu.close(), 0.4)
 	# ---- the owner's tools are not part of this change (they stay where they were)

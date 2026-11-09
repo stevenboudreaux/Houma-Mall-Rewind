@@ -253,6 +253,13 @@ In the browser the MeshInstance3D is just empty: no console error, so the web te
 these wings. New items must not count against the wing packs. Also: the web character pack did not mount,
 and `models/characters/` (~68 MB) must ship per wing and year only what the presets use.
 
+> **CHAR-STRIP, Nov 8 2026 (branch `ws/char-strip`; design/godot-avatar.md):** the character packs
+> (`chars`, `chars_<map>`) and the "later" stage are **gone**: the editor, the UBC bodies (`models/ubc/`) and
+> `scripts/chars/char_pack.gd` were deleted, `web/shell.html` no longer fetches anything after the loading
+> card (`mallFetchLater`, `window.__mallLater` removed) and `tools/chars/pack_list.py` is gone. The only shared
+> pack is `items` ("start"). The cast's files (`data/cast.json`) ship in every wing pack
+> (`tools/make_presets.py` `cast_files()`) and are warmed behind the card. Rows below about `chars` are history.
+
 **What was built.** Files used by many maps ship once, as their own packs, instead of inside every wing pack:
 
 | Pack | Holds | When it loads | Maps |

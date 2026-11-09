@@ -4,7 +4,8 @@ Usage: CHROMIUM=/opt/pw-browsers/chromium python3 tools/qa/menu_webtest.py <url-
   (server on :8765 serving the repo root; <url-path> e.g.
    prototypes/godot-mall/project/.scratch/builds/wsm/index.html?wing=2)
 Checks, each in a fresh browser profile:
-  MENU2 (Nov 3): the tabs are MAIN (the character, money, tickets; Edit inside), INVENTORY, CONTROLS.
+  MENU2 (Nov 3): the tabs are MAIN (the character, money, tickets; CHAR-STRIP Nov 8: the NAME field and the
+  Character row, no editor), INVENTORY, CONTROLS.
   ws/items (Nov 4 2026): no opening; a first visit starts in the mall.
   1. desktop 1280x720, first visit: in the mall; C opens MAIN's editing, Enter on NAME types;
      typing a name saves localStorage "mall.player_name"; Tab closes; Tab opens MAIN; E walks the tabs
@@ -78,15 +79,15 @@ with sync_playwright() as p:
     print("desktop ready_s", ready(pg, logs)); time.sleep(15)
     pg.mouse.click(640, 700); time.sleep(1)     # focus the canvas (a click on empty background)
     shot(pg, "web-first-start-desktop")    # ws/items (Nov 4): no opening; the game starts in the mall
-    key(pg, "c", 3)                         # C: MAIN's avatar editing (what START used to open)
+    key(pg, "c", 3)                         # C: MAIN (CHAR-STRIP: the NAME field is on MAIN, no editor)
     key(pg, "Enter", 2)                     # the NAME row: start typing
-    shot(pg, "web-main-edit-name-focused-desktop")
+    shot(pg, "web-main-name-focused-desktop")
     pg.keyboard.type("TESTER", delay=120); time.sleep(1)
     key(pg, "Enter", 2)
     check(ls(pg, "mall.player_name") == "TESTER", f"desktop: the name is saved ({ls(pg, 'mall.player_name')})")
-    shot(pg, "web-main-edit-desktop")
+    shot(pg, "web-main-named-desktop")
     key(pg, "Tab", 2)
-    check(ls(pg, "mall-avatar-1") is not None, "desktop: Tab closes the menu (the creator's look kept)")
+    check(ls(pg, "mall-avatar-1") is None and ls(pg, "mall-avatar-preset-1") is None, "desktop: Tab closes the menu (no old avatar record written: CHAR-STRIP)")
     shot(pg, "web-closed-desktop")
     key(pg, "Tab", 3)
     shot(pg, "web-main-desktop")           # the menu opens on MAIN (far left)

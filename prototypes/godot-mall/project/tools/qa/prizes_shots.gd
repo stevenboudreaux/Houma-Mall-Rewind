@@ -31,10 +31,8 @@ func _initialize() -> void:
 	DirAccess.make_dir_recursive_absolute(out.get_base_dir())
 	Engine.set_meta("mall_state_1995", "")
 	Engine.set_meta("mall_state_2026", "")
-	var L: Dictionary = load("res://scripts/avatar_look.gd").default_look()
-	L.done = true
-	L.view = "first"
-	Engine.set_meta("mall_avatar", JSON.stringify(L))
+	# CHAR-STRIP: the player's record (scripts/cast.gd), first person, the default cast member
+	Cast.save_player({"cast": str(Cast.roster().default), "view": "first"})
 	scn = load(scene).instantiate()
 	root.add_child(scn)
 	current_scene = scn

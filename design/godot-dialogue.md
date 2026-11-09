@@ -21,6 +21,8 @@ PLACEHOLDER: in its file name (`data/story/placeholder/PLACEHOLDER_*.dialogue`) 
 | `scripts/dialogue/story.gd` | Per wing: makes the screens, the gates, the attendants; `talk()`, `read_item()`. |
 | `scripts/dialogue/gate.gd` | Locked places (`design/godot-quests.md`). |
 | `scripts/attendants/attendant.gd` | A counter attendant. |
+| `scripts/story/talk_camera.gd`, `data/story/talk_camera.json` | The talk camera, its two lights, per-NPC overrides (TALK). |
+| `scripts/npc_look.gd`, `scripts/spatial_npc_eye.gdshader` | The NPC looks at the camera: head, eyes, saccades, blinks (TALK). |
 | `data/story/attendants.json`, `books.json`, `gates.json` | The data. |
 | `data/story/placeholder/*.dialogue` | PLACEHOLDER files: the three attendants, the book, a grammar check. |
 | `tools/qa/dialogue_walk.gd` | Headless: walks every PLACEHOLDER file down every branch through the real addon. |
@@ -109,8 +111,8 @@ Anything in groups **`"talker"`** and **`"interactable"`** whose `interact()` ca
 | Step | Numbers |
 |---|---|
 | Interact → the player stops (`player.frozen`), the HUD hides (every other CanvasLayer), the NPC stops, turns to the player at once and plays its idle | |
-| A camera of its own tweens from the current view (first or third person) to the face | **0.5 s**, cubic in-out; FOV 70 → **45°** |
-| The face shot | **0.85 m** in front of the eyes on the line toward the player, aimed **0.12 m below** the eyes, so the face sits in the upper middle above the box |
+| The talk camera eases from the current view (first or third person) to the face (TALK, Nov 8: "The talk camera" below) | **0.5 s**, cubic in-out |
+| The face shot | a medium close-up from **1.3 m**, at the NPC's eye height, eyes **0.36** of the way down; until Nov 8 it was 0.85 m at 45°, aimed 0.12 m below a nominal eye height |
 | The box | bottom, 16 px from the edges, at most 900 px wide; name in gold 18 px; the line 21 px, typed at **50 characters/s**; "continue >" |
 | Continue | E, Enter, Space, a gamepad's A or X, a click, a tap anywhere. A press while typing finishes the line. |
 | Responses | a vertical list, rows 56 px tall (tap targets); **1–3** (1–9), ↑↓ / W S + Enter / E, d-pad or left stick + A, a click, a tap |
@@ -125,6 +127,73 @@ VR is otherwise untouched.
    it groups `talker` + `interactable`, `interact_prompt()` returning `"TALK"`, and in `interact()`
    call `player.get_node("Story").talk(self, "res://data/story/<name>.dialogue")`.
 3. Run `tools/qa/dialogue_walk.gd` style checks (copy a case) and look at it in the game.
+
+## The talk camera (workstream TALK, Nov 8 2026)
+**Asked for (Steven, Nov 8, after Demo 52):** at the RadioShack and Great American Cookie attendants the
+left side of the face was black, the eyes were dead, and the camera sat too close (Spencer's) or at a
+bad height. One standard framing for every attendant and the bartender, dialogue lighting that leaves
+the baked scene alone, the NPC looking at the camera, square to the player, the counter not in the way.
+
+**One camera for both screens.** `scripts/story/talk_camera.gd` (`TalkCamera`, one per wing, a child of
+the wing root) is used by the conversation screen and the shop list (`scripts/shop.gd`, which turns the
+finished shot 17° so the face sits beside its list, as before). `begin(npc, opts)` / `await end()`.
+All numbers are in **`data/story/talk_camera.json`**; per-NPC overrides go under `"npc": {"<id>": {...}}`
+(the attendant's `id`), or in the entry's own `"talk_cam"`. None are needed today.
+
+| Part | What |
+|---|---|
+| Where the eyes are | From the **head bone** as posed now (`NpcLook.eye_point`): UBC bodies use the eye mesh's centre through the head's bind pose; Mixamo skins use 0.095 m up and 0.085 m forward of the head bone (scaled by height). The old `eye_pos()` used the skin's nominal height (1.767 m for every female preset, whatever her height slider), which put the camera at the wrong height. |
+| The shot | `frame_h` **0.74 m** of the person fills the frame height (head and shoulders); camera at eye height, **1.3 m** from the eyes toward the player and **0.12 m** to the NPC's left, turned back onto the face; eyes **0.36** of the way down. On a tall screen (phone) `portrait_frame_h` **1.0 m**, so the shoulders fit. |
+| Never inside things | A ray from the eyes to the camera spot: a wall or fixture brings it closer (to **0.75 m** at most), as does the player standing nearer than 1.3 + **0.35 m**. The FOV opens to keep `frame_h`, so the framing doesn't change, only the perspective. The camera stays at eye height, above every counter. |
+| Light | Two omni lights carried by the camera: a **key** from up and screen-left (energy 0.9, warm) and a **fill** low to screen-right (0.45, slightly cool), range 3 m, no shadows, not baked. They light **render layer 20 only**; while talking, the NPC's meshes join layer 20 (and leave it after). Nothing else in the mall uses layer 20, so no wall, floor or other person is touched. 2026 runs them at 0.85×. They fade in and out with the camera move. |
+| Square to the player | As before: the NPC stops and turns to the player at once (`talk_begin`); the camera stands on the line between them. |
+
+### The look (`scripts/npc_look.gd`)
+**Eye bones: none of the rigs has them.**
+> **CHAR-STRIP (Nov 8 2026, design/godot-avatar.md):** the UBC bodies and presets are deleted; every attendant is
+> now a Mixamo skin (`"look": "mixamo"`) or a cast member (`"look": "cast"`) made by `Cast.body`. The UBC eye path
+> below no longer finds a body to act on (head look only) until CHAR-BUILD's cast files bring eye bones.
+- **UBC bodies** (`models/ubc`: every attendant, `"look": "preset"`): the eyes are one mesh skinned
+  to the head, with a fisheye-mapped iris texture (front at uv 0.496, 0.501; the two eyes are mirrored
+  in u; read from the mesh, both sexes share it). There are no eyelids and no blink shapes. While
+  talking, that surface gets `spatial_npc_eye.gdshader`: the iris texture slides with the eye's turn,
+  and a blink is a skin-coloured wipe down over the eye (0.16 s). The original material comes back at the end.
+- **Mixamo crowd skins** (the Cuco's bartender, and any attendant in the web build before the
+  character pack mounts): the eyes are painted into the body texture, so they get **head look-at only**:
+  no eye turn, no blink.
+- A rig that someday has `*LeftEye` / `*RightEye` bones gets those bones turned instead.
+
+Each frame the target is the talk camera. The **eyes lead** (ease 0.05 s, within ±16° / ±10°) and the
+**head follows** (0.32 s, within ±40° / ±22° of the body's front, through NpcRig's look: neck 40 %,
+head the rest). **Saccades** every 0.6–2.4 s, up to 1.6°, eyes only. **Blinks** every 2.2–5.5 s. The head
+look blends in and out over 0.35 s (`NpcRig.look_weight`, a one-line hunk in `npc_rig.gd`), so the idle
+clip's own head comes back smoothly when talk ends.
+
+### Checks (TALK)
+- `godot --headless --path . --script res://tools/qa/talk_rig_test.gd` → **TALK RIG TEST OK (234 checks)**:
+  RadioShack (a UBC preset) and the Cuco's bartender (Mixamo), 10 conversations each, alternating the
+  conversation screen and the bare camera (the shop path). In talk: camera current, both lights on and
+  lighting layer 20 only, only the NPC's meshes on that layer, the look running, the eye shader on (UBC).
+  After: walking camera back, lights hidden at 0, no mesh left on layer 20, no look node, rig look
+  cleared, the eye material the original, and the counts of lights, cameras and talk-camera children the
+  same after 10 cycles as after 1.
+- Still pass: `shop_test.gd` (204), `cucos_test.gd` (89), `dialogue_walk.gd` (67). Web (a scratch export of
+  wings 1 + 2 1995 and wing 1 2026, swiftshader): `shops_webtest.py ... both` **SHOPS WEB OK, 0 console
+  errors**; `cucos_webtest.py` all checks pass (1995 desktop, phone, the doubloon in 2026) with 0 errors in
+  the 1995 and phone runs. The 2026 run shows one console error: the page could not pre-cache wings missing
+  from the scratch build (404s), which is unrelated to talking.
+- Native shots, **baked** (the build branch's day lightmaps, opengl3, 1280 × 720), the same script on
+  main and on this branch: `tools/qa/talk_shots.gd -- --npc=<id> --out=<file>` →
+  `production/qa/evidence/wsTALK-<npc>-before.jpg` / `-after.jpg` for RadioShack, Great American Cookie
+  1995 and 2026, Auntie Anne's (2026), Spencer's (2026), the Cuco's bartender and Woolworth (the six asked;
+  only Great American Cookie has an attendant in both years). Plus `wsTALK-spencers-after-phone.jpg` (390 × 844).
+
+### Open (TALK)
+- The UBC eye's dark iris sits a little low in the opening at rest, so a level gaze can still read as
+  slightly downcast. An `eyes_ubc` rest offset could lift it; not done (faces belong to the face research job).
+- Real blinks need eyelids (blend shapes or lid bones) in the bodies: for the face job.
+- The key comes from screen-left in every store. If a store's baked light already comes hard from the
+  left, a per-NPC `"lights"` override can swap the offsets.
 
 ## Attendants (`attendant.gd`, `data/story/attendants.json`)
 One unique person behind each counter, 1995 only (all three stores are gone in 2026; see Open).

@@ -203,7 +203,7 @@ func _ready() -> void:
 	interact = load("res://scripts/interact.gd").new()
 	interact.name = "Interact"; interact.player = self
 	add_child(interact)
-	# V: the avatar, its creator and the view switch (scripts/avatar.gd), after Interact (it moves the
+	# V: the player's body (CHAR-STRIP: its cast member, scripts/cast.gd) and the view switch (scripts/avatar.gd), after Interact (it moves the
 	# held item into the avatar's hand in third person)
 	avatar = load("res://scripts/avatar.gd").new()
 	avatar.name = "Avatar"; avatar.player = self
@@ -214,15 +214,7 @@ func _ready() -> void:
 	var story = load("res://scripts/dialogue/story.gd").new()
 	story.name = "Story"; story.player = self
 	add_child(story)
-	# B2: the character pack (web: scripts/chars/char_pack.gd) and the owner's character editor on an
-	# NPC that wears a preset (K; design/godot-character-editor.md)
-	var char_pack = load("res://scripts/chars/char_pack.gd").new()
-	char_pack.name = "CharPack"; char_pack.player = self
-	add_child(char_pack)
-	var char_owner = load("res://scripts/chars/char_owner.gd").new()
-	char_owner.name = "CharOwner"; char_owner.player = self
-	add_child(char_owner)
-	# M: the menu, after Avatar (it hosts the creator and the inventory list)
+	# M: the menu, after Avatar (its MAIN tab has the Character row, scripts/menu/menu.gd)
 	menu = load("res://scripts/menu/menu.gd").new()
 	menu.name = "Menu"; menu.player = self
 	add_child(menu)

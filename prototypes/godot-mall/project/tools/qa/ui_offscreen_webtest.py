@@ -22,11 +22,11 @@ BASE = "http://127.0.0.1:8765/" + path
 CAM = "npcs=0&warm=0&cam=-20,54,90,-8"   # no shoppers: the UI is the subject, and the shared box is short of memory
 fails, oks, errors = [], 0, []
 # MAIN's buttons (centres, from tools/qa/ui_offscreen_test.gd's RECT lines) and the tabs
-MAIN_VIEW = {"390x844": (201, 596), "844x390": (476, 287), "1280x720": (645, 525)}
+MAIN_VIEW = {"390x844": (83, 669), "844x390": (326, 363), "1280x720": (487, 623)}   # CHAR-STRIP layout (ui_offscreen_test.gd RECT lines, Nov 8)
 INV_TAB = {"390x844": (170, 26), "844x390": (397, 28), "1280x720": (640, 28)}
 ICON = (31, 29)
 INIT = """try{localStorage.setItem('mall-opening-1','skipped');
-if(!localStorage.getItem('mall-avatar-1'))localStorage.setItem('mall-avatar-1',JSON.stringify({v:1,done:true,view:'first'}))}catch(e){}"""
+if(!localStorage.getItem('mall-player-2'))localStorage.setItem('mall-player-2',JSON.stringify({v:2,cast:'placeholder_1',view:'first'}))}catch(e){}"""
 
 def url(extra=""):
     return BASE + ("&" if "?" in BASE else "?") + extra if extra else BASE
@@ -48,7 +48,7 @@ def ready(pg, logs, t=300):
 
 def view(pg):
     try:
-        return json.loads(pg.evaluate("localStorage.getItem('mall-avatar-1')") or "{}").get("view")
+        return json.loads(pg.evaluate("localStorage.getItem('mall-player-2')") or "{}").get("view")   # CHAR-STRIP
     except Exception:
         return None
 
