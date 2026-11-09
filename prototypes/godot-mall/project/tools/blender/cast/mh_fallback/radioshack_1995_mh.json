@@ -1,0 +1,112 @@
+{
+ "id": "radioshack_1995_mh",
+ "store": "RADIO SHACK",
+ "period": 1995,
+ "status": "superseded (Rocketbox, Nov 8)",
+ "steven": "RadioShack (1990s): 25-year-old overweight white man.",
+ "proposed": "Built on MakeHuman's CC0 asset library: young light-skinned male skin texture (tone-matched), eyebrow001, eyelashes01, brown eyes, short02 hair (short, side-swept) in mid-brown; light stubble painted. 1990s RadioShack staff look on male_casualsuit06: its white short-sleeve top with a painted button placket (logo painted out) under a generated dress collar and a plain dark navy tie, its trousers recoloured charcoal (the top is worn untucked, as the asset is modelled), shoes03 (black dress shoes), a blank black name badge (no words, invented). No logo anywhere.",
+ "macro": {
+  "sex": "male",
+  "age_years": 25,
+  "weight": 0.86,
+  "muscle": 0.42,
+  "height": 0.52,
+  "proportions": 0.45,
+  "ethnicity": {
+   "caucasian": 1.0
+  }
+ },
+ "face": {
+  "head/head-fat-incr": 0.55,
+  "head/head-round": 0.35,
+  "neck/neck-double-incr": 0.35,
+  "chin/chin-width-incr": 0.2,
+  "eyebrows/eyebrows-trans-down": 0.1,
+  "eyes/l-eye-height2-incr": 0.45,
+  "eyes/r-eye-height2-incr": 0.45,
+  "expression/units/caucasian/mouth-corner-puller": 0.12,
+  "expression/units/caucasian/eye-left-opened-up": 0.25,
+  "expression/units/caucasian/eye-right-opened-up": 0.25
+ },
+ "skin": {
+  "base": "young_lightskinned_male_diffuse",
+  "tone": "#d6a487",
+  "flush": 0.3,
+  "stubble": 0.18,
+  "stubble_color": "#4a3a2c",
+  "lips": "#b27566"
+ },
+ "eyes": {
+  "asset": "eyes/low-poly",
+  "texture": "brown_eye",
+  "iris": "#5e4430"
+ },
+ "brows": {
+  "asset": "eyebrows/eyebrow001",
+  "color": "#4a3424"
+ },
+ "hair": {
+  "asset": "hair/short02",
+  "color": "#4a3426",
+  "scalp": 0.6,
+  "line_shift": -4,
+  "fade": {
+   "lo": -30,
+   "hi": 10,
+   "min": 0.85
+  }
+ },
+ "garments": [
+  {
+   "type": "mh",
+   "asset": "clothes/male_casualsuit06",
+   "role": "top",
+   "color": "#f1f0ea",
+   "bottom_color": "#3a3b40",
+   "placket": true,
+   "paint_out": [
+    [
+     0.4,
+     0.1,
+     0.64,
+     0.215
+    ],
+    [
+     0.17,
+     0.1,
+     0.32,
+     0.18
+    ],
+    [
+     0.71,
+     0.13,
+     0.77,
+     0.19
+    ]
+   ],
+   "bottom_detail": 0.25
+  },
+  {
+   "type": "mh",
+   "asset": "clothes/shoes03",
+   "cell": "shoes",
+   "color": "#1a1a1a"
+  },
+  {
+   "type": "tie",
+   "color": "#1f2a44",
+   "end_y": 0.04
+  },
+  {
+   "type": "nametag",
+   "color": "#161616",
+   "border": "#9a9a9a",
+   "side": 1
+  }
+ ],
+ "lashes": {
+  "asset": "eyelashes/eyelashes01",
+  "color": "#3a2c22"
+ },
+ "shoe_sole_m": 0.004
+}

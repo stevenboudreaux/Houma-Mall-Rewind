@@ -144,7 +144,7 @@
   },
   {
    "id": "radioshack",
-   "look": "mixamo",
+   "look": "cast",
    "store": "RADIO SHACK",
    "wing": 1,
    "years": [
@@ -169,7 +169,8 @@
     8.2,
     30.9
    ],
-   "_where": "SHOPS: the clerks' aisle between the cash wrap (z 31.6-32.3) and the phone wall (z 34.0), facing the shop"
+   "_where": "SHOPS: the clerks' aisle between the cash wrap (z 31.6-32.3) and the phone wall (z 34.0), facing the shop",
+   "cast": "radioshack_1995"
   },
   {
    "id": "b_dalton",

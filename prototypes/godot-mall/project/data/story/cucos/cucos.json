@@ -15,7 +15,7 @@
   "years": [
    1995
   ],
-  "look": "mixamo",
+  "look": "cast",
   "skin": "Ch28",
   "sex": "m",
   "name": "PLACEHOLDER Cuco's bartender",
@@ -35,7 +35,8 @@
    24.85,
    -75.35
   ],
-  "_": "skin Ch28 is a PLACEHOLDER pick (a male Mixamo skin free in wing 1). area: behind the counter, in front of the back bar. talk_at: the customer side, between two stools."
+  "_": "skin Ch28 is a PLACEHOLDER pick (a male Mixamo skin free in wing 1). area: behind the counter, in front of the back bar. talk_at: the customer side, between two stools.",
+  "cast": "cucos_owner_1995"
  },
  "patrons": [
   {

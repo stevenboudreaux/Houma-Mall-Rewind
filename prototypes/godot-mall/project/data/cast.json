@@ -1,11 +1,56 @@
 {
  "_": "CHAR-STRIP (Nov 8 2026, design/godot-avatar.md): the cast. One person = one id here = one baked file. scripts/cast.gd Cast.body(id) is the ONLY way any view makes a person (the player in the world, the menu portrait and its chooser row, attendants with \"look\": \"cast\", the talk camera, which frames the attendant's body). Each entry: name (shown in the menu's chooser), sex (m/f: the walk clip), height_m, hips (the skeleton's hips height, for NpcRig), and its file: \"glb\": res://cast/<id>.glb (CHAR-BUILD's baked person, design/godot-characters-research.md section 3) or, until CHAR-BUILD delivers, \"stub\": a Mixamo crowd skin (npc/skins/<id>.scn) that stands in for a cast member. A stub is chosen here in data, never by testing at runtime whether a file is there; a missing file means the person is not shown and an error is logged. player: the chooser row in order (3-4). default: who a new player is. Every entry below is a PLACEHOLDER: Steven names and describes the cast.",
  "default": "placeholder_1",
- "player": ["placeholder_1", "placeholder_2", "placeholder_3", "placeholder_4"],
+ "player": [
+  "placeholder_1",
+  "placeholder_2",
+  "placeholder_3",
+  "placeholder_4"
+ ],
  "cast": {
-  "placeholder_1": {"name": "PLACEHOLDER 1", "sex": "m", "height_m": 1.75, "hips": 0.9916, "stub": "res://npc/skins/Ch01.scn"},
-  "placeholder_2": {"name": "PLACEHOLDER 2", "sex": "f", "height_m": 1.74, "hips": 0.9383, "stub": "res://npc/skins/Ch37.scn"},
-  "placeholder_3": {"name": "PLACEHOLDER 3", "sex": "m", "height_m": 1.78, "hips": 1.009, "stub": "res://npc/skins/Ch23.scn"},
-  "placeholder_4": {"name": "PLACEHOLDER 4", "sex": "f", "height_m": 1.75, "hips": 0.9776, "stub": "res://npc/skins/Ch27.scn"}
+  "placeholder_1": {
+   "name": "PLACEHOLDER 1",
+   "sex": "m",
+   "height_m": 1.75,
+   "hips": 0.9916,
+   "stub": "res://npc/skins/Ch01.scn"
+  },
+  "placeholder_2": {
+   "name": "PLACEHOLDER 2",
+   "sex": "f",
+   "height_m": 1.74,
+   "hips": 0.9383,
+   "stub": "res://npc/skins/Ch37.scn"
+  },
+  "placeholder_3": {
+   "name": "PLACEHOLDER 3",
+   "sex": "m",
+   "height_m": 1.78,
+   "hips": 1.009,
+   "stub": "res://npc/skins/Ch23.scn"
+  },
+  "placeholder_4": {
+   "name": "PLACEHOLDER 4",
+   "sex": "f",
+   "height_m": 1.75,
+   "hips": 0.9776,
+   "stub": "res://npc/skins/Ch27.scn"
+  },
+  "radioshack_1995": {
+   "name": "radioshack_1995",
+   "sex": "m",
+   "height_m": 1.833,
+   "hips": 0.8952,
+   "glb": "res://cast/radioshack_1995.glb",
+   "_": "int-53: CHAR-BUILD's baked person (Rocketbox, design/godot-cast.md); attendant only, not in the player row"
+  },
+  "cucos_owner_1995": {
+   "name": "cucos_owner_1995",
+   "sex": "m",
+   "height_m": 1.828,
+   "hips": 0.8952,
+   "glb": "res://cast/cucos_owner_1995.glb",
+   "_": "int-53: CHAR-BUILD's baked person (Rocketbox, design/godot-cast.md); attendant only, not in the player row"
+  }
  }
 }

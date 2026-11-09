@@ -1,0 +1,81 @@
+{
+ "id": "radioshack_1995",
+ "source": "rocketbox",
+ "rocketbox": "Adults/Male_Adult_08",
+ "hips": 0.8952,
+ "height_m": 1.8330762814730406,
+ "morphs": [
+  "viseme_Sil",
+  "viseme_PP",
+  "viseme_FF",
+  "viseme_TH",
+  "viseme_DD",
+  "viseme_KK",
+  "viseme_CH",
+  "viseme_SS",
+  "viseme_nn",
+  "viseme_RR",
+  "viseme_aa",
+  "viseme_E",
+  "viseme_I",
+  "viseme_O",
+  "viseme_U",
+  "blink_L",
+  "blink_R",
+  "squint_L",
+  "squint_R",
+  "eyes_wide",
+  "smile",
+  "jaw_open",
+  "brow_up",
+  "brow_down",
+  "brow_inner_up",
+  "brow_up_L",
+  "brow_up_R",
+  "mouth_pucker",
+  "mouth_press",
+  "mouth_wide",
+  "mouth_funnel",
+  "frown",
+  "lip_upper_up",
+  "lips_part",
+  "sneer"
+ ],
+ "jaw_open_deg": 0.0,
+ "eyes": {
+  "L": [
+   0.03191890940070152,
+   1.686033844947815,
+   0.09400688856840134
+  ],
+  "R": [
+   -0.03185127675533295,
+   1.686033010482788,
+   0.0940098986029625
+  ]
+ },
+ "lod_switch_m": 9.0,
+ "lod0": {
+  "tris": 7512,
+  "surfaces": 3,
+  "parts": {
+   "radioshack_1995_lod0": 4022,
+   "radioshack_1995_lod0_face": 3490
+  }
+ },
+ "lod1": {
+  "tris": 5599,
+  "surfaces": 3
+ },
+ "glb_bytes": 9794300,
+ "iris": [
+  0.27420605333679116,
+  0.9192796129408713,
+  0.01904296875
+ ],
+ "store": "RADIO SHACK",
+ "period": 1995,
+ "status": "proposal",
+ "built": "2026-11-08",
+ "source_file": "tools/blender/cast/radioshack_1995.json"
+}

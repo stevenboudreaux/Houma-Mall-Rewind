@@ -92,10 +92,17 @@ static func body(id: String) -> NpcBody:
 	if path == "" or not ResourceLoader.exists(path):
 		push_error("cast: the file of \"%s\" (%s) is not in this pack: not shown" % [id, path])
 		return null
-	var b := NpcBody.new()
-	b.name = "Cast_" + id
-	b.set_meta("cast", id)
-	b.set_skin({"id": id, "scn": path, "hips": float(e.get("hips", 1.0)), "height_m": float(e.get("height_m", 1.7))})
+	var b: NpcBody
+	if e.has("glb") and CastGlb.exists(id):
+		# int-53: a baked person (CHAR-BUILD, scripts/cast_glb.gd): LODs, morphs, eye bones come with it
+		b = CastGlb.body(id)
+		if b == null:
+			return null
+	else:
+		b = NpcBody.new()
+		b.name = "Cast_" + id
+		b.set_meta("cast", id)
+		b.set_skin({"id": id, "scn": path, "hips": float(e.get("hips", 1.0)), "height_m": float(e.get("height_m", 1.7))})
 	if b.skin == null:
 		push_error("cast: \"%s\" (%s) did not load: not shown" % [id, path])
 		b.free()

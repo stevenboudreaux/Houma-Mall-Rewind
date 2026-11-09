@@ -1,0 +1,130 @@
+{
+ "id": "cucos_owner_1995",
+ "store": "CUCO'S",
+ "period": 1995,
+ "status": "proposal",
+ "steven": "Cuco's owner (1990s): 35-year-old white man, average build. The TALK close-up.",
+ "steven_picked": "Rocketbox Male_Adult_07 (Nov 8)",
+ "proposed": "Rocketbox Male_Adult_07 as he is built (average). His grey sport coat kept; his rust shirt repainted a cream open-collar dress shirt (its collar keeps Rocketbox's rust: the collar is textured from the same texels as his neck skin, so it can't be repainted alone); jeans repainted khaki trousers (denim detail at 35 %); his brown belt and tan shoes kept (Rocketbox maps his shoe uppers onto the hands' texels, so they can't be recoloured alone). No tie, no badge (the owner). Eyes: bigger, brighter iris, a catchlight, lids a little more open. Skin warmed a touch, cheek and nose colour. His own short dark hair.",
+ "rocketbox": {
+  "person": "Adults/Male_Adult_07",
+  "heavy": 0.0
+ },
+ "resting_face": {
+  "EyeWideLeft": 0.25,
+  "EyeWideRight": 0.25
+ },
+ "repaint": {
+  "skin_by": "region",
+  "by_uv": true,
+  "map": [
+   {
+    "from": "#4b4b46",
+    "uv": [
+     [
+      0.28,
+      0.0,
+      0.72,
+      0.82
+     ],
+     [
+      0.0,
+      0.45,
+      0.28,
+      0.83
+     ],
+     [
+      0.72,
+      0.45,
+      1.0,
+      0.83
+     ]
+    ]
+   },
+   {
+    "from": "#965037",
+    "to": "#ece6d6",
+    "detail": 0.85,
+    "uv": [
+     [
+      0.22,
+      0.0,
+      0.78,
+      0.82
+     ]
+    ]
+   },
+   {
+    "from": "#2d4664",
+    "to": "#a8977a",
+    "detail": 0.35,
+    "uv": [
+     [
+      0.0,
+      0.03,
+      0.28,
+      0.45
+     ],
+     [
+      0.72,
+      0.03,
+      1.0,
+      0.45
+     ]
+    ]
+   },
+   {
+    "from": "#64402a",
+    "uv": [
+     0.0,
+     0.0,
+     1.0,
+     0.03
+    ]
+   },
+   {
+    "from": "#62483d",
+    "to": "#ece6d6",
+    "detail": 0.85,
+    "uv": [
+     [
+      0.23,
+      0.4,
+      0.31,
+      0.51
+     ],
+     [
+      0.69,
+      0.4,
+      0.77,
+      0.51
+     ],
+     [
+      0.22,
+      0.03,
+      0.31,
+      0.11
+     ],
+     [
+      0.69,
+      0.03,
+      0.78,
+      0.11
+     ]
+    ]
+   }
+  ]
+ },
+ "tone": {
+  "warm": 0.4,
+  "cheeks": 0.35,
+  "nose": 0.3
+ },
+ "eyes": {
+  "iris_scale": 1.3,
+  "iris_gain": 1.3,
+  "catchlight": 0.85
+ },
+ "garments": [],
+ "lod1_tris": 5600
+}

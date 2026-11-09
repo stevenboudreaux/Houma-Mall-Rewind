@@ -1,0 +1,81 @@
+{
+ "id": "cucos_owner_1995",
+ "source": "rocketbox",
+ "rocketbox": "Adults/Male_Adult_07",
+ "hips": 0.8952,
+ "height_m": 1.8275682590901852,
+ "morphs": [
+  "viseme_Sil",
+  "viseme_PP",
+  "viseme_FF",
+  "viseme_TH",
+  "viseme_DD",
+  "viseme_KK",
+  "viseme_CH",
+  "viseme_SS",
+  "viseme_nn",
+  "viseme_RR",
+  "viseme_aa",
+  "viseme_E",
+  "viseme_I",
+  "viseme_O",
+  "viseme_U",
+  "blink_L",
+  "blink_R",
+  "squint_L",
+  "squint_R",
+  "eyes_wide",
+  "smile",
+  "jaw_open",
+  "brow_up",
+  "brow_down",
+  "brow_inner_up",
+  "brow_up_L",
+  "brow_up_R",
+  "mouth_pucker",
+  "mouth_press",
+  "mouth_wide",
+  "mouth_funnel",
+  "frown",
+  "lip_upper_up",
+  "lips_part",
+  "sneer"
+ ],
+ "jaw_open_deg": 0.0,
+ "eyes": {
+  "L": [
+   0.03191867470741272,
+   1.6860355138778687,
+   0.09400709718465805
+  ],
+  "R": [
+   -0.03185127675533295,
+   1.6860336065292358,
+   0.09401106834411621
+  ]
+ },
+ "lod_switch_m": 9.0,
+ "lod0": {
+  "tris": 7588,
+  "surfaces": 3,
+  "parts": {
+   "cucos_owner_1995_lod0": 4272,
+   "cucos_owner_1995_lod0_face": 3316
+  }
+ },
+ "lod1": {
+  "tris": 5600,
+  "surfaces": 3
+ },
+ "glb_bytes": 10165684,
+ "iris": [
+  0.2713980439044677,
+  0.9209221089294202,
+  0.01904296875
+ ],
+ "store": "CUCO'S",
+ "period": 1995,
+ "status": "proposal",
+ "built": "2026-11-08",
+ "source_file": "tools/blender/cast/cucos_owner_1995.json"
+}

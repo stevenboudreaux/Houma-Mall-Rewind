@@ -1,0 +1,15 @@
+CAST PERF (llvmpipe (LLVM 20.1.2, 256 bits), X11, LOD0 distance)
+case                    n   mean ms   p95 ms    fps   tris drawn   draw calls   build ms/body
+none                    0      7.73     9.91     129           0           0          0
+mixamo:Ch22             1     19.47    23.84      51        6905           5         37
+mixamo:Ch22            10     57.99    67.57      17       69050          50          2
+auntie_annes_2026       1     21.46    25.48      47        7824           2        246
+auntie_annes_2026      10     64.31    74.35      16       62820          20         27
+cucos_owner_1995        1     21.06    25.04      47        7588           3        242
+cucos_owner_1995       10     63.61    71.38      16       60480          30         26
+gac_1995                1     24.09    27.39      42       10098           3        285
+gac_1995               10     83.76    93.78      12       85220          30         30
+radioshack_1995         1     23.65    30.55      42        7512           3        271
+radioshack_1995        10     64.14    74.75      16       59920          30         25
+spencers_2026           1     22.55    25.64      44        8966           3        272
+spencers_2026          10     65.88    73.78      15       73620          30         29

@@ -4,6 +4,7 @@
 ## proves the Mixamo clips play on it. Lights: a warm key and a cool fill like TALK's talk camera.
 ##   xvfb-run -a -s "-screen 0 1600x1000x24" godot --path . --rendering-driver opengl3 --resolution 480x720 \
 ##     --script res://tools/qa/cast_turntable.gd -- --cast=res://cast_preview/x.glb --hips=0.9 --out=/tmp/t/x
+##   or --id=<cast id> (CHAR-BUILD): the person through CastGlb.body(id), faces by the cast's morph names.
 ## Writes <out>-turn<deg>.png and <out>-face-<name>.png; prints TURNTABLE OK.
 extends SceneTree
 
@@ -17,10 +18,10 @@ var i := 0
 var plan: Array = []
 const FACES := {
 	"neutral": {},
-	"talk": {"JawOpen": 0.35, "MouthSmileLeft": 0.5, "MouthSmileRight": 0.5, "viseme_aa": 0.3},
-	"smile": {"MouthSmileLeft": 0.9, "MouthSmileRight": 0.9, "CheekSquintLeft": 0.4, "CheekSquintRight": 0.4},
-	"blink": {"EyeBlinkLeft": 1.0, "EyeBlinkRight": 1.0},
-	"oh": {"viseme_O": 0.9, "BrowInnerUp": 0.6},
+	"talk": {"JawOpen": 0.35, "MouthSmileLeft": 0.5, "MouthSmileRight": 0.5, "viseme_aa": 0.3, "jaw_open": 0.35, "smile": 0.5},
+	"smile": {"MouthSmileLeft": 0.9, "MouthSmileRight": 0.9, "CheekSquintLeft": 0.4, "CheekSquintRight": 0.4, "smile": 0.9, "squint_L": 0.25, "squint_R": 0.25},
+	"blink": {"EyeBlinkLeft": 1.0, "EyeBlinkRight": 1.0, "blink_L": 1.0, "blink_R": 1.0},
+	"oh": {"viseme_O": 0.9, "BrowInnerUp": 0.6, "brow_inner_up": 0.6},
 	"look-left": {},
 }
 
@@ -29,6 +30,7 @@ func _initialize() -> void:
 		if a.begins_with("--cast="): cast = a.substr(7)
 		elif a.begins_with("--hips="): hips = float(a.substr(7))
 		elif a.begins_with("--out="): out = a.substr(6)
+		elif a.begins_with("--id="): cast = "id:" + a.substr(5)
 	DirAccess.make_dir_recursive_absolute(out.get_base_dir())
 	var we := WorldEnvironment.new(); var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR; e.background_color = Color(0.36, 0.37, 0.4)
@@ -39,8 +41,11 @@ func _initialize() -> void:
 	root.add_child(key); key.rotation_degrees = Vector3(-35, -30, 0)
 	var fill := DirectionalLight3D.new(); fill.light_color = Color(0.92, 0.95, 1.0); fill.light_energy = 0.45
 	root.add_child(fill); fill.rotation_degrees = Vector3(-5, 40, 0)
-	body = NpcBody.new(); root.add_child(body)
-	body.set_skin({"id": "cast_preview", "scn": cast, "hips": hips})
+	if cast.begins_with("id:"):
+		body = CastGlb.body(cast.substr(3)); root.add_child(body)
+	else:
+		body = NpcBody.new(); root.add_child(body)
+		body.set_skin({"id": "cast_preview", "scn": cast, "hips": hips})
 	body.freeze("idle", 0.5)
 	cam = Camera3D.new(); root.add_child(cam); cam.current = true
 	for deg in [0, 45, 90, 135, 180, 270]:
@@ -75,11 +80,7 @@ func _process(dt: float) -> bool:
 			cam.fov = 18.0; cam.position = Vector3(0.0, eye_y, 1.25); cam.look_at(Vector3(0, eye_y - 0.03, 0))
 		else:
 			cam.fov = 30.0; cam.position = Vector3(0, 0.95, 3.9); cam.look_at(Vector3(0, 0.9, 0))
-		for side in ["Left", "Right"]:
-			var b := sk.find_bone("mixamorig_%sEye" % side)
-			if b >= 0:
-				var r := Quaternion(Vector3.UP, deg_to_rad(18.0)) if p[0] == "face-look-left" else Quaternion()
-				sk.set_bone_pose_rotation(b, sk.get_bone_rest(b).basis.get_rotation_quaternion() * r)
+		CastFace.turn_eyes(sk, CastFace.eye_bones(sk), 18.0 if p[0] == "face-look-left" else 0.0, 0.0)
 	else:
 		var im := root.get_texture().get_image()
 		im.save_png("%s-%s.png" % [out, p[0]])

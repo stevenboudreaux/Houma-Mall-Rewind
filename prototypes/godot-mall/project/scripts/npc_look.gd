@@ -7,8 +7,10 @@
 ## the eyes are turned by sliding that texture (scripts/spatial_npc_eye.gdshader) and they blink (a
 ## lid-coloured wipe: the bodies have no eyelids). The Mixamo crowd skins (the Cuco's bartender, and
 ## any attendant before the web's character pack mounts) paint the eyes into the one body texture:
-## head look-at only, no eye turn, no blink. If a rig ever has eye bones (a bone named *LeftEye /
-## *RightEye), they are turned instead of the texture.
+## head look-at only, no eye turn, no blink. Rigs WITH eye bones (the cast's eye.L / eye.R, converted
+## Rocketbox bodies' *LeftEye / *RightEye) turn those instead of the texture, and bodies with blink morphs
+## (blink_L / blink_R, ARKit EyeBlinkLeft / EyeBlinkRight) blink with them (scripts/cast_face.gd,
+## CHAR-BUILD); the texture slide stays the fallback. Limits and timing are the same either way.
 ##
 ## Each frame: the gaze target is the camera (plus a saccade, eyes only). The head follows within
 ## head_yaw / head_pitch of the body's front with a slow ease (head_tau); the eyes lead with a fast
@@ -40,7 +42,8 @@ var _eye_surf := -1
 var _eye_had: Material = null     # its surface override before the swap (null = none)
 var _eye_mat: ShaderMaterial
 var _eye_bind := Transform3D()    # the head's bind pose in the eye mesh's skin
-var _eye_bones := []              # [bone, rest rotation] when a rig has eye bones
+var _eye_bones := []              # eye bone indices when a rig has eye bones (CastFace.eye_bones)
+var _blinks := []                 # blink morphs when the body has them (CastFace.blink_shapes)
 
 ## Start looking at `at` (the talk camera). c: talk_camera.json's whole config.
 func start(b: NpcBody, at: Node3D, c: Dictionary) -> void:
@@ -52,11 +55,9 @@ func start(b: NpcBody, at: Node3D, c: Dictionary) -> void:
 	_sacc_t = _rng.randf_range(0.4, 1.0)
 	_blink_t = _rng.randf_range(0.8, 2.0)
 	_sk = skeleton(body)
+	_blinks = CastFace.blink_shapes(body.skin)
 	if _sk:
-		for i in range(_sk.get_bone_count()):
-			var n := _sk.get_bone_name(i)
-			if n.ends_with("LeftEye") or n.ends_with("RightEye"):
-				_eye_bones.append(i)
+		_eye_bones = CastFace.eye_bones(_sk)
 		if _eye_bones.is_empty():
 			_swap_eyes()
 		_sk.skeleton_updated.connect(_after_pose)
@@ -120,15 +121,15 @@ func _process(dt: float) -> void:
 	if _eye_mat:
 		_eye_mat.set_shader_parameter("gaze", eyes * weight)
 		_eye_mat.set_shader_parameter("blink", blink * weight)
+	if not _blinks.is_empty():
+		CastFace.set_blink(_blinks, blink * weight)
 
 ## After the skeleton's final pose (NpcRig included): the eye shader's unpose, or the eye bones.
 func _after_pose() -> void:
 	if _sk == null or not is_instance_valid(_sk):
 		return
 	if not _eye_bones.is_empty():
-		var q := Quaternion(Vector3.UP, deg_to_rad(eyes.x * weight)) * Quaternion(Vector3.LEFT, deg_to_rad(eyes.y * weight))
-		for i in _eye_bones:
-			_sk.set_bone_pose_rotation(i, (_sk.get_bone_pose_rotation(i) * q).normalized())
+		CastFace.turn_eyes(_sk, _eye_bones, eyes.x * weight, eyes.y * weight)
 		return
 	if _eye_mat == null or _eye_mi == null or not is_instance_valid(_eye_mi):
 		return
@@ -201,6 +202,7 @@ func _restore_eyes() -> void:
 
 func _finish() -> void:
 	weight = 0.0
+	CastFace.set_blink(_blinks, 0.0)
 	if body and is_instance_valid(body) and body.rig:
 		body.rig.look = Vector3.INF
 		body.rig.look_weight = 1.0
@@ -215,6 +217,7 @@ func _finish() -> void:
 func _exit_tree() -> void:
 	if _eye_mat != null or weight > 0.0:
 		weight = 0.0
+		CastFace.set_blink(_blinks, 0.0)
 		_restore_eyes()
 		if body and is_instance_valid(body) and body.rig:
 			body.rig.look = Vector3.INF

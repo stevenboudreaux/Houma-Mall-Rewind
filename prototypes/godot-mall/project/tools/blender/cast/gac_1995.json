@@ -1,0 +1,95 @@
+{
+ "id": "gac_1995",
+ "store": "GREAT AMERICAN COOKIE CO",
+ "period": 1995,
+ "status": "proposal",
+ "steven": "Great American Cookie (1990s): 18-year-old Black woman, average build. GAC uniform (red polo/apron, visor; no logo). Steven Nov 8: Female_Party_02, keep her long hair as-is.",
+ "steven_picked": "Rocketbox Female_Party_02 (Nov 8)",
+ "proposed": "Rocketbox Female_Party_02, her long curly hair and hoop earrings as made. Her patterned top repainted GAC red (the print flattened away), her shorts and bare legs painted black as uniform trousers, shoes black; a red visor (no logo) sized over her hair. Eyes: iris + catchlight, lids a touch more open; skin warmed a touch.",
+ "rocketbox": {
+  "person": "Adults/Female_Party_02",
+  "heavy": 0.0
+ },
+ "resting_face": {
+  "EyeWideLeft": 0.2,
+  "EyeWideRight": 0.2
+ },
+ "repaint": {
+  "skin_by": "colour",
+  "by_uv": true,
+  "map": [
+   {
+    "from": "#5a4048",
+    "to": "#b51f24",
+    "detail": 0.12,
+    "uv": [
+     [
+      0.3,
+      0.0,
+      0.7,
+      0.95
+     ],
+     [
+      0.0,
+      0.27,
+      0.31,
+      0.52
+     ],
+     [
+      0.69,
+      0.27,
+      1.0,
+      0.52
+     ]
+    ]
+   },
+   {
+    "from": "#1e1e22",
+    "to": "#1d1d20",
+    "detail": 0.4,
+    "uv": [
+     [
+      0.0,
+      0.5,
+      0.31,
+      0.66
+     ],
+     [
+      0.69,
+      0.5,
+      1.0,
+      0.66
+     ]
+    ]
+   }
+  ]
+ },
+ "skin_paint": [
+  {
+   "regions": [
+    "legs"
+   ],
+   "to": "#1d1d20",
+   "detail": 0.35
+  }
+ ],
+ "tone": {
+  "warm": 0.3,
+  "cheeks": 0.25,
+  "nose": 0.2
+ },
+ "eyes": {
+  "iris_scale": 1.25,
+  "iris_gain": 1.35,
+  "catchlight": 0.85
+ },
+ "garments": [
+  {
+   "type": "visor",
+   "color": "#b51f24",
+   "gap": 0.012,
+   "front_el": 0.4
+  }
+ ],
+ "lod1_tris": 5600
+}
