@@ -609,6 +609,118 @@ Shared: `scripts/player.gd` one hunk (the s1n name). `build_mall.gd` untouched. 
 3. `tools/capture_standin.sh 3` and `3 2026`: the door pictures of wings 1, 2, 4, 5 (s41 now looks down the channel; s1n
    adds a row at the end of wing 1's atlas, the existing rows unchanged).
 
+## Workstream EXT-LOT (Nov 9, 2026): six lot fixes from Steven's Demo 53 walk
+
+Branch `ws/ext-lot` from `main` (0b07b54). Both years unless said. Evidence `production/qa/evidence/wsEXTL2-*.jpg`
+(all **unbaked**: the cloud does not bake). One commit per item.
+
+### 1. Accessible stalls (`exterior.gd ada_stalls`, `ada_pair`; `lot_field` records `ROWS`)
+- Steven: the wheelchair symbols "make zero sense on the outside concrete". They were placed on a 2 m search grid
+  round each door, so they sat off the stall lines and out in the aisles.
+- Now `lot_field` records every stall row it paints (start, direction, stall count, field, row number). For each
+  customer door (and JCPenney's two entrances), the rows whose building end is within 40 m of the door are found;
+  the nearest row and **every other row** of the same field after it get a pair (at most two rows a door, never
+  every row). In a chosen row, on the side facing the door, **stalls 1 and 2 from the building end** carry the
+  symbol (same 1.5 m size), centred and wholly inside the yellow lines, turned to read from the drive aisle.
+- **Access aisle:** stall 3 beside each pair is the striped aisle: a blue frame 0.15 m inside the stall lines and
+  45-degree blue hatching at 0.6 m (`ex_lot_ada_blue`), as filmed at JCPenney's west side (4488 f005, f009: blue
+  hatched aisles). 1995's aisle colour is a GUESS (blue). The stall lines themselves stay the lot's yellow (today's
+  blue HC lines are not drawn).
+
+### 2. Road into the lot: the lanes carry on (`exterior.gd entry_throat`, `lot_field` calls, `lot_keepouts`)
+- Steven: "when turning from the road onto the mall lot make sure the driving lanes stay intact as they should in a
+  mall parking lot; only difference is pavement change from asphalt to concrete." The Armour Dr drive (and the Bayou
+  Gardens one) were `MON.drive`: asphalt with a double yellow that ran 10 m into the lot and stopped at a stall
+  row's end island, because one stall field's row sat right on the drive's line (back lot row x -24.5; south lot
+  row x -140.5).
+- Now each drive mouth (`entry_throat`): asphalt only from the road's edge to the end of two 4.5 m **curb returns**
+  at the property line (`THROAT_R`), with the road's double yellow stopping there and a white stop bar across the
+  outbound lane; the frontage curb is cut at the mouth; an 8 m curbed throat (`THROAT_L`) on each side; the stop
+  sign on the outbound side.
+- The **lanes continue in concrete** as a 12 m (Armour, `ARMOUR_DRIVE` x -26..-14) / 16 m (Bayou Gardens,
+  `BAYOU_DRIVE`) drive aisle all the way to the building: the back lot and south lot are each laid as two stall
+  fields either side of the aisle, so rows meet the drive with their **sides** (stalls opening onto it), not their
+  ends. The Armour aisle runs straight to Lynn's north entrance (s1n, x -24); the Bayou Gardens aisle to the south
+  entrance's drop-off. Cost: the back lot's westernmost row (x -120..-109, south of Unitech) is now the perimeter
+  aisle along the apartments' fence.
+- Walking it: the walk grid is flat; the asphalt sits 1.6 cm over the concrete (paint, not a step), so there is
+  nothing to pop at the seam.
+
+### 3. The UA marquee on West Park; one entrance sign (`monuments.gd build()`, a small hunk; the models unchanged)
+- Steven: the "Southland Cinema / Now Showing" pylon at the Kirschman's end (Armour Dr) was in the wrong place. It
+  now stands on **West Park Ave's far (east) verge across from the bank pad** (`UA_MARQUEE_X/Z` = 124, -64; the bank
+  pad is z -76.9..-51.1), its face to the road and the mall. 1995 only: the 2026 footage shows no successor.
+- The brick monument beside it (Armour Dr) is gone. "The mall keeps exactly one entrance sign, the one toward the
+  front of the mall": the West Park monument at the palm drive (100, -11.5). **The Bayou Gardens monument was also
+  removed** to leave exactly one (the brief's count); restoring it is one line (commented in `build()`).
+  Verified in both years' builds: one `monument()`, `monuments: 1 sign` in the build log.
+
+### 4. The small building with the mast, north of JCPenney (`exterior.gd tank`, `TANK_UTILITY`)
+- What it stood for: not in `exterior.json` and not an outparcel. It was the tank yard's **peach utility building**
+  (5 x 5 x 3 m) and the 8 m **conduit pole** on its yellow base beside it (read as an antenna mast), after the peach
+  electrical building and the pole with two conduit risers filmed in 4486 f077-102 (notes_C, "big conduit right
+  there"). Steven: "remove this building". Both are off behind `TANK_UTILITY = false`; the tank, its fence and
+  shrubs stay.
+
+### 5. Unitech's entrance (`exterior.gd unitech_box`; `make_exterior.py` writes `standalone[].entrance`)
+- Steven: "Sears Hardware in 1995, Unitech(?) today"; doors where he drew the arch, the centre of the long lot-facing
+  face. The box is 40 x 36.2 m: the long faces are north and south, and the south one faces the back lot and Lynn's.
+- Built (both years): a **7.2 x 2.4 m recessed vestibule** centred at (-102, -196) on the south face; a white soffit
+  at 3.2 m with two cans (a night light); a 0.1 m concrete step; a clear-anodized storefront on the back wall: two
+  pairs of full-glass doors (0.9 m leaves, push bars), a sidelight each side, a transom bar at the 2.3 m door head and
+  transom to the soffit, dark glass. Period commercial (1970s-90s), the same in 2026 (no footage of this face).
+- **Visual only:** the box has no inside, so the doors are not in `doors` and the recess is not on the walk grid.
+- **For EXT-SIGNS:** `exterior.json` `standalone[name=UNITECH].entrance` = `{face: "S", n: [0, 1], mid: [-102, -196],
+  width: 7.2, recess: 2.4, h: 2.3, soffit: 3.2, sign_band: [3.6, 6.4], walkable: false}`; the sign goes on the wall
+  face above the recess (the lintel, z -196, y 3.6-6.4).
+
+### 6. No NPCs outside (`scripts/npcs.gd`, one commented hunk)
+- Steven: no NPCs outside the mall "at this time". `npcs.gd` stays off in wing 3 unless `npcs.json` sets
+  `"outside": true` (a flag, default false; `?npcs=N` does not override it). 2026 already skipped wing 3 in
+  `player.gd`; 1995 now stops at the flag. The Runner is wing 2 only and no story attendant is placed in wing 3.
+- From the vestibules: in every inside wing and year, the walk grid (which the shoppers' path grid copies) is closed
+  1-10 m past each exit door (s39, s41, s43, s55, s1e, s1n, s1x, s2e, s2s), so no shopper can reach or spawn in a
+  vestibule and none can walk in from outside.
+
+### Files (EXT-LOT)
+`tools/exterior/exterior.gd` (`ROWS`, `FIELD`, `ada_stalls`, `ada_pair`, `entry_throat`, `unitech_box`, `ARMOUR_DRIVE`,
+`THROAT_R`, `THROAT_L`, `TANK_UTILITY`; the stall fields and keep-outs in `lot` / `lot_keepouts`; the `ex_lot_ada_blue`
+paint), `tools/exterior/monuments.gd` (`build()` only, `UA_MARQUEE_X/Z`), `tools/make_exterior.py` (`entrance`),
+`exterior.json`, `scripts/npcs.gd` (one hunk), `gen/w3`, `gen/w3y26`, `wing3.tscn`, `wing3_2026.tscn`.
+Not touched: any building face but Unitech's, the sign models, the entrances, `player.gd`, `build_mall.gd`.
+
+### Tests (cloud, unbaked; export `.scratch/builds/extl2`, wings 1-4, both years; lightmaps left out of the import)
+- `--wing=3` and `--wing=3 --year=2026`: BUILD OK (`accessible stalls, 15 pairs`; `monuments: 1 sign` [+ the UA
+  marquee in 1995]).
+- `doortest.py` wing 1 main entrance -> outside -> back, 1995 and 2026: CROSSED, 0 errors.
+- `movetest.py` wing 3 (`?npcs=12` asked for), 1995 and 2026: 0 errors at four cameras, the touch walk MOVED;
+  1995 logs `npcs: off outside`.
+- **Drive-in walks** (a scratch Playwright script: hold run + forward from the road's edge, read `DBG pos` every
+  0.5 s of game time, then E at the door): Armour Dr road edge (-24, -249) down the drive aisle to Lynn's north
+  doors, 1995 and 2026: 4.6-4.8 m per sample the whole way, no jump over 1.5 x the median, no stall, x held at
+  -24 (no sideways push), across the asphalt -> concrete seam at z -243; "Enter the mall" -> wing 4 (s1n), 0
+  errors. West Park road edge (102.6, -118) to Lynn's east doors (s1e), 1995: the same, -> wing 4. Note: s1n's
+  prompt circle (2.8 m round its out spot, 3.5 m off the glass) does not reach the glass; walking straight up to
+  the doors stops 3.1 m from the spot with no prompt, one step back shows it (EXT-LAYOUT's spot, not changed here).
+- Not compared here: pack sizes (this cloud export has `w3` 98.9 MB, `w3y26` 85.7 MB; LOT measured 59.7 / 44.9 MB
+  on its own branch; this branch adds a few hundred stripes, the throats and one storefront, no texture).
+
+### For the Mac (integration)
+1. Rebake `wing3:fastday` and `wing3_2026:fastday` (the lot paint, the throats, Unitech's front, the tank yard and
+   the monuments changed; the old lightmaps no longer fit).
+2. `tools/capture_standin.sh 3` and `3 2026` (the door pictures of the inside wings look out on the lot).
+3. Wings 1, 2, 4, 5 need no rebake (`npcs.gd` is a script).
+4. EXT-SIGNS: Unitech's sign position is `exterior.json standalone[0].entrance` (above). EXT-ENTRANCES: nothing here
+   touches the entrances.
+
+### Open for Steven
+- The Bayou Gardens monument went too, to leave one entrance sign: say if "one" meant only the Armour one.
+- The marquee's real spot is still not in any picture: on the verge across from the bank, facing the road, as asked.
+- The tank-yard utility building was the filmed electrical building (4486 f077-102); removed as asked
+  (`TANK_UTILITY` brings it back).
+- Unitech's entrance is on the south (lot-facing, toward Lynn's) long face; the east face also faces the lot.
+
+
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).
