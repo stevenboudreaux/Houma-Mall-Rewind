@@ -44,10 +44,14 @@ func _initialize() -> void:
 	root.add_child(scn)
 	current_scene = scn
 	var lm = scn.get_node_or_null("LightmapGI")
+	# int-53: cloud-built scenes don't embed light_data; apply() loads res://wing3[_2026]_<mode>.lmbake
+	# by path when it exists (as capture_anchor.gd does), so apply first, then see whether it is baked
+	if lm != null:
+		load("res://scripts/time_of_day.gd").apply(scn, mode)
 	baked = lm != null and lm.light_data != null
 	var envn = scn.get_node("Env")
 	if baked:
-		load("res://scripts/time_of_day.gd").apply(scn, mode)
+		pass
 	else:
 		print("  no lightmap for the outside: an unbaked sun and sky stand in (re-capture after the bake)")
 		if lm:

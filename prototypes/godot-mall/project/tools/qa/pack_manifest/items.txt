@@ -1,4 +1,13 @@
 # files inside items.<desktop|mobile>.pck (tools/qa/packcontents.py write)
+models/bl_aa_nugget_cup/bl_aa_nugget_cup.glb
+models/bl_aa_nugget_cup/bl_aa_nugget_cup_albedo.png
+models/bl_aa_nugget_cup/bl_aa_nugget_cup_icon.png
+models/bl_aa_nugget_cup/bl_aa_nugget_cup_normal.png
+models/bl_aa_nugget_cup/bl_aa_nugget_cup_orm.png
+models/bl_aa_nugget_cup_case/bl_aa_nugget_cup_case.glb
+models/bl_aa_nugget_cup_case/bl_aa_nugget_cup_case_albedo.png
+models/bl_aa_nugget_cup_case/bl_aa_nugget_cup_case_normal.png
+models/bl_aa_nugget_cup_case/bl_aa_nugget_cup_case_orm.png
 models/bl_aa_warmer/bl_aa_warmer.glb
 models/bl_aa_warmer/bl_aa_warmer_albedo.png
 models/bl_aa_warmer/bl_aa_warmer_normal.png
@@ -33,6 +42,10 @@ models/bl_bd_paperback/bl_bd_paperback_albedo.png
 models/bl_bd_paperback/bl_bd_paperback_icon.png
 models/bl_bd_paperback/bl_bd_paperback_normal.png
 models/bl_bd_paperback/bl_bd_paperback_orm.png
+models/bl_cd7_case/bl_cd7_case.glb
+models/bl_cd7_case/bl_cd7_case_albedo.png
+models/bl_cd7_case/bl_cd7_case_normal.png
+models/bl_cd7_case/bl_cd7_case_orm.png
 models/bl_cd7_corndog/bl_cd7_corndog.glb
 models/bl_cd7_corndog/bl_cd7_corndog_albedo.png
 models/bl_cd7_corndog/bl_cd7_corndog_icon.png
@@ -101,6 +114,15 @@ models/bl_dir_finial/bl_dir_finial.glb
 models/bl_dir_finial/bl_dir_finial_albedo.png
 models/bl_dir_finial/bl_dir_finial_normal.png
 models/bl_dir_finial/bl_dir_finial_orm.png
+models/bl_gac_choc_chip_cookie/bl_gac_choc_chip_cookie.glb
+models/bl_gac_choc_chip_cookie/bl_gac_choc_chip_cookie_albedo.png
+models/bl_gac_choc_chip_cookie/bl_gac_choc_chip_cookie_icon.png
+models/bl_gac_choc_chip_cookie/bl_gac_choc_chip_cookie_normal.png
+models/bl_gac_choc_chip_cookie/bl_gac_choc_chip_cookie_orm.png
+models/bl_gac_cookies/bl_gac_cookies.glb
+models/bl_gac_cookies/bl_gac_cookies_albedo.png
+models/bl_gac_cookies/bl_gac_cookies_normal.png
+models/bl_gac_cookies/bl_gac_cookies_orm.png
 models/bl_gac_sugarcookie/bl_gac_sugarcookie.glb
 models/bl_gac_sugarcookie/bl_gac_sugarcookie_albedo.png
 models/bl_gac_sugarcookie/bl_gac_sugarcookie_icon.png
@@ -135,6 +157,10 @@ models/bl_ls_lion/bl_ls_lion.glb
 models/bl_ls_lion/bl_ls_lion_albedo.png
 models/bl_ls_lion/bl_ls_lion_normal.png
 models/bl_ls_lion/bl_ls_lion_orm.png
+models/bl_mall_trashcan/bl_mall_trashcan.glb
+models/bl_mall_trashcan/bl_mall_trashcan_albedo.png
+models/bl_mall_trashcan/bl_mall_trashcan_normal.png
+models/bl_mall_trashcan/bl_mall_trashcan_orm.png
 models/bl_oj_cup/bl_oj_cup.glb
 models/bl_oj_cup/bl_oj_cup_albedo.png
 models/bl_oj_cup/bl_oj_cup_icon.png
