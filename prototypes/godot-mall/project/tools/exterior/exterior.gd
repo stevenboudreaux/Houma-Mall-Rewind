@@ -624,11 +624,58 @@ static func roofs(b):
 		var r = s.rect
 		var y = H_UNITECH
 		# Unitech: "a separate long low white warehouse box" (4486 f010, f072)
-		b.box("ex_shell", "ex_block_white", Vector3((r[0] + r[2]) * 0.5, y * 0.5, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0], y, r[3] - r[1]), Transform3D.IDENTITY, ["-y"])
+		if s.has("entrance"):
+			unitech_box(b, r, y, s.entrance)   # EXT-LOT: the box with its recessed entrance
+		else:
+			b.box("ex_shell", "ex_block_white", Vector3((r[0] + r[2]) * 0.5, y * 0.5, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0], y, r[3] - r[1]), Transform3D.IDENTITY, ["-y"])
 		# EXT-LAYOUT (Nov 8 2026, Steven): unsigned in both years ("Old Sears Hardware" on his plan; a historian
 		# pass will settle what it read in the 1990s). It carried "UNITECH" in 2026 before.
 		b.box("ex_shell", "ex_coping", Vector3((r[0] + r[2]) * 0.5, y + 0.05, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0] + 0.2, 0.12, r[3] - r[1] + 0.2))
 		b.obst(["rect", r[0], r[1], r[2], r[3]])
+
+## EXT-LOT (Nov 9 2026, Steven, Demo 53: "Sears Hardware in 1995, Unitech(?) today"; the arch he drew at the centre
+## of the long lot-facing face): the white box with a modest recessed vestibule there, both years. exterior.json
+## `standalone[].entrance` (make_exterior.py) gives the face (S, z = r[3]), the doorway's centre, width, recess depth,
+## door head and soffit; EXT-SIGNS reads the same record for the sign above. The box is built as the back block plus
+## two piers and a lintel round the recess. Period storefront (both years, 1970s-90s commercial): clear-anodized
+## aluminium frame, two pairs of full-glass doors with push bars, a sidelight each side, a transom to the soffit,
+## a white soffit with two cans, a concrete floor a step proud of the lot. VISUAL ONLY: the box has no inside, so
+## the doors are not in `doors` and the recess is not on the walk grid (the box's obstacle covers it).
+static func unitech_box(b, r, y, en):
+	var g = "ex_shell"
+	var W = float(en.width); var D = float(en.recess); var so = float(en.soffit)
+	var xm = float(en.mid[0]); var zf = r[3]
+	var zb = zf - D                 # the recess's back wall (the storefront)
+	var xa = xm - W * 0.5; var xb = xm + W * 0.5
+	# the back block (all but the front D metres), the two piers either side of the recess, the lintel over it
+	b.box(g, "ex_block_white", Vector3((r[0] + r[2]) * 0.5, y * 0.5, (r[1] + zb) * 0.5), Vector3(r[2] - r[0], y, zb - r[1]), Transform3D.IDENTITY, ["-y", "+z"])
+	b.box(g, "ex_block_white", Vector3((r[0] + xa) * 0.5, y * 0.5, (zb + zf) * 0.5), Vector3(xa - r[0], y, D), Transform3D.IDENTITY, ["-y", "-z"])
+	b.box(g, "ex_block_white", Vector3((xb + r[2]) * 0.5, y * 0.5, (zb + zf) * 0.5), Vector3(r[2] - xb, y, D), Transform3D.IDENTITY, ["-y", "-z"])
+	b.box(g, "ex_block_white", Vector3(xm, (so + y) * 0.5, (zb + zf) * 0.5), Vector3(W, y - so, D), Transform3D.IDENTITY, ["-z", "+x", "-x", "-y"])
+	# the soffit (white, two cans) and the vestibule's floor, a 0.1 m step
+	b.quad(g, "ex_soffit_white", [Vector3(xa, so - 0.01, zb), Vector3(xb, so - 0.01, zb), Vector3(xb, so - 0.01, zf), Vector3(xa, so - 0.01, zf)], -UP)
+	for k in 2:
+		b.cyl(g, "ex_can", Vector3(xm - 1.6 + k * 3.2, so - 0.03, (zb + zf) * 0.5), 0.12, 0.12, 0.02, 10, false, true)
+	b.box("ex_lot", "ex_curb", Vector3(xm, 0.05, (zb + zf) * 0.5 + 0.15), Vector3(W, 0.1, D + 0.3), Transform3D.IDENTITY, ["-y"])
+	# the storefront on the back wall (the back block's +z face is not drawn: the piers cover it either side, the
+	# dark glass and the frame close the recess)
+	var gz = zb + 0.02
+	b.quad(g, "ex_glass_dark", [Vector3(xa, 0.0, gz), Vector3(xb, 0.0, gz), Vector3(xb, so, gz), Vector3(xa, so, gz)], Vector3(0, 0, 1))
+	var dh = float(en.h)
+	var posts = [xa + 0.05, xa + 1.0, xm - 1.8, xm, xm + 1.8, xb - 1.0, xb - 0.05]   # sidelight | pair | pair | sidelight
+	for px in posts:
+		b.box(g, "ex_mullion", Vector3(px, (so + 0.1) * 0.5, zb + 0.06), Vector3(0.1, so - 0.1, 0.12))
+	b.box(g, "ex_mullion", Vector3(xm, dh + 0.05, zb + 0.06), Vector3(W, 0.12, 0.12))      # the transom bar at the door head
+	b.box(g, "ex_mullion", Vector3(xm, 0.15, zb + 0.06), Vector3(W, 0.1, 0.12))            # the sill
+	b.box(g, "ex_mullion", Vector3(xm, so - 0.05, zb + 0.06), Vector3(W, 0.1, 0.12))       # the head
+	for k in 4:
+		# each leaf: a 0.12 m stile frame (bottom rail 0.25), a push bar at 1.0 m
+		var x0 = xm - 1.8 + k * 0.9
+		b.box(g, "ex_mullion", Vector3(x0 + 0.45, 0.25, zb + 0.08), Vector3(0.9, 0.25, 0.06))
+		b.box(g, "ex_mullion", Vector3(x0 + 0.06, (0.1 + dh) * 0.5, zb + 0.08), Vector3(0.08, dh - 0.1, 0.06))
+		b.box(g, "ex_mullion", Vector3(x0 + 0.84, (0.1 + dh) * 0.5, zb + 0.08), Vector3(0.08, dh - 0.1, 0.06))
+		b.box(g, "ex_stainless", Vector3(x0 + 0.45, 1.0, zb + 0.13), Vector3(0.7, 0.05, 0.05))
+	b.tag(b.add_spot(Vector3(xm, so - 0.1, (zb + zf) * 0.5), -UP, 1.5, 8.0, 50.0, Color("#FFE6C2")), "night")
 
 ## The taller masses stand above the low roof: Sears, Dillard's, JCPenney's rear block, the cinema
 ## auditorium box, the Woolworth block, the south pavilion. Their roofs and inner sides.

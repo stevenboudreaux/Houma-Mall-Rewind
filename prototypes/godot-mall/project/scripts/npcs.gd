@@ -45,6 +45,7 @@ var cfg := {
 	"spawn_min_m": 22.0, "see_m": 70.0, "see_cone_deg": 70.0, "recycle_unseen_s": 8.0, "recycle_m": 55.0,
 	"lod_anim_m": 45.0, "groups": {"mixamo": 1.0}, "exclude": [], "retire_after_goals": [4, 9],
 	"self_light_day": 0.0, "self_light_night": 0.3, "mannequins": false, "mannequin_skins": ["Ch36"], "mannequin_pose": ["idle", 0.4],
+	"outside": false,   # EXT-LOT: shoppers outside (wing 3); off "at this time" (Steven, Nov 9 2026)
 	"unique": true, "skin_sex": {}, "walks": {"m": ["walk_m"], "f": ["walk_f"]}, "idles": {"m": ["idle"], "f": ["idle"]},
 	"hall_pause": {"phone": 0.2}, "types": {},
 	"drunk": {}, "pairs": [], "pair_talk_s": [50.0, 120.0], "pair_apart_s": [60.0, 150.0], "pair_gestures": [],
@@ -147,6 +148,14 @@ func _ready() -> void:
 		if j is Dictionary:
 			for k in j: cfg[k] = j[k]
 	_year_cfg()   # M
+	# ---- EXT-LOT (Nov 9 2026, Steven: no NPCs outside the mall "at this time"): a flag, not a deletion. Outside
+	# (wing 3, both years) the crowd stays off unless npcs.json sets "outside": true. ?npcs=N does not override it.
+	if int(player.wing) == 3 and not bool(cfg.get("outside", false)):
+		disabled = true
+		print("npcs: off outside (npcs.json \"outside\": false)")
+		load("res://scripts/npc_warmup.gd").ready_now()
+		return
+	# ---- end EXT-LOT
 	if force == "0":
 		disabled = true
 		load("res://scripts/npc_warmup.gd").ready_now()   # workstream H: no warm-up, lift the card

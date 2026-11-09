@@ -281,6 +281,16 @@ def main(src, out_path):
                 walk[ty][tx] = "1"
     walk = ["".join(r) for r in walk]
     standalone = [dict(name=sa["name"], rect=sa["rect"]) for sa in WF.STANDALONE]
+    # EXT-LOT (Nov 9 2026, Steven, Demo 53: "Sears Hardware in 1995, Unitech(?) today"): the entrance he drew
+    # (an arch) at the centre of the long lot-facing face, both years. VISUAL ONLY: there is no inside, so it is
+    # not in `doors` and the walk grid stays closed (the box's tiles are "0"). EXT-SIGNS reads `entrance` to put
+    # the sign above it: face "S" (z = rect[3], outward +z), mid = the doorway's centre on that face, width of the
+    # recess, recess depth, door head height (`h`), and the free wall band for a sign (`sign_band`, y0..y1 m).
+    for sd in standalone:
+        if sd["name"] == "UNITECH":
+            r = sd["rect"]
+            sd["entrance"] = dict(face="S", n=[0, 1], mid=[(r[0] + r[2]) * 0.5, r[3]], width=7.2, recess=2.4,
+                                  h=2.3, soffit=3.2, sign_band=[3.6, 6.4], walkable=False)
 
     # EXT-B: the doors whose outside wall moved (wall_fixes.DOOR_MOVES): the outside face only
     for d in doors:
