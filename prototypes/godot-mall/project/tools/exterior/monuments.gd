@@ -61,9 +61,7 @@ static func monument(b, at: Vector3, n: Vector3, face: String):
 	b.box("ex_lot", "ex_curb", Vector3.ZERO, Vector3(bx * 2.0, 0.12, bz * 2.0), Transform3D(Basis(t, UP, n), at + UP * 0.059), ["+y", "-y"])
 	for s in [-1.0, 1.0]:
 		for k in [-1.0, 1.0]:
-			b.force_dyn = true
-			b.bush(at + t * (s * (W * 0.5 + 0.5)) + n * (k * (D * 0.5 + 0.55)) + UP * 0.12, "leafy", 0.55, 3)
-			b.force_dyn = false
+			load("res://tools/exterior/flora.gd").grass(b, at + t * (s * (W * 0.5 + 0.5)) + n * (k * (D * 0.5 + 0.55)) + UP * 0.12, 0.5)
 	var ext = W * 0.5 + 1.2
 	var ex = (t * ext).abs() + (n * bz).abs()
 	b.obst(["rect", at.x - ex.x, at.z - ex.z, at.x + ex.x, at.z + ex.z])
@@ -95,7 +93,10 @@ static func drive(b, x0: float, x1: float, z0: float, z1: float):
 	var xm = (x0 + x1) * 0.5
 	for dx in [-0.12, 0.12]:
 		var a = Vector3(xm + dx, 0.02, z0); var e = Vector3(xm + dx, 0.02, z1)
-		b.quad("ex_paint", "ex_stripe_yellow", [a - Vector3(0.05, 0, 0), e - Vector3(0.05, 0, 0), e + Vector3(0.05, 0, 0), a + Vector3(0.05, 0, 0)], UP, [], true)
+		# worn paint: u across the line, v along it (paint_lot.py ex_paint_worn covers 8 m)
+		var L = abs(z1 - z0) / 8.0
+		b.quad("ex_paint", "ex_stripe_yellow", [a - Vector3(0.05, 0, 0), e - Vector3(0.05, 0, 0), e + Vector3(0.05, 0, 0), a + Vector3(0.05, 0, 0)], UP,
+			[Vector2(0, 0), Vector2(0, L), Vector2(1, L), Vector2(1, 0)], true)
 
 ## Everything above, for the year being built. Called from exterior.gd's build().
 static func build(b, year: int):

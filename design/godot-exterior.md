@@ -3,6 +3,9 @@
 > **Since Nov 4, 2026 (Workstream EXT-B, branch `ws/exterior`) the footprint, the roads, the lot and the
 > outparcels are at their real places** (design/exterior-sequence.md §5 with Steven's §9 decisions).
 > Where the older sections below give other numbers, the "Workstream EXT-B" section near the end wins.
+> **Since Nov 8, 2026 (Workstream LOT, branch `ws/lot`) the lot is jointed concrete with fine joints, the trees, shrubs and planters
+> are `tools/exterior/flora.gd`'s and the bank pad is 7,758 SF:** see "Workstream LOT" near the end; it wins
+> over "The lot" below.
 
 **Asked for (Steven, Oct 23–24):** the exterior phase — the parking lot and the building as seen
 from it, built from the Oct 23 site visit (the report's shared exterior table), with the Cucos
@@ -245,7 +248,7 @@ build session. No build branch was ever pushed. This is that build: §5's mismat
 | 8 | Wing wall, pavilion | the wing wall z 118 from x −134 to −42; the pavilion −146..−134 solid to z 112, the loggia to z 118; the link off JCPenney −154..−146 to z 110 | Steven: "from JCPenney to the Dillard's side, at least 3/4" — 92 m of ~108 m. The doors at the loggia's back (z 112); the bike rack on the link; the drop-off bulb moved out to z 127–131 |
 | — | East facade between the Shoe Dept box and Dillard's | 30, 50, 44, 80 filled flush | the plan's flush block; 2026 the blank white ACM wall (4492 f081-108) with the yellow-hatched loading lane in front; 1995 the facade's panels (**decided**, Steven, Nov 4) |
 | 9 | The map | −390..130 × −270..240 (was −296..106 × −200..202) | West Park Ave x 112 (4 lanes, curb ~106), Bayou Gardens z 216, Armour z −252, the west lot to x −360; the apartments' land north-west (x < −120, z < −150) is lawn behind a wood fence with 6 charcoal blocks; the soccer fields and St. Bernadette's beyond the west edge |
-| 10 | Ground Pat'i | (146, 244), across both roads at the SE corner | the cube pole sign faces the intersection |
+| 10 | Ground Pat'i | ~~(146, 244), across both roads at the SE corner~~ **moved Nov 8 (Workstream LOT): across Bayou Gardens opposite Dillard's, (20, 242)** | see "Workstream LOT" 7 |
 | 11 | Bank pad | 64, −78, 98, −50 on West Park opposite K&B / Cucos | both years, brick, a 3-lane drive-thru canopy, **no name** (Steven: "a bank in 1995, not Chase") |
 | 12 | East entrance recess | not changed (4 m) | the Sears box is flush now, so the recess reads; a 10 m recess would cut into wing 1's vestibule. **Decided** (Steven, Nov 4): stays 4 m |
 | 13 | Sun | wing 3's sun from the game's N / NE, ~40° up (`build_mall.gd`, `exshots.gd`) | Steven: switch to the afternoon. Only wing 3; the inside wings keep theirs |
@@ -307,10 +310,152 @@ door. Wing 3 now: 64 wall runs, 107 trees, 170 lights (1995) / 173 (2026), +45 %
 ### Still guesses
 - Kirschman's sign letters and colours, the 1995 bank's look, the strip centre's tenants (none named).
 
+## Workstream LOT (Nov 8, 2026): a real parking lot, not a toy
+
+Branch `ws/lot` from `main` (f96a04b). Brief: Steven's six complaints about the outside, both years. Evidence
+`production/qa/evidence/wsLOT-*.jpg` (all **unbaked** unless named `-baked`; the cloud does not bake).
+
+### 1. The lot: concrete without the "tile lines" (Steven: "it looks like Roblox / Minecraft")
+- **Decided (Steven, Nov 8): the lot is concrete**, both years, as filmed (4487 f034, 4492 f060): jointed
+  exposed-aggregate panels. The brief first asked for asphalt and this branch built it; Steven corrected it. The
+  asphalt set (`ex_asphalt_*`) now covers only the roads and the Bayou Gardens / Armour drives; the palm drive is
+  the lot's concrete (4492 f060). The asphalt albedo imports at 1024 px.
+- The "tile lines" were the old panel texture's thick black tar joints, imported with no mipmaps, so they aliased
+  into a hard grid. `paint_lot.py concrete()` paints one 6 m panel at 2048 px (`ex_concrete_alb.png`, ~3 mm/px):
+  exposed aggregate, weathering, and half a thin (~6 mm) dark-grey sealed joint on every edge, so the joint is
+  ~12 mm between panels and fades with distance through the mipmaps. Roughness and a shallow-groove normal at 512.
+- `lot_ground` lays one panel per 6 m cell, each turned a random quarter turn (the half joints on every edge keep
+  the joints whole), tinted by a slow two-octave mottle and its own shade; about one panel in twelve is a lighter
+  replacement (notes_D). 1995 is cleaner and lighter, 2026 weathered and a shade darker and warmer. No ground
+  under the building.
+- Stall paint: worn yellow in both years (Steven: the 1990s lot was yellow; **2026 fresh yellow over the ghost
+  white grid, from the footage, confirmed by Steven Nov 8**), each line faded a little differently and laid with a
+  centimetre or two of hand error (`ex_paint_worn.png`).
+- Wear: sealed and alligator cracks along each face out in the lane, oil stains in ~28 % of the stalls
+  (`ex_lot_decals.png`; its patch cell is no longer used on the lot).
+- A 1.65 m **concrete sidewalk** (`ex_walk`, its own mesh `ex_walks` at a finer lightmap texel) runs between each
+  wall and its curb and round the outside corners.
+- Evidence: `wsLOT-lot-concrete.jpg` (current); `wsLOT-asphalt-before.jpg` / `-after.jpg` show the superseded
+  asphalt pass.
+
+### 2. No rainbow sheen
+- The "oil slick" was **moire**, not specular: all 30 textures in `tex/ex/` were imported lossless **without
+  mipmaps**, so the brick's mortar grid (and the lot's tar joints) aliased into coloured arcs at distance
+  (`wsLOT-sheen-*.jpg`, the crops show the arcs). They now import VRAM-compressed with mipmaps, as the interior's
+  textures do.
+- Material audit (`fill_mat`): metallic 0 for everything that is paint, masonry or concrete (chain-link, dark
+  coping, doors, wall packs, painted pipes and poles, lamp heads, the tank, dock steel, the black fence, roof
+  metal, ACM, the lace), roughness 0.55-0.95; brick / stucco / EIFS / concrete 0.85-0.95. Real metals (mullions,
+  bronze, stainless, gold leaf) and glass keep theirs. No material uses anisotropy.
+
+### 3. Trees (`tools/exterior/flora.gd`)
+- The outside borrowed the interior's potted palm (a 7 cm trunk under 2 m fronds) and the card bush whose flat
+  horizontal top card was the **dark cap**. Now: **sabal palms** (a 0.45 m trunk with boot scars, a skirt of dead
+  leaf bases, ~27 folded fan leaves on petioles in three tiers), **live oaks** (low limbs, a wide crown of
+  randomly turned crossed clusters, no top card), pines, clipped shrubs on a dome core, grass clumps, podocarpus
+  columns. One 1024 px atlas, `ex_foliage.png`; trunks are baked (`ex_props`), leaves unbaked (`ex_flora`).
+- **Far crowns:** the alpha-tested cards' mipmaps averaged thin fronds below the threshold, leaving bare poles at
+  60-110 m (`wsLOT-trees-far.jpg`). Fixed with solid cores in the atlas cells and **alpha-to-coverage** on the
+  foliage material (needs the project's MSAA, on: `msaa_3d=1`; without MSAA it falls back to the plain alpha test
+  and the cores still hold most of the crown). No impostor was needed, so no cull distance was raised.
+- Cost: every plant outside together is ~18.5k triangles, one draw call for the leaves; `dyn_ex_flora.res`
+  1.2 MB with compressed attributes (`build_mall.gd`, one line).
+- **Tree options. Decided (Steven, Nov 8): option A**, the procedural sabals, live oaks and shrubs of flora.gd
+  (as built). B (the Quaternius pack) is dropped: none of its files were committed. C (the Blender sabal sketch)
+  stays in `tools/exterior/options/` as a later upgrade path. The sheet (`wsLOT-tree-options.jpg`, near and far at
+  the palm drive):
+  | Option | What | Licence | Cost |
+  |---|---|---|---|
+  | **A (chosen, built)** | flora.gd, procedural, this branch | ours | 18.5k tris all plants; atlas 1024 (~1 MB) |
+  | B (dropped) | Quaternius "Ultimate Stylized Nature" PalmTree_1 (also bushes, oaks) | CC0 1.0 (quaternius.com; fetched here from the MIT-wrapped GitHub mirror walterpalladino/godot-quaternius-ultimate-stylized-nature since quaternius.com is blocked from the cloud) | 760 tris/palm; trunk texture 4096 px, must be cut to 1024; a stylised **coconut** palm, not a sabal |
+  | C (later upgrade path) | a Blender-built sabal, every leaflet geometry (`tools/exterior/options/bl_sabal_option.py`, a sketch) | ours | 14.5k tris/palm, ~680k for the palms: needs an LOD or impostor first; ~1.1 MB a variant |
+  Shots: `tools/exterior/options/option_shot.gd` (A and C). Poly Haven and Kenney were not reachable from the cloud.
+
+### 4. Planters
+- Every curbed island is `flora.gd planter`: a **low (10 cm), wide (30 cm)** concrete curb, mulch, 3-5 shrubs and
+  grass clumps with size and tint variation. Lot row ends alternate: a pole with liriope round its pedestal, a
+  live oak with shrubs and grasses, a sabal with shrubs (rows over 40 m), shrubs and grasses.
+- Curb colour: **grey in 1995** (a GUESS, no period photo; accepted by Steven, Nov 8), **painted yellow in 2026** as filmed (4492 f060-066, the
+  palm drive's medians; 4487 the lot's islands). The roads' islands stay grey.
+- The beds are unbaked meshes (`ex_beds`, see item 6).
+
+### 5. The bank pad stays, shrunk
+- The "stray" brick box with the flat canopy north-east of the Hypervelocity face is EXT-B's bank pad (§5 #11),
+  the Morguard site plan's bank pad on West Park ("#3000 CHASE BANK ... NOT A PART"). Steven first asked to remove
+  it, then (Nov 8): **keep it; shrink it to that footprint, 7,758 SF; one storey; brick and nameless in both years;
+  the drive-thru canopy on the lot side.**
+- Built (`bank_pad`, `BANK`): a 28.0 x 25.75 m pad (721 m2 = 7,758 SF) holding a 14 x 14 m one-storey brick building
+  (4.2 m, thin coping, no roof box), a lawn, and a flat white canopy over three north-south lanes on its **west** side
+  (toward the mall's lot) with two kiosk islands. It was a 34 x 28 m pad, a 16 x 18 m box to 6.4 m, the canopy on
+  the road side. *Read as:* 7,758 SF is the whole pad, not the building alone (a 7,758 SF building would be larger
+  than the old one, not smaller). **Confirmed (Steven, Nov 8).**
+
+### 6. Facade smears (the bake)
+Read off the Demo 52 bake (`wsLOT-facade-before-baked.jpg`) and the geometry; **not yet confirmed by a bake**.
+- **Walls behind base boxes:** every wainscot, base band and door laid flat on a wall had the wall face running
+  on behind it. Those texels are inside geometry; the bake marks them invalid and the denoiser smeared their
+  black up the visible wall at ground level. Walls are now drawn last (`wall` defers, `flush_walls` draws), cut
+  behind such covers: 128 stretches in 1995, 110 in 2026.
+- **Dillard's ashlar scoring** was boxes sunk flush into the face (coplanar: z-fighting, strips of invalid
+  texels all up the wall): now thin lines 1 cm proud, unbaked.
+- **JCPenney's black parapet band:** the taller masses' roofs overhung their faces by 5 cm and the outline
+  coping ran 0.6 m back through them: roofs inset, coping 0.16 m.
+- **Ground:** no ground under the building; walks with their own texel; planter beds unbaked, so the 1.6 m ground
+  texels under them stop baking black squares round the islands (seen in the Demo 52 bake).
+- Texel density was not the cause (the walls' 0.4 m texel is unchanged).
+
+### 7. Ground Pat'i across Bayou Gardens (Steven, Nov 8)
+- Steven: Ground Pat'i is on Bayou Gardens Blvd **directly across the street from the mall**, not across West Park at
+  the intersection corner. Re-checked the frames: in 4492 f105-107 the camera walks south down the east facade past
+  the Shoe Dept box and the restaurant's rust mansards and both its signs sit just past Dillard's corner, across
+  the road; 4489 f078-082 zoom on the cube sign from Dillard's west end over the south lot. Both put it **opposite
+  Dillard's**.
+- Built (`outparcels`, `GROUND_PATI = 20.0`, x of its centre): the brown-brick restaurant with its rust mansards
+  set back across Bayou Gardens at z 242, facing the mall, behind its own small asphalt lot; the cube pole sign
+  at the road's edge and the low yellow monument sign beside it (4489 f079). Evidence
+  `wsLOT-groundpati-moved.jpg` (unbaked).
+- **Steven to confirm** opposite Dillard's (built) vs the south pavilion (x ~ -140) or JCPenney (x ~ -184): a
+  one-number change.
+
+### Pack size and bake (before = main f96a04b, exported here; after = this branch)
+| | Before | After |
+|---|---|---|
+| `w3` pack (desktop = mobile) | 48.27 MB | 59.52 MB (+11.3) |
+| `w3y26` pack | 30.93 MB | 44.71 MB (+13.8) |
+| `gen/w3` / `gen/w3y26` meshes | 4.36 / 3.80 MB | 5.42 / 5.02 MB |
+| wing 3 lightmap texels (sum of the static meshes' size hints) | 2.95 M | 3.15 M (+7 %) |
+| wing 3 2026 lightmap texels | 2.86 M | 3.04 M (+6 %) |
+Most of the pack growth is textures: the concrete and asphalt sets and the atlases (~6 MB VRAM) and the old `tex/ex/` textures
+now VRAM-compressed **with mipmaps** (they were small lossless PNGs). Levers if Steven wants it smaller: the concrete
+albedo at 1024 (-2.1 MB), the old outside textures lossless with mipmaps instead of VRAM. The bake is the same kind
+of job (+~7 % texels).
+
+### Files
+`tools/exterior/exterior.gd`, `flora.gd` (new), `paint_lot.py` (new), `monuments.gd` (the drive's line paint, the
+monument liriope), `exshots.gd` (`--sun`, `--baked`), `options/` (the tree-option sketches), `tex/ex/ex_*` (new),
+`tex/ex/*.import` (mipmaps, VRAM), `gen/w3`, `gen/w3y26`, `wing3.tscn`, `wing3_2026.tscn`.
+Shared: `tools/build_mall.gd` one line (the dynamic `ex_flora`, `ex_paint`, `ex_beds` meshes commit with compressed
+attributes).
+
+### Tests (cloud, unbaked)
+- `--wing=3` and `--wing=3 --year=2026`: BUILD OK.
+- `tools/qa/doortest.py`: wing 1's main entrance -> "Go outside" -> wing 3 at the doors -> "Enter the mall" ->
+  wing 1: CROSSED, 0 errors (`wsLOT-walkout-doortest.jpg`).
+- `tools/qa/movetest.py` wing 3, 1995 and 2026: loads, 3 cameras, the touch walk MOVED (from a lot spot,
+  `WALK_CAM=62,30,0,0`; the default spot is inside the building). 1995 0 errors; 2026 one console line
+  "could not keep the next files for later" because this local build has no 2026 wing 1/2 packs to prefetch.
+
+### For the Mac (integration)
+1. Rebake `wing3:fastday` and `wing3_2026:fastday` (every outside mesh changed; the old lightmaps no longer fit).
+   Expected cost as before plus ~7 % texels (the 12 GB swap in the cloud).
+2. Check the facade fixes in the bake at Dillard's, JCPenney (west fascia, south parapet) and Lynn's.
+3. `tools/capture_standin.sh 3` and `3 2026` (the door pictures of wings 1, 2, 4, 5 look out on the lot).
+4. Wings 1, 2, 4, 5 need no rebake.
+
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).
 - Not filmed: Dillard's north dock, JCPenney's dock face, the Armour Dr edge (plain here).
 - JCPenney's red south arcade, maroon west fascia and coral Package Pick-up fascia are today's
   (2012-era) treatment but still stand in the 1995 build too (open question for Steven).
-- Lot furniture still sparse: no storm grates, stop signs or wheel stops.
+- Lot furniture still sparse: no wheel stops.
