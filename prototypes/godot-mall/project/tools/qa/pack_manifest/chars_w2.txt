@@ -1,0 +1,10 @@
+# files inside chars_w2.<desktop|mobile>.pck (tools/qa/packcontents.py write)
+models/ubc/fab_canvas_albedo.png
+models/ubc/fab_canvas_normal.png
+models/ubc/fab_knit_albedo.png
+models/ubc/fab_knit_normal.png
+models/ubc/fab_twill_albedo.png
+models/ubc/fab_twill_normal.png
+models/ubc/full_storevest_female.gltf
+models/ubc/x_watch_female.gltf
+project.binary

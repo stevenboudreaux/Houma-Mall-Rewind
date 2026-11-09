@@ -215,6 +215,37 @@ run left the remote untouched; four publishes each pushed a pack-free godot-buil
 kept the newest three. In Chromium (swiftshader) the page from one origin loaded every pack from the other,
 across a door crossing and a reload (results in `production/session-handoff-2026-11-04-r2.md`).
 
+## Pack contents (workstream PACKS, Nov 8 2026)
+
+**What happened.** Demo 52 (R2 `20261106-0332-76f5ee18`) went out with every pack on R2 at its size, but 81 of
+the generated meshes its wing scenes use were not inside the packs: half the 1990s signs and 3D letters
+(Champs, Babbage's, Sports Avenue …), shop stock (579's clothes), Sears' and Dillard's outside views, the 2026
+lease cards and sign letters, the 2026 outside's entrances. Full list: `production/qa/evidence/wsPACKS-diagnosis.md`.
+
+**Why.** After the Nov 5 bakes the editor on Steven's Mac re-saved the twelve wing scenes and wrote
+`uid="…"` on references to `gen/*.res` meshes. Those files are saved by `tools/build_mall.gd` without a UID,
+so on every other machine the UIDs are unknown. The scene still loads (`ext_resource, invalid UID … using text
+path instead`), but the web export's dependency walk resolves the UID, finds nothing and leaves the file out.
+In the browser the MeshInstance3D is just empty: no console error, so the web tests ("0 errors") passed.
+
+**Guards (all in the project):**
+- `tools/fix_stale_uids.gd` drops a `uid=` from a wing scene's ext_resource when this project's UID cache does
+  not map it to that same path (the path stays; nothing else in the scene changes; no rebake; the stand-in
+  stamps do not hash the scene). `--check` reports only. Run after an import.
+- `tools/export_web.sh` runs it before exporting, stops when an export log still says `invalid UID`, and at
+  the end runs `tools/qa/packcontents.py refs`: every `res://` path that a scene or resource inside a wing pack
+  names must ship in that pack or in a shared pack the map loads.
+- `tools/qa/pack_manifest/<pack>.txt`: the files inside each pack by source path (Godot's `.godot/` copies,
+  `.remap` / `.import` stubs and compiled scripts folded into the file they stand for), checked in.
+  `tools/publish_build.sh` runs `packcontents.py check`: the reference check, the pack set equal to the list's,
+  desktop = mobile, and each pack's files equal to its list. A build that adds or drops files is refused until
+  `python3 tools/qa/packcontents.py write <builddir>` rewrites the lists (it refuses while a reference is not
+  shipped); the diff, committed with the build, is that build's content change log.
+- `tools/qa/packcontents_test.py`: the checks against synthetic packs (no Godot).
+
+**For the Mac bakes:** after an editor bake, run `tools/fix_stale_uids.gd` (or just export with
+`export_web.sh`, which does) before committing the scenes, so the next session's export is not surprised.
+
 ## Shared packs (workstream CHARS, Nov 3 2026)
 
 **Asked for (brief, Nov 3):** wing 1 was 98.6 MB and wing 2 97.1 MB against GitHub's 100 MB file limit

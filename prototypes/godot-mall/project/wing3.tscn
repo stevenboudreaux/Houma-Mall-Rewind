@@ -3,7 +3,7 @@
 [ext_resource type="FontFile" uid="uid://dcnghf3fxs8al" path="res://fonts/serif.ttf" id="1_g0ktn"]
 [ext_resource type="FontFile" uid="uid://dtr3jom6wlm84" path="res://fonts/script.ttf" id="2_j8x0k"]
 [ext_resource type="FontFile" uid="uid://ben4k8s2bfllr" path="res://fonts/sans.otf" id="3_jmw5f"]
-[ext_resource type="Environment" uid="uid://vf7piov86y3w" path="res://gen/env_day.tres" id="4_j8x0k"]
+[ext_resource type="Environment" path="res://gen/env_day.tres" id="4_j8x0k"]
 [ext_resource type="ArrayMesh" path="res://gen/w3/ex_shell.res" id="5_1homq"]
 [ext_resource type="ArrayMesh" path="res://gen/w3/ex_roof.res" id="6_14yat"]
 [ext_resource type="ArrayMesh" path="res://gen/w3/ex_entry.res" id="7_oefx5"]

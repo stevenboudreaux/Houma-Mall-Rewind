@@ -185,6 +185,10 @@ def main():
             pic = "tex/standin/%sfrom_w%d_*.png" % ("y26_" if n.endswith("2026") else "", 4 if mw == 1 else 5)
             p["main"] = add_items(p["main"], "include_filter", [pic])
         p["main"] = add_items(p["main"], "exclude_filter", room_ex)
+        # PACKS (Nov 8 2026): the 2026 outside had no pocket-item icons (tex/items/*) though its item scenes name
+        # them (tools/qa/packcontents.py refs); every other map ships them
+        if n.startswith("Wing 3") and n.endswith("2026"):
+            p["main"] = add_items(p["main"], "include_filter", ["tex/items/*"])
     # CHARS: no wing pack carries the shared packs' files
     for p in keep + new:
         if p["name"].startswith("Wing "):

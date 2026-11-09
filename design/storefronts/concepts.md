@@ -32,3 +32,12 @@ Steven (Nov 1): "the shapes are right; texture them more." New source: the store
 
 ## Nov 2, 2026: the display in front of Chick-fil-A removed
 Steven (Nov 2): remove the Concepts display kiosk in front of Chick-fil-A (workstream D's rolling table from the ad, `wave9.gd display()`). Removed; the Concepts store itself stays as built. Wing 2's day lightmap (1995) keeps its baked shadow until the next bake.
+
+## Nov 8, 2026 (workstream PACKS): the solids smooth
+Steven (Nov 8, looking at Demo 52): "the square displays have a noisy texture; they should be smooth (flat colour or
+a clean fabric, not noise)". The Nov 1 spatter flecks are off the four solids: same shapes, sizes and colours,
+flat satin paint (`wave9.gd` `solid_*`). Read as the solids, the only textured thing in the shadow boxes (guess:
+"square displays" = the shadow-box displays). `tex/w9/concepts_spatter.png` stays on disk, unused. Wing 2 (1995)
+needs its stand-in recaptured; the lightmap is unaffected (material only), a rebake refines the bounce colour.
+Evidence: `production/qa/evidence/wsPACKS-concepts-before-preview-unbaked.jpg` / `-after-preview-unbaked.jpg` (probe-lit preview, front and close-up), and the live Demo 52 front `wsPACKS-concepts-before.jpg`.
+
