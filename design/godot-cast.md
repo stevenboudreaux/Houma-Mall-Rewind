@@ -178,7 +178,7 @@ loading card); TALK: `Cast.set_mouth`, `Cast.set_morph`, `NpcLook` (eye bones + 
   patches it to alpha MASK at 0.35 (Godot: scissor): `production/qa/evidence/wsCAST-radioshack_1995-hair.jpg`.
   Raw ARKit 52 stay out (20 named + 15 visemes stand).
 
-### 2. Cuco's owner (1995) — `cucos_owner_1995` — PROPOSAL, waiting for Steven's okay
+### 2. Cuco's owner (1995) — `cucos_owner_1995` — **APPROVED** as is (Steven, Nov 9: the rust collar and tan shoes stay)
 * **Steven:** "35-year-old white man, average build. The TALK close-up." Picked Rocketbox **Male_Adult_07**.
 * **Proposed:** his build as made (average); his grey sport coat kept; his rust shirt repainted a cream
   open-collar dress shirt; jeans repainted khaki trousers (denim detail at 35 %); his brown belt and tan shoes
@@ -189,7 +189,43 @@ loading card); TALK: `Cast.set_mouth`, `Cast.set_morph`, `NpcLook` (eye bones + 
   as his neck skin) and the shoes stay tan (the shoe uppers share the hands' texels).
 * **Guessed:** a 1995 restaurant owner's dress (sport coat, open collar, khakis).
 * Evidence: `wsCAST-cucos_owner_1995-sheet.jpg`, `wsCAST-cucos_owner_1995-ingame.jpg` (wing 1, unbaked).
-### 3. Great American Cookie (1995) — Female_Party_02 — not started (her long curly hair kept as-is: Steven)
-### 4. Auntie Anne's (2026) — Male_Adult_16 — not started (hair recoloured red, freckles as tone detail)
-### 5. Spencer's (2026) — **Business_Female_01** (Steven's change, Nov 8) — not started: pushed heavier, her suit
-repainted as a black Spencer's staff tee and dark trousers
+### 3. Great American Cookie (1995) — `gac_1995` — PROPOSAL (built without stopping, per Steven)
+* **Steven:** "18-year-old Black woman, average build. GAC uniform (red polo/apron, visor; no logo)." Picked
+  **Female_Party_02**; "keep her long hair as-is".
+* **Proposed:** her hair and hoop earrings as made; her patterned top repainted GAC red (print flattened to 12 %),
+  her black shorts kept and her bare legs painted black as uniform trousers (`skin_paint`), shoes black; a red
+  visor (no logo) on her head under the hair. Eyes: iris + catchlight, lids a touch open; skin warmed a touch.
+* **Flags (looks wrong / for Steven):** the visor reads as a red band sunk into her big hair (the hair cards stand
+  far off the head; a visor over the hair floated, one on the head is half-buried); the top is a tee shape, not a
+  polo (no collar), with a faint trace of the diamond print; a small red smear stays on one thigh; her strappy
+  heels and painted-black legs read as leggings, not work trousers. She reads mid-20s rather than 18 (no
+  Rocketbox teenagers). Heaviest on a phone of the five (big alpha hair): see `wsCAST-cost.md`.
+* Evidence: `wsCAST-gac_1995-sheet.jpg`, `wsCAST-gac_1995-ingame.jpg` (wing 2 1995, unbaked).
+
+### 4. Auntie Anne's (2026) — `auntie_annes_2026` — PROPOSAL
+* **Steven:** "19-year-old light-skinned redheaded white man. Auntie Anne's-style navy polo and cap (no logo)."
+  Picked **Male_Adult_16**, hair recoloured red.
+* **Proposed:** his painted short hair and brows recoloured copper (`hair.color`, `hair.brows`), light freckles on
+  nose and cheeks; his printed blue tee repainted navy (print flattened), jeans black, sneakers black; a navy cap
+  (no logo, front bill). Eyes: iris + catchlight.
+* **Flags:** the cap covers most of the red hair (only sideburns and nape show); its crown is a smooth generated
+  dome, simpler than the rest of him; the tee has no polo collar. He has no hair material, so he is **2 draw
+  calls** and the cap is textured in a small block of his body texture.
+* Evidence: `wsCAST-auntie_annes_2026-sheet.jpg`, `wsCAST-auntie_annes_2026-ingame.jpg` (wing 2 2026, unbaked).
+
+### 5. Spencer's (2026) — `spencers_2026` — PROPOSAL
+* **Steven:** "25-year-old lighter-skinned African American woman, plus size. Spencer's black staff tee (no
+  logo)." Picked **Business_Female_01** (instead of Female_Adult_11), "pushed heavier, suit repainted as a black
+  Spencer's staff tee and dark trousers".
+* **Proposed:** HEAVY 1.0 + face fill 6 mm + `CheekPuff` 0.3; jacket and white shirt repainted black, trousers
+  charcoal; her shoes and short bob kept; skin lightened a touch (gain 1.08) toward "lighter-skinned".
+* **Flags:** it still reads as a **black suit jacket**, not a tee: the lapels, collar and pocket flaps are geometry
+  (a real tee needs a different body or a mesh edit); the heavy push makes the jacket lumpy at the chest;
+  plus-size reads moderate. Face/skin read well.
+* Evidence: `wsCAST-spencers_2026-sheet.jpg`, `wsCAST-spencers_2026-ingame.jpg` (wing 2 2026, unbaked).
+
+## Cost (item 9)
+`production/qa/evidence/wsCAST-cost.md` (raw: `wsCAST-cost-near.txt`, `wsCAST-cost-far.txt`), measured with
+`tools/qa/cast_perf.gd` in the Compatibility renderer on llvmpipe: one cast member ≈ one Mixamo shopper in frame
+time (3 draw calls vs 5; 7.5–10k tris near, 5.6k far), GAC +45 % with ten on screen (alpha hair). On a phone the
+cost is memory: ≈ 6 MB textures + 1.3 MB blend shapes per person; pack per wing.
