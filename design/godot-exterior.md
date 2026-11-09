@@ -554,6 +554,26 @@ inside (-6.6, -140), the north end of the walkable Sears's main aisle (details a
 `design/godot-sears.md`). s1e and s1x unchanged. Not filmed: the form is a GUESS. Evidence
 `wsEXTL-north-entrance-{far,near}-{1995,2026}-unbaked.jpg`, `wsEXTL-north-entrance-top-unbaked.jpg`.
 
+### 5. The bank pad (verify only)
+In the merged tree (LOT's `bank_pad`, `BANK`): a 28.0 x 25.75 m pad (721 m2 = 7,758 SF), a 14 x 14 m one-storey brick
+building 4.2 m to a thin coping, the flat white drive-thru canopy over three lanes on its west (lot) side, no name in
+either year. Matches the brief; not changed. Evidence `wsEXTL-bank-verify-unbaked.jpg` (1995, 2026, both top views).
+
+### 6. Steven's annotated plan against `exterior.json` (listed only: nothing below was changed)
+Mapping: the annotated plan's Lynn's box (x 1148..1478 px) onto x -84..44, z 2.54 px/m from its south face.
+| Label | Plan says | Built | Agree? |
+|---|---|---|---|
+| Sears Loading Dock (west) | dock on Lynn's west face, canopy + well ~24 m out | §3 | yes |
+| Bike Rack / Southland Cinema Mall Entrance | at the channel between Lynn's and the cinema box | §0, §1 | yes (after this branch) |
+| Sears Entrance (north) | the bump at x -39..-12 | s1n at x -28..-20 | yes (new, §4) |
+| Mall Entrance / Old Cuco's (east) | the east entrance at Lynn's SE corner, Cuco's south of it | s43's recess z -96..-86 at x 40..44; Cucos (s42) south of it | yes |
+| Old Sears Hardware = Unitech | a 15,600 SF box by Armour Dr at **x -122..-82, z -232..-193** (its east edge in line with Lynn's west face) | `STANDALONE` UNITECH **x -85..-57, z -236..-207** (812 m2, ~8,700 SF), plain white in 1995, "UNITECH" in 2026 | **no**: the built box is ~30 m too far east and half the area. Also, if it was Sears Hardware, the 1995 box could carry a Sears Hardware sign (none now). Steven to confirm both |
+| Shoe Dept. (Encore) 20,071 SF | the flush box on the east facade, x ~1..44, z ~27..90 | box x 4..44, z 32..77; 2026 Shoe Dept.'s white ACM front with three canopied bays (decorative: not a walkable door) | yes (within the plan's z stretch). Its exterior entrance is a storefront only; making it a door is a separate job |
+| Chase Bank 7,758 SF "not a part" | the West Park pad | §5 | yes |
+| Building 870 SF drive-thru, "not a part" 40,000 SF | the far SW corner by Bayou Gardens | the drive-thru bank at (-346, 166), the strip centre x -321..-303, z 100..155 | yes (EXT-B) |
+| PAD 1 ACRE | a vacant pad at the lot's NE corner, ~x 78..106, z -226..-199, stall rows round it | parked over (the front lot's stall field runs to z -240) | **no**: a vacant pad (grass or bare) would be a one-rect keep-out. Steven to say whether it was empty in 1995 / 2026 |
+| Water tank | x ~-159..-140, z -32..-12 | yard x -141..-121, z -32..-9 | **roughly**: ~18 m east of the plan (EXT-B took the footage) |
+
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).
