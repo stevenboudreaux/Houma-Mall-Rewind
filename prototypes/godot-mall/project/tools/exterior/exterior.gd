@@ -50,6 +50,9 @@ static var YEAR = 1995     # --year=2026 builds the outside as filmed on Oct 23 
 ## The Bayou Gardens drive (Workstream F): the gap in the palm island in front of the south
 ## entrance, x0..x1, where the monument sign stands (tools/exterior/monuments.gd)
 const BAYOU_DRIVE = [-150.0, -134.0]
+const ARMOUR_DRIVE = [-26.0, -14.0]   # EXT-LOT: the Armour Dr drive, x0..x1 (was inline), on Lynn's north entrance's axis
+const THROAT_R = 4.5                  # EXT-LOT: the curb returns' radius at the property line
+const THROAT_L = 8.0
 const TANK_UTILITY = false            # EXT-LOT: the tank yard's utility building and conduit pole (Steven: remove)                  # EXT-LOT: the curbed throat past the returns, before the stall rows start
 
 ## EXT-B (Nov 4 2026): the roads at the site plan's places (design/exterior-sequence.md §4, §5 #9).
@@ -1628,20 +1631,27 @@ static func lot(b):
 	b.quad(g, "ex_grass", [Vector3(LOT_WEST - 2.0, 0.025, ROAD_ARMOUR + 4.5), Vector3(APTS[2], 0.025, ROAD_ARMOUR + 4.5), Vector3(APTS[2], 0.025, APTS[3]), Vector3(LOT_WEST - 2.0, 0.025, APTS[3])], UP, [], false, 0.1)
 	b.obst(["rect", LOT_WEST - 40.0, ROAD_ARMOUR + 4.5, APTS[2], APTS[3]])
 	b.obst(["rect", M[0] - 10.0, ROAD_ARMOUR + 4.5, LOT_WEST - 2.0, ROAD_BAYOU - 5.5])
-	# the curb along the lot's edges (a grey road curb on the verge's line)
-	for e in [[Vector3(APTS[2], 0, ROAD_ARMOUR + 4.5), Vector3(ROAD_WEST_PARK - 6.5, 0, ROAD_ARMOUR + 4.5)],
-			[Vector3(LOT_WEST - 2.0, 0, ROAD_BAYOU - 5.5), Vector3(ROAD_WEST_PARK - 6.5, 0, ROAD_BAYOU - 5.5)]]:
-		var c = (e[0] + e[1]) * 0.5
-		b.box("ex_lot", "ex_curb", c + UP * 0.07, Vector3(e[0].distance_to(e[1]), 0.14, 0.3), Transform3D.IDENTITY, ["-y"])
+	# the curb along the lot's edges (a grey road curb on the verge's line); EXT-LOT: cut at the two drive
+	# mouths, where entry_throat turns it into curb returns
+	for e in [[APTS[2], ROAD_ARMOUR + 4.5, ARMOUR_DRIVE], [LOT_WEST - 2.0, ROAD_BAYOU - 5.5, BAYOU_DRIVE]]:
+		for piece in [[e[0], e[2][0] - THROAT_R], [e[2][1] + THROAT_R, ROAD_WEST_PARK - 6.5]]:
+			var c = Vector3((piece[0] + piece[1]) * 0.5, 0, e[1])
+			b.box("ex_lot", "ex_curb", c + UP * 0.07, Vector3(piece[1] - piece[0], 0.14, 0.3), Transform3D.IDENTITY, ["-y"])
 	lot_keepouts()
 	ROWS = []; FIELD = 0   # EXT-LOT
 	# the stall fields: the front lot (West Park), the back lot (Armour Dr), the staff lot, the west
 	# lot behind JCPenney ("where a lot of us learned how to skate"), the south lot (Bayou Gardens)
 	lot_field(52.0, -240.0, 104.0, 200.0, true, 0)
-	lot_field(-120.0, -244.0, 52.0, -156.0, false, 1)
+	# EXT-LOT (Nov 9 2026): the back lot in two fields either side of the Armour Dr drive aisle, so a stall row's
+	# side, not its end, meets the drive (was one field from x -120 whose row at x -24.5 sat on the drive's line)
+	lot_field(-109.0, -244.0, ARMOUR_DRIVE[0], -156.0, false, 1)
+	lot_field(ARMOUR_DRIVE[1], -244.0, 52.0, -156.0, false, 0)
 	lot_field(-150.0, -144.0, -86.0, -38.0, false, 0)
 	lot_field(-356.0, -146.0, -236.0, 200.0, true, 1)
-	lot_field(-236.0, 116.0, 52.0, 200.0, false, 0)
+	# EXT-LOT: the south lot likewise either side of the Bayou Gardens drive aisle, which now runs on to the
+	# south entrance's drop-off (was one field whose row at x -140.5 sat on the drive's line)
+	lot_field(-233.0, 116.0, BAYOU_DRIVE[0], 200.0, false, 0)
+	lot_field(BAYOU_DRIVE[1], 116.0, 52.0, 200.0, false, 1)
 	lot_field(-236.0, -146.0, -150.0, -36.0, true, 0)
 	entry_drive(b)
 	ada_stalls(b)
@@ -1660,11 +1670,12 @@ static func lot(b):
 		if ox > BAYOU_DRIVE[0] - 3.0 and ox < BAYOU_DRIVE[1] + 3.0:
 			ox += 10.0
 		tree_oak(b, Vector3(ox, 0.08, fz), 5.5)
-	MON.drive(b, BAYOU_DRIVE[0], BAYOU_DRIVE[1], fz - 2.0, ROAD_BAYOU - 5.5)
-	stop_sign(b, Vector3(BAYOU_DRIVE[1] + 1.0, 0, fz - 3.0), Vector3(0, 0, -1))
-	# the Armour Dr drive into the back lot (monuments.gd puts its sign by it)
-	MON.drive(b, -26.0, -14.0, ROAD_ARMOUR + 4.5, -238.0)
-	stop_sign(b, Vector3(-13.0, 0, -238.5), Vector3(0, 0, 1))
+	# EXT-LOT (Nov 9 2026, Steven: "make sure the driving lanes stay intact as they should in a mall parking
+	# lot; only difference is pavement change from asphalt to concrete"): each drive is asphalt only from the
+	# road to the property line, with curb returns; the lanes carry on in the lot's concrete as a drive aisle
+	# between stall rows to the building (was MON.drive: asphalt and a double yellow that ended at an island)
+	entry_throat(b, BAYOU_DRIVE[0], BAYOU_DRIVE[1], ROAD_BAYOU - 5.5, -1.0)
+	entry_throat(b, ARMOUR_DRIVE[0], ARMOUR_DRIVE[1], ROAD_ARMOUR + 4.5, 1.0)
 	# the lawn island with a magnolia and loblolly pines (the south lot's west end)
 	island(b, -234.0, 150.0, -206.0, 160.0, "ex_grass")
 	tree_oak(b, Vector3(-220.0, 0.08, 155.0), 5.0)
@@ -1906,6 +1917,52 @@ static func ada_pair(b, r, near0, door):
 			stripe(b, P.call(u0 + (va - v0) + c0, va), P.call(u0 + (vb - v0) + c0, vb), 0.1, "ex_lot_ada_blue")
 		c0 += 0.6
 
+## EXT-LOT (Nov 9 2026): a drive's mouth. x0..x1 the drive (two lanes), ze the lot's edge on the road (the property
+## line, where the frontage curb runs), dz +1 when the lot lies toward +z. Asphalt from the road's edge to the end
+## of the curb returns, with the road's double yellow stopping there and a white stop bar across the outbound lane;
+## two quarter-circle curb returns (THROAT_R) and a curbed throat (THROAT_L) along each side; then the same two
+## lanes go on in the lot's concrete between the stall rows (lot_field / lot_keepouts leave the aisle open).
+static func entry_throat(b, x0, x1, ze, dz):
+	var R = THROAT_R
+	var zp = ze + dz * R                        # the end of the returns: the asphalt and the centre line stop here
+	var y = 0.016
+	b.quad("ex_ground", "ex_asphalt", [Vector3(x0, y, ze), Vector3(x1, y, ze), Vector3(x1, y, zp), Vector3(x0, y, zp)], UP, [], false, 0.1)
+	# the flares between each return and the drive, asphalt (a fan from the drive's corner at the road)
+	for sd in [-1.0, 1.0]:
+		var xe = x0 if sd < 0 else x1
+		var ctr = Vector3(xe + sd * R, 0, ze + dz * R)      # the return's centre, in the land beside the drive
+		var corner = Vector3(xe, y, ze)
+		var s = b.st("ex_ground", "ex_asphalt")
+		var prev = null
+		for k in 9:
+			var a = PI * 0.5 * k / 8.0
+			# from the frontage line (straight toward the road from the centre) round to the drive's edge
+			var q = ctr + Vector3(-sd * sin(a) * R, y, -dz * cos(a) * R)
+			if prev != null:
+				b.tri(s, corner, prev, q, Vector2(corner.x, corner.z) * 0.1, Vector2(prev.x, prev.z) * 0.1, Vector2(q.x, q.z) * 0.1, UP)
+			prev = q
+		# the return's curb: short boxes along the arc, then the throat's straight curb
+		for k in 8:
+			var a0 = PI * 0.5 * k / 8.0; var a1 = PI * 0.5 * (k + 1) / 8.0
+			var p0 = ctr + Vector3(-sd * sin(a0) * R, 0, -dz * cos(a0) * R)
+			var p1 = ctr + Vector3(-sd * sin(a1) * R, 0, -dz * cos(a1) * R)
+			var mid = (p0 + p1) * 0.5
+			var tt = (p1 - p0).normalized()
+			b.box("ex_lot", "ex_curb", Vector3.ZERO, Vector3(p0.distance_to(p1) + 0.06, 0.14, 0.3),
+				Transform3D(Basis(tt, UP, tt.cross(UP)), mid + UP * 0.07), ["-y"])
+		var c = Vector3(xe - sd * 0.15, 0.07, zp + dz * THROAT_L * 0.5)
+		b.box("ex_lot", "ex_curb", c, Vector3(0.3, 0.14, THROAT_L), Transform3D.IDENTITY, ["-y"])
+	# the road's double yellow to the property line, and the stop bar across the outbound lane
+	var xm = (x0 + x1) * 0.5
+	for dx in [-0.12, 0.12]:
+		stripe(b, Vector3(xm + dx, 0.02, ze), Vector3(xm + dx, 0.02, zp), 0.1, "ex_stripe_yellow", 0.9)
+	var right_out = Vector3(0, 0, -dz).cross(UP).x   # the outbound lane is on the driver's right, heading to the road
+	var xo0 = xm + 0.3 * right_out; var xo1 = (x1 - 0.3) if right_out > 0 else (x0 + 0.3)
+	stripe(b, Vector3(xo0, 0.02, zp - dz * 0.3), Vector3(xo1, 0.02, zp - dz * 0.3), 0.45, "ex_stripe_white", 0.9)
+	# a stop sign facing the outbound lane, on its curb at the end of the throat
+	var xs = (x1 + 0.6) if right_out > 0 else (x0 - 0.6)
+	stop_sign(b, Vector3(xs, 0, zp + dz * 1.0), Vector3(0, 0, dz))
+
 static func road(b, a, bb, w):
 	var t = (bb - a).normalized(); var s = Vector3(-t.z, 0, t.x) * (w * 0.5)
 	b.quad("ex_ground", "ex_asphalt", [a - s + UP * 0.01, bb - s + UP * 0.01, bb + s + UP * 0.01, a + s + UP * 0.01], UP, [], false, 0.1)
@@ -2145,8 +2202,12 @@ static func lot_keepouts():
 	keep_out([-68.0, 114.0, -36.0, 152.0])                  # Dillard's dock, roll-off, flag island
 	keep_out([-160.0, 110.0, -122.0, 136.0])                # the south entrance's drop-off bulb
 	keep_out([-27.0, 136.0, -3.0, 156.0])                   # Dillard's portal walk
-	keep_out([-152.0, 180.0, -132.0, ROAD_BAYOU])           # the Bayou Gardens drive
-	keep_out([-28.0, ROAD_ARMOUR, -12.0, -230.0])           # the Armour Dr drive
+	# EXT-LOT: the drives run on as aisles to the building (the south drop-off; Lynn's north entrance), and their
+	# throats (curb returns + THROAT_L) stay clear of stall rows
+	keep_out([BAYOU_DRIVE[0], 136.0, BAYOU_DRIVE[1], ROAD_BAYOU])                   # the Bayou Gardens drive
+	keep_out([BAYOU_DRIVE[0] - THROAT_R - 1.0, ROAD_BAYOU - 5.5 - THROAT_R - THROAT_L, BAYOU_DRIVE[1] + THROAT_R + 1.0, ROAD_BAYOU])
+	keep_out([ARMOUR_DRIVE[0], ROAD_ARMOUR, ARMOUR_DRIVE[1], -146.0])                # the Armour Dr drive
+	keep_out([ARMOUR_DRIVE[0] - THROAT_R - 1.0, ROAD_ARMOUR, ARMOUR_DRIVE[1] + THROAT_R + 1.0, ROAD_ARMOUR + 4.5 + THROAT_R + THROAT_L])
 	keep_out([-12.0, -170.0, 4.0, -146.0])                  # the side exit's crosswalk (s1x)
 	keep_out([-32.0, -162.0, -16.0, -146.0])                # EXT-LAYOUT: the north entrance's walk (s1n)
 	keep_out(APTS, 6.0)
