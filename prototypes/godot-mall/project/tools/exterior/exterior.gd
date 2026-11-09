@@ -2027,12 +2027,18 @@ static func tank(b):
 		b.cyl(g, "ex_steel", c + Vector3(R + 0.4, 3.0 + i * 1.4, 0), 0.4, 0.4, 0.03, 10, false)
 	b.cyl(g, "ex_tank_rust", c + Vector3(0, 0, R + 0.6), 0.2, 0.2, 10.0, 8, false)
 	fence(b, "ex_chainlink", [Vector3(-141, 0, -32), Vector3(-121, 0, -32), Vector3(-121, 0, -9), Vector3(-141, 0, -9), Vector3(-141, 0, -32)], 2.2)
-	b.box(g, "ex_stucco_peach", Vector3(-125.0, 1.5, -13.0), Vector3(5.0, 3.0, 5.0), Transform3D.IDENTITY, ["-y"])
+	# EXT-LOT (Nov 9 2026, Steven, Demo 53, "remove this building"): the small peach utility building in the tank
+	# yard and the 8 m conduit pole beside it (the "antenna mast") are off. They stood for the peach electrical
+	# building and the pole with two conduit risers filmed in 4486 f077-102 (notes_C); not an outparcel and not in
+	# exterior.json. TANK_UTILITY = true brings them back.
+	if TANK_UTILITY:
+		b.box(g, "ex_stucco_peach", Vector3(-125.0, 1.5, -13.0), Vector3(5.0, 3.0, 5.0), Transform3D.IDENTITY, ["-y"])
 	shrub(b, Vector3(-138.0, 0, -29.0), "leafy", 2.5)
 	shrub(b, Vector3(-138.5, 0, -12.0), "leafy", 2.0)
-	b.box(g, "ex_pedestal", Vector3(-119.0, 0.4, -8.0), Vector3(0.6, 0.8, 0.6))
-	b.cyl(g, "ex_trunk", Vector3(-119.0, 0.8, -8.0), 0.12, 0.1, 8.0, 7, true)
-	b.obst(["rect", -119.3, -8.3, -118.7, -7.7])
+	if TANK_UTILITY:
+		b.box(g, "ex_pedestal", Vector3(-119.0, 0.4, -8.0), Vector3(0.6, 0.8, 0.6))
+		b.cyl(g, "ex_trunk", Vector3(-119.0, 0.8, -8.0), 0.12, 0.1, 8.0, 7, true)
+		b.obst(["rect", -119.3, -8.3, -118.7, -7.7])
 	b.obst(["rect", -141.0, -32.0, -121.0, -9.0])
 	# the pink-lane sidewalk from the yard west to the docks (4486 f100-110)
 	b.quad("ex_paint", "ex_concrete", [Vector3(-154.0, 0.02, -36.0), Vector3(-141.0, 0.02, -36.0), Vector3(-141.0, 0.02, -34.0), Vector3(-154.0, 0.02, -34.0)], UP, [], true, 1.0 / 6.0)
