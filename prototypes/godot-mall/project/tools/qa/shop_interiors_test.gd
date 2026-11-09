@@ -106,7 +106,7 @@ func _test_years() -> void:
 ## 3. Buys: into the hand (or the bag for a pocket thing); the lava lamp at Spencer's.
 func _test_buys(db) -> void:
 	for c in [["auntie_annes", 2026, "standin_aa_original_pretzel"], ["payless", 1995, "standin_pay_sneakers"],
-			["great_american_cookie", 1995, "standin_gac_choc_chip_cookie"], ["great_american_cookie_2026", 2026, "standin_gac_choc_chip_cookie"],
+			["great_american_cookie", 1995, "gac_choc_chip_cookie"], ["great_american_cookie_2026", 2026, "gac_choc_chip_cookie"],
 			["spencers", 2026, "bl_gb_lavalamp"]]:
 		var m = _mall({}, c[1])
 		var sh = Shop.new()
