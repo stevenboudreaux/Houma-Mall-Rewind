@@ -50,6 +50,7 @@ static var YEAR = 1995     # --year=2026 builds the outside as filmed on Oct 23 
 ## The Bayou Gardens drive (Workstream F): the gap in the palm island in front of the south
 ## entrance, x0..x1, where the monument sign stands (tools/exterior/monuments.gd)
 const BAYOU_DRIVE = [-150.0, -134.0]
+const TANK_UTILITY = false            # EXT-LOT: the tank yard's utility building and conduit pole (Steven: remove)                  # EXT-LOT: the curbed throat past the returns, before the stall rows start
 
 ## EXT-B (Nov 4 2026): the roads at the site plan's places (design/exterior-sequence.md §4, §5 #9).
 const ROAD_WEST_PARK = 112.0     # x of West Park Ave's centreline (curb ~106)
@@ -64,6 +65,8 @@ const GROUND_PATI = 20.0
 const APTS = [-400.0, -290.0, -128.0, -150.0]
 
 static var KEEP = []             # rectangles the stall fields stay out of [x0, z0, x1, z1]
+static var ROWS = []             # EXT-LOT: every stall row lot_field painted {p, t, n, field, row} (ada_stalls reads it)
+static var FIELD = 0             # EXT-LOT: lot_field's running field number
 
 static var b_ref = null
 
@@ -108,11 +111,12 @@ static func fill_mat(m, key, b):
 			m.albedo_color = Color(lum, lum, lum * 1.01)
 			if key == "asphalt_lot":
 				m.vertex_color_use_as_albedo = true
-		"stripe_white", "stripe_yellow", "stripe_ghost":
+		"stripe_white", "stripe_yellow", "stripe_ghost", "lot_ada_blue":
 			# worn stall paint (paint_lot.py ex_paint_worn: alpha = paint left, the stones show through);
 			# the stripe's vertex alpha fades each line a little differently
 			m.albedo_texture = b.tex("ex/ex_paint_worn.png")
-			m.albedo_color = {"stripe_white": Color("#ecebe4"), "stripe_yellow": Color("#e0b92c"), "stripe_ghost": Color(0.92, 0.92, 0.9, 0.22)}[key]
+			m.albedo_color = {"stripe_white": Color("#ecebe4"), "stripe_yellow": Color("#e0b92c"), "stripe_ghost": Color(0.92, 0.92, 0.9, 0.22),
+				"lot_ada_blue": Color("#2f6fc0")}[key]   # EXT-LOT: the access aisles' hatching
 			m.vertex_color_use_as_albedo = true
 			m.roughness = 0.85; m.metallic = 0.0
 			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -1630,6 +1634,7 @@ static func lot(b):
 		var c = (e[0] + e[1]) * 0.5
 		b.box("ex_lot", "ex_curb", c + UP * 0.07, Vector3(e[0].distance_to(e[1]), 0.14, 0.3), Transform3D.IDENTITY, ["-y"])
 	lot_keepouts()
+	ROWS = []; FIELD = 0   # EXT-LOT
 	# the stall fields: the front lot (West Park), the back lot (Armour Dr), the staff lot, the west
 	# lot behind JCPenney ("where a lot of us learned how to skate"), the south lot (Bayou Gardens)
 	lot_field(52.0, -240.0, 104.0, 200.0, true, 0)
@@ -1813,10 +1818,15 @@ static func fire_lane(b, a, t, n, Ln):
 				[Vector2(0, 0), Vector2((u1 - u) / 2.0, 0), Vector2((u1 - u) / 2.0, 1), Vector2(0, 1)], true)
 		u += 2.0
 
-## Accessible stalls by the entrances (both years: the blue wheelchair stalls are in the 2026
-## footage everywhere near the doors, 4486 / 4488 / 4492; 1995 had them by the doors too, the exact
-## stalls a GUESS): the symbol painted in the four stalls nearest each customer door, laid on the
-## nearest stall row the field put there.
+## Accessible stalls by the entrances. EXT-LOT (Nov 9 2026, Steven, Demo 53: the old symbols "make zero sense on
+## the outside concrete": they sat on a 2 m search grid, off the stall lines and out in the aisles). Now, for each
+## customer door, the stall rows whose end nearest the building lies within 40 m of the door; of those, the
+## nearest row and every other row of the same field after it (rows 0, 2, ...; at most two a door, never every
+## row). In each chosen row, on the side facing the door, the first two stalls from the building end carry the
+## wheelchair symbol, centred and wholly inside the stall lines (the symbol keeps its 1.5 m size), turned to read
+## from the drive aisle; the third stall is the striped access aisle beside the pair (blue hatching in a blue
+## frame, as filmed at JCPenney's west side, 4488 f005, f009). Both years; 1995's aisle colour is a GUESS (blue,
+## as the 1991 ADA standard's symbol). The stall lines stay the lot's yellow.
 static func ada_stalls(b):
 	var spots = []
 	for d in E.doors:
@@ -1825,25 +1835,76 @@ static func ada_stalls(b):
 		spots.append(Vector3(d.out[0], 0, d.out[1]))
 	spots.append(Vector3(-214.0 - 2.0, 0, 46.0))      # JCPenney's tree-side entrance
 	spots.append(Vector3(-200.0, 0, 108.0))           # JCPenney's arcade
+	var used_rows = {}
+	var pairs = 0
 	for p in spots:
-		# the stalls of the field nearest this door: the lot fields' rows start 5.5 m in from a
-		# keep-out, so search the painted grid around the door for the closest free stall centres
-		var best = []
-		for dx in range(-12, 13):
-			for dz in range(-12, 13):
-				var q = p + Vector3(dx * 2.0, 0, dz * 2.0)
-				if q.distance_to(p) < 9.0 or kept(q.x - 1.4, q.z - 1.4, q.x + 1.4, q.z + 1.4):
-					continue
-				best.append(q)
-		best.sort_custom(func(u, v): return u.distance_to(p) < v.distance_to(p))
-		var used = 0
-		for q in best:
-			if used >= 2:
-				break
-			var c = q + UP * 0.015
-			b.quad("ex_paint", "ex_ada", [c + Vector3(-0.75, 0, -0.75), c + Vector3(0.75, 0, -0.75), c + Vector3(0.75, 0, 0.75), c + Vector3(-0.75, 0, 0.75)], UP,
-				[Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)], true)
-			used += 1
+		# the run of each (field, row) whose end is nearest this door
+		var best = {}
+		for ri in ROWS.size():
+			var r = ROWS[ri]
+			if r.n < 3:
+				continue
+			var e0 = r.p; var e1 = r.p + r.t * (r.n * 2.7)
+			var near0 = e0.distance_to(p) <= e1.distance_to(p)
+			var d = min(e0.distance_to(p), e1.distance_to(p))
+			if d > 40.0:
+				continue
+			var key = "%d:%d" % [r.field, r.row]
+			if not best.has(key) or d < best[key][0]:
+				best[key] = [d, ri, near0]
+		var cands = best.values()
+		if cands.is_empty():
+			continue
+		cands.sort_custom(func(u, v): return u[0] < v[0])
+		var r0 = ROWS[cands[0][1]]
+		var taken = 0
+		for cnd in cands:
+			var r = ROWS[cnd[1]]
+			if r.field != r0.field or abs(r.row - r0.row) % 2 != 0:
+				continue    # every other row, not every row
+			var key = "%d:%d" % [r.field, r.row]
+			if used_rows.has(key) or taken >= 2:
+				continue
+			used_rows[key] = true
+			taken += 1
+			pairs += 1
+			ada_pair(b, r, cnd[2], p)
+	print("exterior: accessible stalls, ", pairs, " pairs")
+
+## One accessible pair in row r: stalls 0 and 1 from the building end (near0: the run's start), on the side
+## nearer `door`, and the hatched access aisle in stall 2.
+static func ada_pair(b, r, near0, door):
+	var t = r.t if near0 else -r.t
+	var e = r.p if near0 else r.p + r.t * (r.n * 2.7)
+	var s = Vector3(-t.z, 0, t.x)
+	var side = 1.0
+	var q0 = e + t * 1.35
+	if (q0 - s * 2.75).distance_to(door) < (q0 + s * 2.75).distance_to(door):
+		side = -1.0
+	var into = -s * side        # from the stall's aisle end toward the row's centre line
+	var at0 = e + t * 1.35 + s * (side * 2.75)
+	print("  accessible pair at (%.1f, %.1f), into (%.0f, %.0f)" % [at0.x, at0.z, into.x, into.z])
+	for k in 2:
+		var c = e + t * (k * 2.7 + 1.35) + s * (side * 2.75) + UP * 0.015
+		var right = into.cross(UP)  # the symbol's right as you look at it walking in from the aisle
+		var h = 0.75
+		b.quad("ex_paint", "ex_ada", [c - right * h - into * h, c + right * h - into * h, c + right * h + into * h, c - right * h + into * h], UP,
+			[Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)], true)
+	# the access aisle: stall 2, a blue frame 0.15 m inside the yellow lines, 45-degree hatching at 0.6 m
+	var a0 = e + t * (2.0 * 2.7) + s * (side * 0.0)
+	var W = 2.7; var D = 5.5; var m = 0.15
+	var P = func(u, v): return a0 + t * u + s * (side * v)
+	var corners = [P.call(m, m), P.call(W - m, m), P.call(W - m, D - m), P.call(m, D - m), P.call(m, m)]
+	for k in 4:
+		stripe(b, corners[k], corners[k + 1], 0.1, "ex_lot_ada_blue")
+	var u0 = m; var u1 = W - m; var v0 = m; var v1 = D - m
+	var c0 = -(v1 - v0) + 0.3
+	while c0 < (u1 - u0):
+		# the line u - u0 = (v - v0) + c0, clipped to the box
+		var va = max(v0, v0 - c0); var vb = min(v1, v0 + (u1 - u0) - c0)
+		if vb - va > 0.2:
+			stripe(b, P.call(u0 + (va - v0) + c0, va), P.call(u0 + (vb - v0) + c0, vb), 0.1, "ex_lot_ada_blue")
+		c0 += 0.6
 
 static func road(b, a, bb, w):
 	var t = (bb - a).normalized(); var s = Vector3(-t.z, 0, t.x) * (w * 0.5)
@@ -2126,6 +2187,7 @@ static func lot_field(x0, z0, x1, z1, along_x, seed_ = 0):
 			var p = Vector3(i0 + 3.0, 0, c) if along_x else Vector3(c, 0, i0 + 3.0)
 			var t = Vector3(1, 0, 0) if along_x else Vector3(0, 0, 1)
 			stall_row(b_ref, p, t, i1 - i0 - 6.0)
+			ROWS.append({"p": p, "t": t, "n": int((i1 - i0 - 6.0) / 2.7), "field": FIELD, "row": row})   # EXT-LOT
 			for e in [[i0, i0 + 3.0], [i1 - 3.0, i1]]:
 				var ic = (e[0] + e[1]) * 0.5
 				var at = Vector3(ic, 0.08, c) if along_x else Vector3(c, 0.08, ic)
@@ -2156,6 +2218,7 @@ static func lot_field(x0, z0, x1, z1, along_x, seed_ = 0):
 				k += 30.0
 		row += 1
 		c += 18.0
+	FIELD += 1   # EXT-LOT
 
 ## A stop sign on a post facing n (the drives' mouths).
 static func stop_sign(b, at, n):
