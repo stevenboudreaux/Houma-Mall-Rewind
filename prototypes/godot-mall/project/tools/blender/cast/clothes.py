@@ -489,28 +489,33 @@ def radial_surface(hp, c, dirs, gap):
 
 
 def headwear(ctx, kind, colour):
-    """A visor (band + brim) or a cap (crown + brim), rigid on the head bone."""
+    """A visor (band + brim) or a cap (crown + brim), rigid on the head bone (MakeHuman path)."""
     c, hp, top = head_frame(ctx)
     hidx = ctx.P.names.index("mixamorig_Head")
+    V, T, U = headwear_core(c, hp, kind)
+    Wt = np.zeros((len(V), len(ctx.P.names))); Wt[:, hidx] = 1
+    return {"pos": V, "tri": T, "cuv": cell_uv("headwear", U[T]), "W": Wt, "cell": "headwear"}
+
+
+def headwear_core(c, hp, kind, gap=0.010, front_el=None):
+    """Visor / cap geometry around the surface points hp (head skin, or head + hair cards) seen from the
+    head centre c: (V, T, U) with U in 0..1 (band/crown v 0.05..0.48, brim v 0.55..0.95)."""
     nseg = 40
     az = np.linspace(-math.pi, math.pi, nseg, endpoint=False)
-    # band: a ring tilted down at the back, across the forehead ~3 cm above the brows
-    eyes = 0.5 * (ctx.J["eye.L"] + ctx.J["eye.R"])
-    V, U, T = [], [], []
-    def ring(el_front, el_back, gap):
+    def ring(el_front, el_back, g):
         dirs = []
         for a in az:
             cf = math.cos(a)
             el = el_back + (el_front - el_back) * (cf + 1) / 2
-            d = np.array([math.sin(a) * math.cos(el), math.sin(el), math.cos(a) * math.cos(el)])
-            dirs.append(d)
-        return radial_surface(hp, c, np.array(dirs), gap)
-    rows = []
+            dirs.append(np.array([math.sin(a) * math.cos(el), math.sin(el), math.cos(a) * math.cos(el)]))
+        return radial_surface(hp, c, np.array(dirs), g)
+    f0 = float(front_el) if front_el is not None else (0.28 if kind == "visor" else 0.20)
     if kind == "visor":
-        rows = [ring(0.28, 0.02, 0.010), ring(0.50, 0.22, 0.010)]
+        rows = [ring(f0, f0 - 0.26, gap), ring(f0 + 0.22, f0 - 0.06, gap)]
     else:
-        els = [0.20, 0.45, 0.75, 1.05, 1.30]
-        rows = [ring(e, e - 0.22, 0.012 + 0.004 * i) for i, e in enumerate(els)]
+        els = [f0, f0 + 0.25, f0 + 0.55, f0 + 0.85, f0 + 1.10]
+        rows = [ring(e, e - 0.22, gap + 0.0015 * i) for i, e in enumerate(els)]
+    V, U = [], []
     for r in rows:
         V += list(r)
     nr = len(rows)
@@ -525,9 +530,8 @@ def headwear(ctx, kind, colour):
         last = (nr - 1) * nseg
         for j in range(nseg):
             T.append([last + j, ai, last + (j + 1) % nseg])
-    # brim: from the front of the lowest ring, out and slightly down
     base = rows[0]
-    front = np.cos(az) > math.cos(math.radians(80))
+    front = np.cos(az) > math.cos(math.radians(80 if kind == "visor" else 50))   # a cap's bill is narrower
     fi = np.nonzero(front)[0]
     fi = fi[np.argsort(az[fi])]
     brim_len = 0.075 if kind == "visor" else 0.07
@@ -536,7 +540,7 @@ def headwear(ctx, kind, colour):
         p = base[k]
         d = p - c; d[1] = 0; d /= np.linalg.norm(d)
         fall = math.cos(az[k]) ** 2
-        tip = p + d * brim_len * (0.35 + 0.65 * fall) + np.array([0, -0.012, 0])
+        tip = p + d * brim_len * ((0.35 + 0.65 * fall) if kind == "visor" else (0.15 + 0.85 * fall ** 2)) + np.array([0, -0.012, 0])
         V += [p, tip]
         U += [[0.1 + 0.8 * j / (len(fi) - 1), 0.55], [0.1 + 0.8 * j / (len(fi) - 1), 0.95]]
     for j in range(len(fi) - 1):
@@ -544,9 +548,7 @@ def headwear(ctx, kind, colour):
         T += [[a, a + 1, a + 2], [a + 2, a + 1, a + 3]]
     V = np.array(V); T = np.array(T, np.int64)
     T = orient_out(V, T, c)
-    # double-sided (the inside of the band and the brim's underside)
     nV = len(V)
     V = np.concatenate([V, V]); U = np.array(U + U)
     T = np.concatenate([T, T[:, ::-1] + nV])
-    Wt = np.zeros((len(V), len(ctx.P.names))); Wt[:, hidx] = 1
-    return {"pos": V, "tri": T, "cuv": cell_uv("headwear", U[T]), "W": Wt, "cell": "headwear"}
+    return V, T, U

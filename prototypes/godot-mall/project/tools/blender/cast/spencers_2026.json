@@ -1,0 +1,65 @@
+{
+ "id": "spencers_2026",
+ "store": "SPENCER'S",
+ "period": 2026,
+ "status": "proposal",
+ "steven": "Spencer's (2026): 25-year-old lighter-skinned African American woman, plus size. Spencer's black staff tee (no logo). Steven Nov 8: Business_Female_01, pushed heavier, suit repainted as a black Spencer's staff tee and dark trousers.",
+ "steven_picked": "Rocketbox Business_Female_01 (Nov 8, replacing Female_Adult_11)",
+ "proposed": "Rocketbox Business_Female_01, build pushed heavier (HEAVY 1.0) with a fuller resting face; her suit jacket and white shirt repainted black (the staff tee; the jacket's lapels stay as shapes), trousers dark charcoal, her shoes kept; skin lightened a touch toward Steven's 'lighter-skinned'. Her own short bob. Eyes: iris + catchlight, lids a touch more open.",
+ "rocketbox": {
+  "person": "Professions/Business_Female_01",
+  "heavy": 1.0
+ },
+ "resting_face": {
+  "EyeWideLeft": 0.2,
+  "EyeWideRight": 0.2,
+  "CheekPuff": 0.3
+ },
+ "face_fill_m": 0.006,
+ "repaint": {
+  "skin_by": "colour",
+  "map": [
+   {
+    "from": "#1c1c20",
+    "to": "#151517",
+    "detail": 0.5,
+    "regions": [
+     "top"
+    ]
+   },
+   {
+    "from": "#d8d8e8",
+    "to": "#19191b",
+    "detail": 0.25,
+    "regions": [
+     "top"
+    ]
+   },
+   {
+    "from": "#1c1c20",
+    "to": "#26262b",
+    "detail": 0.5,
+    "regions": [
+     "legs"
+    ]
+   }
+  ]
+ },
+ "tone": {
+  "gain": [
+   1.08,
+   1.06,
+   1.05
+  ],
+  "warm": 0.25,
+  "cheeks": 0.2,
+  "nose": 0.15
+ },
+ "eyes": {
+  "iris_scale": 1.25,
+  "iris_gain": 1.35,
+  "catchlight": 0.85
+ },
+ "garments": [],
+ "lod1_tris": 5600
+}

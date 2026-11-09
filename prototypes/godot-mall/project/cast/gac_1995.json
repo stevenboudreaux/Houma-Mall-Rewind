@@ -1,0 +1,81 @@
+{
+ "id": "gac_1995",
+ "source": "rocketbox",
+ "rocketbox": "Adults/Female_Party_02",
+ "hips": 0.9233,
+ "height_m": 1.7946497276425362,
+ "morphs": [
+  "viseme_Sil",
+  "viseme_PP",
+  "viseme_FF",
+  "viseme_TH",
+  "viseme_DD",
+  "viseme_KK",
+  "viseme_CH",
+  "viseme_SS",
+  "viseme_nn",
+  "viseme_RR",
+  "viseme_aa",
+  "viseme_E",
+  "viseme_I",
+  "viseme_O",
+  "viseme_U",
+  "blink_L",
+  "blink_R",
+  "squint_L",
+  "squint_R",
+  "eyes_wide",
+  "smile",
+  "jaw_open",
+  "brow_up",
+  "brow_down",
+  "brow_inner_up",
+  "brow_up_L",
+  "brow_up_R",
+  "mouth_pucker",
+  "mouth_press",
+  "mouth_wide",
+  "mouth_funnel",
+  "frown",
+  "lip_upper_up",
+  "lips_part",
+  "sneer"
+ ],
+ "jaw_open_deg": 0.0,
+ "eyes": {
+  "L": [
+   0.03003435954451561,
+   1.6120339632034302,
+   0.02939237467944622
+  ],
+  "R": [
+   -0.02996576763689518,
+   1.6120184659957886,
+   0.029392914846539497
+  ]
+ },
+ "lod_switch_m": 9.0,
+ "lod0": {
+  "tris": 10098,
+  "surfaces": 3,
+  "parts": {
+   "gac_1995_lod0": 5084,
+   "gac_1995_lod0_face": 5014
+  }
+ },
+ "lod1": {
+  "tris": 5600,
+  "surfaces": 3
+ },
+ "glb_bytes": 13286652,
+ "iris": [
+  0.26672345495386107,
+  0.9262142764995144,
+  0.018310546875
+ ],
+ "store": "GREAT AMERICAN COOKIE CO",
+ "period": 1995,
+ "status": "proposal",
+ "built": "2026-11-09",
+ "source_file": "tools/blender/cast/gac_1995.json"
+}

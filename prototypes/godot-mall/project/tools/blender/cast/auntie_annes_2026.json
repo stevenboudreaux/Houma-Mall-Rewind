@@ -1,0 +1,49 @@
+{
+ "id": "auntie_annes_2026",
+ "store": "AUNTIE ANNE'S",
+ "period": 2026,
+ "status": "proposal",
+ "steven": "Auntie Anne's (2026): 19-year-old light-skinned redheaded white man. Auntie Anne's-style navy polo and cap (no logo). Steven Nov 8: Male_Adult_16 recoloured red.",
+ "steven_picked": "Rocketbox Male_Adult_16, hair recoloured red (Nov 8)",
+ "proposed": "Rocketbox Male_Adult_16; his short hair and brows recoloured copper red, light freckles on nose and cheeks. His printed blue tee repainted navy (print flattened), jeans repainted black, sneakers black; a navy cap (no logo). Eyes: iris + catchlight, lids a touch more open.",
+ "rocketbox": {
+  "person": "Adults/Male_Adult_16",
+  "heavy": 0.0
+ },
+ "resting_face": {
+  "EyeWideLeft": 0.25,
+  "EyeWideRight": 0.25
+ },
+ "repaint": {
+  "top": "#1c2a4a",
+  "top_detail": 0.3,
+  "legs": "#1b1b1e",
+  "legs_detail": 0.35,
+  "feet": "#161616",
+  "feet_detail": 0.5
+ },
+ "hair": {
+  "color": "#9a4420",
+  "brows": "#7a3a1e"
+ },
+ "tone": {
+  "warm": 0.15,
+  "cheeks": 0.35,
+  "nose": 0.3,
+  "freckles": 0.6
+ },
+ "eyes": {
+  "iris_scale": 1.3,
+  "iris_gain": 1.3,
+  "catchlight": 0.85
+ },
+ "garments": [
+  {
+   "type": "cap",
+   "color": "#1c2a4a",
+   "gap": 0.012,
+   "front_el": 0.42
+  }
+ ],
+ "lod1_tris": 5600
+}

@@ -1,0 +1,81 @@
+{
+ "id": "spencers_2026",
+ "source": "rocketbox",
+ "rocketbox": "Professions/Business_Female_01",
+ "hips": 0.9233,
+ "height_m": 1.7447329619899392,
+ "morphs": [
+  "viseme_Sil",
+  "viseme_PP",
+  "viseme_FF",
+  "viseme_TH",
+  "viseme_DD",
+  "viseme_KK",
+  "viseme_CH",
+  "viseme_SS",
+  "viseme_nn",
+  "viseme_RR",
+  "viseme_aa",
+  "viseme_E",
+  "viseme_I",
+  "viseme_O",
+  "viseme_U",
+  "blink_L",
+  "blink_R",
+  "squint_L",
+  "squint_R",
+  "eyes_wide",
+  "smile",
+  "jaw_open",
+  "brow_up",
+  "brow_down",
+  "brow_inner_up",
+  "brow_up_L",
+  "brow_up_R",
+  "mouth_pucker",
+  "mouth_press",
+  "mouth_wide",
+  "mouth_funnel",
+  "frown",
+  "lip_upper_up",
+  "lips_part",
+  "sneer"
+ ],
+ "jaw_open_deg": 0.0,
+ "eyes": {
+  "L": [
+   0.030034363269805908,
+   1.6119810342788696,
+   0.029367506504058838
+  ],
+  "R": [
+   -0.02996576763689518,
+   1.61198091506958,
+   0.029365019872784615
+  ]
+ },
+ "lod_switch_m": 9.0,
+ "lod0": {
+  "tris": 8966,
+  "surfaces": 3,
+  "parts": {
+   "spencers_2026_lod0": 5146,
+   "spencers_2026_lod0_face": 3820
+  }
+ },
+ "lod1": {
+  "tris": 5600,
+  "surfaces": 3
+ },
+ "glb_bytes": 11384156,
+ "iris": [
+  0.2702190629219172,
+  0.9183502334608461,
+  0.018310546875
+ ],
+ "store": "SPENCER'S",
+ "period": 2026,
+ "status": "proposal",
+ "built": "2026-11-09",
+ "source_file": "tools/blender/cast/spencers_2026.json"
+}

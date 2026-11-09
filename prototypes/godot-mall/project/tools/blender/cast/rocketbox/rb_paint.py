@@ -191,3 +191,44 @@ def eyes(tex, eye_mask, spec):
     spot = np.exp(-(((xx - hx) ** 2 + (yy - hy) ** 2) / (rad * s * 0.13) ** 2)) * eye_mask
     out = out * (1 - spot[..., None] * cl) + np.array([1.0, 1.0, 0.98]) * spot[..., None] * cl
     return out, (cx / W, cy / H, R2 / W)
+
+
+def hash3(p):
+    h = np.sin(p[..., 0] * 127.1 + p[..., 1] * 311.7 + p[..., 2] * 74.7) * 43758.5453
+    return h - np.floor(h)
+
+
+def freckles(tex, skin_mask, pos, eyes, k):
+    """Sparse light-brown dots on the face skin (nose, cheeks) where pos (H,W,3) is known."""
+    eL, eR = eyes
+    q = np.floor(pos * 900.0)
+    dots = (hash3(q) > 0.86).astype(np.float32) * (0.5 + 0.5 * hash3(q + 7.0))
+    zone = np.exp(-((pos[..., 1] - (eL[1] - 0.03)) / 0.03) ** 2) * (np.abs(pos[..., 0]) < 0.07) * (pos[..., 2] > eL[2] - 0.03)
+    f = np.clip(dots * zone * k, 0, 1)[..., None] * skin_mask[..., None]
+    return tex * (1 - f) + tex * np.array([0.78, 0.6, 0.46]) * f
+
+
+def hair_masks(tex, hcov, pos, eyes, skin_ref):
+    """Painted hair and brows on a Rocketbox head texture: texels far in colour from the skin, on the
+    scalp (above / behind the face) or in the brow band. Returns (hair, brows) float masks."""
+    eL, eR = eyes
+    x, y, z = pos[..., 0], pos[..., 1], pos[..., 2]
+    ey = 0.5 * (eL[1] + eR[1]); ez = 0.5 * (eL[2] + eR[2])
+    L = lum(tex); ch = tex / np.maximum(L, 0.03)[..., None]
+    rl = lum(skin_ref[None, None])[0, 0]; rc = skin_ref / max(rl, 0.03)
+    diff = np.linalg.norm(ch - rc, axis=-1) * 0.6 + np.abs(L - rl) * 1.4
+    face = (np.abs(x) < 0.068) & (z > ez - 0.035) & (y < ey + 0.062) & (y > ey - 0.16)
+    scalp = hcov & ~face & (y > ey - 0.03)
+    hair = scalp * smoothstep(0.10, 0.25, diff)
+    brow = hcov & (np.abs(x) > 0.006) & (np.abs(x) < 0.066) & (y > ey + 0.006) & (y < ey + 0.042) & (z > ez - 0.02)
+    brows = brow * smoothstep(0.12, 0.3, diff) * (L < rl)
+    return hair, brows
+
+
+def recolour_soft(tex, w, target):
+    """Blend toward the target colour (keeping light) by weight w (H,W)."""
+    L = lum(tex)
+    m = w > 0.3
+    ref = float(np.percentile(L[m], 60)) if m.any() else 0.5
+    rec = np.clip(target[None, None] * (L / max(ref, 1e-3))[..., None], 0, 1)
+    return tex * (1 - w[..., None]) + rec * w[..., None]

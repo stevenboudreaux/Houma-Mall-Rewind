@@ -1,0 +1,81 @@
+{
+ "id": "auntie_annes_2026",
+ "source": "rocketbox",
+ "rocketbox": "Adults/Male_Adult_16",
+ "hips": 0.8952,
+ "height_m": 1.835451312828809,
+ "morphs": [
+  "viseme_Sil",
+  "viseme_PP",
+  "viseme_FF",
+  "viseme_TH",
+  "viseme_DD",
+  "viseme_KK",
+  "viseme_CH",
+  "viseme_SS",
+  "viseme_nn",
+  "viseme_RR",
+  "viseme_aa",
+  "viseme_E",
+  "viseme_I",
+  "viseme_O",
+  "viseme_U",
+  "blink_L",
+  "blink_R",
+  "squint_L",
+  "squint_R",
+  "eyes_wide",
+  "smile",
+  "jaw_open",
+  "brow_up",
+  "brow_down",
+  "brow_inner_up",
+  "brow_up_L",
+  "brow_up_R",
+  "mouth_pucker",
+  "mouth_press",
+  "mouth_wide",
+  "mouth_funnel",
+  "frown",
+  "lip_upper_up",
+  "lips_part",
+  "sneer"
+ ],
+ "jaw_open_deg": 0.0,
+ "eyes": {
+  "L": [
+   0.03191867470741272,
+   1.6860370635986328,
+   0.09400276094675064
+  ],
+  "R": [
+   -0.03185127675533295,
+   1.68603515625,
+   0.0940067246556282
+  ]
+ },
+ "lod_switch_m": 9.0,
+ "lod0": {
+  "tris": 7824,
+  "surfaces": 2,
+  "parts": {
+   "auntie_annes_2026_lod0": 4742,
+   "auntie_annes_2026_lod0_face": 3082
+  }
+ },
+ "lod1": {
+  "tris": 5600,
+  "surfaces": 2
+ },
+ "glb_bytes": 8762260,
+ "iris": [
+  0.27042196839838256,
+  0.9192097123329818,
+  0.01904296875
+ ],
+ "store": "AUNTIE ANNE'S",
+ "period": 2026,
+ "status": "proposal",
+ "built": "2026-11-09",
+ "source_file": "tools/blender/cast/auntie_annes_2026.json"
+}

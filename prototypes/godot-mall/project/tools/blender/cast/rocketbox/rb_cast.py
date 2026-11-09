@@ -190,9 +190,10 @@ def main(pid):
     co = basis2.copy()
     code = region_codes(names, W)
     P = b2g(co)
-    nb = tex_of("body"); nh = tex_of("head"); no = tex_of("opacity")
+    has_op = "opacity" in mats
+    nb = tex_of("body"); nh = tex_of("head"); no = tex_of("opacity") if has_op else None
     body_png = bpy.path.abspath(nb.image.filepath); head_png = bpy.path.abspath(nh.image.filepath)
-    op_png = bpy.path.abspath(no.image.filepath)
+    op_png = bpy.path.abspath(no.image.filepath) if has_op else None
     body = rb_paint.load(body_png); BH = body.shape[0]
     bm_ = mat == mats["body"]
     A = np.concatenate([P[tri[bm_]], code[tri[bm_]][..., None]], 2)
@@ -207,6 +208,12 @@ def main(pid):
             nbr = np.roll(np.roll(region, dy, 0), dx, 1)
             region = np.where((region == 0) & (nbr > 0), nbr, region)
     body2, skin_b = rb_paint.repaint_body(body, region, data.get("repaint", {}))
+    # bare skin painted over as clothing (leggings / trousers on bare legs): "skin_paint"
+    rcode = {"top": 1, "legs": 2, "feet": 3, "hands": 4}
+    for sp in data.get("skin_paint", []):
+        m_ = skin_b & np.isin(region, [rcode[r] for r in sp["regions"]])
+        body2 = rb_paint.recolour(body2, m_, rb_paint.hexrgb(sp["to"]), float(sp.get("detail", 0.4)))
+        skin_b = skin_b & ~m_
     head = rb_paint.load(head_png); HH = head.shape[0]
     hm = mat == mats["head"]
     eyeg = np.zeros(n)
@@ -219,15 +226,35 @@ def main(pid):
     skin_h = hcov & ~eye_mask & rb_paint.classify(head, None) & (himg[..., 1] < J["mixamorig:Head"][1] + 0.12)
     ts = data.get("tone", {})
     eyes_pos = (J["eye.L"], J["eye.R"])
+    hs = data.get("hair", {})
+    if hs.get("color") or hs.get("brows"):
+        # painted hair / brows on the head texture recoloured (Auntie Anne's red), from their own light
+        ey = 0.5 * (eyes_pos[0][1] + eyes_pos[1][1])
+        cheek = hcov & ~eye_mask & (np.abs(himg[..., 1] - (ey - 0.04)) < 0.015) & (np.abs(np.abs(himg[..., 0]) - 0.04) < 0.012)
+        ref = np.median(head[cheek], 0) if cheek.any() else np.array([0.8, 0.6, 0.5])
+        hm2, bm2 = rb_paint.hair_masks(head2, hcov & ~eye_mask, himg[..., :3], eyes_pos, ref)
+        if hs.get("color"):
+            head2 = rb_paint.recolour_soft(head2, hm2, rb_paint.hexrgb(hs["color"]))
+        if hs.get("brows"):
+            head2 = rb_paint.recolour_soft(head2, bm2, rb_paint.hexrgb(hs["brows"]))
+        skin_h = skin_h & (hm2 < 0.3) & (bm2 < 0.3)
     head2 = rb_paint.tone(head2, skin_h, ts, himg[..., :3], eyes_pos)
+    if float(ts.get("freckles", 0)) > 0:
+        head2 = rb_paint.freckles(head2, skin_h, himg[..., :3], eyes_pos, float(ts["freckles"]))
     body2 = rb_paint.tone(body2, skin_b & (region == 4) | (skin_b & (region == 1)), ts)
 
     # ---- generated pieces (tie, badge) on the shirt, textured in a free block of the hair/lash atlas
     extra = []
-    op = rb_paint.load(op_png, "RGBA"); OH = op.shape[0]
-    om = mat == mats["opacity"]
+    # the pieces' atlas: the hair/lash texture, or (no hair material) the body texture
+    akey = "opacity" if has_op else "body"
+    if has_op:
+        op = rb_paint.load(op_png, "RGBA")
+    else:
+        op = np.concatenate([body2, np.ones(body2.shape[:2] + (1,))], -1)
+    OH = op.shape[0]
+    om = mat == mats[akey]
     _, ocov = raster.raster(cuv[om], np.zeros((om.sum(), 3, 1)), OH, pad_px=3)
-    gens = [g for g in data.get("garments", []) if g["type"] in ("tie", "nametag")]
+    gens = [g for g in data.get("garments", []) if g["type"] in ("tie", "nametag", "cap", "visor")]
     if gens:
         import clothes
         top_t = tri[bm_][(code[tri[bm_]] <= 2).all(1)]     # shirt + trousers: the front surface the pieces lie on
@@ -236,6 +263,37 @@ def main(pid):
             pass
         ctx = Ctx(); ctx.J = {k.replace(":", "_"): v for k, v in J.items()}
         for g in gens:
+            if g["type"] in ("cap", "visor"):
+                # over the head AND its hair cards (big hair: the visor sits on the hair)
+                ey = 0.5 * (J["eye.L"] + J["eye.R"])
+                cH = np.array([0.0, ey[1] + 0.02, ey[2] - 0.085])
+                # on the head (hair cards only when "over_hair": a visor on big hair sits on the head and
+                # the hair puffs over it)
+                sel_m = (mat == mats["head"]) | (((mat == mats["opacity"]) if has_op else False) & bool(g.get("over_hair", False)))
+                hv = np.unique(tri[sel_m].ravel())
+                hp = P[hv]; hp = hp[hp[:, 1] > ey[1] - 0.03]
+                V_, T_, U_ = clothes.headwear_core(cH, hp, g["type"], gap=float(g.get("gap", 0.008)),
+                                                   front_el=g.get("front_el"))
+                Wt = np.zeros((len(V_), len(names))); Wt[:, names.index("mixamorig:Head")] = 1
+                pr = {"pos": V_, "tri": T_, "cuv": U_[T_], "W": Wt}
+                for bw in (128, 64, 32, 16):           # a flat-colour cap needs only a small block
+                    bh = bw
+                    xy = free_rect(ocov, bw + 8, bh + 8)
+                    if xy is not None:
+                        break
+                if xy is None:
+                    raise SystemExit("rb_cast: no free block in the %s atlas for %s" % (akey, g["type"]))
+                x0, y0 = xy[0] + 4, xy[1] + 4
+                ocov[y0 - 4:y0 + bh + 4, x0 - 4:x0 + bw + 4] = True
+                luv = pr["cuv"]
+                pr["cuv"] = np.stack([(x0 + luv[..., 0] * bw) / OH, (y0 + luv[..., 1] * bh) / OH], -1)
+                c = rb_paint.hexrgb(g.get("color", "#202020"))
+                yy, xx = np.mgrid[0:bh, 0:bw]
+                block = np.ones((bh, bw, 3)) * c * (0.92 + 0.08 * np.sin(xx / bw * np.pi * 8) ** 2)[..., None]
+                block[yy > bh * 0.52] *= 0.85            # the brim a little darker
+                op[y0:y0 + bh, x0:x0 + bw, :3] = block; op[y0:y0 + bh, x0:x0 + bw, 3] = 1.0
+                extra.append(pr)
+                continue
             if g["type"] == "tie":
                 pr = clothes.tie(ctx, top, ctx.J["mixamorig_Neck"][1] + float(g.get("top_y", -0.005)),
                                  ctx.J["mixamorig_Hips"][1] + float(g.get("end_y", 0.06)))
@@ -269,17 +327,16 @@ def main(pid):
 
     # tone and repaint written; textures swapped into the materials
     outp = os.path.join(work, "paint"); os.makedirs(outp, exist_ok=True)
-    for arr, key, mode, img_node in ((body2, "body", "RGB", nb), (head2, "head", "RGB", nh), (op, "opacity", "RGBA", no)):
+    if not has_op:
+        body2 = op[..., :3]
+    writes = [(body2, "body", "RGB", nb), (head2, "head", "RGB", nh)]
+    if has_op:
+        writes.append((op, "opacity", "RGBA", no))
+    for arr, key, mode, img_node in writes:
         p = os.path.join(outp, "%s_%s.png" % (pid, key))
         rb_paint.save(arr, p, mode)
         img_node.image = bpy.data.images.load(p, check_existing=False)
         img_node.image.name = "%s_%s" % (pid, key)
-    mo = me.data.materials[mats["opacity"]]
-    mo.blend_method = "CLIP" if hasattr(mo, "blend_method") else None
-    try:
-        mo.alpha_threshold = float(data.get("alpha_cut", 0.35))
-    except Exception:
-        pass
 
     # ---- shape keys: the resting edit into every key, the named morphs, drop the raw ARKit keys
     for k in kb:
@@ -303,7 +360,7 @@ def main(pid):
 
     # ---- generated pieces into the body: one mesh, opacity material, skinned like the shirt under them
     if extra:
-        ob = add_pieces(extra, me, arm, names, mats["opacity"])
+        ob = add_pieces(extra, me, arm, names, mats[akey])
     # ---- split: face (head + hair/lash surfaces, with morphs) and body (no morphs)
     bpy.ops.object.select_all(action="DESELECT")
     me.select_set(True); bpy.context.view_layer.objects.active = me
@@ -311,7 +368,7 @@ def main(pid):
     bpy.ops.mesh.select_all(action="DESELECT")
     bpy.ops.object.mode_set(mode="OBJECT")
     for p in me.data.polygons:
-        p.select = p.material_index in (mats["head"], mats["opacity"])
+        p.select = p.material_index in (mats["head"], mats.get("opacity", -1))
     bpy.ops.object.mode_set(mode="EDIT")
     bpy.ops.mesh.separate(type="SELECTED")
     bpy.ops.object.mode_set(mode="OBJECT")
@@ -320,9 +377,10 @@ def main(pid):
     if bodyo.data.shape_keys:
         bodyo.shape_key_clear()
     if extra:
-        # into the face mesh: the pieces use the hair/lash material, so they add no draw call there
+        # into the mesh that already draws their material, so they add no draw call
+        dest = face if has_op else bodyo
         bpy.ops.object.select_all(action="DESELECT")
-        ob.select_set(True); face.select_set(True); bpy.context.view_layer.objects.active = face
+        ob.select_set(True); dest.select_set(True); bpy.context.view_layer.objects.active = dest
         bpy.ops.object.join()
     bodyo.name = pid + "_lod0"; bodyo.data.name = pid + "_lod0"
     face.name = pid + "_lod0_face"; face.data.name = pid + "_lod0_face"
@@ -341,7 +399,8 @@ def main(pid):
     bpy.ops.export_scene.gltf(filepath=glb, export_format="GLB", use_selection=True, export_animations=False,
                               export_morph=True, export_morph_normal=False, export_skins=True, export_apply=False,
                               export_yup=True, export_image_format="AUTO")
-    patch_alpha(glb, "opacity", float(data.get("alpha_cut", 0.35)))
+    if has_op:
+        patch_alpha(glb, "opacity", float(data.get("alpha_cut", 0.35)))
     tris = {}
     for o in (bodyo, face, lod1):
         o.data.calc_loop_triangles(); tris[o.name] = len(o.data.loop_triangles)
