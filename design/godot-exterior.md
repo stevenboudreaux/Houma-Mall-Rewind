@@ -534,6 +534,18 @@ Brick at 50 m: no swirl (LOT's mipmaps hold, `wsEXTL-cinema-wall-50m-*`), so the
 Evidence: `wsEXTL-cinema-wall-frame.jpg`, `wsEXTL-cinema-wall-render-{1995,2026}-unbaked.jpg`,
 `wsEXTL-cinema-wall-sbs-{f016,f017,f022,f028,f034}-{1995,2026}-unbaked.jpg`.
 
+### 3. The Sears loading dock and truck well (`exterior.gd sears_dock`, `WELL`; 4416 f012-f017, 4486 f004-f010)
+| Frame | Shows | Built (was) |
+|---|---|---|
+| 4486 f006-f008 | the white flat canopy on thin white pipe columns at the dock's edge, overhanging the well; white roll-up doors **at the building's floor level**; the trucks stand lower | canopy 8 m at 4.6 m, 4 thin white columns at the dock edge (were 3 grey ones 7.6 m out, standing in the well); the dock floor at grade, white roll-ups 3 m high from it (was a raised 1.2 m dock box with steel doors 1.2-4.2 m) |
+| 4486 f008, f010 | a **depressed** truck well in front of the dock, the yellow 2-rail on its red curb along the drop | the well sunk 1.2 m, x -107..-87, z -118..-101, concrete retaining walls, the dock face with black bumpers, then a 12 m ramp west back up to the lot (x -119..-107); the rail on the red curb along both tops, the full 32 m (was a painted dark slab at grade with a 20 m rail) |
+| 4416 f012-f017 | from the rack corner, the rail runs far west along the grade drop; the lower lot beyond | the rail's 32 m; the lot itself is flat in the game, so the drop is the well and its ramp (the lower lot is not modelled: a GUESS kept simple) |
+| 4486 f006-f008 | the low white block at the dock's south end, a door on its **west** face | the rack block (§0) with a beige door on its west face |
+| 2026 / 1995 | the Lynn's box truck | 2026 the Lynn's truck backed into the well; 1995 a plain white trailer (brief) |
+The well is an obstacle for the player (the walk grid is flat), and the lot ground is cut round it (`lot_ground` ->
+`ground_minus_well`, a small separate hunk in LOT's function). Evidence: `wsEXTL-dock-frame.jpg`,
+`wsEXTL-dock-render-{1995,2026}-unbaked.jpg`, `wsEXTL-dock-sbs-{4486f008,4486f010,4416f014}-*`, `wsEXTL-dock-top-*`.
+
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).

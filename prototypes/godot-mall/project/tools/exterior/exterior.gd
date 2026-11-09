@@ -39,6 +39,9 @@ const H_UNITECH = 7.0
 # the cinema's north face
 const SEARS_W = -84.0
 const CINEMA_W = -98.0
+# the Sears truck well (sunk 1.2 m) and the x where its ramp up to the lot begins
+const WELL = [SEARS_W - 35.0, -118.0, SEARS_W - 3.0, -101.0]
+const WELL_RAMP = SEARS_W - 23.0
 
 static var E = {}          # exterior.json
 static var rng = RandomNumberGenerator.new()
@@ -1242,27 +1245,52 @@ static func dillards(b):
 static func sears_dock(b):
 	var g = "ex_entry"
 	var a = Vector3(SEARS_W, 0, -100); var n = Vector3(-1, 0, 0); var t = Vector3(0, 0, -1)
-	run_box(b, g, "ex_curb", a, t, n, 1.0, 26.0, 0.0, 1.2, 3.0, 3.0, ["-y"])
+	run_box(b, g, "ex_walk", a, t, n, 1.0, 26.0, 0.0, 0.02, 3.0, 3.0, ["-y"])   # EXT-LAYOUT: the dock floor at grade
 	run_box(b, g, "ex_coping", a, t, n, 0.0, 27.0, 4.6, 4.9, 8.0, 8.0)
 	b.quad(g, "ex_soffit_white", [a + UP * 4.59, a + t * 27.0 + UP * 4.59, a + t * 27.0 + n * 8.0 + UP * 4.59, a + n * 8.0 + UP * 4.59], -UP)
-	for u in [1.0, 13.5, 26.0]:
-		b.cyl(g, "ex_pipe_grey", a + t * u + n * 7.6, 0.12, 0.12, 4.6, 8, false)
-		b.obst(["rect", a.x - 7.8, a.z - u - 0.2, a.x - 7.4, a.z - u + 0.2])
+	# EXT-LAYOUT: thin white pipe columns at the dock's edge, the canopy overhanging the well (4486 f008)
+	for u in [1.0, 9.5, 18.0, 26.0]:
+		b.cyl(g, "ex_coping", a + t * u + n * 2.9, 0.08, 0.08, 4.6, 8, false)
+		b.obst(["rect", a.x - 3.05, a.z - u - 0.15, a.x - 2.75, a.z - u + 0.15])
 	for u in [5.0, 11.0, 17.0, 23.0]:
-		run_box(b, g, "ex_steel", a, t, n, u - 1.5, u + 1.5, 1.2, 4.2, 0.03, 0.03)
-		run_box(b, g, "ex_canopy_brown", a, t, n, u - 1.8, u + 1.8, 1.1, 4.4, 0.22, 0.22)
+		run_box(b, g, "ex_white_wainscot", a, t, n, u - 1.5, u + 1.5, 0.0, 3.0, 0.03, 0.03)   # white roll-up doors at the floor (4486 f008)
+		run_box(b, g, "ex_canopy_brown", a, t, n, u - 1.8, u + 1.8, 2.9, 3.2, 0.22, 0.22)
 		b.tag(b.add_spot(a + t * u + n * 3.0 + UP * 4.5, -UP, 1.0, 7.0, 60.0, Color("#FFD9A8")), "night")
 	b.obst(["rect", SEARS_W - 3.0, -126.0, SEARS_W, -101.0])
-	# the truck well: a darker slab in front of the dock, the yellow rail on its red curbs
-	b.quad("ex_paint", "ex_asphalt", [Vector3(SEARS_W - 23.0, 0.01, -118.0), Vector3(SEARS_W - 3.0, 0.01, -118.0), Vector3(SEARS_W - 3.0, 0.01, -101.0), Vector3(SEARS_W - 23.0, 0.01, -101.0)], UP, [], true, 0.1)
-	for z in [-118.2, -100.8]:
-		b.box(g, "ex_curb_red", Vector3(SEARS_W - 13.0, 0.15, z), Vector3(20.0, 0.3, 0.4))
-		for x in [SEARS_W - 22.5, SEARS_W - 17.5, SEARS_W - 12.5, SEARS_W - 7.5, SEARS_W - 3.5]:
-			b.cyl(g, "ex_pipe_yellow", Vector3(x, 0.3, z), 0.04, 0.04, 0.85, 6, false)
-		b.box(g, "ex_pipe_yellow", Vector3(SEARS_W - 13.0, 1.12, z), Vector3(19.4, 0.07, 0.07))
-		b.box(g, "ex_pipe_yellow", Vector3(SEARS_W - 13.0, 0.7, z), Vector3(19.4, 0.07, 0.07))
-		b.obst(["rect", SEARS_W - 23.0, z - 0.25, SEARS_W - 3.0, z + 0.25])
-	box_truck(b, Vector3(SEARS_W - 3.2, 0, -111.0), Vector3(1, 0, 0), YEAR == 2026)
+	# EXT-LAYOUT (Nov 8 2026; 4486 f004-f010, 4416 f012-f017): the truck well is SUNK, not painted: the dock
+	# floor under the canopy is the building's grade and the trucks stand 1.2 m lower, their beds at the
+	# dock's edge (x SEARS_W - 3). The well runs 20 m out, then a ramp climbs 12 m west to the lot (the lot
+	# beyond is lower in the frames; here it comes back up to grade, the lot being flat). Concrete retaining
+	# walls each side, the yellow 2-rail on the red curb along both tops, the full length of the drop.
+	var wx0 = WELL[0]; var wz0 = WELL[1]; var wx1 = WELL[2]; var wz1 = WELL[3]; var wr = WELL_RAMP
+	var dp = -1.2
+	b.quad("ex_walks", "ex_asphalt", [Vector3(wr, dp, wz0), Vector3(wx1, dp, wz0), Vector3(wx1, dp, wz1), Vector3(wr, dp, wz1)], UP, [], false, 0.25)
+	b.quad("ex_walks", "ex_asphalt", [Vector3(wx0, 0.0, wz0), Vector3(wr, dp, wz0), Vector3(wr, dp, wz1), Vector3(wx0, 0.0, wz1)], Vector3(-dp, wr - wx0, 0).normalized(), [], false, 0.25)
+	for side in [[wz1, Vector3(0, 0, -1)], [wz0, Vector3(0, 0, 1)]]:
+		var z = side[0]; var nw = side[1]
+		b.quad(g, "ex_curb", [Vector3(wx0, 0.0, z), Vector3(wr, dp, z), Vector3(wx1, dp, z), Vector3(wx1, 0.0, z)], nw)
+		var zc = z - nw.z * 0.2
+		b.box(g, "ex_curb_red", Vector3((wx0 + wx1) * 0.5, 0.15, zc), Vector3(wx1 - wx0, 0.3, 0.4))
+		var px = wx0 + 1.5
+		while px < wx1:
+			b.cyl(g, "ex_pipe_yellow", Vector3(px, 0.3, zc), 0.04, 0.04, 0.85, 6, false)
+			px += 4.0
+		b.cyl(g, "ex_pipe_yellow", Vector3(wx1 - 0.3, 0.3, zc), 0.04, 0.04, 0.85, 6, false)
+		for y in [1.12, 0.7]:
+			b.box(g, "ex_pipe_yellow", Vector3((wx0 + wx1) * 0.5, y, zc), Vector3(wx1 - wx0 - 0.4, 0.07, 0.07))
+	# the dock's face down to the well, black rubber bumpers under each door
+	b.quad(g, "ex_curb", [Vector3(wx1, dp, wz0), Vector3(wx1, dp, wz1), Vector3(wx1, 0.0, wz1), Vector3(wx1, 0.0, wz0)], Vector3(-1, 0, 0))
+	for u in [5.0, 11.0, 17.0]:
+		for sd in [-1.0, 1.0]:
+			b.box(g, "ex_fence_black", Vector3(wx1 - 0.08, -0.35, -100.0 - u + sd * 1.3), Vector3(0.16, 0.5, 0.3))
+	# you cannot walk into the well (the lot is flat for the player)
+	b.obst(["rect", wx0 + 2.0, wz0, wx1, wz1])
+	# the low white block's door on its west face, by the well (4486 f006-f008)
+	run_box(b, g, "ex_beige_door", Vector3(SEARS_W - 4.0, 0, -100.0), Vector3(0, 0, 1), Vector3(-1, 0, 0), 0.5, 1.5, 0.0, 2.1, 0.03, 0.03)
+	if YEAR == 2026:
+		box_truck(b, Vector3(wx1 - 0.2, dp, -111.0), Vector3(1, 0, 0), true)       # the Lynn's truck in the well
+	else:
+		trailer(b, Vector3(wx1 - 0.2, dp, -107.0), Vector3(1, 0, 0), 13.5)          # a plain white trailer
 	# the anchors' doors
 	for d in E.doors:
 		if d.store == "s1e":
@@ -1627,18 +1655,33 @@ static func lot_ground(b, x0, z0, x1, z1):
 					inside = true
 			if inside:
 				continue
-			var p = [Vector3(xa, 0, za), Vector3(xb, 0, za), Vector3(xb, 0, zb), Vector3(xa, 0, zb)]
-			var uv = []
-			var cs = []
-			for q in p:
-				cs.append(col.call(q.x, q.z, k))
-				var u = (q.x - (x0 + i * C)) / C; var v = (q.z - (z0 + j * C)) / C
-				for _r in rot:
-					var t = u; u = 1.0 - v; v = t
-				uv.append(Vector2(u, v))
-			for tri in [[0, 1, 2], [0, 2, 3]]:
-				for kk in tri:
-					s.set_color(cs[kk]); s.set_normal(UP); s.set_uv(uv[kk]); s.add_vertex(p[kk])
+			# EXT-LAYOUT: cells over the Sears truck well are cut round it (the well is sunk, sears_dock)
+			for rc in ground_minus_well(xa, za, xb, zb):
+				var p = [Vector3(rc[0], 0, rc[1]), Vector3(rc[2], 0, rc[1]), Vector3(rc[2], 0, rc[3]), Vector3(rc[0], 0, rc[3])]
+				var uv = []
+				var cs = []
+				for q in p:
+					cs.append(col.call(q.x, q.z, k))
+					var u = (q.x - (x0 + i * C)) / C; var v = (q.z - (z0 + j * C)) / C
+					for _r in rot:
+						var t = u; u = 1.0 - v; v = t
+					uv.append(Vector2(u, v))
+				for tri in [[0, 1, 2], [0, 2, 3]]:
+					for kk in tri:
+						s.set_color(cs[kk]); s.set_normal(UP); s.set_uv(uv[kk]); s.add_vertex(p[kk])
+
+## EXT-LAYOUT: a ground cell [xa, za, xb, zb] less the sunk truck well (WELL), as up to four rectangles.
+static func ground_minus_well(xa, za, xb, zb):
+	var h = WELL
+	if xb <= h[0] or xa >= h[2] or zb <= h[1] or za >= h[3]:
+		return [[xa, za, xb, zb]]
+	var out = []
+	if za < h[1]: out.append([xa, za, xb, h[1]])
+	if zb > h[3]: out.append([xa, h[3], xb, zb])
+	var zc0 = max(za, h[1]); var zc1 = min(zb, h[3])
+	if xa < h[0]: out.append([xa, zc0, h[0], zc1])
+	if xb > h[2]: out.append([h[2], zc0, xb, zc1])
+	return out
 
 ## True when the corner at p (a wall run's end, the run's outward normal n, `along` pointing off the
 ## run's end) is an outside corner: the square diagonally out from it is clear of every footprint.
@@ -1957,7 +2000,7 @@ static func lot_keepouts():
 	keep_out([44.0, -10.0, ROAD_WEST_PARK, 10.0])           # the palm drive and its islands
 	keep_out([44.0, -100.0, 64.0, -82.0])                   # the east entrance's walk
 	keep_out(BANK, 3.0)                                     # the bank pad (§5 #11; LOT: 7,758 SF)
-	keep_out([SEARS_W - 28.0, -128.0, SEARS_W, -92.0])      # the Sears dock and truck well (EXT-LAYOUT: x -84)
+	keep_out([SEARS_W - 40.0, -128.0, SEARS_W, -92.0])      # the Sears dock, truck well and its ramp (EXT-LAYOUT: x -84)
 	keep_out([-68.0, 114.0, -36.0, 152.0])                  # Dillard's dock, roll-off, flag island
 	keep_out([-160.0, 110.0, -122.0, 136.0])                # the south entrance's drop-off bulb
 	keep_out([-27.0, 136.0, -3.0, 156.0])                   # Dillard's portal walk
