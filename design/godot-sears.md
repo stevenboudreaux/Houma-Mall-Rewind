@@ -114,6 +114,23 @@ recoloured onto one palette, `models/lynns/pack/`, plus the generator props; `de
 exit / customer entrance" ("Lynn's" in 2026), and outside the spots lead back in. Wing 3 has the
 east face but no door geometry at these spots and its box is 12 m short: **workstream F**.
 
+### The north entrance s1n (Workstream EXT-LAYOUT, Nov 8 2026)
+Steven (Nov 8): keep the east-face doors **and** add a customer entrance on the north face, per his annotated site
+plan's "Sears Entrance" (`design/exterior/site-plan-annotated-2026-11-08.png`). On the plan the entrance's bump sits
+at x -39..-12 of the north face (mapped between Lynn's corners): built **centred at x -24, an 8 m storefront x
+-28..-20 on z -146**, toward the Armour Dr lot. Outside (wing 3, `exterior.gd sears_north_entrance`): a dark bronze
+storefront of three door pairs under a transom, 1 m sidelights, a flat dark canopy 3 m deep with a white soffit and
+cans, "Sears" over it in 1995 / "Lynn's" in 2026 (the north wordmark moved from x -20 to -24 to sit over it).
+In `exterior.json` it is a real door (`wall_fixes.NEW_DOORS`, written by `make_exterior.py`): out (-24, -149.5)
+facing north; **inside (-6.6, -140) at the north end of the main aisle**, facing south down the aisle, 5 m from s1x's
+inside spot (DOOR_NEAR is 2.8, so the two prompts do not overlap). `player.gd` names it "the Sears north entrance"
+("Lynn's" in 2026). s1e and s1x are unchanged.
+- **Not changed inside (open question):** the walkable box has no storefront in its north wall at x -28..-20 (that
+  wall is R1's, the appliance / navy corner room). Coming in you land in the main aisle as the brief asks; going out
+  you take the prompt there. If Steven wants the door to be seen from inside, the next step is a storefront in R1's
+  north wall (`tools/stores/sears/store.gd`) and the inside spot moved to it.
+- Its form is a GUESS (the north face is not filmed): 1970s-80s Sears department-store doors.
+
 ## Budget (unbaked, measured on this branch)
 | | Lightmap texels (static meshes) | Web pack |
 |---|---|---|

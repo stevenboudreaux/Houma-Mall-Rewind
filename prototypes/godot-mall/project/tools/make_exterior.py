@@ -242,6 +242,16 @@ def main(src, out_path):
                           depth=depth, wing=w, zone="", out=out, inside=inside,
                           yaw_in=math.degrees(math.atan2(-n[0], -n[1])), yaw_out=math.degrees(math.atan2(n[0], n[1]))))
 
+    # EXT-LAYOUT (Nov 8 2026): doors with no layout edge and their own inside spot (wall_fixes.NEW_DOORS):
+    # the Sears north entrance
+    for nd in getattr(WF, "NEW_DOORS", []):
+        a, b, n, depth = nd["a"], nd["b"], nd["n"], float(nd["depth"])
+        mid = [(a[0] + b[0]) * 0.5, (a[1] + b[1]) * 0.5]
+        doors.append(dict(store=nd["store"], kind=nd["kind"], a=a, b=b, n=n, mid=mid,
+                          width=abs(b[0] - a[0]) + abs(b[1] - a[1]), depth=depth, wing=nd["wing"], zone="",
+                          out=[mid[0] - n[0] * (depth + 2.2), mid[1] - n[1] * (depth + 2.2)], inside=nd["inside"],
+                          yaw_in=math.degrees(math.atan2(-n[0], -n[1])), yaw_out=math.degrees(math.atan2(n[0], n[1]))))
+
     # ---- the walk grid: every map tile outside any building
     # EXT-B (Nov 4 2026): grown on three sides (wall_fixes.GROW): the new tiles are all lot
     G = getattr(WF, "GROW", dict(west=0, north=0, east=0, south=0))

@@ -1299,6 +1299,8 @@ static func sears_dock(b):
 			run_box(b, g, "ex_mullion", da, dt, dn, -1.0, dl + 1.0, 0.0, 3.6, 0.04, 0.04)
 			run_box(b, g, "ex_black_steel" if YEAR == 2026 else "ex_coping_dark", da, dt, dn, -0.6, dl + 0.6, 3.4, 3.65, 1.6, 1.6)
 			trash_can(b, da + dt * (dl + 1.6) + dn * 1.2)
+		elif d.store == "s1n":
+			sears_north_entrance(b, d)
 		elif d.store == "s1x":
 			var da = V(d.a); var db = V(d.b); var dn = -V(d.n); var dt = (db - da).normalized(); var dl = da.distance_to(db)
 			run_box(b, g, "ex_beige_door", da, dt, dn, -0.3, dl + 0.3, 0.0, 2.4, 0.05, 0.05)
@@ -1317,7 +1319,34 @@ static func sears_dock(b):
 	else:
 		b.label("Sears", "sans", "#1c2a4a", Vector3(SEARS_W - 0.08, 6.6, -134.0), n, 12.0, 1.6)
 		b.label("Sears", "sans", "#1c2a4a", Vector3(44.08, 6.6, -134.0), Vector3(1, 0, 0), 12.0, 1.6)
-		b.label("Sears", "sans", "#1c2a4a", Vector3(-20.0, 6.6, -146.08), Vector3(0, 0, -1), 12.0, 1.6)
+		b.label("Sears", "sans", "#1c2a4a", Vector3(-24.0, 6.6, -146.08), Vector3(0, 0, -1), 12.0, 1.6)   # over the north entrance
+
+## The Sears north entrance (s1n; EXT-LAYOUT, Nov 8 2026; Steven's annotated plan "Sears Entrance", design/
+## godot-sears.md): a period Sears department-store entrance: a dark bronze storefront of three door
+## pairs under a transom, bronze-framed sidelights, set under a flat dark canopy 3 m deep on the wall with
+## a white soffit and cans; the wordmark over it is the face's "Sears" (1995) / "Lynn's" (2026) sign.
+## Not filmed (the north face is a gap in the footage): the form is a GUESS after 1970s-80s Sears stores.
+static func sears_north_entrance(b, d):
+	var g = "ex_entry"
+	var da = V(d.a); var db = V(d.b); var dn = -V(d.n); var dt = (db - da).normalized(); var dl = da.distance_to(db)
+	# a 1 m bronze sidelight each side of the three pairs
+	entry_doors(b, da, dt, dn, 1.0, dl - 1.0, 3)
+	for u in [[0.0, 1.0], [dl - 1.0, dl]]:
+		run_box(b, g, "ex_bronze", da, dt, dn, u[0], u[0] + 0.08, 0.0, 3.34, 0.16, 0.16)
+		run_box(b, g, "ex_bronze", da, dt, dn, u[1] - 0.08, u[1], 0.0, 3.34, 0.16, 0.16)
+		run_box(b, g, "ex_glass_dark", da, dt, dn, u[0] + 0.08, u[1] - 0.08, 0.1, 3.2, 0.1, 0.02)
+	# the flat canopy: dark fascia 0.7 m, 3 m out, 1 m past the storefront each side, white soffit, cans
+	var c0 = -1.0; var c1 = dl + 1.0; var dep = 3.0; var yb = 3.6
+	run_box(b, g, "ex_coping_dark" if YEAR != 2026 else "ex_black_steel", da, dt, dn, c0, c1, yb, yb + 0.7, dep, 0.25)
+	for u in [c0, c1 - 0.25]:
+		run_box(b, g, "ex_coping_dark" if YEAR != 2026 else "ex_black_steel", da, dt, dn, u, u + 0.25, yb, yb + 0.7, dep, dep)
+	b.quad(g, "ex_soffit_white", [da + dt * c0 + UP * (yb + 0.01), da + dt * c1 + UP * (yb + 0.01), da + dt * c1 + dn * dep + UP * (yb + 0.01), da + dt * c0 + dn * dep + UP * (yb + 0.01)], -UP)
+	for k in 4:
+		var c = da + dt * (dl * (k + 0.5) / 4.0) + dn * 1.8 + UP * yb
+		b.cyl(g, "ex_can", c, 0.1, 0.1, 0.01, 10, false, true)
+		b.tag(b.add_spot(c - UP * 0.05, -UP, 1.2, 6.0, 60.0, Color("#FFE6C2")), "night")
+	for sd in [-1.6, dl + 1.6]:
+		trash_can(b, da + dt * sd + dn * 1.2)
 
 ## The east facade's trash / transformer bay (Workstream F; 4406 f011-015, 4493 f030-032): an
 ## open-sided roofed drive-in bay ~8 m wide, 6 m deep, tan brick, big brown louvers and louvered
@@ -2007,6 +2036,7 @@ static func lot_keepouts():
 	keep_out([-152.0, 180.0, -132.0, ROAD_BAYOU])           # the Bayou Gardens drive
 	keep_out([-28.0, ROAD_ARMOUR, -12.0, -230.0])           # the Armour Dr drive
 	keep_out([-12.0, -170.0, 4.0, -146.0])                  # the side exit's crosswalk (s1x)
+	keep_out([-32.0, -162.0, -16.0, -146.0])                # EXT-LAYOUT: the north entrance's walk (s1n)
 	keep_out(APTS, 6.0)
 	keep_out([-232.0, -36.0, -208.0, -14.0])                # JCPenney's pine island and hydrant
 	keep_out([-182.0, -24.0, -150.0, -14.0])                # JCPenney's docks and compactor

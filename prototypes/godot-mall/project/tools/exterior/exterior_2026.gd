@@ -172,7 +172,7 @@ static func hypervelocity(b, a, t, n, Ln):
 static func lynns(b):
 	b.label("Lynn's", "script", "#1c1c1e", Vector3(44.08, 6.6, -118.0), Vector3(1, 0, 0), 9.0, 1.6)
 	b.label("INTERIORS", "sans", "#1c1c1e", Vector3(44.08, 5.3, -118.0), Vector3(1, 0, 0), 5.0, 0.4)
-	b.label("Lynn's", "script", "#1c1c1e", Vector3(-20.0, 6.6, -146.08), Vector3(0, 0, -1), 9.0, 1.6)
+	b.label("Lynn's", "script", "#1c1c1e", Vector3(-24.0, 6.6, -146.08), Vector3(0, 0, -1), 9.0, 1.6)   # EXT-LAYOUT: over the north entrance (s1n)
 	# EXT-LAYOUT (Nov 8 2026): the west face is at x -84 (exterior.gd SEARS_W)
 	b.label("Lynn's", "script", "#1c1c1e", Vector3(-84.08, 6.6, -134.0), Vector3(-1, 0, 0), 9.0, 1.6)
 

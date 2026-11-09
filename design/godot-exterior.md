@@ -546,6 +546,14 @@ The well is an obstacle for the player (the walk grid is flat), and the lot grou
 `ground_minus_well`, a small separate hunk in LOT's function). Evidence: `wsEXTL-dock-frame.jpg`,
 `wsEXTL-dock-render-{1995,2026}-unbaked.jpg`, `wsEXTL-dock-sbs-{4486f008,4486f010,4416f014}-*`, `wsEXTL-dock-top-*`.
 
+### 4. The Sears north entrance, s1n (new; `exterior.gd sears_north_entrance`, `wall_fixes.NEW_DOORS`)
+Steven's plan marks "Sears Entrance" on Lynn's north face, toward Armour Dr. Built centred at x -24 (the plan's bump,
+x -39..-12) on z -146: dark bronze, three door pairs, sidelights, a flat dark canopy 3 m deep with cans, "Sears" (1995)
+/ "Lynn's" (2026) over it; a keep-out keeps stalls off its walk. A real door in `exterior.json`: out (-24, -149.5),
+inside (-6.6, -140), the north end of the walkable Sears's main aisle (details and the open question in
+`design/godot-sears.md`). s1e and s1x unchanged. Not filmed: the form is a GUESS. Evidence
+`wsEXTL-north-entrance-{far,near}-{1995,2026}-unbaked.jpg`, `wsEXTL-north-entrance-top-unbaked.jpg`.
+
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).

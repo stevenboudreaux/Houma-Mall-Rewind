@@ -128,3 +128,14 @@ WALK_OPEN = [[-80.0, -96.0, -78.0, -86.0]]
 # and DOOR_MOVES); the side exit is on the north face (4413 f004: the afternoon sun shines in), not
 # the east one. Nothing left here.
 DOOR_SPOTS = []
+
+# EXT-LAYOUT (Nov 8 2026; Steven's annotated site plan "Sears Entrance"): a customer entrance on Lynn's /
+# Sears's north face toward the Armour Dr lot, kept beside the east-face doors (s1e) and the shutter side
+# exit (s1x). On the plan the entrance's bump sits at x -39..-12 on the north face (mapped between Lynn's
+# corners, -84 and 44): centred x -24, an 8 m storefront. Inside it lands at the north end of the walkable
+# Sears's main aisle (design/godot-sears.md "Exits"), 5 m from s1x's inside spot (player.gd DOOR_NEAR 2.8).
+# Appended after the other doors so door_view.gd's atlas rows stay as they are.
+NEW_DOORS = [
+    dict(store="s1n", kind="exit", a=[-28.0, -146.0], b=[-20.0, -146.0], n=[0, 1], depth=1.3, wing=4,
+         inside=[-6.6, -140.0]),
+]
