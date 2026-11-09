@@ -334,7 +334,7 @@
    "_note": "ws/interiors (design/storefronts/great-american-cookie.md). The same store and case in both years; two entries because the prices and the attendant's spot differ by year (shop.gd has one price per entry).",
    "items": [
     {
-     "item": "standin_gac_choc_chip_cookie",
+     "item": "gac_choc_chip_cookie",
      "price_cents": 99,
      "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
      "ready_line": "One chocolate-chip cookie coming right up.",
@@ -387,7 +387,7 @@
    "_note": "ws/interiors: the 2026 entry of the same store (see great_american_cookie); the sugar cookie is a 1995 item, so it is not on this list.",
    "items": [
     {
-     "item": "standin_gac_choc_chip_cookie",
+     "item": "gac_choc_chip_cookie",
      "price_cents": 299,
      "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
      "ready_line": "One chocolate-chip cookie coming right up.",
@@ -449,7 +449,7 @@
      "standin": true
     },
     {
-     "item": "standin_aa_pretzel_bites",
+     "item": "aa_pretzel_nuggets",
      "price_cents": 649,
      "price_note": "PLACEHOLDER guess (ws/interiors, Nov 4: Steven asked for guesses, marked)",
      "ready_line": "One cup of pretzel bites coming right up.",
