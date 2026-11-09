@@ -574,6 +574,32 @@ Mapping: the annotated plan's Lynn's box (x 1148..1478 px) onto x -84..44, z 2.5
 | PAD 1 ACRE | a vacant pad at the lot's NE corner, ~x 78..106, z -226..-199, stall rows round it | parked over (the front lot's stall field runs to z -240) | **no**: a vacant pad (grass or bare) would be a one-rect keep-out. Steven to say whether it was empty in 1995 / 2026 |
 | Water tank | x ~-159..-140, z -32..-12 | yard x -141..-121, z -32..-9 | **roughly**: ~18 m east of the plan (EXT-B took the footage) |
 
+### Files (EXT-LAYOUT)
+`tools/exterior/exterior.gd` (`SEARS_W`, `CINEMA_W`, `WELL`; `cinema_exit`, `cinema_box`, `cinema_door`, `sears_dock`,
+`sears_north_entrance`; `skin` for the rack block; the walks loop's cinema curb hunk; `lot_ground` -> `ground_minus_well`
+and one keep-out line in LOT's code, both commented), `exterior_2026.gd` (Lynn's west and north signs), `wave_rack.gd`
+(new), `wall_fixes.py` (FILLS, `DOOR_MOVES` s41, `WALK_OPEN`, `NEW_DOORS`), `tools/make_exterior.py` (reads `WALK_OPEN`,
+`NEW_DOORS`), `exterior.json`, `gen/w3`, `gen/w3y26`, `wing3.tscn`, `wing3_2026.tscn`.
+Shared: `scripts/player.gd` one hunk (the s1n name). `build_mall.gd` untouched.
+
+### Tests (cloud, unbaked; export `.scratch/builds/extl`, wings 1-4, both years)
+- `--wing=3` and `--wing=3 --year=2026`: BUILD OK.
+- `doortest.py`: **s41** (1995 and 2026), **s43**, **s1n** (1995 and 2026: wing 4 main aisle -> "Go outside · the Sears
+  north entrance" -> wing 3 at (-24, -149.5) -> "Enter the mall" -> wing 4), and s1x unchanged: all CROSSED, 0 errors
+  (`wsEXTL-doortest-*`). (Without wing 2's packs in the export, wing 1's prefetch fails and nothing crosses: export
+  wing 2 too.)
+- `movetest.py` wing 3, 1995 and 2026: 0 errors; the touch walk from the channel walks into the recess (x -86 -> -80.3).
+  Wing 4, 1995 and 2026, starting at s1n's inside spot: 0 errors, MOVED down the main aisle.
+- Packs, wing 3 (before = `ws/lot` a31aa7e's generated files, exported here): `w3` 59.52 -> 59.71 MB (+0.19),
+  `w3y26` 44.71 -> 44.90 MB (+0.19), desktop = mobile. No new textures.
+
+### For the Mac (integration)
+1. Rebake `wing3:fastday` and `wing3_2026:fastday` (the cinema corner, Lynn's west face and the dock moved).
+2. **Wing 4 / 4_2026:** no static mesh changed, but the new door s1n is in its door list (`exterior.json`); rebake with the
+   others as the brief asks (`wing4:day wing4_2026:day`), then `tools/capture_standin.sh 4` / `4 2026`.
+3. `tools/capture_standin.sh 3` and `3 2026`: the door pictures of wings 1, 2, 4, 5 (s41 now looks down the channel; s1n
+   adds a row at the end of wing 1's atlas, the existing rows unchanged).
+
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).
