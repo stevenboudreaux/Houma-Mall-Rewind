@@ -518,6 +518,7 @@ No reference photo of Southland's cans (`refs/INDEX.md`): the type and every det
 | Model | Class | Tris | Tex | Where | Guessed |
 |---|---|---|---|---|---|
 | `bl_mall_trashcan` | small_fixture (≤ 1,500 asked) | 1,404 | 1024 | every `trash()` spot: halls (one lane out from each bench group) and court corners, both years | everything (type, colour kept near the old grey, flaps, liner) |
+| `bl_exs_sears` / `_sears_hw` / `_dillards` / `_dillards_portal` / `_kb` | small_fixture (≤ 6,000 asked) | 2,589 / 4,373 / 5,484 / 2,883 / 1,393 | 1024 / 1024 / 1024 / 512 / 512 | the outside's department-store signs, `models/exterior/signs/`, placed by `tools/exterior/signs.gd` (EXT-SIGNS, Nov 9 2026; `design/exterior/signage-research.md`) | returns' colours, Sears raceway, Sears Hardware entirely |
 
 **Packs, measured (Nov 8; `tools/export_web.sh` wings 1-2, both years; "before" = `main`'s files in the same
 workspace, the new model folders moved aside; desktop and mobile packs are byte-identical here):**

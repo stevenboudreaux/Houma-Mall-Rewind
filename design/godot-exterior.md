@@ -609,6 +609,57 @@ Shared: `scripts/player.gd` one hunk (the s1n name). `build_mall.gd` untouched. 
 3. `tools/capture_standin.sh 3` and `3 2026`: the door pictures of wings 1, 2, 4, 5 (s41 now looks down the channel; s1n
    adds a row at the end of wing 1's atlas, the existing rows unchanged).
 
+## Workstream EXT-SIGNS (Nov 9 2026): the department-store signs in 3D
+Branch `ws/ext-signs` (merged `ws/ext-lot`). Steven (Nov 9 stills, recording `Screen_Recording_11.38.54`): "Sears"
+was flat blue text painted on the wall, Dillard's a flat decal that shimmered as the camera moved, K&B a flat
+purple oval on a white band; he wants "realistic 3D signage that was actually there", researched. Research,
+sources and options: `design/exterior/signage-research.md`. Options sheet: `production/qa/evidence/wsEXTS-options.jpg`.
+
+### How they are built (the Cucos sign's approach)
+- **Models:** `tools/blender/assets_src/bl_exs_*.py` through the Blender pipeline (`tools/blender/run.sh`; shared
+  construction in `_exsign.py`). Each sign is real channel letters: returns (sheet-metal sides), a trim cap, a closed
+  back, a face of its own material, and studs across a visible gap to the wall or a raceway. A contact-shadow film
+  on the wall keeps the gap readable after the bake; the sun's real shadow does the same unbaked. One atlas per
+  sign (512 or 1024), all ≤ 6k tris. Letterforms are OFL fonts close to the period wordmarks (Archivo Black for
+  Sears, Libre Caslon Text 600 for Dillard's; `tools/exterior/signs_src/`, a `.gdignore` keeps them out of the game).
+  K&B uses the project's own trace (`tools/stores/signs/kb_letters_logo.json`). None is a traced trademark bitmap.
+- **Placement and light:** `tools/exterior/signs.gd` `place(b, id, at, n)` puts the sign's origin (on the wall,
+  centred on the sign) at `at` facing `n`. The mesh is saved to `gen/w3[y26]/exs_<id>.res` so the scene references it.
+  The flat face materials from the .glb are swapped for `ex_sign_<sign>_<part>` with `e_day` / `e_night` emission
+  (`scripts/time_of_day.gd`): Sears, Sears Hardware and K&B glow at night. Dillard's is unlit, as filmed. Lit faces do
+  not receive shadows (shadow acne). The meshes are dynamic (no lightmap, like the Cucos sign).
+- **exterior.gd** (small commented hunks, marked EXT-SIGNS): each flat `Label3D` and the flat K&B oval now draw only
+  when the model is missing. `EXS_OFF=1` builds the old signs (before shots); `EXS_OPTIONS=B` builds the options
+  sheet's B models (`models/exterior/signs/options/`, not committed).
+
+| Sign | Year | Where | Model | Tris / atlas |
+|---|---|---|---|---|
+| SEARS, blue lit channel letters on a white raceway, cap 1.6 m | 1995 | east face **over the s1e doors** (z −118; it stood at z −134, beside them), west face (dock side, z −134), north face over s1n | `bl_exs_sears` | 2.6k / 1024 |
+| Dillard's, black cans on 5 cm studs, bronze edge, cap 2.0 m | both | east and south faces between the cornices (y 11.6) | `bl_exs_dillards` | 5.5k / 1024 |
+| Dillard's, cut-out plates on 4 cm studs, cap 0.8 m | both | the portal's entablature (s2s) | `bl_exs_dillards_portal` | 2.9k / 512 |
+| K&B, lit oval cabinet (purple face, red line, white K&B, gold rim), 1.45 m | 1995 | the cream band over K&B's canopy | `bl_exs_kb` | 1.4k / 512 |
+| SEARS HARDWARE, the Sears letters on a raceway, cap 1.0 m | 1995 | the Unitech box's south face, centred on EXT-LOT's recessed doors (`standalone[].entrance`, `sign_band` 3.6–6.4) | `bl_exs_sears_hw` | 4.4k / 1024 |
+
+**Left alone:** Lynn's in 2026 (out of scope), Hypervelocity on K&B's band in 2026 (K&B was gone by 1997), the
+Cucos sign. **Unitech (2026): unsigned**, Steven's Nov 8 decision. Its wordmark is not legible in any frame and
+could not be looked up; the plan only names the tenant. A plain UNITECH mock is option B on the sheet.
+
+### Picks
+Steven had not answered within the session, so every sign is option A, the better-sourced one. Option B
+(Sears as a cabinet, Dillard's halo-lit, K&B as an unlit panel with lit letters, Sears Hardware as a stacked
+cabinet, UNITECH letters) is one rebuild away: the scripts take `EXS_VARIANT=B`.
+
+### Still guesses
+Sears's return colour and raceway; the north and west Sears signs (not filmed); whether Dillard's was halo-lit;
+the 1995 Dillard's letters = 2026's; how K&B's oval was mounted and lit; everything about the Sears Hardware sign
+(no photo); which box was Sears Hardware and which the "former Sears TBA" (a LoopNet flyer names both).
+
+### For the Mac (integration)
+- **Rebuild and rebake wing 3, both years** (`wing3:day wing3_2026:day`): the signs are dynamic meshes and need no
+  lightmap themselves, but they shadow the walls (Sears's raceway, Dillard's studs) and the flat labels they
+  replace are gone. Then `tools/capture_standin.sh 3` and `3 2026` if the door pictures show the signs.
+- The new `gen/w3/exs_*.res`, `gen/w3y26/exs_*.res` come from the build (not committed here).
+
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).

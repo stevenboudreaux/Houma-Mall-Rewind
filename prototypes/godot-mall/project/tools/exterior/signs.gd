@@ -47,6 +47,7 @@ static func opt(id):
 
 static var _mats = {}
 static var _meshes = {}
+static var _saved = {}
 
 ## The game material for one of a sign's flat parts (`key` = "<sign>_<part>", from the .glb's material name
 ## "bl_exs_<sign>_<part>"). Faces get their LOOK; "_shadow" parts are a soft dark film on the wall.
@@ -116,6 +117,13 @@ static func place(b, id, at: Vector3, n: Vector3, label := ""):
 		return null
 	var z = n.normalized()
 	var x = UP.cross(z).normalized()
+	# saved beside the build's other meshes (gen/w3/, gen/w3y26/) so the scene references it (binary)
+	# instead of carrying it as text; once per model per build
+	var gp = String(b.GEN) + "exs_" + id.get_file() + ".res"
+	if not _saved.has(gp):
+		ResourceSaver.save(mesh, gp)
+		_saved[gp] = true
+	mesh = load(gp)
 	var mi = MeshInstance3D.new()
 	mi.mesh = mesh
 	mi.transform = Transform3D(Basis(x, UP, z), at)
