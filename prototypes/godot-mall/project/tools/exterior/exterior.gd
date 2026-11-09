@@ -554,6 +554,8 @@ static func shell(b):
 		var t = (bb - a).normalized(); var Ln = a.distance_to(bb)
 		if seg.store == "s41":
 			continue    # EXT-LAYOUT: the cinema-wing exit's recess, fascia and soffit are cinema_exit()'s
+		if seg.store in ["s39", "s43"]:
+			continue    # EXT-ENTRANCES: the main and east entrances' faces are ent_main() / ent_side()'s
 		var sk = skin(seg)
 		var h = sk.h
 		if YEAR == 2026 and seg.side == "S" and V(seg.a).z >= 96.0 and seg.name != "DILLARD'S" and h <= 5.5:
@@ -658,11 +660,14 @@ static func masses(b):
 
 # ------------------------------------------------------------------ the special fronts
 static func fronts(b):
-	east_entrance(b)
+	# EXT-ENTRANCES (Nov 9 2026): s43 and s39 as filmed, both years (ent_side, ent_main)
+	ent_side(b)
 	if YEAR == 2026:
-		Y26.main_entrance(b)        # today's porte-cochere, T-Mobile, Shoe Dept. (exterior_2026.gd)
+		Y26.main_entrance(b)        # the 2026 storefront, T-Mobile, Shoe Dept. (exterior_2026.gd)
 	else:
-		main_entrance(b)
+		main_entrance(b)            # the 1995 storefront
+	ent_main(b)
+	# end EXT-ENTRANCES
 	south_entrance(b)
 	cinema_exit(b)
 	cinema_box(b)
@@ -733,20 +738,177 @@ static func main_entrance(b):
 	run_box(b, g, "ex_bronze", a, t, n, 1.0, 11.0, 2.4, 2.55, 0.0, 0.14)
 	run_box(b, g, "ex_bronze", a, t, n, 1.0, 11.0, 4.0, 4.15, 0.0, 0.14)
 	b.quad("ex_glass", "ex_glass", [a + t * 1.0 + n * 0.02, a + t * 11.0 + n * 0.02, a + t * 11.0 + n * 0.02 + UP * 4.0, a + t * 1.0 + n * 0.02 + UP * 4.0], n, [], true)
-	# the canopy: a flat slab 6 m out on four square columns
-	var slab = a + t * 6.0 + n * 3.0 + UP * 4.6
-	b.box(g, "ex_cream_pier", slab, Vector3(6.4, 0.6, 14.0))
-	b.box(g, "ex_soffit_white", slab - UP * 0.31, Vector3(6.2, 0.02, 13.8), Transform3D.IDENTITY, ["+y"])
-	for p in [Vector3(49.5, 0, -5.4), Vector3(49.5, 0, 5.4)]:
-		b.box(g, "ex_cream_pier", p + UP * 2.15, Vector3(0.7, 4.3, 0.7))
-		b.obst(["rect", p.x - 0.4, p.z - 0.4, p.x + 0.4, p.z + 0.4])
-	for i in 3:
-		b.tag(b.add_spot(a + t * (3.0 + i * 3.0) + n * 3.0 + UP * 4.25, -UP, 1.5, 7.0, 60.0, Color("#FFE6C2")), "night")
-	# SMALLFIX (Nov 8 2026): one sign, on the canopy's fascia. Until now a second, bigger
-	# "SOUTHLAND MALL" stood on the wall at 6.3 m behind the canopy, which cut it from the lot
-	# (d52-w3-1995-entrance-sign-doubled-baked.jpg). The kept one takes that one's dark bronze so it
-	# reads on the cream fascia (it was cream on cream).
-	b.label("SOUTHLAND MALL", "serif", "#4a3a2a", slab + n * 3.21 + UP * 0.0, n, 12.0, 0.45)
+	# EXT-ENTRANCES (Nov 9 2026): the flat canopy on two columns and its letters are gone; the tower
+	# (ent_main) stands in front of this storefront in both years
+
+# ==== EXT-ENTRANCES (Nov 9 2026, branch ws/ext-entrances): the main entrance s39 =================
+# design/exterior/entrances-2026-11-09.md. Owned by EXT-ENTRANCES: ent_main() and ent_side() below,
+# the s39 / s43 skips in shell() and their two calls in fronts().
+#
+## The main entrance's tower as filmed (4406 f002-f003, 4426 f004-f007, 4492 f049-f053, f067):
+## two square piers 8 m out from the facade carrying a thin flat white roof slab at ~10 m, a black
+## steel "lantern" between them over a flat porch canopy (soffit 3.6 m, dark fascia, the letters
+## standing on it), two-storey void walls back to the facade, a stepped pylon either side at the
+## facade. Both years have the massing; the skin differs (1995 a GUESS: no footage of it).
+const TW_X = 52.0        # the front piers' centres
+const TW_Z = 7.2
+const TW_TOP = 9.9       # pier tops = the roof slab's underside
+const TW_CAN = 3.6       # the porch canopy's soffit
+static func ent_main(b):
+	var g = "ex_entry"
+	var y26 = YEAR == 2026
+	var body = "ex_eifs_tan" if y26 else "ex_stucco_cream"
+	var band_a = "ex_tile_dark" if y26 else "ex_stucco_peach"
+	var band_b = "ex_tile_light" if y26 else "ex_stucco_cream"
+	var fascia = "ex_coping_dark" if y26 else "ex_bronze"
+	var n = Vector3(1, 0, 0)
+	# the front piers, tile-banded to 2.75 m
+	for sz in [-1.0, 1.0]:
+		var p = Vector3(TW_X, 0, sz * TW_Z)
+		b.box(g, body, p + UP * (TW_TOP * 0.5), Vector3(1.3, TW_TOP, 1.3))
+		for k in 5:
+			b.box(g, band_a if k % 2 == 0 else band_b, p + UP * (0.275 + k * 0.55), Vector3(1.34, 0.55, 1.34))
+		b.obst(["rect", p.x - 0.7, p.z - 0.7, p.x + 0.7, p.z + 0.7])
+		# the two-storey void's side walls, from the facade to the pier, above the porch soffit
+		b.box(g, body, Vector3((44.0 + TW_X - 0.65) * 0.5, (TW_CAN + TW_TOP) * 0.5, sz * (TW_Z + 0.05)), Vector3(TW_X - 0.65 - 44.0, TW_TOP - TW_CAN, 0.5))
+		# the stepped flank pylon at the facade, banded base, a two-tier cornice cap (~8.6 m)
+		var fz0 = sz * 8.3; var fz1 = sz * 10.8
+		var fc = Vector3(44.55, 0, (fz0 + fz1) * 0.5)
+		b.box(g, body, fc + UP * 3.8, Vector3(1.1, 7.6, 2.5))
+		for k in 5:
+			b.box(g, band_a if k % 2 == 0 else band_b, fc + UP * (0.275 + k * 0.55), Vector3(1.14, 0.55, 2.54))
+		b.box(g, body, fc + UP * 7.85 + n * 0.2, Vector3(1.5, 0.5, 2.9))
+		b.box(g, body, fc + UP * 8.35 + n * 0.1, Vector3(1.3, 0.5, 2.7))
+		b.box(g, "ex_coping", fc + UP * 8.63 + n * 0.1, Vector3(1.36, 0.06, 2.76))
+		b.obst(["rect", 44.0, min(fz0, fz1), 45.2, max(fz0, fz1)])
+	# the porch's back wall above the storefront, up to the high soffit
+	b.box(g, body, Vector3(44.1, (4.15 + TW_TOP) * 0.5, 0), Vector3(0.2, TW_TOP - 4.15, TW_Z * 2.0 - 0.6))
+	# the low porch soffit round the void (a band along the back wall and the sides), cans
+	b.box(g, "ex_soffit_white", Vector3(44.9, TW_CAN + 0.2, 0), Vector3(1.6, 0.4, TW_Z * 2.0 - 0.6))
+	for sz in [-1.0, 1.0]:
+		b.box(g, "ex_soffit_white", Vector3((45.7 + TW_X - 0.65) * 0.5, TW_CAN + 0.2, sz * (TW_Z - 0.9)), Vector3(TW_X - 0.65 - 45.7, 0.4, 1.2))
+	# the high soffit (lay-in) under the slab
+	b.quad(g, "ex_soffit_white", [Vector3(44.2, TW_TOP - 0.02, -TW_Z + 0.3), Vector3(TW_X, TW_TOP - 0.02, -TW_Z + 0.3), Vector3(TW_X, TW_TOP - 0.02, TW_Z - 0.3), Vector3(44.2, TW_TOP - 0.02, TW_Z - 0.3)], -UP)
+	# the porch canopy: ~3 m in front of the piers, dark fascia 3.6-4.2 m, cans in its soffit
+	var cx0 = TW_X - 0.65; var cx1 = TW_X + 3.0; var cz = TW_Z + 1.4
+	b.box(g, fascia, Vector3((cx0 + cx1) * 0.5, TW_CAN + 0.3, 0), Vector3(cx1 - cx0, 0.6, cz * 2.0))
+	b.box(g, "ex_soffit_white", Vector3((cx0 + cx1) * 0.5, TW_CAN - 0.005, 0), Vector3(cx1 - cx0 - 0.1, 0.02, cz * 2.0 - 0.1), Transform3D.IDENTITY, ["+y"])
+	for i in 4:
+		for j in 2:
+			var cp = Vector3(cx0 + 1.0 + j * 1.6, TW_CAN - 0.02, -4.5 + i * 3.0)
+			b.cyl(g, "ex_can", cp, 0.1, 0.1, 0.01, 10, false, true)
+			if j == 1:
+				b.tag(b.add_spot(cp - UP * 0.05, -UP, 1.5, 7.0, 60.0, Color("#FFE6C2")), "night")
+	# the letters standing on the canopy's front edge (white sans caps, 0.55 m)
+	b.label("SOUTHLAND MALL", "sans" if y26 else "serif", "#f4efe3", Vector3(cx1 - 0.25, TW_CAN + 0.6 + 0.3, 0), n, 9.0, 0.55)
+	# the lantern between the piers: a black beam, black-mullioned glass, the tan centre panel
+	var lz = TW_Z - 0.65; var ly0 = TW_CAN + 0.6; var ly1 = 8.0
+	b.box(g, "ex_black_steel", Vector3(TW_X, ly0 + 0.25, 0), Vector3(0.6, 0.5, lz * 2.0))
+	b.box(g, "ex_glass_dark", Vector3(TW_X, (ly0 + 0.5 + ly1) * 0.5, 0), Vector3(0.06, ly1 - ly0 - 0.5, lz * 2.0))
+	b.box(g, "ex_eifs_tan", Vector3(TW_X + 0.05, (ly0 + 0.5 + ly1) * 0.5, 0), Vector3(0.12, ly1 - ly0 - 0.5, 4.0))
+	for zz in [-lz + 0.05, -4.2, -2.05, 2.05, 4.2, lz - 0.05]:
+		b.box(g, "ex_black_steel", Vector3(TW_X + 0.06, (ly0 + 0.5 + ly1) * 0.5, zz), Vector3(0.14, ly1 - ly0 - 0.5, 0.1))
+	for yy in [6.4, ly1 - 0.05]:
+		b.box(g, "ex_black_steel", Vector3(TW_X + 0.06, yy, 0), Vector3(0.14, 0.1, lz * 2.0))
+	b.box(g, body, Vector3(TW_X, (ly1 + TW_TOP) * 0.5, 0), Vector3(0.6, TW_TOP - ly1, lz * 2.0))
+	if y26:
+		# the navy banner with the white fan, hung on the lantern's centre (4406 f003)
+		var bc = Vector3(TW_X + 0.2, 6.15, 0)
+		b.quad(g, "ex_banner_2026", [bc + Vector3(0, -1.35, 0.7), bc + Vector3(0, -1.35, -0.7), bc + Vector3(0, 1.35, -0.7), bc + Vector3(0, 1.35, 0.7)], n,
+			[Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)])
+	# the thin flat white roof slab, overhanging ~3 m in front and ~2.4 m each side
+	b.box(g, "ex_coping", Vector3((43.8 + TW_X + 3.2) * 0.5, TW_TOP + 0.2, 0), Vector3(TW_X + 3.2 - 43.8, 0.4, (TW_Z + 3.0) * 2.0))
+	# pavers under the porch
+	b.quad("ex_paint", "ex_tile_light" if y26 else "ex_walk", [Vector3(44.2, 0.012, -TW_Z), Vector3(TW_X + 0.65, 0.012, -TW_Z), Vector3(TW_X + 0.65, 0.012, TW_Z), Vector3(44.2, 0.012, TW_Z)], UP, [], true, 0.5)
+# ==== end EXT-ENTRANCES main =====================================================================
+
+# ==== EXT-ENTRANCES: the east (side) entrance s43 =================================================
+## As filmed (4406 f031-f042): the peach fascia mass set back from the Cucos / Red Seal front, a
+## flat soffit (3.6 m) back to the glass, the dark eyebrow on the fascia's face, white painted brick
+## returns, two tall brick pylons on the Cucos side. The glass stays at x 40 (Steven, Nov 4: the
+## recess stays 4 m, wing 1's vestibule is behind it), so the filmed depths are scaled: forecourt
+## x 42..44, soffit x 40..42 (filmed ~4.5 m and ~4 m).
+const SE_GLASS = 40.0
+const SE_FASCIA = 42.0
+static func ent_side(b):
+	var g = "ex_entry"
+	var y26 = YEAR == 2026
+	var fr = "ex_mullion" if y26 else "ex_bronze"
+	var z0 = -96.0; var z1 = -86.0
+	var a = Vector3(SE_GLASS, 0, z0); var t = Vector3(0, 0, 1); var n = Vector3(1, 0, 0)
+	# white painted brick jambs, 1 m each side of the 8 m storefront
+	for u in [[0.0, 1.0], [9.0, 10.0]]:
+		run_box(b, g, "ex_paint_white", a, t, n, u[0], u[1], 0.0, TW_CAN, 0.3, 0.4)
+	_storefront(b, g, a, t, n, 1.0, fr)
+	# the wall over the glass (hidden behind the fascia) and the soffit
+	run_box(b, g, "ex_stucco_peach", a, t, n, 0.0, 10.0, TW_CAN, H_EAST_ENTRY, 0.0, 0.3)
+	b.quad(g, "ex_stucco_tan", [Vector3(SE_GLASS, TW_CAN, z0), Vector3(SE_FASCIA, TW_CAN, z0), Vector3(SE_FASCIA, TW_CAN, z1), Vector3(SE_GLASS, TW_CAN, z1)], -UP)
+	for i in 4:
+		var c = Vector3(SE_GLASS + 1.0, TW_CAN - 0.01, z0 + 1.6 + i * 2.27)
+		b.cyl(g, "ex_can", c, 0.09, 0.09, 0.01, 10, false, true)
+		b.tag(b.add_spot(c - UP * 0.05, -UP, 1.5, 6.0, 60.0, Color("#FFE6C2")), "night")
+	# the fascia: peach to 6.3 m, the cream band and cap to 7.0 m, its face at x 42
+	var fa = Vector3(SE_FASCIA, 0, z0)
+	run_box(b, g, "ex_stucco_peach", fa, t, n, 0.0, 10.0, TW_CAN, 6.3, 0.0, 2.0)
+	run_box(b, g, "ex_cream_pier", fa, t, n, 0.0, 10.0, 6.3, 6.9, 0.1, 2.1)
+	run_box(b, g, "ex_coping", fa, t, n, 0.0, 10.0, 6.9, 7.02, 0.18, 2.2)
+	# the eyebrow: dark brown, curved in section, 8 m wide, 4.3-5.4 m, 1.5 m out
+	var ey0 = 4.3; var eh = 1.1; var eo = 1.5
+	for k in 8:
+		var f0 = float(k) / 8.0; var f1 = float(k + 1) / 8.0
+		var y0 = ey0 + eh * sin(f0 * PI * 0.5); var y1 = ey0 + eh * sin(f1 * PI * 0.5)
+		var o0 = eo * (1.0 - cos(f0 * PI * 0.5)); var o1 = eo * (1.0 - cos(f1 * PI * 0.5))
+		var p0 = fa + t * 1.0 + n * (eo - o0) + UP * y0
+		var p1 = fa + t * 9.0 + n * (eo - o0) + UP * y0
+		var p2 = fa + t * 9.0 + n * (eo - o1) + UP * y1
+		var p3 = fa + t * 1.0 + n * (eo - o1) + UP * y1
+		var nn = (n * (y1 - y0) + UP * (o1 - o0)).normalized()
+		b.quad(g, "ex_canopy_brown", [p0, p1, p2, p3], nn)
+		b.quad(g, "ex_canopy_brown", [p3, p2, p1, p0], -nn)
+	var c = fa + t * 5.0 + UP * 5.6 + n * 0.02
+	if y26:
+		Y26.fan_ornament(b, c, n, t)
+	else:
+		CU.build(b, "ex_cucos_neon", "res://tools/stores/signs/cu_sign.json", c - UP * 0.15, n, 1.25)
+	# the two tall brick pylons on the Cucos side: the corner one at the facade (~8.5 m), the
+	# second at the fascia's line (~7.2 m); 2026 black-painted brick, 1995 Cucos's red-brown (a GUESS)
+	var pm = "ex_paint_black" if y26 else "ex_brick_red"
+	b.box(g, pm, Vector3(43.85, 4.25, -85.45), Vector3(1.1, 8.5, 1.1))
+	b.box(g, pm, Vector3(42.4, 3.6, -85.7), Vector3(1.1, 7.2, 0.6))
+	b.obst(["rect", 43.3, -86.0, 44.4, -84.9])
+	b.obst(["rect", 41.85, -86.0, 42.95, -85.4])
+	# gooseneck lamps: one on the fascia's south end, one on the corner pylon
+	for lp in [[Vector3(SE_FASCIA + 0.1, 5.9, -86.8), n], [Vector3(43.85, 6.6, -84.85), Vector3(0, 0, 1)]]:
+		b.cyl(g, "ex_bronze", lp[0] + lp[1] * 0.45 - UP * 0.15, 0.18, 0.05, 0.16, 8, true, true)
+		b.tag(b.add_spot(lp[0] + lp[1] * 0.45 - UP * 0.2, -UP, 0.8, 5.0, 70.0, Color("#FFD9A8")), "night")
+
+## A storefront on the plane a, t, n from u0, 8 modules of 1 m (as s43, 4406 f042): two sidelights,
+## two pairs of 0.95 m leaves, two sidelights; door head 2.13 m, two rows of transom glass to the
+## soffit; leaves with narrow stiles, a 10 cm bottom rail, a bow pull outside and a push bar inside.
+static func _storefront(b, g, a, t, n, u0, fr):
+	var top = TW_CAN
+	for i in 9:
+		var u = u0 + i
+		run_box(b, g, fr, a, t, n, u - 0.025, u + 0.025, 0.0, top, 0.06, 0.12)
+	run_box(b, g, fr, a, t, n, u0, u0 + 8.0, 0.0, 0.05, 0.06, 0.12)            # sill
+	run_box(b, g, fr, a, t, n, u0, u0 + 8.0, 2.13, 2.23, 0.06, 0.12)          # transom bar
+	run_box(b, g, fr, a, t, n, u0, u0 + 8.0, 2.88, 2.93, 0.06, 0.12)          # transom rail
+	run_box(b, g, fr, a, t, n, u0, u0 + 8.0, top - 0.05, top, 0.06, 0.12)     # head
+	b.quad("ex_glass", "ex_glass", [a + t * u0, a + t * (u0 + 8.0), a + t * (u0 + 8.0) + UP * top, a + t * u0 + UP * top], n, [], true)
+	for i in 4:
+		var l0 = u0 + 2.0 + i + 0.025; var l1 = u0 + 3.0 + i - 0.025
+		var meet_hi = i % 2 == 0     # the leaf's meeting stile is on its +t side for the pair's first leaf
+		run_box(b, g, fr, a, t, n, l0, l0 + 0.06, 0.0, 2.13, 0.04, 0.06)           # stiles
+		run_box(b, g, fr, a, t, n, l1 - 0.06, l1, 0.0, 2.13, 0.04, 0.06)
+		run_box(b, g, fr, a, t, n, l0, l1, 2.05, 2.13, 0.04, 0.06)                 # top rail
+		run_box(b, g, fr, a, t, n, l0, l1, 0.0, 0.1, 0.04, 0.06)                   # 10 cm bottom rail
+		# the bow pull outside at ~1.05 m, near the meeting stile; the push bar inside
+		var pu = l1 - 0.42 if meet_hi else l0 + 0.42
+		run_box(b, g, "ex_stainless", a, t, n, pu - 0.3, pu + 0.3, 1.03, 1.07, 0.11, 0.03)
+		for e in [pu - 0.28, pu + 0.28]:
+			run_box(b, g, "ex_stainless", a, t, n, e - 0.015, e + 0.015, 1.03, 1.07, 0.09, 0.05)
+		run_box(b, g, "ex_stainless", a, t, n, l0 + 0.12, l1 - 0.12, 0.98, 1.04, -0.06, 0.05)
+# ==== end EXT-ENTRANCES side ======================================================================
 
 ## The south entrance (s55, Bayou Gardens): a pavilion ~12 m wide in line with the wing wall's
 ## front (z 118), a deep loggia with the doors at its back (z 112), big square pilasters on the front
