@@ -11,7 +11,7 @@
 ##   - the truncated-dome mats at the doors' curb ramps
 ## exterior.gd itself switches the rest by year: The Red Seal's colours on Cucos, the two-tone EIFS
 ## wing wall, the south pavilion's EIFS and tile bands, pink fire lanes on red curbs, yellow stall
-## lines, the LED twin-arm poles, JCPenney's magenta letters, the Unitech sign; monuments.gd the
+## lines, the LED twin-arm poles, JCPenney's magenta letters (Unitech unsigned since EXT-LAYOUT); monuments.gd the
 ## monument faces (and no United Artists marquee).
 const UP = Vector3.UP
 

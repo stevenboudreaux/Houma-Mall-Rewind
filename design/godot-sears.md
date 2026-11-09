@@ -74,7 +74,7 @@ Partitions are on the column lines. Sizes are inside dimensions to the wall line
 
 | Room | Where (x, z) | Size | Doors | 2026 use (as filmed) |
 |---|---|---|---|---|
-| R1 northwest | −40..−17.5, −146..−128 | 22.5 × 18 m (405 m²) | 7 m opening south (x −31..−24), 5 m east (z −136..−131) | appliances, TV wall, navy corner |
+| R1 northwest | −40..−28, −146..−128 (EXT-LAYOUT; was to −17.5) | 12 × 18 m (216 m²) | 5 m opening south (x −35.5..−30.5), 5 m east (z −136..−131) onto the north entrance lobby | appliances, TV wall, navy corner |
 | R2 west | −40..−26.5, −128..−110 | 13.5 × 18 m (243 m²) | 6 m opening east (z −122..−116) | recliners along its east side |
 | R3 northeast | 9.5..30, −146..−128 | 20.5 × 18 m (369 m²) | 6 m west (z −137..−131), 8 m south (x 13..21) | mattress gallery, taupe carpet, slatwall |
 | R4 mint-door room | −17.5..−8.5, −146..−137 | 9 × 9 m (81 m²) | the mint double door onto the main aisle | — |
@@ -122,13 +122,20 @@ at x -39..-12 of the north face (mapped between Lynn's corners): built **centred
 storefront of three door pairs under a transom, 1 m sidelights, a flat dark canopy 3 m deep with a white soffit and
 cans, "Sears" over it in 1995 / "Lynn's" in 2026 (the north wordmark moved from x -20 to -24 to sit over it).
 In `exterior.json` it is a real door (`wall_fixes.NEW_DOORS`, written by `make_exterior.py`): out (-24, -149.5)
-facing north; **inside (-6.6, -140) at the north end of the main aisle**, facing south down the aisle, 5 m from s1x's
-inside spot (DOOR_NEAR is 2.8, so the two prompts do not overlap). `player.gd` names it "the Sears north entrance"
-("Lynn's" in 2026). s1e and s1x are unchanged.
-- **Not changed inside (open question):** the walkable box has no storefront in its north wall at x -28..-20 (that
-  wall is R1's, the appliance / navy corner room). Coming in you land in the main aisle as the brief asks; going out
-  you take the prompt there. If Steven wants the door to be seen from inside, the next step is a storefront in R1's
-  north wall (`tools/stores/sears/store.gd`) and the inside spot moved to it.
+facing north; **inside (-24, -143.5), in its own vestibule**, facing south into the store. `player.gd` names it "the
+Sears north entrance" ("Lynn's" in 2026). s1e and s1x are unchanged.
+- **The vestibule (Steven, Nov 8 follow-up: "land at a real door, not in the aisle"; `store.gd north_entry`,
+  `NORTH_ENTRY`, `VEST_Z`):** the outer storefront in the north wall at x -28..-20 (dark bronze frames, three glass
+  door pairs with push bars between 1 m sidelights, a transom to 3.3 m, an EXIT sign, the lot card outside); 6 m in,
+  an inner glass front at z -140 with fixed glass either side of an open pair (x -25..-23); a dark walk-off mat; its
+  sides are partitions (x -28 and x -20). South of it the strip **x -28..-17.5, z -146..-128 is the entrance's
+  lobby**, open south onto the centre-west sales floor.
+- **R1 (the appliance / navy corner room) shrinks** from x -40..-17.5 to **x -40..-28** (12 x 18 m, 216 m2): its east
+  partition moves from x -17.5 to x -28 (same doorway, z -136..-131), its south partition ends at x -28 with its
+  doorway moved to x -35.5..-30.5; R4 keeps its west wall at x -17.5 (z -146..-137) as a partition of its own. The navy
+  corner and the 2026 fridges stand where they were (inside x -40..-28).
+- **Lynn's 2026 furniture:** the 16 pieces of zone Z5 that stood in the freed strip (the east ends of the three
+  recliner runs and the back curtain) are left out at placement (`lynns.gd FREED`); `placements.json` is unchanged.
 - Its form is a GUESS (the north face is not filmed): 1970s-80s Sears department-store doors.
 
 ## Budget (unbaked, measured on this branch)

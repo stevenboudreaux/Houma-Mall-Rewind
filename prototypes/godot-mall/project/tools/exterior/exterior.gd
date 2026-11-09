@@ -60,7 +60,8 @@ const LOT_WEST = -360.0          # the west lot's edge (the parcel line is -383)
 ## (x -38..44) from 4492 f105-107; Steven to confirm against the south pavilion (x ~ -140) or JCPenney (~ -184).
 const GROUND_PATI = 20.0
 ## The apartments' land: nothing of the mall's north of z -150 west of x -120 (site plan)
-const APTS = [-400.0, -290.0, -120.0, -150.0]
+# EXT-LAYOUT: the east fence moved from x -120 to -128 so Unitech's plan footprint (x -122..-82) has its drive
+const APTS = [-400.0, -290.0, -128.0, -150.0]
 
 static var KEEP = []             # rectangles the stall fields stay out of [x0, z0, x1, z1]
 
@@ -622,8 +623,8 @@ static func roofs(b):
 		var y = H_UNITECH
 		# Unitech: "a separate long low white warehouse box" (4486 f010, f072)
 		b.box("ex_shell", "ex_block_white", Vector3((r[0] + r[2]) * 0.5, y * 0.5, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0], y, r[3] - r[1]), Transform3D.IDENTITY, ["-y"])
-		if YEAR == 2026:
-			b.label("UNITECH", "sans", "#1d2a4a", Vector3((r[0] + r[2]) * 0.5, y - 1.4, r[3] + 0.08), Vector3(0, 0, 1), 10.0, 1.1)
+		# EXT-LAYOUT (Nov 8 2026, Steven): unsigned in both years ("Old Sears Hardware" on his plan; a historian
+		# pass will settle what it read in the 1990s). It carried "UNITECH" in 2026 before.
 		b.box("ex_shell", "ex_coping", Vector3((r[0] + r[2]) * 0.5, y + 0.05, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0] + 0.2, 0.12, r[3] - r[1] + 0.2))
 		b.obst(["rect", r[0], r[1], r[2], r[3]])
 

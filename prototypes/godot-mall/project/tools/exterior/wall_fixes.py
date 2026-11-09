@@ -89,7 +89,10 @@ BAY = [38, -50, 44, -42]
 # directory map show only parking and the soccer fields. Unitech is NORTH of Lynn's (old Sears), by
 # Armour Dr (site plan "UNITECH 15,600 SF"; directory map "UNITECH" north-west of Lynn's; 4486 f010:
 # "that building back there", looking north from the cinema-side exit).
-STANDALONE = [dict(name="UNITECH", rect=[-85.0, -236.0, -57.0, -207.0])]   # EXT-B #3: by Armour Dr
+# EXT-LAYOUT (Nov 8 2026, Steven): Unitech at the site plan's footprint, x -122..-82 (its east edge about in line
+# with Lynn's west face) by Armour Dr, 15,600 SF (40 x 36.2 m = 1,448 m2). "Old Sears Hardware" per Steven's
+# annotated plan; unsigned in both years until the mall historian settles what it read in the 1990s.
+STANDALONE = [dict(name="UNITECH", rect=[-122.0, -232.2, -82.0, -196.0])]   # was EXT-B #3: -85, -236, -57, -207
 
 # EXT-B: map blocks left out of the building altogether (n2 would join JCPenney's rear block)
 DROP = ["n2"]
@@ -133,9 +136,10 @@ DOOR_SPOTS = []
 # Sears's north face toward the Armour Dr lot, kept beside the east-face doors (s1e) and the shutter side
 # exit (s1x). On the plan the entrance's bump sits at x -39..-12 on the north face (mapped between Lynn's
 # corners, -84 and 44): centred x -24, an 8 m storefront. Inside it lands at the north end of the walkable
-# Sears's main aisle (design/godot-sears.md "Exits"), 5 m from s1x's inside spot (player.gd DOOR_NEAR 2.8).
+# Sears's main aisle at first; since Steven's Nov 8 follow-up it lands in its own vestibule inside the north
+# wall (tools/stores/sears/store.gd north_entry), facing south into the store.
 # Appended after the other doors so door_view.gd's atlas rows stay as they are.
 NEW_DOORS = [
     dict(store="s1n", kind="exit", a=[-28.0, -146.0], b=[-20.0, -146.0], n=[0, 1], depth=1.3, wing=4,
-         inside=[-6.6, -140.0]),
+         inside=[-24.0, -143.5]),
 ]

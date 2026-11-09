@@ -501,8 +501,9 @@ Proportions measured off 4416 f002 (the glass plane, ~121 px/m against the 2.1 m
 | South side | buff brick under the soffit with the **poster case** (aluminium frame, dark glass, 1.2 x 0.9 m at 1.0-1.9 m), a rusty steel pipe post at the fascia's corner, a 0.9 m buff pier rising to 7 m, then the salmon brick | f004, f005, 4417 |
 | Apron | a flush dark slab, no curb across the recess; the red curb comes along the cinema's north face and stops at the recess corner | f002, f005 |
 | Behind the glass | a 5 m vestibule (dark tile, white ceiling at 3.2 m with cans, the inner pairs as dark glass): wing 3 had nothing behind the glass, so it showed the lot through the building | 4416 f002, 4418 |
-*Note for Steven:* "a red-painted curb across the recess" in the brief: in f002 / f005 the red curb is along the
-cinema's north face and ends at the recess corner; the recess itself is a flush apron. Built as filmed.
+The red curb runs along the cinema's north face and ends at the recess corner; the recess itself is a flush apron
+(f002 / f005). **Kept as filmed** (Steven, Nov 8 follow-up; the brief had said "across the recess"), as is the rack
+block's door on its west face (§3).
 "No return wall on the south side": no perpendicular wall is built there; the salmon brick of the cinema's north face
 runs from 0.9 m past the recess, the buff strip being the recess's own side and the pier (f005).
 
@@ -550,8 +551,12 @@ The well is an obstacle for the player (the walk grid is flat), and the lot grou
 Steven's plan marks "Sears Entrance" on Lynn's north face, toward Armour Dr. Built centred at x -24 (the plan's bump,
 x -39..-12) on z -146: dark bronze, three door pairs, sidelights, a flat dark canopy 3 m deep with cans, "Sears" (1995)
 / "Lynn's" (2026) over it; a keep-out keeps stalls off its walk. A real door in `exterior.json`: out (-24, -149.5),
-inside (-6.6, -140), the north end of the walkable Sears's main aisle (details and the open question in
-`design/godot-sears.md`). s1e and s1x unchanged. Not filmed: the form is a GUESS. Evidence
+inside (-24, -143.5) in its vestibule (first the north end of the main aisle; see the follow-up below) (details and the open question in
+`design/godot-sears.md`). s1e and s1x unchanged. Not filmed: the form is a GUESS.
+**Follow-up (Steven, Nov 8):** the door now lands in a real **vestibule inside the north wall** at x -28..-20 (inside
+spot (-24, -143.5)); the appliance room R1 shrinks to x -40..-28 to make room (`tools/stores/sears/store.gd`
+`north_entry`; `design/godot-sears.md`). Evidence `wsEXTL-north-entrance-vestibule-*` (inside, unbaked, the night
+lights on: the cloud preview's sun comes through the box's ceiling). Evidence
 `wsEXTL-north-entrance-{far,near}-{1995,2026}-unbaked.jpg`, `wsEXTL-north-entrance-top-unbaked.jpg`.
 
 ### 5. The bank pad (verify only)
@@ -567,11 +572,11 @@ Mapping: the annotated plan's Lynn's box (x 1148..1478 px) onto x -84..44, z 2.5
 | Bike Rack / Southland Cinema Mall Entrance | at the channel between Lynn's and the cinema box | §0, §1 | yes (after this branch) |
 | Sears Entrance (north) | the bump at x -39..-12 | s1n at x -28..-20 | yes (new, §4) |
 | Mall Entrance / Old Cuco's (east) | the east entrance at Lynn's SE corner, Cuco's south of it | s43's recess z -96..-86 at x 40..44; Cucos (s42) south of it | yes |
-| Old Sears Hardware = Unitech | a 15,600 SF box by Armour Dr at **x -122..-82, z -232..-193** (its east edge in line with Lynn's west face) | `STANDALONE` UNITECH **x -85..-57, z -236..-207** (812 m2, ~8,700 SF), plain white in 1995, "UNITECH" in 2026 | **no**: the built box is ~30 m too far east and half the area. Also, if it was Sears Hardware, the 1995 box could carry a Sears Hardware sign (none now). Steven to confirm both |
+| Old Sears Hardware = Unitech | a 15,600 SF box by Armour Dr at **x -122..-82, z -232..-193** (its east edge in line with Lynn's west face) | was x -85..-57, z -236..-207 (~8,700 SF), "UNITECH" in 2026. **Fixed (Steven, Nov 8 follow-up):** `STANDALONE` **x -122..-82, z -232.2..-196** (40 x 36.2 m = 15,600 SF), **unsigned in both years**; "Old Sears Hardware" per Steven's plan, what it read in the 1990s left to a historian pass. The apartments' fence (`APTS`) moved from x -120 to -128 to leave Unitech a 6 m drive (`wsEXTL-unitech-moved-unbaked.jpg`) | yes (after the fix) |
 | Shoe Dept. (Encore) 20,071 SF | the flush box on the east facade, x ~1..44, z ~27..90 | box x 4..44, z 32..77; 2026 Shoe Dept.'s white ACM front with three canopied bays (decorative: not a walkable door) | yes (within the plan's z stretch). Its exterior entrance is a storefront only; making it a door is a separate job |
 | Chase Bank 7,758 SF "not a part" | the West Park pad | §5 | yes |
 | Building 870 SF drive-thru, "not a part" 40,000 SF | the far SW corner by Bayou Gardens | the drive-thru bank at (-346, 166), the strip centre x -321..-303, z 100..155 | yes (EXT-B) |
-| PAD 1 ACRE | a vacant pad at the lot's NE corner, ~x 78..106, z -226..-199, stall rows round it | parked over (the front lot's stall field runs to z -240) | **no**: a vacant pad (grass or bare) would be a one-rect keep-out. Steven to say whether it was empty in 1995 / 2026 |
+| PAD 1 ACRE | a vacant pad at the lot's NE corner, ~x 78..106, z -226..-199, stall rows round it | parked over (the front lot's stall field runs to z -240) | **kept as parking in both years** (Steven, Nov 8: a 2024 leasing label, not a 1995 fact) |
 | Water tank | x ~-159..-140, z -32..-12 | yard x -141..-121, z -32..-9 | **roughly**: ~18 m east of the plan (EXT-B took the footage) |
 
 ### Files (EXT-LAYOUT)
@@ -580,23 +585,27 @@ Mapping: the annotated plan's Lynn's box (x 1148..1478 px) onto x -84..44, z 2.5
 and one keep-out line in LOT's code, both commented), `exterior_2026.gd` (Lynn's west and north signs), `wave_rack.gd`
 (new), `wall_fixes.py` (FILLS, `DOOR_MOVES` s41, `WALK_OPEN`, `NEW_DOORS`), `tools/make_exterior.py` (reads `WALK_OPEN`,
 `NEW_DOORS`), `exterior.json`, `gen/w3`, `gen/w3y26`, `wing3.tscn`, `wing3_2026.tscn`.
-Shared: `scripts/player.gd` one hunk (the s1n name). `build_mall.gd` untouched.
+Shared: `scripts/player.gd` one hunk (the s1n name). `build_mall.gd` untouched. Follow-up: `tools/stores/sears/store.gd`
+(`north_entry`, R1 / R4 partitions, one light) and `lynns.gd` (`FREED`), the apartments' fence (`APTS`).
 
 ### Tests (cloud, unbaked; export `.scratch/builds/extl`, wings 1-4, both years)
 - `--wing=3` and `--wing=3 --year=2026`: BUILD OK.
-- `doortest.py`: **s41** (1995 and 2026), **s43**, **s1n** (1995 and 2026: wing 4 main aisle -> "Go outside · the Sears
-  north entrance" -> wing 3 at (-24, -149.5) -> "Enter the mall" -> wing 4), and s1x unchanged: all CROSSED, 0 errors
+- `doortest.py`: **s41** (1995 and 2026), **s43**, **s1n** (1995 and 2026: wing 4's north vestibule -> "Go outside · the
+  Sears north entrance" -> wing 3 at (-24, -149.5) -> "Enter the mall" -> back in the vestibule), and s1x unchanged:
+  all CROSSED, 0 errors
   (`wsEXTL-doortest-*`). (Without wing 2's packs in the export, wing 1's prefetch fails and nothing crosses: export
   wing 2 too.)
 - `movetest.py` wing 3, 1995 and 2026: 0 errors; the touch walk from the channel walks into the recess (x -86 -> -80.3).
-  Wing 4, 1995 and 2026, starting at s1n's inside spot: 0 errors, MOVED down the main aisle.
-- Packs, wing 3 (before = `ws/lot` a31aa7e's generated files, exported here): `w3` 59.52 -> 59.71 MB (+0.19),
-  `w3y26` 44.71 -> 44.90 MB (+0.19), desktop = mobile. No new textures.
+  Wing 4, 1995 and 2026, starting at s1n's inside spot in the vestibule: 0 errors, the walk goes south through the
+  inner doors (z -143.5 -> -137.8). Wing 3 again after Unitech's move, both years: 0 errors.
+- Packs, wing 3 (before = `ws/lot` a31aa7e's generated files, exported here): `w3` 59.52 -> 59.74 MB (+0.22),
+  `w3y26` 44.71 -> 44.92 MB (+0.21), desktop = mobile. No new textures. Wing 4 (the vestibule): `w4` 42.63 -> 42.67 MB,
+  `w4y26` 96.07 -> 96.07 MB.
 
 ### For the Mac (integration)
 1. Rebake `wing3:fastday` and `wing3_2026:fastday` (the cinema corner, Lynn's west face and the dock moved).
-2. **Wing 4 / 4_2026:** no static mesh changed, but the new door s1n is in its door list (`exterior.json`); rebake with the
-   others as the brief asks (`wing4:day wing4_2026:day`), then `tools/capture_standin.sh 4` / `4 2026`.
+2. **Wing 4 / 4_2026: rebake** (`wing4:day wing4_2026:day`): the north vestibule, R1's moved partitions and the lobby
+   are new static geometry; then `tools/capture_standin.sh 4` / `4 2026` (wing 1's picture of the Sears opening).
 3. `tools/capture_standin.sh 3` and `3 2026`: the door pictures of wings 1, 2, 4, 5 (s41 now looks down the channel; s1n
    adds a row at the end of wing 1's atlas, the existing rows unchanged).
 
