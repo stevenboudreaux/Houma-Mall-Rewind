@@ -30,6 +30,8 @@ TIERS = [  # (z of the tier, y from, y to): front (cups), middle, back (pretzels
 ]
 N_PRETZEL = 6      # per tier
 N_CUP = 8
+CUPS = False       # FOOD3D (Nov 8 2026): the closed cups are gone; the open cups of nuggets (bl_aa_nugget_cup_case)
+                   # are instanced at the same places by tools/stores/auntie_annes/store.gd
 SCALE = 1.3        # the pretzels: ~19 cm across, as in the clip against the cups
 
 META = {"id": "bl_aa_warmer", "class": "small_fixture", "tex": 1024, "ao": 0.4,
@@ -150,7 +152,7 @@ def build():
     band = mats.flat("cup_band", "#f4f2ec", 0.6)
     bites = pretzel_mat("bites", "#b8622a", "#7a3a14", "#f4f0e6")
     z, ya, yb = TIERS[0]
-    for k in range(N_CUP):
+    for k in range(N_CUP if CUPS else 0):
         x = -W / 2 + 0.09 + k * (W - 0.18) / (N_CUP - 1)
         y = (ya + yb) / 2
         parts.cylinder("cup", 0.042, 0.08, verts=12, loc=(x, y, z + 0.044), mat=cup.mat, bev=0, r2=0.032)

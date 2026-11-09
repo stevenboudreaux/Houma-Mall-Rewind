@@ -70,3 +70,10 @@ Frame: `u` runs along the frontage from the store's north end (the mall viewer's
 - No geometry change: the back worktop (d 3.85 to 4.45) touches the attendant's back below 0.9 m, hidden behind the 1.0 m counter from the shop. No rebake.
 - The corn dog on the counter is stock on show in 1995, not a pick-up. In 2026 (no attendant) it stays a pick-up (Steven, Nov 4).
 - **The menu box:** it said Corn Dog 1.29; repainted to **2.00** (Steven, Nov 4; `paint_corn_dog_7.py menu_board()`, `tex/cd7/menu.png`). Fries and lemonade follow the box (.99). The box's COMBO line (corn dog, fries & lemonade 2.99) is unchanged and not sold (Steven, Nov 4: "leave the combo"). A texture change only: no rebake for it.
+
+## FOOD3D: Blender corn dogs in the case (Nov 8, 2026; both years)
+The cases' tapered cylinders on sticks become the Blender corn dog (`bl_cd7_case` kit, the hand item's new cornmeal
+crust): 14 per case standing batter-down in the steel holder, a few leaning; the yellow block becomes a steel pan of
+cheese on a stick (a guess; **Steven, Nov 8: keep it, display only, not sold**; not on the menu box). Placement: `corn_dog_7.gd case_food()` (instanced, dynamic: no rebake; the
+old cylinders were in the baked mesh, so wing 2's next bake drops their shadows). Evidence (unbaked):
+`wsFOOD3D-cd7-case-sheet.jpg`, `wsFOOD3D-cd7-case-ingame.jpg`, `wsFOOD3D-bl_cd7_corndog-sheet.jpg`.

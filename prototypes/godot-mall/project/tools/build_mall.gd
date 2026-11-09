@@ -2525,10 +2525,18 @@ func planter(at, kind):
 		bush(at + Vector3(0, 0.56, 0), "leafy", 0.75, 5)
 	obst([at.x, at.z, 0.6])
 
+## FOOD3D (Nov 8 2026): the trash can is the Blender model bl_mall_trashcan (tools/blender/assets_src), instanced
+## under dyn_fixtures in build() (so "Benches & plants" still shows and hides it); the old cylinders if it is missing.
+const TRASH_GLB = "res://models/bl_mall_trashcan/bl_mall_trashcan.glb"
+var trash_xf = []
+
 func trash(at):
-	cyl("fixtures", "planter", at, 0.24, 0.28, 0.82, 20, false)
-	cyl("fixtures", "planter", at + Vector3(0, 0.82, 0), 0.29, 0.29, 0.05, 20, false)
-	cyl("fixtures", "planter", at + Vector3(0, 0.87, 0), 0.29, 0.12, 0.12, 20, true)
+	if ResourceLoader.exists(TRASH_GLB):
+		trash_xf.append(Transform3D(Basis(Vector3.UP, fposmod(at.x * 1.7 + at.z * 0.9, TAU)), at))
+	else:
+		cyl("fixtures", "planter", at, 0.24, 0.28, 0.82, 20, false)
+		cyl("fixtures", "planter", at + Vector3(0, 0.82, 0), 0.29, 0.29, 0.05, 20, false)
+		cyl("fixtures", "planter", at + Vector3(0, 0.87, 0), 0.29, 0.12, 0.12, 20, true)
 	obst([at.x, at.z, 0.45])
 
 ## Benches, planters and trash cans in the groupings seen in the 2018 walkthrough:
@@ -2905,6 +2913,21 @@ func finish():
 		mi.gi_mode = GeometryInstance3D.GI_MODE_DYNAMIC
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		dyn_root.add_child(mi); mi.owner = mall
+	# FOOD3D: the trash cans, one MultiMesh under dyn_fixtures (hidden with it)
+	var fxn = dyn_root.get_node_or_null("dyn_fixtures")
+	if fxn != null and not trash_xf.is_empty():
+		var tmesh = load("res://tools/stores/food3d/kit.gd").meshes(TRASH_GLB).values()
+		if not tmesh.is_empty():
+			var tmi = MultiMeshInstance3D.new()   # its MultiMesh is built at run time (scripts/food3d_multi.gd)
+			tmi.set_script(load("res://scripts/food3d_multi.gd"))
+			tmi.name = "trash_cans"
+			tmi.piece = tmesh[0]
+			var txa: Array[Transform3D] = []
+			for x in trash_xf:
+				txa.append(x)
+			tmi.xforms = txa
+			tmi.gi_mode = GeometryInstance3D.GI_MODE_DYNAMIC
+			fxn.add_child(tmi); tmi.owner = mall
 
 	for z in (L.zones if WING != 3 and WING != 6 else []):
 		var r = z.rect

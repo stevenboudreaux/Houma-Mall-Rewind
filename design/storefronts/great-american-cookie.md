@@ -89,3 +89,40 @@ clamps the width to the front's length. Wicks checked: `interiors-gac-1995-wicks
 years, the attendant behind the case: a chocolate-chip cookie (a new Blender item; `bl_gac_sugarcookie`
 already exists as a 1995 pick-up and would become stock on display), a cookie-cake slice, a brownie, a
 fountain drink. Prices for Steven. The cookie cake on the prep table is a fixture, not an item.
+
+## FOOD3D: 3D cookies and cookie cakes in the case, both years (Nov 8, 2026)
+Steven: replace the flat pictures of cookies with 3D cookies on trays; "the items in the bottom of the case are
+COOKIE CAKES, not cookies". `gac/case.gd` now instances the Blender kit `bl_gac_cookies` (one 1024 atlas):
+aluminium sheet pans on all three tiers with chocolate chip, double chocolate, candy-coated (invented colours),
+sugar, white chocolate macadamia, snickerdoodle, peanut butter cookies and fudge brownies; in the lower window,
+leaning on a maroon back, 16 in round, heart and pan cookie cakes with piped borders, "Happy Birthday", "Love You",
+"Congrats", "Go Team" and icing drawings. Same case both years (Steven, Nov 7). Details, sources and guesses:
+`design/godot-blender-pipeline.md` "FOOD3D". Hand item: `gac_choc_chip_cookie` (`data/items/food3d.json`).
+Evidence (unbaked): `wsFOOD3D-gac-cookies-sheet.jpg`, `wsFOOD3D-gac-cookies-ingame-1995.jpg`, `-2026.jpg`.
+No rebake for the food (dynamic); the window's back changed from the lit cake picture to plain maroon in the
+baked mesh, so wing 2 (both years) picks that up at its next bake.
+**Pan cake: 2026 only** (Steven, Nov 8: the chain's first pan cookie cake was in 2012): the 1995 window shows the
+rounds and the heart in turn (`case.gd cakes3d`, by `b.YEAR`). Evidence: `wsFOOD3D-gac-cakes-1995-no-pan-unbaked.jpg`.
+
+## FOOD3D: the 1990s front (Nov 8, 2026; 1995 map only)
+Steven (Nov 7): the white tile with scattered red/black/yellow squares is the 2026 look; the 1990s store was
+"more traditional". **Research:** the chain's own history online (Wikipedia via search results, Mashed, Tasting
+Table, the Rockland Report's 1991 Nanuet Mall throwback) gives the names (the 1977 "Original Great American
+Chocolate Chip Cookie Company"; "Great American Cookie Company" 1985-1997 per Logopedia's list) but no
+description or picture of a period store that could be read from the cloud (the wikis and the throwback page are
+blocked here). The one period picture of a store is Steven's own (`refs/great-american-cookie-case.jpg`): cream
+tile walls, burgundy lower panels on the case and the walls, red-and-cream checkerboard bands, a row of lit menu
+pictures; its sign is already the 1995 sign (the record's).
+**Two options** (`tools/stores/gac/front95.gd`, walls painted by `gac/paint95.py`; evidence
+`production/qa/evidence/wsFOOD3D-gac-1990s-options.jpg`):
+- **A, burgundy and checker (shown, not chosen):** from Steven's photo: a burgundy laminate
+  wainscot to 1.0 m with a brass cap rail, cream 15 cm tile above, a two-row red-and-cream checkerboard band at
+  1.95-2.25 m; burgundy returns at the opening's sides and a brass bar under the sign box.
+- **B, dark oak and brass (Steven's pick, Nov 8: built, the only finish now):** a period type with no photo of this chain: a stained oak raised-panel wainscot,
+  an oak chair rail with a brass strip, cream plaster, a burgundy pinstripe, an oak crown.
+Steven (Nov 8) picked B; the switch between them (`STYLE`, the `GAC95` preview variable) and option A's painter
+and texture are removed: `front95.gd` and `paint95.py` make B only. The brass bar under the sign box and oak returns
+at the opening's sides go with it.
+The menu wall and the kitchen take the same finish (`kitchen.gd TILE`, set by `wave7.gd` around `build_1995`).
+Unchanged: the sign, the case, the record's red check course, the 2026 store. **Guessed:** the heights, the panel
+widths, the brass. **Rebake:** wing 2 (1995).

@@ -432,3 +432,110 @@ types from `design/research/redemption-items.md`; generic, no brand, no words.
 Also: the three claw plush and the finger trap are `"year": "both"` now (shared with games, inc.); the counter
 tints the plush's near-white fur (instance colour through `vertex_color_use_as_albedo` on the baked material).
 Evidence: `production/qa/evidence/wsPRIZES-<id>-sheet.jpg`.
+
+## Food and counter props (workstream FOOD3D, Nov 8 2026)
+
+Steven's asks, in order (one push each): the cookie case's 3D cookies and cookie cakes; Great American's 1990s
+front; Corn Dog 7's case; Auntie Anne's counter logo and open cups of nuggets; the mall trash can. Evidence:
+`production/qa/evidence/wsFOOD3D-*` (all in-game shots unbaked, probe-lit preview).
+
+**Kits (new, `tools/blender/assets_src/_kit.py`).** Several small models built side by side in one asset share
+one bake and one atlas, then `_kit.py <id>` splits the baked mesh into one glTF node per piece (each face goes to
+the nearest piece position in `META["kit"]["pieces"]`), re-centres each piece's mesh on its own origin (the node
+keeps the layout offset, so the .glb still shows the laid-out kit) and fails with `OVER BUDGET` when a piece has
+more than `META["kit"]["max_tris"]`. Run it after `run.sh <id>`. `build.py` is unchanged.
+
+**Placing (new, `tools/stores/food3d/kit.gd`).** `meshes(path)` reads a kit's pieces; `multi(b, mesh, xforms)` puts
+one MultiMeshInstance3D per kind under the mall's `Food3D` node. **Its MultiMesh is built at run time** by
+`scripts/food3d_multi.gd` (the node saves the piece and its transforms as plain properties): the wing build runs
+headless on Godot's dummy renderer, which does not keep a MultiMesh's instance transforms, so a MultiMesh made in
+the build saves every copy at the origin (found in the first export: the cases were empty in the game while the
+probe-lit preview, a real renderer, showed them); `one(b, path, xf)` a single .glb. All dynamic GI
+(probe-lit like the hand items) with no shadows, so food placed this way needs no rebake.
+
+| Model | Class | Tris | Tex | Where | Based on | Guessed |
+|---|---|---|---|---|---|---|
+| `bl_gac_cookies` (kit, 13 pieces) | small_fixture (kit) | 4,500 total; cookies cc 408, dchoc 348, candy 400, sugar 240, wcm 456, snick 240, pb 240, brownie 216; cakes 518 / 518 / 518 (heart) / 258 (pan); tray 140 (each ≤ 600) | 1024 (one atlas, 3 maps; the tray is a flat material) | Great American's case, both years (`gac/case.gd case_run`: `cakes3d`, `trays3d`) | `refs/new/cookie_co/gacc_t000_040, 065, 134-138` (2026 video, not Southland: bare aluminium sheet pans, cookies heaped and shingled, cakes with rosette borders and white icing letters outlined in colour); `design/storefronts/refs/great-american-cookie-case.jpg` (1990s case); the chain's own releases for cake shapes (16 in rounds, heart-shaped, pan cakes) | every recipe's look; candy colours (invented: teal, coral, lilac, lime, sky, tangerine; no letters); the cake designs (balloons, stars, hearts, a blank pennant) and border colours |
+| `bl_gac_choc_chip_cookie` (item `gac_choc_chip_cookie`) | hand | 1,320 | 1024 | not placed: sold at the counter (the shop still lists `standin_gac_choc_chip_cookie`; the integration session swaps the id) | the kit's `cc` | the bakery tissue |
+
+**The case (Steven, Nov 7: the same case in the 1990s; Nov 8: "the items in the bottom of the case are COOKIE
+CAKES, not cookies ... look online for examples").** The trays' painted pictures are replaced by bare aluminium
+sheet pans (0.30 x 0.15 m) across every tier: one row on each of the two narrow steps, two on the top; each pan
+one kind, three cookies lying flat in front and three leaning on them behind (eight brownies on a brownie pan),
+random yaw and ±5% size (seeded, so the same every build). The deck's last front slot stays empty for the 1995
+sugar cookie on show. The lower window's painted cakes are replaced by a plain maroon back with 3D cookie cakes
+leaning on it, three per 1.4 m section (Happy Birthday, Love You, Congrats, Go Team, in turn). Cake shapes and
+sizes from the chain (sources below): 16 in (0.41 m) rounds, a heart (0.38 m), a pan cake (0.38 x 0.27 m); 13 mm
+cookie, a piped rosette border in two alternating icing colours, piped writing (white over a coloured line) and
+simple icing drawings. If the kit's .glb is missing, the case falls back to the painted pictures.
+Sources (searched Nov 8; fan wikis and the 1991 Nanuet Mall throwback page are blocked from the cloud):
+QSR Magazine "Great American Cookies offers heart-shaped cookie cakes"; Franchising.com Jan 2012 (the first
+pan-sized cookie cake: so the pan cake is **2026 only**, Steven Nov 8; the 1995 window shows the rounds and the heart); Franchising.com May 2010 (dozens of catalogue designs).
+
+Still visible: the heart cake's top edge shows a dark sliver at the cusp in Blender's close renders (not in Godot,
+where it leans on the maroon back); the cakes are darker than the old self-lit picture (the window's own small
+light only).
+
+**Corn Dog 7 (item 3, both years).** `bl_cd7_corndog` (the hand item) has a new cornmeal crust (`batter_mat()`:
+cornmeal grain, fryer blisters with browner rims, broad golden-to-brown colour, a dry crust with oily highlights;
+it read as a smooth glazed sausage before); same mesh (4,296 tris), 1024 px. The case's plain tapered cylinders and
+the yellow block are replaced by the kit `bl_cd7_case` (`corn_dog_7.gd case_food()`): per glass case, 14 corn dogs
+standing batter-down in the holder in two rows of seven (sunk 35 mm into it; about a quarter lean 7-15°; these
+cast shadows, the only food that does), and a 1/4 steam-table pan of six cheese-on-a-stick where the yellow block
+was. The cheese on a stick is a **guess** (a period corn-dog-stand item; Corn Dog 7's 1990s menu is not known), so
+it is not sold or added to the menu box. **Steven (Nov 8): keep it, display only, not sold.**
+
+| Model | Class | Tris | Tex | Where | Guessed |
+|---|---|---|---|---|---|
+| `bl_cd7_corndog` (crust redone) | hand | 4,296 | 1024 | unchanged (the counter's display / pick-up) | the crust's look (no photo of the food) |
+| `bl_cd7_case` (kit: dog / cheese / pan) | small_fixture (kit) | 596: 296 / 192 / 108 (≤ 800 each) | 1024 (one atlas; the pan flat steel) | each glass case on Corn Dog 7's counter | cheese on a stick, the pan |
+
+**Auntie Anne's (item 4, 2026).** (a) The counter mark under the warmer (`tex/aa/front.png`, painted by
+`tools/stores/auntie_annes/paint.py front()`, now 1024 x 580 for the 1.5 x 0.85 m panel): the sign's own pretzel
+(its traced mask `tools/stores/signs/y26/src/auntie_pretzel_mask.png`) in the sign's yellow (#f4b80a, trim
+#d99f00) with a halo in the same yellow, on a navy disc (the fascia's #24316b) in a ring of the letters' blue
+(#1f3fff); it was a hand-drawn knot in gold with a pale-blue ring. The HOT • FRESH • ROLLED BY HAND strip stays.
+(b) The cups: the warmer's closed cups with a lump on the lid are gone (`bl_aa_warmer.py CUPS = False`, rebuilt:
+5,176 tris, so wing 2 2026 needs a rebake); eight open cups of nuggets stand where they were
+(`auntie_annes/store.gd`, instanced, with shadows).
+
+| Model | Class | Tris | Tex | Where | Guessed |
+|---|---|---|---|---|---|
+| `bl_aa_nugget_cup` (item `aa_pretzel_nuggets`) | hand | 1,504 | 1024 | sold at the counter (the shop lists `standin_aa_pretzel_bites`; the integration session swaps the id) | the white band and inside, the nugget count |
+| `bl_aa_nugget_cup_case` | hand (fixture use) | 1,728 | 1024 | x 8 on the warmer's front tier | the spill |
+| `bl_aa_warmer` (cups removed) | small_fixture | 5,176 | 1024 | unchanged | |
+
+**The mall trash can (item 5, both years, every wing with halls or courts).** `bl_mall_trashcan`: a round
+painted-steel receptacle of the 1980s-90s mall type: a dark kick ring, a slightly tapered body in warm grey enamel
+(orange-peel bump, scuffs low down), a rolled brushed-steel rim band, a dome lid in the same enamel with two push
+openings opposite each other, each with a swing flap pushed in, the dark inside and the black liner bag's rolled
+edge visible. Same size as the old cylinders (0.58 m across the rim, 0.99 m tall), so `trash()`'s floor obstacle is
+unchanged. `build_mall.gd trash()` now records each spot (yaw from its position) and `build()` puts one
+MultiMeshInstance3D (`trash_cans`, `scripts/food3d_multi.gd`) under `Dynamic/dyn_fixtures`, so the "Benches &
+plants" button still shows and hides the cans with the benches; the old cylinders come back if the model is missing.
+No reference photo of Southland's cans (`refs/INDEX.md`): the type and every detail are guessed.
+
+| Model | Class | Tris | Tex | Where | Guessed |
+|---|---|---|---|---|---|
+| `bl_mall_trashcan` | small_fixture (≤ 1,500 asked) | 1,404 | 1024 | every `trash()` spot: halls (one lane out from each bench group) and court corners, both years | everything (type, colour kept near the old grey, flaps, liner) |
+
+**Packs, measured (Nov 8; `tools/export_web.sh` wings 1-2, both years; "before" = `main`'s files in the same
+workspace, the new model folders moved aside; desktop and mobile packs are byte-identical here):**
+
+| Pack | Before | After | Change |
+|---|---|---|---|
+| `items` (shared, "start") | 74,610,168 | 82,373,872 | +7.76 MB (the six new model folders, 1024 px maps, ~12 MB of PNG in the repo) |
+| `w1` (1995) | 94,359,280 | 94,367,776 | +8 KB (the trash cans' node) |
+| `w1y26` | 51,580,092 | 51,588,588 | +8 KB |
+| `w2` (1995) | 99,278,280 | 98,384,640 | −0.89 MB (the painted cookie and cake sheets and the scattered-square tile leave the 1995 store; the food meshes are embedded, small) |
+| `w2y26` | 82,793,328 | 82,957,928 | +0.16 MB |
+
+Every wing pack stays under GitHub's 100 MiB file limit (`w2` was the closest: 99.3 MB before, 98.4 MB after).
+
+**Tests (Nov 8):** SHOP TEST OK (204), ITEMS TEST OK (49, with `gac_choc_chip_cookie` and `aa_pretzel_nuggets`
+appended to `tools/qa/fixtures/item_ids_int51.txt`), INVENTORY TEST OK (45), SHOP INTERIORS TEST OK (180). The
+brief's "FOOD" suite does not exist in `tools/qa/` (no test file names it): **not run**. Movetests on the web export
+(`tools/qa/movetest.py`, unbaked): wing 1 and wing 2, 1995 and 2026: every camera 0 errors, the touch walk moved.
+The trash cans are hidden by default ("Benches & plants"), and the movetest could not press that button, so their
+in-game evidence is the probe-lit preview (`wsFOOD3D-trashcan-ingame-preview.jpg`); the rest is from the game
+itself (`wsFOOD3D-game-*.jpg`).

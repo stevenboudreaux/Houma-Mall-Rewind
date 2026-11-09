@@ -58,3 +58,14 @@ Wing 2, 2026 (`wing2_2026`).
 A counter shop (`design/godot-shops.md`), 2026: an original salted pretzel, a cinnamon-sugar pretzel, a cup of
 pretzel bites, a lemonade. The pretzels in `bl_aa_warmer` are part of the fixture; a hand-item pretzel
 (`bl_aa_pretzel`) could reuse its knot path (`KNOT` in the asset script). Prices and the attendant for Steven.
+
+## FOOD3D (Nov 8, 2026): the counter mark and open cups of nuggets
+- **The mark under the warmer** is redrawn to match the sign above: the sign's own traced pretzel, in its yellow,
+  a halo over it in the same yellow, on a navy disc inside a ring of the sign letters' blue; painted at 1024 px
+  (`paint.py front()`). The wordmark is not repeated; no other brand marks.
+- **The cups:** open navy cups with a white band and rim (same size and colours as before), heaped above the rim
+  with pretzel nuggets, a few spilled on the tier (`bl_aa_nugget_cup_case`, eight on the front tier); the hand
+  variant `bl_aa_nugget_cup` is the item `aa_pretzel_nuggets` (`data/items/food3d.json`).
+- The pretzels are unchanged (Steven: keep). **Rebake:** wing 2, 2026 (the warmer's mesh changed).
+Evidence (unbaked): `wsFOOD3D-aa-sheet.jpg`, `wsFOOD3D-aa-ingame.jpg`, `wsFOOD3D-bl_aa_nugget_cup-sheet.jpg`,
+`wsFOOD3D-bl_aa_nugget_cup_case-sheet.jpg`.

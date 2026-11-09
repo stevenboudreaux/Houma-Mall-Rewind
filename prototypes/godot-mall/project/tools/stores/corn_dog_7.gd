@@ -28,6 +28,38 @@ const COUNTER_DEEP = 0.8
 const PART_D = 4.5      # oak-and-glass partition into the kitchen
 const DINE_U1 = 5.0     # dining room is left of this
 
+const FK = preload("res://tools/stores/food3d/kit.gd")   # FOOD3D (Nov 8 2026): the Blender corn dogs
+const CD7_CASE = "res://models/bl_cd7_case/bl_cd7_case.glb"
+
+## FOOD3D (Nov 8 2026; design/godot-blender-pipeline.md "FOOD3D"): one glass case's stock from the bl_cd7_case
+## kit: 14 corn dogs standing batter-down in the holder in two rows of seven (a few leaning), and a steel pan of
+## cheese on a stick where the yellow block was. Instanced, dynamic: no rebake. cc = the case's centre.
+static func case_food(b, cc, t, n, seed):
+	var M = FK.meshes(CD7_CASE)
+	var rng = RandomNumberGenerator.new()
+	rng.seed = 700 + seed
+	var dogs = []
+	for ri in 2:
+		for ci in 7:
+			# sunk 35 mm into the holder: they stand in its holes, not on its top
+			var dp = cc - t * 0.5 + t * (0.1 * ci) - n * (-0.1 + 0.2 * ri) + Vector3(0, -0.245, 0)
+			var bas = Basis(Vector3.UP, rng.randf() * TAU)
+			if rng.randf() < 0.25:   # a few lean in their holes
+				var ax = Vector3(rng.randf_range(-1, 1), 0, rng.randf_range(-1, 1)).normalized()
+				bas = Basis(ax, rng.randf_range(0.12, 0.26)) * bas
+			dogs.append(Transform3D(bas, dp + Vector3(rng.randf_range(-0.004, 0.004), 0, rng.randf_range(-0.004, 0.004))))
+	FK.multi(b, M.get("dog"), dogs, "cd7_dog", true)
+	var pc = cc + Vector3(0, -0.25, 0) + t * 0.42
+	var zr = t.cross(Vector3.UP)
+	FK.multi(b, M.get("pan"), [Transform3D(Basis(t, Vector3.UP, zr), pc)], "cd7_pan")
+	var sticks = []
+	for k in 6:
+		var flip = 1.0 if k % 2 == 0 else -1.0
+		var p = pc + Vector3(0, 0.0016, 0) + n * (-0.112 + 0.045 * k) + t * (0.02 * flip)
+		var bas = Basis(t * flip, Vector3.UP, zr * flip).rotated(Vector3.UP, rng.randf_range(-0.08, 0.08))
+		sticks.append(Transform3D(bas, p))
+	FK.multi(b, M.get("cheese"), sticks, "cd7_cheese")
+
 ## Frame helpers: u along the frontage from `a`, d into the store, y up.
 static func P(a, t, n, u, y, d):
 	return a + t * u - n * d + Vector3(0, y, 0)
@@ -232,16 +264,19 @@ static func counter(b, g, a, t, n):
 			b.box(g, "cd7_steel", cc + t * (0.6 * side), b.abs_size(t, 0.03, 0.5, 0.55, n))
 		# food inside: corn dogs standing in a steel holder, a pan of fries
 		b.box(g, "cd7_steel", cc + Vector3(0, -0.23, 0) - t * 0.15, b.abs_size(t, 0.8, 0.04, 0.4, n))
-		for ri in 2:
-			for ci in 7:
-				var dp = cc - t * 0.5 + t * (0.1 * ci) - n * (-0.1 + 0.2 * ri) + Vector3(0, -0.21, 0)
-				b.cur_color = Color("#a8662a")
-				b.cyl(g, "vcolor_matte", dp, 0.024, 0.02, 0.15, 8, true)
-				b.cur_color = Color("#e8d2a0")
-				b.cyl(g, "vcolor_matte", dp + Vector3(0, 0.15, 0), 0.004, 0.004, 0.07, 4, true)
-		b.cur_color = Color("#d9a43a")
-		b.box(g, "vcolor_matte", cc + Vector3(0, -0.19, 0) + t * 0.42, b.abs_size(t, 0.26, 0.09, 0.32, n))
-		b.cur_color = Color.WHITE
+		if FK.meshes(CD7_CASE).is_empty() or b.mall == null:
+			for ri in 2:
+				for ci in 7:
+					var dp = cc - t * 0.5 + t * (0.1 * ci) - n * (-0.1 + 0.2 * ri) + Vector3(0, -0.21, 0)
+					b.cur_color = Color("#a8662a")
+					b.cyl(g, "vcolor_matte", dp, 0.024, 0.02, 0.15, 8, true)
+					b.cur_color = Color("#e8d2a0")
+					b.cyl(g, "vcolor_matte", dp + Vector3(0, 0.15, 0), 0.004, 0.004, 0.07, 4, true)
+			b.cur_color = Color("#d9a43a")
+			b.box(g, "vcolor_matte", cc + Vector3(0, -0.19, 0) + t * 0.42, b.abs_size(t, 0.26, 0.09, 0.32, n))
+			b.cur_color = Color.WHITE
+		else:
+			case_food(b, cc, t, n, int(uu * 10))
 		var cl = b.add_omni(cc + Vector3(0, 0.18, 0), 0.25, 1.6, Color(1.0, 0.9, 0.7))
 		b.tag(cl, "", 0.25, 0.4)
 		uu += 1.3

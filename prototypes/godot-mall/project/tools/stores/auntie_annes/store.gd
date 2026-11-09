@@ -72,6 +72,20 @@ static func build(F, sd):
 	F.front_q(G, "in_aa_front", wx0 + 0.02, wx1 - 0.02, 0.1, CT - 0.06, 0.195)
 	# the warmer on the left third (Blender), the register and a napkin box on the right
 	place_glb(b, WARMER, F.P((wx0 + wx1) * 0.5, CT + 0.01, 0.52), rx, F.nn)
+	# FOOD3D (Nov 8 2026): the open cups of pretzel nuggets on the warmer's front tier, where its old closed
+	# cups stood (bl_aa_warmer.py: 8 across x = -W/2 + 0.09 .. W/2 - 0.09, y -0.17, on the tier at z 0.074)
+	var FK = load("res://tools/stores/food3d/kit.gd")
+	var cm = FK.meshes("res://models/bl_aa_nugget_cup_case/bl_aa_nugget_cup_case.glb")
+	if not cm.is_empty():
+		var wc = F.P((wx0 + wx1) * 0.5, CT + 0.01, 0.52)
+		var wz = F.nn.normalized()
+		var wx = UP.cross(wz).normalized()
+		var cups = []
+		for k in 8:
+			var X = -0.625 + 0.09 + k * (1.25 - 0.18) / 7.0
+			var yaw = [0.0, 0.5, -0.3, 0.2, -0.6, 0.35, -0.1, 0.6][k]    # the spills point different ways
+			cups.append(Transform3D(Basis(wx, UP, wz).rotated(UP, yaw), wc + wx * X + UP * 0.074 + wz * 0.17))
+		FK.multi(b, cm.values()[0], cups, "aa_nugget_cups", true)
 	K.register(b, GS, F.P(LN - 0.75, CT + 0.01, 0.75), -rx, F.nn)
 	F.cbx("#e8e6e0", LN - 1.55, CT + 0.01, 0.4, 0.22, 0.14, 0.14, GS)
 	F.cbx("#1f2c6a", 2.0, CT + 0.01, 0.3, 0.3, 0.22, 0.04, GS)
