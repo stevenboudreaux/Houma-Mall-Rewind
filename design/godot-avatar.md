@@ -28,8 +28,7 @@ held item stays. The research behind it: `design/godot-characters-research.md` (
    (Engine metadata off the web). The name stays where it was, `mall.player_name`, and the money in
    `mall.money` (`scripts/inventory.gd`, `scripts/bank.gd`): the arcade pages read both
    (`play/lib/mallbank.js`), so they are not copied into the record (a second copy would be a second
-   record). **A guess against the brief, which put name and money inside `mall-player-2`; Steven to
-   confirm.** On the first run `Cast.migrate()` reads the old `mall-avatar-1` and `mall-avatar-preset-1`
+   record). **Decided at integration (Nov 9 2026): name and money stay in their own keys.** On the first run `Cast.migrate()` reads the old `mall-avatar-1` and `mall-avatar-preset-1`
    once, for the name only (only the preset ever had one), sets `mall.player_name` if it is empty, and
    deletes both, and the owner's old `mall-char-*` edits.
 4. **No fallback body.** The cast's files ship **in every wing pack** (`tools/make_presets.py`
@@ -156,9 +155,10 @@ menu's portrait stages while it is open (the closed menu frees them). The web ha
 AVATAR WEB OK 27): `production/qa/evidence/wsSTRIP-count-test.md`.
 
 ## Not done / open (for Steven)
-- **Who the cast is.** Four PLACEHOLDER members on crowd skins; names, looks and how many (3 or 4) are
-  Steven's. The crowd also wears these skins, so a shopper can look like the player until the cast is real.
-- **Name and money in `mall-player-2`?** Kept in their own keys (above); say if they must move.
+- **Who the cast is.** Four PLACEHOLDER members on crowd skins **for this demo** (decided Nov 9); Steven
+  defines the cast later. The crowd also wears these skins, so a shopper can look like the player until then.
+- `scripts/cast.gd` meets CHAR-BUILD's loader at integration: CHAR-BUILD's loader, this branch's
+  placeholder data (`data/cast.json`).
 - The UBC eye code in TALK's `npc_look.gd` / `talk_camera.json` "eyes_ubc" no longer finds a UBC body (none
   left); left for TALK / CHAR-BUILD to replace with the cast's eye bones.
 - First person stays the default for a new player (as since ws/items).
