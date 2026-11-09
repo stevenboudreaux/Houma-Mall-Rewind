@@ -40,14 +40,13 @@ def build():
     m_pin = X.paint("pin", "#4a4a48", 0.5, 0.6, 0.0)
     parts, face = X.channel_word(WORD, f, CAP, DEPTH, GAP, m_face, m_ret, m_trim, trim_w=0.01, res=3,
                                  spacing=1.06, cap_ref="D")
+    if VAR == "B":
+        # recentred with the letters (below), so it sits behind them
+        parts.append(X.text_obj("halo", WORD, f, CAP, extrude=0.0, offset=0.07, fill="BOTH", res=2, spacing=1.06,
+                                mat=X.face_mat("halo", "#ffe6c0", 0.9), y_front=-0.004, cap_ref="D"))
     X.recentre(parts, face)
     parts.append(X.pins(face, -GAP, GAP, m_pin, r=0.014))
     parts.append(X.contact_shadow(face, "shadow", 0.11, 0.025))
-    if VAR == "B":
-        halo = X.text_obj("halo", WORD, f, CAP, extrude=0.0, offset=0.07, fill="BOTH", res=2, spacing=1.06,
-                          mat=X.face_mat("halo", "#ffe6c0", 0.9), y_front=-0.004, cap_ref="D")
-        X.recentre([halo], face)
-        parts.append(halo)
     X.check(parts)
     for p in parts:
         if not p.name.startswith(("halo", "shadow")):

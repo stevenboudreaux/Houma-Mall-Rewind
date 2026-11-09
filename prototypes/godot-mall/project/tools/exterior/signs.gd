@@ -58,15 +58,15 @@ static func sign_mat(key, src):
 	if key.ends_with("_halo"):
 		# a reverse-channel letter's light on the wall behind it: added light, night only
 		m.albedo_color = Color.BLACK
+		m.roughness = 1.0
 		m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		m.emission_enabled = true
 		m.emission = Color("#ffd9a0")
-		m.emission_energy_multiplier = 0.6
+		m.emission_energy_multiplier = 1.2
 		m.set_meta("e_day", 0.0)
-		m.set_meta("e_night", 0.6)
+		m.set_meta("e_night", 1.2)
 	elif key.ends_with("_shadow"):
-		m.albedo_color = Color(0.0, 0.0, 0.0, 0.32)
+		m.albedo_color = Color(0.0, 0.0, 0.0, 0.16)
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		m.render_priority = -1
@@ -80,6 +80,7 @@ static func sign_mat(key, src):
 			m.emission_energy_multiplier = lk[3]
 			m.set_meta("e_day", lk[2])
 			m.set_meta("e_night", lk[3])
+			m.disable_receive_shadows = true   # a lit face: no shadow acne striping it (unbaked views)
 	_mats[key] = m
 	return m
 
