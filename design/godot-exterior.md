@@ -654,6 +654,22 @@ Sears's return colour and raceway; the north and west Sears signs (not filmed); 
 the 1995 Dillard's letters = 2026's; how K&B's oval was mounted and lit; everything about the Sears Hardware sign
 (no photo); which box was Sears Hardware and which the "former Sears TBA" (a LoopNet flyer names both).
 
+### Tests (cloud, unbaked; export `.scratch/builds/exts`, wings 1-3, both years)
+- `doortest.py` wing 1 main entrance -> wing 3 -> back: **CROSSED, 0 errors**, 1995 and 2026.
+- `movetest.py` wing 3, cameras at Sears (day and `time=night`), Dillard's portal, K&B: **0 errors** both years; the
+  touch walk from the lot in front of K&B (`WALK_CAM=70,-28,90,0`) moves the player both years (the tool's default
+  spot 0,14 is inside the building on wing 3).
+- The web shots (`wsEXTS-*-web-stale-lightmap.jpg`) still carry the old wing-3 lightmap: the rebake fixes it.
+
+### Pack size (wing 3, desktop = mobile here)
+| | before (flat signs, `EXS_OFF=1`) | after | the signs' share |
+|---|---|---|---|
+| `w3` (1995) | 115,650,040 B | 118,814,720 B | +3.16 MB (+2.7 %): 8 signs, 5 models, 5 atlases |
+| `w3y26` (2026) | 102,513,320 B | 103,794,736 B | +1.28 MB (+1.3 %): Dillard's ×3, 2 models |
+
+`export_web.sh` warns that `w3y26` (103.8 MB) is near GitHub's 100 MiB file limit (104.9 MB): about 1 MB of room
+left. If that bites, the Dillard's atlas can go to 512 (it is mostly flat black and bronze) with Steven's yes.
+
 ### For the Mac (integration)
 - **Rebuild and rebake wing 3, both years** (`wing3:day wing3_2026:day`): the signs are dynamic meshes and need no
   lightmap themselves, but they shadow the walls (Sears's raceway, Dillard's studs) and the flat labels they
