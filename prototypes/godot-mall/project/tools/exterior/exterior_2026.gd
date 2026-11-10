@@ -38,42 +38,8 @@ static func main_entrance(b):
 	for k in 12:
 		var a0 = PI * k / 12.0; var a1 = PI * (k + 1) / 12.0
 		b.tri(s, c0, c0 + t * (cos(a0) * 3.4) + UP * (sin(a0) * 1.1), c0 + t * (cos(a1) * 3.4) + UP * (sin(a1) * 1.1), Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, n)
-	# the portal: two columns out at x 52, a tall tan frame, the canopy fascia, the clerestory
-	var X = 52.0; var Z = 7.2; var top = 9.6
-	for sz in [-1.0, 1.0]:
-		var p = Vector3(X, 0, sz * Z)
-		b.box(g, "ex_eifs_tan", p + UP * (top * 0.5), Vector3(1.3, top, 1.3))
-		for k in 6:
-			b.box(g, "ex_tile_dark" if k % 2 == 0 else "ex_tile_light", p + UP * (0.23 + k * 0.45), Vector3(1.34, 0.45, 1.34))
-		b.obst(["rect", p.x - 0.7, p.z - 0.7, p.x + 0.7, p.z + 0.7])
-		# the side frames back to the facade, above head height
-		b.box(g, "ex_eifs_tan", Vector3((44.0 + X) * 0.5, (5.4 + top) * 0.5, sz * Z), Vector3(X - 44.0, top - 5.4, 1.0))
-	# the tan top band and the soffit
-	b.box(g, "ex_eifs_tan", Vector3(X, top - 0.8, 0), Vector3(1.3, 1.6, Z * 2.0))
-	b.box(g, "ex_eifs_tan", Vector3((44.0 + X) * 0.5, top + 0.15, 0), Vector3(X - 44.0 + 1.4, 0.3, Z * 2.0 + 1.4))
-	b.quad(g, "ex_eifs_tan", [Vector3(44.0, top - 0.02, -Z), Vector3(X, top - 0.02, -Z), Vector3(X, top - 0.02, Z), Vector3(44.0, top - 0.02, Z)], -UP, [], false, 0.5)
-	for i in 6:
-		var cp = Vector3(46.0 + (i % 3) * 2.6, top - 0.04, -2.5 + (i / 3) * 5.0)
-		b.cyl(g, "ex_can", cp, 0.12, 0.12, 0.02, 10, false, true)
-	for i in 3:
-		b.tag(b.add_spot(Vector3(48.0, top - 0.1, -4.0 + i * 4.0), -UP, 2.0, 12.0, 50.0, Color("#FFE6C2")), "night")
-	# the black steel beam across, the dark canopy fascia with the letters, the clerestory above
-	b.box(g, "ex_black_steel", Vector3(X, 5.0, 0), Vector3(0.6, 0.5, Z * 2.0))
-	b.box(g, "ex_navy", Vector3(X + 0.05, 4.45, 0), Vector3(0.5, 0.7, Z * 2.0 - 1.3))
-	b.label("SOUTHLAND MALL", "sans", "#f4efe3", Vector3(X + 0.32, 4.45, 0), n, 8.5, 0.42)
-	var cy0 = 5.3; var cy1 = top - 1.6
-	b.box(g, "ex_glass_dark", Vector3(X - 0.1, (cy0 + cy1) * 0.5, 0), Vector3(0.06, cy1 - cy0, Z * 2.0 - 1.3))
-	b.box(g, "ex_eifs_tan", Vector3(X - 0.05, (cy0 + cy1) * 0.5, 0), Vector3(0.1, cy1 - cy0, 3.0))
-	for k in 7:
-		var zz = -Z + 0.65 + k * ((Z * 2.0 - 1.3) / 6.0)
-		b.box(g, "ex_black_steel", Vector3(X, (cy0 + cy1) * 0.5, zz), Vector3(0.12, cy1 - cy0, 0.08))
-	b.box(g, "ex_black_steel", Vector3(X, (cy0 + cy1) * 0.5, 0), Vector3(0.12, 0.08, Z * 2.0 - 1.3))
-	# the navy banner with the white fan on the north column's lot face
-	var bc = Vector3(X + 0.67, 6.2, -Z)
-	b.quad(g, "ex_banner_2026", [bc + Vector3(0, -2.0, 0.5), bc + Vector3(0, -2.0, -0.5), bc + Vector3(0, 2.0, -0.5), bc + Vector3(0, 2.0, 0.5)], n,
-		[Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)])
-	# tan 2 ft pavers under the canopy
-	b.quad("ex_paint", "ex_eifs_tan", [Vector3(44.2, 0.012, -Z), Vector3(X + 0.6, 0.012, -Z), Vector3(X + 0.6, 0.012, Z), Vector3(44.2, 0.012, Z)], UP, [], true, 0.5)
+	# EXT-ENTRANCES (Nov 9 2026): the portal (columns, lantern, letters, banner, soffit, pavers) is
+	# exterior.gd ent_main()'s, for both years
 	tmobile(b)
 	shoe_dept(b)
 
