@@ -15,11 +15,13 @@
 ##
 ## The United Artists marquee (era_1995/other/other_3.jpg) is real, but the photo is summer 1997:
 ## the structure (two black posts, a black-framed white cabinet) and the "UNITED ARTISTS Theatres /
-## SOUTHLAND CINEMA" header are built for 1995 at the cinema side (Armour Dr, north of the cinema
+## SOUTHLAND CINEMA" header are built for 1995 (EXT-LOT, Nov 9 2026: on West Park across from the bank; was Armour Dr, north of the cinema
 ## box); the changeable-letter lines are invented house lines, no film titles (a 1995 board could not
 ## show the photo's 1997 films; IP rule). Where it stood is a guess (the photo shows grass, a bayou
 ## and a road). 1995 only: the cinema closed long before 2026.
 const UP = Vector3.UP
+const UA_MARQUEE_X = 124.0   # EXT-LOT: West Park's far verge (centreline x 112, east edge 118.5)
+const UA_MARQUEE_Z = -64.0   # EXT-LOT: across from the bank pad's middle
 
 ## The monument: a tan-brick plinth and two brick piers with cream stucco caps, a cream stepped
 ## cornice over the face panel; the face on both sides (it stands square to the road so both
@@ -104,11 +106,14 @@ static func build(b, year: int):
 	# West Park Ave: the palm drive's north corner, square to the road
 	# EXT-B (Nov 4 2026): at the roads' real places (design/exterior-sequence.md §5 #3, #9)
 	monument(b, Vector3(100.0, 0, -11.5), Vector3(0, 0, 1), face)
-	# Bayou Gardens Blvd: the drive in front of the south entrance (exterior.gd cuts the palm island
-	# there, BAYOU_DRIVE), on its east side, square to the road
-	monument(b, Vector3(-127.0, 0, 205.5), Vector3(1, 0, 0), face)
-	# Armour Dr: the back lot's drive, west side, square to the road
-	monument(b, Vector3(-33.0, 0, -243.0), Vector3(1, 0, 0), face)
+	# EXT-LOT (Nov 9 2026, Steven, Demo 53): the mall keeps exactly ONE entrance sign, the one toward the front
+	# of the mall (West Park, above). The brick monuments at the Armour Dr drive (beside the UA marquee) and at the
+	# Bayou Gardens drive are gone; the monument() model itself is unchanged (EXT-SIGNS owns it). Were:
+	#   monument(b, Vector3(-127.0, 0, 205.5), Vector3(1, 0, 0), face)   # Bayou Gardens Blvd
+	#   monument(b, Vector3(-33.0, 0, -243.0), Vector3(1, 0, 0), face)   # Armour Dr
+	# The United Artists marquee moves from Armour Dr (-90, -243) to the far (east) side of West Park Ave, across the
+	# road from the bank pad (exterior.gd BANK, z -76.9..-51.1), on the verge, its face to the road and the mall.
+	# 1995 only (the 2026 footage shows no successor). Where it really stood is still not in any picture.
 	if year != 2026:
-		ua_marquee(b, Vector3(-90.0, 0, -243.0), Vector3(1, 0, 0))
-	print("monuments: 3 signs", "" if year == 2026 else " + the UA marquee")
+		ua_marquee(b, Vector3(UA_MARQUEE_X, 0, UA_MARQUEE_Z), Vector3(-1, 0, 0))
+	print("monuments: 1 sign", "" if year == 2026 else " + the UA marquee")

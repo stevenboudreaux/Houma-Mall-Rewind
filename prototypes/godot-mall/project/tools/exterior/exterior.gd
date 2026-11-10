@@ -50,6 +50,10 @@ static var YEAR = 1995     # --year=2026 builds the outside as filmed on Oct 23 
 ## The Bayou Gardens drive (Workstream F): the gap in the palm island in front of the south
 ## entrance, x0..x1, where the monument sign stands (tools/exterior/monuments.gd)
 const BAYOU_DRIVE = [-150.0, -134.0]
+const ARMOUR_DRIVE = [-26.0, -14.0]   # EXT-LOT: the Armour Dr drive, x0..x1 (was inline), on Lynn's north entrance's axis
+const THROAT_R = 4.5                  # EXT-LOT: the curb returns' radius at the property line
+const THROAT_L = 8.0
+const TANK_UTILITY = false            # EXT-LOT: the tank yard's utility building and conduit pole (Steven: remove)                  # EXT-LOT: the curbed throat past the returns, before the stall rows start
 
 ## EXT-B (Nov 4 2026): the roads at the site plan's places (design/exterior-sequence.md §4, §5 #9).
 const ROAD_WEST_PARK = 112.0     # x of West Park Ave's centreline (curb ~106)
@@ -64,6 +68,8 @@ const GROUND_PATI = 20.0
 const APTS = [-400.0, -290.0, -128.0, -150.0]
 
 static var KEEP = []             # rectangles the stall fields stay out of [x0, z0, x1, z1]
+static var ROWS = []             # EXT-LOT: every stall row lot_field painted {p, t, n, field, row} (ada_stalls reads it)
+static var FIELD = 0             # EXT-LOT: lot_field's running field number
 
 static var b_ref = null
 
@@ -108,11 +114,12 @@ static func fill_mat(m, key, b):
 			m.albedo_color = Color(lum, lum, lum * 1.01)
 			if key == "asphalt_lot":
 				m.vertex_color_use_as_albedo = true
-		"stripe_white", "stripe_yellow", "stripe_ghost":
+		"stripe_white", "stripe_yellow", "stripe_ghost", "lot_ada_blue":
 			# worn stall paint (paint_lot.py ex_paint_worn: alpha = paint left, the stones show through);
 			# the stripe's vertex alpha fades each line a little differently
 			m.albedo_texture = b.tex("ex/ex_paint_worn.png")
-			m.albedo_color = {"stripe_white": Color("#ecebe4"), "stripe_yellow": Color("#e0b92c"), "stripe_ghost": Color(0.92, 0.92, 0.9, 0.22)}[key]
+			m.albedo_color = {"stripe_white": Color("#ecebe4"), "stripe_yellow": Color("#e0b92c"), "stripe_ghost": Color(0.92, 0.92, 0.9, 0.22),
+				"lot_ada_blue": Color("#2f6fc0")}[key]   # EXT-LOT: the access aisles' hatching
 			m.vertex_color_use_as_albedo = true
 			m.roughness = 0.85; m.metallic = 0.0
 			m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
@@ -622,11 +629,58 @@ static func roofs(b):
 		var r = s.rect
 		var y = H_UNITECH
 		# Unitech: "a separate long low white warehouse box" (4486 f010, f072)
-		b.box("ex_shell", "ex_block_white", Vector3((r[0] + r[2]) * 0.5, y * 0.5, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0], y, r[3] - r[1]), Transform3D.IDENTITY, ["-y"])
+		if s.has("entrance"):
+			unitech_box(b, r, y, s.entrance)   # EXT-LOT: the box with its recessed entrance
+		else:
+			b.box("ex_shell", "ex_block_white", Vector3((r[0] + r[2]) * 0.5, y * 0.5, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0], y, r[3] - r[1]), Transform3D.IDENTITY, ["-y"])
 		# EXT-LAYOUT (Nov 8 2026, Steven): unsigned in both years ("Old Sears Hardware" on his plan; a historian
 		# pass will settle what it read in the 1990s). It carried "UNITECH" in 2026 before.
 		b.box("ex_shell", "ex_coping", Vector3((r[0] + r[2]) * 0.5, y + 0.05, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0] + 0.2, 0.12, r[3] - r[1] + 0.2))
 		b.obst(["rect", r[0], r[1], r[2], r[3]])
+
+## EXT-LOT (Nov 9 2026, Steven, Demo 53: "Sears Hardware in 1995, Unitech(?) today"; the arch he drew at the centre
+## of the long lot-facing face): the white box with a modest recessed vestibule there, both years. exterior.json
+## `standalone[].entrance` (make_exterior.py) gives the face (S, z = r[3]), the doorway's centre, width, recess depth,
+## door head and soffit; EXT-SIGNS reads the same record for the sign above. The box is built as the back block plus
+## two piers and a lintel round the recess. Period storefront (both years, 1970s-90s commercial): clear-anodized
+## aluminium frame, two pairs of full-glass doors with push bars, a sidelight each side, a transom to the soffit,
+## a white soffit with two cans, a concrete floor a step proud of the lot. VISUAL ONLY: the box has no inside, so
+## the doors are not in `doors` and the recess is not on the walk grid (the box's obstacle covers it).
+static func unitech_box(b, r, y, en):
+	var g = "ex_shell"
+	var W = float(en.width); var D = float(en.recess); var so = float(en.soffit)
+	var xm = float(en.mid[0]); var zf = r[3]
+	var zb = zf - D                 # the recess's back wall (the storefront)
+	var xa = xm - W * 0.5; var xb = xm + W * 0.5
+	# the back block (all but the front D metres), the two piers either side of the recess, the lintel over it
+	b.box(g, "ex_block_white", Vector3((r[0] + r[2]) * 0.5, y * 0.5, (r[1] + zb) * 0.5), Vector3(r[2] - r[0], y, zb - r[1]), Transform3D.IDENTITY, ["-y", "+z"])
+	b.box(g, "ex_block_white", Vector3((r[0] + xa) * 0.5, y * 0.5, (zb + zf) * 0.5), Vector3(xa - r[0], y, D), Transform3D.IDENTITY, ["-y", "-z"])
+	b.box(g, "ex_block_white", Vector3((xb + r[2]) * 0.5, y * 0.5, (zb + zf) * 0.5), Vector3(r[2] - xb, y, D), Transform3D.IDENTITY, ["-y", "-z"])
+	b.box(g, "ex_block_white", Vector3(xm, (so + y) * 0.5, (zb + zf) * 0.5), Vector3(W, y - so, D), Transform3D.IDENTITY, ["-z", "+x", "-x", "-y"])
+	# the soffit (white, two cans) and the vestibule's floor, a 0.1 m step
+	b.quad(g, "ex_soffit_white", [Vector3(xa, so - 0.01, zb), Vector3(xb, so - 0.01, zb), Vector3(xb, so - 0.01, zf), Vector3(xa, so - 0.01, zf)], -UP)
+	for k in 2:
+		b.cyl(g, "ex_can", Vector3(xm - 1.6 + k * 3.2, so - 0.03, (zb + zf) * 0.5), 0.12, 0.12, 0.02, 10, false, true)
+	b.box("ex_lot", "ex_curb", Vector3(xm, 0.05, (zb + zf) * 0.5 + 0.15), Vector3(W, 0.1, D + 0.3), Transform3D.IDENTITY, ["-y"])
+	# the storefront on the back wall (the back block's +z face is not drawn: the piers cover it either side, the
+	# dark glass and the frame close the recess)
+	var gz = zb + 0.02
+	b.quad(g, "ex_glass_dark", [Vector3(xa, 0.0, gz), Vector3(xb, 0.0, gz), Vector3(xb, so, gz), Vector3(xa, so, gz)], Vector3(0, 0, 1))
+	var dh = float(en.h)
+	var posts = [xa + 0.05, xa + 1.0, xm - 1.8, xm, xm + 1.8, xb - 1.0, xb - 0.05]   # sidelight | pair | pair | sidelight
+	for px in posts:
+		b.box(g, "ex_mullion", Vector3(px, (so + 0.1) * 0.5, zb + 0.06), Vector3(0.1, so - 0.1, 0.12))
+	b.box(g, "ex_mullion", Vector3(xm, dh + 0.05, zb + 0.06), Vector3(W, 0.12, 0.12))      # the transom bar at the door head
+	b.box(g, "ex_mullion", Vector3(xm, 0.15, zb + 0.06), Vector3(W, 0.1, 0.12))            # the sill
+	b.box(g, "ex_mullion", Vector3(xm, so - 0.05, zb + 0.06), Vector3(W, 0.1, 0.12))       # the head
+	for k in 4:
+		# each leaf: a 0.12 m stile frame (bottom rail 0.25), a push bar at 1.0 m
+		var x0 = xm - 1.8 + k * 0.9
+		b.box(g, "ex_mullion", Vector3(x0 + 0.45, 0.25, zb + 0.08), Vector3(0.9, 0.25, 0.06))
+		b.box(g, "ex_mullion", Vector3(x0 + 0.06, (0.1 + dh) * 0.5, zb + 0.08), Vector3(0.08, dh - 0.1, 0.06))
+		b.box(g, "ex_mullion", Vector3(x0 + 0.84, (0.1 + dh) * 0.5, zb + 0.08), Vector3(0.08, dh - 0.1, 0.06))
+		b.box(g, "ex_stainless", Vector3(x0 + 0.45, 1.0, zb + 0.13), Vector3(0.7, 0.05, 0.05))
+	b.tag(b.add_spot(Vector3(xm, so - 0.1, (zb + zf) * 0.5), -UP, 1.5, 8.0, 50.0, Color("#FFE6C2")), "night")
 
 ## The taller masses stand above the low roof: Sears, Dillard's, JCPenney's rear block, the cinema
 ## auditorium box, the Woolworth block, the south pavilion. Their roofs and inner sides.
@@ -1577,19 +1631,27 @@ static func lot(b):
 	b.quad(g, "ex_grass", [Vector3(LOT_WEST - 2.0, 0.025, ROAD_ARMOUR + 4.5), Vector3(APTS[2], 0.025, ROAD_ARMOUR + 4.5), Vector3(APTS[2], 0.025, APTS[3]), Vector3(LOT_WEST - 2.0, 0.025, APTS[3])], UP, [], false, 0.1)
 	b.obst(["rect", LOT_WEST - 40.0, ROAD_ARMOUR + 4.5, APTS[2], APTS[3]])
 	b.obst(["rect", M[0] - 10.0, ROAD_ARMOUR + 4.5, LOT_WEST - 2.0, ROAD_BAYOU - 5.5])
-	# the curb along the lot's edges (a grey road curb on the verge's line)
-	for e in [[Vector3(APTS[2], 0, ROAD_ARMOUR + 4.5), Vector3(ROAD_WEST_PARK - 6.5, 0, ROAD_ARMOUR + 4.5)],
-			[Vector3(LOT_WEST - 2.0, 0, ROAD_BAYOU - 5.5), Vector3(ROAD_WEST_PARK - 6.5, 0, ROAD_BAYOU - 5.5)]]:
-		var c = (e[0] + e[1]) * 0.5
-		b.box("ex_lot", "ex_curb", c + UP * 0.07, Vector3(e[0].distance_to(e[1]), 0.14, 0.3), Transform3D.IDENTITY, ["-y"])
+	# the curb along the lot's edges (a grey road curb on the verge's line); EXT-LOT: cut at the two drive
+	# mouths, where entry_throat turns it into curb returns
+	for e in [[APTS[2], ROAD_ARMOUR + 4.5, ARMOUR_DRIVE], [LOT_WEST - 2.0, ROAD_BAYOU - 5.5, BAYOU_DRIVE]]:
+		for piece in [[e[0], e[2][0] - THROAT_R], [e[2][1] + THROAT_R, ROAD_WEST_PARK - 6.5]]:
+			var c = Vector3((piece[0] + piece[1]) * 0.5, 0, e[1])
+			b.box("ex_lot", "ex_curb", c + UP * 0.07, Vector3(piece[1] - piece[0], 0.14, 0.3), Transform3D.IDENTITY, ["-y"])
 	lot_keepouts()
+	ROWS = []; FIELD = 0   # EXT-LOT
 	# the stall fields: the front lot (West Park), the back lot (Armour Dr), the staff lot, the west
 	# lot behind JCPenney ("where a lot of us learned how to skate"), the south lot (Bayou Gardens)
 	lot_field(52.0, -240.0, 104.0, 200.0, true, 0)
-	lot_field(-120.0, -244.0, 52.0, -156.0, false, 1)
+	# EXT-LOT (Nov 9 2026): the back lot in two fields either side of the Armour Dr drive aisle, so a stall row's
+	# side, not its end, meets the drive (was one field from x -120 whose row at x -24.5 sat on the drive's line)
+	lot_field(-109.0, -244.0, ARMOUR_DRIVE[0], -156.0, false, 1)
+	lot_field(ARMOUR_DRIVE[1], -244.0, 52.0, -156.0, false, 0)
 	lot_field(-150.0, -144.0, -86.0, -38.0, false, 0)
 	lot_field(-356.0, -146.0, -236.0, 200.0, true, 1)
-	lot_field(-236.0, 116.0, 52.0, 200.0, false, 0)
+	# EXT-LOT: the south lot likewise either side of the Bayou Gardens drive aisle, which now runs on to the
+	# south entrance's drop-off (was one field whose row at x -140.5 sat on the drive's line)
+	lot_field(-233.0, 116.0, BAYOU_DRIVE[0], 200.0, false, 0)
+	lot_field(BAYOU_DRIVE[1], 116.0, 52.0, 200.0, false, 1)
 	lot_field(-236.0, -146.0, -150.0, -36.0, true, 0)
 	entry_drive(b)
 	ada_stalls(b)
@@ -1608,11 +1670,12 @@ static func lot(b):
 		if ox > BAYOU_DRIVE[0] - 3.0 and ox < BAYOU_DRIVE[1] + 3.0:
 			ox += 10.0
 		tree_oak(b, Vector3(ox, 0.08, fz), 5.5)
-	MON.drive(b, BAYOU_DRIVE[0], BAYOU_DRIVE[1], fz - 2.0, ROAD_BAYOU - 5.5)
-	stop_sign(b, Vector3(BAYOU_DRIVE[1] + 1.0, 0, fz - 3.0), Vector3(0, 0, -1))
-	# the Armour Dr drive into the back lot (monuments.gd puts its sign by it)
-	MON.drive(b, -26.0, -14.0, ROAD_ARMOUR + 4.5, -238.0)
-	stop_sign(b, Vector3(-13.0, 0, -238.5), Vector3(0, 0, 1))
+	# EXT-LOT (Nov 9 2026, Steven: "make sure the driving lanes stay intact as they should in a mall parking
+	# lot; only difference is pavement change from asphalt to concrete"): each drive is asphalt only from the
+	# road to the property line, with curb returns; the lanes carry on in the lot's concrete as a drive aisle
+	# between stall rows to the building (was MON.drive: asphalt and a double yellow that ended at an island)
+	entry_throat(b, BAYOU_DRIVE[0], BAYOU_DRIVE[1], ROAD_BAYOU - 5.5, -1.0)
+	entry_throat(b, ARMOUR_DRIVE[0], ARMOUR_DRIVE[1], ROAD_ARMOUR + 4.5, 1.0)
 	# the lawn island with a magnolia and loblolly pines (the south lot's west end)
 	island(b, -234.0, 150.0, -206.0, 160.0, "ex_grass")
 	tree_oak(b, Vector3(-220.0, 0.08, 155.0), 5.0)
@@ -1766,10 +1829,15 @@ static func fire_lane(b, a, t, n, Ln):
 				[Vector2(0, 0), Vector2((u1 - u) / 2.0, 0), Vector2((u1 - u) / 2.0, 1), Vector2(0, 1)], true)
 		u += 2.0
 
-## Accessible stalls by the entrances (both years: the blue wheelchair stalls are in the 2026
-## footage everywhere near the doors, 4486 / 4488 / 4492; 1995 had them by the doors too, the exact
-## stalls a GUESS): the symbol painted in the four stalls nearest each customer door, laid on the
-## nearest stall row the field put there.
+## Accessible stalls by the entrances. EXT-LOT (Nov 9 2026, Steven, Demo 53: the old symbols "make zero sense on
+## the outside concrete": they sat on a 2 m search grid, off the stall lines and out in the aisles). Now, for each
+## customer door, the stall rows whose end nearest the building lies within 40 m of the door; of those, the
+## nearest row and every other row of the same field after it (rows 0, 2, ...; at most two a door, never every
+## row). In each chosen row, on the side facing the door, the first two stalls from the building end carry the
+## wheelchair symbol, centred and wholly inside the stall lines (the symbol keeps its 1.5 m size), turned to read
+## from the drive aisle; the third stall is the striped access aisle beside the pair (blue hatching in a blue
+## frame, as filmed at JCPenney's west side, 4488 f005, f009). Both years; 1995's aisle colour is a GUESS (blue,
+## as the 1991 ADA standard's symbol). The stall lines stay the lot's yellow.
 static func ada_stalls(b):
 	var spots = []
 	for d in E.doors:
@@ -1778,25 +1846,122 @@ static func ada_stalls(b):
 		spots.append(Vector3(d.out[0], 0, d.out[1]))
 	spots.append(Vector3(-214.0 - 2.0, 0, 46.0))      # JCPenney's tree-side entrance
 	spots.append(Vector3(-200.0, 0, 108.0))           # JCPenney's arcade
+	var used_rows = {}
+	var pairs = 0
 	for p in spots:
-		# the stalls of the field nearest this door: the lot fields' rows start 5.5 m in from a
-		# keep-out, so search the painted grid around the door for the closest free stall centres
-		var best = []
-		for dx in range(-12, 13):
-			for dz in range(-12, 13):
-				var q = p + Vector3(dx * 2.0, 0, dz * 2.0)
-				if q.distance_to(p) < 9.0 or kept(q.x - 1.4, q.z - 1.4, q.x + 1.4, q.z + 1.4):
-					continue
-				best.append(q)
-		best.sort_custom(func(u, v): return u.distance_to(p) < v.distance_to(p))
-		var used = 0
-		for q in best:
-			if used >= 2:
-				break
-			var c = q + UP * 0.015
-			b.quad("ex_paint", "ex_ada", [c + Vector3(-0.75, 0, -0.75), c + Vector3(0.75, 0, -0.75), c + Vector3(0.75, 0, 0.75), c + Vector3(-0.75, 0, 0.75)], UP,
-				[Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)], true)
-			used += 1
+		# the run of each (field, row) whose end is nearest this door
+		var best = {}
+		for ri in ROWS.size():
+			var r = ROWS[ri]
+			if r.n < 3:
+				continue
+			var e0 = r.p; var e1 = r.p + r.t * (r.n * 2.7)
+			var near0 = e0.distance_to(p) <= e1.distance_to(p)
+			var d = min(e0.distance_to(p), e1.distance_to(p))
+			if d > 40.0:
+				continue
+			var key = "%d:%d" % [r.field, r.row]
+			if not best.has(key) or d < best[key][0]:
+				best[key] = [d, ri, near0]
+		var cands = best.values()
+		if cands.is_empty():
+			continue
+		cands.sort_custom(func(u, v): return u[0] < v[0])
+		var r0 = ROWS[cands[0][1]]
+		var taken = 0
+		for cnd in cands:
+			var r = ROWS[cnd[1]]
+			if r.field != r0.field or abs(r.row - r0.row) % 2 != 0:
+				continue    # every other row, not every row
+			var key = "%d:%d" % [r.field, r.row]
+			if used_rows.has(key) or taken >= 2:
+				continue
+			used_rows[key] = true
+			taken += 1
+			pairs += 1
+			ada_pair(b, r, cnd[2], p)
+	print("exterior: accessible stalls, ", pairs, " pairs")
+
+## One accessible pair in row r: stalls 0 and 1 from the building end (near0: the run's start), on the side
+## nearer `door`, and the hatched access aisle in stall 2.
+static func ada_pair(b, r, near0, door):
+	var t = r.t if near0 else -r.t
+	var e = r.p if near0 else r.p + r.t * (r.n * 2.7)
+	var s = Vector3(-t.z, 0, t.x)
+	var side = 1.0
+	var q0 = e + t * 1.35
+	if (q0 - s * 2.75).distance_to(door) < (q0 + s * 2.75).distance_to(door):
+		side = -1.0
+	var into = -s * side        # from the stall's aisle end toward the row's centre line
+	var at0 = e + t * 1.35 + s * (side * 2.75)
+	print("  accessible pair at (%.1f, %.1f), into (%.0f, %.0f)" % [at0.x, at0.z, into.x, into.z])
+	for k in 2:
+		var c = e + t * (k * 2.7 + 1.35) + s * (side * 2.75) + UP * 0.015
+		var right = into.cross(UP)  # the symbol's right as you look at it walking in from the aisle
+		var h = 0.75
+		b.quad("ex_paint", "ex_ada", [c - right * h - into * h, c + right * h - into * h, c + right * h + into * h, c - right * h + into * h], UP,
+			[Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)], true)
+	# the access aisle: stall 2, a blue frame 0.15 m inside the yellow lines, 45-degree hatching at 0.6 m
+	var a0 = e + t * (2.0 * 2.7) + s * (side * 0.0)
+	var W = 2.7; var D = 5.5; var m = 0.15
+	var P = func(u, v): return a0 + t * u + s * (side * v)
+	var corners = [P.call(m, m), P.call(W - m, m), P.call(W - m, D - m), P.call(m, D - m), P.call(m, m)]
+	for k in 4:
+		stripe(b, corners[k], corners[k + 1], 0.1, "ex_lot_ada_blue")
+	var u0 = m; var u1 = W - m; var v0 = m; var v1 = D - m
+	var c0 = -(v1 - v0) + 0.3
+	while c0 < (u1 - u0):
+		# the line u - u0 = (v - v0) + c0, clipped to the box
+		var va = max(v0, v0 - c0); var vb = min(v1, v0 + (u1 - u0) - c0)
+		if vb - va > 0.2:
+			stripe(b, P.call(u0 + (va - v0) + c0, va), P.call(u0 + (vb - v0) + c0, vb), 0.1, "ex_lot_ada_blue")
+		c0 += 0.6
+
+## EXT-LOT (Nov 9 2026): a drive's mouth. x0..x1 the drive (two lanes), ze the lot's edge on the road (the property
+## line, where the frontage curb runs), dz +1 when the lot lies toward +z. Asphalt from the road's edge to the end
+## of the curb returns, with the road's double yellow stopping there and a white stop bar across the outbound lane;
+## two quarter-circle curb returns (THROAT_R) and a curbed throat (THROAT_L) along each side; then the same two
+## lanes go on in the lot's concrete between the stall rows (lot_field / lot_keepouts leave the aisle open).
+static func entry_throat(b, x0, x1, ze, dz):
+	var R = THROAT_R
+	var zp = ze + dz * R                        # the end of the returns: the asphalt and the centre line stop here
+	var y = 0.016
+	b.quad("ex_ground", "ex_asphalt", [Vector3(x0, y, ze), Vector3(x1, y, ze), Vector3(x1, y, zp), Vector3(x0, y, zp)], UP, [], false, 0.1)
+	# the flares between each return and the drive, asphalt (a fan from the drive's corner at the road)
+	for sd in [-1.0, 1.0]:
+		var xe = x0 if sd < 0 else x1
+		var ctr = Vector3(xe + sd * R, 0, ze + dz * R)      # the return's centre, in the land beside the drive
+		var corner = Vector3(xe, y, ze)
+		var s = b.st("ex_ground", "ex_asphalt")
+		var prev = null
+		for k in 9:
+			var a = PI * 0.5 * k / 8.0
+			# from the frontage line (straight toward the road from the centre) round to the drive's edge
+			var q = ctr + Vector3(-sd * sin(a) * R, y, -dz * cos(a) * R)
+			if prev != null:
+				b.tri(s, corner, prev, q, Vector2(corner.x, corner.z) * 0.1, Vector2(prev.x, prev.z) * 0.1, Vector2(q.x, q.z) * 0.1, UP)
+			prev = q
+		# the return's curb: short boxes along the arc, then the throat's straight curb
+		for k in 8:
+			var a0 = PI * 0.5 * k / 8.0; var a1 = PI * 0.5 * (k + 1) / 8.0
+			var p0 = ctr + Vector3(-sd * sin(a0) * R, 0, -dz * cos(a0) * R)
+			var p1 = ctr + Vector3(-sd * sin(a1) * R, 0, -dz * cos(a1) * R)
+			var mid = (p0 + p1) * 0.5
+			var tt = (p1 - p0).normalized()
+			b.box("ex_lot", "ex_curb", Vector3.ZERO, Vector3(p0.distance_to(p1) + 0.06, 0.14, 0.3),
+				Transform3D(Basis(tt, UP, tt.cross(UP)), mid + UP * 0.07), ["-y"])
+		var c = Vector3(xe - sd * 0.15, 0.07, zp + dz * THROAT_L * 0.5)
+		b.box("ex_lot", "ex_curb", c, Vector3(0.3, 0.14, THROAT_L), Transform3D.IDENTITY, ["-y"])
+	# the road's double yellow to the property line, and the stop bar across the outbound lane
+	var xm = (x0 + x1) * 0.5
+	for dx in [-0.12, 0.12]:
+		stripe(b, Vector3(xm + dx, 0.02, ze), Vector3(xm + dx, 0.02, zp), 0.1, "ex_stripe_yellow", 0.9)
+	var right_out = Vector3(0, 0, -dz).cross(UP).x   # the outbound lane is on the driver's right, heading to the road
+	var xo0 = xm + 0.3 * right_out; var xo1 = (x1 - 0.3) if right_out > 0 else (x0 + 0.3)
+	stripe(b, Vector3(xo0, 0.02, zp - dz * 0.3), Vector3(xo1, 0.02, zp - dz * 0.3), 0.45, "ex_stripe_white", 0.9)
+	# a stop sign facing the outbound lane, on its curb at the end of the throat
+	var xs = (x1 + 0.6) if right_out > 0 else (x0 - 0.6)
+	stop_sign(b, Vector3(xs, 0, zp + dz * 1.0), Vector3(0, 0, dz))
 
 static func road(b, a, bb, w):
 	var t = (bb - a).normalized(); var s = Vector3(-t.z, 0, t.x) * (w * 0.5)
@@ -1862,12 +2027,18 @@ static func tank(b):
 		b.cyl(g, "ex_steel", c + Vector3(R + 0.4, 3.0 + i * 1.4, 0), 0.4, 0.4, 0.03, 10, false)
 	b.cyl(g, "ex_tank_rust", c + Vector3(0, 0, R + 0.6), 0.2, 0.2, 10.0, 8, false)
 	fence(b, "ex_chainlink", [Vector3(-141, 0, -32), Vector3(-121, 0, -32), Vector3(-121, 0, -9), Vector3(-141, 0, -9), Vector3(-141, 0, -32)], 2.2)
-	b.box(g, "ex_stucco_peach", Vector3(-125.0, 1.5, -13.0), Vector3(5.0, 3.0, 5.0), Transform3D.IDENTITY, ["-y"])
+	# EXT-LOT (Nov 9 2026, Steven, Demo 53, "remove this building"): the small peach utility building in the tank
+	# yard and the 8 m conduit pole beside it (the "antenna mast") are off. They stood for the peach electrical
+	# building and the pole with two conduit risers filmed in 4486 f077-102 (notes_C); not an outparcel and not in
+	# exterior.json. TANK_UTILITY = true brings them back.
+	if TANK_UTILITY:
+		b.box(g, "ex_stucco_peach", Vector3(-125.0, 1.5, -13.0), Vector3(5.0, 3.0, 5.0), Transform3D.IDENTITY, ["-y"])
 	shrub(b, Vector3(-138.0, 0, -29.0), "leafy", 2.5)
 	shrub(b, Vector3(-138.5, 0, -12.0), "leafy", 2.0)
-	b.box(g, "ex_pedestal", Vector3(-119.0, 0.4, -8.0), Vector3(0.6, 0.8, 0.6))
-	b.cyl(g, "ex_trunk", Vector3(-119.0, 0.8, -8.0), 0.12, 0.1, 8.0, 7, true)
-	b.obst(["rect", -119.3, -8.3, -118.7, -7.7])
+	if TANK_UTILITY:
+		b.box(g, "ex_pedestal", Vector3(-119.0, 0.4, -8.0), Vector3(0.6, 0.8, 0.6))
+		b.cyl(g, "ex_trunk", Vector3(-119.0, 0.8, -8.0), 0.12, 0.1, 8.0, 7, true)
+		b.obst(["rect", -119.3, -8.3, -118.7, -7.7])
 	b.obst(["rect", -141.0, -32.0, -121.0, -9.0])
 	# the pink-lane sidewalk from the yard west to the docks (4486 f100-110)
 	b.quad("ex_paint", "ex_concrete", [Vector3(-154.0, 0.02, -36.0), Vector3(-141.0, 0.02, -36.0), Vector3(-141.0, 0.02, -34.0), Vector3(-154.0, 0.02, -34.0)], UP, [], true, 1.0 / 6.0)
@@ -2037,8 +2208,12 @@ static func lot_keepouts():
 	keep_out([-68.0, 114.0, -36.0, 152.0])                  # Dillard's dock, roll-off, flag island
 	keep_out([-160.0, 110.0, -122.0, 136.0])                # the south entrance's drop-off bulb
 	keep_out([-27.0, 136.0, -3.0, 156.0])                   # Dillard's portal walk
-	keep_out([-152.0, 180.0, -132.0, ROAD_BAYOU])           # the Bayou Gardens drive
-	keep_out([-28.0, ROAD_ARMOUR, -12.0, -230.0])           # the Armour Dr drive
+	# EXT-LOT: the drives run on as aisles to the building (the south drop-off; Lynn's north entrance), and their
+	# throats (curb returns + THROAT_L) stay clear of stall rows
+	keep_out([BAYOU_DRIVE[0], 136.0, BAYOU_DRIVE[1], ROAD_BAYOU])                   # the Bayou Gardens drive
+	keep_out([BAYOU_DRIVE[0] - THROAT_R - 1.0, ROAD_BAYOU - 5.5 - THROAT_R - THROAT_L, BAYOU_DRIVE[1] + THROAT_R + 1.0, ROAD_BAYOU])
+	keep_out([ARMOUR_DRIVE[0], ROAD_ARMOUR, ARMOUR_DRIVE[1], -146.0])                # the Armour Dr drive
+	keep_out([ARMOUR_DRIVE[0] - THROAT_R - 1.0, ROAD_ARMOUR, ARMOUR_DRIVE[1] + THROAT_R + 1.0, ROAD_ARMOUR + 4.5 + THROAT_R + THROAT_L])
 	keep_out([-12.0, -170.0, 4.0, -146.0])                  # the side exit's crosswalk (s1x)
 	keep_out([-32.0, -162.0, -16.0, -146.0])                # EXT-LAYOUT: the north entrance's walk (s1n)
 	keep_out(APTS, 6.0)
@@ -2079,6 +2254,7 @@ static func lot_field(x0, z0, x1, z1, along_x, seed_ = 0):
 			var p = Vector3(i0 + 3.0, 0, c) if along_x else Vector3(c, 0, i0 + 3.0)
 			var t = Vector3(1, 0, 0) if along_x else Vector3(0, 0, 1)
 			stall_row(b_ref, p, t, i1 - i0 - 6.0)
+			ROWS.append({"p": p, "t": t, "n": int((i1 - i0 - 6.0) / 2.7), "field": FIELD, "row": row})   # EXT-LOT
 			for e in [[i0, i0 + 3.0], [i1 - 3.0, i1]]:
 				var ic = (e[0] + e[1]) * 0.5
 				var at = Vector3(ic, 0.08, c) if along_x else Vector3(c, 0.08, ic)
@@ -2109,6 +2285,7 @@ static func lot_field(x0, z0, x1, z1, along_x, seed_ = 0):
 				k += 30.0
 		row += 1
 		c += 18.0
+	FIELD += 1   # EXT-LOT
 
 ## A stop sign on a post facing n (the drives' mouths).
 static func stop_sign(b, at, n):
