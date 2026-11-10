@@ -14,6 +14,8 @@
 ## medium one (build_mall.gd). Trees, palms and the signs are dynamic (no lightmap).
 const UP = Vector3.UP
 const CU = preload("res://tools/stores/signs/cucos_sign.gd")
+# EXT-SIGNS (Nov 9 2026): the department-store signs as 3D models (tools/exterior/signs.gd)
+const SG = preload("res://tools/exterior/signs.gd")
 const MON = preload("res://tools/exterior/monuments.gd")
 const Y26 = preload("res://tools/exterior/exterior_2026.gd")
 const FL = preload("res://tools/exterior/flora.gd")   # Workstream LOT: trees, shrubs, planters
@@ -631,6 +633,16 @@ static func roofs(b):
 		# Unitech: "a separate long low white warehouse box" (4486 f010, f072)
 		if s.has("entrance"):
 			unitech_box(b, r, y, s.entrance)   # EXT-LOT: the box with its recessed entrance
+			# EXT-SIGNS (Nov 9 2026, Steven's brief: "Sears Hardware (1990s) / Unitech (2026)"): SEARS HARDWARE in
+			# 1995 on the band over the recess (entrance.sign_band); 2026 left unsigned until Unitech's wordmark is
+			# confirmed (design/exterior/signage-research.md)
+			var sb = s.entrance.get("sign_band", [3.6, 6.4])
+			var sn = Vector3(float(s.entrance.n[0]), 0, float(s.entrance.n[1]))
+			var sat = Vector3(float(s.entrance.mid[0]), (float(sb[0]) + float(sb[1])) * 0.5, float(s.entrance.mid[1]))
+			if YEAR != 2026:
+				SG.place(b, SG.opt("bl_exs_sears_hw"), sat, sn, "sears_hardware")
+			elif OS.get_environment("EXS_OPTIONS") == "B":
+				SG.place(b, "options/bl_exs_unitech_optb", sat, sn, "unitech")
 		else:
 			b.box("ex_shell", "ex_block_white", Vector3((r[0] + r[2]) * 0.5, y * 0.5, (r[1] + r[3]) * 0.5), Vector3(r[2] - r[0], y, r[3] - r[1]), Transform3D.IDENTITY, ["-y"])
 		# EXT-LAYOUT (Nov 8 2026, Steven): unsigned in both years ("Old Sears Hardware" on his plan; a historian
@@ -1094,6 +1106,9 @@ static func kb_bay(b):
 	run_box(b, g, "ex_kb_tan", a, t, n, 0.0, Ln, 0.0, 0.9, 0.05, 0.05)
 	# the sign band: cream with the purple oval and K&B
 	run_box(b, g, "ex_ivory", a, t, n, 2.0, 18.0, 4.6, 6.2, 0.1, 0.1)
+	# EXT-SIGNS: the oval is a lit cabinet on the band now (bl_exs_kb); the flat oval only if the model is missing
+	if SG.place(b, SG.opt("bl_exs_kb"), a + t * 10.0 + n * 0.1 + UP * 5.4, n, "kb_oval") != null:
+		return
 	var s = b.st(g, "ex_purple")
 	var c = a + t * 10.0 + n * 0.14 + UP * 5.4
 	for i in 24:
@@ -1267,7 +1282,9 @@ static func dillards(b):
 		blind_door(b, ea, et, en, u)
 	entry_doors(b, ea, et, en, 14.6, 21.8, 2)
 	gallery(b, ea, et, en, 0.5, 57.5)
-	b.label("Dillard's", "serif", "#3b2e28", ea + et * 29.0 + UP * 11.6 + en * 0.08, en, 14.0, 1.6)
+	# EXT-SIGNS: 3D letters on studs (bl_exs_dillards) instead of the flat label that shimmered
+	if SG.place(b, SG.opt("bl_exs_dillards"), ea + et * 29.0 + UP * 11.6, en, "dillards_east") == null:
+		b.label("Dillard's", "serif", "#3b2e28", ea + et * 29.0 + UP * 11.6 + en * 0.08, en, 14.0, 1.6)
 	# the south face: the gallery either side of the portal (x -15)
 	run_box(b, g, "ex_white_wainscot", sa, stt, sn, 0.0, 82.0, 0.0, 4.8, 0.08, 0.08)
 	for u in [4.0, 9.6, 15.2, 30.8, 36.4, 42.0, 47.6, 53.2, 58.8, 64.4, 70.0, 75.6]:
@@ -1275,7 +1292,8 @@ static func dillards(b):
 	gallery(b, sa, stt, sn, 0.5, 16.8)
 	gallery(b, sa, stt, sn, 29.2, 81.5)
 	portal(b, sa, stt, sn, 23.0)
-	b.label("Dillard's", "serif", "#3b2e28", sa + stt * 55.0 + UP * 11.6 + sn * 0.08, sn, 14.0, 1.6)
+	if SG.place(b, SG.opt("bl_exs_dillards"), sa + stt * 55.0 + UP * 11.6, sn, "dillards_south") == null:   # EXT-SIGNS
+		b.label("Dillard's", "serif", "#3b2e28", sa + stt * 55.0 + UP * 11.6 + sn * 0.08, sn, 14.0, 1.6)
 	# the flagpole island at the SW corner (4490 f029-034)
 	island(b, -50.0, 141.0, -43.0, 147.0, "ex_grass", "ex_curb")
 	for k in 3:
@@ -1375,9 +1393,15 @@ static func sears_dock(b):
 	if YEAR == 2026:
 		Y26.lynns(b)
 	else:
-		b.label("Sears", "sans", "#1c2a4a", Vector3(SEARS_W - 0.08, 6.6, -134.0), n, 12.0, 1.6)
-		b.label("Sears", "sans", "#1c2a4a", Vector3(44.08, 6.6, -134.0), Vector3(1, 0, 0), 12.0, 1.6)
-		b.label("Sears", "sans", "#1c2a4a", Vector3(-24.0, 6.6, -146.08), Vector3(0, 0, -1), 12.0, 1.6)   # over the north entrance
+		# EXT-SIGNS: SEARS as lit blue channel letters on a raceway (bl_exs_sears); the east one moves over the
+		# s1e doors (z -118, where Lynn's sign is today: 4406 f031-035); the flat labels only if the model is missing
+		var so = SG.opt("bl_exs_sears")
+		if SG.place(b, so, Vector3(44.0, 6.6, -118.0), Vector3(1, 0, 0), "sears_east") == null:
+			b.label("Sears", "sans", "#1c2a4a", Vector3(44.08, 6.6, -134.0), Vector3(1, 0, 0), 12.0, 1.6)
+		if SG.place(b, so, Vector3(SEARS_W, 6.6, -134.0), n, "sears_west") == null:
+			b.label("Sears", "sans", "#1c2a4a", Vector3(SEARS_W - 0.08, 6.6, -134.0), n, 12.0, 1.6)
+		if SG.place(b, so, Vector3(-24.0, 6.6, -146.0), Vector3(0, 0, -1), "sears_north") == null:   # over the north entrance
+			b.label("Sears", "sans", "#1c2a4a", Vector3(-24.0, 6.6, -146.08), Vector3(0, 0, -1), 12.0, 1.6)
 
 ## The Sears north entrance (s1n; EXT-LAYOUT, Nov 8 2026; Steven's annotated plan "Sears Entrance", design/
 ## godot-sears.md): a period Sears department-store entrance: a dark bronze storefront of three door
@@ -1572,7 +1596,9 @@ static func portal(b, a, t, n, u):
 		var c = a + t * (u - 3.0 + i * 3.0) + n * (D * 0.5) + UP * (H - 1.85)
 		b.cyl(g, "ex_can", c, 0.12, 0.12, 0.02, 10, false, true)
 		b.tag(b.add_spot(c, -UP, 1.5, 8.0, 60.0, Color("#FFE6C2")), "night")
-	b.label("Dillard's", "serif", "#3b2e28", a + t * u + n * (D + 0.06) + UP * (H - 0.9), n, 7.0, 1.1)
+	# EXT-SIGNS: the pin-mounted cut-out letters on the entablature (bl_exs_dillards_portal)
+	if SG.place(b, "bl_exs_dillards_portal", a + t * u + n * D + UP * (H - 0.9), n, "dillards_portal") == null:
+		b.label("Dillard's", "serif", "#3b2e28", a + t * u + n * (D + 0.06) + UP * (H - 0.9), n, 7.0, 1.1)
 	# the glass front: 4 door pairs, a transom, a fanlight band
 	entry_doors(b, a, t, n, u - W * 0.5 + 1.5, u + W * 0.5 - 1.5, 4)
 	b.quad(g, "ex_pebble", [a + t * (u - W * 0.5) + UP * 0.012, a + t * (u + W * 0.5) + UP * 0.012, a + t * (u + W * 0.5) + n * (D + 1.0) + UP * 0.012, a + t * (u - W * 0.5) + n * (D + 1.0) + UP * 0.012], UP)
