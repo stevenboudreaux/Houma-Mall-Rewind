@@ -84,10 +84,10 @@ light("fill", 2.2, (0.55, -0.45, 0.20), 0.5, (1.0, 0.86, 0.72))
 light("rim", 9.0, (0.25, 0.60, 0.22), 0.25, (0.80, 0.90, 1.0))
 
 cam = render.camera(28.0)
-render.aim(cam, c + Vector((0, 0, -0.004)), r, 34, 30, 1.38, 28.0)
+render.aim(cam, c + Vector((0, 0, -0.006)), r, 32, 30, 1.02, 28.0)
 cam.data.dof.use_dof = True
 cam.data.dof.focus_distance = (cam.location - (c + Vector((0, -0.01, 0)))).length
-cam.data.dof.aperture_fstop = 9.0
+cam.data.dof.aperture_fstop = 11.0
 sc.render.filepath = out
 bpy.ops.render.render(write_still=True)
 print("BEAUTY " + out)
