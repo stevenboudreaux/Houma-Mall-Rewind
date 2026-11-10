@@ -2,8 +2,10 @@
 ## the camera inside a baked wing, lit only by the scene (the lightmap's probes, the reflection probes, the
 ## wing's own lights). No menu, no HUD: this script is the only thing that ever loads the test models.
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --script res://tools/blender/assets_src/pocket_pal_shots/device_shot.gd -- \
-##     --wing=1 --mode=day --glb=res://models/hud/pocket_pal_a.glb --out=/tmp/dir \
-##     --cams="x,z,yaw,pitch:name:view;..."     view = held (default) | keys (close on the keys and legends)
+##     --wing=1 --mode=day --glb=res://models/hud/pocket_pal_a.glb[,res://...b.glb] --out=/tmp/dir \
+##     --cams="x,z,yaw,pitch:name:view:n;..."   view = held (default) | keys (the same pose through a long lens,
+##                                              on the keys and legends) | none (the place alone); n = which --glb (0)
+## Loading a wing takes minutes under xvfb, so one launch shoots every model at every camera.
 ## The LCD surface (material name ending in _lcd) gets a flat test card with no text; --light=1 adds the
 ## teal backlight glow.
 extends SceneTree
@@ -11,7 +13,7 @@ var frames := 0
 var out := "/tmp"
 var vp: SubViewport
 var cam: Camera3D
-var dev: Node3D
+var devs := []
 var cams := []
 var i := 0
 var settle := 24
@@ -32,7 +34,7 @@ func _initialize() -> void:
 			for c in a.substr(7).split(";"):
 				var kv = c.split(":")
 				if kv.size() >= 2:
-					cams.append([kv[0].split(","), kv[1], kv[2] if kv.size() > 2 else "held"])
+					cams.append([kv[0].split(","), kv[1], kv[2] if kv.size() > 2 else "held", int(kv[3]) if kv.size() > 3 else 0])
 	var scn = load("res://wing%d.tscn" % wing).instantiate()
 	var pl = scn.get_node_or_null("Player")
 	if pl:
@@ -44,9 +46,10 @@ func _initialize() -> void:
 	vp.msaa_3d = Viewport.MSAA_4X
 	cam = Camera3D.new(); cam.fov = 70.0; cam.near = 0.02
 	vp.add_child(cam); root.add_child(vp); cam.current = true
-	if glb != "":
-		dev = load(glb).instantiate()
+	for g in glb.split(",", false):
+		var dev = load(g).instantiate()
 		cam.add_child(dev)
+		devs.append(dev)
 		for mi in dev.find_children("*", "MeshInstance3D", true, false):
 			for s in mi.mesh.get_surface_count():
 				var m = mi.mesh.surface_get_material(s)
@@ -83,11 +86,15 @@ func _place() -> void:
 	var v = cams[i][0]
 	cam.rotation = Vector3(deg_to_rad(float(v[3])), deg_to_rad(float(v[2])), 0)
 	cam.position = Vector3(float(v[0]), 1.62, float(v[1]))
-	if dev:
+	for k in devs.size():
+		var dev = devs[k]
+		dev.visible = (k == cams[i][3] and cams[i][2] != "none")
+		# held low in front of the eye, the base tipped up toward the face (the lid then stands almost upright)
+		dev.rotation_degrees = Vector3(48, -6, 0)
 		if cams[i][2] == "keys":
-			dev.position = Vector3(0.012, -0.050, -0.135); dev.rotation_degrees = Vector3(62, 0, 0)
+			cam.fov = 24.0; dev.position = Vector3(0.004, -0.030, -0.265)
 		else:
-			dev.position = Vector3(0.0, -0.095, -0.265); dev.rotation_degrees = Vector3(48, -6, 0)
+			cam.fov = 70.0; dev.position = Vector3(0.0, -0.095, -0.265)
 	frames = 0
 
 func _process(_d) -> bool:

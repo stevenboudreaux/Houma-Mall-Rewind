@@ -22,6 +22,10 @@ from lib import core, parts, mats, labels
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CC0 = os.path.join(HERE, "cc0")
+AI = os.path.join(HERE, "..", "pocket_pal_c", "ai")
+STYLE = "cc0"                # "cc0": route A, scanned materials. "ai": route C, the same shapes with surface tiles
+#                              cut from the reference stills and enlarged by Real-ESRGAN (pocket_pal_c/)
+AI_TILE = {"Plastic004": "plastic", "Plastic012A": "plastic", "Rubber004": "rubber"}
 
 # ---- the numbers (metres) ----
 W = 0.166                    # width of both halves
@@ -130,6 +134,19 @@ def _scan(m, name, tile, bump, rough0, rough_var, prints=0.0):
     mp = m.node("ShaderNodeMapping")
     mp.inputs["Scale"].default_value = (1.0 / tile,) * 3
     m.link(co, mp.inputs["Vector"])
+    if STYLE == "ai":
+        # route C: the enlarged still is all there is. Its brightness drives a bump of the same strength and a
+        # little roughness variation; there is no measured height or gloss, and no smudge map
+        t = m.node("ShaderNodeTexImage")
+        t.image = bpy.data.images.load(os.path.join(AI, AI_TILE[name] + "_tile.png"), check_existing=True)
+        t.image.colorspace_settings.name = "Non-Color"
+        t.projection, t.projection_blend = "BOX", 0.25
+        m.link(mp.outputs["Vector"], t.inputs["Vector"])
+        bw = m.node("ShaderNodeRGBToBW")
+        m.link(t.outputs["Color"], bw.inputs["Color"])
+        m.bump(bw.outputs["Val"], bump, 0.0006)
+        m.link(m.math("MULTIPLY_ADD", bw.outputs["Val"], rough_var, rough0 - rough_var * 0.5), m.bsdf.inputs["Roughness"])
+        return
 
     def tex(fn, vec):
         t = m.node("ShaderNodeTexImage")
@@ -153,7 +170,7 @@ def _scan(m, name, tile, bump, rough0, rough_var, prints=0.0):
 def materials(a):
     M = {}
     b = mats.M("body", BODY, 0.6, frozen=True)
-    _scan(b, "Plastic004", 0.030, 0.55, 0.60, 0.22, prints=0.10)
+    _scan(b, "Plastic004", 0.030, 0.42, 0.60, 0.22, prints=0.10)
     c = mats.decal(b, a["base"][0], (a["base"][1][0], a["base"][1][1], 0), a["base"][2], "XY", facing="+Z")
     c = mats.decal(b, a["lid"][0], (a["lid"][1][0], a["lid"][1][1], 0), a["lid"][2], "XY", base=c, facing="+Z")
     mats.decal(b, a["back"][0], (a["back"][1][0], a["back"][1][1], 0), a["back"][2], "XY", base=c, flip_u=True, facing="-Z")

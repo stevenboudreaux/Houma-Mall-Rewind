@@ -1,6 +1,6 @@
 """Route A driver: builds pocket_pal_a with the project's Blender pipeline (tools/blender/lib), the one
 difference from tools/blender/build.py being that the in-game mesh is modelled (not decimated) and the dense
-source is baked onto it. Run:  /home/claude/bvenv/bin/python tools/blender/assets_src/pocket_pal_a/make.py [--fast]
+source is baked onto it. Run:  /home/claude/bvenv/bin/python tools/blender/assets_src/pocket_pal_a/make.py [--fast] [--route=c]
 Writes models/hud/pocket_pal_a.glb + _albedo/_orm/_normal.png, .scratch/blender/pocket_pal_a-sheet.png and
 -report.json. design/godot-device-bakeoff.md."""
 import json
@@ -19,7 +19,9 @@ import build as drv  # noqa: E402  (tools/blender/build.py: export_glb, fix_glb_
 from lib import core, mats, clean, bake, render  # noqa: E402
 import device  # noqa: E402
 
-AID = "pocket_pal_a"
+ROUTE = "c" if "--route=c" in sys.argv else "a"      # c: the same shapes with the AI-enlarged still textures
+AID = "pocket_pal_" + ROUTE
+device.STYLE = "ai" if ROUTE == "c" else "cc0"
 BUDGET = 8000
 TEX = 2048
 META = {"id": AID, "class": "hud device", "tex": TEX,
