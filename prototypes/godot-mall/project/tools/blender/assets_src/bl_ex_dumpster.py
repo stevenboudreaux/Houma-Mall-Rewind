@@ -1,5 +1,5 @@
 """The outside's steel roll-off compactor container (workstream EXT-DOCKS, Nov 11 2026): the "green boxes" at
-Dillard's dock and JCPenney's dock (tools/exterior/docks.gd), both years. Static prop, lightmapped with the outside.
+Dillard's dock and JCPenney's dock (tools/exterior/docks.gd), both years. A dynamic mesh like the 3D signs (probe-lit, no lightmap of its own).
 
 Steven (Demo 53 walk): "the green rectangle on the ground (what even is that)"; then: keep them, texture them
 properly: a real steel dumpster or compactor, ribbed sides, lids, wear, on a concrete pad (the pad is docks.gd's).

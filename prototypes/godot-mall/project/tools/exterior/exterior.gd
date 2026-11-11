@@ -20,6 +20,7 @@ const MON = preload("res://tools/exterior/monuments.gd")
 const Y26 = preload("res://tools/exterior/exterior_2026.gd")
 const FL = preload("res://tools/exterior/flora.gd")   # Workstream LOT: trees, shrubs, planters
 const RACK = preload("res://tools/exterior/wave_rack.gd")   # EXT-LAYOUT: the 3-loop wave bike rack
+const DK = preload("res://tools/exterior/docks.gd")         # EXT-DOCKS: Dillard's and JCPenney's loading docks
 
 # ---- heights (parapets, metres): the report's table
 const H_DEFAULT = 6.5     # store backs, the east facade
@@ -196,6 +197,7 @@ static func fill_mat(m, key, b):
 		"pine": m.albedo_color = Color("#2f5a2a"); m.roughness = 0.95
 		"myrtle": m.albedo_color = Color("#d26b8c"); m.roughness = 0.95
 		"holly": m.albedo_color = Color("#2e5a2f"); m.roughness = 0.9
+		"dock_green": m.albedo_color = Color("#234d3a"); m.roughness = 0.6   # EXT-DOCKS: the compactor head, as bl_ex_dumpster's paint
 		"podocarpus": m.albedo_color = Color("#3a6a3a"); m.roughness = 0.9
 		"fence_wood": m.albedo_texture = b.tex("wood_dark.png"); m.roughness = 0.8; m.albedo_color = Color(1.1, 1.0, 0.9)
 		"fence_black": m.albedo_color = Color("#1e1e1e"); m.roughness = 0.6
@@ -501,6 +503,9 @@ static func skin(seg):
 		return {"mat": "ex_brick_cream", "h": H_JCP_FRONT if front else H_JCP_REAR}
 	if nm == "SOUTHLAND CINEMA":
 		return {"mat": "ex_brick_salmon", "h": H_CINEMA}
+	# EXT-DOCKS: the dock court's walls behind the wing wall's line at Dillard's are the wing wall's (4490 f017-f026)
+	if DK.court_wall(seg):
+		return {"mat": "ex_brick_tan", "h": H_SOUTH_BACKS}
 	if nm == "WOOLWORTH":
 		return {"mat": "ex_brick_red", "h": H_WOOL}
 	if nm == "CUCOS BORDER CAFE":
@@ -567,7 +572,7 @@ static func shell(b):
 			continue    # EXT-ENTRANCES: the main and east entrances' faces are ent_main() / ent_side()'s
 		var sk = skin(seg)
 		var h = sk.h
-		if YEAR == 2026 and seg.side == "S" and V(seg.a).z >= 96.0 and seg.name != "DILLARD'S" and h <= 5.5:
+		if YEAR == 2026 and (seg.side == "S" or DK.court_wall(seg)) and V(seg.a).z >= 96.0 and seg.name != "DILLARD'S" and h <= 5.5:   # EXT-DOCKS: or the dock court's walls
 			# 2026: the low wing wall in two-tone EIFS, pale peach over deeper salmon split at 2.2 m,
 			# thick cream coping, diamond wall-packs every ~10 m (4489 f059-f069)
 			wall(b, g, "ex_eifs_salmon", a, bb, n, 0.0, 2.2)
@@ -1385,22 +1390,13 @@ static func jcpenney(b):
 		var hp = sa + stt * (25.0 + i * 2.4) + sn * 1.0
 		FL.shrub(b, hp, 0.75, Color(0.75, 0.62, 0.45) if YEAR == 2026 else Color(0.85, 1.0, 0.85))
 	b.obst(["rect", sa.x + 24.0, sa.z + 0.3, sa.x + 58.0, sa.z + 1.7])
-	# ---- north face z = -14, x -214..-154 (u runs west from x -154): docks 1-2 under the red canopy,
-	# the compactor, the Package Pick-up recess under the coral ribbed fascia
+	# ---- north face z = -14, x -214..-154 (u runs west from x -154): the Package Pick-up recess under the
+	# coral ribbed fascia (EXT-DOCKS: the docks and the compactor are on the east face)
 	var na = Vector3(-154, 0, -14); var nn = Vector3(0, 0, -1); var nt = Vector3(-1, 0, 0)
-	run_box(b, g, "ex_red_arcade", na, nt, nn, 4.0, 18.0, 4.0, 4.5, 3.5, 3.5)
-	for u in [8.0, 14.0]:
-		run_box(b, g, "ex_steel", na, nt, nn, u - 1.6, u + 1.6, 1.2, 4.0, 0.03, 0.03)
-		run_box(b, g, "ex_canopy_brown", na, nt, nn, u - 1.9, u + 1.9, 1.1, 4.2, 0.25, 0.25)   # the dock seals
-		b.label("1" if u < 10.0 else "2", "sans", "#f4efe3", na + nt * u + UP * 4.25 + nn * 0.05, nn, 0.5, 0.4)
-	run_box(b, g, "ex_curb", na, nt, nn, 4.5, 17.5, 0.0, 1.2, 2.0, 2.0, ["-y"])
-	for u in [4.8, 17.2]:
-		b.cyl(g, "ex_pipe_yellow", na + nt * u + nn * 1.9 + UP * 1.2, 0.03, 0.03, 1.0, 6, false)
-	b.box(g, "ex_pipe_yellow", na + nt * 11.0 + nn * 1.9 + UP * 2.15, Vector3(12.4, 0.06, 0.06))
-	b.obst(["rect", -172.0, -16.0, -158.0, -14.0])
-	# the compactor west of the docks
-	b.box(g, "ex_awning_teal" if YEAR != 2026 else "ex_holly", Vector3(-176.0, 1.2, -17.0), Vector3(3.0, 2.4, 6.0))
-	b.obst(["rect", -177.6, -20.0, -174.4, -14.0])
+	# ==== EXT-DOCKS (Nov 11 2026; Steven, Demo 53: "move truck loading area to side of building"; 4486 f105-f110):
+	# docks 1-2, their red canopy and the compactor left this face for the east face at the NE corner (docks.gd)
+	DK.jcpenney(b)
+	# ==== end EXT-DOCKS
 	run_box(b, g, "ex_coral", na, nt, nn, 33.0, 45.0, 3.2, 4.4, 1.6, 1.6)
 	for k in 8:
 		run_box(b, g, "ex_maroon", na, nt, nn, 33.6 + k * 1.5, 33.9 + k * 1.5, 3.2, 4.4, 1.64, 0.05)
@@ -1460,18 +1456,11 @@ static func dillards(b):
 	island(b, -50.0, 141.0, -43.0, 147.0, "ex_grass", "ex_curb")
 	for k in 3:
 		b.cyl("ex_props", "ex_pole_white", Vector3(-48.5 + k * 2.0, 0.16, 144.0), 0.08, 0.04, 11.0 + (1.0 if k == 1 else 0.0), 8, true)
-	# the covered loading dock on the west side (4490 f024-028): a raised dock, a canopy, a trailer
-	b.box(g, "ex_curb", Vector3(-41.0, 0.6, 127.0), Vector3(6.0, 1.2, 12.0), Transform3D.IDENTITY, ["-y"])
-	b.box(g, "ex_coping_dark", Vector3(-42.0, 4.75, 127.0), Vector3(8.0, 0.3, 14.0))
-	for z in [121.0, 133.0]:
-		b.cyl(g, "ex_pipe_grey", Vector3(-45.6, 0, z), 0.12, 0.12, 4.6, 8, false)
-	for z in [123.5, 130.5]:
-		b.box(g, "ex_steel", Vector3(-38.03, 2.7, z), Vector3(0.04, 3.0, 3.2))
-	b.obst(["rect", -46.0, 120.0, -38.0, 134.0])
-	trailer(b, Vector3(-51.5, 0, 125.0), Vector3(1, 0, 0), 13.0)
-	# the roll-off container by the lane's mouth
-	b.box(g, "ex_awning_teal", Vector3(-58.0, 0.8, 132.0), Vector3(2.4, 1.6, 6.5))
-	b.obst(["rect", -59.3, 128.7, -56.7, 135.3])
+	# ==== EXT-DOCKS (Nov 11 2026; Steven, Demo 53: the dock, the trailer and the green box "need to push back"
+	# behind the brick wall's line; 4490 f013-f027): the dock that stood on this face at z 121..133, the trailer
+	# and the roll-off in front of the wing wall are gone; the dock court behind the wall is docks.gd's
+	DK.dillards(b)
+	# ==== end EXT-DOCKS
 
 ## The Sears / Lynn's box (EXT-B, §5 #1: 115 x 50 m, flush with the facade): the loading dock on the
 ## WEST face just north of the cinema-side exit, under a flat white canopy on pipe columns, a raised
@@ -1878,6 +1867,8 @@ static func lot(b):
 		var L = a.distance_to(bb)
 		if seg.store == "s41":
 			continue    # EXT-LAYOUT: no walk or curb across the exit's recess: a flush apron (4416 f002, f005)
+		if DK.service_face(seg):
+			continue    # EXT-DOCKS: no customer walk or curb in the dock court or along JCPenney's dock face
 		var fl = fire_lane_face(seg)
 		var cm = "ex_curb"
 		if fl:
@@ -1986,6 +1977,8 @@ static func outside_corner(p, n, along):
 ## 4487-4489, 4492-4493), not the store backs on the staff lot, the docks or the service lane.
 static func fire_lane_face(seg):
 	var a = V(seg.a); var bb = V(seg.b)
+	if DK.service_face(seg):
+		return false    # EXT-DOCKS: the dock court and JCPenney's dock face
 	if seg.side == "E" and a.x >= 30.0:
 		return not in_bay(seg)
 	if seg.name in ["DILLARD'S", "JCPENNEY", "SOUTHLAND CINEMA", "LINK", "PAVILION"]:
@@ -2406,7 +2399,7 @@ static func lot_keepouts():
 	keep_out([-32.0, -162.0, -16.0, -146.0])                # EXT-LAYOUT: the north entrance's walk (s1n)
 	keep_out(APTS, 6.0)
 	keep_out([-232.0, -36.0, -208.0, -14.0])                # JCPenney's pine island and hydrant
-	keep_out([-182.0, -24.0, -150.0, -14.0])                # JCPenney's docks and compactor
+	keep_out([-156.0, -26.0, -134.0, 6.0])                  # EXT-DOCKS: JCPenney's docks, apron, compactor and tree bed, on the east face (was the north face: -182, -24, -150, -14)
 
 ## A field of double stall rows inside [x0, z0, x1, z1]. along_x: the rows run east-west (spaced in
 ## z), else north-south (spaced in x). Each row is cut where it meets a keep-out; every run gets a
