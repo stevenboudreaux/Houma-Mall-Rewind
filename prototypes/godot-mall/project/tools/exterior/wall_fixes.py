@@ -128,6 +128,16 @@ DOOR_MOVES = {
 # under the cinema-wing exit's fascia, so the player can walk up to the glass (4416 f002)
 WALK_OPEN = [[-80.0, -96.0, -78.0, -86.0]]
 
+# EXT-ENTRANCES-BUILD (Nov 11 2026; design/exterior/entrances-2026-11-09.md "The main entrance, measured"): the
+# main entrance's porch. The 4406 f002-f003 frames, solved by their vanishing points, put the tower's two front
+# piers in the facade's plane (x 44), not out on the lot: the porch is the recess BEHIND them, the 8 m between
+# the facade and the doors that the 1995 map already gives s39 (its door edge is at x 36, depth 8). So the
+# outside (wing 3) opens that recess: its tiles are walkable (make_exterior.py adds PORCH to the walk grid; the
+# building's outline, segments and roofs stay as they are, exterior.gd build() cuts the porch out of the
+# footprint's obstacle) and the door's outside spot stands in front of the doors, in the porch (DOOR_OUT).
+PORCH = [36.0, -6.0, 44.0, 6.0]
+DOOR_OUT = {"s39": [38.0, 0.0]}
+
 # Where Workstream E (the walkable old Sears) can put Sears's own exterior doors: the east face, by
 # the Lynn's script sign and black awning (4406 f031-035) and the side exit with Big Lots across the
 # drive (4413 f001-f008, f033). Not doors yet: player.gd only reads "doors". E: move a spot into

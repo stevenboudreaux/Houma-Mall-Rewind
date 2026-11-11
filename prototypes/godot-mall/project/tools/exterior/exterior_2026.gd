@@ -20,26 +20,9 @@ static func run_box(b, g, mname, a, t, n, u0, u1, y0, y1, out, deep, skip = []):
 	var c = a + t * ((u0 + u1) * 0.5) + UP * ((y0 + y1) * 0.5) + n * (out - deep * 0.5)
 	b.box(g, mname, c, b.abs_size(t, u1 - u0, y1 - y0, deep, n), Transform3D.IDENTITY, skip)
 
-## The main entrance today: a two-storey portal in tan EIFS (diagonal-scored panels), square
-## columns banded in cream and charcoal tile, a black steel beam across, a dark canopy fascia with
-## "SOUTHLAND MALL", a black-mullioned clerestory over it with a tan centre panel, a flat tan soffit
-## with cans at the top, tan pavers; the sliding doors under a segmental 4-light transom. Then
-## T-Mobile and Shoe Dept. down the facade to the south.
+## Beside the main entrance today: T-Mobile and Shoe Dept. down the facade to the south. (The entrance itself,
+## tower, porch and doors, is exterior.gd ent_main()'s for both years since EXT-ENTRANCES-BUILD, Nov 11 2026.)
 static func main_entrance(b):
-	var g = "ex_entry"
-	var a = Vector3(44, 0, -6); var n = Vector3(1, 0, 0); var t = Vector3(0, 0, 1); var Ln = 12.0
-	# the storefront: sliding doors in the middle, swing pairs either side, a segmental transom
-	for i in 7:
-		run_box(b, g, "ex_mullion", a, t, n, 1.0 + i * (10.0 / 6.0) - 0.05, 1.0 + i * (10.0 / 6.0) + 0.05, 0.0, 3.0, 0.0, 0.14)
-	run_box(b, g, "ex_mullion", a, t, n, 1.0, 11.0, 2.95, 3.1, 0.0, 0.14)
-	b.quad("ex_glass", "ex_glass", [a + t * 1.0 + n * 0.02, a + t * 11.0 + n * 0.02, a + t * 11.0 + n * 0.02 + UP * 3.0, a + t * 1.0 + n * 0.02 + UP * 3.0], n, [], true)
-	var s = b.st(g, "ex_glass_dark")
-	var c0 = a + t * 6.0 + UP * 3.1 + n * 0.03
-	for k in 12:
-		var a0 = PI * k / 12.0; var a1 = PI * (k + 1) / 12.0
-		b.tri(s, c0, c0 + t * (cos(a0) * 3.4) + UP * (sin(a0) * 1.1), c0 + t * (cos(a1) * 3.4) + UP * (sin(a1) * 1.1), Vector2.ZERO, Vector2.ZERO, Vector2.ZERO, n)
-	# EXT-ENTRANCES (Nov 9 2026): the portal (columns, lantern, letters, banner, soffit, pavers) is
-	# exterior.gd ent_main()'s, for both years
 	tmobile(b)
 	shoe_dept(b)
 

@@ -873,6 +873,87 @@ baked albedo ships in the game (the model's ORM and normal maps are not referenc
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).
 - Not filmed: the Armour Dr edge (plain here). (Both docks are filmed: EXT-DOCKS.)
+
+## Workstream EXT-ENTRANCES-BUILD (Nov 11 2026): the two entrances, finished
+
+Branch `ws/ext-entrances-build` from `int-54` (cc2191b). Design note: **`design/exterior/entrances-2026-11-09.md`**
+(the Nov 9 frame study, the director's answers, "The main entrance, measured (Nov 11)" and "The east entrance, as
+built"). Evidence: `production/qa/evidence/wsEXTE-main-2026.jpg`, `wsEXTE-main-1990s.jpg`, `wsEXTE-side-2026.jpg`,
+`wsEXTE-side-1990s.jpg` (frame | Nov 9 blockout | now, same cameras, unbaked).
+
+### The main entrance s39 is a slim tower in the facade, and the porch is behind it
+The Nov 9 blockout (two piers 14.4 m apart, 8 m out on the lot, a 20 m slab) was scaled to the door record, not to
+the frames. Solving 4406 f003's camera from its vanishing points puts the piers **in the facade's plane, 3.9 m
+apart**, under a slab ~8.4 x 8.1 m at ~9.2 m, with a set-back tan bay and a banded flank pylon either side: 12 m
+pylon to pylon, the door's own width. The porch is the recess behind the piers, the 8 m to the doors at x 36 that the
+map already gave s39. Wing 3 now builds that recess and lets the player walk into it.
+
+- `tools/exterior/wall_fixes.py`: `PORCH = [36, -6, 44, 6]`, `DOOR_OUT = {"s39": [38, 0]}`.
+- `tools/make_exterior.py`: opens the porch's walk tiles, applies `DOOR_OUT`, writes `porch`. Regenerated
+  `exterior.json` differs from before in exactly: `porch` (new), 24 walk tiles (6 rows x 4), s39's `out`
+  (45.5, 0) -> (38, 0). Segments, roofs, every other door: unchanged.
+- `exterior.gd build()`: the footprint's obstacle rectangles are cut round `porch`.
+- `exterior.gd ent_main()` (rewritten), `_main_doors()`, `_tmobile_porch()`, helpers; `main_entrance()` (the flat
+  1995 storefront on the facade) is now empty and `exterior_2026.gd main_entrance()` keeps only T-Mobile and Shoe
+  Dept.; the door wall is at x 35.9, 10 cm behind wing 1's door edge, so `capture_doors.gd`'s cameras (which stand
+  at x 36) look out through the porch with no frame in front of the lens.
+- The letters are geometry (`channel.gd`) from `tools/exterior/ent_letters_2026.json` / `ent_letters_1990s.json`
+  (`make_entrance_letters.py`; needs fonttools, mapbox_earcut, shapely). The Label3D is gone.
+
+### The east entrance s43
+`ent_side()`, `_storefront()`, `_leaf()`: as the note's "as built". Glass still at x 40; `exterior.json`'s s43 record
+is untouched.
+
+### The lot (two guarded lines in `lot()`'s walks loop, nothing else)
+No walk strip, curb or fire-lane ladder across s43's recess (the director, Nov 11); no curb across the main
+entrance. The loop's random draws are not skipped, so every decal, row, tree and prop is where it was: the
+generated meshes were compared vertex by vertex with int-54's (`ex_props`, `ex_far`, `ex_signs`, `ex_ground`
+identical; `ex_lot` differs only in the curb boxes at x 41.6-45.8, z -96..6; `ex_walks` and the paint only at the
+two entrances). The accessible stalls keep their places although s39's outside spot moved.
+
+### Materials (`fill_mat`, one block: "ent_*")
+`ent_eifs`, `ent_panel`, `ent_charcoal`, `ent_tile_dk`, `ent_tile_lt`, `ent_grout`, `ent_grout_lt`, `ent_paver`,
+`ent_slab`, `ent_reveal`, `ent_soffit`, `ent_dim`, `ent_sawcut`, `ent_eyebrow_under`, `ent_sconce` (night),
+`ent_letter` / `ent_letter_cream` (night), `ent_letter_ret`. No new textures.
+
+### Tests (cloud, unbaked)
+- **Build**: `build_mall.gd --wing=3` and `--wing=3 --year=2026`: BUILD OK, no script errors, no unknown material.
+- **`tools/qa/ext_door_test.gd`**, `--door=s39` and `--door=s43`, 1990s and `--year=2026` (4 runs): **PASS**, 0 FAIL.
+  s39's outside spot (38, 0) and the spot 2 m further out are on the grid and clear; the player there finds the
+  door; wing 1 -> "Go outside" -> wing 3 at the spot -> "Enter the mall" -> wing 1.
+- **`tools/qa/doortest.py`** (web export `.scratch/builds/exte`, wings 1-3, both years, lightmaps in the packs):
+  main entrance and east entrance, 1990s and 2026: **CROSSED** all four, out and back. Game errors: 0. The 2026
+  main-entrance run logs 0 errors; the other three log one line each, "could not keep the next files for later:
+  QuotaExceededError", which is the page's pre-cache hitting the headless browser's storage quota with the 150 MB
+  1990s packs (lightmaps included this time), not the game.
+- **`tools/qa/movetest.py`** wing 3, 1990s and 2026: cameras at the drive, in the porch, at the doors, at the east
+  entrance, and night: **0 errors** each; the touch walk from the porch (`WALK_CAM=38,0,-90,0`) goes out between the
+  piers to x 44.2: **MOVED**, both years.
+- **The lot is unchanged**: int-54's generated meshes against this build's, vertex by vertex: `ex_props`, `ex_far`,
+  `ex_signs`, `ex_ground` identical; `ex_lot` only the curb boxes at the two entrances; `ex_walks` and the paint
+  only at the two entrances.
+- The web shots carry the old wing-3 lightmap (smeared over the new geometry) until the rebake.
+
+### For the Mac (integration)
+- **Rebuild and rebake wing 3, both years** (`wing3:day wing3_2026:day`); `gen/w3`, `gen/w3y26`, `wing3.tscn`,
+  `wing3_2026.tscn` are not committed here. Then `tools/capture_standin.sh 3` and `3 2026`: wing 1's door pictures
+  at s39 are now taken from inside the porch (they will show the piers and the lantern from behind, as 4492 f050)
+  and at s43 through the new storefront's place.
+- Wing 1 is not touched. Its vestibule stand-in past s39's doors (a 12 m floor and canopy) now doubles the porch
+  that wing 3 really has; nothing needs doing, but it could go once the pictures are recaptured.
+- `w3y26.desktop.pck` exported here at 104,150,764 B (EXT-SIGNS: 103,794,736): about 0.7 MB under GitHub's
+  100 MiB. The packs are on R2 since Nov 4, so this only matters for an `R2=0` rollback.
+
+### Open for Steven (the calls made for him are in the session handoff)
+1. Does the slim tower in the facade match what you remember, and is walking into the porch right?
+2. The side bays between pier and pylon: open at porch level (built) or walled?
+3. The 1990s skin is still a guess; a 1990s picture of this entrance would settle it.
+
+## Known gaps / next
+- Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
+  1995 forms are placeholders until Steven finds photos (the report's open question). (Main entrance: the 1990s
+  build has today's measured massing in a guessed 1990s skin since EXT-ENTRANCES-BUILD.)
+- Not filmed: Dillard's north dock, JCPenney's dock face, the Armour Dr edge (plain here).
 - JCPenney's red south arcade, maroon west fascia and coral Package Pick-up fascia are today's
   (2012-era) treatment but still stand in the 1995 build too (open question for Steven).
 - Lot furniture still sparse: no wheel stops.
