@@ -6,8 +6,8 @@
 ## Signal Hill Mall (Statesville, NC) video Steven chose as "the exact Woolworth layout":
 ## glossy off-white vinyl with a red stripe along the main aisles, a white lay-in ceiling
 ## with long rows of troffers, plain square columns, a red band of department names high on
-## the walls, white gondolas, numbered checkout lanes and a customer service booth, round
-## racks of clothes, and the coffee-shop restaurant. Steven: the restaurant was on the
+## the walls, white gondolas, numbered checkout lanes (at the left front since Nov 11; the customer
+## service booth is gone: Steven, WOOL-FRONT), round racks of clothes, and the coffee-shop restaurant. Steven: the restaurant was on the
 ## RIGHT as you face the store, entered from the store and by its own mall door; there was
 ## no garden center.
 ##
@@ -146,7 +146,7 @@ static func room(b, a, t, n, rng):
 	K.wall(b, G, "md_wall", a, t, n, SIDE, R_D, SIDE, dB, 0.0, CEIL, t)
 	# the restaurant's walls seen from the store: its back (d 14) and its side (u 9.6), with
 	# the wood-framed opening at d OP0..OP1 (video 7:37-7:49)
-	K.wall(b, G, "md_wall", a, t, n, u9, R_D, SIDE, R_D, 0.0, CEIL, -n)
+	K.wall(b, G, "md_wall", a, t, n, u9, R_D, K_U1, R_D, 0.0, CEIL, -n)   # the kitchen (WOOL-FRONT) takes u 0.12..K_U1
 	K.wall(b, G, "md_wall", a, t, n, u9, 0.0, u9, OP0, 0.0, CEIL, t)
 	K.wall(b, G, "md_wall", a, t, n, u9, OP1, u9, R_D, 0.0, CEIL, t)
 	K.wall(b, G, "md_wall", a, t, n, u9, OP0, u9, OP1, 2.4, CEIL, t)
@@ -235,7 +235,11 @@ static func restaurant(b, a, t, n, rng):
 	K.wall(b, G, "wl_beige", a, t, n, u1, OP0, u1, 0.0, 0.9, R_CEIL, -t)
 	K.wall(b, G, "wl_beige", a, t, n, u1, dB, u1, OP1, 0.9, R_CEIL, -t)
 	K.wall(b, G, "wl_beige", a, t, n, u1, OP1, u1, OP0, 2.4, R_CEIL, -t)
-	K.wall(b, G, "wl_beige", a, t, n, u1, dB, u0, dB, 0.9, R_CEIL, n)
+	# the back wall, with the kitchen pass-through cut in it (WOOL-FRONT, Nov 11)
+	K.wall(b, G, "wl_beige", a, t, n, u1, dB, PT_U1, dB, 0.9, R_CEIL, n)
+	K.wall(b, G, "wl_beige", a, t, n, PT_U1, dB, PT_U0, dB, 0.9, PT_Y0, n)
+	K.wall(b, G, "wl_beige", a, t, n, PT_U1, dB, PT_U0, dB, PT_Y1, R_CEIL, n)
+	K.wall(b, G, "wl_beige", a, t, n, PT_U0, dB, u0, dB, 0.9, R_CEIL, n)
 	for w in [[u0, 0.0, u0, dB, t], [u1, OP0, u1, 0.0, -t], [u1, dB, u1, OP1, -t], [u1, dB, u0, dB, n]]:
 		var pa = P2.call(w[0], 0, w[1])
 		var pb = P2.call(w[2], 0, w[3])
@@ -252,7 +256,9 @@ static func restaurant(b, a, t, n, rng):
 	# "There were also 3 booths lining the left wall right behind where the opening to the woolworth
 	# store is": along the left wall, between the door and the opening into the store
 	# Nov 1 (Steven): they sit behind the opening, which moved to the front (d 1.0..4.6)
-	for d in [OP1 + 1.1, OP1 + 3.2, OP1 + 5.3]:
+	# Nov 11 (Steven, WOOL-FRONT): "one more booth along the left wall in the empty stretch before
+	# that door": a fourth, at the same spacing (d 11.05..12.95)
+	for d in [OP1 + 1.1, OP1 + 3.2, OP1 + 5.3, OP1 + 7.4]:
 		booth(b, G, P2.call(u1, 0, d), -n, -t, rng)
 	# two free-standing tables with chairs in the middle
 	for c in [[5.1, 4.4], [5.1, 7.6]]:
@@ -264,6 +270,101 @@ static func restaurant(b, a, t, n, rng):
 	# things": the back bar against the right wall, the counter in front of it, its front end
 	# curving round toward the window and back to the wall
 	lunch_counter(b, G, S, a, t, n, rng)
+	kitchen_wall(b, G, S, a, t, n)
+
+## The restaurant's back wall (Steven, Nov 11, WOOL-FRONT): "add a closed door to the kitchen, and
+## beside it, between the door and the back bar, a kitchen pass-through window (a framed opening with
+## a stainless shelf, a glimpse of a simple kitchen behind, heat lamps)". From the right wall: the
+## back bar, the pass-through behind the counter's back end (u PT_U0..PT_U1), then the door
+## (u KD_U0..KD_U1) just left of the counter, where the clerks come round it.
+## GUESS (no Southland source): every size, the door's look (wood, a small window, steel kick and
+## push plates), and the kitchen: a 1 m deep room behind the wall (u 0.12..K_U1, d 14..15, taken
+## from the store's floor behind the restaurant) with a range under a hood, a pot shelf and a
+## tall refrigerator. Nothing in it is lettered.
+const PT_U0 = 0.9
+const PT_U1 = 2.6
+const PT_Y0 = 1.05
+const PT_Y1 = 1.95
+const KD_U0 = 3.2
+const KD_U1 = 4.1
+const KD_H = 2.05
+const K_U1 = 4.4          # the kitchen's outer corner (u), and its depth behind the restaurant
+const K_DP = 1.0
+static func kitchen_wall(b, G, S, a, t, n):
+	var P2 = func(u, y, d): return P(a, t, n, u, y, d)
+	var dB = R_D - 0.12
+	var o = P2.call(0.0, 0.0, dB)      # the wall's face; r = t along it, f = n out into the room
+	# --- the door: a wood leaf in a dark casing, a small dark window, steel kick and push plates
+	b.cur_color = Color("#6a4424")
+	for sx in [[KD_U0 - 0.08, 0.08, 0.0, KD_H + 0.08], [KD_U1, 0.08, 0.0, KD_H + 0.08], [KD_U0, KD_U1 - KD_U0, KD_H, 0.08]]:
+		K.lbox(b, G, "vcolor", o, t, n, sx[0], sx[2], 0.0, sx[1], sx[3], 0.06, ["-y"])
+	b.cur_color = Color.WHITE
+	K.lbox(b, G, "wl_wood", o, t, n, KD_U0, 0.0, 0.0, KD_U1 - KD_U0, KD_H, 0.04, ["-y"])
+	K.lbox(b, G, "wl_steel", o, t, n, KD_U0 + 0.03, 0.02, 0.04, KD_U1 - KD_U0 - 0.06, 0.26, 0.004, ["-y"])
+	K.lbox(b, G, "wl_steel", o, t, n, KD_U0 + 0.08, 1.0, 0.04, 0.1, 0.32, 0.004)
+	K.lbox(b, G, "wl_steel", o, t, n, KD_U0 + 0.3, 1.38, 0.04, 0.3, 0.3, 0.006)
+	b.cur_color = Color("#1a2226")
+	K.lbox(b, G, "vcolor", o, t, n, KD_U0 + 0.325, 1.405, 0.04, 0.25, 0.25, 0.008)
+	b.cur_color = Color.WHITE
+	# --- the pass-through: a stainless lining through the wall, a frame, the shelf on brackets
+	var d1 = R_D                        # the wall's kitchen face
+	b.quad(G, "wl_steel", [P2.call(PT_U0, PT_Y0, dB), P2.call(PT_U1, PT_Y0, dB), P2.call(PT_U1, PT_Y0, d1), P2.call(PT_U0, PT_Y0, d1)], UP)
+	b.quad(G, "wl_steel", [P2.call(PT_U0, PT_Y1, dB), P2.call(PT_U1, PT_Y1, dB), P2.call(PT_U1, PT_Y1, d1), P2.call(PT_U0, PT_Y1, d1)], Vector3.DOWN)
+	b.quad(G, "wl_steel", [P2.call(PT_U0, PT_Y0, dB), P2.call(PT_U0, PT_Y0, d1), P2.call(PT_U0, PT_Y1, d1), P2.call(PT_U0, PT_Y1, dB)], t)
+	b.quad(G, "wl_steel", [P2.call(PT_U1, PT_Y0, dB), P2.call(PT_U1, PT_Y0, d1), P2.call(PT_U1, PT_Y1, d1), P2.call(PT_U1, PT_Y1, dB)], -t)
+	var pw = PT_U1 - PT_U0
+	for sx in [[PT_U0 - 0.05, PT_Y0 - 0.05, 0.05, PT_Y1 - PT_Y0 + 0.1], [PT_U1, PT_Y0 - 0.05, 0.05, PT_Y1 - PT_Y0 + 0.1],
+			[PT_U0, PT_Y1, pw, 0.05], [PT_U0, PT_Y0 - 0.05, pw, 0.05]]:
+		K.lbox(b, G, "wl_steel", o, t, n, sx[0], sx[1], 0.0, sx[2], sx[3], 0.025)
+	K.lbox(b, G, "wl_steel", o, t, n, PT_U0 - 0.05, PT_Y0, -0.24, pw + 0.1, 0.035, 0.52)
+	for u in [PT_U0 + 0.15, PT_U1 - 0.15]:
+		K.lbox(b, G, "wl_steel", o, t, n, u - 0.015, PT_Y0 - 0.22, 0.0, 0.03, 0.22, 0.2)
+	# --- heat lamps over the shelf: three steel shades on stems from a rail in the opening's head
+	K.lbox(b, G, "wl_steel", o, t, n, PT_U0, PT_Y1 - 0.05, -0.05, pw, 0.03, 0.03)
+	for i in 3:
+		var lc = P2.call(PT_U0 + pw * (0.2 + 0.3 * i), 0.0, dB + 0.035)
+		b.cyl(S, "wl_steel", lc + UP * (PT_Y1 - 0.14), 0.012, 0.012, 0.1, 8, false, false)
+		b.cyl(S, "wl_steel", lc + UP * (PT_Y1 - 0.26), 0.1, 0.035, 0.12, 14, true, false)
+		b.cyl(S, "wl_warm_disc", lc + UP * (PT_Y1 - 0.258), 0.085, 0.085, 0.004, 12, false, true)
+	K.ob(b, P2.call(PT_U0 - 0.05, 0, dB - 0.3), P2.call(PT_U1 + 0.05, 0, dB), 0.0)
+	# --- the kitchen behind: plain cream walls, a tiled band, a range under a hood, a pot shelf, a
+	# tall refrigerator. Its outer walls are the store's white wall, to the store's ceiling.
+	var KG = "wl_kitchen"
+	var kd = R_D + K_DP
+	var ki = kd - 0.1                   # the inner face of its back wall
+	var ku = K_U1 - 0.1
+	K.wall(b, "wl_shell", "md_wall", a, t, n, K_U1, R_D, K_U1, kd, 0.0, CEIL, t)
+	K.wall(b, "wl_shell", "md_wall", a, t, n, K_U1, kd, SIDE, kd, 0.0, CEIL, -n)
+	K.ob(b, P2.call(SIDE, 0, R_D), P2.call(K_U1, 0, kd), 0.05)
+	b.cur_color = Color("#e6dfcc")
+	b.quad(KG, "vcolor", [P2.call(SIDE, 0.0, ki), P2.call(ku, 0.0, ki), P2.call(ku, CEIL, ki), P2.call(SIDE, CEIL, ki)], n)
+	b.quad(KG, "vcolor", [P2.call(ku, 0.0, ki), P2.call(ku, 0.0, R_D), P2.call(ku, CEIL, R_D), P2.call(ku, CEIL, ki)], -t)
+	b.cur_color = Color.WHITE
+	b.quad(KG, "wl_tile_stripe", [P2.call(SIDE, 0.9, ki - 0.005), P2.call(ku, 0.9, ki - 0.005), P2.call(ku, 2.0, ki - 0.005), P2.call(SIDE, 2.0, ki - 0.005)], n,
+		[Vector2(0.0, 1.1), Vector2(ku - SIDE, 1.1), Vector2(ku - SIDE, 0.0), Vector2(0.0, 0.0)])
+	var ko = P2.call(0.0, 0.0, ki)     # the kitchen's back wall; f = n comes toward the pass-through
+	# the range: a steel body, a dark cooking top, a low back splash; two pots on it
+	K.lbox(b, KG, "wl_steel", ko, t, n, 0.5, 0.0, 0.0, 1.5, 0.88, 0.62, ["-y"])
+	b.cur_color = Color("#232325")
+	K.lbox(b, KG, "vcolor", ko, t, n, 0.5, 0.88, 0.0, 1.5, 0.03, 0.62, ["-y"])
+	b.cur_color = Color.WHITE
+	b.cyl(KG, "wl_steel", K.L(ko, t, n, 0.9, 0.91, 0.3), 0.14, 0.14, 0.2, 14, true, false)
+	b.cyl(KG, "wl_steel", K.L(ko, t, n, 1.55, 0.91, 0.28), 0.11, 0.11, 0.12, 14, true, false)
+	# the hood over it
+	K.lbox(b, KG, "wl_steel", ko, t, n, 0.4, 2.0, 0.0, 1.7, 0.45, 0.72)
+	# a pot shelf on the wall between the range and the hood
+	K.lbox(b, KG, "wl_steel", ko, t, n, 0.5, 1.5, 0.0, 1.5, 0.025, 0.24)
+	for u in [0.75, 1.05, 1.6]:
+		b.cyl(KG, "wl_steel", K.L(ko, t, n, u, 1.525, 0.12), 0.09, 0.09, 0.13, 12, true, false)
+	# the refrigerator: a tall steel cabinet, a door seam and a handle
+	K.lbox(b, KG, "wl_steel", ko, t, n, 2.25, 0.0, 0.0, 0.85, 1.95, 0.66, ["-y"])
+	b.cur_color = Color("#3a3c3e")
+	K.lbox(b, KG, "vcolor", ko, t, n, 2.67, 0.1, 0.66, 0.012, 1.75, 0.004)
+	K.lbox(b, KG, "vcolor", ko, t, n, 2.58, 0.95, 0.66, 0.025, 0.3, 0.03)
+	b.cur_color = Color.WHITE
+	var kl = b.add_omni(P2.call(1.75, 2.5, R_D + 0.5), 0.5, 4.0, Color(0.96, 0.98, 1.0))
+	b.tag(kl, "", 0.5, 0.5)
+
 ## A window booth (Steven's photo of booths at a window): along r from o (o on the glass line),
 ## f into the room: a bench, a table square to the glass on a pedestal, a bench facing it; the
 ## benches' high backs carry vertical channels. 1.65 m along r.
@@ -290,18 +391,22 @@ static func window_booth(b, G, o, r, f):
 ## striped tile wall under a strip of menu cards, a stainless canopy over it; on it a pie case, the
 ## soda fountain, a soft-serve machine, malt mixers, coffee urns and stacked glasses. The counter
 ## (wood-grain front between black pilasters, a black top with a steel edge, a chrome foot rail)
-## runs from the back to d 3.6, curves round toward the window and ends at the wall (Steven's
+## runs from the back to d LC_D0, curves round toward the window and ends at the wall (Steven's
 ## curved-end photo); chrome stools with coral and teal seats line it and follow the curve.
 const LC_U = 2.45         # the counter's customer face
 const LC_DP = 0.68        # its depth
 const LC_H = 1.0
-const LC_D0 = 3.6         # where the straight run ends and the curve begins
+## Steven, Nov 11 (WOOL-FRONT): "Shorten bar (this area of barstools crowds the booth seat to its
+## right)". The straight run is 1.6 m shorter (was LC_D0 = 3.6), so the curved end and its stools
+## stand clear of the window booths: the curve meets the wall at d 2.87, the first booth's bench
+## ends at d 1.34. The curve keeps his Oct 20 shape; it carries two stools (was three).
+const LC_D0 = 5.2         # where the straight run ends and the curve begins
 const LC_D1 = 12.8        # its back end
 static func lunch_counter(b, G, S, a, t, n, rng):
 	var P2 = func(u, y, d): return P(a, t, n, u, y, d)
 	var u0 = SIDE
 	# --- the back wall of the bar: striped tile, the menu strip, the canopy
-	var tw0 = 2.2
+	var tw0 = LC_D0 - 1.4     # the back bar's front end, just inside the curve
 	var tw1 = R_D - 0.12
 	b.quad(G, "wl_tile_stripe", [P2.call(u0 + 0.01, 0.9, tw0), P2.call(u0 + 0.01, 0.9, tw1), P2.call(u0 + 0.01, 2.0, tw1), P2.call(u0 + 0.01, 2.0, tw0)], t,
 		[Vector2(tw0, 1.1), Vector2(tw1, 1.1), Vector2(tw1, 0.0), Vector2(tw0, 0.0)])
@@ -309,7 +414,7 @@ static func lunch_counter(b, G, S, a, t, n, rng):
 	K.fq(b, G, "wl_price_strip", P2.call(u0, 0, tw0 + 5.0), -n, t, 0.0, 4.6, 2.32, 2.66, 0.02, 0.0, 0.0, 1.0, 1.0)
 	K.lbox(b, G, "wl_steel", P2.call(u0, 0, tw0), -n, t, 0.0, 2.05, 0.0, tw1 - tw0, 0.08, 0.5, [])
 	K.lbox(b, G, "wl_steel", P2.call(u0, 0, tw0), -n, t, 0.0, 2.13, 0.0, tw1 - tw0, 0.16, 0.12, [])
-	for d in [3.2, 5.6, 8.0, 10.4]:
+	for d in [4.4, 6.4, 8.4, 10.4]:
 		b.cyl(G, "wl_warm_disc", P2.call(u0 + 0.3, 2.045, d), 0.06, 0.06, 0.004, 10, false, true)
 	# --- the back bar: stainless cabinets and its top
 	K.lbox(b, G, "wl_steel", P2.call(u0, 0, tw0), -n, t, 0.0, 0.0, 0.0, tw1 - tw0, 0.9, 0.6, ["-y"])
@@ -318,7 +423,7 @@ static func lunch_counter(b, G, S, a, t, n, rng):
 	b.cur_color = Color.WHITE
 	var bb = func(d, x): return P2.call(u0 + x, 0.93, d)
 	# the pie case: a steel base, glass sides, pies on two shelves
-	var pc = bb.call(3.0, 0.3)
+	var pc = bb.call(4.4, 0.3)
 	b.box(S, "wl_steel", pc + UP * 0.03, Vector3(0.45, 0.06, 0.8))
 	b.box(S, "wl_steel", pc + UP * 0.5, Vector3(0.45, 0.03, 0.8))
 	b.cur_color = Color("#e8d0a0")
@@ -392,7 +497,7 @@ static func lunch_counter(b, G, S, a, t, n, rng):
 		stool(b, S, P2.call(LC_U + 0.42, 0, d), -t, k)
 		d -= 0.62
 		k += 1
-	for ang in [20.0, 45.0, 70.0]:
+	for ang in [20.0, 50.0]:
 		var th = deg_to_rad(ang)
 		var rr = (LC_U - u0) + 0.42
 		var su = u0 + rr * cos(th)
@@ -524,7 +629,7 @@ static func floor_fixtures(b, a, t, n, rng):
 		u -= BAY
 	# right wall behind the restaurant: greeting cards, then party goods
 	d = dB - 0.45
-	while d - BAY >= R_D + 0.6:
+	while d - BAY >= R_D + K_DP + 0.1:   # the bays stop short of the kitchen (WOOL-FRONT, Nov 11)
 		var sh = [["gcards"]] if d > 24.0 else [["party"]]
 		K.bay_run(b, grp("fix", 2.0, d), grp("merch", 2.0, d), P(a, t, n, SIDE, 0, d), n, t, BAY, 1, BOARDS, sh, [-1], "", 0.0, rng, 0.4)
 		d -= BAY
@@ -544,16 +649,19 @@ static func floor_fixtures(b, a, t, n, rng):
 	# left front: round racks and T-stands of clothes (video 1:19-1:58, 2:28)
 	for c in [[27.0, 6.5], [30.2, 6.5], [33.2, 7.2], [27.0, 10.0], [30.2, 10.0], [33.2, 10.8], [27.0, 13.5], [30.2, 13.5]]:
 		round_rack(b, grp("fix", 30.0, 9.0), P(a, t, n, c[0], 0, c[1]), rng)
-	# -- the front end: four checkout lanes with numbered lane lights (video 2:16), a cart
-	# corral, and the customer service booth with its glass upper wall (video 2:22)
+	# -- the front end (Steven, Nov 11, WOOL-FRONT: "Remove the customer service desk, move
+	# checkouts to left side and the area where they were on the right as open. The checkout
+	# counters should be numbered 1,2,3,4."): four checkout lanes at the left front, where the
+	# service booth stood, lane lights 1-4 reading left to right from the hall (GUESS: the
+	# order); the right front (u 9.6..20) is open floor up to the first gondola. The carts stay
+	# by the main aisle (GUESS: his note does not mention them).
 	var lanes = 0
-	for uu in [11.2, 13.6, 16.0, 18.4]:
+	for uu in CHECKOUT_U:
 		lanes += 1
-		checkout(b, P(a, t, n, uu, 0, 1.6), t, n, lanes * 2 - 1, rng)
+		checkout(b, P(a, t, n, uu, 0, CHECKOUT_D), t, n, lanes, rng)
 	for j in 3:
 		cart(b, "wl00_small", P(a, t, n, 20.2 + j * 0.0, 0, 1.4 + j * 0.42), n)
 	K.ob(b, P(a, t, n, 19.8, 0, 1.0), P(a, t, n, 20.6, 0, 3.0), 0.1)
-	service(b, a, t, n, rng)
 
 ## A round rack of hanging clothes: chrome ring on a pole, a ring of garments.
 static func round_rack(b, G, c, rng):
@@ -573,18 +681,23 @@ static func round_rack(b, G, c, rng):
 	b.cyl(G, "md_chrome", c + UP * 1.32, rad + 0.02, rad + 0.02, 0.025, 20, true, false)
 	K.ob(b, c - Vector3(rad, 0, rad), c + Vector3(rad, 0, rad), 0.1)
 
+## The four checkout lanes (WOOL-FRONT, Nov 11): the u of each counter's right edge, lane 1 first
+## (the far left as you face the store from the hall), and the d they start at.
+const CHECKOUT_U = [33.6, 31.2, 28.8, 26.4]
+const CHECKOUT_D = 1.6
+
 ## A checkout counter running into the store (customers pass along it toward the hall),
 ## a register, an impulse rack at its head, and the numbered lane light on a pole.
 static func checkout(b, o, t, n, num, rng):
-	var G = "wl00_fix"
-	var S = "wl00_small"
+	var G = "wl10_fix"
+	var S = "wl10_small"
 	var into = -n
 	K.lbox(b, G, "wl_laminate", o, into, t, 0.0, 0.0, 0.0, 2.6, 0.9, 0.75, ["-y"])
 	K.fq(b, G, "wl_counter", o, into, t, 0.0, 2.6, 0.0, 0.9, 0.752)
 	K.fq(b, G, "wl_counter", o + into * 2.6 + t * 0.75, -into, -t, 0.0, 2.6, 0.0, 0.9, 0.752)
 	K.register(b, S, K.L(o, into, t, 0.4, 0.9, 0.2), into, -t)
 	# the impulse rack: candy and batteries on a low stand at the lane's head
-	K.bay(b, G, "wl00_merch", o + into * 2.7, t, into, 0.75, [0.5, 0.85, 1.2], ["candy"], rng, 0.25)
+	K.bay(b, G, "wl10_merch", o + into * 2.7, t, into, 0.75, [0.5, 0.85, 1.2], ["candy"], rng, 0.25)
 	# the lane light
 	var pole = K.L(o, into, t, 0.1, 0.0, 0.65)
 	b.cyl(S, "md_chrome", pole, 0.025, 0.025, 2.5, 8, false, false)
@@ -608,28 +721,6 @@ static func cart(b, S, c, f):
 	for q in [Vector2(-0.2, -0.38), Vector2(0.2, -0.38), Vector2(-0.18, 0.38), Vector2(0.18, 0.38)]:
 		b.box(S, "vcolor", c + r * q.x + f * q.y + UP * 0.05, Vector3(0.05, 0.1, 0.05))
 	b.cur_color = Color.WHITE
-
-## The customer service booth at the left front: an L counter, a glass upper wall, the
-## red-lettered sign over it (video 2:22).
-static func service(b, a, t, n, rng):
-	var G = "wl10_fix"
-	var into = -n
-	# the back wall toward the hall
-	K.lbox(b, G, "md_wall", P(a, t, n, 30.4, 0, 0.8), t, into, 0.0, 0.0, 0.0, UNIT - SIDE - 30.4, 2.6, 0.1)
-	# the side counter facing the main aisle, glass above it, the sign over the glass
-	var so = P(a, t, n, 31.0, 0, 0.9)
-	K.lbox(b, G, "wl_laminate", so, into, -t, 0.0, 0.0, 0.0, 2.9, 1.05, 0.6, ["-y"])
-	K.fq(b, G, "wl_counter", so, into, -t, 0.0, 2.9, 0.0, 1.05, 0.602, 0.0, 0.0, 1.0, 1.0)
-	b.quad("glass", "glass", [P(a, t, n, 30.97, 1.1, 0.9), P(a, t, n, 30.97, 1.1, 3.8), P(a, t, n, 30.97, 2.5, 3.8), P(a, t, n, 30.97, 2.5, 0.9)], -t,
-		[Vector2(0, 1), Vector2(1, 1), Vector2(1, 0), Vector2(0, 0)], true)
-	K.lbox(b, G, "wl_alum", so, into, -t, 0.0, 2.5, -0.03, 2.9, 0.06, 0.06)
-	K.lbox(b, G, "md_wall", so, into, -t, 0.0, 2.56, -0.05, 2.9, 0.9, 0.1)
-	K.fq(b, G, "wl_signs", so, into, -t, 0.45, 2.45, 2.62, 3.42, 0.052, 0.0, 0.0, 0.5, 0.5)
-	K.register(b, "wl10_small", K.L(so, into, -t, 1.2, 1.05, 0.12), into, -t)
-	# the front counter facing into the store
-	K.lbox(b, G, "wl_laminate", P(a, t, n, 30.4, 0, 3.8), t, into, 0.0, 0.0, 0.0, UNIT - SIDE - 30.4, 1.05, 0.6, ["-y"])
-	K.fq(b, G, "wl_counter", P(a, t, n, UNIT - SIDE, 0, 3.8), -t, into, 0.0, UNIT - SIDE - 30.4, 0.0, 1.05, 0.602, 0.0, 0.0, 1.0, 1.0)
-	K.ob(b, P(a, t, n, 30.4, 0, 0.8), P(a, t, n, UNIT - SIDE, 0, 4.4), 0.1)
 
 # ------------------------------------------------------------------ materials
 ## "wl_<key>" (build_mall.gd's mat() calls this).
