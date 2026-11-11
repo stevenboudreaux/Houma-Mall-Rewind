@@ -50,7 +50,7 @@ Scheduled worker run, nobody watching. Not merged, not baked, not published, not
    were on `godot-build`, and the diagnosis showed an unlit run adds its own moving shadow line (§4) that would
    muddy the comparison. Evidence files say `baked`. Wing 1's lightmap is Demo 52's, on int-54's scenes.
 6. **Local frames are every 0.5 m, not every 0.5 s.** The software renderer runs about 0.3 fps, so the script
-   places the player and shoots; 0.5 m is about a third of a second of walking.
+   places the player and shoots; 0.5 m is an eighth of a second at walking speed (4 m/s), so the spacing is finer than the brief asked for.
 7. **Web walks use the desktop pack at 960x540**, holding W for 0.6 s between frames (as the diagnosis did).
 8. **Exported wings 1 and 2 only** (both years) for the web checks, to `.scratch/builds/floorfix` (not committed).
    Wings 4-6 were shot locally, one pose each, 1990s only.
