@@ -261,7 +261,7 @@ static func fill_mat(m, key, b):
 		"ent_slab": m.albedo_color = Color("#f1efe8"); m.roughness = 0.7
 		"ent_reveal": m.albedo_color = Color("#b3a791"); m.roughness = 0.9
 		"ent_soffit": m.albedo_color = Color("#e8dcc4"); m.roughness = 0.9
-		"ent_dim": m.albedo_color = Color("#15171a"); m.roughness = 0.9
+		"ent_dim": m.albedo_color = Color("#262c32"); m.roughness = 0.9
 		"ent_sawcut": m.albedo_color = Color("#6b675f"); m.roughness = 0.95
 		"ent_eyebrow_under": m.albedo_color = Color("#2b1e17"); m.roughness = 0.8
 		"ent_sconce":
@@ -1125,10 +1125,11 @@ static func _main_doors(b, g, y26, body):
 				_leaf(b, g, fr, a, t, n, u + l[1] * 0.5 + 0.005, u + l[1] - 0.03, dh + 0.04, 0.25, 0.06, "bar_lo")
 			u += l[1]
 		run_box(b, g, fr, a, t, n, u - 0.03, u + 0.03, 0.0, top, 0.08, 0.12)
-		var k = u0 + 1.1
-		while k < u1 - 0.5:
+		# the outer sidelights' own posts, and a transom post over each pair's meeting stiles
+		for k in [u0 + (6.0 - tot * 0.5 - u0) * 0.5, u1 - (6.0 - tot * 0.5 - u0) * 0.5]:
+			run_box(b, g, fr, a, t, n, k - 0.03, k + 0.03, 0.0, top, 0.08, 0.12)
+		for k in [6.0 - 2.65, 6.0, 6.0 + 2.65]:
 			run_box(b, g, fr, a, t, n, k - 0.025, k + 0.025, dh + 0.12, top, 0.08, 0.12)
-			k += 1.1
 
 ## One glazed door leaf on the plane a, t, n: from l0 to l1, `head` high, a `rail` bottom rail, its face `out`
 ## proud. pull: "bow_hi" / "bow_lo" a horizontal bow pull outside near the meeting stile (hi: the meeting stile
@@ -1247,11 +1248,13 @@ static func ent_side(b):
 		var u = 1.0 if k == 0 else 9.0
 		var pts = PackedVector2Array([Vector2(0.0, 4.3), Vector2(0.7, 4.98), Vector2(0.7, 5.32), Vector2(0.0, 5.4)])
 		b.poly(g, "ex_canopy_brown", pts, fa + t * u, n, UP, t * (-1.0 if k == 0 else 1.0))
-	var c = fa + t * 5.0 + UP * 5.6 + n * 0.02
+	# the gold fan (2026) stands on the eyebrow's top, half way out (f038); the 1990s Cucos neon in its place
+	# (Steven, Oct 23), so neither hides behind the eyebrow's edge from the lot
+	var c = fa + t * 5.0 + UP * 5.36 + n * 0.75
 	if y26:
 		Y26.fan_ornament(b, c, n, t)
 	else:
-		CU.build(b, "ex_cucos_neon", "res://tools/stores/signs/cu_sign.json", c - UP * 0.15, n, 1.25)
+		CU.build(b, "ex_cucos_neon", "res://tools/stores/signs/cu_sign.json", c, n, 1.1)
 	# the two tall brick pylons on the Cucos side, each with a corbelled cap: the corner one at the facade
 	# (~8.5 m), the second at the fascia's line (~7.2 m); 2026 black-painted brick, the 1990s Cucos's red-brown
 	# (a GUESS)
