@@ -8,9 +8,12 @@ extends Node
 
 @export var scale := 0.5          # reflection resolution vs. the screen
 @export var strength := 0.6
-## bake-look (design/godot-bake-quality.md): the floor's share of the ReflectionProbes (Demo 51: 0.25).
-## On the web ?floorspec=<0..1> overrides it, so Steven can compare before choosing a default.
-@export var floor_spec := 0.25
+## bake-look (design/godot-bake-quality.md): the floor's specular share, i.e. how much it reflects the
+## hall ReflectionProbes and the sky. 0 since FLOOR-FIX (Nov 11 2026,
+## design/godot-floor-lighting-diagnosis.md "Fix shipped"): at 0.25 (Demos 51-53) those reflections showed
+## as patches that slid across the floor as the player walked. The polish now comes from the mirror alone.
+## On the web ?floorspec=0.25 brings the old look back for comparison.
+@export var floor_spec := 0.0
 var vp: SubViewport
 var mcam: Camera3D
 var floor_mats := []
@@ -30,9 +33,11 @@ uniform float strength = 0.5;
 uniform float refl_clamp = 1.5;
 uniform vec2 px = vec2(0.002, 0.003);
 // bake-look (design/godot-bake-quality.md): how much the floor takes from the hall ReflectionProbes.
-// 0.25 = Demo 51. The probes' box-projected picture of the shop grilles shows as pale streaks and
-// blotches on the floor; 0 leaves the polish to the mirror above. Steven decides (?floorspec=0 to try).
-uniform float floor_spec = 0.25;
+// The probes' box-projected picture of the shop grilles shows as pale streaks and hard-edged patches
+// on the floor, and where no probe reaches the floor shows the sky as a glow ahead of the camera; both
+// move with the view. 0 (since FLOOR-FIX, Nov 11 2026) leaves the polish to the mirror below.
+// 0.25 = Demos 51-53 (?floorspec=0.25 for the old look).
+uniform float floor_spec = 0.0;
 varying vec3 wpos;
 
 void vertex() { wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz; }
@@ -157,7 +162,7 @@ void fragment() {
 	k *= mix(1.25, 0.55, lum);   // dark tiles mirror more, as real terrazzo does
 	ALBEDO = a * (1.0 - k * 0.35);
 	ROUGHNESS = 0.35;
-	SPECULAR = floor_spec;   // bake-look: was 0.25 (the default)
+	SPECULAR = floor_spec;   // FLOOR-FIX: 0, no probe or sky reflection (was 0.25)
 	EMISSION = r * k;
 }
 """
@@ -187,7 +192,7 @@ void fragment() {
 ## BPTC) or in phone and headset ones (ETC2 and ASTC), and web/shell.html picks one before
 ## the engine starts. If it guessed wrong for this GPU, switch to the other build once and
 ## remember the choice in this browser.
-## bake-look: the floor's probe share, from ?floorspec= on the web, else floor_spec.
+## bake-look: the floor's specular share, from ?floorspec= on the web, else floor_spec.
 func _floor_spec() -> float:
 	if OS.has_feature("web"):
 		var q := str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('floorspec') || ''"))
