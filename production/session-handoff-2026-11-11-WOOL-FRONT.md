@@ -76,8 +76,8 @@ made without Steven. Not merged, not baked, not published. Design notes: `design
 - The local export's last step (`packcontents.py refs`) fails on the stand-in pictures only: `standin/` on
   `godot-build` is empty and CLAUDE-CLOUD.md's `git archive` line fails when run from the project folder.
   The export itself loaded and ran. Shots are unbaked, without lightmaps.
-- `wsWOOL-web-*` shots were taken before the door's leaf changed to plain walnut; there is no web shot of
-  the back wall in the evidence for that reason (the native one is current).
+- `wsWOOL-web-*` shots were taken before the door's leaf changed to plain walnut, so
+  `wsWOOL-web-backwall-after-unbaked.jpg` shows the earlier wood-texture door (the native one is current).
 - Period-art-director notes not acted on (all optional): give the heat-lamp bulbs a warm glow after the
   bake; lane 1's box sits in front of the APPAREL band from the hall; the dark slab beside each register
   (the shared kit's register, not new) could read as a modern screen.
@@ -89,7 +89,7 @@ made without Steven. Not merged, not baked, not published. Design notes: `design
 - Back wall: `wsWOOL-backwall-{before,after}`, `-backwall-2-`, `-backwall-door-passthrough-close-after`,
   `-kitchen-from-store-after`.
 - Kiosk: `wsWOOL-kiosk-{before,after}`, `-kiosk-from-court-`.
-- In the web build: `wsWOOL-web-{front,front-left,counter-end,kiosk}-after`.
+- In the web build: `wsWOOL-web-{front,front-left,counter-end,backwall,kiosk}-after`.
 
 ## Open for Steven
 1. Curve moved back, or cut off square?
