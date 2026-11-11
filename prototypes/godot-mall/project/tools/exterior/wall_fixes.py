@@ -69,7 +69,12 @@ FILLS += [
     # blank wing wall in line with the pavilion's front from the pavilion to the service lane
     dict(rect=[-154, 92, -146, 110], owner="", name="LINK"),
     dict(rect=[-146, 92, -134, 112], owner="", name="PAVILION"),
-    dict(rect=[-134, 100, -42, 118], owner="", name=""),
+    # EXT-DOCKS (Nov 11 2026; Steven, Demo 53: "the brick wall should have an opening around where the red
+    # line is ... Dillard's truck loading area was behind the area where the wall is, not in front"; 4490
+    # f017-f027): the wing wall stops at x -52 (was -42). East of it a court 10 m wide and 18 m deep opens
+    # behind the wall's line, 14 m with the service lane between the wing block and Dillard's (measured 14 m
+    # off f026); the dock stands on its back wall (z 100), tools/exterior/docks.gd
+    dict(rect=[-134, 100, -52, 118], owner="", name=""),
     # #7 Dillard's: 87 x 58 m, flush with the facade, the south face (the gallery and the portal) at
     # z 138. CHANGED from §5: its west face stays at x -38 north of z 118 so the 4 m service lane
     # between the wing's back (x -42) and Dillard's (4490 f006-028: doors 3026-3029, the lane to the
