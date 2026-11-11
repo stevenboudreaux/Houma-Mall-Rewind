@@ -279,6 +279,12 @@ def main(src, out_path):
         for ty in range(int(r[1] / S + OY2), int(r[3] / S + OY2)):
             for tx in range(int(r[0] / S + OX2), int(r[2] / S + OX2)):
                 walk[ty][tx] = "1"
+    # EXT-ENTRANCES-BUILD (Nov 11 2026): the main entrance's porch, the recess behind the tower (wall_fixes.PORCH)
+    pr = getattr(WF, "PORCH", None)
+    if pr:
+        for ty in range(int(pr[1] / S + OY2), int(pr[3] / S + OY2)):
+            for tx in range(int(pr[0] / S + OX2), int(pr[2] / S + OX2)):
+                walk[ty][tx] = "1"
     walk = ["".join(r) for r in walk]
     standalone = [dict(name=sa["name"], rect=sa["rect"]) for sa in WF.STANDALONE]
     # EXT-LOT (Nov 9 2026, Steven, Demo 53: "Sears Hardware in 1995, Unitech(?) today"): the entrance he drew
@@ -303,11 +309,16 @@ def main(src, out_path):
         d.update(a=a, b=b, mid=mid, depth=dep, width=abs(b[0] - a[0]) + abs(b[1] - a[1]),
                  out=[mid[0] - n[0] * (dep + 2.2), mid[1] - n[1] * (dep + 2.2)])
 
+    # EXT-ENTRANCES-BUILD: a door whose outside spot is not `depth` out from the hall edge (wall_fixes.DOOR_OUT)
+    for d in doors:
+        if d["store"] in getattr(WF, "DOOR_OUT", {}):
+            d["out"] = list(WF.DOOR_OUT[d["store"]])
+
     xs = [t[0] for t in comps[main_k]]; ys = [t[1] for t in comps[main_k]]
     bounds = [wx(min(xs)), wz(min(ys)), wx(max(xs) + 1), wz(max(ys) + 1)]
     json.dump(dict(scale=S, origin=[OX2, OY2], bounds=bounds, map=[wx(-GW), wz(-GN), wx(W + G["east"]), wz(H + G["south"])], segments=segments, roofs=roofs,
                    doors=doors, standalone=standalone, walk=walk,
-                   bay=WF.BAY, door_spots=WF.DOOR_SPOTS), open(out_path, "w"), indent=1)
+                   bay=WF.BAY, door_spots=WF.DOOR_SPOTS, porch=getattr(WF, "PORCH", [])), open(out_path, "w"), indent=1)
     print("segments", len(segments), "roofs", len(roofs), "doors", len(doors), "standalone", standalone, "bounds", bounds)
     for dr in doors:
         print(" door", dr["store"], dr["kind"], "wing", dr["wing"], dr["zone"], "out", dr["out"], "in", dr["inside"], "yaw_in", round(dr["yaw_in"]))
