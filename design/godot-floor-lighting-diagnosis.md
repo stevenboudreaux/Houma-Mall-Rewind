@@ -1,6 +1,7 @@
 # Godot mall: the floor patches that move with the camera (workstream FLOOR-LIGHT, Nov 9 2026)
 
 A diagnosis spike. Nothing in the game changed; the fix is for the director to schedule in Wave B.
+**Nov 11 2026: the fix is in, on `ws/floor-fix` (§7 "Fix shipped").**
 
 **The two causes**
 
@@ -204,3 +205,71 @@ skylight pools must stay where they are.
    find out first, or H2 will keep showing the sky.
 3. These shots are software-rendered (SwiftShader / llvmpipe). On a real GPU the probe cube is the same size,
    so expect the same edges, perhaps a little crisper.
+
+## 7. Fix shipped (workstream FLOOR-FIX, Nov 11 2026, branch `ws/floor-fix`)
+
+**What changed.** The §5 recommendation, nothing more: the floor's specular share is 0.
+
+```
+scripts/mall_runtime.gd   @export var floor_spec := 0.25   ->  := 0.0
+scripts/mall_runtime.gd   uniform float floor_spec = 0.25; ->  = 0.0;    (FLOOR shader)
+```
+
+`?floorspec=0.25` on the web still gives the Demo 51-53 look, for comparison. Roughness (0.35), the floor
+mirror (strength 0.6), the probes, the Environment, the lights and the lightmaps are untouched.
+
+**Where it lives.** In the runtime floor shader that `mall_runtime.gd` puts on every `floorz_*` surface when a
+wing loads. It is shared by every wing and both years, so **no wing rebuild and no rebake**; the next export
+carries it. No `gen/` file or `wing*.tscn` changed (none stores `floor_spec`).
+
+**What the floor looks like now.** Matte tile with the mirror's faint reflection of the hall on top (shop
+fronts, ceiling lights; strongest on the dark tiles and at shallow angles). The mirror is a real reflection of
+the room, so it stays put on the things it reflects; it does not slide. The baked skylight pools stay where
+they are. The floor is a little darker overall, because the specular share was adding light: about 4-11 grey
+levels (of 255) less on the floor part of the frame at the two spots.
+
+**Checked** (all with the Demo 53 day lightmaps from `godot-build`; software renderers, see gaps):
+
+| | Before (floor_spec 0.25) | After (0) |
+|---|---|---|
+| (a) H4 at Woolworth toward court C2, grey-floor pass, hard-edge score x1000 over 8 steps of 0.5 m, 1990s | 7.7, 90.5, 115.5, 168.9, 171.4, 140.2, 41.5, 132.7 | 7.7, 6.0, 2.1, 4.0, 3.4, 4.2, 4.1, 5.2 |
+| same, 2026 | 3.7, 99.4, 122.0, 206.1, 192.1, 151.8, 44.2, 154.9 | 3.7, 2.9, 3.2, 3.3, 3.2, 2.2, 5.3, 6.2 |
+| (b) H2 Kay-Bee / Sound Shop / Lane Bryant, grey-floor pass | a pale glow on the far floor in every frame, the same place on screen | gone; only the baked skylight pool, which grows as you walk up to it |
+
+(The score is the share of pixels in the bottom third of the frame with a step of 4 or more grey levels to a
+neighbour; the few that remain after are the floor's edge against the shop fronts and shoppers' feet.)
+
+- **Local** (Godot 4.7.2, `opengl3` under xvfb, `tools/qa/floor_walk.gd`): the game as it ships (Player,
+  Runtime, shoppers, noon), a frame every 0.5 m, 8 frames per walk, each walk shot at 0.25 and at 0 in the same
+  load, once with the real floor and once with it painted grey. Strips (every second frame):
+  `production/qa/evidence/wsFLOORFIX-a-woolworth-court-{1990s,2026}-local-baked.jpg`,
+  `wsFLOORFIX-b-soundshop-corridor-{1990s,2026}-local-baked.jpg`.
+- **Web** (an export of this branch, headless Chromium / SwiftShader, `tools/qa/floor_webwalk.py`): the same two
+  start poses, hold W 0.6 s between frames, `?floorspec=0.25` against the build's default. Strips:
+  `wsFLOORFIX-{a-woolworth-court,b-soundshop-corridor}-{1990s,2026}-web.jpg`. 0 console errors in all 8 loads.
+- **Other interior wings**, one pose each, before and after: wing 2 (court C3 both years, hall H5), wing 4
+  (Sears), wing 5 (Dillard's), wing 6 (cinema lobby): `wsFLOORFIX-other-wings-local-baked.jpg`. Wing 2's mall
+  floors change the same way as wing 1's. The rooms' own floors (Sears, Dillard's, the cinema carpet) are other
+  materials and did not change (frame difference 0.0-0.6 grey levels, which is the shoppers moving).
+
+**Web fps cost: none measured.** Mean frame time over each web walk, before / after: 1990s (a) 2506 / 2521 ms,
+(b) 2126 / 2114 ms; 2026 (a) 1340 / 1315 ms, (b) 1091 / 1054 ms. That is -3 % to +0.6 %, inside the noise of
+SwiftShader on a 2-CPU box; it is one uniform's value, no pass added or removed.
+
+**Sheen: what was kept, and options left for Steven** (taste; nothing decided here). The brief asked for a
+soft sheen that does not move with the view if one could be had, else matte. The mirror is that sheen and is
+unchanged. If the floor now reads too flat on a real screen:
+1. raise the mirror (`strength` 0.6 on the Runtime node; no rebake, no rebuild). It reflects the real room, so
+   it cannot slide, but more of it shows the shop fronts upside down in the tile;
+2. `?floorspec=0.1`: a weaker version of the old gloss. The patches come back in proportion, so this is a
+   trade, not a fix;
+3. leave it matte (as shipped here).
+
+**Gaps.**
+- Software rendering only (llvmpipe, SwiftShader). Not seen on a real GPU or an iPhone; §6 Q3 still applies.
+- Steven's clip is still not in the repo or on `refs`, so the walks follow the brief's description of it.
+- Day bake only (the clock is day-only for now, `scripts/lighting.json`). The night Environment has no sky
+  glow to reflect, and the probes are the same nodes, so the same fix covers it; not shot.
+- The rooms that are their own wings (4-6) have floors that are not `floorz_*`. One pose each showed nothing
+  wrong; they were not walked. If a patch moves in Sears or Dillard's, that is a separate material.
+- §6 Q2 (why H2's floor gets nothing from its hall probe) is moot at 0 and was not chased.

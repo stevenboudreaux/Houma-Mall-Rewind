@@ -169,4 +169,6 @@ inside mesh's UV2, so the Demo 51 lightmaps no longer fit those scenes):
 ## Steven's decisions (Nov 4, 2026, evening)
 - Bake profile: **nov4** (sharpest). Keep it active.
 - Floor reflection / `floor_spec`: **he will test first** (`?refl=0` on Demo 51, `?floorspec=0` on the next build). Default stays 0.25 until he answers.
+  **Nov 11 2026 (FLOOR-FIX): the default is now 0**, by the director's brief after Steven saw the patches move
+  (`design/godot-floor-lighting-diagnosis.md` "Fix shipped"). `?floorspec=0.25` is the old look.
 - The 1995 main entrance hall looks as bad as 2026: fix both years.
