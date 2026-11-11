@@ -122,7 +122,7 @@ A single-sided totem: the backs are plain cream (IMG_4484 f068).
 |---|---|---|---|---|---|
 | 1 | H2 north end, just south of the Sears / Lynn's court: (−3.0, −82.5) | north, toward the court | filmed | guess: same spot | IMG_4408 50–72 s; IMG_4413 f010 (from inside Lynn's); back IMG_4484 f068 |
 | 2 | Top of H6 where it meets the JCPenney court, behind the kiddie carousel: (−142.0, 71.5) | south, down H6 | filmed | guess: same spot | IMG_4461 8–16 s; back IMG_4459 f006 |
-| 3 | H3, the main entrance hall: (26.5, 3.2) | east, toward the doors | — | guess | none |
+| 3 | H3, the main entrance hall, by Mitchell's Formal Wear and Laser Copies, **in the centre of the corridor**: (26.5, 0.0) | east, down the corridor toward the doors | — | Steven, Nov 11 (centre); the spot along the hall is a guess | `wsWOOL-kiosk-*-unbaked.jpg` |
 | 4 | C3, the Dillard's court: (−15.0, 69.5) | north, up H4 | — | guess | none |
 
 - **Wings:** kiosks 1 and 3 are in Wing 1; kiosks 2 and 4 are in Wing 2.
@@ -131,6 +131,18 @@ A single-sided totem: the backs are plain cream (IMG_4484 f068).
   Dillard's court, where a shopper arriving would look for one. Spots 3 and 4 are guesses.
 - **Placement:** the x of kiosk 1 is from t050_007 (it stands east of the hall's centre line,
   toward the charcoal unit). The z is from IMG_4484 f068, close to the court's threshold band.
+- **Kiosk 3 moved (Steven's Demo 53 walk, Nov 11 2026, WOOL-FRONT):** it stood at (26.5, 3.2), against the south
+  storefront line (the left as you look toward the Woolworth court), on top of Optical Outlet's jump spot. It now
+  stands on the hall's centre line (z 0), still facing east down the corridor toward the main doors
+  (a call: "facing down the corridor" fits either way; east keeps its face toward shoppers coming in).
+  - It exists only in the 1990s (no kiosk 3 in 2026), so only wing 1's 1990s scene changes. Built dynamic: no
+    rebake for the kiosk itself.
+  - The hall's palm and benches (x 17.4–20.6) stay: the palm is exactly 7.5 m from the kiosk, and the rule is
+    "closer than 7.5 m".
+  - `data/directory_twins.json` (the time-travel trip's kiosk list) carries the same position, so the trip from this
+    kiosk still starts; `tools/qa/menu_unit_test.gd` follows.
+  - Checks: `ui_test.gd -- wing1.tscn mitch 26.5,0` (new third argument: open the kiosk standing at x,z; it must be
+    there, with free floor in front and in reach), `kiosk_test.gd` both years.
 - Benches and planters keep 7.5 m away from each kiosk (the build's `avoid` list).
 
 ## Reading the directory (scripts/directory_ui.gd)
@@ -232,7 +244,8 @@ goes with the store, not the spot. Differences:
   - `make_data.gd`: writes `map.json` for the painter.
   - `paint_dir.py`: the panels and their click areas, and `fonts/` (Liberation Sans, OFL).
 - **Tests:**
-  - `ui_test.gd`: a native headless jump test, e.g. `-- wing1.tscn dil` → Dillard's in Wing 2.
+  - `ui_test.gd`: a native headless jump test, e.g. `-- wing1.tscn dil` → Dillard's in Wing 2; `-- wing1.tscn mitch 26.5,0`
+    opens the kiosk standing at that spot.
   - `kiosk_test.gd`: the whole reader natively (open, pages, tap, confirm, jump, year switch).
   - `dirtest.js`: the web shots and the jumps (Node Playwright). Out of date since option B.
 - **Runtime:** `scripts/directory_kiosk.gd`, `scripts/directory_ui.gd`, `scripts/hidpi.gd`, and

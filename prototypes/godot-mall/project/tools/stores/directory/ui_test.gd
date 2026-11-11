@@ -4,6 +4,7 @@
 ## and prints where the player stands before and after (a jump into the other wing changes the scene).
 ## The whole reader, touch and the year switch: tools/stores/directory/kiosk_test.gd.
 ##   godot --headless --path . --script res://tools/stores/directory/ui_test.gd -- wing1.tscn dil
+##   ... -- wing1.tscn mitch 26.5,0   opens the kiosk standing at x,z instead of the first one
 ## Prints UI TEST OK, or UI TEST FAILED.
 extends SceneTree
 
@@ -52,7 +53,23 @@ func _process(_dt):
 			if ks.is_empty():
 				_fail("no kiosk"); print("UI TEST FAILED"); quit(1); return true
 			print("before: wing ", pl.wing, " year ", pl.year, " pos ", pl.position)
-			ks[0].interact(pl)
+			# a third argument "x,z" picks the kiosk standing there (WOOL-FRONT, Nov 11 2026: the main
+			# entrance hall's kiosk at 26.5,0): it must stand within 0.05 m of it, be free floor 1.2 m out
+			# from its face, and be in reach from there
+			var kk = ks[0]
+			if args.size() > 2:
+				var xz = args[2].split(",")
+				var at := Vector3(float(xz[0]), 0, float(xz[1]))
+				for k in ks:
+					if k.position.distance_to(at) < kk.position.distance_to(at):
+						kk = k
+				var f: Vector2 = kk.get_meta("face", Vector2(0, 1))
+				var front: Vector3 = kk.position + Vector3(f.x, 0, f.y) * 1.2
+				print("kiosk at ", kk.position, " face ", f, " free in front ", pl._free(front.x, front.z), " in reach ", kk.in_reach(front))
+				if kk.position.distance_to(at) > 0.05 or not pl._free(front.x, front.z) or not kk.in_reach(front):
+					_fail("the kiosk at %s" % args[2])
+				pl.position = front
+			kk.interact(pl)
 			_next()
 		1:
 			if _wait(2600):
