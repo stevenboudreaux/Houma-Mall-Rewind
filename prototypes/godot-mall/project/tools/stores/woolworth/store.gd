@@ -294,12 +294,16 @@ static func kitchen_wall(b, G, S, a, t, n):
 	var P2 = func(u, y, d): return P(a, t, n, u, y, d)
 	var dB = R_D - 0.12
 	var o = P2.call(0.0, 0.0, dB)      # the wall's face; r = t along it, f = n out into the room
-	# --- the door: a wood leaf in a dark casing, a small dark window, steel kick and push plates
+	# --- the door: a walnut laminate leaf in a dark casing, a small dark window, steel kick and push plates
 	b.cur_color = Color("#6a4424")
 	for sx in [[KD_U0 - 0.08, 0.08, 0.0, KD_H + 0.08], [KD_U1, 0.08, 0.0, KD_H + 0.08], [KD_U0, KD_U1 - KD_U0, KD_H, 0.08]]:
 		K.lbox(b, G, "vcolor", o, t, n, sx[0], sx[2], 0.0, sx[1], sx[3], 0.06, ["-y"])
 	b.cur_color = Color.WHITE
-	K.lbox(b, G, "wl_wood", o, t, n, KD_U0, 0.0, 0.0, KD_U1 - KD_U0, KD_H, 0.04, ["-y"])
+	# a plain walnut laminate leaf in one piece (period-art-director, Nov 11: the wood texture's
+	# grain read as a loud zigzag with a seam)
+	b.cur_color = Color("#7a5230")
+	K.lbox(b, G, "vcolor", o, t, n, KD_U0, 0.0, 0.0, KD_U1 - KD_U0, KD_H, 0.04, ["-y"])
+	b.cur_color = Color.WHITE
 	K.lbox(b, G, "wl_steel", o, t, n, KD_U0 + 0.03, 0.02, 0.04, KD_U1 - KD_U0 - 0.06, 0.26, 0.004, ["-y"])
 	K.lbox(b, G, "wl_steel", o, t, n, KD_U0 + 0.08, 1.0, 0.04, 0.1, 0.32, 0.004)
 	K.lbox(b, G, "wl_steel", o, t, n, KD_U0 + 0.3, 1.38, 0.04, 0.3, 0.3, 0.006)
