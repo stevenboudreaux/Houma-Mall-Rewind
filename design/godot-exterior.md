@@ -6,6 +6,8 @@
 > **Since Nov 8, 2026 (Workstream LOT, branch `ws/lot`) the lot is jointed concrete with fine joints, the trees, shrubs and planters
 > are `tools/exterior/flora.gd`'s and the bank pad is 7,758 SF:** see "Workstream LOT" near the end; it wins
 > over "The lot" below.
+> **Since Nov 11, 2026 (Workstream EXT-DOCKS, branch `ws/ext-docks`) Dillard's dock is in a court behind the wing wall
+> (the wall ends at x -52) and JCPenney's docks are on its east face:** see "Workstream EXT-DOCKS" near the end.
 > **Since Nov 8, 2026 (Workstream EXT-LAYOUT, branch `ws/ext-layout`) the exit s41 stands at the end of a channel,
 > the cinema box's west face is x -98 and Lynn's x -84:** see "Nov 8 refinements" near the end.
 
@@ -788,10 +790,89 @@ left. If that bites, the Dillard's atlas can go to 512 (it is mostly flat black 
   replace are gone. Then `tools/capture_standin.sh 3` and `3 2026` if the door pictures show the signs.
 - The new `gen/w3/exs_*.res`, `gen/w3y26/exs_*.res` come from the build (not committed here).
 
+## Workstream EXT-DOCKS (Nov 11, 2026): the two loading docks, both years
+
+Branch `ws/ext-docks` from `int-54`. Steven's Demo 53 notes; the frame study with sheets, annotated frames and
+measurements is `design/exterior/docks-2026-11-11.md`. Evidence `production/qa/evidence/wsDOCK-*.jpg` (all
+**unbaked**). Code: `tools/exterior/docks.gd` (new, everything below), `wall_fixes.py` (one fill), `exterior.gd`
+(small hunks marked EXT-DOCKS: the `DK` preload, the `dock_green` material, `skin` / `shell` for the court's walls,
+the two old docks replaced by `DK.dillards(b)` / `DK.jcpenney(b)`, no walk / curb / fire lane on the dock faces,
+one keep-out). `exterior_2026.gd`, the lot markings, the signs, the entrances and Unitech are untouched.
+
+### A. Dillard's: the dock is behind the wing wall (4490 f013-f027)
+Steven: "The brick wall should have an opening around where the red line is ... Dillard's truck loading area was
+behind the area where the wall is, not in front ... The truck, green rectangle on ground and the loading bay need
+to push back." The frames agree: the dock stands deep in a court between the wing block and Dillard's west face.
+| What | Was | Now |
+|---|---|---|
+| Wing wall (z 118) | ran to x -42 | **stops at x -52** (`wall_fixes.py` fill `-134, 100, -52, 118`); the opening runs from there to Dillard's west face (x -38): 14 m, as measured off f026 |
+| Court | none | x -52..-42, z 100..118 (10 x 18 m) plus the 4 m service lane beside it; its walls are the wing wall's (5 m tan brick; 2026 the two-tone EIFS) |
+| Dock | a raised dock, canopy and two doors on Dillard's west face at z 121..133, in front of the wall | on the court's **back wall** (z 100): a low flat canopy with a brown fascia (underside 4.3 m, 3.6 m out), two positions with roll-ups in black seals (sill 1.2 m), yellow bollards at bay 2 |
+| Trailer | parked east-west in front of the wall | backed into bay 1, nose to the lot (z 100.5..113.5) |
+| Green box | a teal box at (-58, 132) | the roll-off (`bl_ex_dumpster`) on a pad left of the trailer, under the canopy's edge |
+| New | | the wood-plank enclosure on a red curb at the mouth's west side (4 x 4 m, chain-link gate toward the dock); a double door in the wing block's east wall; Dillard's west face from z 100 to its SW corner gets the **white base to 4.8 m**, two white man doors, the FDC and hose valves, wall packs, a chain-link panel by the dock |
+The service lane (doors 3026-3029) stays open: it is reached through the court (Steven's Nov 4 decision kept).
+
+### B. JCPenney: the dock is on the side face (4486 f102-f110)
+Steven: "Move truck loading area to side of building (should be a tree in between this area and the big tank to
+the left; confirm in video walkthrough)." Confirmed: f105 shows the corner with the sign face to the right and the
+dock face to the left; f106-f108 the docks on the east face at the NE corner.
+| What | Was | Now |
+|---|---|---|
+| Docks 1-2 | north face (z -14), x -172..-158, under a red canopy | **east face** (x -154), z -13..-3.4: door 2 centred 3.0 m and door 1 6.9 m south of the NE corner, white roll-ups 2.4 x 2.6 m, sill 1.2 m, black seals with yellow guides, red numerals; the red corrugated canopy (0.9 m fascia, 2.5 m out, 9.6 m long); the grey concrete pier at the corner |
+| Raised dock, steps | a 2 m platform | a 1.5 m platform, the landing and five concrete steps east with pipe rails, a white man door, an electrical box |
+| Compactor | a box at (-176, -17) on the north face | the head on the wall south of the steps (z -2.7..-0.1), the roll-off (`bl_ex_dumpster`) pointing east on its pad, a chain-link fence behind |
+| Rail | a yellow pipe on the platform | the galvanized two-rail on a curb along the apron's north edge, 12 m |
+| Tree | none | a curbed bed (x -151..-143, z -22.6..-15.4) with a **live oak** and four clipped hollies, between the apron and the tank yard |
+The north face keeps the "JCPenney" letters and the Package Pick-up; nothing else is on it. No customer walk, curb
+or fire lane on the east face (it had a fire lane); stalls keep out of x -156..-134, z -26..6.
+
+### C. The green boxes (`bl_ex_dumpster`, `tools/blender/assets_src/`)
+A steel roll-off compactor container, 6.4 x 2.3 x 2.1 m, **700 triangles, one 1024 atlas**: vertical channel ribs
+between a top and a bottom rail, a sloped nose on legs with the hook bar, the door end with cross ribs and a ratchet
+bar, skid rails on rollers, two hinged lids, chipped paint, rust low down, stains from the lid seams. Placed by
+`docks.gd dumpster()` on a 6 cm concrete pad as a dynamic mesh (like the 3D signs: no lightmap of its own). Only the
+baked albedo ships in the game (the model's ORM and normal maps are not referenced by the scene). No lettering.
+
+### Calls and guesses
+- **Steven's note vs the footage:** they agree at both docks. One reading to flag: "an opening in the wall" is built
+  as the court's whole mouth (the wall ends at x -52 and the next 14 m to Dillard's is open), because that is what
+  f026 shows; there is no second piece of wall east of the opening.
+- **Steven's note wins over the footage:** the containers stay **green** in both years (he said keep them); the
+  filmed ones are tan today.
+- GUESS: the court's depth (18 m; 18-22 m by perspective); the court as 10 m of cut wing plus the lane (the real
+  lane is north of the dock and the dock canopy closes it; here the lane stays open beside the dock, Nov 4 decision);
+  the door in the wing block's wall and the enclosure's exact size; everything in 1990s form (no period picture of
+  either dock: built as filmed in both years); the container's lids; JCPenney's parapet height on the dock face
+  (9.5 m as the rest of the rear, the footage reads ~7.5 m: not changed, the shell is not this job's).
+- Known gaps: JCPenney's truck apron is **flat** (the filmed one is a shallow well below the walk; the rail and
+  curb are there, the drop is not); the apron and the court have the lot's concrete, not their own darker slab;
+  the benches at Dillard's base and the dome camera at JCPenney's corner are not built; the enclosure's planks are
+  the dark fence wood (the filmed ones are weathered grey).
+
+### Tests (cloud, unbaked)
+- `--wing=3` and `--wing=3 --year=2026`: BUILD OK.
+- `tools/qa/ext_door_test.gd`, both years: PASS.
+- `tools/qa/ext_docks_test.gd` (new, headless, both years): PASS. The wing wall cannot be walked through anywhere
+  on x -134..-52; the opening x -47..-39 is clear; the court and the service lane are reached on foot from the lot;
+  the old dock / trailer / box spots are open lot; JCPenney's apron is reached from the staff lot; docks, compactor,
+  containers, rail, enclosure and tree bed block.
+- `movetest.py` wing 3 (export `.scratch/builds/docks`, all wings so the prefetch finds its packs), 1990s and 2026:
+  4 cameras, **0 errors**; the touch walk goes through the opening (z 126 -> 120). `wsDOCK-web-movetest-unbaked.jpg`.
+- Packs (this box, no lightmaps): `w3` 102,116,404 -> 102,332,068 B (+0.22 MB), `w3y26` 87,074,576 -> 87,294,372 B
+  (+0.22 MB). **Watch `w3y26`:** EXT-SIGNS measured it at 103.8 MB with its lightmap against GitHub's 104.9 MB
+  file limit; this adds ~0.2 MB.
+
+### For the Mac (integration)
+1. Rebuild wing 3, both years (`gen/w3`, `gen/w3y26`, `wing3.tscn`, `wing3_2026.tscn` are not committed here), then
+   rebake **`wing3` and `wing3_2026`**: the wing wall, the court, both dock faces and the walks changed.
+2. `tools/capture_standin.sh 3` and `3 2026` as after any wing-3 change (no door moved; s2s's side picture may show the flag island and the court's mouth).
+3. No other wing changes.
+
 ## Known gaps / next
 - Period photos: the main entrance, the south entrance and Dillard's are all re-skinned; the
   1995 forms are placeholders until Steven finds photos (the report's open question).
-- Not filmed: Dillard's north dock, JCPenney's dock face, the Armour Dr edge (plain here).
+- Not filmed: the Armour Dr edge (plain here). (Both docks are filmed: EXT-DOCKS.)
 - JCPenney's red south arcade, maroon west fascia and coral Package Pick-up fascia are today's
   (2012-era) treatment but still stand in the 1995 build too (open question for Steven).
 - Lot furniture still sparse: no wheel stops.

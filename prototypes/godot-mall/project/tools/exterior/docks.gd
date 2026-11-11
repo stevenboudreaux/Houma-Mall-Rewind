@@ -62,6 +62,15 @@ static func dumpster(b, at: Vector3, nose: Vector3, label: String):
 		var mis = root.find_children("*", "MeshInstance3D", true, false)
 		if not mis.is_empty():
 			_mesh = mis[0].mesh.duplicate()
+			# one 1024 texture in the game: only the baked albedo (AO folded in) ships; the model's ORM and normal
+			# maps stay out of wing 3's packs (the pack is near GitHub's 100 MiB file limit, EXT-SIGNS)
+			for i in _mesh.get_surface_count():
+				var src = _mesh.surface_get_material(i)
+				var m = StandardMaterial3D.new()
+				m.resource_name = "ex_dumpster"
+				m.albedo_texture = src.albedo_texture if src is BaseMaterial3D else null
+				m.roughness = 0.62
+				_mesh.surface_set_material(i, m)
 		root.free()
 	if _mesh == null or b.mall == null:
 		# the model is missing: a plain green box so the build still says where it stands
