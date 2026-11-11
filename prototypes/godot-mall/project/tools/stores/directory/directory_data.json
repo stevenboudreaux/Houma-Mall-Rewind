@@ -110,7 +110,7 @@
   "kiosks": [
    {"x": -3.0, "z": -82.5, "face": [0, -1], "where": "H2 north end, by the Sears court (same spot as 2026; guess for 1995)"},
    {"x": -142.0, "z": 71.5, "face": [0, 1], "where": "top of H6 by the JCPenney court, facing the south exit (same spot as 2026; guess for 1995)"},
-   {"x": 26.5, "z": 3.2, "face": [1, 0], "where": "H3 main entrance hall, facing the doors (guess)"},
+   {"x": 26.5, "z": 0.0, "face": [1, 0], "where": "H3 main entrance hall by Mitchell's Formal Wear and Laser Copies, in the centre of the corridor, facing down it toward the doors (Steven, Nov 11 2026, WOOL-FRONT: moved from z 3.2 by the south storefronts; the spot along the hall is still a guess)"},
    {"x": -15.0, "z": 69.5, "face": [0, -1], "where": "C3 Dillard's court, facing north up H4 (guess)"}
   ]
  },

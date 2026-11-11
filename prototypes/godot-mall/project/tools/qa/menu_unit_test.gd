@@ -91,7 +91,7 @@ func _initialize() -> void:
 	_check(tw.found and tw.known and int(tw.wing) == 2 and is_equal_approx(tw.x, -142.0), "the JCPenney court kiosk's twin in 2026, wing 2")
 	tw = Trip.twin(2026, -3.0, -82.5)
 	_check(tw.found and tw.known and int(tw.wing) == 1, "the H2 kiosk's twin in 1995, wing 1")
-	tw = Trip.twin(1995, 26.5, 3.2)
+	tw = Trip.twin(1995, 26.5, 0.0)
 	_check(tw.found and not tw.known, "the main entrance kiosk (1995 only) has no twin: the same spot, a guess")
 	var ld: Dictionary = Trip.landing(Trip.twin(1995, -142.0, 71.5), -142.0, 71.5, -141.7, 73.1, 0.3)
 	_check(is_equal_approx(ld.x, -141.7) and is_equal_approx(ld.z, 73.1) and is_equal_approx(ld.yaw, 0.3), "a twin facing the same way: the same spot and facing")
