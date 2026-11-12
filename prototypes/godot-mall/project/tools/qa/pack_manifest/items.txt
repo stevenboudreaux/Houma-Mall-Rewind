@@ -114,6 +114,10 @@ models/bl_dir_finial/bl_dir_finial.glb
 models/bl_dir_finial/bl_dir_finial_albedo.png
 models/bl_dir_finial/bl_dir_finial_normal.png
 models/bl_dir_finial/bl_dir_finial_orm.png
+models/bl_ex_dumpster/bl_ex_dumpster.glb
+models/bl_ex_dumpster/bl_ex_dumpster_albedo.png
+models/bl_ex_dumpster/bl_ex_dumpster_normal.png
+models/bl_ex_dumpster/bl_ex_dumpster_orm.png
 models/bl_gac_choc_chip_cookie/bl_gac_choc_chip_cookie.glb
 models/bl_gac_choc_chip_cookie/bl_gac_choc_chip_cookie_albedo.png
 models/bl_gac_choc_chip_cookie/bl_gac_choc_chip_cookie_icon.png

@@ -366,6 +366,7 @@ gen/w1/wl10_merch.res
 gen/w1/wl10_small.res
 gen/w1/wl11_fix.res
 gen/w1/wl11_merch.res
+gen/w1/wl_kitchen.res
 gen/w1/wl_rest.res
 gen/w1/wl_rest_small.res
 gen/w1/wl_shell.res
