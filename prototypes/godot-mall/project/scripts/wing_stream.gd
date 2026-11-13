@@ -174,7 +174,7 @@ func _process(dt: float) -> void:
 		if st == "" and now - _t_start > _num("start_delay_s", 2.0) and _away(b) < _num("near_m", 60.0):
 			_start(to, b)
 		elif st == "in":
-			if d < -_num("handoff_past_m", 1.0) and _in_span(b):
+			if d < -_num("handoff_past_m", 1.0) and _stands_in(to):
 				_handoff.call_deferred(to)
 				_busy = true
 				return
@@ -191,9 +191,17 @@ func _process(dt: float) -> void:
 			"load": _step_load(int(w))
 			"enter": _step_enter(int(w))
 
-func _in_span(b: Dictionary) -> bool:
-	var ln: Array = b.line
-	return player.position.x > float(ln[0]) - 1.0 and player.position.x < float(ln[2]) + 1.0
+## Whether the floor under the player is wing w's own and not the home wing's (their walk grids): past
+## a border line alone is not enough, a store of the home wing can reach past the line beside it.
+func _stands_in(w: int) -> bool:
+	return _on_grid(w, player.position) and not _on_grid(home_wing, player.position)
+
+func _on_grid(w: int, p: Vector3) -> bool:
+	var wj: Dictionary = wing_info(w)
+	var rows: Array = wj.get("walk", [])
+	var o: Array = wj.get("origin", [148.0, 100.0])
+	var tx := int(floor(p.x / 2.0 + float(o[0]))); var ty := int(floor(p.z / 2.0 + float(o[1])))
+	return ty >= 0 and ty < rows.size() and tx >= 0 and tx < str(rows[ty]).length() and str(rows[ty])[tx] == "1"
 
 # ------------------------------------------------------------------ 1-2: fetch and mount
 func _start(w: int, b: Dictionary) -> void:
@@ -406,9 +414,7 @@ func _surf_counts(m: Mesh) -> Dictionary:
 ## Which mall wing's floor a point stands over (its walk grid), or 0.
 func _owner_of(p: Vector3) -> int:
 	for w in [1, 2]:
-		var rows: Array = wing_info(w).get("walk", [])
-		var tx := int(floor(p.x / 2.0 + 148.0)); var ty := int(floor(p.z / 2.0 + 100.0))
-		if ty >= 0 and ty < rows.size() and tx >= 0 and tx < str(rows[ty]).length() and str(rows[ty])[tx] == "1":
+		if _on_grid(w, p):
 			return w
 	return 0
 

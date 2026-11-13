@@ -1123,7 +1123,9 @@ window.mallPrefetchOther = function () {
 	}
 	caches.keys().then((ks) => Promise.all(ks.filter((k) => k.indexOf('mall-wings-') === 0 && k !== MALL_CACHE).map((k) => caches.delete(k))))
 		.then(() => caches.open(MALL_CACHE))
-		.then((c) => wanted.reduce((p, u) => p.then(() => c.match(u)).then((r) => (r ? null : c.add(u))), Promise.resolve()))
+		// SEAMLESS: a pack the streamer is already fetching (window.mallStream) is not fetched a second time, and one
+		// being fetched here is waited for there (window.__mallPre)
+		.then((c) => wanted.reduce((p, u) => p.then(() => c.match(u)).then((r) => ((r || (window.__mallPre && window.__mallPre[u])) ? null : (window.__mallPre[u] = c.add(u)))), Promise.resolve()))
 		.catch((e) => console.warn('could not keep the next files for later:', e));
 };
 // the game calls this when you cross the seam (scripts/player.gd _cross)
@@ -1135,20 +1137,24 @@ window.mallGoWing = function (url) { if (window.mallVR.inSession) { window.mallV
 // ('fetching' meanwhile, 'error' when it could not be had: the old prompt and load still work then).
 window.__mallStream = {};
 window.__mallStreamMs = {};
+window.__mallPre = window.__mallPre || {};   // pack URL -> a fetch in flight (this streamer's, or the prefetch's)
 window.mallStream = function (w) {
 	if (window.__mallStream[w]) { return; }
 	window.__mallStream[w] = 'fetching';
 	const url = mallPackUrl(w);
 	const path = '/mall/w' + w + window.__mallYear + '.pck';
 	const t0 = performance.now();
-	fetch(url).then((r) => {
+	const before = window.__mallPre[url] || Promise.resolve();   // the prefetch may be half way through this file
+	const mine = before.catch(() => {}).then(() => fetch(url)).then((r) => {
 		if (!r.ok) { throw new Error('HTTP ' + r.status); }
 		if ('caches' in window) {
 			const copy = r.clone();
 			caches.open(MALL_CACHE).then((c) => c.match(url).then((m) => (m ? null : c.put(url, copy)))).catch(() => {});
 		}
 		return r.arrayBuffer();
-	}).then((buf) => {
+	});
+	window.__mallPre[url] = mine;
+	mine.then((buf) => {
 		window.__mallStreamMs[w] = { fetch: Math.round(performance.now() - t0), bytes: buf.byteLength };
 		const t1 = performance.now();
 		engine.copyToFS(path, buf);

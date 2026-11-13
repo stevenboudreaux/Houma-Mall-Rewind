@@ -45,3 +45,12 @@ Run the .gd tools with `godot --headless --path . --script res://tools/qa/<tool>
 - `pictures_publish_test.js` (Node): `window.mallPictures.publish` against a mocked GitHub contents API.
 - `pictures_pick_webtest.js [shot.png]` (Node + Playwright): the page's picture chooser (shrink to 1024 px JPEG, Cancel, Original picture).
 - `arcade_nes_webtest.js [evidence-dir]` (Node + Playwright): NES-only cabinets, `emu.html` served locally, GitHub and the emulator CDN mocked. `arcade_nes_shot.gd -- --id=pc.video.37 --out=…`: an NES cabinet, natively.
+
+- `stream_test.gd [-- --kind=mobile]` (SEAMLESS, Nov 13 2026; design/godot-wings.md "Seamless streaming"; headless): the
+  wing 1 / wing 2 seam with streaming on: the neighbour comes in, both wings' stand-ins of each other are hidden, the
+  handoff both ways (the prize counter and the Stockrooms change hands), and with `--kind=mobile` the unload far from
+  the seam. Prints the streamer's timings and `STREAM TEST OK`.
+- `stream_webtest.py <url-path> <out-prefix> [pack] ["wing cam"]` (web build, `?stream=1`): the same walk in the
+  export: no load screen, no page load, the address bar's `?wing=` follows, timings, memory (browser processes and
+  JS heap: before, neighbour in, after the handoff), 0 page errors; screenshots before / in / cross / after.
+  Serve the build folder itself on :8765. Prints `STREAM WEB OK`.

@@ -337,3 +337,27 @@ before; the shared packs are even byte-identical between the two (all their text
 (~205 MB per site). As a shared "start" pack they would ship once; but `scripts/npcs.gd` picks each map's
 crowd by which skins exist in its pack (the room wings and the outside leave three out), so the crowd lists
 would first have to move into data (`scripts/npcs.json`). Then wing 1 would be ~66 MB and each site ~370 MB.
+
+## Streaming a neighbour's pack (workstream SEAMLESS, Nov 13 2026)
+
+`design/godot-wings.md` "Seamless streaming": with `?stream=1` (or `data/stream.json` `enabled`) the page fetches the
+wing pack on the other side of a border while the game runs (`window.mallStream(w)`: Cache Storage first, then the
+network, kept in the cache) and the game mounts it beside the running wing's pack. Nothing about the build folder,
+the pack names or the upload changes. Two new files ship in every wing pack (`scripts/wing_stream.gd`,
+`data/stream.json`), so the first export after this needs `python3 tools/qa/packcontents.py write <builddir>`.
+
+**What the packs share (measured on the Demo 54 build, R2 `20261113-1915-df378f57`, 1990s, mobile = desktop):**
+
+| | MB |
+|---|---|
+| w1 + w2 + w4 + w5 + w6 as downloaded | 582.4 |
+| the same files counted once | 227.0 |
+| identical in all five (the cast's bodies and heads 71.7, shopper skins 3.1, animations 2.9, scripts and data) | 79.7 |
+| w2 that w1 does not already have | 64.3 |
+| w4 that w1 does not have / w5 that w2 does not have / w6 that w1 does not have | 11.3 / 12.5 / 0.1 |
+
+Only `project.binary` and `.godot/uid_cache.bin` differ in bytes between packs. A streamed neighbour is mounted
+whole today, so its duplicates are downloaded and held in the page's memory again (154 MB for wing 2 where 64 would
+do). The fix is a pack boundary change, **not made here** (options in
+`production/qa/evidence/wsSEAMLESS-findings.md`): a shared "common" pack like `items` for what every wing carries
+(`tools/shared_packs.json`), leaving the wing packs near 70, 74, 18, 19 and under 1 MB.
