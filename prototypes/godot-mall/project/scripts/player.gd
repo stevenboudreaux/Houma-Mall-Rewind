@@ -194,6 +194,26 @@ func _ready() -> void:
 		yaw = x.yaw
 		pitch = x.pitch
 		hint.visible = false
+	# ---- SEAMLESS (Nov 13 2026, scripts/wing_stream.gd, design/godot-wings.md "Seamless streaming"): this
+	# Player was made by a handoff, when the one before walked across a border into a wing that was
+	# already in. It stands where that one stood, with its HUD toggles and its walking finger.
+	if Engine.has_meta("mall_handoff"):
+		var ho: Dictionary = Engine.get_meta("mall_handoff")
+		Engine.remove_meta("mall_handoff")
+		if Engine.has_meta("mall_xfer"):
+			var hx: Dictionary = Engine.get_meta("mall_xfer")
+			Engine.remove_meta("mall_xfer")
+			position = Vector3(hx.x, 0, hx.z)
+			yaw = hx.yaw
+			pitch = hx.pitch
+		var tg: Array = ho.get("toggles", [])
+		for i in mini(tg.size(), buttons.size()):
+			buttons[i].set_pressed_no_signal(bool(tg[i]))
+		var cr: Dictionary = ho.get("carry", {})
+		for k in cr:
+			set(k, cr[k])
+		hint.visible = false
+	# ---- end SEAMLESS
 	_apply_rot()
 	_light_start.call_deferred()
 	_build_wing_ui()
@@ -235,6 +255,8 @@ func _ready() -> void:
 	add_child(vr)
 	# MENU2: a time-travel trip from a mall directory lands here (scripts/timetravel_trip.gd)
 	load("res://scripts/timetravel_trip.gd").arrive(self)
+	# SEAMLESS: the wing on the other side of a border is brought in while you walk (scripts/wing_stream.gd)
+	load("res://scripts/wing_stream.gd").make(get_tree()).attach(self)
 
 ## The Runner, the shoppers, the shirt words, the Stockrooms and the prize counter: 1995 only (2026
 ## is the building as it is today).
@@ -955,6 +977,11 @@ func _cross() -> void:
 ## test by changing the scene.
 ## year_to (the mall directory's jump, jump_to below): load that year's file instead of this one's.
 func _go_to_wing(w: int, x: float, z: float, yaw_to: float, pitch_to: float, year_to := 0) -> void:
+	# SEAMLESS: a wing that is already in (scripts/wing_stream.gd) is stood in at once, no load
+	if year_to == 0 or year_to == year:
+		var ws = get_tree().root.get_node_or_null("WingStream")
+		if ws and ws.go(w, x, z, yaw_to, pitch_to):
+			return
 	leaving = true
 	print("crossing to wing ", w)
 	if prompt:

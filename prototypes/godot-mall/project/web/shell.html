@@ -1128,6 +1128,43 @@ window.mallPrefetchOther = function () {
 };
 // the game calls this when you cross the seam (scripts/player.gd _cross)
 window.mallGoWing = function (url) { if (window.mallVR.inSession) { window.mallVR.remember(true); } location.replace(url); };
+// ---- SEAMLESS (Nov 13 2026, scripts/wing_stream.gd, design/godot-wings.md "Seamless streaming"): the wing on
+// the other side of a border is brought into the running game instead of loading a new page. The game asks
+// for wing w's pack; it is fetched (from the cache the prefetch above fills, else the network, and kept),
+// copied into the engine's file system and its path left in window.__mallStream[w] for the game to mount
+// ('fetching' meanwhile, 'error' when it could not be had: the old prompt and load still work then).
+window.__mallStream = {};
+window.__mallStreamMs = {};
+window.mallStream = function (w) {
+	if (window.__mallStream[w]) { return; }
+	window.__mallStream[w] = 'fetching';
+	const url = mallPackUrl(w);
+	const path = '/mall/w' + w + window.__mallYear + '.pck';
+	const t0 = performance.now();
+	fetch(url).then((r) => {
+		if (!r.ok) { throw new Error('HTTP ' + r.status); }
+		if ('caches' in window) {
+			const copy = r.clone();
+			caches.open(MALL_CACHE).then((c) => c.match(url).then((m) => (m ? null : c.put(url, copy)))).catch(() => {});
+		}
+		return r.arrayBuffer();
+	}).then((buf) => {
+		window.__mallStreamMs[w] = { fetch: Math.round(performance.now() - t0), bytes: buf.byteLength };
+		const t1 = performance.now();
+		engine.copyToFS(path, buf);
+		window.__mallStreamMs[w].copy = Math.round(performance.now() - t1);
+		window.__mallStream[w] = path;
+	}).catch((e) => {
+		console.warn('could not bring wing ' + w + ' in:', e);
+		window.__mallStream[w] = 'error';
+	});
+};
+// the player's systems now belong to wing w (a handoff): a reload, the year switch and the prefetch start from it
+window.mallStreamHome = function (w) {
+	window.__mallWing = w;
+	try { const u = new URL(location.href); u.searchParams.set('wing', String(w)); u.searchParams.delete('cam'); history.replaceState(null, '', u.toString()); } catch (e) { /* ignore */ }
+};
+// ---- end SEAMLESS
 let mallXfer = '';
 try { mallXfer = sessionStorage.getItem('mall-xfer') || ''; } catch (e) { /* ignore */ }
 if (mallXfer) {

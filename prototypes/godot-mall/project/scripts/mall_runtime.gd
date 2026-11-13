@@ -239,8 +239,24 @@ func _ready() -> void:
 	var imat := ShaderMaterial.new()
 	imat.shader = ish
 	imat.set_shader_parameter("shelf_tex", load("res://tex/int_side.png"))
-	var cache := {}
-	for mi in _meshes(get_tree().current_scene):
+	# ---- SEAMLESS (Nov 13 2026, scripts/wing_stream.gd): the floor and side-wall materials are kept, so a
+	# wing streamed in beside this one gets the same ones (adopt)
+	_fsh = fsh; _imat = imat
+	adopt(get_tree().current_scene, false)
+	_resize()
+	get_viewport().size_changed.connect(_resize)
+
+var _fsh: Shader
+var _imat: ShaderMaterial
+var _fcache := {}
+
+## Give the meshes under `root` this runtime's floor shader and store side walls: the scene itself at
+## start, and each wing scripts/wing_stream.gd brings in.
+func adopt(root: Node, late := true) -> void:
+	var fsh := _fsh
+	var imat := _imat
+	var cache := _fcache
+	for mi in _meshes(root):
 		var m: Mesh = mi.mesh
 		for i in m.get_surface_count():
 			var sm := m.surface_get_material(i)
@@ -266,8 +282,10 @@ func _ready() -> void:
 				mi.set_surface_override_material(i, cache[sm.resource_name])
 			elif sm.resource_name == "int_wall":
 				mi.set_surface_override_material(i, imat)
-	_resize()
-	get_viewport().size_changed.connect(_resize)
+	if late:
+		set_reflections(refl_on)
+		_resize()
+# ---- end SEAMLESS
 
 func _meshes(n: Node) -> Array:
 	var out := []
