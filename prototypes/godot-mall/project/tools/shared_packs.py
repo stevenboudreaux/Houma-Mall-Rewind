@@ -11,6 +11,11 @@ wing pack and its 2026 twin carried its own copy of the Blender items. Now:
 CHAR-STRIP (Nov 8 2026, design/godot-avatar.md): the character packs ("chars", "chars_<map>", fetched once
 the mall was running) are gone with the editor and models/ubc/. The cast's files (data/cast.json) ship in
 every wing pack (tools/make_presets.py CAST) and are loaded behind the loading card.
+SEAMLESS (Nov 13 2026, design/godot-build-hosting.md "The common pack"):
+  - "common"         what every wing pack carried its own identical copy of: the cast's bodies (cast/*.glb and
+                     their pictures, 72 MB of every pack) and the animation library npc/anims.res. With wings
+                     streamed in beside each other (scripts/wing_stream.gd) a neighbour's pack no longer brings
+                     those bytes a second time. Downloaded with the wing pack, mounted before its scene loads.
 The list of packs is tools/shared_packs.json. Each pack is <name>.desktop.pck and
 <name>.mobile.pck, exported by tools/export_web.sh through the presets "Shared Desktop" / "Shared Mobile"
 (tools/make_presets.py), cached by the page like the wing packs (web/shell.html SHARED_PACKS) and mounted
@@ -35,7 +40,8 @@ CFG = "export_presets.cfg"
 ALL_MAPS = ["w1", "w2", "w3", "w1y26", "w2y26", "w3y26", "w4", "w5", "w6", "w4y26", "w5y26", "w6y26"]
 SKIP_EXT = (".import", ".uid", ".md", ".py", ".blend", ".blend1")
 # the patterns the wing presets exclude, so these files are only in the shared packs
-WING_EXCLUDES = ["models/bl_*", "prizes/*"]   # prizes/*: PRIZES (Nov 3)
+WING_EXCLUDES = ["models/bl_*", "prizes/*",   # prizes/*: PRIZES (Nov 3)
+                 "cast/*.glb", "cast/*.png", "npc/anims.res"]   # SEAMLESS (Nov 13): the "common" pack
 
 
 def project_files():
