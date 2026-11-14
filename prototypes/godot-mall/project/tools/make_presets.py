@@ -32,7 +32,8 @@ import sys
 CFG = "export_presets.cfg"
 # CHARS (Nov 3 2026): files that ship in the shared packs, never in a wing pack (tools/shared_packs.py)
 # PRIZES (Nov 3 2026): the prize counters' pictures (prizes/*) moved into the items pack: both years' counters use them
-SHARED_EXCLUDES = ["models/bl_*", "prizes/*"]
+SHARED_EXCLUDES = ["models/bl_*", "prizes/*",
+                   "cast/*.glb", "cast/*.png", "npc/anims.res"]   # SEAMLESS (Nov 13 2026): the "common" shared pack
 # CHAR-STRIP (Nov 8 2026): the dead character patterns (models/characters/, models/ubc/, both deleted) are
 # dropped from every preset
 DEAD = ["models/characters/*.glb", "models/characters/*.png", "models/ubc/*.gltf", "models/ubc/*.bin", "models/ubc/*.png"]
@@ -68,7 +69,10 @@ def cast_filters(inc, exc):
             continue
         else:
             out.append(x)
-    inc = list(inc) + [f for f in files + ["cast/*"] if f not in inc]
+    # SEAMLESS (Nov 13 2026): the cast's bodies (cast/*.glb, their pictures) ship once, in the shared "common"
+    # pack (tools/shared_packs.json), not in every wing pack; a stub (a crowd skin) and cast/*.json stay here
+    inc = [x for x in inc if x != "cast/*" and not x.startswith("cast/")]
+    inc = inc + [f for f in files if f not in inc and not f.startswith("cast/")]
     return inc, out
 SHARED_NAMES = ("Shared Desktop", "Shared Mobile")
 ROOMS = {4: {"mall": 1, "pics": True}, 5: {"mall": 2, "pics": True}, 6: {"mall": 1, "pics": False}}
@@ -232,7 +236,7 @@ def main():
     # CHARS: no wing pack carries the shared packs' files
     for p in keep + new:
         if p["name"].startswith("Wing "):
-            p["main"] = drop_items(p["main"], "include_filter", lambda x: x.startswith("models/bl_") or x.startswith("prizes/"))
+            p["main"] = drop_items(p["main"], "include_filter", lambda x: x.startswith("models/bl_") or x.startswith("prizes/") or x == "npc/anims.res")
             p["main"] = drop_items(p["main"], "exclude_filter", lambda x: x in DEAD)
             p["main"] = add_items(p["main"], "exclude_filter", SHARED_EXCLUDES)
             # CHAR-STRIP: the cast's files in every wing pack
