@@ -252,3 +252,9 @@ step. The probes now enter after the meshes and a room wing stays "coming" for 4
 then the real store; never the tinted floor.** A player who reaches the line first is held there behind the cue.
 On this box, at under one frame a second, that wait was 585 to 1,357 s at the Sears / Lynn's opening; at 30 to 60
 frames a second it is 8 to 16 s. Whether a walking player can outrun it on a real machine is not verified.
+
+### Tests with streaming on by default (build of `a4334dd`)
+Native: the 8 headless suites, `stream_test.gd` (desktop, mobile, `--fail`) and `stream_walk_test.gd`: all OK.
+Web: the walk x4 OK; movetest MOVED 4 of 4; doortest CROSSED 3 of 3 (outside doors); MENU TRIP WEB OK (20);
+REDEMPTION WEB OK; SHOPS WEB OK (21); 0 page errors throughout. `stockrooms_test.gd` and the Rougarou tests are
+as in "Tests on this branch" above: failing the same way on main, not repaired. Details in the handoff.

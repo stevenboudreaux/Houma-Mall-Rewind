@@ -18,8 +18,8 @@ Every item below was pushed when it passed its check; nothing is left only on th
 | 3d. The same borders, 2026 | **Done.** |
 | 3e. Desktop everything, phones neighbours | **Done.** Browser memory with the wings in: see "Web walk". |
 | 3f. Wordless cue; on by default | **Done.** `data/stream.json` `"enabled": true` for desktop and mobile. |
-| 3g. Tests | WALKS_STATE |
-| Border shots, both years | SHOTS_STATE |
+| 3g. Tests | **Done except where the Tests section says otherwise.** Web walk OK on all four packs and years; web suites run with streaming on; doortest, seamtest and wsS_webtest updated. |
+| Border shots, both years | **Partly.** 1990s: a before/after pair at every border on the web walk (`wsSEAMLESS-borders-1990s-webwalk.jpg`), the seam pairs and crossings from stage 2, the floor-tint pair. 2026: no sheet in the repo; the walk passed and its raw shots are on the box only. The cinema lobby border has no shot. |
 
 ## Borders
 | Border | 1990s | 2026 |
@@ -75,7 +75,29 @@ mount first was moved. A second split (scripts, data and shopper skins into `com
 share) would get closer; `design/godot-build-hosting.md` "The common pack" says why it was not done here.
 
 ## Tests
-TESTS_BLOCK
+All on the build of `a4334dd` (no project file has changed since), streaming on by default.
+
+Native (headless):
+- The 8 suites: SHOP 200, CUCOS 89, FLAGS 31, INVENTORY 45, REDEMPTION 32, ECON 52, MENU UNIT 64, INT D49: all OK.
+- `stream_test.gd`: OK desktop, OK mobile (unload), OK `--fail` (a pack that cannot be fetched: no prompt, the old
+  crossing starts by itself).
+- `stream_walk_test.gd`: OK (desktop, 1990s) and OK (mobile, 2026), including the cue.
+
+Web (headless Chromium, one browser at a time):
+- `stream_walk_webtest.py`: OK x4 (table above).
+- movetest (walk): MOVED, 0 errors, in wing 1 and wing 2, 1990s and 2026 (4 of 4).
+- doortest: CROSSED, 0 errors: main entrance 1990s, Sears outside door 1990s, main entrance 2026 (3 of 3). These
+  are inside ↔ outside, still a load.
+- `menu_trip_webtest.js` (directory jump and the year trip): MENU TRIP WEB OK, 20 checks.
+- `redemption_webtest.py`: REDEMPTION WEB OK, 0 errors (iPhone portrait and landscape sizes).
+- `shops_webtest.py both`: SHOPS WEB OK, 21 checks, 0 console errors (Woolworth, RadioShack, Corn Dog 7, B. Dalton).
+
+Not run on this build: seamtest and wsS_webtest (updated to `?stream=0`, not rerun), the stream border web test
+from stage 2 (superseded by the walk), `packtest.py`, the cast count and full MENU web suites.
+
+Failing, and failing the same way on main (not repaired, outside this job): `stockrooms_test.gd` 3 of 12;
+`rougarou_test.gd` and `rougarou_stalk_test.gd` never finish (they wait for a `RougarouAI` node the game no longer
+makes); `rougarou_story_test.gd` not run.
 
 ## Lighting at the borders
 No lighting step seen at any border in the walk shots (1990s and 2026): each wing's bake already includes its
