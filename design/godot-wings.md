@@ -189,7 +189,7 @@ in 2026 the gate opens only once it was opened in 1995.
   2.2 m inside the opening, facing in (`tools/stores/directory/map_data.gd ROOM_JUMPS`). The J menu's
   "Sears" and "Dillard's" keep Steven's spots in the mall (Oct 9: back to the entrance, looking out).
 
-## Seamless streaming (workstream SEAMLESS, Nov 13 2026; stage 2 of 3)
+## Seamless streaming (workstream SEAMLESS, Nov 13 2026; stages 1 to 3)
 **Asked for (Steven, Nov 13):** "walk from the inside of Dillard's to the inside of Sears, and then all the way to
 Corn Dog 7, all without a load screen." No load screens between wings or at the department stores; the facades at the
 wing borders "kill the exploratory experience". The wings were split for GitHub's 100 MB file limit; the packs have
@@ -201,10 +201,21 @@ wings stay separate scenes and bake separately. Every device streams; the only d
 neighbours, far ones unloaded). Inside ↔ outside, the year switch, the mini-games, conversations and the menu keep
 their own transitions. The Stockrooms may keep a load (they are a level inside wing 1 today and are unchanged).
 
-**State:** built for the wing 1 ↔ wing 2 seam, 1990s, both pack kinds. **Off by default**
-(`data/stream.json` `"enabled": false`); `?stream=1` turns it on for a session. The thresholds (Sears, Dillard's,
-the cinema), 2026 and the desktop "everything" pass are stage 3. Findings, numbers and the open choices:
-`production/qa/evidence/wsSEAMLESS-findings.md`.
+**State (stage 3, Nov 13):** built for **every interior border in both years** and **on by default** for desktop
+and mobile (`data/stream.json` `"enabled": true`; `?stream=0` turns it off for a session, `?stream=1` on).
+
+| Border | Kind | Years | Notes |
+|---|---|---|---|
+| wing 1 ↔ wing 2 | the seam | 1990s, 2026 | plain floor while both are in |
+| wing 1 ↔ wing 4 (Sears / Lynn's) | threshold | 1990s, 2026 | room wing: waits for its probes (below) |
+| wing 2 ↔ wing 5 (Dillard's) | threshold | 1990s, 2026 | room wing: waits for its probes |
+| wing 1 ↔ wing 6 (cinema lobby) | threshold, gated | 1990s, 2026 | brought in only once the cinema's gate is open (`scripts/cinema_gate.gd`) |
+
+Still a load, on purpose: inside ↔ outside (wing 3), the year switch, the mini-games, conversations, the menu, and
+the **Stockrooms** (a level inside wing 1, unchanged; the walk grid of the wings that are in is put back on return).
+Director's calls (Nov 13): the common pack (`design/godot-build-hosting.md` "The common pack"); a wordless cue and no
+prompt on a slow line; on by default once every border streams; the stand-in stays as the fallback and as the
+bake's lit context. Findings, numbers and evidence: `production/qa/evidence/wsSEAMLESS-findings.md`.
 
 ### How it works (`scripts/wing_stream.gd`, one node under `/root` for the whole run)
 1. **Fetch.** The game asks the page for the neighbour's pack (`web/shell.html` `window.mallStream(w)`): from the
@@ -225,7 +236,7 @@ the cinema), 2026 and the desktop "everything" pass are stage 3. Findings, numbe
    `dyn_info`, most of `misc`; labels and reflection probes): same name, same box and the same vertex count per
    material = the same geometry, so one copy is hidden (`_dedupe`). `dyn_glass` differs (each wing adds its own
    shop glass) and is left in both: the shared skylight panes are drawn twice until the builder stops duplicating
-   them (stage 3 option). The player's walk grid and obstacles become the two wings' union and the seam prompt
+   them (stage 2; since stage 3 the later copy is trimmed and they are drawn once). The player's walk grid and obstacles become the two wings' union and the seam prompt
    goes. "Benches & plants" shows or hides every wing's fixtures.
 5. **Handoff.** Shops, attendants, items, shoppers, signs, the prize counter, the Stockrooms … are made per wing at
    start (`player.wing`). When the player stands on the neighbour's own floor, `handoff_past_m` past the border,
@@ -236,28 +247,59 @@ the cinema), 2026 and the desktop "everything" pass are stage 3. Findings, numbe
    (the old crossing reloaded the page). The address bar's `?wing=` follows (`window.mallStreamHome`), so a reload,
    the year switch and the old prefetch start from the right wing. `player._go_to_wing()` (the J menu, a directory
    jump) into a wing that is in is the same handoff, with no fade or load.
-6. **Not in yet, or failed:** nothing changes: the stand-in pictures, the seam's wall and the old prompt, which
-   still loads the other wing the old way.
+6. **Not in yet, or failed:** the stand-in pictures and the seam's wall stay. (Stage 2 kept the old prompt; since
+   stage 3 there is no prompt: a wordless cue, and the old load only by itself after a failed fetch. See below.)
 7. **Unload** (phones and tablets, `far_m`): the neighbour's scene and held resources are freed and the home
    wing's stand-in, seam and walk grid come back. The pack stays mounted (its bytes stay in the page's memory).
 
-### Settings (`data/stream.json`)
-`enabled` (true / false, or one per kind `{"desktop": …, "mobile": …}`), `borders` (which borders stream, in which
-years), `wing2_zones` (must equal `tools/build_mall.gd` `WING2_ZONES`), `near_m` / `far_m` / `start_delay_s` per
-kind, `load_budget_ms`, `nodes_per_frame`, `handoff_past_m`. URL: `?stream=1|0`. Tests: Engine meta `mall_stream`,
-`mall_stream_kind`.
+### Stage 3: what was added to the above
+- **Borders are a list** (`data/stream.json` `borders`): wings chain, one at a time, nearest border first.
+  **Desktop** (`near_m` / `far_m` 100000) brings in the whole interior of the year after the first load screen.
+  **Phones and tablets** bring in a wing when the player is within `near_m` (60 m) of its border and unload one
+  whose every border is further than `far_m` (110 m).
+- **Who draws what** is worked out afresh for the set of wings that are in (`_resync`): zones, storefront pictures,
+  the shared parts once. The skylight glass both mall wings carried is drawn once (`trim`: the later copy loses the
+  triangles an earlier one draws). Wing 1's dim copy of the cinema lobby is hidden while the real lobby is in (`hide`).
+- **People and things before the border.** Attendants, pick-up items and shop stock are made for every wing that is
+  in (`player.has_wing`), within `people_m` of its border or once nothing else is loading; the player's systems are
+  remade when the set of wings changes and the player is not in a screen. The crowd (`scripts/npcs.gd` rebind) is
+  one node that outlives every remake, so it does not respawn at a crossing. `no_crowd`: wings the crowd skips.
+- **A room wing waits for its reflection probes** (`settle_frames` 480). Its probes are UPDATE_ONCE and enter the
+  tree after its meshes; they finish their pictures 360 to 400 frames later (about 7 s at 60 frames a second, 13 s
+  at 30). Until then a polished floor would mirror the sky (a cool, bluish cast), so the wing stays "coming": the
+  border holds and the storefront picture covers the opening. **The player sees the store appear a few seconds
+  late, never tinted.** On desktop this happens during the background load after the first card. Mall wings do not
+  wait (their hall floors take no probe reflection since FLOOR-FIX).
+- **Slow line** (the wing is not ready at the border): the border holds (its floor is not walkable), the stand-in
+  picture stays, and a wordless cue shows within `cue_m`: a soft pulse along the floor line. No prompt, no words.
+- **Failed fetch** (the pack could not be had): the old crossing starts by itself when the player is within
+  `fallback_m` of the line (the old load screen, a page load into that wing). `?stream=0` is the old game throughout.
 
-### What is not done (stage 2 is one border)
-- The neighbour's **wing-made content** (attendants, shop stock made at runtime, pick-up items, shoppers, owner sign
-  edits, the prize counter) is not there until the handoff: from wing 1 you see wing 2's rooms and fixtures, lit,
-  but its people and loose items appear as you step over. The crowd is respawned round the player at the handoff.
-  Making those systems span wings is the main job left (list in the findings doc).
-- Guesses: `near_m` 60 m and `far_m` 110 m for phones; `handoff_past_m` 1 m.
-- The stand-in pictures and `tools/capture_standin.sh` are still needed (the fallback in 6, and the bake uses the
-  lit stand-in shops). Nothing in the bake or publish steps changes at this stage.
+### Settings (`data/stream.json`)
+`enabled` (true / false, or one per kind `{"desktop": …, "mobile": …}`), `borders` (a, b, kind, years, gate),
+`wing2_zones` (must equal `tools/build_mall.gd` `WING2_ZONES`), `near_m` / `far_m` / `start_delay_s` per kind,
+`load_budget_ms`, `nodes_per_frame`, `handoff_past_m`, `settle_frames`, `people_m`, `cue_m`, `fallback_m`,
+`no_crowd`, `trim`, `hide`. URL: `?stream=1|0`; `?qa=1` lets a web test place the player
+(`window.__mallTeleport`). Tests: Engine meta `mall_stream`, `mall_stream_kind`.
+
+### Not done, and guesses
+- Nothing has run on a real phone or GPU. `near_m` 60 m and `far_m` 110 m for phones, `handoff_past_m` 1 m,
+  `people_m` 45 m and `cue_m` 14 m are guesses.
+- The stand-in pictures and `tools/capture_standin.sh` are still needed and still stamped: they are the fallback
+  (slow line, failed fetch, `?stream=0`) and the bake uses the lit stand-in shops. **Nothing in the bake or publish
+  steps changes.**
+- The packs still overlap pairwise (`design/godot-build-hosting.md` "The common pack": what was and was not moved).
 
 ### Tests
-- `tools/qa/stream_test.gd [-- --kind=mobile]` (headless): the neighbour comes in, the stand-ins are hidden, both
-  handoffs (the prize counter and the Stockrooms change hands), and the phone unload. `STREAM TEST OK`.
-- `tools/qa/stream_webtest.py <url> <out> [pack] ["wing cam"]` (web): the same walk in the export; no load screen,
-  no page load, the address follows, timings, memory, 0 page errors. `STREAM WEB OK`.
+- `tools/qa/stream_test.gd [-- --kind=mobile] [-- --fail]` (headless): the neighbour comes in, the stand-ins are
+  hidden, both handoffs, the phone unload; `--fail`: a pack that cannot be fetched (no prompt, the old crossing
+  starts by itself at the line). `STREAM TEST OK`.
+- `tools/qa/stream_walk_test.gd [-- --year=2026] [-- --kind=mobile]` (headless): every border, both directions,
+  the cue, and that the floor past a held border is not walkable. `STREAM WALK OK`.
+- `tools/qa/stream_walk_webtest.py <url> <out> [pack] [year]` (web): Dillard's → the court → wing 1 → Sears →
+  back → wing 2 → Corn Dog 7 in one page: no load screen, no page load, no prompt, 0 page errors, memory.
+  `STREAM WALK WEB OK`. About 25 minutes a run on the cloud box (the 480-frame wait at under a frame a second).
+- `tools/qa/stream_webtest.py` (web, stage 2): the seam alone.
+- `tools/qa/stream_shots.gd` (native, xvfb): pictures at named cameras with the wings in `--need` in.
+- `doortest.py`, `seamtest.py`, `wsS_webtest.py`: an inside border is checked as the old crossing with `?stream=0`;
+  doors to and from the outside run as before.

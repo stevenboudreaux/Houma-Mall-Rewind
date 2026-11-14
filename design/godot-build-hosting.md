@@ -358,6 +358,48 @@ the pack names or the upload changes. Two new files ship in every wing pack (`sc
 
 Only `project.binary` and `.godot/uid_cache.bin` differ in bytes between packs. A streamed neighbour is mounted
 whole today, so its duplicates are downloaded and held in the page's memory again (154 MB for wing 2 where 64 would
-do). The fix is a pack boundary change, **not made here** (options in
-`production/qa/evidence/wsSEAMLESS-findings.md`): a shared "common" pack like `items` for what every wing carries
-(`tools/shared_packs.json`), leaving the wing packs near 70, 74, 18, 19 and under 1 MB.
+do). Stage 3 made the first part of that fix: the common pack, below.
+
+## The common pack (workstream SEAMLESS, stage 3, Nov 13 2026)
+
+**Decided (director, Nov 13):** split what every wing pack carries into a shared pack, so a streamed neighbour is
+not downloaded and held with the same people again. No picture changes.
+
+**Built:** `tools/shared_packs.json` has a second shared pack, `common`, beside `items`: `cast/*.glb`, `cast/*.png`
+(the cast's bodies and their pictures) and `npc/anims.res` (the animation library); 62 files. `at: "start"`: fetched
+with the first wing pack and mounted before its scene, because people must be in before the card lifts.
+`cast/*.json` stays in the wing packs with the other data. A new cast member under `cast/` lands in `common` with
+no change. `tools/make_presets.py` and `tools/shared_packs.py` leave those files out of the wing presets;
+`export_presets.cfg` and `tools/qa/pack_manifest/` (`common.txt` is new) were rewritten from an export.
+
+**Pack sizes, MB (desktop = mobile to the byte). Before = the Demo 54 build on R2; after = this branch, same lightmaps:**
+
+| Pack | Before | After |
+|---|---|---|
+| `w1` / `w2` | 150.6 / 154.2 | 91.0 / 94.7 |
+| `w4` / `w5` / `w6` | 98.6 / 99.4 / 80.3 | 39.0 / 39.9 / 20.7 |
+| 1990s interior, the five packs | 583.1 | 285.3 |
+| `w1y26` / `w2y26` | 107.8 / 138.9 | 48.3 / 79.3 |
+| `w4y26` / `w5y26` / `w6y26` | 152.0 / 94.7 / 80.4 | 92.5 / 35.1 / 20.9 |
+| 2026 interior, the five packs | 573.8 | 276.1 |
+| `w3` / `w3y26` (the outside) | 119.4 / 104.4 | 59.9 / 44.8 |
+| `items` (once) | 84.0 | 84.0 |
+| `common` (once) | none | 59.6 |
+| Everything, one kind of device | 1,464.7 | 809.7 |
+
+So a first visit to wing 1 in the 1990s downloads 91.0 + 84.0 + 59.6 = 234.6 MB, as before (150.6 + 84.0: the same bytes,
+in three files); each further wing costs 59.6 MB less than before, in download and in the page's memory.
+
+**Smaller than the estimate.** The findings doc (section f, option 1A) guessed wing packs near 70, 74, 18, 19 and
+under 1 MB. That counted every file two or more packs share. What moved is only what is byte-identical in **all**
+of them and safe to mount first (the cast and the animations, 57 MB of the 79.7). Still duplicated: shopper skins,
+scripts and data in every pack (about 20 MB: wing 6 is 20.7 MB with 0.1 MB of its own), and what wings 1 and 2
+share with each other and with their room wings (wing 2 has 64 MB wing 1 lacks, and is a 94.7 MB download).
+Moving those is a second pack-boundary change (a "mall" pack for the two mall wings' shared stores' textures, and
+scripts and data into `common`); it needs care with `project.binary` and the uid cache, which differ per pack. Not done.
+
+**For the director at export and upload:** nothing new to run. `tools/export_web.sh` writes every shared pack named
+in `tools/shared_packs.json`; `tools/publish_build.sh` already checks that every shared pack `index.html` lists is
+in the export (`common.desktop.pck`, `common.mobile.pck`), checks pack contents against `tools/qa/pack_manifest/`
+(already rewritten for this branch; run `python3 tools/qa/packcontents.py write <builddir>` again only if other
+branches in the same integration add files), and uploads `*.pck` to R2. Two more files in the bucket per build.
