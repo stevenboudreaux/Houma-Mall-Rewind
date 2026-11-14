@@ -1536,7 +1536,18 @@ const engine = new Engine(GODOT_CONFIG);
 			}
 		}, 5000);
 		engine.startGame({
-			'onPrintError': function () { say('Engine error: ' + Array.prototype.slice.call(arguments).join(' ').slice(0, 220)); },
+			// UPFRONT (Nov 14 2026): the engine's warnings are not errors and are not put on the load screen (Steven's
+			// Air showed "Engine error: at: open (core/io/resource_format_binary.cpp:1028)": the last line of a warning
+			// that a model in a shared pack names its textures by an id this wing's pack does not list, so the path is
+			// used instead, which works; 40 of them in Demo 54, 55 with the common pack). Everything goes to the console.
+			'onPrintError': function () {
+				const t = Array.prototype.slice.call(arguments).join(' ');
+				console.warn('[engine] ' + t);
+				if (/^\s*WARNING:/.test(t)) { window.__mallWarnAt = true; return; }
+				if (window.__mallWarnAt && /^\s*at: /.test(t)) { window.__mallWarnAt = false; return; }
+				window.__mallWarnAt = false;
+				say('Engine error: ' + t.slice(0, 220));
+			},
 			'onExit': function (code) { say('The engine stopped (code ' + code + ')'); },
 			'onProgress': function (current, total) {
 				// the last progress tick can land after the loading screen is removed

@@ -18,7 +18,8 @@ the old load); the old crossing's fade starts; the player stops for a second wit
 anywhere; a page error; the route's stops (wing 2, Dillard's, Sears / Lynn's, Corn Dog 7) are not all reached.
 
 Usage: python3 stream_natural_walk_webtest.py <url-path> <out-prefix> [year]   (serve the build folder on :8765;
-run from the project folder, for gen/). Env: WALK_S (the longest the walk may take, seconds, default 3600).
+run from the project folder, for gen/). Env: WALK_S (the longest the walk may take, seconds, default 7200), VIEW
+(the page's size, default 640x360).
 Prints NATURAL WALK OK, or the failures.
 """
 import heapq, json, math, os, sys, time
@@ -26,7 +27,8 @@ from playwright.sync_api import sync_playwright
 
 path, out = sys.argv[1], sys.argv[2]
 YEAR = sys.argv[3] if len(sys.argv) > 3 else "1995"
-WALK_S = float(os.environ.get("WALK_S", "3600"))
+WALK_S = float(os.environ.get("WALK_S", "7200"))
+VIEW = [int(v) for v in os.environ.get("VIEW", "640x360").split("x")]   # a small picture: the test box draws in software
 SHOT = int(os.environ.get("SHOT_TIMEOUT", "180000"))
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", "--enable-precise-memory-info"]
 Y = "y26" if YEAR == "2026" else ""
@@ -157,7 +159,7 @@ def rss_mb():
 
 with sync_playwright() as p:
     b = p.chromium.launch(args=ARGS)
-    ctx = b.new_context(viewport={"width": 1280, "height": 720})
+    ctx = b.new_context(viewport={"width": VIEW[0], "height": VIEW[1]})
     pg = ctx.new_page()
     logs, errors, navs = [], [], []
     pg.on("console", lambda m: logs.append(f"[{m.type}] {m.text}"))

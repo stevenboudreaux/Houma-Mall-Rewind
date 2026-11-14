@@ -50,6 +50,13 @@ Run the .gd tools with `godot --headless --path . --script res://tools/qa/<tool>
   wing 1 / wing 2 seam with streaming on: the neighbour comes in, both wings' stand-ins of each other are hidden, the
   handoff both ways (the prize counter and the Stockrooms change hands), and with `--kind=mobile` the unload far from
   the seam. Prints the streamer's timings and `STREAM TEST OK`.
+- `stream_natural_walk_webtest.py <url-path> <out-prefix> [year]` (UPFRONT, Nov 14 2026; design/godot-wings.md "Everything
+  up front"; web build, the page's own address plus `?qa=1`): the walk a visitor takes: forward held from the moment
+  the load screen lifts, across the seam, into Dillard's and out, back, into Sears / Lynn's and out, to Corn Dog 7; no
+  placing, no waiting for a wing. Run from the project folder (it reads gen/), the build folder served on :8765.
+  Prints `NATURAL WALK OK`. `stream_walk_webtest.py` is not a walk: it checks crossings once the wing is in.
+- `stream_upfront_test.gd [-- --year=2026] [-- --open] [-- --kind=mobile]` (UPFRONT; headless): every interior wing in and
+  peopled before the load screen would lift, then every border walked with forward held. Prints `UPFRONT TEST OK`.
 - `stream_webtest.py <url-path> <out-prefix> [pack] ["wing cam"]` (web build, `?stream=1`): the same walk in the
   export: no load screen, no page load, the address bar's `?wing=` follows, timings, memory (browser processes and
   JS heap: before, neighbour in, after the handoff), 0 page errors; screenshots before / in / cross / after.

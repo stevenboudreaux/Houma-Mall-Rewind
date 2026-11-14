@@ -204,6 +204,10 @@ their own transitions. The Stockrooms may keep a load (they are a level inside w
 **State (stage 3, Nov 13):** built for **every interior border in both years** and **on by default** for desktop
 and mobile (`data/stream.json` `"enabled": true`; `?stream=0` turns it off for a session, `?stream=1` on).
 
+**Changed Nov 14 (workstream UPFRONT, "Everything up front" below):** on a computer the whole interior comes in
+**behind the load screen**, not after it; on phones and tablets streaming is **off** (they load one wing at a time,
+as in Demo 54) until the phone's memory is a job of its own.
+
 | Border | Kind | Years | Notes |
 |---|---|---|---|
 | wing 1 ↔ wing 2 | the seam | 1990s, 2026 | plain floor while both are in |
@@ -275,6 +279,53 @@ bake's lit context. Findings, numbers and evidence: `production/qa/evidence/wsSE
 - **Failed fetch** (the pack could not be had): the old crossing starts by itself when the player is within
   `fallback_m` of the line (the old load screen, a page load into that wing). `?stream=0` is the old game throughout.
 
+### Everything up front (workstream UPFRONT, Nov 14 2026)
+**Why.** Steven tried the Nov 14 preview (R2 build `20261114-1715-5ba126d8`) and could not walk the interior
+without loads. Two causes, both found on his MacBook Air:
+1. On a computer the other wings came in *after* the first load screen lifted, one at a time: wing 2 was in 47 s
+   after the page started, Dillard's at 92 s, Sears at 122 s. A visitor who starts walking gets to a border first
+   and meets the held border, or the old load. Steven had said on Nov 13: "I'd rather the load be as big as
+   possible up front." The Nov 13 brief had it the other way round.
+2. The Nov 13 walk test hid it: `stream_walk_webtest.py` places the player a few metres before each line and
+   waits (up to 900 s) for the wing beyond to be in before it walks. It checks a crossing once the wing is in; it
+   was never a walk. It is kept under that description; the walk is `stream_natural_walk_webtest.py` (below).
+3. iPhone Safari: the streaming build crashed within seconds (a second wing coming into memory a few seconds
+   after the start). With streaming off the same build runs.
+
+**What happens now on a computer** (`data/stream.json` `"upfront": {"desktop": true, "mobile": false}`):
+- A page load of an inside wing (the start, a year switch, coming back inside from the lot: all three are page
+  loads with their own load screen) holds that load screen until **every interior wing of the year is fetched,
+  loaded, entered, settled (the 480-frame probe wait of the room wings included) and peopled**. The cinema lobby
+  counts only if its gate is already open; behind a shut gate it comes in later, in the background, when the gate
+  opens (as before).
+- `web/shell.html` asks for the mall and department-store packs (wings 1, 2, 4, 5 of the year, minus the one the
+  page starts in) at once, beside the first wing's own download; the game asks for the lobby's if it is wanted.
+  The packs arrive side by side; the game loads them one at a time, with a flat 50 ms of loading and 300 nodes a
+  frame (`upfront_load_budget_ms`, `upfront_nodes_per_frame`: nothing has to stay smooth behind the card). Two room
+  wings' probe waits run together.
+- The load screen's bar counts every pack's bytes (70 %) and then the wings' own progress (30 %):
+  `window.mallBarFrac`. The game says where it is with `window.__mallUpfront` (0 while the wings come in, 1 when
+  done) and `window.__mallUpfrontFrac`; the card lifts when the shopper warm-up *and* this are done.
+- If it takes more than 15 minutes after the engine starts (a very slow line), the card lifts anyway and the rest
+  comes in the background behind held borders, exactly as before Nov 14. A pack that cannot be fetched does not
+  hold the card: that border falls back to the old load, as before.
+- `MALL_UPFRONT` in the page (which kinds of device do this) is written by `tools/export_web.sh` from
+  `data/stream.json` (`enabled` and `upfront`).
+- Once the card lifts, **no border on a computer is ever "not in"**: no cue, no hold, no prompt, no load.
+
+**Phones and tablets:** `"enabled": {"desktop": true, "mobile": false}`. A phone gets the old crossings (a prompt
+and a load at the seam and the thresholds) and never has two wings in memory. The phone path of the streamer is
+untouched and `?stream=1` still turns it on for a session, for whoever takes the memory job.
+
+**Cost on a computer:** the first download is the whole interior, not one wing: 1990s 408 MB (was 235 MB then
+174 MB more in the background), 2026 399 MB (was 192 MB then 207 MB more). Time to control: see
+`production/session-handoff-2026-11-14-UPFRONT.md` (test-box numbers only; not measured on a real machine).
+
+**Settings and switches:** `upfront`, `upfront_load_budget_ms`, `upfront_nodes_per_frame`; URL `?upfront=0|1`;
+Engine meta `mall_upfront` (tests). `?qa=1` also: `window.__mallWalk = [[x, z], …]` (the game turns the player
+toward each waypoint in turn; the test holds forward), `window.__mallWalkLog` (`held`, `stuck`, `prompt`,
+`leaving`), and a 90-minute limit on the card in place of 15 (the test box draws under a frame a second).
+
 ### Settings (`data/stream.json`)
 `enabled` (true / false, or one per kind `{"desktop": …, "mobile": …}`), `borders` (a, b, kind, years, gate),
 `wing2_zones` (must equal `tools/build_mall.gd` `WING2_ZONES`), `near_m` / `far_m` / `start_delay_s` per kind,
@@ -291,14 +342,29 @@ bake's lit context. Findings, numbers and evidence: `production/qa/evidence/wsSE
 - The packs still overlap pairwise (`design/godot-build-hosting.md` "The common pack": what was and was not moved).
 
 ### Tests
+- (`stream_test.gd`, `stream_walk_test.gd`, `stream_shots.gd` and `stream_webtest.py` run with upfront off: they
+  are about wings coming in in the background.)
 - `tools/qa/stream_test.gd [-- --kind=mobile] [-- --fail]` (headless): the neighbour comes in, the stand-ins are
   hidden, both handoffs, the phone unload; `--fail`: a pack that cannot be fetched (no prompt, the old crossing
   starts by itself at the line). `STREAM TEST OK`.
 - `tools/qa/stream_walk_test.gd [-- --year=2026] [-- --kind=mobile]` (headless): every border, both directions,
   the cue, and that the floor past a held border is not walkable. `STREAM WALK OK`.
-- `tools/qa/stream_walk_webtest.py <url> <out> [pack] [year]` (web): Dillard's → the court → wing 1 → Sears →
-  back → wing 2 → Corn Dog 7 in one page: no load screen, no page load, no prompt, 0 page errors, memory.
-  `STREAM WALK WEB OK`. About 25 minutes a run on the cloud box (the 480-frame wait at under a frame a second).
+- `tools/qa/stream_natural_walk_webtest.py <url> <out> [year]` (web, UPFRONT, Nov 14): **the walk a visitor
+  takes.** The page's own address (only `?qa=1`, and `?year=2026`), forward held from the moment the load screen
+  lifts and never let go, a route found on the walk grids: from the start across the seam, into Dillard's and out,
+  back across the seam, into Sears / Lynn's and out, to Corn Dog 7. The player is never placed and no wing's state
+  is waited for. Fails on: the load screen again, a page load, an "Enter …" prompt, the old crossing's fade, a
+  stop for a second within 3 m of a border line (or 4 s anywhere), a page error, a stop not reached.
+  `NATURAL WALK OK`. About an hour and a half a year on the cloud box.
+- `tools/qa/stream_upfront_test.gd [-- --year=2026] [-- --open] [-- --kind=mobile]` (headless, UPFRONT): the
+  build's own settings; every interior wing is in and peopled before the streamer lets the load screen go (the
+  lobby only with `--open`), then a walk over every border with forward held; `--kind=mobile`: streaming is off
+  and nothing comes in. `UPFRONT TEST OK`.
+- `tools/qa/stream_walk_webtest.py <url> <out> [pack] [year]` (web): **crossings once the wing is in, not a
+  walk**: the player is placed a few metres before each line and the test waits for the wing beyond before it
+  walks (Dillard's → the court → wing 1 → Sears → back → wing 2 → Corn Dog 7 in one page: no load screen, no page
+  load, no prompt, 0 page errors, memory). It runs with `?stream=1&upfront=0` (the background path that phones
+  with `?stream=1` and the cinema lobby still use). `STREAM WALK WEB OK`. About 25 minutes a run on the cloud box.
 - `tools/qa/stream_webtest.py` (web, stage 2): the seam alone.
 - `tools/qa/stream_shots.gd` (native, xvfb): pictures at named cameras with the wings in `--need` in.
 - `doortest.py`, `seamtest.py`, `wsS_webtest.py`: an inside border is checked as the old crossing with `?stream=0`;
