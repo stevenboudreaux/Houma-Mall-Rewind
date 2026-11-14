@@ -278,12 +278,12 @@ of this job is `production/session-handoff-2026-11-14-UPFRONT.md`; the design is
 ### After (this branch; test box, software renderer)
 | | 1990s | 2026 |
 |---|---|---|
-| Natural walk (`stream_natural_walk_webtest.py`): forward held from the lift, 560 m, no placing, no waiting | OK | WALK26_RESULT |
-| Load screen lifts after | 2,018 s | WALK26_LIFT |
-| of which the room wings' 480-frame probe wait | 1,903 s (a frame every 4 s) | WALK26_SETTLE |
-| Wings in and peopled at the lift | 2, 4, 5 | WALK26_WINGS |
-| Packs: fetched side by side (ms from the page's start to each pack whole) | w2 1,231 · w4 1,399 · w5 31,139 (local server) | WALK26_FETCH |
-| Peak memory, all Chromium processes | 5,539 MB | WALK26_MEM |
+| Natural walk (`stream_natural_walk_webtest.py`): forward held from the lift, 560 m, no placing, no waiting | OK | OK |
+| Load screen lifts after | 2,018 s | 1,110 s |
+| of which the room wings' 480-frame probe wait | 1,903 s (a frame every 4 s) | not separated (the worker was stopped by a box restart before reading it) |
+| Wings in and peopled at the lift | 2, 4, 5 | 2, 4, 5 |
+| Packs: fetched side by side (ms from the page's start to each pack whole) | w2 1,231 · w4 1,399 · w5 31,139 (local server) | not read |
+| Peak memory, all Chromium processes | 5,539 MB | 5,080 MB |
 | First download on a computer | 408 MB (was 235 MB + 174 MB behind) | 399 MB (was 192 MB + 207 MB behind) |
 
 Natively (`stream_upfront_test.gd`, headless, no renderer): the interior is in and peopled 5.7 s after the scene

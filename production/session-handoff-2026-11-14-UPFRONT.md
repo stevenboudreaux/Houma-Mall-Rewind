@@ -29,7 +29,7 @@ Corn Dog 7. About 560 m. No placing, no waiting for a wing.
 | Year | Result | Load screen lifted after | Wings in at the lift | Walk | Prompt / hold / load screen / page error | Peak memory (all Chromium processes) |
 |---|---|---|---|---|---|---|
 | 1990s | **NATURAL WALK OK** | 2,018 s | 2, 4, 5 in and peopled | 560 m in 2,627 s | none / none / none / 0 | 5,539 MB |
-| 2026 | WALK26_RESULT | WALK26_LIFT | WALK26_WINGS | WALK26_WALK | WALK26_FLAGS | WALK26_MEM |
+| 2026 | **NATURAL WALK OK** | 1,110 s | 2, 4, 5 in and peopled | 550 m in 1,828 s | none / none / none / 0 | 5,080 MB |
 
 These are **test-box numbers** (2 CPUs, software renderer, about a frame every four seconds with four wings
 drawn). 1,903 of the 2,018 s are the department stores' 480-frame probe wait at that frame rate; at 30 to 60 frames
@@ -62,7 +62,7 @@ error", and the last one stuck.
   Small, optional, its own job.
 
 ## Tests
-- `stream_natural_walk_webtest.py`: 1990s OK; 2026 WALK26_RESULT.
+- `stream_natural_walk_webtest.py`: 1990s OK; 2026 **NATURAL WALK OK**.
 - `stream_upfront_test.gd` (native): OK for 1990s, 2026, `--open` (the lobby comes in too), `--kind=mobile`
   (streaming off, nothing comes in).
 - `stream_test.gd` desktop, mobile, `--fail`: OK (they now run with upfront off: the background path).
