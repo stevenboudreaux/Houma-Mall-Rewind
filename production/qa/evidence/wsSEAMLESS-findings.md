@@ -1,4 +1,4 @@
-# SEAMLESS: findings (stage 1) and the first border (stage 2)
+# SEAMLESS: findings (stage 1), the first border (stage 2) and stage 3
 
 Workstream SEAMLESS, branch `ws/seamless` from main `81cb3ba9` (Demo 54). Fri Nov 13, 2026.
 Brief: `claude/briefs-2026-11-13-seamless.md` (project doc). Design note: `design/godot-wings.md` "Seamless streaming".
@@ -206,3 +206,49 @@ as they are now. The options, should a step show up at an opening in stage 3:
 - Desktop pack: one web run from wing 2 into wing 1 with `pack=desktop`: `STREAM WEB OK`.
 - Not run: the other web suites (walk 12/12, doors, directory jump, redemption, shops). Streaming is off by
   default and those paths are untouched; the director's integration run covers them.
+
+---
+
+## Stage 3 (added Nov 13 to 14): every border, the common pack, on by default
+
+Sections a to f above are the stage 1 and 2 record and are left as written. What changed since:
+streaming is **on by default** for both pack kinds; every interior border streams in both years; the neighbour's
+people and things are there before the border. Full status: `production/session-handoff-2026-11-13-SEAMLESS.md`.
+
+### Packs before and after the common pack (MB; before = Demo 54 on R2, after = this branch, same lightmaps)
+| | Before | After |
+|---|---|---|
+| `w1` / `w2` | 150.6 / 154.2 | 91.0 / 94.7 |
+| `w4` / `w5` / `w6` | 98.6 / 99.4 / 80.3 | 39.0 / 39.9 / 20.7 |
+| `w1y26` / `w2y26` / `w4y26` / `w5y26` / `w6y26` | 107.8 / 138.9 / 152.0 / 94.7 / 80.4 | 48.3 / 79.3 / 92.5 / 35.1 / 20.9 |
+| `w3` / `w3y26` | 119.4 / 104.4 | 59.9 / 44.8 |
+| `items` / `common` (each once) | 84.0 / none | 84.0 / 59.6 |
+| Whole 1990s interior with both shared packs | 667.1 | 428.9 |
+| Everything, one kind of device | 1,464.7 | 809.7 |
+
+Section f's guess of 311 MB for the 1990s interior was too low: only what is byte-identical in every pack and safe
+to mount first was moved (the cast's bodies and the animation library, 59.6 MB).
+
+### Browser memory on the walk from Dillard's to Sears to Corn Dog 7
+Headless Chromium with the software renderer on the cloud box, every Chromium process added up: inflated, for
+comparing runs only. Stage 1 measured one wing at 2.8 to 3.2 GB and two at 4.1 to 4.5 GB the same way.
+
+| Pack, year | Peak | Wings in at the end | Page errors | Load screen |
+|---|---|---|---|---|
+| mobile, 1990s | 5,446 MB | 2, 1 | 0 | never |
+| mobile, 2026 | 4,339 MB | 2, 1, 5 | 0 | never |
+| desktop, 1990s | 5,525 MB | 1, 2, 4, 5 (all but the gated cinema lobby) | 0 | never |
+| desktop, 2026 | 4,909 MB | 1, 2, 4, 5 | 0 | never |
+
+The mobile 1990s peak is as high as desktop's because a far wing is unloaded only after the next one is in, so
+three wings overlap for a moment. All four interior wings together cost about 0.1 to 0.6 GB more than two here.
+**Not measured: any real device.**
+
+### The blue floor in a streamed department store
+`wsSEAMLESS-floor-tint-settle.jpg`. Just streamed in, a store's polished floor mirrors the sky (a cool cast) until
+its reflection probes have taken their pictures, 360 to 400 frames after the last node enters. It is not a bake
+step. The probes now enter after the meshes and a room wing stays "coming" for 480 frames (`settle_frames` in
+`data/stream.json`). **What a player sees during the wait: the store's opening still shows its storefront picture,
+then the real store; never the tinted floor.** A player who reaches the line first is held there behind the cue.
+On this box, at under one frame a second, that wait was 585 to 1,357 s at the Sears / Lynn's opening; at 30 to 60
+frames a second it is 8 to 16 s. Whether a walking player can outrun it on a real machine is not verified.
