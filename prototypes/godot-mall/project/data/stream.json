@@ -1,7 +1,18 @@
 {
  "_doc": "Seamless streaming between wings (workstream SEAMLESS, Nov 13 2026; design/godot-wings.md 'Seamless streaming'). scripts/wing_stream.gd reads this.",
- "enabled": true,
- "_enabled": "On for both kinds of device since stage 3 (Nov 13 2026). ?stream=1 turns it on for a session, ?stream=0 off. May also be one value per kind of device: {\"desktop\": true, \"mobile\": false}.",
+ "enabled": {
+  "desktop": true,
+  "mobile": false
+ },
+ "_enabled": "Computers: on (stage 3, Nov 13 2026). Phones and tablets: off since Nov 14 2026 (UPFRONT): the streaming build crashed iPhone Safari within seconds, two wings in memory; with it off a phone loads one wing at a time as in Demo 54. ?stream=1 turns it on for a session (the phone path is still there, for testing), ?stream=0 off. One value for both kinds also works: true / false.",
+ "upfront": {
+  "desktop": true,
+  "mobile": false
+ },
+ "_upfront": "UPFRONT (Nov 14 2026): every interior wing of the year (the cinema lobby only once its gate is open) is fetched, loaded, entered, settled and peopled behind the load screen of a page load (the start, a year switch, coming back inside), so no border is ever 'not in' once it lifts. Steven, Nov 13: 'I'd rather the load be as big as possible up front.' web/shell.html MALL_UPFRONT mirrors this (tools/export_web.sh writes it). ?upfront=0 / 1 for a session.",
+ "upfront_load_budget_ms": 50,
+ "upfront_nodes_per_frame": 300,
+ "_upfront_budget": "behind the load screen: milliseconds of resource loading and nodes entering the tree per frame (flat, not scaled by frame time).",
  "borders": [
   {
    "a": 1,

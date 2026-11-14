@@ -71,8 +71,21 @@ var _cue: MeshInstance3D
 var _cue_t := 0.0
 var _in_remake := false        # attach() is being called by a Player this streamer made
 var _was_away := false         # the player was in the Stockrooms (a level built far off) last frame
+## UPFRONT (Nov 14 2026, data/stream.json "upfront"; design/godot-wings.md "Everything up front"):
+## on a computer every interior wing of the year is brought in behind the first load screen (and the
+## ones of a year switch or of coming back inside, which are page loads too), so no border is ever
+## "not in" once the screen lifts. Steven, Nov 13: "I'd rather the load be as big as possible up front."
+var upfront := false
+var _up_active := false        # the load screen is being held for the wings still coming in
+var _up_frames := 0
+var _up_t0 := 0
+var _up_js_t := 0.0
 var _qa := false               # ?qa=1 (tools/qa): the page may place the player (window.__mallTeleport) and reads where it is
 var _qa_t := 0.0
+var _qa_path := []             # UPFRONT, ?qa=1: waypoints [x, z] the player is steered along (the test holds forward itself)
+var _qa_last := Vector3.ZERO
+var _qa_still := 0.0           # seconds the player has not moved while a path is being walked
+var _qa_seen := {}             # what went wrong on the walk, once each: window.__mallWalkLog
 ## Measurements for tools/qa (and ?debug=1): wing -> {fetch_ms, mount_ms, load_ms, load_max_ms,
 ## inst_ms, enter_ms, enter_max_ms, handoff_ms}; "remakes": how many times the systems were remade
 var stats := {}
@@ -105,8 +118,20 @@ func _init() -> void:
 		enabled = bool(Engine.get_meta("mall_stream"))
 	if q == "1": enabled = true
 	elif q == "0": enabled = false
+	# UPFRONT: "upfront": true / false, or one per kind of device; ?upfront=0 / 1 for a session
+	var up = cfg.get("upfront", false)
+	upfront = enabled and (bool(up.get(kind, false)) if up is Dictionary else bool(up))
+	if Engine.has_meta("mall_upfront"):         # tests and native runs
+		upfront = enabled and bool(Engine.get_meta("mall_upfront"))
+	if OS.has_feature("web"):
+		var uq := str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('upfront') || ''"))
+		if uq == "1": upfront = enabled
+		elif uq == "0": upfront = false
 
 func _num(key: String, def: float) -> float:
+	# UPFRONT: behind the load screen nothing has to stay smooth: a bigger share of each frame
+	if _up_active and cfg.has("upfront_" + key):
+		key = "upfront_" + key
 	var v = cfg.get(key, def)
 	if v is Dictionary:
 		return float(v.get(kind, def))
@@ -125,6 +150,12 @@ func attach(p: Node3D) -> void:
 		nb.clear(); held.clear(); info.clear()
 		_hid_nodes.clear(); _hid_surfs.clear(); _trimmed.clear(); _fx_off.clear()
 		_t_start = Time.get_ticks_msec() / 1000.0
+		# UPFRONT: a page load (the start, a year switch, back inside): hold its load screen for the interior
+		_up_active = enabled and upfront
+		_up_frames = 0
+		_up_t0 = Time.get_ticks_msec()
+		if _up_active and OS.has_feature("web"):
+			JavaScriptBridge.eval("window.__mallUpfront = 0; window.__mallUpfrontFrac = 0;", true)
 	player = p
 	home = p.get_parent()
 	home_wing = int(p.wing)
@@ -278,6 +309,8 @@ func _process(dt: float) -> void:
 	_was_away = away_now
 	var now := Time.get_ticks_msec() / 1000.0
 	var S := span()
+	if _up_active:
+		_upfront_step(dt)
 	var loading := _loading()
 	var best := {}
 	var cue := {}
@@ -343,6 +376,8 @@ func _process(dt: float) -> void:
 					var el := _edge_line(e)
 					if not el.is_empty() and _away(el.line) < _num("people_m", 45.0):
 						close = true
+		if _up_active:
+			close = false      # UPFRONT: one remake, once every wing is in (nobody is walking yet)
 		if gone or close or not (loading or waiting or not best.is_empty()):
 			_busy = true
 			_remake.call_deferred(home_wing)
@@ -353,6 +388,77 @@ func _process(dt: float) -> void:
 			"load": _step_load(int(w))
 			"enter": _step_enter(int(w))
 	_sync_fixtures()
+
+# ------------------------------------------------------------------ UPFRONT: the whole interior behind the load screen
+## The wings to bring in: every wing a chain of borders reaches from the wings that are in, not
+## through a shut gate (the cinema lobby comes in later, in the background, when its gate opens).
+func _up_targets() -> Array:
+	var seen := span()
+	var out := []
+	var grew := true
+	while grew:
+		grew = false
+		for e in _edges():
+			if _locked(e):
+				continue
+			for pair in [[int(e.a), int(e.b)], [int(e.b), int(e.a)]]:
+				if pair[0] in seen and not (pair[1] in seen):
+					seen.append(pair[1]); out.append(pair[1]); grew = true
+	return out
+
+## A wing is being loaded or its nodes are entering the tree (one at a time; a wing whose probes are
+## settling does not hold the next one up).
+func _working(except := -1) -> bool:
+	for w in nb:
+		if int(w) == except:
+			continue
+		var st := str(nb[w].state)
+		if st == "load" or (st == "enter" and not (nb[w].get("queue", []) as Array).is_empty()):
+			return true
+	return false
+
+## How far along the wings are, 0-1, for the load screen's bar (web/shell.html).
+func _up_frac() -> float:
+	var T := _up_targets()
+	var n := 0; var sum := 0.0
+	for w in nb:
+		n += 1
+		match str(nb[w].state):
+			"in", "failed": sum += 1.0
+			"load":
+				var nd := maxi(1, int(nb[w].get("n_deps", 1)))
+				sum += 0.1 + 0.4 * (1.0 - float((nb[w].get("pending", []) as Array).size()) / nd)
+			"enter":
+				var total := maxf(1.0, _num("settle_frames", 0.0))
+				sum += 0.6 + (0.4 * (1.0 - float(nb[w].settle) / total) if nb[w].has("settle") else 0.0)
+	for w in T:
+		if not nb.has(w):
+			n += 1
+	return clampf(sum / n, 0.0, 1.0) if n > 0 else 1.0
+
+func _upfront_step(dt: float) -> void:
+	_up_frames += 1
+	# every pack is asked for at once (the page fetches them side by side; web/shell.html starts on the
+	# mall and department-store wings before the engine is even up)
+	for w in _up_targets():
+		if _state(w) == "":
+			_start(w)
+	_up_js_t += dt
+	if _up_js_t > 0.25 and OS.has_feature("web"):
+		_up_js_t = 0.0
+		JavaScriptBridge.eval("window.__mallUpfrontFrac = %.3f;" % _up_frac(), true)
+	if _up_frames < 8:           # the player's own systems (the cinema gate among them) are a few frames old
+		return
+	for w in _up_targets():
+		if not (_state(w) in ["in", "failed"]):
+			return
+	if _loading() or _span_changed() or _busy:
+		return                   # the last wing's people and things are still to be made
+	_up_active = false
+	print("wing_stream: the interior is in up front: wings %s, %d ms after the scene" % [str(span()), Time.get_ticks_msec() - _up_t0])
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("window.__mallUpfront = 1; window.__mallUpfrontFrac = 1;", true)
+	_js_state()
 
 func _span_changed() -> bool:
 	var S := span()
@@ -415,6 +521,8 @@ func _poll_fetch(w: int) -> void:
 			return
 		if not s.begins_with("/"):
 			return        # "fetching"
+		if _working(w):
+			return        # UPFRONT: several packs arrive side by side; they are loaded one at a time
 		path = s
 		stats[w]["fetch_ms"] = Time.get_ticks_msec() - int(nb[w].t0)
 		var t := Time.get_ticks_msec()
@@ -424,6 +532,8 @@ func _poll_fetch(w: int) -> void:
 		if not ok:
 			_fail(w, "the pack did not mount")
 			return
+	elif _working(w):
+		return            # (native) one wing is loaded at a time
 	if not ResourceLoader.exists(scene_path(w)):
 		_fail(w, "no scene " + scene_path(w))
 		return
@@ -465,7 +575,7 @@ func _fallback(el: Dictionary, u: int, v: int) -> void:
 # ------------------------------------------------------------------ 3: load and instance
 func _step_load(w: int) -> void:
 	var t := Time.get_ticks_msec()
-	var budget := int(_num("load_budget_ms", 6.0) * _scale)
+	var budget := int(_num("load_budget_ms", 6.0) * (1.0 if _up_active else _scale))   # UPFRONT: a flat share (scaling a big one by the frame it lengthens would run away)
 	var pend: Array = nb[w].pending
 	while not pend.is_empty() and Time.get_ticks_msec() - t < budget:
 		var p: String = pend.pop_back()
@@ -539,7 +649,7 @@ func _pull_probes(n: Node, out: Array) -> void:
 func _step_enter(w: int) -> void:
 	var t := Time.get_ticks_msec()
 	var q: Array = nb[w].queue
-	var n := int(_num("nodes_per_frame", 24.0) * _scale)
+	var n := int(_num("nodes_per_frame", 24.0) * (1.0 if _up_active else _scale))
 	while n > 0 and not q.is_empty():
 		var e: Array = q.pop_back()
 		e[0].add_child(e[1])
@@ -1123,6 +1233,7 @@ func _qa_step(dt: float) -> void:
 			player.position = Vector3(float(a[0]), 0, float(a[1]))
 			player.yaw = deg_to_rad(float(a[2])); player.pitch = 0.0
 			player._apply_rot()
+	_qa_walk(dt)
 	_qa_t += dt
 	if _qa_t > 0.25 or tp != "":
 		_qa_t = 0.0
@@ -1131,6 +1242,59 @@ func _qa_step(dt: float) -> void:
 		JavaScriptBridge.eval("window.__mallPos = [%.2f, %.2f, %d, %s, %s];" % [player.position.x, player.position.z, home_wing, str(cue_on).to_lower(), str(pr).to_lower()], true)
 		_js_state()
 
+## ?qa=1, UPFRONT (tools/qa/stream_natural_walk_webtest.py): window.__mallWalk = [[x, z], ...] gives the player a
+## path to walk; the test holds forward and this only turns the player toward the next waypoint each frame (no
+## placing, no waiting for a wing). What a visitor must never meet on the way is noted once each in
+## window.__mallWalkLog: "held" (not moving for a second within 3 m of a border line while walking),
+## "stuck" (not moving for 4 s anywhere), "prompt" (an "Enter ..." prompt: a border asking for the old load),
+## "leaving" (the old crossing's fade started). window.__mallWalkLeft = waypoints still ahead.
+func _qa_walk(dt: float) -> void:
+	var wp := str(JavaScriptBridge.eval("(function(){var t=window.__mallWalk;window.__mallWalk=null;return t?JSON.stringify(t):''})()", true))
+	if wp != "":
+		var a = JSON.parse_string(wp)
+		if a is Array:
+			_qa_path = a
+			_qa_still = 0.0
+			_qa_last = player.position
+	var pos := player.position
+	if bool(player.get("leaving")):
+		_qa_note("leaving", "the old crossing started at (%.1f, %.1f)" % [pos.x, pos.z])
+	if player.prompt != null and player.prompt.visible and str(player.prompt_text.text).begins_with("Enter ") and int(player.wing) != 3:
+		_qa_note("prompt", "'%s' at (%.1f, %.1f), home wing %d" % [str(player.prompt_text.text), pos.x, pos.z, home_wing])
+	if _qa_path.is_empty():
+		return
+	# pop the waypoints already reached (a long frame covers several)
+	var reach := maxf(1.6, 4.0 * dt * 1.5)
+	while not _qa_path.is_empty() and Vector2(float(_qa_path[0][0]) - pos.x, float(_qa_path[0][1]) - pos.z).length() < reach:
+		_qa_path.pop_front()
+	if not _qa_path.is_empty():
+		var dx := float(_qa_path[0][0]) - pos.x; var dz := float(_qa_path[0][1]) - pos.z
+		player.yaw = atan2(-dx, -dz); player.pitch = 0.0
+		player._apply_rot()
+	if pos.distance_to(_qa_last) > 0.02:
+		_qa_still = 0.0
+		_qa_last = pos
+	elif not bool(player.get("frozen")):
+		_qa_still += dt
+		if _qa_still > 1.0:
+			for e in _edges():
+				var el := _edge_line(e)
+				if el.is_empty():
+					continue
+				var ln: Array = el.line
+				if absf(float(ln[1]) - pos.z) < 3.0 and pos.x > float(ln[0]) - 1.0 and pos.x < float(ln[2]) + 1.0:
+					_qa_note("held", "held at the border %d-%d at (%.1f, %.1f): wings %s" % [int(e.a), int(e.b), pos.x, pos.z, str(span())])
+		if _qa_still > 4.0 and not _qa_path.is_empty():
+			_qa_note("stuck", "not moving for 4 s at (%.1f, %.1f), next waypoint %s" % [pos.x, pos.z, str(_qa_path[0])])
+	JavaScriptBridge.eval("window.__mallWalkLeft = %d;" % _qa_path.size(), true)
+
+func _qa_note(key: String, what: String) -> void:
+	if _qa_seen.has(key):
+		return
+	_qa_seen[key] = what
+	print("qa walk: ", key, ": ", what)
+	JavaScriptBridge.eval("window.__mallWalkLog = %s;" % JSON.stringify(_qa_seen), true)
+
 ## For tools/qa: window.__mallStreamState = {home, wings: {w: state}, peopled, stats}
 func _js_state() -> void:
 	if not OS.has_feature("web"):
@@ -1138,4 +1302,4 @@ func _js_state() -> void:
 	var st := {}
 	for w in nb:
 		st[str(w)] = str(nb[w].state)
-	JavaScriptBridge.eval("window.__mallStreamState = %s;" % JSON.stringify({"home": home_wing, "wings": st, "peopled": _peopled, "stats": stats}), true)
+	JavaScriptBridge.eval("window.__mallStreamState = %s;" % JSON.stringify({"home": home_wing, "wings": st, "peopled": _peopled, "stats": stats, "upfront": upfront, "upfront_active": _up_active}), true)

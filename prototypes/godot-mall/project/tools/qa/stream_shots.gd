@@ -29,6 +29,7 @@ func _initialize() -> void:
 	Engine.set_meta("mall_state_%d" % year, "")
 	Engine.set_meta("mall_stream", stream)
 	Engine.set_meta("mall_stream_kind", "desktop")
+	Engine.set_meta("mall_upfront", false)   # UPFRONT (Nov 14 2026): this test is about wings coming in in the background (tools/qa/stream_upfront_test.gd is the other)
 	Engine.set_meta("mall_flags", {"v": 1, "flags": {"cinema_unlocked": true}})
 	var scn: Node = load(("res://wing%d_2026.tscn" if year == 2026 else "res://wing%d.tscn") % wing).instantiate()
 	root.add_child(scn); current_scene = scn

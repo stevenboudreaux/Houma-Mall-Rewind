@@ -85,7 +85,16 @@ import sys
 p, line = sys.argv[1], sys.argv[2]
 s = open(p).read()
 i = s.index("const SHARED_PACKS = "); j = s.index("// SHARED_PACKS", i) + len("// SHARED_PACKS")
-open(p, "w").write(s[:i] + line + s[j:])
+s = s[:i] + line + s[j:]
+# UPFRONT (Nov 14 2026): the kinds of device that bring the whole interior in behind the load screen, from
+# data/stream.json ("enabled" and "upfront"), into index.html's MALL_UPFRONT line
+import json
+c = json.load(open("data/stream.json"))
+on = lambda k, kind: (c.get(k, False).get(kind, False) if isinstance(c.get(k, False), dict) else bool(c.get(k, False)))
+up = {kind: bool(on("enabled", kind) and on("upfront", kind)) for kind in ("desktop", "mobile")}
+i = s.index("const MALL_UPFRONT = "); j = s.index("// MALL_UPFRONT", i) + len("// MALL_UPFRONT")
+s = s[:i] + "const MALL_UPFRONT = " + json.dumps(up) + "; " + "// MALL_UPFRONT" + s[j:]
+open(p, "w").write(s)
 PY
 # GitHub refuses a file over 100 MiB (design/godot-build-hosting.md): warn from 95 MB, tools/publish_build.sh refuses
 for f in "$OUT"/*.pck; do [ "$(stat -c %s "$f")" -lt 95000000 ] || echo "WARNING: $(basename "$f") is $(stat -c %s "$f") bytes, near GitHub's 100 MiB file limit"; done

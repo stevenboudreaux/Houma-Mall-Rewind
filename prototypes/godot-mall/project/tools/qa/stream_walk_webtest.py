@@ -24,7 +24,7 @@ from playwright.sync_api import sync_playwright
 path, out = sys.argv[1], sys.argv[2]
 PACK = sys.argv[3] if len(sys.argv) > 3 else "mobile"
 YEAR = sys.argv[4] if len(sys.argv) > 4 else "1995"
-STREAM = os.environ.get("STREAM", "")
+STREAM = os.environ.get("STREAM", "1")   # UPFRONT: forced on (phones are off by default since Nov 14; this test is the background path)
 EXTRA = os.environ.get("EXTRA", "")
 WAIT_IN = float(os.environ.get("WAIT_IN", "900"))     # the longest a wing may take to come in, seconds (here)
 WALK = float(os.environ.get("WALK", "240"))           # the longest forward is held at one border, seconds
@@ -73,7 +73,7 @@ with sync_playwright() as p:
     pg.on("pageerror", lambda e: errors.append(str(e)))
     pg.on("load", lambda _p: navs.append(pg.url))
     sep = "&" if "?" in path else "?"
-    q = f"wing=5&cam={LEGS[0][1]},{LEGS[0][2]},{LEGS[0][3]},0&pack={PACK}&warm=0&qa=1"
+    q = f"wing=5&cam={LEGS[0][1]},{LEGS[0][2]},{LEGS[0][3]},0&pack={PACK}&warm=0&upfront=0&qa=1"
     if YEAR == "2026":
         q += "&year=2026"
     if STREAM:

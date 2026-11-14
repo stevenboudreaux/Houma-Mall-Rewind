@@ -64,7 +64,7 @@ with sync_playwright() as p:
     pg.on("pageerror", lambda e: errors.append(str(e)))
     pg.on("load", lambda _p: navs.append(pg.url))        # a real page load (the address changing in place is not one)
     sep = "&" if "?" in path else "?"
-    pg.goto(f"http://127.0.0.1:8765/{path}{sep}wing={WING}&cam={CAM}&pack={PACK}&stream={STREAM}&warm=0&debug=1{EXTRA}", timeout=180000)
+    pg.goto(f"http://127.0.0.1:8765/{path}{sep}wing={WING}&cam={CAM}&pack={PACK}&stream={STREAM}&warm=0&upfront=0&debug=1{EXTRA}", timeout=180000)
     t0 = time.time()
     while time.time() - t0 < 420:
         if pg.evaluate("!document.getElementById('status')"):

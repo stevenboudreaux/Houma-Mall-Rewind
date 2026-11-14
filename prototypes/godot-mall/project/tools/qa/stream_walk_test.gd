@@ -39,6 +39,7 @@ func _initialize() -> void:
 	Engine.set_meta("mall_state_%d" % year, "")
 	Engine.set_meta("mall_stream", true)
 	Engine.set_meta("mall_stream_kind", kind)
+	Engine.set_meta("mall_upfront", false)   # UPFRONT (Nov 14 2026): this test is about wings coming in in the background (tools/qa/stream_upfront_test.gd is the other)
 	# the cinema's gate is open for this walk (scripts/cinema_gate.gd reads the same store off the web)
 	if not locked:
 		Engine.set_meta("mall_flags", {"v": 1, "flags": {"cinema_unlocked": true}})

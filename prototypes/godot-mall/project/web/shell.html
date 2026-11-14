@@ -1004,6 +1004,10 @@ const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
 // ?year=2026: the mall as it is today (same building, today's stores), its own pair of files per
 // wing: w1y26.* / w2y26.* (scripts/player.gd's 1995 / 2026 switch sets it).
 const PACK_SIZES = {"w1": {"desktop": 0, "mobile": 0}, "w2": {"desktop": 0, "mobile": 0}, "w3": {"desktop": 0, "mobile": 0}, "w1y26": {"desktop": 0, "mobile": 0}, "w2y26": {"desktop": 0, "mobile": 0}, "w3y26": {"desktop": 0, "mobile": 0}, "w4": {"desktop": 0, "mobile": 0}, "w5": {"desktop": 0, "mobile": 0}, "w6": {"desktop": 0, "mobile": 0}, "w4y26": {"desktop": 0, "mobile": 0}, "w5y26": {"desktop": 0, "mobile": 0}, "w6y26": {"desktop": 0, "mobile": 0}}; // PACK_SIZES
+// UPFRONT (Nov 14 2026, scripts/wing_stream.gd, design/godot-wings.md "Everything up front"): the kinds of device
+// that bring the whole interior in behind the load screen. tools/export_web.sh writes this line from
+// data/stream.json ("enabled" and "upfront").
+const MALL_UPFRONT = {"desktop": true, "mobile": false}; // MALL_UPFRONT
 // CHARS (Nov 3 2026, design/godot-build-hosting.md "Shared packs"): packs shared by every wing instead of
 // copied into each wing pack: "items" (the Blender items and prize pictures, downloaded with the wing pack
 // and mounted before its scene loads: at "start"). CHAR-STRIP (Nov 8 2026): the "later" character packs,
@@ -1137,6 +1141,7 @@ window.mallGoWing = function (url) { if (window.mallVR.inSession) { window.mallV
 // ('fetching' meanwhile, 'error' when it could not be had: the old prompt and load still work then).
 window.__mallStream = {};
 window.__mallStreamMs = {};
+window.__mallStreamBytes = {};   // UPFRONT: wing -> bytes of its pack fetched so far
 window.__mallPre = window.__mallPre || {};   // pack URL -> a fetch in flight (this streamer's, or the prefetch's)
 window.mallStream = function (w) {
 	if (window.__mallStream[w]) { return; }
@@ -1151,15 +1156,36 @@ window.mallStream = function (w) {
 			const copy = r.clone();
 			caches.open(MALL_CACHE).then((c) => c.match(url).then((m) => (m ? null : c.put(url, copy)))).catch(() => {});
 		}
-		return r.arrayBuffer();
+		// UPFRONT: the bytes are counted as they arrive, for the load screen's bar
+		if (!r.body || !r.body.getReader) { return r.arrayBuffer(); }
+		const rd = r.body.getReader(); const parts = []; let got = 0;
+		const pump = () => rd.read().then((x) => {
+			if (x.done) {
+				const all = new Uint8Array(got); let o = 0;
+				parts.forEach((c) => { all.set(c, o); o += c.byteLength; });
+				return all.buffer;
+			}
+			parts.push(x.value); got += x.value.byteLength; window.__mallStreamBytes[w] = got;
+			return pump();
+		});
+		return pump();
 	});
 	window.__mallPre[url] = mine;
 	mine.then((buf) => {
+		window.__mallStreamBytes[w] = buf.byteLength;
 		window.__mallStreamMs[w] = { fetch: Math.round(performance.now() - t0), bytes: buf.byteLength };
-		const t1 = performance.now();
-		engine.copyToFS(path, buf);
-		window.__mallStreamMs[w].copy = Math.round(performance.now() - t1);
-		window.__mallStream[w] = path;
+		// UPFRONT: a pack asked for before the engine is up waits for its file system (a quarter second at a time)
+		const until = performance.now() + 600000;
+		const put = () => {
+			const t1 = performance.now();
+			try { engine.copyToFS(path, buf); } catch (e) {
+				if (performance.now() > until) { console.warn('could not bring wing ' + w + ' in:', e); window.__mallStream[w] = 'error'; return; }
+				setTimeout(put, 250); return;
+			}
+			window.__mallStreamMs[w].copy = Math.round(performance.now() - t1);
+			window.__mallStream[w] = path;
+		};
+		put();
 	}).catch((e) => {
 		console.warn('could not bring wing ' + w + ' in:', e);
 		window.__mallStream[w] = 'error';
@@ -1170,6 +1196,31 @@ window.mallStreamHome = function (w) {
 	window.__mallWing = w;
 	try { const u = new URL(location.href); u.searchParams.set('wing', String(w)); u.searchParams.delete('cam'); history.replaceState(null, '', u.toString()); } catch (e) { /* ignore */ }
 };
+// ---- UPFRONT (Nov 14 2026): on the kinds of device MALL_UPFRONT names, every interior wing of the year comes
+// in behind this page's load screen (the start, a year switch, coming back inside: all page loads), so no
+// border is "not in" once it lifts. The mall and department-store wings' packs are asked for now, beside the
+// first wing's own; the game asks for the cinema lobby's if its gate is open, loads them one at a time and
+// says how far along it is (window.__mallUpfront 0 -> 1, window.__mallUpfrontFrac). ?upfront=0 / 1, ?stream=0.
+window.__mallUpfrontOn = (function () {
+	if (window.__mallWing === 3) { return false; }
+	try {
+		const q = new URLSearchParams(location.search);
+		if (q.get('stream') === '0' || q.get('upfront') === '0') { return false; }
+		if (q.get('upfront') === '1') { return true; }
+	} catch (e) { /* ignore */ }
+	return !!MALL_UPFRONT[window.__mallPack];
+}());
+window.__mallUpfrontWings = window.__mallUpfrontOn ? [1, 2, 4, 5].filter((w) => w !== window.__mallWing && mallSize(w) > 0) : [];
+window.__mallUpfrontWings.forEach((w) => window.mallStream(w));
+// the load screen's bar: every pack's bytes, then the game's own progress on the wings
+window.mallBarFrac = function (current, total) {
+	if (!window.__mallUpfrontOn) { return total > 0 ? current / total : 0; }
+	let extra = 0, got = 0;
+	Object.keys(window.__mallStream).forEach((w) => { extra += mallSize(+w); got += Math.min(mallSize(+w), window.__mallStreamBytes[w] || 0); });
+	const dl = (total + extra) > 0 ? (current + got) / (total + extra) : 0;
+	return 0.7 * dl + 0.3 * (window.__mallUpfrontFrac || 0);
+};
+// ---- end UPFRONT
 // ---- end SEAMLESS
 let mallXfer = '';
 try { mallXfer = sessionStorage.getItem('mall-xfer') || ''; } catch (e) { /* ignore */ }
@@ -1479,7 +1530,7 @@ const engine = new Engine(GODOT_CONFIG);
 		window.addEventListener('unhandledrejection', (e) => { say('Could not start: ' + ((e.reason && e.reason.message) || e.reason || 'unknown error')); });
 		let startedAt = 0;
 		setInterval(() => {
-			if (initializing && startedAt && Date.now() - startedAt > 45000) {
+			if (initializing && startedAt && Date.now() - startedAt > 45000 && window.__mallUpfront !== 0) {   // UPFRONT: not while the wings come in
 				say('Still starting after 45 s… if this stays, tell Steven: ' + (navigator.userAgent.match(/iPhone OS [\d_]+|Android [\d.]+|Chrome\/[\d.]+|Version\/[\d.]+ Safari/) || ['this browser'])[0]);
 				startedAt = 0;
 			}
@@ -1494,7 +1545,8 @@ const engine = new Engine(GODOT_CONFIG);
 				if (current > 0 && total > 0 && lbar && lmb) {
 					statusProgress.value = current;
 					statusProgress.max = total;
-					lbar.style.width = (100 * current / total).toFixed(1) + '%';
+					window.__mallBar = [current, total];
+					lbar.style.width = (100 * window.mallBarFrac(current, total)).toFixed(1) + '%';   // UPFRONT: the other wings count too
 					lmb.textContent = '';
 					if (current >= total && !startedAt) { startedAt = Date.now(); }
 				} else {
@@ -1519,7 +1571,14 @@ const engine = new Engine(GODOT_CONFIG);
 			(function waitWarm() {
 				frames++;
 				const w = window.__mallWarm;
-				if (w === 1 || (w === undefined && frames > 10) || performance.now() - window.__mallEngineAt > 30000) { lift(); return; }
+				// UPFRONT: the card also stays while the rest of the interior comes in (never more than 15 minutes; after
+				// that the wings keep coming in the background, as before Nov 14)
+				const up = window.__mallUpfront === 0 && performance.now() - window.__mallEngineAt < 900000;
+				if (up) {
+					const lbar = document.getElementById('load-bar'); const b = window.__mallBar || [1, 1];
+					if (lbar) { lbar.style.width = (100 * window.mallBarFrac(b[0], b[1])).toFixed(1) + '%'; }
+				}
+				if (!up && (w === 1 || (w === undefined && frames > 10) || performance.now() - window.__mallEngineAt > 30000)) { lift(); return; }
 				requestAnimationFrame(waitWarm);
 			}());
 			// ---- end workstream H
