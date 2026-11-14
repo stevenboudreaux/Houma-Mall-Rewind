@@ -544,17 +544,32 @@ func _step_enter(w: int) -> void:
 		var e: Array = q.pop_back()
 		e[0].add_child(e[1])
 		n -= 1
+	if q.is_empty() and nb[w].has("settle"):
+		# the probes are taking their pictures: the wing stays "coming" (the border holds, its storefront
+		# picture still covers the opening) until they have, so nobody sees the floor mirror the sky
+		nb[w].settle = int(nb[w].settle) - 1
+		if int(nb[w].settle) > 0:
+			return
 	if q.is_empty():
 		var root: Node = nb[w].root
-		var mode := _mode()
-		load("res://scripts/time_of_day.gd").apply(root, mode)
-		var rt = home.get_node_or_null("Runtime")
-		if rt and rt.has_method("adopt"):
-			rt.adopt(root)
-		for pr in nb[w].get("probes", []):
-			if is_instance_valid(pr[0]) and is_instance_valid(pr[1]):
-				pr[0].add_child(pr[1])
-		nb[w].erase("probes")
+		if not nb[w].has("settle"):
+			var mode := _mode()
+			load("res://scripts/time_of_day.gd").apply(root, mode)
+			var rt = home.get_node_or_null("Runtime")
+			if rt and rt.has_method("adopt"):
+				rt.adopt(root)
+			for pr in nb[w].get("probes", []):
+				if is_instance_valid(pr[0]) and is_instance_valid(pr[1]):
+					pr[0].add_child(pr[1])
+			nb[w].erase("probes")
+			# data/stream.json "settle_frames": a room wing (a threshold: Sears, Dillard's, the cinema lobby)
+			# waits this many frames for its reflection probes; a mall wing does not (its halls are already
+			# in sight across the seam, and the other wing's copy of them must not stay beside the real ones)
+			nb[w].settle = 0 if w in MALL else int(_num("settle_frames", 0.0))
+			if int(nb[w].settle) > 0:
+				stats[w]["enter_max_ms"] = maxi(int(stats[w].get("enter_max_ms", 0)), Time.get_ticks_msec() - t)
+				return
+		nb[w].erase("settle")
 		nb[w].state = "in"
 		stats[w]["enter_ms"] = Time.get_ticks_msec() - int(nb[w].t0)
 		_resync()

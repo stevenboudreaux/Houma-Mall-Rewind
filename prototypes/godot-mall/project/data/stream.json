@@ -1,7 +1,7 @@
 {
  "_doc": "Seamless streaming between wings (workstream SEAMLESS, Nov 13 2026; design/godot-wings.md 'Seamless streaming'). scripts/wing_stream.gd reads this.",
- "enabled": false,
- "_enabled": "Stage 3: turned on at the end (true for both kinds of device). ?stream=1 turns it on for a session, ?stream=0 off. May also be one value per kind of device: {\"desktop\": true, \"mobile\": false}.",
+ "enabled": true,
+ "_enabled": "On for both kinds of device since stage 3 (Nov 13 2026). ?stream=1 turns it on for a session, ?stream=0 off. May also be one value per kind of device: {\"desktop\": true, \"mobile\": false}.",
  "borders": [
   {
    "a": 1,
@@ -69,6 +69,8 @@
  "nodes_per_frame": 24,
  "handoff_past_m": 1.0,
  "_handoff_past_m": "the wing's own systems (shops, attendants, items, shoppers, signs) follow the player once they are this far past the border.",
+ "settle_frames": 480,
+ "_settle_frames": "a room wing (Sears / Lynn's, Dillard's, the cinema lobby) counts as in this many frames after its last node entered: its reflection probes (UPDATE_ONCE) are not done taking their pictures until about 360-400 frames later (measured natively, wing 5; about 7 s at 60 frames a second, 13 s at 30), and until then a polished floor mirrors the sky (a cool, bluish cast). The border holds and the storefront picture covers the opening meanwhile.",
  "people_m": 45,
  "_people_m": "a wing's own people and things (attendants, items, shop stock) are made as soon as it is in when the player is within this many metres of its border; otherwise once nothing else is loading.",
  "cue_m": 14,
