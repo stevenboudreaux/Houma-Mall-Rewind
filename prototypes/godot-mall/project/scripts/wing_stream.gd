@@ -69,6 +69,10 @@ var _scale := 1.0
 var _peopled := []             # the wings whose own content the player's systems were last made for
 var _cue: MeshInstance3D
 var _cue_t := 0.0
+var _in_remake := false        # attach() is being called by a Player this streamer made
+var _was_away := false         # the player was in the Stockrooms (a level built far off) last frame
+var _qa := false               # ?qa=1 (tools/qa): the page may place the player (window.__mallTeleport) and reads where it is
+var _qa_t := 0.0
 ## Measurements for tools/qa (and ?debug=1): wing -> {fetch_ms, mount_ms, load_ms, load_max_ms,
 ## inst_ms, enter_ms, enter_max_ms, handoff_ms}; "remakes": how many times the systems were remade
 var stats := {}
@@ -91,6 +95,7 @@ func _init() -> void:
 	if OS.has_feature("web"):
 		q = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('stream') || ''"))
 		kind = str(JavaScriptBridge.eval("window.__mallPack || 'desktop'"))
+		_qa = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('qa') || ''")) == "1"
 	if Engine.has_meta("mall_stream_kind"):
 		kind = str(Engine.get_meta("mall_stream_kind"))
 	# "enabled": true / false, or one per kind of device {"desktop": true, "mobile": false}
@@ -109,12 +114,21 @@ func _num(key: String, def: float) -> float:
 
 ## A new Player (the first one, or the one a remake made) says where it stands.
 func attach(p: Node3D) -> void:
+	if not _in_remake:
+		# a Player from a scene load (the start, an old crossing in the editor or a test, the year switch):
+		# whatever was streamed in belonged to the scene before
+		for w in nb.keys():
+			var r = nb[w].get("root")
+			_drop_probes(w)
+			if r and is_instance_valid(r):
+				r.queue_free()
+		nb.clear(); held.clear(); info.clear()
+		_hid_nodes.clear(); _hid_surfs.clear(); _trimmed.clear(); _fx_off.clear()
+		_t_start = Time.get_ticks_msec() / 1000.0
 	player = p
 	home = p.get_parent()
 	home_wing = int(p.wing)
 	year = int(p.year)
-	if _t_start == 0.0 or nb.is_empty():
-		_t_start = Time.get_ticks_msec() / 1000.0
 	if not enabled:
 		return
 	_peopled = span()
@@ -254,6 +268,14 @@ func _process(dt: float) -> void:
 		return
 	if bool(player.get("leaving")):
 		return
+	if _qa:
+		_qa_step(dt)
+	# back from the Stockrooms (scripts/stockrooms.gd puts back the walk grid it saved on the way in, which may
+	# be from before a wing came in or went): the grid of the wings that are in now
+	var away_now := absf(player.position.x) > 1000.0 or absf(player.position.z) > 1000.0
+	if _was_away and not away_now:
+		_apply_grid()
+	_was_away = away_now
 	var now := Time.get_ticks_msec() / 1000.0
 	var S := span()
 	var loading := _loading()
@@ -480,6 +502,12 @@ func _step_load(w: int) -> void:
 				c.owner = null
 				g.remove_child(c)
 				queue.append([g, c])
+	# the reflection probes go on last too: they are UPDATE_ONCE and take their picture when they enter the
+	# tree; entered with the first batch they saw an empty room and the sky (a department store's polished
+	# floor then mirrored blue sky instead of its own ceiling)
+	var probes := []
+	_pull_probes(root, probes)
+	nb[w].probes = probes
 	nb[w].root = root
 	nb[w].queue = queue
 	nb[w].state = "enter"
@@ -488,6 +516,25 @@ func _step_load(w: int) -> void:
 	stats[w]["inst_ms"] = Time.get_ticks_msec() - t
 	stats[w]["enter_max_ms"] = 0
 	get_tree().root.add_child(root)
+
+## A wing dropped before it was all in: its probes are still out of the tree and would leak.
+func _drop_probes(w) -> void:
+	if not nb.has(w):
+		return
+	for pr in nb[w].get("probes", []):
+		if is_instance_valid(pr[1]):
+			pr[1].free()
+	nb[w].erase("probes")
+
+## Take every ReflectionProbe under n out of the tree-to-be: [[parent, probe]], put back by _step_enter.
+func _pull_probes(n: Node, out: Array) -> void:
+	for c in n.get_children():
+		if c is ReflectionProbe:
+			c.owner = null
+			n.remove_child(c)
+			out.append([n, c])
+		else:
+			_pull_probes(c, out)
 
 func _step_enter(w: int) -> void:
 	var t := Time.get_ticks_msec()
@@ -504,6 +551,10 @@ func _step_enter(w: int) -> void:
 		var rt = home.get_node_or_null("Runtime")
 		if rt and rt.has_method("adopt"):
 			rt.adopt(root)
+		for pr in nb[w].get("probes", []):
+			if is_instance_valid(pr[0]) and is_instance_valid(pr[1]):
+				pr[0].add_child(pr[1])
+		nb[w].erase("probes")
 		nb[w].state = "in"
 		stats[w]["enter_ms"] = Time.get_ticks_msec() - int(nb[w].t0)
 		_resync()
@@ -891,6 +942,7 @@ func unload(w: int) -> void:
 			drop.append(int(v))
 	for v in drop:
 		var root = nb[v].get("root")
+		_drop_probes(v)
 		if root and is_instance_valid(root):
 			root.queue_free()
 		nb.erase(v)
@@ -998,7 +1050,9 @@ func _remake(w: int, at := {}) -> void:
 	# the systems, as tools/build_mall.gd makes them: Player (and, in a new home, Runtime and Signs)
 	var p = load("res://scripts/player.gd").new()
 	p.name = "Player"
+	_in_remake = true
 	root.add_child(p)
+	_in_remake = false
 	if move:
 		var rt := Node.new()
 		rt.set_script(load("res://scripts/mall_runtime.gd"))
@@ -1042,6 +1096,25 @@ func go(w: int, x: float, z: float, yaw: float, pitch: float) -> bool:
 	_busy = true
 	_remake.call_deferred(w, {"x": x, "z": z, "yaw": yaw, "pitch": pitch})
 	return true
+
+## ?qa=1 (tools/qa/stream_walk_webtest.py): window.__mallTeleport = [x, z, yaw_deg] places the player once (the
+## long halls between borders are not walked by the test; each border is); window.__mallPos = [x, z, home wing,
+## cue showing, prompt showing] is refreshed a few times a second.
+func _qa_step(dt: float) -> void:
+	var tp := str(JavaScriptBridge.eval("(function(){var t=window.__mallTeleport;window.__mallTeleport=null;return t?JSON.stringify(t):''})()", true))
+	if tp != "":
+		var a = JSON.parse_string(tp)
+		if a is Array and a.size() >= 3:
+			player.position = Vector3(float(a[0]), 0, float(a[1]))
+			player.yaw = deg_to_rad(float(a[2])); player.pitch = 0.0
+			player._apply_rot()
+	_qa_t += dt
+	if _qa_t > 0.25 or tp != "":
+		_qa_t = 0.0
+		var cue_on: bool = _cue != null and is_instance_valid(_cue) and _cue.visible
+		var pr: bool = player.prompt != null and player.prompt.visible
+		JavaScriptBridge.eval("window.__mallPos = [%.2f, %.2f, %d, %s, %s];" % [player.position.x, player.position.z, home_wing, str(cue_on).to_lower(), str(pr).to_lower()], true)
+		_js_state()
 
 ## For tools/qa: window.__mallStreamState = {home, wings: {w: state}, peopled, stats}
 func _js_state() -> void:

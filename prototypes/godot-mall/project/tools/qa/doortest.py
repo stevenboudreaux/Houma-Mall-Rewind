@@ -9,6 +9,12 @@ Workstream S (Nov 2 2026): any wing's door or threshold: start in <wing> at <cam
 standing at the door / threshold), press E, expect <to-wing>, press E again where it arrives and
 expect <wing> back. E.g. the Sears side exit "4 -4,-144.4,180,0 3", the Sears opening from the mall
 "1 -4,-94.5,0,0 4", the cinema lobby's doors "6 -60,-84.5,180,0 1". [year] 2026 adds ?year=2026.
+
+SEAMLESS (Nov 13 2026): a border between two inside wings (a threshold) no longer loads when streaming is on
+(data/stream.json): there is no prompt and no page load, the wing beyond is walked into
+(tools/qa/stream_walk_webtest.py checks that). For such a pair this test adds ?stream=0 and checks the old
+crossing, which is still what happens with ?stream=0 or when the wing's pack cannot be fetched. The doors between
+inside and outside (to or from wing 3) are unchanged and run as before.
 """
 import sys, time
 from playwright.sync_api import sync_playwright
@@ -17,6 +23,9 @@ path, out = sys.argv[1], sys.argv[2]
 WING, CAM, TO = (sys.argv[3], sys.argv[4], sys.argv[5]) if len(sys.argv) > 5 else ("1", "34.5,0,-90,0", "3")
 YQ = "&year=2026" if len(sys.argv) > 6 and sys.argv[6] == "2026" else ""
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
+if WING != "3" and TO != "3":      # SEAMLESS: an inside border: the old crossing is checked with streaming off
+    YQ += "&stream=0"
+    print("inside border %s <-> %s: checked as the old crossing (?stream=0)" % (WING, TO))
 
 def ready(pg, t=300):
     t0 = time.time()

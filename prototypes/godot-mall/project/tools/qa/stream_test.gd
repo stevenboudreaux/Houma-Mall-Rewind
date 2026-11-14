@@ -9,6 +9,9 @@
 ##    (the Stockrooms);
 ## 4. walks back north: handoff to wing 1, the Stockrooms are back, the prize counter gone;
 ## 5. --kind=mobile: walks far up the east hall: wing 2 is unloaded, wing 1's stand-in and seam are back.
+## --fail: wing 2's pack "could not be fetched" (its state is set to failed before it starts): no prompt is needed (the
+##    director's call, Nov 13): the seam is still a wall, and walking up to the line starts the old crossing by itself
+##    (natively: the scene changes to wing 2).
 ## Prints the streamer's timings and STREAM TEST OK, or the failures.
 extends SceneTree
 
@@ -21,11 +24,13 @@ var errs := []
 var worst_ms := 0
 var _last := 0
 var crowd_id := 0
+var fail_mode := false
 var crowd_n := 0
 
 func _initialize() -> void:
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--kind="): kind = a.substr(7)
+		if a == "--fail": fail_mode = true
 	Engine.set_meta("mall_state_1995", "")
 	Engine.set_meta("mall_stream", true)
 	Engine.set_meta("mall_stream_kind", kind)
@@ -67,6 +72,10 @@ func _process(dt: float) -> bool:
 				ws.cfg["far_m"] = {"desktop": 100000, "mobile": 70}
 				ws.cfg["borders"] = [{"a": 1, "b": 2, "kind": "seam", "years": [1995]}]   # this test: the seam alone
 				step = 1; t = 0.0
+				if fail_mode:
+					ws.nb[2] = {"state": "failed"}
+					_place(-9.0, 44.0, 180.0)     # 4 m from the seam
+					step = 20
 		1:
 			if ws.is_in(2):
 				print("wing 2 in after %.1f s: %s" % [t, JSON.stringify(ws.stats.get(2, {}))])
@@ -154,6 +163,19 @@ func _process(dt: float) -> bool:
 				step = 99
 			elif t > 5.0:
 				_fail("wing 2 was not unloaded 80 m from the seam"); step = 99
+		20:
+			if t > 1.0:
+				if ws.holds(2): _fail("the streamer holds a border whose pack failed")
+				if _player()._free(-9.0, 52.0): _fail("the floor past the seam is walkable after a failed fetch")
+				Input.action_press("ui_up"); step = 21; t = 0.0
+		21:
+			var cs := current_scene
+			if cs and str(cs.scene_file_path).ends_with("wing2.tscn") and _player() != null and t > 0.5:
+				print("the old crossing loaded wing 2 by itself; player at z=%.2f" % _player().position.z)
+				if _player().position.z < 48.0: _fail("the old crossing did not land past the seam")
+				step = 99
+			elif t > 15.0:
+				_fail("the old crossing did not start by itself at the line (z %.2f)" % (_player().position.z if _player() else -1.0)); step = 99
 		99:
 			Input.action_release("ui_up")
 			print("worst frame while streaming: %d ms; resync max %s ms, trims %s ms in all" % [worst_ms, ws.stats.get("resync_max_ms", "?"), ws.stats.get("trim_ms", "?")])

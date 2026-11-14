@@ -28,6 +28,7 @@ var legs := []
 var seen_max := 1
 var old_cross := false
 var ready_t := -1.0
+var cues := 0             # frames on which the wordless cue showed at a border still coming in
 var locked := false       # --locked: the cinema's gate stays shut; its lobby must never come in
 
 func _initialize() -> void:
@@ -123,6 +124,10 @@ func _process(dt: float) -> bool:
 				# not in yet: the border must hold and the streamer must own it (the cue, no prompt)
 				if not ws.holds(to): _fail("%s: the streamer does not hold the border while wing %d comes in" % [L[4], to])
 				if p.prompt and p.prompt.visible and to != 6: _fail("%s: the old prompt shows while wing %d comes in" % [L[4], to])
+				if ws._cue == null or not ws._cue.visible: _fail("%s: no cue on the floor while wing %d comes in" % [L[4], to])
+				else: cues += 1
+				if p._free(float(L[1]), float(L[2]) + (1.0 if float(L[3]) == 180.0 else -1.0) * 6.0) and ws._edge(ws.home_wing, to) != null:
+					_fail("%s: the floor past the line is walkable before wing %d is in" % [L[4], to])
 		2:
 			if _home() == to:
 				print("  handoff -> %d at (%.1f, %.1f), %s ms" % [to, _player().position.x, _player().position.z, ws.stats.get(to, {}).get("handoff_ms", "?")])
@@ -158,6 +163,7 @@ func _finish() -> bool:
 		else:
 			print("mobile: most wings in at once: %d" % seen_max)
 			if seen_max >= 5: _fail("mobile: every interior wing was in at once (nothing was unloaded)")
+	print("frames with the cue showing at a held border: %d" % cues)
 	print("in at the end: %s; remakes %s; resync max %s ms; worst frame %d ms" % [str(ws.span()), ws.stats.get("remakes", 0), ws.stats.get("resync_max_ms", "?"), worst_ms])
 	for w in ws.stats:
 		if ws.stats[w] is Dictionary: print("  wing %s: %s" % [w, JSON.stringify(ws.stats[w])])

@@ -12,6 +12,10 @@ legs (comma list, default all): sears, dillards, cinema, jump
     (the flag survived the reload).
   jump: ?wing=4 / ?wing=5 at the directory jump spots (map_data.gd ROOM_JUMPS), screenshots.
 Prints one line per check and the console errors; "WSS WEB OK" when all passed.
+
+SEAMLESS (Nov 13 2026): with streaming on (data/stream.json) these openings are plain floor: no prompt, no crossing
+card, no page load (tools/qa/stream_walk_webtest.py). This test now runs with ?stream=0 and checks the old crossings
+and the cinema gate's own steps, which are what a visitor gets with ?stream=0 or when a pack cannot be fetched.
 """
 import json, os, re, sys, time
 from playwright.sync_api import sync_playwright
@@ -19,7 +23,7 @@ from playwright.sync_api import sync_playwright
 path, out = sys.argv[1], sys.argv[2]
 YEAR = sys.argv[3] if len(sys.argv) > 3 else "1995"
 LEGS = (sys.argv[4] if len(sys.argv) > 4 else "sears,dillards,cinema,jump").split(",")
-YQ = "&year=2026" if YEAR == "2026" else ""
+YQ = ("&year=2026" if YEAR == "2026" else "") + "&stream=0"   # SEAMLESS: the old crossings
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
 BASE = "http://127.0.0.1:8765/" + path
 fails = []

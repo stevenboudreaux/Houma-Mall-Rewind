@@ -2,6 +2,10 @@
 prompt shows, press E, and check the page comes back as wing 2 at the same spot (and back again).
 
 Usage: python3 seamtest.py <url-path> <out-prefix>   (server on :8765 serving the repo root)
+
+SEAMLESS (Nov 13 2026): with streaming on (data/stream.json) the seam is plain floor and has no prompt
+(tools/qa/stream_walk_webtest.py walks it). This test now runs with ?stream=0: it checks the old crossing, which is
+still what a visitor gets with ?stream=0 or when a wing's pack cannot be fetched.
 """
 import sys, time, re
 from playwright.sync_api import sync_playwright
@@ -25,7 +29,7 @@ with sync_playwright() as p:
     ok = True
     for leg, (start, key_wing) in enumerate([("-4,46.6,180,-3", "2"), (None, "1")]):
         if start:
-            pg.goto(f"http://127.0.0.1:8765/{path}?cam={start}&debug=1")
+            pg.goto(f"http://127.0.0.1:8765/{path}?cam={start}&debug=1&stream=0")
         print("leg", leg, "ready_s", ready(pg, logs))
         time.sleep(6)
         pg.screenshot(path=f"{out}-{leg}-prompt.png")

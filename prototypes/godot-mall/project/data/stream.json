@@ -83,6 +83,15 @@
   "dyn_glass"
  ],
  "_trim": "meshes that are partly the same in every wing (the skylight panes plus each wing's own shop glass): a later wing's copy loses the triangles an earlier one draws.",
- "hide": [],
- "_hide": "[{\"in\": wing, \"when\": wing, \"nodes\": [names]}]: meshes of wing `in` that are hidden while wing `when` is in."
+ "hide": [
+  {
+   "in": 1,
+   "when": 6,
+   "nodes": [
+    "cin_lobby",
+    "cin_back26"
+   ]
+  }
+ ],
+ "_hide": "[{\"in\": wing, \"when\": wing, \"nodes\": [names]}]: meshes of wing `in` that are hidden while wing `when` is in. Wing 1 carries the cinema's dim lobby behind its doors (1990s cin_lobby; 2026 the dark recess cin_back26): the real lobby (wing 6) takes its place."
 }
