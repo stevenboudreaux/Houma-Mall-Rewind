@@ -1,71 +1,117 @@
-# Worker handoff: SEAMLESS (Fri Nov 13, 2026)
+# Worker handoff: SEAMLESS (Fri Nov 13, 2026), stages 1 to 3
 
-Branch `ws/seamless` from main `81cb3ba9` (Demo 54). Brief: `claude/briefs-2026-11-13-seamless.md` (project doc), with
-the director's change for this run: stage 1, then stage 2, stop, report to the director; stage 3 not started.
-Not merged, not baked, not published, nothing uploaded.
+Branch `ws/seamless` from main `81cb3ba9` (Demo 54). Brief: `claude/briefs-2026-11-13-seamless.md` (project doc), plus
+the director's calls of Nov 13 on findings section f (the common pack; a wordless cue on a slow line; on by default
+after stage 3; keep the stand-in). Not merged, not baked, not published, nothing uploaded.
+
+Stage 3 was written by four worker runs: two were killed by restarts of the cloud box and one by the usage limit.
+Every item below was pushed when it passed its check; nothing is left only on the box except raw test shots.
 
 ## Done / partly / not started
-| Stage | State |
+| Item | State |
 |---|---|
-| 1. Measure and report | **Done**, with gaps named in the doc: `production/qa/evidence/wsSEAMLESS-findings.md`. Not measured: anything on a real phone or GPU; memory with all interior wings in (only one border streams); browser memory for wings 4 to 6 and 2026. |
-| 2. Wing 1 ↔ wing 2, 1990s | **Built and tested, off by default.** `?stream=1` turns it on. Geometry, lighting, floors, walking, the handoff of every per-wing system, phone unload: done. **Partly:** the neighbour's people and loose items appear at the handoff, not before; the crowd respawns at the border. |
-| 3. The rest | Not started: thresholds (Sears, Dillard's, cinema), 2026, desktop "everything", per-wing systems spanning wings, the common pack, retiring interior stand-in capture. |
+| Stage 1, measure and report | Done. `production/qa/evidence/wsSEAMLESS-findings.md`. |
+| Stage 2, wing 1 ↔ wing 2 | Done. |
+| 3a. People and things before the border; skylight glass once | **Done.** Attendants, items and shop stock are made for every wing that is in; the crowd is one node that outlives a crossing; the shared skylight panes are drawn once. |
+| 3b. The common pack | **Done, smaller than estimated.** The cast's bodies and the animation library ship once (`common`, 59.6 MB). Each wing pack is 59.6 MB lighter. Shopper skins, scripts, data and what wings share pairwise are still duplicated (see "Packs"). |
+| 3c. Every interior border, 1990s | **Done:** the seam, Sears, Dillard's, the cinema lobby (once its gate is open). The Stockrooms stay a load (a level inside wing 1, unchanged; brief allowed it; streaming them would need their own pack boundary and saves nothing today). |
+| 3d. The same borders, 2026 | **Done.** |
+| 3e. Desktop everything, phones neighbours | **Done.** Browser memory with the wings in: see "Web walk". |
+| 3f. Wordless cue; on by default | **Done.** `data/stream.json` `"enabled": true` for desktop and mobile. |
+| 3g. Tests | WALKS_STATE |
+| Border shots, both years | SHOTS_STATE |
 
-## What changed (files)
-- New: `prototypes/godot-mall/project/scripts/wing_stream.gd`, `data/stream.json`, `tools/qa/stream_test.gd`,
-  `tools/qa/stream_webtest.py`.
-- Small hunks, marked SEAMLESS: `scripts/player.gd` (attach to the streamer; arrive from a handoff; `_go_to_wing`
-  into a wing that is in), `scripts/mall_runtime.gd` (`adopt(root)`, the floor loop moved into it),
-  `web/shell.html` (`window.mallStream`, `window.mallStreamHome`).
-- Docs: `design/godot-wings.md` "Seamless streaming", `design/godot-build-hosting.md` "Streaming a neighbour's
-  pack" (with the pack overlap table), `tools/qa/README.md`.
-- Not touched: `tools/build_mall.gd`, stores, exterior, characters, story data, the HUD, `tools/publish_build.sh`,
-  `export_presets.cfg`.
+## Borders
+| Border | 1990s | 2026 |
+|---|---|---|
+| wing 1 ↔ wing 2 (the seam) | streams | streams |
+| wing 1 ↔ wing 4 (Sears / Lynn's) | streams, after a probe wait | streams, after a probe wait |
+| wing 2 ↔ wing 5 (Dillard's) | streams, after a probe wait | streams, after a probe wait |
+| wing 1 ↔ wing 6 (cinema lobby) | streams once the gate is open | streams once the gate is open |
+| inside ↔ outside, year switch, Stockrooms, mini-games, conversations | a load, as before | a load, as before |
 
-## Evidence (`production/qa/evidence/`, web build, baked with the Demo 54 lightmaps, swiftshader)
-- `wsSEAMLESS-seam-from-wing1-before-after.jpg`, `wsSEAMLESS-seam-from-wing2-before-after.jpg`
-- `wsSEAMLESS-crossing-1to2-sequence.jpg`, `wsSEAMLESS-crossing-2to1-sequence.jpg`
-- `wsSEAMLESS-findings.md`
+## The blue floor (the director's question 1)
+A streamed department store's polished floor mirrored the sky (a cool, bluish cast) until its reflection probes had
+taken their pictures: 360 to 400 frames after the last node entered (about 7 s at 60 frames a second, 13 s at 30).
+It is not a bake step. Fix: the probes enter after the meshes, and a room wing stays "coming" for 480 frames
+(`settle_frames`). **What the player sees: the store's opening shows its storefront picture a few seconds longer,
+then the real store; never a tinted floor.** If the player reaches the line first, the border holds behind the
+wordless cue. On desktop the wait happens in the background after the first card.
+Evidence: `production/qa/evidence/wsSEAMLESS-floor-tint-settle.jpg` (inside Dillard's just streamed in, and 480 frames
+later; from the court during the wait, and after). Not checked: whether 480 frames is enough on a slow phone
+(the count is frames, not seconds, so a slow device waits longer, which is the safe direction).
+
+## Web walk: Dillard's → Sears → Corn Dog 7 (`tools/qa/stream_walk_webtest.py`, build of `a4334dd`, streaming on by default)
+All four runs: `STREAM WALK WEB OK`, the load screen never shown, no page load, 0 page errors.
+
+| Pack, year | Result | Peak memory (all Chromium processes) | Wings in at the end | Longest wait for a wing at a border |
+|---|---|---|---|---|
+| mobile, 1990s | OK | 5,446 MB | 2, 1 (far wings unloaded) | Sears 616 s |
+| mobile, 2026 | OK | 4,339 MB | 2, 1, 5 | Lynn's 52 s |
+| desktop, 1990s | OK | 5,525 MB | 1, 2, 4, 5 (every interior wing but the gated cinema lobby) | Sears 585 s |
+| desktop, 2026 | OK | 4,909 MB | 1, 2, 4, 5 | Lynn's 1,357 s |
+
+**The long waits are the probe wait counted in frames on a box drawing under one frame a second** (480 frames; the
+software renderer with two to four wings in). The other borders came in within 4 to 62 s. On a real GPU 480 frames is
+8 to 16 s. During the wait the test stood at the line behind the cue; nothing loaded or reloaded. This is the number
+to check first on Steven's machines: if the Sears or Lynn's opening holds a walking player, lower `settle_frames`
+or start the store earlier.
+
+Memory is every Chromium process on the cloud box with the software renderer: inflated, and not a phone's number.
+
+## Packs (MB; before = Demo 54 on R2, after = this branch, same lightmaps)
+| | Before | After |
+|---|---|---|
+| `w1` / `w2` | 150.6 / 154.2 | 91.0 / 94.7 |
+| `w4` / `w5` / `w6` | 98.6 / 99.4 / 80.3 | 39.0 / 39.9 / 20.7 |
+| `w1y26` / `w2y26` / `w4y26` / `w5y26` / `w6y26` | 107.8 / 138.9 / 152.0 / 94.7 / 80.4 | 48.3 / 79.3 / 92.5 / 35.1 / 20.9 |
+| `w3` / `w3y26` | 119.4 / 104.4 | 59.9 / 44.8 |
+| `items` / `common` (each once) | 84.0 / none | 84.0 / 59.6 |
+| Whole 1990s interior with both shared packs | 667.1 | 428.9 |
+| Everything, one kind of device | 1,464.7 | 809.7 |
+
+Section f guessed 311 MB for the 1990s interior; it is 428.9. Only what is byte-identical in every pack and safe to
+mount first was moved. A second split (scripts, data and shopper skins into `common`; a pack for what wings 1 and 2
+share) would get closer; `design/godot-build-hosting.md` "The common pack" says why it was not done here.
 
 ## Tests
-- `tools/qa/stream_test.gd`: `STREAM TEST OK (desktop)`, `STREAM TEST OK (mobile)`.
-- `tools/qa/stream_webtest.py` (export of wings 1 and 2, 1990s, served locally): `STREAM WEB OK` wing 1 into wing 2
-  (mobile pack) and wing 2 into wing 1 (mobile and desktop packs): no load screen, no page load, `?wing=` follows,
-  0 page errors.
-- The 8 headless suites all OK: SHOP 200, CUCOS 89, FLAGS 31, INVENTORY 45, REDEMPTION 32, ECON 52, MENU UNIT 64, INT D49.
-- `stockrooms_test.gd`: 3 of 12 checks fail, **the same 3 with main's scripts put back** (not from this branch).
-- `rougarou_test.gd`, `rougarou_stalk_test.gd`: never finish, here or on main: they wait for `RougarouAI`, which the
-  game no longer makes. `rougarou_story_test.gd` not run.
-- `pack_base_test.js`, `packcontents_test.py`: OK.
-- Not run: the other web suites (walk, doors, seam, directory jump, redemption, shops). Streaming is off by default
-  and those paths are unchanged; `seamtest.py` and `doortest.py` need no update until it is turned on.
-- New web test for Dillard's → Sears → Corn Dog 7: not written (needs the thresholds, stage 3); `stream_webtest.py`
-  covers the one border that streams.
+TESTS_BLOCK
+
+## Lighting at the borders
+No lighting step seen at any border in the walk shots (1990s and 2026): each wing's bake already includes its
+neighbours' halls. **No rebake asked for.** Not looked at: night (the build is day only), a real GPU.
 
 ## Rebake
-None. No wing's geometry or lighting changed (`gen/` is untouched, so the stand-in stamps stay valid).
+None. `gen/` is untouched, so every stand-in stamp stays valid.
 
-## For the director at integration
-- The first export needs `python3 tools/qa/packcontents.py write <builddir>`: two new files in every wing pack.
-- Bake and publish steps: unchanged at this stage. The stand-ins are still captured and stamped.
-- To try it on any build of this branch: add `?stream=1` to the address. To turn it on: `data/stream.json`
-  `"enabled"` (true, or `{"desktop": true, "mobile": false}`).
-- `data/stream.json` `wing2_zones` repeats `tools/build_mall.gd` `WING2_ZONES`; keep them equal.
-- The four choices are in the findings doc, section f, with my pick for each: the phone's memory (the common
-  pack), a slow line at the border, when to turn it on, the stand-in after stage 3.
+## For the director
+- **Integration:** `export_presets.cfg` and `tools/qa/pack_manifest/*` were rewritten by script on this branch. If
+  another branch in int-55 touches them, regenerate (`tools/make_presets.py`; export; `python3
+  tools/qa/packcontents.py write <builddir>`), never hand-merge. Small marked hunks (SEAMLESS) are in
+  `scripts/player.gd`, `mall_runtime.gd`, `npcs.gd`, `interact.gd`, `shop.gd`, `dialogue/story.gd`, `story/cucos.gd`,
+  `cinema_gate.gd`, `web/shell.html`. `data/stream.json` `wing2_zones` must stay equal to `tools/build_mall.gd`
+  `WING2_ZONES`.
+- **Export:** as before (`tools/export_web.sh`); it now also writes `common.desktop.pck` and `common.mobile.pck`.
+- **Upload / publish:** as before. `tools/publish_build.sh` is unchanged and already checks every shared pack the
+  page lists; two more files go to R2 per build. The stand-in pictures are still required and stamped.
+- **Bake:** none for this branch.
+- **To turn it off** without a new build: `?stream=0`. For a build: `data/stream.json` `"enabled"`.
+- **`ws/seamless-wip`** (070db52): the same common-pack files, superseded by `32be6dc`. It can be deleted now.
 
-## Differences between the brief and the repo
-- The brief's file paths are under `prototypes/godot-mall/project/`.
-- Wing 6 is interior: the Southland Cinema lobby, off wing 1, never baked (the director's record was unsure).
-- The stand-in storefront pictures are `Dynamic/dyn_standin`, and each wing also carries the other wing's halls as
-  real meshes, plus a copy of the whole mall's shared parts: more than "panels at the border".
-- The crossing today is a page reload into another pack, not a scene change, which is why streaming needed the
-  page's help and a handoff of the per-wing systems.
+## Changed outside the brief's scope
+- `tools/qa/doortest.py`, `seamtest.py`, `wsS_webtest.py`: an inside border is checked with `?stream=0` (the brief
+  asked for doortest; the other two test the same old crossing).
+- `scripts/npcs.gd`, `interact.gd`, `shop.gd`, `dialogue/story.gd`, `story/cucos.gd`, `cinema_gate.gd`: small marked
+  hunks so people and things exist for every wing that is in. No store interior, sign, exterior, character look,
+  story data or HUD file was touched. `tools/publish_build.sh` was not touched.
 
-## Open questions for Steven (through the director)
-- On your iPhone, does `?stream=1` survive a walk from the east hall into the Dillard's court and back?
-- Is a short stall (a fraction of a second) at the border acceptable for now, until the shoppers live across it?
+## Not verified
+- Anything on a real phone or a real GPU: memory, frame times, the 480-frame wait, the cue's look.
+- The cinema lobby border in a browser (the web walk does not go there; native walk test only).
+- VR with streaming; a night lighting change with neighbours in (the build is day only).
+- `stockrooms_test.gd` (3 of 12 fail, the same on main) and the Rougarou tests (wait for a node the game no longer
+  makes; the same on main): not repaired, outside this job.
 
-## Unverified
-Real-device memory and frame times; the look on a real GPU (z-fighting between the two wings' skylight glass was
-not seen on swiftshader); VR with streaming; a lighting change (night) while a neighbour is in.
+## Open for Steven (through the director)
+- On the iPhone: does the walk from Dillard's to Sears hold, and how long does the store's opening show its picture?
+- The cue is a soft pulse along the floor line. Right, or something else?
