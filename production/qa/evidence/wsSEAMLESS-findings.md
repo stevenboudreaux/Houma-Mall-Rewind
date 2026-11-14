@@ -258,3 +258,38 @@ Native: the 8 headless suites, `stream_test.gd` (desktop, mobile, `--fail`) and 
 Web: the walk x4 OK; movetest MOVED 4 of 4; doortest CROSSED 3 of 3 (outside doors); MENU TRIP WEB OK (20);
 REDEMPTION WEB OK; SHOPS WEB OK (21); 0 page errors throughout. `stockrooms_test.gd` and the Rougarou tests are
 as in "Tests on this branch" above: failing the same way on main, not repaired. Details in the handoff.
+
+## UPFRONT (Nov 14): what the first preview got wrong, and the numbers after
+
+Steven on the preview (R2 build `20261114-1715-5ba126d8`): no way to walk the interior without loads. The record
+of this job is `production/session-handoff-2026-11-14-UPFRONT.md`; the design is `design/godot-wings.md`
+"Everything up front".
+
+### What was wrong
+- **The order of things on a computer.** Stage 3 lifted the load screen with one wing in and brought the rest in
+  behind held borders. On Steven's Air (director's reading of `window.__mallStreamState`, page start = 0): wing 2
+  in at 47 s, Dillard's at 92 s, Sears at 122 s. The start is 48 m from the seam: twelve seconds' walk.
+- **The claim "the walk passes" (sections above).** `stream_walk_webtest.py` places the player a few metres before
+  each line and waits, up to 900 s, for the wing beyond. Every "OK" above means: *once a wing is in*, its border
+  is crossed with no load screen, prompt or page load. None of them is a walk. Read the walk table above that way.
+- **Phones.** Streaming on crashed iPhone Safari within seconds. The memory figures above are headless and say
+  nothing about that; they were reported as unknown and should have kept phones off until someone held one.
+
+### After (this branch; test box, software renderer)
+| | 1990s | 2026 |
+|---|---|---|
+| Natural walk (`stream_natural_walk_webtest.py`): forward held from the lift, 560 m, no placing, no waiting | OK | WALK26_RESULT |
+| Load screen lifts after | 2,018 s | WALK26_LIFT |
+| of which the room wings' 480-frame probe wait | 1,903 s (a frame every 4 s) | WALK26_SETTLE |
+| Wings in and peopled at the lift | 2, 4, 5 | WALK26_WINGS |
+| Packs: fetched side by side (ms from the page's start to each pack whole) | w2 1,231 · w4 1,399 · w5 31,139 (local server) | WALK26_FETCH |
+| Peak memory, all Chromium processes | 5,539 MB | WALK26_MEM |
+| First download on a computer | 408 MB (was 235 MB + 174 MB behind) | 399 MB (was 192 MB + 207 MB behind) |
+
+Natively (`stream_upfront_test.gd`, headless, no renderer): the interior is in and peopled 5.7 s after the scene
+in the 1990s; the two department stores' probe waits run together.
+
+### The load screen's "Engine error"
+`Engine error: at: open (core/io/resource_format_binary.cpp:1028)` is the tail of a warning (a shared pack's model
+names its textures by an id the wing pack does not list; the path is used). 40 on Demo 54, 55 with the common
+pack's cast; nothing fails to load. The page no longer puts warnings on the load screen.
