@@ -1573,7 +1573,7 @@ const engine = new Engine(GODOT_CONFIG);
 				const w = window.__mallWarm;
 				// UPFRONT: the card also stays while the rest of the interior comes in (never more than 15 minutes; after
 				// that the wings keep coming in the background, as before Nov 14)
-				const up = window.__mallUpfront === 0 && performance.now() - window.__mallEngineAt < 900000;
+				const up = window.__mallUpfront === 0 && performance.now() - window.__mallEngineAt < (/[?&]qa=1/.test(location.search) ? 5400000 : 900000);   // (tools/qa: a test box draws under a frame a second)
 				if (up) {
 					const lbar = document.getElementById('load-bar'); const b = window.__mallBar || [1, 1];
 					if (lbar) { lbar.style.width = (100 * window.mallBarFrac(b[0], b[1])).toFixed(1) + '%'; }
