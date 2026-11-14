@@ -73,7 +73,7 @@ func _spawn_gates() -> void:
 			continue
 		if not in_year(e.get("years", "both"), int(player.year)):
 			continue
-		var here: bool = int(e.get("wing", 0)) == int(player.wing) or int(player.wing) == 0
+		var here: bool = player.has_wing(int(e.get("wing", 0)))   # SEAMLESS: any wing that is in
 		if not here and e.get("doors", []).is_empty():
 			continue
 		var g := Gate.new()
@@ -96,7 +96,7 @@ func _spawn_attendants() -> void:
 		return
 	var crowd = player.get_parent().get_node_or_null("Shoppers")
 	for e in j.get("attendants", []):
-		if int(e.get("wing", 0)) != int(player.wing) and int(player.wing) != 0:
+		if not player.has_wing(int(e.get("wing", 0))):   # SEAMLESS: any wing that is in
 			continue
 		if not in_year(e.get("years", [1995]), int(player.year)):
 			continue

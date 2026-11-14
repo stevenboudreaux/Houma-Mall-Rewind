@@ -66,7 +66,7 @@ func _spawn() -> void:
 		_owner_debug()
 	# the bar: wing 1 only
 	var be: Dictionary = cfg.get("bartender", {})
-	if be.is_empty() or (int(be.get("wing", 1)) != int(player.wing) and int(player.wing) != 0):
+	if be.is_empty() or not player.has_wing(int(be.get("wing", 1))):   # SEAMLESS: any wing that is in
 		return
 	if not story.in_year(be.get("years", [1995]), int(player.year)):
 		return

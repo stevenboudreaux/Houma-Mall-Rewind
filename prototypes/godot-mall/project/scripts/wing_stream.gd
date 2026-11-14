@@ -8,22 +8,30 @@
 ##
 ##  1. fetch: on the web the page downloads the neighbour's pack (web/shell.html window.mallStream,
 ##     the same Cache Storage as the old prefetch) and copies it into the engine's file system;
-##  2. mount: the pack is mounted with replace_files = false (the running wing's copies win; the two
+##  2. mount: the pack is mounted with replace_files = false (the running wing's copies win; the
 ##     packs' shared files are byte-identical);
 ##  3. load: every resource the neighbour's scene names is loaded a few milliseconds per frame, then
 ##     the scene is instanced without its Player / Runtime / Signs / Env / Sun and its nodes enter
 ##     the tree a batch per frame; its lightmap is set last;
-##  4. swap: both wings hide their copy of the other's halls and their pictures of its storefronts;
-##     the player's walk grid and obstacles become the two wings' union and the seam prompt goes;
-##  5. handoff: when the player is past the border, the systems that belong to a wing (the player's
-##     own nodes, shops, attendants, items, shoppers, signs, prizes ...) are remade for the wing they
-##     now stand in, in one frame, exactly as a page load into that wing would make them; the
-##     geometry of both wings stays where it is. State lives outside the scene already (the old
-##     crossing reloaded the page), so nothing is lost.
+##  4. swap: every wing that is in hides its copy of the others' halls and its pictures of their
+##     storefronts (_resync); the player's walk grid and obstacles become the wings' union;
+##  5. handoff: when the player stands on a neighbour's own floor, past the border, that wing becomes
+##     the home wing: the player's own nodes and the systems made per wing are remade for it in one
+##     frame, exactly as a page load into that wing would make them; every wing's geometry stays
+##     where it is. State lives outside the scene already (the old crossing reloaded the page).
 ##
-## A neighbour that is not in yet leaves everything as it was: the stand-in pictures, the seam's
-## wall and the old prompt, which still loads the other wing the old way.
-## Phones and tablets unload a neighbour that is far behind (data/stream.json far_m).
+## Stage 3 (Nov 13 2026): every interior border streams, in both years (data/stream.json "borders": the
+## seam 1-2, the thresholds 1-4 Sears / Lynn's, 2-5 Dillard's, 1-6 the cinema once its gate is open),
+## and wings chain: a wing next to any wing that is in can come in (one at a time, nearest first).
+## Desktop keeps going until the whole interior of the year is in; phones and tablets keep the wing
+## you are in plus the ones whose border is near (near_m) and unload the far ones (far_m).
+## People and things: a wing's own content (attendants, pick-up items, shop stock) is made for every
+## wing that is in (player.has_wing()), by remaking the player's systems when the set of wings
+## changes and the player is not in a menu or a conversation; the crowd (scripts/npcs.gd) is one
+## node that outlives every remake and walks the union of the wings' floors.
+## A neighbour that is not in yet: the border holds (the stand-in pictures and the wall stay) and a
+## wordless cue, a soft pulse along the floor line, shows while it loads. Only when the pack could
+## not be fetched does the old load happen, by itself, as the player reaches the line.
 ##
 ## One of these lives under /root for the whole run (make(); scripts/player.gd attaches each new
 ## Player to it).
@@ -33,6 +41,8 @@ const NODE_NAME := "WingStream"
 const CFG_PATH := "res://data/stream.json"
 ## Nodes of a wing scene that exist once for the whole game: taken out of a neighbour.
 const SOLO := ["Player", "Runtime", "Signs", "Env", "Sun"]
+## The mall wings (they own the halls and courts); the others are room wings.
+const MALL := [1, 2]
 
 var cfg := {}
 var enabled := false
@@ -41,20 +51,26 @@ var player: Node3D
 var home: Node                 # the wing scene the player's systems belong to (current_scene)
 var home_wing := 0
 var year := 1995
-## wing -> {state, root, deps, held, pending, t0, ms, border}; state: "", "fetch", "load", "enter", "in", "failed"
+## wing -> {state, root, pending, queue, t0}; state: "fetch", "load", "enter", "in", "failed"
 var nb := {}
 ## wing -> the wing's own wing.json / collide.json (walk grid, obstacles), read once
 var info := {}
 ## Resources held so ResourceLoader's cache keeps them between the load and the instancing (and
 ## across handoffs): wing -> Array
 var held := {}
-var _hidden := {}              # wing -> Array of nodes this streamer hid (that wing's stand-in of others)
+var _hid_nodes := []           # nodes _resync hid (shown again before each resync)
+var _hid_surfs := []           # [mesh instance, surface] given the draws-nothing material
+var _trimmed := []             # [mesh instance, its own mesh] where shared triangles were cut out
+var _fx_off := {}              # instance id -> true: a wing's "Benches & plants" mesh that is a twin of one shown
 var _discard: StandardMaterial3D
 var _t_start := 0.0
 var _busy := false
 var _scale := 1.0
+var _peopled := []             # the wings whose own content the player's systems were last made for
+var _cue: MeshInstance3D
+var _cue_t := 0.0
 ## Measurements for tools/qa (and ?debug=1): wing -> {fetch_ms, mount_ms, load_ms, load_max_ms,
-## inst_ms, enter_ms, enter_max_ms, handoff_ms}
+## inst_ms, enter_ms, enter_max_ms, handoff_ms}; "remakes": how many times the systems were remade
 var stats := {}
 
 ## The streamer under /root, made on first use.
@@ -91,37 +107,77 @@ func _num(key: String, def: float) -> float:
 		return float(v.get(kind, def))
 	return float(v)
 
-## A new Player (the first one, or the one a handoff made) says where it stands.
+## A new Player (the first one, or the one a remake made) says where it stands.
 func attach(p: Node3D) -> void:
 	player = p
 	home = p.get_parent()
 	home_wing = int(p.wing)
 	year = int(p.year)
-	_t_start = Time.get_ticks_msec() / 1000.0
+	if _t_start == 0.0 or nb.is_empty():
+		_t_start = Time.get_ticks_msec() / 1000.0
 	if not enabled:
 		return
-	# a wing that is already in (after a handoff): its borders are open at once
-	for w in nb:
-		if nb[w].state == "in":
-			_open_border(int(w))
+	_peopled = span()
+	_resync()
+	_apply_grid()
 	_js_state()
 
-## The borders of the home wing that stream: [{to, kind, line [x0, z, x1], side}]
-func borders() -> Array:
+# ------------------------------------------------------------------ the wings and their borders
+## The wings that are in: the home wing, then the neighbours whose scene is whole.
+func span() -> Array:
+	var out := [home_wing]
+	for w in nb:
+		if str(nb[w].state) == "in":
+			out.append(int(w))
+	return out
+
+## Whether wing w's own content is to be made now (scripts/player.gd has_wing).
+func spans(w: int) -> bool:
+	return enabled and (w == home_wing or is_in(w))
+
+func is_in(w: int) -> bool:
+	return enabled and nb.has(w) and str(nb[w].state) == "in"
+
+func _state(w: int) -> String:
+	return str(nb[w].state) if nb.has(w) else ""
+
+## The scene of a wing that is in (or coming in), or null.
+func root_of(w: int) -> Node:
+	if w == home_wing:
+		return home
+	return nb[w].get("root") if nb.has(w) else null
+
+## The borders that stream in the year on show: [{a, b, kind, gate}]
+func _edges() -> Array:
 	var out := []
 	for b in cfg.get("borders", []):
-		if not (year in (b.get("years", []) as Array).map(func(v): return int(v))):
+		if year in (b.get("years", []) as Array).map(func(v): return int(v)):
+			out.append(b)
+	return out
+
+func _edge(u: int, v: int):
+	for e in _edges():
+		if (int(e.a) == u and int(e.b) == v) or (int(e.a) == v and int(e.b) == u):
+			return e
+	return null
+
+## A border's line, from whichever of its two wings' wing.json is readable (its pack is mounted):
+## {line [x0, z, x1], wing, toward}: `toward` is the side (+1: +z) on which the other wing lies, seen
+## from `wing`. {} when neither is readable.
+func _edge_line(e: Dictionary) -> Dictionary:
+	for pair in [[int(e.a), int(e.b)], [int(e.b), int(e.a)]]:
+		var wj: Dictionary = wing_info(pair[0])
+		if wj.is_empty():
 			continue
-		var a := int(b.a); var c := int(b.b)
-		if home_wing != a and home_wing != c:
-			continue
-		var to := c if home_wing == a else a
-		if str(b.get("kind", "seam")) == "seam":
-			var wj: Dictionary = wing_info(home_wing)
+		if str(e.get("kind", "seam")) == "seam":
 			var s: Array = wj.get("seam", [])
 			if s.size() >= 3:
-				out.append({"to": to, "kind": "seam", "line": s, "side": float(wj.get("other_side", 1.0))})
-	return out
+				return {"line": s, "wing": pair[0], "toward": float(wj.get("other_side", 1.0))}
+		else:
+			for th in wj.get("thresholds", []):
+				if int(th.to) == pair[1]:
+					return {"line": th.line, "wing": pair[0], "toward": float(th.side)}
+	return {}
 
 func _gen(w: int) -> String:
 	return "res://gen/w%d%s/" % [w, "y26" if year == 2026 else ""]
@@ -145,18 +201,50 @@ func wing_info(w: int) -> Dictionary:
 	info[w] = wj
 	return wj
 
-## Signed distance from the player to a border line, positive on the home side.
-func _dist(b: Dictionary) -> float:
-	var ln: Array = b.line
-	return (float(ln[1]) - player.position.z) * float(b.side)
+## Signed distance from the player to a border line, positive on wing u's side of it.
+func _side_dist(el: Dictionary, u: int) -> float:
+	var t := float(el.toward) if int(el.wing) == u else -float(el.toward)
+	return (float(el.line[1]) - player.position.z) * t
 
 ## How far the player is from a border line, whichever side.
-func _away(b: Dictionary) -> float:
-	var ln: Array = b.line
+func _away(ln: Array) -> float:
 	var dx := 0.0
 	if player.position.x < float(ln[0]): dx = float(ln[0]) - player.position.x
 	elif player.position.x > float(ln[2]): dx = player.position.x - float(ln[2])
 	return Vector2(dx, float(ln[1]) - player.position.z).length()
+
+## A border a gate holds shut (the cinema doors, scripts/cinema_gate.gd): its wing is not brought in
+## and the gate's own prompt stays, until the gate is open.
+func _locked(e: Dictionary) -> bool:
+	if not bool(e.get("gate", false)):
+		return false
+	var room := int(e.b) if int(e.b) > 2 else int(e.a)
+	if home_wing == room or is_in(room):
+		return false
+	var any := false
+	for g in get_tree().get_nodes_in_group("gate"):
+		if g.has_method("locks_threshold"):
+			any = true
+			if g.locks_threshold(room):
+				return true
+	return not any     # no gate node yet (the gate's wing is not peopled): shut until one says otherwise
+
+## scripts/player.gd _update_prompt: the border from the home wing to wing `to` is the streamer's (no
+## "Enter ..." prompt): it is in, or coming in behind the wordless cue. False when streaming is off,
+## the border does not stream, a gate holds it, or its pack could not be fetched (the old prompt).
+func holds(to: int) -> bool:
+	if not enabled or player == null:
+		return false
+	var e = _edge(home_wing, to)
+	if e == null or _locked(e):
+		return false
+	return _state(to) != "failed"
+
+func _loading() -> bool:
+	for w in nb:
+		if str(nb[w].state) in ["fetch", "load", "enter"]:
+			return true
+	return false
 
 func _process(dt: float) -> void:
 	# a slow renderer (a long frame) gets a proportionally bigger share per frame, or the load would
@@ -167,29 +255,113 @@ func _process(dt: float) -> void:
 	if bool(player.get("leaving")):
 		return
 	var now := Time.get_ticks_msec() / 1000.0
-	for b in borders():
-		var to := int(b.to)
-		var d := _dist(b)
-		var st: String = nb.get(to, {}).get("state", "")
-		if st == "" and now - _t_start > _num("start_delay_s", 2.0) and _away(b) < _num("near_m", 60.0):
-			_start(to, b)
-		elif st == "in":
-			if d < -_num("handoff_past_m", 1.0) and _stands_in(to):
-				_handoff.call_deferred(to)
-				_busy = true
-				return
-			if _away(b) > _num("far_m", 1e9):
-				unload(to)
+	var S := span()
+	var loading := _loading()
+	var best := {}
+	var cue := {}
+	var waiting := false       # a wing is still to come in (desktop: the rest of the interior)
+	for e in _edges():
+		var el := _edge_line(e)
+		if el.is_empty():
+			continue
+		var away := _away(el.line)
+		for pair in [[int(e.a), int(e.b)], [int(e.b), int(e.a)]]:
+			var u: int = pair[0]; var v: int = pair[1]
+			if not (u in S) or v in S:
+				continue
+			var st := _state(v)
+			if st == "" and not _locked(e) and away < _num("near_m", 60.0):
+				waiting = true
+				if not loading and now - _t_start > _num("start_delay_s", 2.0) and (best.is_empty() or away < float(best.d)):
+					best = {"v": v, "d": away}
+			if u == home_wing and st != "failed" and not _locked(e) and away < _num("cue_m", 14.0) and _side_dist(el, u) > -0.3:
+				if cue.is_empty() or away < float(cue.d):
+					cue = {"el": el, "d": away}
+			if u == home_wing and st == "failed":
+				_fallback(el, u, v)
+	if not best.is_empty():
+		_start(int(best.v))
+	_show_cue(cue, dt)
+	# the handoff: the player stands on a neighbour's own floor, past the border
+	for v in S:
+		if v == home_wing:
+			continue
+		var e = _edge(home_wing, v)
+		if e == null:
+			continue
+		var el := _edge_line(e)
+		if not el.is_empty() and _side_dist(el, home_wing) < -_num("handoff_past_m", 1.0) and _stands_in(v):
+			_busy = true
+			_remake.call_deferred(v)
+			return
+	# phones and tablets: a neighbour whose every border is far is unloaded
+	for v in S:
+		if v == home_wing:
+			continue
+		var near := 1e9
+		for e in _edges():
+			if int(e.a) != v and int(e.b) != v:
+				continue
+			var o := int(e.b) if int(e.a) == v else int(e.a)
+			var el := _edge_line(e)
+			if o in S and not el.is_empty():
+				near = minf(near, _away(el.line))
+		if near > _num("far_m", 1e9):
+			unload(v)
+			return
+	# people and things follow the wings: remake the player's systems when the set changed
+	if _span_changed() and _idle():
+		var gone := _peopled.any(func(w): return not (w in S))
+		var close := false
+		for v in S:
+			if v in _peopled:
+				continue
+			for e in _edges():
+				if int(e.a) == v or int(e.b) == v:
+					var el := _edge_line(e)
+					if not el.is_empty() and _away(el.line) < _num("people_m", 45.0):
+						close = true
+		if gone or close or not (loading or waiting or not best.is_empty()):
+			_busy = true
+			_remake.call_deferred(home_wing)
+			return
 	for w in nb.keys():
-		if str(nb[w].state) == "in":
-			# "Benches & plants" (the player's HUD switch) shows or hides every wing's fixtures
-			var fx = nb[w].root.get_node_or_null("Dynamic/dyn_fixtures")
-			if fx and fx.visible != bool(player.fixtures_on):
-				fx.visible = bool(player.fixtures_on)
 		match str(nb[w].state):
 			"fetch": _poll_fetch(int(w))
 			"load": _step_load(int(w))
 			"enter": _step_enter(int(w))
+	_sync_fixtures()
+
+func _span_changed() -> bool:
+	var S := span()
+	if S.size() != _peopled.size():
+		return true
+	for w in S:
+		if not (w in _peopled):
+			return true
+	return false
+
+## Whether the player's systems can be remade now without taking a screen away from them: not in a
+## menu, a conversation, a shop, the prize counter, a book, a time trip (all freeze the player), VR
+## or the Stockrooms (a level built far off).
+func _idle() -> bool:
+	if player == null or not is_instance_valid(player):
+		return false
+	if bool(player.get("frozen")) or bool(player.get("leaving")) or bool(player.get("vr_on")):
+		return false
+	return absf(player.position.x) < 1000.0 and absf(player.position.z) < 1000.0
+
+## "Benches & plants" (the player's HUD switch) shows or hides every wing's fixtures; a wing whose
+## fixtures mesh is the twin of one already shown stays off.
+func _sync_fixtures() -> void:
+	var on := bool(player.fixtures_on)
+	for w in span():
+		var r := root_of(w)
+		var fx = r.get_node_or_null("Dynamic/dyn_fixtures") if r else null
+		if fx:
+			var want: bool = on and not _fx_off.has(fx.get_instance_id())
+			if fx.visible != want:
+				fx.visible = want
 
 ## Whether the floor under the player is wing w's own and not the home wing's (their walk grids): past
 ## a border line alone is not enough, a store of the home wing can reach past the line beside it.
@@ -204,8 +376,8 @@ func _on_grid(w: int, p: Vector3) -> bool:
 	return ty >= 0 and ty < rows.size() and tx >= 0 and tx < str(rows[ty]).length() and str(rows[ty])[tx] == "1"
 
 # ------------------------------------------------------------------ 1-2: fetch and mount
-func _start(w: int, b: Dictionary) -> void:
-	nb[w] = {"state": "fetch", "border": b, "t0": Time.get_ticks_msec()}
+func _start(w: int) -> void:
+	nb[w] = {"state": "fetch", "t0": Time.get_ticks_msec()}
 	stats[w] = {}
 	if OS.has_feature("web"):
 		JavaScriptBridge.eval("window.mallStream && window.mallStream(%d)" % w, true)
@@ -255,6 +427,19 @@ func _fail(w: int, why: String) -> void:
 	nb[w].state = "failed"
 	_js_state()
 
+## The pack could not be fetched: the old load, by itself, as the player reaches the line (the same
+## spot player.gd _cross() would land on).
+func _fallback(el: Dictionary, u: int, v: int) -> void:
+	var ln: Array = el.line
+	if player.position.x < float(ln[0]) - 0.6 or player.position.x > float(ln[2]) + 0.6:
+		return
+	var d := _side_dist(el, u)
+	if d < -0.2 or d > _num("fallback_m", 1.0):
+		return
+	var t := float(el.toward) if int(el.wing) == u else -float(el.toward)
+	print("wing_stream: wing %d could not be streamed: loading it the old way" % v)
+	player._go_to_wing(v, clampf(player.position.x, float(ln[0]) + 0.5, float(ln[2]) - 0.5), float(ln[1]) + t * 1.3, player.yaw, player.pitch)
+
 # ------------------------------------------------------------------ 3: load and instance
 func _step_load(w: int) -> void:
 	var t := Time.get_ticks_msec()
@@ -297,9 +482,8 @@ func _step_load(w: int) -> void:
 				queue.append([g, c])
 	nb[w].root = root
 	nb[w].queue = queue
-	_hide_standin(root, w, home_wing)
-	_dedupe(root, w, home, home_wing)
 	nb[w].state = "enter"
+	_resync()      # its copies of what is already here are hidden before they are ever drawn
 	nb[w].t0 = Time.get_ticks_msec()
 	stats[w]["inst_ms"] = Time.get_ticks_msec() - t
 	stats[w]["enter_max_ms"] = 0
@@ -322,7 +506,8 @@ func _step_enter(w: int) -> void:
 			rt.adopt(root)
 		nb[w].state = "in"
 		stats[w]["enter_ms"] = Time.get_ticks_msec() - int(nb[w].t0)
-		_open_border(w)
+		_resync()
+		_apply_grid()
 		print("wing_stream: wing %d is in %s" % [w, JSON.stringify(stats[w])])
 		_js_state()
 	stats[w]["enter_max_ms"] = maxi(int(stats[w].get("enter_max_ms", 0)), Time.get_ticks_msec() - t)
@@ -338,11 +523,10 @@ func _day_only() -> bool:
 	var j = JSON.parse_string(FileAccess.get_file_as_string("res://scripts/lighting.json")) if FileAccess.file_exists("res://scripts/lighting.json") else null
 	return j is Dictionary and bool(j.get("day_only", false))
 
-# ------------------------------------------------------------------ 4: the swap at the border
-## The zones (halls and courts) that belong to mall wing w.
-func _own_zone(zone: String, w: int) -> bool:
-	var w2: Array = cfg.get("wing2_zones", [])
-	return (zone in w2) == (w == 2)
+# ------------------------------------------------------------------ 4: the swap (who draws what)
+## The mall wing a zone (a hall or court) belongs to.
+func _zone_owner(zone: String) -> int:
+	return 2 if zone in (cfg.get("wing2_zones", []) as Array) else 1
 
 func _zone_ids() -> Array:
 	if not has_meta("zones"):
@@ -354,31 +538,10 @@ func _zone_ids() -> Array:
 		set_meta("zones", ids)
 	return get_meta("zones")
 
-## In the scene `root` of wing w: hide its copy of wing `other`'s halls and courts (meshes named by
-## zone, and their floors) and its pictures of that wing's storefronts (the surfaces of the
-## "dyn_standin" mesh with material standin_w<other>). Remembered, so unload() can show them again.
-func _hide_standin(root: Node, w: int, other: int) -> void:
-	var list: Array = _hidden.get(w, [])
-	var zones := _zone_ids()
-	for c in _group_nodes(root):
-		var nm := str(c.name)
-		var z := nm.trim_suffix("_fl")
-		if z in zones and _own_zone(z, other) and not _own_zone(z, w):
-			if c.visible:
-				c.visible = false
-				list.append(c)
-		elif nm.ends_with("standin") and c.mesh:
-			for i in c.mesh.get_surface_count():
-				var m = c.mesh.surface_get_material(i)
-				if m and m.resource_name == "standin_w%d" % other and c.get_surface_override_material(i) == null:
-					c.set_surface_override_material(i, _discard_mat())
-					list.append([c, i])
-	_hidden[w] = list
-
-func _hid(w: int, what) -> void:
-	if not _hidden.has(w):
-		_hidden[w] = []
-	_hidden[w].append(what)
+## The zone a mesh belongs to by its name ("H5", "H5_fl", "H5_f26s", "dyn_H7_sg26", ...), or "".
+func _zone_of(nm: String) -> String:
+	var z := nm.trim_prefix("dyn_").get_slice("_", 0)
+	return z if z in _zone_ids() else ""
 
 ## A material that draws nothing, for one surface of a mesh that must stay (the other surfaces show).
 ## Transparent with alpha 0, not a shader that discards: a fragment shader with no output makes WebGL
@@ -403,6 +566,14 @@ func _group_nodes(root: Node) -> Array:
 					out.append(c)
 	return out
 
+func _queued_for(parent: Node) -> Array:
+	var out := []
+	for w in nb:
+		for e in nb[w].get("queue", []):
+			if e[0] == parent:
+				out.append(e[1])
+	return out
+
 func _surf_counts(m: Mesh) -> Dictionary:
 	var d := {}
 	for i in m.get_surface_count():
@@ -413,205 +584,470 @@ func _surf_counts(m: Mesh) -> Dictionary:
 
 ## Which mall wing's floor a point stands over (its walk grid), or 0.
 func _owner_of(p: Vector3) -> int:
-	for w in [1, 2]:
+	for w in MALL:
 		if _on_grid(w, p):
 			return w
 	return 0
 
-## Each wing's build also carries the parts of the whole mall that are not in a zone mesh (the shell
-## seen through the skylights, the skylight frames, lanterns, the information desk, leftover floor):
-## with two wings in, those are there twice, one on top of the other. Same name, same box, and per
-## material the same number of vertices = the same geometry: one copy is hidden (the one whose wing
-## the thing does not stand in; home's is kept when it spans both). Labels and reflection probes at
-## the same spot likewise. Hidden in `root` (wing w) unless the twin in `other_root` is the stand-in.
-func _dedupe(root: Node, w: int, other_root: Node, other: int) -> void:
-	var zones := _zone_ids()
-	var twins := {}
-	for d in _group_nodes(other_root):
-		twins[str(d.get_parent().name if d.get_parent() else "") + "/" + str(d.name)] = d
-	for c in _group_nodes(root):
-		var nm := str(c.name)
-		if nm.trim_suffix("_fl") in zones or nm.ends_with("standin") or c.mesh == null:
-			continue
-		var gname := "Static" if not nm.begins_with("dyn_") else "Dynamic"
-		var d = twins.get(gname + "/" + nm)
-		if d == null or d.mesh == null:
-			continue
-		var a: AABB = c.mesh.get_aabb(); var b: AABB = d.mesh.get_aabb()
-		if a.position.distance_to(b.position) > 0.3 or a.size.distance_to(b.size) > 0.3:
-			continue
-		var ca := _surf_counts(c.mesh); var cb := _surf_counts(d.mesh)
-		var same := ca.keys().filter(func(k): return cb.has(k) and cb[k] == ca[k])
-		if same.size() == ca.size() and ca.size() == cb.size():
-			var own := _owner_of(a.get_center()) if a.size.x < 40.0 and a.size.z < 40.0 else other
-			if own == w and d.visible:
-				d.visible = false
-				_hid(other, d)
-			elif c.visible:
-				c.visible = false
-				_hid(w, c)
-		else:
-			for i in c.mesh.get_surface_count():
-				var mt = c.mesh.surface_get_material(i)
-				if mt and mt.resource_name in same and c.get_surface_override_material(i) == null:
-					c.set_surface_override_material(i, _discard_mat())
-					_hid(w, [c, i])
-	for c in root.get_children():
-		if not (c is Label3D or c is ReflectionProbe):
-			continue
-		for d in other_root.get_children():
-			if d.get_class() == c.get_class() and d.visible and d.position.distance_to(c.position) < 0.1:
-				c.visible = false
-				_hid(w, c)
-				break
+func _hide(n: Node) -> void:
+	if n.visible:
+		n.visible = false
+		_hid_nodes.append(n)
 
-func _queued_for(parent: Node) -> Array:
-	var out := []
-	for w in nb:
-		for e in nb[w].get("queue", []):
-			if e[0] == parent:
-				out.append(e[1])
-	return out
+func _hide_surf(c: MeshInstance3D, i: int) -> void:
+	if c.get_surface_override_material(i) == null:
+		c.set_surface_override_material(i, _discard_mat())
+		_hid_surfs.append([c, i])
 
-func _show_standin(w: int) -> void:
-	for e in _hidden.get(w, []):
-		if e is Array:
-			if is_instance_valid(e[0]):
-				e[0].set_surface_override_material(e[1], null)
-		elif is_instance_valid(e):
-			e.visible = true
-	_hidden.erase(w)
+## Who draws what, worked out afresh for the wings that are in (and, for its own meshes only, a wing
+## that is coming in, so its copies are never drawn on top of what is here).
+##
+## Every wing's build carries the whole mall: its own zones (halls and courts) for real, the other mall
+## wing's zones as a coarse stand-in, pictures of the other wings' storefronts ("dyn_standin", one
+## material per wing: standin_w<n>), and the parts of the mall that are in no zone (the shell seen
+## through the skylights, skylight frames and glass, lanterns, the information desk, leftover floor,
+## labels, reflection probes). With several wings in:
+##  - a zone's meshes show in the wing that owns the zone; when that wing is not in, in one wing only
+##    (the other mall wing if it is in, else the home wing), as its stand-in;
+##  - a wing's storefront pictures show only while that wing is not in, in that same one wing;
+##  - a part that is the same in several wings (same name, box and vertices per material) shows once:
+##    in the mall wing it stands in if that wing is in and has it, else in the home wing;
+##  - a part that is partly the same (the glass: the mall's skylight panes plus each wing's own shop
+##    glass) keeps its own triangles and loses the ones an earlier wing already draws.
+func _resync() -> void:
+	var t_rs := Time.get_ticks_msec()
+	_resync_now()
+	stats["resync_ms"] = Time.get_ticks_msec() - t_rs
+	stats["resync_max_ms"] = maxi(int(stats.get("resync_max_ms", 0)), Time.get_ticks_msec() - t_rs)
 
-## Wing w is in: the home wing drops its stand-in of w, the player may walk both, no prompt.
-func _open_border(w: int) -> void:
-	_hide_standin(home, home_wing, w)
-	var a: Dictionary = wing_info(home_wing)
-	var b: Dictionary = wing_info(w)
-	if a.is_empty() or b.is_empty():
+func _resync_now() -> void:
+	for n in _hid_nodes:
+		if is_instance_valid(n):
+			n.visible = true
+	_hid_nodes.clear()
+	for e in _hid_surfs:
+		if is_instance_valid(e[0]):
+			e[0].set_surface_override_material(e[1], null)
+	_hid_surfs.clear()
+	for e in _trimmed:
+		if is_instance_valid(e[0]):
+			e[0].mesh = e[1]
+	_trimmed.clear()
+	_fx_off.clear()
+	if home == null or not is_instance_valid(home):
 		return
-	var ra: PackedStringArray = PackedStringArray(a.get("walk", []))
-	var rb: PackedStringArray = PackedStringArray(b.get("walk", []))
-	var rows := PackedStringArray()
-	for y in ra.size():
-		var s := ra[y]
-		if y < rb.size() and rb[y].contains("1"):
-			var t := rb[y]
+	var S := span()
+	var coming := []
+	for w in nb:
+		if str(nb[w].state) == "enter":
+			coming.append(int(w))
+	if S.size() + coming.size() < 2:
+		return
+	# home first, then the mall wings, then the rooms: the order in which a shared part is kept
+	var order := [home_wing]
+	for w in MALL + S + coming:
+		if not (w in order) and (w in S or w in coming):
+			order.append(w)
+	var groups := {}            # "Static/misc" -> [[wing, mesh instance], ...] in `order`
+	for w in order:
+		var root := root_of(w)
+		if root == null or not is_instance_valid(root):
+			continue
+		var here: Array = S if w in S else S + [w]       # a wing coming in sees itself as in
+		for c in _group_nodes(root):
+			var nm := str(c.name)
+			var z := _zone_of(nm)
+			if z != "":
+				var o := _zone_owner(z)
+				if o != w and (o in here or w != _shower(o, here)):
+					_hide(c)
+				continue
+			if nm.ends_with("standin"):
+				if c.mesh:
+					for i in c.mesh.get_surface_count():
+						var m = c.mesh.surface_get_material(i)
+						var mn: String = m.resource_name if m else ""
+						if mn.begins_with("standin_w"):
+							var o := int(mn.trim_prefix("standin_w"))
+							if o in here or (o in MALL and w != _shower(o, here)):
+								_hide_surf(c, i)
+				continue
+			if c.mesh == null:
+				continue
+			var key := ("Dynamic/" if nm.begins_with("dyn_") else "Static/") + nm
+			if not groups.has(key):
+				groups[key] = []
+			groups[key].append([w, c])
+		# a wing's own extra hides (data/stream.json "hide": a mesh that only makes sense without wing `when`)
+		for h in cfg.get("hide", []):
+			if int(h.get("in", 0)) == w and int(h.get("when", 0)) in S:
+				for nm in h.get("nodes", []):
+					for g in ["Static/", "Dynamic/"]:
+						var n = root.get_node_or_null(g + str(nm))
+						if n:
+							_hide(n)
+	var trim: Array = cfg.get("trim", ["dyn_glass"])
+	for key in groups:
+		var list: Array = groups[key]
+		if list.size() < 2:
+			continue
+		var first: MeshInstance3D = list[0][1]
+		var a: AABB = first.mesh.get_aabb()
+		var ca := _surf_counts(first.mesh)
+		var whole := true
+		for i in range(1, list.size()):
+			var b: AABB = list[i][1].mesh.get_aabb()
+			var cb := _surf_counts(list[i][1].mesh)
+			if a.position.distance_to(b.position) > 0.3 or a.size.distance_to(b.size) > 0.3 or ca != cb:
+				whole = false
+		if whole:
+			# the same thing in every wing: one copy shows
+			var keep := 0
+			if a.size.x < 40.0 and a.size.z < 40.0:
+				var own := _owner_of(a.get_center())
+				for i in list.size():
+					if int(list[i][0]) == own and own in S:
+						keep = i
+			for i in list.size():
+				if i == keep:
+					continue
+				if str(list[i][1].name) == "dyn_fixtures":
+					_fx_off[list[i][1].get_instance_id()] = true
+					list[i][1].visible = false
+				else:
+					_hide(list[i][1])
+			continue
+		# partly the same: each later copy drops what an earlier one already draws
+		var seen := {}          # material -> {vertex count -> true} of the earlier copies' surfaces
+		var tris := {}          # material -> {triangle key -> true}, only for the meshes that are trimmed
+		var do_trim: bool = str(first.name) in trim
+		for i in list.size():
+			var c: MeshInstance3D = list[i][1]
+			var cut := {}
+			for si in c.mesh.get_surface_count():
+				var mt = c.mesh.surface_get_material(si)
+				var k: String = mt.resource_name if mt else "-"
+				var n: int = c.mesh.surface_get_array_len(si)
+				if i > 0 and seen.has(k) and seen[k].has(n):
+					_hide_surf(c, si)
+				elif do_trim:
+					if i > 0 and tris.has(k):
+						cut[si] = tris[k]
+					if not tris.has(k):
+						tris[k] = {}
+				if not seen.has(k):
+					seen[k] = {}
+				seen[k][n] = true
+			if do_trim:
+				var t_tr := Time.get_ticks_msec()
+				var own_mesh: Mesh = c.mesh
+				if not cut.is_empty():
+					_trim(c, cut)
+				if i < list.size() - 1:
+					for si in own_mesh.get_surface_count():
+						var mt = own_mesh.surface_get_material(si)
+						var k: String = mt.resource_name if mt else "-"
+						if tris.has(k):
+							_tri_keys(own_mesh, si, tris[k])
+				stats["trim_ms"] = int(stats.get("trim_ms", 0)) + Time.get_ticks_msec() - t_tr
+	# labels and reflection probes at the same spot: one of each
+	var spots := []
+	for w in order:
+		var root := root_of(w)
+		if root == null or not is_instance_valid(root):
+			continue
+		for c in root.get_children():
+			if not (c is Label3D or c is ReflectionProbe) or not c.visible:
+				continue
+			var dup := false
+			for d in spots:
+				if d.get_class() == c.get_class() and d.position.distance_to(c.position) < 0.1:
+					dup = true
+					break
+			if dup:
+				_hide(c)
+			else:
+				spots.append(c)
+
+## The one wing that shows mall wing o's zones and storefront pictures while o itself is not in: the
+## other mall wing if it is in, else the home wing.
+func _shower(o: int, here: Array) -> int:
+	var other := 3 - o
+	return other if other in here else home_wing
+
+## The triangles of one surface, as keys (see _tri_key), added to `into`.
+func _tri_keys(m: Mesh, si: int, into: Dictionary) -> void:
+	var arr := m.surface_get_arrays(si)
+	var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var idx = arr[Mesh.ARRAY_INDEX]
+	var has_idx: bool = idx != null and idx.size() > 0
+	var n: int = idx.size() if has_idx else v.size()
+	for t in range(0, n - 2, 3):
+		var a: Vector3 = v[idx[t]] if has_idx else v[t]
+		var b: Vector3 = v[idx[t + 1]] if has_idx else v[t + 1]
+		var c: Vector3 = v[idx[t + 2]] if has_idx else v[t + 2]
+		into[_tri_key(a, b, c)] = true
+
+## A triangle as a number: its centre to 2 cm and the sum of its squared sides.
+func _tri_key(a: Vector3, b: Vector3, c: Vector3) -> int:
+	var s := (a + b + c) * (50.0 / 3.0)
+	var e := (a - b).length_squared() + (b - c).length_squared() + (c - a).length_squared()
+	return hash(Vector4i(int(round(s.x)), int(round(s.y)), int(round(s.z)), int(round(e * 100.0))))
+
+## Cut out of mesh instance c the triangles another wing already draws: cut = {surface -> keys}. The
+## instance gets a copy of its mesh with those surfaces re-indexed; its own mesh is put back by the
+## next _resync.
+func _trim(c: MeshInstance3D, cut: Dictionary) -> void:
+	var src: Mesh = c.mesh
+	var out := ArrayMesh.new()
+	var changed := false
+	for si in src.get_surface_count():
+		var arr := src.surface_get_arrays(si)
+		if cut.has(si):
+			var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+			var idx = arr[Mesh.ARRAY_INDEX]
+			var has_idx: bool = idx != null and idx.size() > 0
+			var n: int = idx.size() if has_idx else v.size()
+			var kept := PackedInt32Array()
+			for t in range(0, n - 2, 3):
+				var i0: int = idx[t] if has_idx else t
+				var i1: int = idx[t + 1] if has_idx else t + 1
+				var i2: int = idx[t + 2] if has_idx else t + 2
+				if not cut[si].has(_tri_key(v[i0], v[i1], v[i2])):
+					kept.append(i0); kept.append(i1); kept.append(i2)
+			if kept.size() != n:
+				changed = true
+				print("wing_stream: %s surface %d: %d of %d triangles are another wing's too, cut" % [c.name, si, (n - kept.size()) / 3, n / 3])
+			if kept.is_empty():
+				# nothing of its own in this surface: one degenerate triangle keeps the surface slot
+				kept.append(0); kept.append(0); kept.append(0)
+			arr[Mesh.ARRAY_INDEX] = kept
+		out.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+		out.surface_set_material(out.get_surface_count() - 1, src.surface_get_material(si))
+	if changed:
+		_trimmed.append([c, src])
+		c.mesh = out
+
+## The player may walk every wing that is in: the walk grid and obstacles are their union.
+func _apply_grid() -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	var a: Dictionary = wing_info(home_wing)
+	if a.is_empty():
+		return
+	if absf(player.position.x) > 1000.0 or absf(player.position.z) > 1000.0:
+		return       # in the Stockrooms (their own grid; the wing's comes back when they are left)
+	player.walk_rows = _union_rows(span())
+	var obs := []
+	var fx := []
+	for w in span():
+		var wj: Dictionary = wing_info(w)
+		obs += wj.get("static", []) as Array
+		fx += wj.get("fixtures", []) as Array
+	player.obstacles = obs
+	player.fx_obstacles = fx
+
+func _union_rows(wings: Array) -> PackedStringArray:
+	var rows := PackedStringArray(wing_info(home_wing).get("walk", []))
+	for w in wings:
+		if w == home_wing:
+			continue
+		var rb := PackedStringArray(wing_info(w).get("walk", []))
+		for y in mini(rows.size(), rb.size()):
+			if not rb[y].contains("1"):
+				continue
+			var s := rows[y]; var t := rb[y]
 			var o := ""
 			for x in s.length():
 				o += "1" if s[x] == "1" or (x < t.length() and t[x] == "1") else "0"
-			s = o
-		rows.append(s)
-	player.walk_rows = rows
-	player.obstacles = (a.get("static", []) as Array) + (b.get("static", []) as Array)
-	player.fx_obstacles = (a.get("fixtures", []) as Array) + (b.get("fixtures", []) as Array)
-	if str(nb[w].border.get("kind", "")) == "seam" or int(nb[w].get("was_home", 0)) != 0:
-		player.seam = []
+			rows[y] = o
+	return rows
 
-## Take a neighbour out again (phones and tablets, far behind): the stand-in comes back.
+## The floor the crowd walks (scripts/npcs.gd rebind): every wing that is in, but not a wing listed in
+## "no_crowd" (the cinema lobby is one empty room).
+func crowd_rows() -> PackedStringArray:
+	var skip: Array = (cfg.get("no_crowd", [6]) as Array).map(func(v): return int(v))
+	if home_wing in skip:
+		return PackedStringArray(wing_info(home_wing).get("walk", []))
+	return _union_rows(span().filter(func(w): return not (w in skip)))
+
+## Take a neighbour out again (phones and tablets, far behind), and any wing that was only reachable
+## through it: the stand-ins come back.
 func unload(w: int) -> void:
 	if not nb.has(w):
 		return
-	var root = nb[w].get("root")
-	if root and is_instance_valid(root):
-		root.queue_free()
-	_hidden.erase(w)
-	nb.erase(w)
-	held.erase(w)
-	_show_standin(home_wing)
-	var a: Dictionary = wing_info(home_wing)
-	if not a.is_empty() and player and is_instance_valid(player):
-		player.walk_rows = PackedStringArray(a.get("walk", []))
-		player.obstacles = a.get("static", [])
-		player.fx_obstacles = a.get("fixtures", [])
-		player.seam = a.get("seam", [])
-	print("wing_stream: wing %d unloaded" % w)
+	var drop := [w]
+	# what is still joined to the home wing without w
+	var reach := [home_wing]
+	var grew := true
+	while grew:
+		grew = false
+		for e in _edges():
+			for pair in [[int(e.a), int(e.b)], [int(e.b), int(e.a)]]:
+				if pair[0] in reach and not (pair[1] in reach) and pair[1] != w and nb.has(pair[1]):
+					reach.append(pair[1]); grew = true
+	for v in nb.keys():
+		if not (int(v) in reach) and not (int(v) in drop):
+			drop.append(int(v))
+	for v in drop:
+		var root = nb[v].get("root")
+		if root and is_instance_valid(root):
+			root.queue_free()
+		nb.erase(v)
+		held.erase(v)
+		print("wing_stream: wing %d unloaded" % v)
+	_resync()
+	_apply_grid()
 	_js_state()
 
-func is_in(w: int) -> bool:
-	return enabled and nb.has(w) and str(nb[w].state) == "in"
+# ------------------------------------------------------------------ the wordless cue
+## A soft pulse along the floor at a border whose wing is still coming in (the border holds until it
+## is in). No words.
+func _show_cue(cue: Dictionary, dt: float) -> void:
+	if cue.is_empty():
+		if _cue and is_instance_valid(_cue):
+			_cue.visible = false
+		return
+	if _cue == null or not is_instance_valid(_cue):
+		_cue = MeshInstance3D.new()
+		_cue.name = "StreamCue"
+		var q := PlaneMesh.new()
+		q.size = Vector2(1, 1)
+		_cue.mesh = q
+		var m := StandardMaterial3D.new()
+		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.albedo_color = Color(1.0, 0.93, 0.75, 0.0)
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		_cue.material_override = m
+		_cue.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(_cue)
+	var ln: Array = cue.el.line
+	var t := float(cue.el.toward) if int(cue.el.wing) == home_wing else -float(cue.el.toward)
+	_cue.visible = true
+	_cue.position = Vector3((float(ln[0]) + float(ln[2])) * 0.5, 0.03, float(ln[1]) - t * 0.35)
+	_cue.scale = Vector3(absf(float(ln[2]) - float(ln[0])), 1.0, 0.5)
+	_cue_t += dt
+	var fade := clampf(1.0 - float(cue.d) / _num("cue_m", 14.0), 0.0, 1.0)
+	(_cue.material_override as StandardMaterial3D).albedo_color.a = (0.18 + 0.22 * (0.5 + 0.5 * sin(_cue_t * 2.6))) * sqrt(fade)
 
-# ------------------------------------------------------------------ 5: the handoff
-## The player now stands in wing w (already in): w becomes the home wing. Everything a page load
-## into w would make is made again for w; the two wings' geometry stays as it is.
+# ------------------------------------------------------------------ 5: the remake (and the handoff)
+## The player's systems are made again, for home wing w: w is the home wing already (the set of wings
+## changed: their attendants, items and shop stock are made or dropped), or a neighbour the player
+## now stands in (the handoff: w becomes the scene). Everything a page load into w would make is made
+## again; every wing's geometry stays as it is; the crowd is the same node before and after.
 ## at: {x, z, yaw, pitch} to stand somewhere else in w (a jump); empty keeps the player's spot.
-func _handoff(w: int, at := {}) -> void:
+func _remake(w: int, at := {}) -> void:
 	var t0 := Time.get_ticks_msec()
 	var old_home := home
 	var old_wing := home_wing
-	var root: Node = nb[w].root
+	var move := w != old_wing
+	var root: Node = nb[w].root if move else home
 	var op := player
 	# what the new Player takes over: the spot and view, the walking finger, the HUD toggles
 	var keep := {"x": at.get("x", op.position.x), "z": at.get("z", op.position.z), "yaw": at.get("yaw", op.yaw), "pitch": at.get("pitch", op.pitch)}
 	var carry := {}
-	for k in ["move_touch", "move_vec", "look_touch", "last_pos", "input_kind", "rmb_run"]:
+	for k in ["move_touch", "move_vec", "move_origin", "look_touch", "last_pos", "input_kind", "rmb_run", "dragging"]:
 		if k in op:
 			carry[k] = op.get(k)
 	var toggles := []
 	for b in op.buttons:
 		toggles.append(b.button_pressed if b is BaseButton else false)
 	var mode := _mode()
-	# the old wing's systems go: every node that is not part of its scene file
+	# the crowd outlives the remake (scripts/npcs.gd): one node, moved to the new home
+	var crowd = old_home.get_node_or_null("Shoppers")
+	if crowd and (bool(crowd.get("disabled")) or not crowd.has_method("rebind")):
+		crowd = null
+	# the old systems go: every node that is not part of the scene file
+	var stay := ["Env", "Sun"] if move else ["Env", "Sun", "Runtime", "Signs"]
 	for c in old_home.get_children():
-		if c.owner == null and not (str(c.name) in ["Env", "Sun"]):
+		if c == crowd:
+			continue
+		if c.owner == null and not (str(c.name) in stay):
 			old_home.remove_child(c)
 			c.queue_free()
-	for nm in ["Player", "Runtime", "Signs"]:
-		var n := old_home.get_node_or_null(nm)
+	for nm in (["Player", "Runtime", "Signs"] if move else ["Player"]):
+		var n: Node = old_home.get_node_or_null(str(nm))
 		if n:
 			old_home.remove_child(n)
 			n.queue_free()
 	if old_home.has_meta("directory_ui"):      # scripts/directory_kiosk.gd: its reader was one of those nodes
 		old_home.remove_meta("directory_ui")
-	# the sky and the sun exist once: they move to the new home
-	for nm in ["Env", "Sun"]:
-		var n := old_home.get_node_or_null(nm)
-		if n:
-			n.owner = null
-			old_home.remove_child(n)
-			root.add_child(n)
-			n.owner = root
-	# the roles swap: the old home is now a neighbour, w is the scene
-	nb[old_wing] = {"state": "in", "root": old_home, "border": {"kind": "seam"}, "was_home": 1}
-	nb.erase(w)
-	get_tree().current_scene = root
-	home = root
-	home_wing = w
+	if move:
+		# the sky and the sun exist once: they move to the new home
+		for nm in ["Env", "Sun"]:
+			var n: Node = old_home.get_node_or_null(str(nm))
+			if n:
+				n.owner = null
+				old_home.remove_child(n)
+				root.add_child(n)
+				n.owner = root
+		if crowd:
+			old_home.remove_child(crowd)
+			root.add_child(crowd)
+		# the roles swap: the old home is now a neighbour, w is the scene
+		nb[old_wing] = {"state": "in", "root": old_home}
+		nb.erase(w)
+		get_tree().current_scene = root
+		home = root
+		home_wing = w
+	if crowd:
+		Engine.set_meta("mall_crowd", true)      # scripts/player.gd: do not make another
 	Engine.set_meta("mall_xfer", keep)
 	Engine.set_meta("mall_handoff", {"carry": carry, "toggles": toggles, "mode": mode})
-	# the systems, as tools/build_mall.gd makes them: Player, Runtime, Signs
+	# the systems, as tools/build_mall.gd makes them: Player (and, in a new home, Runtime and Signs)
 	var p = load("res://scripts/player.gd").new()
 	p.name = "Player"
 	root.add_child(p)
-	var rt := Node.new()
-	rt.set_script(load("res://scripts/mall_runtime.gd"))
-	rt.name = "Runtime"
-	root.add_child(rt)
-	var sg := Node.new()
-	sg.set_script(load("res://scripts/signs.gd"))
-	sg.name = "Signs"
-	root.add_child(sg)
-	rt.adopt(old_home)
-	if OS.has_feature("web"):
-		JavaScriptBridge.eval("window.mallStreamHome && window.mallStreamHome(%d)" % w, true)
+	if move:
+		var rt := Node.new()
+		rt.set_script(load("res://scripts/mall_runtime.gd"))
+		rt.name = "Runtime"
+		root.add_child(rt)
+		var sg := Node.new()
+		sg.set_script(load("res://scripts/signs.gd"))
+		sg.name = "Signs"
+		root.add_child(sg)
+		for v in nb:
+			if str(nb[v].state) == "in":
+				rt.adopt(nb[v].root)
+		if OS.has_feature("web"):
+			JavaScriptBridge.eval("window.mallStreamHome && window.mallStreamHome(%d)" % w, true)
+	if Engine.has_meta("mall_crowd"):
+		Engine.remove_meta("mall_crowd")
+	if crowd:
+		crowd.rebind(p, crowd_rows(), _gens())
 	stats[w] = stats.get(w, {})
-	stats[w]["handoff_ms"] = Time.get_ticks_msec() - t0
-	print("wing_stream: handoff %d -> %d in %d ms" % [old_wing, w, Time.get_ticks_msec() - t0])
+	stats[w]["handoff_ms" if move else "remake_ms"] = Time.get_ticks_msec() - t0
+	stats["remakes"] = int(stats.get("remakes", 0)) + 1
+	if move:
+		print("wing_stream: handoff %d -> %d in %d ms" % [old_wing, w, Time.get_ticks_msec() - t0])
+	else:
+		print("wing_stream: systems remade for wings %s in %d ms" % [str(span()), Time.get_ticks_msec() - t0])
 	_busy = false
 	_js_state()
 
+## The gen folders of the wings that are in (scripts/npcs.gd: arcade machines, the shoe court).
+func _gens() -> Array:
+	return span().map(func(w): return _gen(w))
+
 ## scripts/player.gd _go_to_wing: wing w is in, so stand there now instead of loading its file.
 func go(w: int, x: float, z: float, yaw: float, pitch: float) -> bool:
-	if not is_in(w) or _busy:
+	if _busy or not enabled:
+		return false
+	if w == home_wing:
+		return false
+	if not is_in(w):
 		return false
 	_busy = true
-	_handoff.call_deferred(w, {"x": x, "z": z, "yaw": yaw, "pitch": pitch})
+	_remake.call_deferred(w, {"x": x, "z": z, "yaw": yaw, "pitch": pitch})
 	return true
 
-## For tools/qa: window.__mallStreamState = {home, wings: {w: state}, stats}
+## For tools/qa: window.__mallStreamState = {home, wings: {w: state}, peopled, stats}
 func _js_state() -> void:
 	if not OS.has_feature("web"):
 		return
 	var st := {}
 	for w in nb:
 		st[str(w)] = str(nb[w].state)
-	JavaScriptBridge.eval("window.__mallStreamState = %s;" % JSON.stringify({"home": home_wing, "wings": st, "stats": stats}), true)
+	JavaScriptBridge.eval("window.__mallStreamState = %s;" % JSON.stringify({"home": home_wing, "wings": st, "peopled": _peopled, "stats": stats}), true)

@@ -214,6 +214,52 @@ func _ready() -> void:
 	print("npcs: grid %dx%d, %d open cells, %d stores, %d windows, %d benches, %d crowd skins, %d pairs" % [W, H, _count_open(), stores.size(), windows.size(), benches.size(), skins.size(), pairs.size()])
 	set_process(true)
 
+# ------------------------------------------------------------------ SEAMLESS: one crowd for every wing that is in
+## SEAMLESS (Nov 13 2026, scripts/wing_stream.gd _remake; design/godot-wings.md "Seamless streaming"): the
+## crowd is one node for the whole run. When the player's systems are remade (a wing came in or went, or
+## the player walked into another wing) the streamer hands this node the new Player, the floor the
+## crowd may walk (the union of the wings that are in) and those wings' gen folders. Nobody is
+## respawned: the grid and the places are rebuilt only when the floor changed, a shopper left standing
+## on floor that is gone is taken out, and Pocket Change gets its players the first time its wing is in.
+var _gens: Array = []
+func rebind(p: Node3D, floor_rows: PackedStringArray, gens: Array) -> void:
+	player = p
+	_gens = gens
+	rt = get_tree().current_scene.get_node_or_null("Runtime") if get_tree().current_scene else null
+	if disabled:
+		return
+	if floor_rows != rows and floor_rows.size() > 0:
+		rows = floor_rows
+		hall_cells.clear()
+		_build_grid()
+		stores.clear(); windows.clear(); benches.clear()
+		_load_places()
+		_load_benches()
+		for s in shoppers.duplicate():
+			if not _open(s.pos):
+				if s.role == "":
+					_remove(s)
+			elif s.role == "" and s.state != "dwell":
+				_decide(s)
+	if players.is_empty() and year_roles:
+		var machines := _arcade_machines()
+		if not machines.is_empty():
+			# its characters are the arcade's now: out of the crowd pool, and off anyone walking as one
+			if bool(cfg.get("unique", false)):
+				for i in cfg.get("arcade_ids", []):
+					reserved[str(i)] = true
+				for s in shoppers.duplicate():
+					if s.role == "" and reserved.has(str(s.body.id)):
+						_remove(s)
+				var kept := []; var total := 0.0
+				weights.clear()
+				for e in skins:
+					if reserved.has(str(e.id)): continue
+					kept.append(e); total += float(cfg.groups.get(str(e.group), 0.0)); weights.append(total)
+				skins = kept
+			_place_players(machines)
+# ---- end SEAMLESS
+
 # ------------------------------------------------------------------ the grid
 ## 1 m cells from the wing's 2 m walk tiles, with the columns and fixtures closed off, a
 ## distance-to-wall field, and an AStarGrid2D whose costs make the sides of a hall the cheap way.
@@ -434,7 +480,7 @@ func _load_benches() -> void:
 		var p := Vector2(float(o[0]), float(o[1]))
 		var f := Vector2.ZERO
 		# the court's benches are drawn by wing 1 only (zone C2); wing 2 lists them but has no court props
-		var in_court := p.distance_to(court) < 3.0 and str(get_tree().current_scene.get_meta("gen", "res://gen/w1/")).contains("/w1/")
+		var in_court := p.distance_to(court) < 3.0 and (str(get_tree().current_scene.get_meta("gen", "res://gen/w1/")).contains("/w1/") or _gens.any(func(g): return str(g).contains("/w1/")))   # SEAMLESS: wing 1 is in
 		if in_court:
 			f = Vector2(signf(p.x - court.x), 0.0)
 		else:
@@ -507,19 +553,25 @@ func _place_mannequins() -> void:
 ## player position in scripts/arcade_panels.json.
 func _arcade_machines() -> Array:
 	var gen := str(get_tree().current_scene.get_meta("gen", "res://gen/"))
-	var path := gen + "machines.json"
-	if not FileAccess.file_exists(path) or not FileAccess.file_exists(PANELS): return []
-	var j = JSON.parse_string(FileAccess.get_file_as_string(path))
+	var paths := [gen + "machines.json"]
+	for g in _gens:   # SEAMLESS: every wing that is in (rebind)
+		if not ((str(g) + "machines.json") in paths):
+			paths.append(str(g) + "machines.json")
+	if not FileAccess.file_exists(PANELS): return []
 	var pj = JSON.parse_string(FileAccess.get_file_as_string(PANELS))
-	if not (j is Dictionary) or not (pj is Dictionary): return []
+	if not (pj is Dictionary): return []
 	var list := []
-	for m in j.get("machines", []):
-		if not (str(m.get("mod", "")) in cfg.arcade_mods): continue
-		var st: Dictionary = pj.styles.get(str(int(m.get("opts", {}).get("style", 0))), {})
-		if st.is_empty() or st.get("skip", false) or not st.has("L"): continue
-		var mm: Dictionary = m.duplicate()
-		mm["panel"] = st
-		list.append(mm)
+	for path in paths:
+		if not FileAccess.file_exists(path): continue
+		var j = JSON.parse_string(FileAccess.get_file_as_string(path))
+		if not (j is Dictionary): continue
+		for m in j.get("machines", []):
+			if not (str(m.get("mod", "")) in cfg.arcade_mods): continue
+			var st: Dictionary = pj.styles.get(str(int(m.get("opts", {}).get("style", 0))), {})
+			if st.is_empty() or st.get("skip", false) or not st.has("L"): continue
+			var mm: Dictionary = m.duplicate()
+			mm["panel"] = st
+			list.append(mm)
 	return list
 
 ## A share of the machines get a player: body centred on their controls, set back from the panel

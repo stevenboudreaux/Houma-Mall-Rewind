@@ -1,20 +1,88 @@
 {
  "_doc": "Seamless streaming between wings (workstream SEAMLESS, Nov 13 2026; design/godot-wings.md 'Seamless streaming'). scripts/wing_stream.gd reads this.",
  "enabled": false,
- "_enabled": "false until every interior border is converted (Stage 3) and Steven has seen it: ?stream=1 turns it on for a session, ?stream=0 off. May also be one value per kind of device: {\"desktop\": true, \"mobile\": false}.",
+ "_enabled": "Stage 3: turned on at the end (true for both kinds of device). ?stream=1 turns it on for a session, ?stream=0 off. May also be one value per kind of device: {\"desktop\": true, \"mobile\": false}.",
  "borders": [
-  {"a": 1, "b": 2, "years": [1995], "kind": "seam"}
+  {
+   "a": 1,
+   "b": 2,
+   "kind": "seam",
+   "years": [
+    1995,
+    2026
+   ]
+  },
+  {
+   "a": 1,
+   "b": 4,
+   "kind": "threshold",
+   "years": [
+    1995,
+    2026
+   ]
+  },
+  {
+   "a": 2,
+   "b": 5,
+   "kind": "threshold",
+   "years": [
+    1995,
+    2026
+   ]
+  },
+  {
+   "a": 1,
+   "b": 6,
+   "kind": "threshold",
+   "years": [
+    1995,
+    2026
+   ],
+   "gate": true
+  }
  ],
- "_borders": "Stage 2: the wing 1 <-> wing 2 seam in the 1990s only.",
- "wing2_zones": ["C3", "H8", "H5", "C4", "H6", "H7"],
+ "_borders": "Every interior border, both years: the seam between the mall wings, and the thresholds of Sears / Lynn's (4), Dillard's (5) and the cinema lobby (6; \"gate\": not brought in while its gate is shut, scripts/cinema_gate.gd). Lines come from gen/w<n>/wing.json (seam, thresholds).",
+ "wing2_zones": [
+  "C3",
+  "H8",
+  "H5",
+  "C4",
+  "H6",
+  "H7"
+ ],
  "_wing2_zones": "the same list as tools/build_mall.gd WING2_ZONES: a mall wing's copy of the other wing's halls and courts (meshes named by zone) is hidden while the real wing is in.",
- "near_m": {"desktop": 100000, "mobile": 60},
- "_near_m": "start loading a neighbour when the player is within this many metres of the border. Desktop: always (the whole interior after the first load screen).",
- "far_m": {"desktop": 100000, "mobile": 110},
- "_far_m": "phones and tablets: a neighbour further than this from the player is unloaded.",
- "start_delay_s": {"desktop": 1.5, "mobile": 4.0},
+ "near_m": {
+  "desktop": 100000,
+  "mobile": 60
+ },
+ "_near_m": "start loading a wing when the player is within this many metres of its border with a wing that is in. Desktop: always (the whole interior after the first load screen), one wing at a time, nearest border first.",
+ "far_m": {
+  "desktop": 100000,
+  "mobile": 110
+ },
+ "_far_m": "phones and tablets: a wing whose every border is further than this from the player is unloaded.",
+ "start_delay_s": {
+  "desktop": 1.5,
+  "mobile": 4.0
+ },
  "load_budget_ms": 6,
  "nodes_per_frame": 24,
  "handoff_past_m": 1.0,
- "_handoff_past_m": "the wing's own systems (shops, attendants, items, shoppers, signs) follow the player once they are this far past the border."
+ "_handoff_past_m": "the wing's own systems (shops, attendants, items, shoppers, signs) follow the player once they are this far past the border.",
+ "people_m": 45,
+ "_people_m": "a wing's own people and things (attendants, items, shop stock) are made as soon as it is in when the player is within this many metres of its border; otherwise once nothing else is loading.",
+ "cue_m": 14,
+ "_cue_m": "the wordless cue (a soft pulse along the floor line) shows within this many metres of a border whose wing is still coming in.",
+ "fallback_m": 1.0,
+ "_fallback_m": "a wing whose pack could not be fetched is loaded the old way, by itself, when the player is this close to the line.",
+ "no_crowd": [
+  6
+ ],
+ "_no_crowd": "wings the crowd does not walk (the cinema lobby is one empty room).",
+ "trim": [
+  "dyn_glass"
+ ],
+ "_trim": "meshes that are partly the same in every wing (the skylight panes plus each wing's own shop glass): a later wing's copy loses the triangles an earlier one draws.",
+ "hide": [],
+ "_hide": "[{\"in\": wing, \"when\": wing, \"nodes\": [names]}]: meshes of wing `in` that are hidden while wing `when` is in."
 }

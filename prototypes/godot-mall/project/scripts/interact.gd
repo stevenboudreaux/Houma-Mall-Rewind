@@ -125,7 +125,7 @@ func _spawn(e: Dictionary, pl: Dictionary, dropped: bool) -> Node3D:
 	var y = pl.get("year", e.year)
 	if str(y) != "both" and int(y) != mall.year:
 		return null
-	if player.wing != 0 and w != 0 and w != player.wing:
+	if not player.has_wing(w):   # SEAMLESS: any wing that is in (scripts/wing_stream.gd)
 		return null
 	var p: Array = pl.pos
 	var pos := Vector3(float(p[0]), float(p[1]), float(p[2]))

@@ -23,6 +23,7 @@ var key_item := ""
 var message := ""
 var _gate_mesh: Node3D = null
 var _open := false
+var in_wing := 0     # SEAMLESS: the wing whose scene holds the gate's mesh
 
 ## Makes this wing's threshold gates (data/story/gates.json entries with "threshold" whose "wing"
 ## is the player's wing and whose "years" include the year on show) as children of the player.
@@ -35,13 +36,14 @@ static func make_all(p: Node3D) -> void:
 	for e in j.get("gates", []):
 		if not (e is Dictionary) or not e.has("threshold"):
 			continue
-		if int(e.get("wing", 0)) != int(p.wing) and int(p.wing) != 0:
+		if not p.has_wing(int(e.get("wing", 0))):   # SEAMLESS: the gate's wing is in (scripts/wing_stream.gd)
 			continue
 		var yrs = e.get("years", "both")
 		if not (str(yrs) == "both" or (yrs is Array and int(p.year) in yrs) or (not (yrs is Array) and int(yrs) == int(p.year))):
 			continue
 		var g = load("res://scripts/cinema_gate.gd").new()
 		g.setup(p, e)
+		g.in_wing = int(e.get("wing", 0))
 		p.add_child(g)
 
 func setup(p: Node3D, e: Dictionary) -> void:
@@ -55,6 +57,10 @@ func setup(p: Node3D, e: Dictionary) -> void:
 
 func _ready() -> void:
 	var root = player.get_parent() if player else null
+	# SEAMLESS: the gate's mesh is in its own wing's scene, which may be streamed in beside the player's
+	var ws = get_tree().root.get_node_or_null("WingStream")
+	if ws and ws.enabled and in_wing != 0 and ws.root_of(in_wing) != null:
+		root = ws.root_of(in_wing)
 	if root:
 		# 1995: a dynamic mesh behind the door arches; 2026: the vacant unit's grille, a static
 		# (lightmapped) mesh of its own

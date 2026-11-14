@@ -258,9 +258,19 @@ func _ready() -> void:
 	# SEAMLESS: the wing on the other side of a border is brought in while you walk (scripts/wing_stream.gd)
 	load("res://scripts/wing_stream.gd").make(get_tree()).attach(self)
 
+## SEAMLESS (scripts/wing_stream.gd): whether wing w's own content (attendants, pick-up items, shop stock)
+## is made now: this wing, the unsplit mall, or a wing streamed in beside this one.
+func has_wing(w: int) -> bool:
+	if w == wing or wing == 0 or w == 0:
+		return true
+	var ws = get_tree().root.get_node_or_null("WingStream") if is_inside_tree() else null
+	return ws != null and ws.spans(w)
+
 ## The Runner, the shoppers, the shirt words, the Stockrooms and the prize counter: 1995 only (2026
 ## is the building as it is today).
 func _spawn_1995_life() -> void:
+	# SEAMLESS: the crowd is one node that outlives a remake (scripts/wing_stream.gd _remake hands it over)
+	var crowd_kept: bool = Engine.has_meta("mall_crowd")
 	if wing == 6:
 		return     # S: the cinema lobby placeholder is one empty room (design/godot-wings.md "Wings 4-6")
 	if year != 1995:
@@ -274,11 +284,12 @@ func _spawn_1995_life() -> void:
 		rn.force = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('runner') || ''"))
 	get_parent().add_child.call_deferred(rn)
 	# the shoppers, the mall's crowd (scripts/npcs.gd; Steven, Oct 15 2026)
-	var np = load("res://scripts/npcs.gd").new()
-	np.name = "Shoppers"; np.player = self
-	if OS.has_feature("web"):
-		np.force = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('npcs') || ''"))
-	get_parent().add_child.call_deferred(np)
+	if not crowd_kept:   # SEAMLESS
+		var np = load("res://scripts/npcs.gd").new()
+		np.name = "Shoppers"; np.player = self
+		if OS.has_feature("web"):
+			np.force = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('npcs') || ''"))
+		get_parent().add_child.call_deferred(np)
 	# the words on Ch02's sweatshirt, owner-editable (scripts/npc_shirt.gd; Steven, Oct 16 2026)
 	var ns = load("res://scripts/npc_shirt.gd").new()
 	ns.name = "ShirtWords"; ns.player = self
@@ -306,6 +317,8 @@ func _spawn_2026_shoppers() -> void:
 		var pg = load("res://scripts/prizes_gi.gd").new()
 		pg.name = "Prizes"; pg.player = self
 		get_parent().add_child.call_deferred(pg)
+	if Engine.has_meta("mall_crowd"):   # SEAMLESS: the crowd outlives a remake (scripts/wing_stream.gd)
+		return
 	var np = load("res://scripts/npcs.gd").new()
 	np.name = "Shoppers"; np.player = self
 	if OS.has_feature("web"):
@@ -852,7 +865,15 @@ func _update_prompt() -> void:
 		return
 	door_near = _door_here() if not leaving else null
 	thr_near = _thr_here() if not leaving and door_near == null else null
-	var near := (door_near != null or thr_near != null or _seam_dist() < SEAM_NEAR) and not leaving
+	var seam_near := _seam_dist() < SEAM_NEAR
+	# SEAMLESS: a border the streamer holds (its wing is in, or coming in behind the wordless cue) has no prompt
+	var ws = get_tree().root.get_node_or_null("WingStream")
+	if ws and ws.enabled and wing != 0:
+		if thr_near != null and ws.holds(int(thr_near.to)):
+			thr_near = null
+		if seam_near and ws.holds(3 - wing):
+			seam_near = false
+	var near := (door_near != null or thr_near != null or seam_near) and not leaving
 	if near != prompt.visible:
 		prompt.visible = near
 	if near:

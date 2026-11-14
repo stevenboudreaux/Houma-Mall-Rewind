@@ -20,6 +20,8 @@ var step := 0
 var errs := []
 var worst_ms := 0
 var _last := 0
+var crowd_id := 0
+var crowd_n := 0
 
 func _initialize() -> void:
 	for a in OS.get_cmdline_user_args():
@@ -63,6 +65,7 @@ func _process(dt: float) -> bool:
 				ws.cfg["start_delay_s"] = 0.0
 				ws.cfg["near_m"] = 60
 				ws.cfg["far_m"] = {"desktop": 100000, "mobile": 70}
+				ws.cfg["borders"] = [{"a": 1, "b": 2, "kind": "seam", "years": [1995]}]   # this test: the seam alone
 				step = 1; t = 0.0
 		1:
 			if ws.is_in(2):
@@ -77,12 +80,30 @@ func _process(dt: float) -> bool:
 				v = _visible_named(w2, z1)
 				if not v.is_empty(): _fail("wing 2 still shows its copy of wing 1's zones: %s" % [v])
 				if _visible_named(w2, z2).is_empty(): _fail("wing 2's own halls are not visible")
-				if not _player().seam.is_empty(): _fail("the seam prompt is still on")
+				if not ws.holds(2): _fail("the streamer does not hold the seam (the old prompt would show)")
+				if _player().prompt and _player().prompt.visible: _fail("a prompt shows at the open seam")
 				if w2.get_node("LightmapGI").light_data == null: print("note: wing 2 has no lightmap here (unbaked run)")
 				if not _player()._free(-9.0, 52.0): _fail("the floor past the seam is not walkable")
-				Input.action_press("ui_up"); step = 2; t = 0.0
+				step = 11; t = 0.0
 			elif t > 120.0 or (ws.nb.has(2) and str(ws.nb[2].state) == "failed"):
 				_fail("wing 2 did not come in"); step = 99
+		11:
+			# stage 3: wing 2's own people and things are made before the border is crossed, and the crowd is kept
+			if int(ws.stats.get("remakes", 0)) >= 1 and t > 1.0:
+				var st = _player().get_node_or_null("Story")
+				var n2 := 0
+				if st:
+					for a in st.attendants:
+						if is_instance_valid(a) and a.global_position.z > 48.0: n2 += 1
+				print("after the remake: %d attendants in all, %d of them south of the seam (wing 2); remake %s ms" % [st.attendants.size() if st else -1, n2, ws.stats.get(1, {}).get("remake_ms", "?")])
+				if n2 == 0: _fail("no wing 2 attendant stands in wing 2 before the crossing")
+				if not (2 in ws._peopled): _fail("wing 2 is not peopled after the remake")
+				var cr = current_scene.get_node_or_null("Shoppers")
+				if cr == null: _fail("no crowd after the remake")
+				else: crowd_id = cr.get_instance_id(); crowd_n = cr.shoppers.size()
+				Input.action_press("ui_up"); step = 2; t = 0.0
+			elif t > 20.0:
+				_fail("the systems were not remade for wing 2 within 20 s"); step = 99
 		2:
 			if int(current_scene.get_meta("wing", 0)) == 2 and _player() != null:
 				var p := _player()
@@ -102,6 +123,10 @@ func _process(dt: float) -> bool:
 				if root.find_children("Player", "", false, false).size() > 0: _fail("a Player sits under /root")
 				if current_scene.get_node_or_null("Env") == null: _fail("the sky (Env) did not move to wing 2")
 				if not ws.is_in(1): _fail("wing 1 is not kept in as the neighbour")
+				var cr = current_scene.get_node_or_null("Shoppers")
+				if cr == null or cr.get_instance_id() != crowd_id: _fail("the crowd was not kept across the handoff")
+				elif cr.player != _player(): _fail("the crowd does not follow the new Player")
+				if scn.get_node_or_null("Shoppers") != null: _fail("wing 1 still has a crowd node")
 				_place(-9.0, 52.0, 0.0)       # facing north (-z), back toward wing 1
 				Input.action_press("ui_up"); step = 4; t = 0.0
 		4:
@@ -124,14 +149,14 @@ func _process(dt: float) -> bool:
 			if not ws.nb.has(2):
 				var v := _visible_named(current_scene, ws.cfg.wing2_zones)
 				if v.is_empty(): _fail("wing 1's stand-in of wing 2 did not come back after the unload")
-				if _player().seam.size() < 3: _fail("the seam did not come back after the unload")
+				if ws.holds(2) and ws._state(2) == "in": _fail("the seam is still held open after the unload")
 				if _player()._free(-9.0, 52.0): _fail("the floor past the seam is still walkable after the unload")
 				step = 99
 			elif t > 5.0:
 				_fail("wing 2 was not unloaded 80 m from the seam"); step = 99
 		99:
 			Input.action_release("ui_up")
-			print("worst frame while streaming: %d ms" % worst_ms)
+			print("worst frame while streaming: %d ms; resync max %s ms, trims %s ms in all" % [worst_ms, ws.stats.get("resync_max_ms", "?"), ws.stats.get("trim_ms", "?")])
 			print("STREAM TEST OK (%s)" % kind if errs.is_empty() else "STREAM TEST FAILED (%s): %d" % [kind, errs.size()])
 			return true
 	return false

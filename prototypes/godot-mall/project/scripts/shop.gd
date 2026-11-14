@@ -244,7 +244,7 @@ func _spawn_displays() -> void:
 		var y = d.get("year", e.year)
 		if str(y) != "both" and int(y) != int(mall.year):
 			continue
-		if wing != 0 and int(d.get("wing", 0)) != 0 and int(d.get("wing", 0)) != wing:
+		if wing != 0 and not player.has_wing(int(d.get("wing", 0))):   # SEAMLESS: any wing that is in
 			continue
 		if not ResourceLoader.exists(str(e.scene)):
 			continue
