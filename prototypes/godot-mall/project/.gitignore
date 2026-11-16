@@ -1,2 +1,10 @@
 .godot/
 .autobake
+# Secrets: the root .gitignore covers these too; repeated here so the project folder is safe on its own
+# (CLAUDE-CLOUD.md "Secrets")
+rclone.conf
+rclone*.conf
+.env
+.env.*
+*.pem
+*.key

@@ -23,6 +23,19 @@ Desktop.ini
 *.key
 credentials.json
 secrets.json
+# R2 / rclone and other key files (CLAUDE-CLOUD.md "Secrets"; .githooks/secret_check.py refuses them too)
+rclone.conf
+rclone*.conf
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa*
+id_ed25519*
+id_ecdsa*
+.netrc
+.git-credentials
+export_credentials.cfg
 
 # Python bytecode from the texture painters
 __pycache__/
