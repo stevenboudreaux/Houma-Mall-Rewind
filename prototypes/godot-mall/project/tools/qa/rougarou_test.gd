@@ -3,7 +3,10 @@
 ## vanish; then a behind-you sighting and its bolt. Writes screenshots at each beat.
 ##   xvfb-run -a godot --path . --rendering-driver opengl3 --script res://tools/qa/rougarou_test.gd -- --out=/tmp/rgt
 ## Prints ROUGAROU TEST OK, or the failed check.
+## TEST-DEBT (Nov 16 2026): the game stopped making the Rougarou on Oct 16 (the Runner replaced it);
+## this suite makes it itself (tools/qa/rg_spawn.gd), so it checks the kept code, not the shipped game.
 extends SceneTree
+const RgSpawn = preload("res://tools/qa/rg_spawn.gd")
 var out := "/tmp/rgt"
 var player: Node3D
 var ai: Node
@@ -41,12 +44,19 @@ func _face_fig() -> void:
 func _process(dt: float) -> bool:
 	clock += dt
 	if ai == null:
-		ai = current_scene.get_node_or_null("RougarouAI")
-		if ai == null: return false
+		# TEST-DEBT: the game no longer makes the Rougarou (tools/qa/rg_spawn.gd); make it here once
+		# the wing's own nodes are in (the Player's walk grid is read in its _ready)
+		if current_scene.get_node_or_null("Stockrooms") == null:
+			if clock > 60.0:
+				_check(false, "the wing did not finish loading in 60 s"); return _done()
+			return false
+		print("the game made a RougarouAI itself: ", RgSpawn.game_made_one(current_scene))
+		ai = RgSpawn.spawn(current_scene, player, "sightings")
 		fig = ai.fig
 		ai.mode = "sightings"; ai.state = "hidden"; fig.visible = false
 		ai.cfg.first_sighting_s = 0.0
 		ai.timer = 0.0
+		clock = 0.0
 		return false
 	match step:
 		0:

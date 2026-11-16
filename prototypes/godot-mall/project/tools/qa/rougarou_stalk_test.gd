@@ -8,7 +8,10 @@
 ## (--fast: the first sighting after 2 s instead of 30; a software-GL wing render runs far slower
 ## than real time, so the real 30 s wait takes ~25 min here)
 ## Prints STALK TEST OK, or the failed checks.
+## TEST-DEBT (Nov 16 2026): the game stopped making the Rougarou on Oct 16 (the Runner replaced it);
+## this suite makes it itself (tools/qa/rg_spawn.gd), so it checks the kept code, not the shipped game.
 extends SceneTree
+const RgSpawn = preload("res://tools/qa/rg_spawn.gd")
 var out := "/tmp/st"
 var player: Node3D
 var ai: Node
@@ -53,7 +56,14 @@ func _process(dt: float) -> bool:
 		tick = 0.0
 		printerr("t step %d state %s d %.1f clock %.1f" % [step, ai.state, ai._dist(), clock])
 	if ai == null:
-		ai = current_scene.get_node_or_null("RougarouAI")
+		# TEST-DEBT: the game no longer makes the Rougarou (tools/qa/rg_spawn.gd); make it here once
+		# the wing's own nodes are in (the Player's walk grid is read in its _ready)
+		if current_scene.get_node_or_null("Stockrooms") == null:
+			if clock > 60.0:
+				_check(false, "the wing did not finish loading in 60 s"); return _done()
+			return false
+		printerr("the game made a RougarouAI itself: ", RgSpawn.game_made_one(current_scene))
+		ai = RgSpawn.spawn(current_scene, player, "stalk")
 		if ai:
 			fig = ai.fig
 			first = float(ai.cfg.stalk_first_s)

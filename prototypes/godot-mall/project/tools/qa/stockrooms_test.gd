@@ -1,9 +1,10 @@
 ## Checks the Stockrooms (scripts/stockrooms.gd) natively in Wing 1 and takes pictures:
-##   the door locked until unlocked; walking into Woolworth's back corner goes in; the start room;
+##   the door open from the start (TEST-DEBT, Nov 16: it was locked until the Rougarou went through
+##   before Oct 16); walking into Woolworth's back corner goes in; the start room;
 ##   the code reachable on the grid (spawn to the stick); a wrong turn's seam puts you in the real
 ##   entry; the stick's caption within 2 m; walking into the start room's wall comes back out to
 ##   Woolworth with the mall, the walk grid and the buttons back.
-##   xvfb-run -a godot --path . --rendering-driver opengl3 --script res://tools/qa/stockrooms_test.gd -- --out=/tmp/sr
+##   xvfb-run -a godot --path . --rendering-driver opengl3 --script res://tools/qa/stockrooms_test.gd -- --out=/tmp/sr [--stream]
 ## Prints STOCKROOMS TEST OK, or the failed checks.
 extends SceneTree
 var out := "/tmp/sr"
@@ -16,10 +17,18 @@ var errors := []
 var oks := 0
 var shots := []        # [name, pos(grid x, y), yaw deg, pitch deg]
 var shot_i := 0
+var hud_before := []
 
 func _initialize() -> void:
+	var stream := false
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--out="): out = a.substr(6)
+		elif a == "--stream": stream = true
+	# TEST-DEBT: wing streaming (scripts/wing_stream.gd) off by default, as on phones: deterministic,
+	# and a software-GL frame of the mall with wing 2 streamed in takes minutes here. --stream keeps
+	# it on; wing 2 then arrives while you are inside (finding F1 in
+	# production/session-handoff-2026-11-16-TEST-DEBT.md) and "the mall still hidden" can fail.
+	Engine.set_meta("mall_stream", stream)
 	if Engine.has_meta("mall_stockrooms"): Engine.remove_meta("mall_stockrooms")
 	Engine.set_meta("mall_xfer", {"x": -40.0, "z": 18.0, "yaw": deg_to_rad(-60.0), "pitch": 0.0})
 	scn = load("res://wing1.tscn").instantiate()
@@ -45,6 +54,13 @@ func _at(gx: float, gy: float, yaw_deg: float, pitch_deg := 0.0) -> void:
 	player.yaw = deg_to_rad(yaw_deg); player.pitch = deg_to_rad(pitch_deg); player._apply_rot()
 	sr.prev = player.position
 
+## The HUD's visible flags: each corner button, then the Jump button.
+func _hud_state() -> Array:
+	var a = []
+	for b in player.buttons: a.append(b.visible)
+	a.append(player.jump_open_btn.visible if player.jump_open_btn else null)
+	return a
+
 ## Grid BFS from a to b over walkable cells.
 func _reach(a: Vector2i, b: Vector2i) -> bool:
 	var rows = sr.rows
@@ -68,27 +84,21 @@ func _process(dt: float) -> bool:
 	match step:
 		0:
 			if clock > 0.5:
-				# locked: walking into the corner does nothing
-				player.position = Vector3(-45.6, 0, 21.55)
-				step = 1; clock = 0.0
-		1:
-			if clock > 1.0:
-				_check(not sr.inside, "locked before the Rougarou has gone through")
-				player.position = Vector3(-40, 0, 18)
-				sr.unlock()
-				step = 2; clock = 0.0
-		2:
-			if clock > 0.3:
+				# TEST-DEBT: since Oct 16 2026 the door is open for everyone from the start (Steven: "not
+				# tied to following the Rougarou"; stockrooms.gd _ready). The old check wanted it locked.
+				_check(sr.unlocked and not sr.inside, "the door is open from the start (no Rougarou needed)")
+				# the HUD as it is in the mall, to compare with on the way out
+				hud_before = _hud_state()
 				player.position = Vector3(-45.6, 0, 21.55)        # walk into the patch of wall
 				step = 3; clock = 0.0
 		3:
 			if sr.inside and not sr.busy:
 				_check(true, "walking into Woolworth's back corner goes in")
 				_check(player.map_scale == 1.0 and player.walk_rows.size() > 100, "the maze's walk grid is in use")
-				var vis = 0
+				var vis = []
 				for c in scn.get_children():
-					if c is Node3D and c != sr and c != player and c.name != "RougarouAI" and c.visible: vis += 1
-				_check(vis == 0, "the mall is hidden (%d visible)" % vis)
+					if c is Node3D and c != sr and c != player and c.name != "RougarouAI" and c.visible: vis.append(str(c.name))
+				_check(vis.is_empty(), "the mall is hidden (visible: %s)" % str(vis))
 				_check(not player.buttons[2].visible, "lighting button hidden")
 				_check(player.jump_locked, "Jump locked for a visitor")
 				var sp = sr.J.notes.spawn
@@ -115,7 +125,15 @@ func _process(dt: float) -> bool:
 			if clock > 0.6:
 				_shot(shots[shot_i][0])
 				if shots[shot_i][0] == "10-stick-close":
-					_check(sr.caption.visible, "the caption shows within 2 m of the stick")
+					# TEST-DEBT: since Nov 1 (B+C) the stick is a pick-up item; the action prompt names it
+					# and the old caption stays off (stockrooms.gd stick_is_item). Caption only without it.
+					if sr.stick_is_item:
+						var ia = player.interact
+						var said: String = ia.prompt_text.text if ia and ia.prompt.visible else ""
+						_check(said == "Pick up Martin Folse's stick" and not sr.caption.visible,
+							"the prompt names the stick within reach (\"%s\")" % said)
+					else:
+						_check(sr.caption.visible, "the caption shows within 2 m of the stick")
 				shot_i += 1; clock = 0.0
 				if shot_i < shots.size():
 					_at(shots[shot_i][1].x, shots[shot_i][1].y, shots[shot_i][2], shots[shot_i][3])
@@ -139,6 +157,10 @@ func _process(dt: float) -> bool:
 				_check(abs(g.x - (float(r[0]) + 1.5 + float(s.dx))) < 0.05 and abs(g.z - want_y) < 0.3,
 					"the seam %s moved you into the real entry (%.1f, %.1f)" % [s.name, g.x, g.z])
 				_shot("11-after-seam")
+				var vis3 = []
+				for c in scn.get_children():
+					if c is Node3D and c != sr and c != player and c.name != "RougarouAI" and c.visible: vis3.append(str(c.name))
+				_check(vis3.is_empty(), "the mall still hidden before leaving (visible: %s)" % str(vis3))
 				# home: stand in the start room facing the door wall and walk into it
 				_at(49.5, 199.3, 180.0)
 				step = 7; clock = 0.0
@@ -148,9 +170,25 @@ func _process(dt: float) -> bool:
 			if not sr.inside and not sr.busy:
 				_check(player.position.distance_to(sr.WOOL_BACK_OUT) < 0.1, "back out in Woolworth")
 				_check(player.map_scale == 2.0, "the mall's walk grid is back")
-				_check(player.buttons[2].visible and not player.jump_locked, "buttons and Jump back")
+				# TEST-DEBT: the corner buttons are the owner's since Nov 4 (player.gd owner_hud_sync), so a
+				# visitor has none in the mall either: "back" means as they were before going in
+				var hud_after = _hud_state()
+				_check(hud_after == hud_before and not player.jump_locked, "buttons and Jump back as before (%s)" % str(hud_after))
 				_shot("12-back-in-woolworth")
+				# TEST-DEBT: in again (a second visit in one session hid all but one mall node in the
+				# old test's in-out-in run): the mall must be hidden the second time too
+				player.position = Vector3(-45.6, 0, 21.55)
+				step = 8; clock = 0.0
+		8:
+			if sr.inside and not sr.busy:
+				var vis2 = []
+				for c in scn.get_children():
+					if c is Node3D and c != sr and c != player and c.name != "RougarouAI" and c.visible: vis2.append(str(c.name))
+				_check(vis2.is_empty(), "a second visit: the mall is hidden again (visible: %s)" % str(vis2))
+				_shot("13-second-visit")
 				return _done()
+			elif clock > 6.0:
+				_check(false, "did not go in a second time"); return _done()
 			elif clock > 8.0:
 				_check(false, "the start room's wall did not take you home"); return _done()
 	return false

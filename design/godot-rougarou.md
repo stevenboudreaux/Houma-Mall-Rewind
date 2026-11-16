@@ -1,5 +1,11 @@
 # The Rougarou: the mall's first NPC (Godot mall, since Demo 25, Oct 14 2026)
 
+> **Retired from the game since Oct 16 2026:** the Runner (`scripts/runner_ai.gd`) replaced it;
+> `scripts/player.gd` no longer makes the `RougarouAI` node and `scripts/rougarou_ai.gd` is kept,
+> unused. The QA suites make it themselves (`tools/qa/rg_spawn.gd`, TEST-DEBT Nov 16 2026), so
+> they check the kept code against today's wing, not anything a player meets. Whether it comes
+> back, stays parked or is deleted is Steven's call.
+
 **Asked for (Steven, Oct 14, 16:23):** "the first NPC that we'll have in the game ... the
 Rougarou. It's a thing of Cajun folklore, a monster that's in the swamp, akin to a werewolf but
 it's not." When you log in it's not there; after a few minutes you see it at the far side of the
@@ -131,3 +137,14 @@ A node under the wing, made by `player.gd`. States:
 - Not yet: sound (a breath, claws on terrazzo), a glimpse through a storefront, it watching from
   a store doorway, the day mode (it appears by day too for now), VR (it works, untested there).
 - The bolt path can cut a corner of a storefront since it follows tile centres.
+
+## Checks after the Demo 54 layout (TEST-DEBT, Nov 16 2026)
+- `tools/qa/rougarou_test.gd`: ROUGAROU TEST OK (12). `rougarou_stalk_test.gd --fast`: STALK TEST OK (10).
+- `tools/qa/rougarou_woolworth_test.gd` (new): story stage 3 in Woolworth's aisles: 148 lurk spots in
+  the back half, all joined to the front on free floor and all with a route to the back corner;
+  live, three ducks, the exit walk (17 steps) to the corner, into the wall, the Stockrooms door
+  open; on free floor every running frame; longest run 2.4 s. WOOLWORTH RG TEST OK (12).
+  Evidence `production/qa/evidence/wsTEST-DEBT-rg-wool-*`.
+- `rougarou_story_test.gd` still waits for a node the game does not make (not in TEST-DEBT's scope;
+  one `rg_spawn` call would fix it).
+

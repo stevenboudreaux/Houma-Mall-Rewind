@@ -65,7 +65,16 @@ camcorder on a tripod with its red light on, stacked boxes, stacked chairs.
   rustle, 9–22 m away (generated PCM, AudioStreamPlayer3D).
 
 ## Checks
-- `tools/qa/stockrooms_test.gd`: STOCKROOMS TEST OK (12 checks) with renders.
+- `tools/qa/stockrooms_test.gd`: STOCKROOMS TEST OK (14 checks) with renders. Since TEST-DEBT
+  (Nov 16 2026) it checks the door is **open from the start** (Oct 16), the **pick-up prompt**
+  "Pick up Martin Folse's stick" within reach (the caption only when the item list has no stick),
+  the HUD **as it was before going in** (the corner buttons are the owner's since Nov 4), the mall
+  still hidden just before leaving, and a second visit. Wing streaming is off by default (as on
+  phones); `--stream` keeps it on.
+- Known (TEST-DEBT finding F1, `production/session-handoff-2026-11-16-TEST-DEBT.md`): a wing-stream
+  resync during a visit can re-show a duplicate the stream had hidden (the Information plaque);
+  it is ~2.9 km from the camera inside (far plane 200 m), so nothing shows. Fix belongs in
+  `scripts/wing_stream.gd`.
 - `tools/qa/rougarou_story_test.gd`: the whole route through the walk into the wall and the unlock.
 
 ## Open
