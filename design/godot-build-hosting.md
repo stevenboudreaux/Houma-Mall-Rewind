@@ -215,6 +215,18 @@ run left the remote untouched; four publishes each pushed a pack-free godot-buil
 kept the newest three. In Chromium (swiftshader) the page from one origin loaded every pack from the other,
 across a door crossing and a reload (results in `production/session-handoff-2026-11-04-r2.md`).
 
+### The phone pack's texture memory (workstream PHONE-MEMORY, Nov 16 2026)
+The size limit that made the textures lossless WebP (GitHub's 100 MB a file, Nov 1) is gone since R2. What it costs
+on a phone, measured (`production/qa/evidence/wsPHONE-MEMORY-findings.md`; `tools/qa/packmemory.py` lists every
+texture in a pack with its bytes on disk and in GPU memory):
+- 702 lossless WebP RGB8 pictures over the mobile packs: 236 MB on disk, decoded to 4 bytes a pixel in memory. The
+  scene of one 1990s mall wing uses about 0.5 GB of them and its neighbour about 0.4 GB more.
+- The mobile lightmaps are ASTC 4x4 **HDR** (`compress/hdr_compression=1`). Godot 4.7.2's web renderer never uses
+  ASTC HDR as is (`astc_hdr_supported` needs a GL extension name WebGL does not list) and decompresses it to RGBAH:
+  12.6 MB on disk becomes 100.7 MB in memory for each 1990s mall wing. The desktop lightmaps (BC6H) stay compressed.
+- The desktop and mobile packs are still the same size to the byte (Nov 1's arithmetic): nothing here changed them.
+Options (mobile-only formats, smaller mobile lightmaps, one mall wing at a time) are stage 2 of that workstream.
+
 ## Pack contents (workstream PACKS, Nov 8 2026)
 
 **What happened.** Demo 52 (R2 `20261106-0332-76f5ee18`) went out with every pack on R2 at its size, but 81 of

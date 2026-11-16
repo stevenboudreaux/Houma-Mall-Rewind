@@ -326,6 +326,21 @@ Engine meta `mall_upfront` (tests). `?qa=1` also: `window.__mallWalk = [[x, z], 
 toward each waypoint in turn; the test holds forward), `window.__mallWalkLog` (`held`, `stuck`, `prompt`,
 `leaving`), and a 90-minute limit on the card in place of 15 (the test box draws under a frame a second).
 
+### Phone memory (workstream PHONE-MEMORY, Nov 16 2026; stage 1 of 3: measured, nothing changed)
+Phones still stream off (`"enabled": {"mobile": false}`). Numbers and method:
+`production/qa/evidence/wsPHONE-MEMORY-findings.md`. In short (browser, phone pack; not yet on an iPhone):
+- One 1990s mall wing: about 0.8 to 0.9 GB of textures, 0.9 GB of video memory, a 142 MB wasm heap. With the
+  neighbour streamed in: 1.2 to 1.4 GB of textures, 1.3 GB of video memory, a 204 MB heap, plus the neighbour's pack
+  held twice by the page. 2026 is about half. Sears / Lynn's and Dillard's add 30 to 40 MB each.
+- The mobile lightmaps (ASTC 4x4 HDR) are decompressed on every phone to half-float RGBA, 8 times their size: Godot's
+  web renderer never uses ASTC HDR as is. Desktop's (BC6H) are used compressed.
+- `?qa=1` makes `scripts/mall_mem.gd` (child `MallMem` of the streamer): the menu's **QA** tab and
+  `window.__mallMem` show wings in, texture / buffer / video memory, wasm heap, GPU formats, context losses, and after
+  a crash the last visit's last sample. Nothing on the game screen; without `?qa=1` nothing is made.
+- An iPad that offers S3TC + BPTC takes the desktop pack and so the desktop path (every interior wing up front).
+  The QA tab's "pack" line shows which one an iPad got.
+- Stage 2 (options with shots and numbers) waits for Steven's iPhone numbers; stage 3 builds his choice.
+
 ### Settings (`data/stream.json`)
 `enabled` (true / false, or one per kind `{"desktop": …, "mobile": …}`), `borders` (a, b, kind, years, gate),
 `wing2_zones` (must equal `tools/build_mall.gd` `WING2_ZONES`), `near_m` / `far_m` / `start_delay_s` per kind,
