@@ -87,37 +87,50 @@ func _sample() -> void:
 			if d is Dictionary:
 				sample = d
 
+## A number from the page's JSON (always a float there) as it should read: 1995, not 1995.0.
+func _n(v) -> String:
+	if v is float and is_equal_approx(v, roundf(v)):
+		return str(int(v))
+	if v is Array:
+		return "[" + ", ".join(v.map(func(x): return _n(x))) + "]"
+	if v is Dictionary:
+		var parts := []
+		for k in v:
+			parts.append("%s: %s" % [str(k), _n(v[k])])
+		return "{" + ", ".join(parts) + "}"
+	return str(v)
+
 ## The QA tab's text (scripts/menu/menu.gd).
 func report() -> String:
 	var s := sample
 	var L := PackedStringArray()
 	L.append("MEMORY  (?qa=1; window.__mallMem)")
 	L.append("wings in: %s   home %s   year %s   %s pack   streaming %s" % [
-		str(s.get("wings", [])), str(s.get("home", "?")), str(s.get("year", "?")), str(s.get("kind", "?")),
+		_n(s.get("wings", [])), _n(s.get("home", "?")), _n(s.get("year", "?")), _n(s.get("kind", "?")),
 		"on" if s.get("streaming", false) else "off"])
 	if not (s.get("states", {}) as Dictionary).is_empty():
-		L.append("streamed: %s" % str(s.get("states")))
+		L.append("streamed: %s" % _n(s.get("states")))
 	var pk: Dictionary = s.get("peak", {})
 	L.append("textures %s MB (peak %s)   meshes/buffers %s MB (peak %s)" % [
-		str(s.get("tex_mb", "?")), str(pk.get("tex_mb", "?")), str(s.get("buf_mb", "?")), str(pk.get("buf_mb", "?"))])
-	L.append("all video memory %s MB (peak %s)" % [str(s.get("video_mb", "?")), str(pk.get("video_mb", "?"))])
+		_n(s.get("tex_mb", "?")), _n(pk.get("tex_mb", "?")), _n(s.get("buf_mb", "?")), _n(pk.get("buf_mb", "?"))])
+	L.append("all video memory %s MB (peak %s)" % [_n(s.get("video_mb", "?")), _n(pk.get("video_mb", "?"))])
 	var st := float(s.get("static_mb", 0.0))
-	L.append("static %s" % (("%s MB (max %s)" % [str(st), str(s.get("static_max_mb", "?"))]) if st > 0.0 else "n/a (release build)"))
+	L.append("static %s" % (("%s MB (max %s)" % [_n(st), _n(s.get("static_max_mb", "?"))]) if st > 0.0 else "n/a (release build)"))
 	L.append("objects %s   resources %s   nodes %s   fps %s" % [
-		str(s.get("objects", "?")), str(s.get("resources", "?")), str(s.get("nodes", "?")), str(s.get("fps", "?"))])
+		_n(s.get("objects", "?")), _n(s.get("resources", "?")), _n(s.get("nodes", "?")), _n(s.get("fps", "?"))])
 	if s.has("wasm_mb"):
 		L.append("wasm heap %s MB (peak %s, grew %s times)   streamed pack bytes fetched %s MB" % [
-			str(s.get("wasm_mb")), str(s.get("wasm_peak_mb", "?")), str(s.get("wasm_grew", 0)), str(s.get("packs_mb", "?"))])
+			_n(s.get("wasm_mb")), _n(s.get("wasm_peak_mb", "?")), _n(s.get("wasm_grew", 0)), _n(s.get("packs_mb", "?"))])
 		if s.get("js_heap_mb", null) != null:
-			L.append("JS heap %s MB (limit %s)" % [str(s.get("js_heap_mb")), str(s.get("js_limit_mb", "?"))])
+			L.append("JS heap %s MB (limit %s)" % [_n(s.get("js_heap_mb")), _n(s.get("js_limit_mb", "?"))])
 		else:
 			L.append("JS heap: not told (Safari)")
-		L.append("canvas %s   device pixel ratio %s" % [str(s.get("canvas", "?")), str(s.get("dpr", "?"))])
-		L.append("GPU %s   max texture %s" % [str(s.get("gpu", "?")), str(s.get("max_tex", "?"))])
-		L.append("formats: %s" % str(s.get("formats", "?")))
-		L.append("WebGL context lost %s times" % str(s.get("lost", 0)))
-		L.append("device memory %s   cores %s" % [str(s.get("device_mem", "not told")), str(s.get("cores", "?"))])
-		L.append("since the page started %s s" % str(s.get("page_s", "?")))
+		L.append("canvas %s   device pixel ratio %s" % [_n(s.get("canvas", "?")), _n(s.get("dpr", "?"))])
+		L.append("GPU %s   max texture %s" % [_n(s.get("gpu", "?")), _n(s.get("max_tex", "?"))])
+		L.append("formats: %s" % _n(s.get("formats", "?")))
+		L.append("WebGL context lost %s times" % _n(s.get("lost", 0)))
+		L.append("device memory %s   cores %s" % [_n(s.get("device_mem", "not told")), _n(s.get("cores", "?"))])
+		L.append("since the page started %s s" % _n(s.get("page_s", "?")))
 		var last = s.get("last", null)
 		if last is Dictionary and not last.is_empty():
 			L.append("")
@@ -125,10 +138,10 @@ func report() -> String:
 			var ls = last.get("s", {})
 			if ls is Dictionary:
 				L.append("  at %s s: wings %s %s, textures %s MB, video %s MB, wasm heap %s MB, packs %s MB, lost %s" % [
-					str(ls.get("page_s", "?")), str(ls.get("wings", "?")), str(ls.get("states", {})), str(ls.get("tex_mb", "?")),
-					str(ls.get("video_mb", "?")), str(ls.get("wasm_mb", "?")), str(ls.get("packs_mb", "?")), str(ls.get("lost", 0))])
+					_n(ls.get("page_s", "?")), _n(ls.get("wings", "?")), _n(ls.get("states", {})), _n(ls.get("tex_mb", "?")),
+					_n(ls.get("video_mb", "?")), _n(ls.get("wasm_mb", "?")), _n(ls.get("packs_mb", "?")), _n(ls.get("lost", 0))])
 			for e in last.get("ev", []):
-				L.append("  " + str(e))
+				L.append("  " + _n(e))
 	return "\n".join(L)
 
 const _JS := """
