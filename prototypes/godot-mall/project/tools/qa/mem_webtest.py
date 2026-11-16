@@ -45,7 +45,8 @@ def rss_mb():
 fails = []
 series = []
 with sync_playwright() as p:
-    b = p.chromium.launch(args=ARGS)
+    exe = os.environ.get("CHROMIUM") or ("/opt/pw-browsers/chromium" if os.path.exists("/opt/pw-browsers/chromium") else None)
+    b = p.chromium.launch(args=ARGS, executable_path=exe) if exe else p.chromium.launch(args=ARGS)
     ctx = b.new_context(viewport={"width": VIEW[0], "height": VIEW[1]}, has_touch=False)
     pg = ctx.new_page()
     errors = []
