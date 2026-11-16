@@ -127,6 +127,11 @@ func _init() -> void:
 		var uq := str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('upfront') || ''"))
 		if uq == "1": upfront = enabled
 		elif uq == "0": upfront = false
+	# PHONE-MEMORY (Nov 16 2026, scripts/mall_mem.gd): ?qa=1 measures memory (the menu's QA tab, window.__mallMem)
+	if _qa or Engine.has_meta("mall_mem"):
+		var mm: Node = load("res://scripts/mall_mem.gd").new()
+		mm.name = "MallMem"
+		add_child(mm)
 
 func _num(key: String, def: float) -> float:
 	# UPFRONT: behind the load screen nothing has to stay smooth: a bigger share of each frame

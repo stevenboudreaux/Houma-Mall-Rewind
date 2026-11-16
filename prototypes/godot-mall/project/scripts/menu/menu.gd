@@ -29,7 +29,7 @@ extends Node
 const Controls = preload("res://scripts/menu/controls.gd")
 ## MENU2 (Steven, Nov 3): MAIN, INVENTORY, CONTROLS. A later "journal" (JOURNAL) goes last; not built.
 const TABS := ["main", "inventory", "controls"]
-const TAB_NAMES := {"main": "MAIN", "controls": "CONTROLS", "inventory": "INVENTORY", "owner": "OWNER"}
+const TAB_NAMES := {"main": "MAIN", "controls": "CONTROLS", "inventory": "INVENTORY", "owner": "OWNER", "qa": "QA"}
 const Portrait = preload("res://scripts/menu/portrait.gd")
 const BG := Color(0.07, 0.055, 0.045, 0.97)
 const INK := Color(1, 0.97, 0.9)
@@ -129,7 +129,31 @@ func open_tab(t: String) -> void:
 
 ## The tabs this visitor gets: TABS, and for the owner OWNER last (design/godot-owner-mode.md).
 func tabs() -> Array:
-	return TABS + ["owner"] if is_owner() else TABS.duplicate()
+	var t: Array = TABS + ["owner"] if is_owner() else TABS.duplicate()
+	if _mem() != null:          # PHONE-MEMORY: the QA tab, only with ?qa=1 (scripts/mall_mem.gd)
+		t.append("qa")
+	return t
+
+# ------------------------------------------------------------------ QA (PHONE-MEMORY, Nov 16 2026)
+## The memory readout of scripts/mall_mem.gd, only while it exists (?qa=1). Nothing on the game screen.
+var _qa_lbl: Label = null
+var _qa_t := 0.0
+func _mem() -> Node:
+	return get_tree().root.get_node_or_null("WingStream/MallMem") if is_inside_tree() else null
+
+func _build_qa(narrow: bool) -> void:
+	var col := _column()
+	_qa_lbl = _label(col, "", 11 if narrow else 13, INK)
+	_qa_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_qa_lbl.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	_qa_lbl.custom_minimum_size.x = maxf(100.0, _content.size.x - 20.0)
+	_qa_lbl.name = "QaMemory"
+	_qa_sync()
+
+func _qa_sync() -> void:
+	var m := _mem()
+	if _qa_lbl and is_instance_valid(_qa_lbl) and m:
+		_qa_lbl.text = m.report()
 
 ## The Character row picked cast member `id` (CHAR-STRIP): saved, and the world's body made anew
 ## through the loader (scripts/avatar.gd choose()); MAIN is rebuilt so its portrait shows the same id.
@@ -319,6 +343,11 @@ func _process(dt: float) -> void:
 	if _typing and _name_lbl:
 		_caret_t += dt
 		_name_text()
+	if is_open and tab == "qa":      # PHONE-MEMORY: the readout follows the sampler (once a second)
+		_qa_t += dt
+		if _qa_t >= 1.0:
+			_qa_t = 0.0
+			_qa_sync()
 
 func _first_key(id: String, fallback: String) -> String:
 	var k: Array = controls.keys(id) if controls else []
@@ -377,6 +406,7 @@ func _build() -> void:
 		"controls": _build_controls(narrow)
 		"inventory": _build_inventory(narrow)
 		"owner": _build_owner(narrow)
+		"qa": _build_qa(narrow)
 	_sel.x = clampi(_sel.x, 0, maxi(0, _nav.size() - 1))
 	_paint_sel()
 
