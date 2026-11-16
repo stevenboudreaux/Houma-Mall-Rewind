@@ -57,22 +57,65 @@ func _rec(label: String) -> void:
 	print("MEM %s wings=%s tex=%.1f buf=%.1f video=%.1f static=%.1f static_max=%.1f objects=%d resources=%d nodes=%d" % [
 		label, str(m.wings), m.tex, m.buf, m.video, m.static, m.static_max, m.objects, m.resources, m.nodes])
 
-## Every texture the renderer holds (RenderingServer.texture_debug_usage), grouped, into .scratch/mem/<label>-tex.json
-## and the biggest 25 printed as MEMTEX lines.
+## Every texture reachable from the tree (materials, shader parameters, lightmaps, sprites, decals), by
+## resource path, into .scratch/mem/<tag>-tex.json; tools/qa/packmemory.py's inventory prices them
+## (production/qa/evidence/wsPHONE-MEMORY-findings.md section b). Textures a script holds outside the tree are
+## not in it: compare the sum with the engine's counter.
 func _dump(label: String) -> void:
-	var use: Array = RenderingServer.texture_debug_usage()
-	var rows := []
-	for u in use:
-		rows.append({"path": str(u.get("path", "")), "w": int(u.get("width", 0)), "h": int(u.get("height", 0)),
-			"depth": int(u.get("depth", 0)), "format": int(u.get("format", -1)), "bytes": int(u.get("bytes", 0))})
-	rows.sort_custom(func(a, b): return a.bytes > b.bytes)
+	var seen := {}
+	var tex := {}
+	for n in _all(root):
+		for pr in n.get_property_list():
+			if pr.type == TYPE_OBJECT:
+				var v = n.get(pr.name)
+				if v is Resource:
+					_walk(v, seen, tex, 0)
+		if n is MeshInstance3D and n.mesh:
+			for i in n.mesh.get_surface_count():
+				var m = n.mesh.surface_get_material(i)
+				if m: _walk(m, seen, tex, 0)
+			for i in n.get_surface_override_material_count():
+				var m = n.get_surface_override_material(i)
+				if m: _walk(m, seen, tex, 0)
 	var tag := "h%d_n%d_y%d_%s" % [home, nxt, year, label]
 	var f := FileAccess.open(ProjectSettings.globalize_path("res://").path_join("../../../.scratch/mem/%s-tex.json" % tag).simplify_path(), FileAccess.WRITE)
 	if f:
-		f.store_string(JSON.stringify(rows))
-	for i in mini(25, rows.size()):
-		var r: Dictionary = rows[i]
-		print("MEMTEX %s %.1f MB %dx%dx%d fmt=%d %s" % [label, r.bytes / 1048576.0, r.w, r.h, r.depth, r.format, r.path])
+		f.store_string(JSON.stringify(tex.keys()))
+	print("MEMTEX %s %d textures in the tree" % [label, tex.size()])
+
+func _all(n: Node) -> Array:
+	var out := [n]
+	for c in n.get_children():
+		out.append_array(_all(c))
+	return out
+
+func _walk(r: Resource, seen: Dictionary, tex: Dictionary, depth: int) -> void:
+	if r == null or depth > 5 or seen.has(r.get_instance_id()):
+		return
+	seen[r.get_instance_id()] = true
+	if r is Texture:
+		if r.resource_path != "":
+			tex[r.resource_path.get_slice("::", 0)] = true
+		if not (r is AtlasTexture):
+			return
+	if r is Mesh and not (r is PrimitiveMesh):
+		for i in r.get_surface_count():
+			var m = r.surface_get_material(i)
+			if m: _walk(m, seen, tex, depth + 1)
+		return
+	if r is ShaderMaterial and r.shader:
+		for u in r.shader.get_shader_uniform_list():
+			var v = r.get_shader_parameter(u.name)
+			if v is Resource: _walk(v, seen, tex, depth + 1)
+	for pr in r.get_property_list():
+		if pr.type == TYPE_OBJECT:
+			var v = r.get(pr.name)
+			if v is Resource: _walk(v, seen, tex, depth + 1)
+		elif pr.type == TYPE_ARRAY and (pr.usage & PROPERTY_USAGE_STORAGE):
+			var a = r.get(pr.name)
+			if a is Array:
+				for v in a:
+					if v is Resource: _walk(v, seen, tex, depth + 1)
 
 func _process(dt: float) -> bool:
 	t += dt
@@ -93,7 +136,7 @@ func _process(dt: float) -> bool:
 			if ws.span().size() > 1:
 				print("MEM NATIVE FAILED: wing %d came in before one wing was measured" % nxt)
 				quit(1)
-			if frames > 600:   # one wing, its probes and crowd settled
+			if frames > 300:   # one wing, its probes and crowd settled
 				_rec("one-wing")
 				ws.cfg["start_delay_s"] = 0.0
 				step = 2; frames = 0; t = 0.0
@@ -104,7 +147,7 @@ func _process(dt: float) -> bool:
 				print("MEM NATIVE FAILED: wing %d never came in" % nxt)
 				quit(1)
 		3:
-			if frames > 600:
+			if frames > 300:
 				_rec("two-wings")
 				var a: Dictionary = rows[0]
 				var b: Dictionary = rows[1]
