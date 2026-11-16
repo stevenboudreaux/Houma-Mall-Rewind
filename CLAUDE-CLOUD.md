@@ -34,10 +34,33 @@ All Godot work is under `prototypes/godot-mall/project` ("the project" below).
   `scripts/mall_runtime.gd`, `web/shell.html`, `layout_*.json`) with small, clearly separated hunks so merges stay
   easy.
 
+## Secrets
+
+The repository and the site are public. **Never print, echo, log, commit or paste a key's value**, including
+one you find; a finding is reported as path, commit, branch, line, kind and the first 4 characters only.
+
+- **Where keys live:** the R2 upload keys are the cloud environment's variables `R2_ACCESS_KEY_ID`,
+  `R2_SECRET_ACCESS_KEY` and `R2_ENDPOINT` (read by name: `tools/publish_build.sh` hands them to rclone as
+  `RCLONE_CONFIG_R2_*`), or an `r2` rclone remote in `~/.config/rclone/rclone.conf` on Steven's Mac, never in
+  the repo. The GitHub token lives only in the owner's browser; `ADMIN_KEY` only in the deployed Apps Script
+  (`apps-script/Code.gs` holds placeholders). The Cloudflare account id and the `pub-….r2.dev` host in
+  `design/godot-build-hosting.md` are public addresses, not keys.
+- **Guards:** `.gitignore` (root and project) ignores `rclone*.conf`, `.env*`, `*.pem`, `*.key` and other key
+  files. `.githooks/secret_check.py` refuses added lines that look like a key (GitHub tokens, S3/R2 keys next
+  to their names, private key blocks, passwords in URLs, the live `$R2_*` values) and key-file names: as a
+  pre-commit hook once `git config core.hooksPath .githooks` is set (do it in every new clone), and in CI on
+  every push and pull request (`.github/workflows/secret-scan.yml`). GitHub's secret scanning and push
+  protection are on for the repo as well. A false positive passes with `secret-check: allow` on that line.
+- **On a finding:** stop, don't commit or push, don't paste the value anywhere. If it is already pushed, tell
+  Steven which key, where (path, commit, branch) and since when: the fix is **rotating the key** (Cloudflare
+  dashboard → R2 → Manage API tokens; GitHub → Settings → Developer settings → tokens) and updating the
+  environment variable. Rewriting history is his call, never a session's.
+
 ## Fresh workspace setup (~15–25 min, mostly the import)
 
 ```bash
 cd /home/claude/houma-mall-rewind            # the clone; if missing: git clone https://github.com/stevenboudreaux/houma-mall-rewind
+git config core.hooksPath .githooks          # 0. the secret check before every commit (see "Secrets")
 # 1. Godot 4.7.2 and the web export templates
 cd /home/claude
 curl -sSLO https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
