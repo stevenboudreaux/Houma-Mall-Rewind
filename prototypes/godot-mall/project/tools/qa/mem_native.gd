@@ -63,14 +63,18 @@ func _process(dt: float) -> bool:
 	var p: Node3D = current_scene.get_node_or_null("Player") if current_scene else null
 	match step:
 		0:
+			if ws:
+				ws.cfg["start_delay_s"] = 100000.0      # hold the neighbour back until one wing is measured (the first frame the streamer exists, before its own _process)
 			if ws and p and frames > 5:
 				p.position = Vector3(pos.x, 0, pos.y)
-				ws.cfg["start_delay_s"] = 100000.0      # hold the neighbour back until one wing is measured
 				ws.cfg["borders"] = (ws.cfg["borders"] as Array).filter(func(b): return (int(b.a) == home and int(b.b) == nxt) or (int(b.a) == nxt and int(b.b) == home))
 				ws.cfg["near_m"] = {"desktop": 100000, "mobile": 100000}
 				ws.cfg["far_m"] = {"desktop": 100000, "mobile": 100000}
 				step = 1; frames = 0
 		1:
+			if ws.span().size() > 1:
+				print("MEM NATIVE FAILED: wing %d came in before one wing was measured" % nxt)
+				quit(1)
 			if frames > 600:   # one wing, its probes and crowd settled
 				_rec("one-wing")
 				ws.cfg["start_delay_s"] = 0.0
