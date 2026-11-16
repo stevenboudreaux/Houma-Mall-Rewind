@@ -1,0 +1,5 @@
+#!/bin/sh
+# Refuse a commit that adds a secret (CLAUDE-CLOUD.md "Secrets"). Turn on once per clone:
+#   git config core.hooksPath .githooks
+# Checks only the staged lines and file names; well under a second. Never prints a value.
+exec python3 "$(git rev-parse --show-toplevel)/.githooks/secret_check.py" --staged
