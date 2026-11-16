@@ -53,8 +53,26 @@ func _rec(label: String) -> void:
 	var m := _mon()
 	m["label"] = label
 	rows.append(m)
+	_dump(label)
 	print("MEM %s wings=%s tex=%.1f buf=%.1f video=%.1f static=%.1f static_max=%.1f objects=%d resources=%d nodes=%d" % [
 		label, str(m.wings), m.tex, m.buf, m.video, m.static, m.static_max, m.objects, m.resources, m.nodes])
+
+## Every texture the renderer holds (RenderingServer.texture_debug_usage), grouped, into .scratch/mem/<label>-tex.json
+## and the biggest 25 printed as MEMTEX lines.
+func _dump(label: String) -> void:
+	var use: Array = RenderingServer.texture_debug_usage()
+	var rows := []
+	for u in use:
+		rows.append({"path": str(u.get("path", "")), "w": int(u.get("width", 0)), "h": int(u.get("height", 0)),
+			"depth": int(u.get("depth", 0)), "format": int(u.get("format", -1)), "bytes": int(u.get("bytes", 0))})
+	rows.sort_custom(func(a, b): return a.bytes > b.bytes)
+	var tag := "h%d_n%d_y%d_%s" % [home, nxt, year, label]
+	var f := FileAccess.open(ProjectSettings.globalize_path("res://").path_join("../../../.scratch/mem/%s-tex.json" % tag).simplify_path(), FileAccess.WRITE)
+	if f:
+		f.store_string(JSON.stringify(rows))
+	for i in mini(25, rows.size()):
+		var r: Dictionary = rows[i]
+		print("MEMTEX %s %.1f MB %dx%dx%d fmt=%d %s" % [label, r.bytes / 1048576.0, r.w, r.h, r.depth, r.format, r.path])
 
 func _process(dt: float) -> bool:
 	t += dt
