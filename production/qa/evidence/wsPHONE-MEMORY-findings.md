@@ -9,6 +9,11 @@ the int-55 preview Steven's iPhone crashed on; this branch changes no texture), 
 the web renderer does with each format, a native Linux run with a real GL renderer (Mesa llvmpipe) for the engine's
 own memory counters, and headless Chromium (swiftshader) for the wasm heap and the page's memory.
 
+> **Nov 17, Steven's iPhone** (preview `20261117-0522-6ba34fcc`): both `?qa=1` (streaming off, one wing) and
+> `?qa=1&stream=1` crashed ("A problem repeatedly occurred"), the first after hanging on the load screen. One wing
+> does not fit on this phone with this build either. No readout numbers: the game never ran far enough. Details and
+> the next checks: `production/session-handoff-2026-11-16-PHONE-MEMORY.md`.
+
 ## Summary
 
 1. **The mobile lightmaps are 8 times their size in memory on the web.** They ship as ASTC 4x4 **HDR**. Godot's web

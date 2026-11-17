@@ -36,6 +36,19 @@ are untouched (none deleted or overwritten).
   QA tab; then the second link; if Safari reloads the page, the QA tab's LAST VISIT block (a screenshot is enough).
   The same two on the iPad (its "pack" and "formats" lines). Stage 2 waits for these numbers.
 
+## Steven's iPhone, Nov 17 2026 (the preview above)
+- **Both links crashed:** `index.html?qa=1` (streaming off, one wing, as phones ship) and `index.html?qa=1&stream=1`:
+  Safari's "A problem repeatedly occurred" (the page's process killed and reloaded twice). Steven: "As phone ships
+  stall screen first, merged wings 2nd" (read here as: the as-shipped link hung on the load screen, then crashed;
+  the streaming link crashed too). Screenshots in the conversation, not in the repo.
+- **So one wing does not fit either, with this build on this phone.** The brief's "with streaming off the same build
+  runs" was the int-55 preview (`20261114-1715-5ba126d8`); this preview is `74cef19e` (UPFRONT) plus the readout.
+- **No readout numbers came back:** the QA tab needs the game running, and the crash crumb (`mall-mem-last`) is
+  first written when the game's scripts start, after the packs are in. A crash on the load screen leaves none.
+- In the browser test the load screen is the page's own peak: the JavaScript heap was 457 MB (the downloaded packs,
+  then their copies in the engine's file system) while the first wing's textures were already at 393 MB on their way
+  to 812 MB (`.scratch` series, `s0_1995`). Not measured on the phone.
+
 ## Done / partly / not started
 | Item | State |
 |---|---|
