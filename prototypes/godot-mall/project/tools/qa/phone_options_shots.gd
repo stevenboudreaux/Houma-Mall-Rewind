@@ -109,7 +109,7 @@ func _src(tx: Texture2D) -> String:
 		return p
 	return ""
 
-func _set(sl: Array, tx: Texture2D) -> void:
+func _put_tex(sl: Array, tx: Texture2D) -> void:
 	var prop: String = sl[1]
 	if prop.begins_with("shader:"):
 		(sl[0] as ShaderMaterial).set_shader_parameter(prop.substr(7), tx)
@@ -140,12 +140,12 @@ func _variant_tex(v: String, path: String, orig: Texture2D) -> Texture2D:
 func _apply(v: String) -> void:
 	var n := 0
 	for sl in slots:
-		_set(sl, sl[2])
+		_put_tex(sl, sl[2])
 	if v == "base": return
 	var want := ["t1"] if v.ends_with("_t1") else ["t1", "t2"]
 	for sl in slots:
 		if _tier(sl[3]) in want:
-			_set(sl, _variant_tex(v, sl[3], sl[2]))
+			_put_tex(sl, _variant_tex(v, sl[3], sl[2]))
 			n += 1
 	print("variant %s: %d slots changed" % [v, n])
 
