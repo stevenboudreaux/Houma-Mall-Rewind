@@ -76,7 +76,11 @@ are untouched (none deleted or overwritten).
 - Tests: `tools/qa/device_webtest.py` DEVICE WEB OK (a fake iPhone on a GPU with S3TC + BPTC: desktop pack, phone
   behaviour, no wing asked for up front or streamed, wing 1 alone 60 s after the lift; a computer: up front 2, 4, 5);
   the 8 suites OK; `stream_test.gd` desktop / mobile / `--fail` OK; `stream_upfront_test.gd` desktop and mobile OK.
-  `stream_natural_walk_webtest.py` (computers, both years): see below when done.
+  `stream_natural_walk_webtest.py` (computers, desktop pack, build59 = this fix): **NATURAL WALK OK (1995)**: lift
+  after 1395 s, 560 m in 1996 s, no load screen, no prompt, no stop at a border (both department stores, Corn Dog 7);
+  **NATURAL WALK OK (2026)**: lift after 1122 s, 550 m in 2260 s. Two earlier 1995 tries failed while Godot shot
+  renders shared the box: one timed out focusing the canvas after the lift (the test now waits as long as for a
+  screenshot), one ended its "back in wing 1" leg still inside Sears; run alone it passed.
 - Evidence: `production/qa/evidence/wsPHONE-MEMORY-device-fake-iphone-qa-unbaked.jpg`.
 
 ## Done / partly / not started
