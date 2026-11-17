@@ -7,6 +7,35 @@ baked, not published, nothing uploaded. Findings: `production/qa/evidence/wsPHON
 **Stopped at the end of stage 1, as the brief says:** the director puts a phone preview on R2 and Steven reads the
 numbers off his iPhone. Stage 2 (options with shots) starts from those numbers.
 
+## The phone preview on R2 (Nov 17 2026; a one-off upload the director asked for, with Steven's OK)
+A preview, not a publish: `tools/publish_build.sh` was not run; `main`, `godot-build` and every other build on R2
+are untouched (none deleted or overwritten).
+
+| | |
+|---|---|
+| **BUILD_ID** | `20261117-0522-6ba34fcc` (branch head `6ba34fcc`) |
+| Files | **36** (12 wing packs x 2 kinds, `items` and `common` x 2, and the 8 page files `index.*`), 1,666 MB |
+| One wing, streaming off (as phones ship) | https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/20261117-0522-6ba34fcc/index.html?qa=1 |
+| Streaming on (the case that crashed) | https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/20261117-0522-6ba34fcc/index.html?qa=1&stream=1 |
+
+- **Export:** `tools/export_web.sh /home/claude/build58` on this box: every wing of both years, both kinds, the
+  outside and the cinema lobby; `packcontents` every reference shipped.
+- **Upload:** boto3 to bucket `houma-mall-rewind`, `builds/20261117-0522-6ba34fcc/`, with `publish_build.sh`'s rclone
+  settings (S3, Cloudflare, private ACL, no bucket check) and content types by extension (`index.wasm` as
+  `application/wasm`); checksums only when required; the script refused a folder that already had objects. The
+  director named `claude/session-handoff-2026-11-16-air-cleanup.md` section 1 for the settings; that is a project
+  document this cloud box cannot open, so the settings came from `tools/publish_build.sh` instead. R2's listing
+  afterwards: 36 objects, every size equal to the export.
+- **Served:** `curl -I` of every file at the public address: 36 x 200, every `Content-Length` equal to the export,
+  CORS header present for `https://stevenboudreaux.github.io`.
+- **Plays:** Chromium (swiftshader) loaded `index.html?qa=1&pack=mobile` from R2: the load screen lifted at 39 s, 0
+  page errors, `window.__mallMem` live (phone pack, streaming off, wing 1 1995, 812 MB of textures, 142 MB wasm heap).
+- **Note for the next publish:** R2 now holds 7 builds. `publish_build.sh` keeps the newest `KEEP` (3) and deletes
+  the rest, so the next publish will remove this preview with the older ones unless `KEEP` is raised for it.
+- **What Steven does:** findings section c, "What Steven reads off his iPhone". The first link, open the menu, the
+  QA tab; then the second link; if Safari reloads the page, the QA tab's LAST VISIT block (a screenshot is enough).
+  The same two on the iPad (its "pack" and "formats" lines). Stage 2 waits for these numbers.
+
 ## Done / partly / not started
 | Item | State |
 |---|---|
