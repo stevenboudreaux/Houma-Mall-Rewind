@@ -5,8 +5,9 @@ things to what the Rougarou did" on a new path. This build has two beats, both i
 Sears side comes later.
 
 Code: `prototypes/godot-mall/project/scripts/runner_ai.gd`. Knobs: `scripts/runner.json`. Test:
-`tools/qa/runner_test.gd`. The Rougarou's scripts (`rougarou_ai.gd`, `rougarou.gd`,
-`design/godot-rougarou.md`) are kept for reference, but `player.gd` no longer creates the Rougarou.
+`tools/qa/runner_test.gd`. The Rougarou's scripts (`rougarou_ai.gd`, `rougarou.gd`, `rougarou.json`)
+and its suites were deleted on Nov 16, 2026 (Steven's decision; workstream TEST-DEBT). Its design note,
+`design/godot-rougarou.md`, is kept as history.
 
 ## Who he is
 He is Ch36, the featureless Mixamo figure that stood in every window in Demo 36. His clips come

@@ -1,6 +1,6 @@
 # TEST-DEBT handoff (Nov 16–17, 2026)
 
-Branch **`ws/test-debt`** @ `4af9489`, from `ws/seamless-upfront` @ `74cef19e`. Two commits:
+Branch **`ws/test-debt`**, from `ws/seamless-upfront` @ `74cef19e`. Two commits:
 `d065c03` (the suites fixed and a Woolworth check) and `4af9489` (the Rougarou deleted, Steven's decision).
 Pushed. **Not merged, not baked, not published.** Shots are unbaked.
 
@@ -50,7 +50,7 @@ Pushed. **Not merged, not baked, not published.** Shots are unbaked.
 - **Related:** a streamed wing's root sits under the tree root, so the Stockrooms never hide it either. It is
   also beyond the far plane.
 
-## The Rougarou deletion (commit `4af9489`)
+## The Rougarou deletion (commit `4af9489`; `design/godot-runner.md` line fixed after it)
 
 **Deleted:**
 - **Scripts and data:** `scripts/rougarou_ai.gd`, `scripts/rougarou.gd` (each with its `.uid`),
@@ -70,7 +70,7 @@ Pushed. **Not merged, not baked, not published.** Shots are unbaked.
 - `design/godot-rougarou.md`: marked "REMOVED on Nov 16, 2026, by Steven's decision" and kept as history.
 - `design/godot-stockrooms.md`: two history notes.
 
-**Left alone: Steven to decide.**
+**Left alone (decided Nov 17: see "Decisions").**
 
 | Where | What |
 |---|---|
@@ -79,18 +79,22 @@ Pushed. **Not merged, not baked, not published.** Shots are unbaked.
 | `tools/claw_prizes/build_claw_prizes.gd`, `claw_prizes_shot.gd`, `export_claw_prizes.py`, `tools/stores/pocket_change/paint_claw_game.py`, `tools/qa/econ_test.gd:191`, `tools/qa/fixtures/item_ids_int51.txt:85` | Builders and checks of the same plush |
 | `wing2.tscn` node `Dynamic/dyn_rg_mannequin`, `gen/w2/dyn_rg_mannequin.res`, `pack_manifest/w2.txt` | Merry-Go-Round's right-hand window form. **The Runner uses it now** (`runner_ai.gd:68`, `runner_test.gd:68`). Scene and baked wing. |
 | `tools/stores/small/wave7.gd:93-95`, `tools/stores/apparel/kit.gd:217,221`, `tools/stores/apparel/more.gd:117` | Scene-builder comments explaining why that form is its own mesh |
-| `scripts/runner_ai.gd:1,5`, `design/godot-runner.md:3-9,45` | The Runner ("the Rougarou's replacement"). The doc still says the Rougarou's scripts are "kept for reference". |
+| `scripts/runner_ai.gd:1,5`, `design/godot-runner.md:3-5,45` | The Runner ("the Rougarou's replacement"); history. The doc's old "kept for reference" line was fixed on Nov 17. |
 | `scripts/npcs.gd:7,367` | Two history comments |
 | `design/godot-economy.md:158`, `design/storefronts/pocket-change.md:141`, `design/corner-2026-c2.md:180` | The plush; an old test note |
 | `production/` handoffs; `production/qa/evidence/d25`–`d33` and `wsTEST-DEBT-rg-*` | The record, including the Nov 16 shots of the Rougarou in Woolworth's aisles (code now deleted) |
 
-## Open questions for Steven
-1. Keep the **Rougarou plush** in Pocket Change's claw machine? It's a toy of the folklore figure, not the
-   creature itself.
-2. Rename **`dyn_rg_mannequin`** some day? That means a wing 2 rebuild and rebake, plus a `runner_ai.gd`
-   change.
-3. Fix `design/godot-runner.md`'s "kept for reference" line? It's the Runner's doc, so it was left alone.
-4. Hand **F1** to PHONE-MEMORY, or fix it after their merge?
+## Decisions (director, Nov 17, 2026)
+1. **The Rougarou plush stays** in Pocket Change's claw machine (Steven's decision, Nov 17). It is a toy of
+   the folklore figure, not the creature; `pc_claw_rougarou` and everything in the claw rows above stay as is.
+2. **`dyn_rg_mannequin` is left as is:** no rename, no wing 2 rebuild or rebake.
+3. **`design/godot-runner.md` fixed:** it now says the Rougarou's scripts and suites were deleted on Nov 16,
+   2026, and its design note is kept as history. That was the only edit to the Runner's material; its code
+   is untouched.
+4. **F1 goes to PHONE-MEMORY.** This branch does not touch `scripts/wing_stream.gd`; the fix is described
+   above.
+
+Nothing is open for Steven from this workstream.
 
 ## Tests (final state, `4af9489`)
 
