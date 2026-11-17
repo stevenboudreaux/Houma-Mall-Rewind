@@ -194,6 +194,9 @@ func _process(dt: float) -> bool:
 				var fc := _focus_cam(f[0], f[1])
 				if not fc.is_empty(): cams.append(fc)
 			ci = 0; vi = 0; frames = 0
+			# game time stands still from here: the people stay put and the shops' lights (the clock) do not change
+			# between variants, so every variant is the same moment
+			Engine.time_scale = 0.0
 			_apply(variants[0])
 		return false
 	if vi >= variants.size():
