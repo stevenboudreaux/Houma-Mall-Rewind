@@ -1,10 +1,13 @@
 # The Rougarou: the mall's first NPC (Godot mall, since Demo 25, Oct 14 2026)
 
-> **Retired from the game since Oct 16 2026:** the Runner (`scripts/runner_ai.gd`) replaced it;
-> `scripts/player.gd` no longer makes the `RougarouAI` node and `scripts/rougarou_ai.gd` is kept,
-> unused. The QA suites make it themselves (`tools/qa/rg_spawn.gd`, TEST-DEBT Nov 16 2026), so
-> they check the kept code against today's wing, not anything a player meets. Whether it comes
-> back, stays parked or is deleted is Steven's call.
+> **REMOVED on Nov 16, 2026, by Steven's decision.** Out of the game since Oct 16 2026 (the Runner,
+> `scripts/runner_ai.gd`, replaced it); on Nov 16 its code and suites were deleted: `scripts/rougarou_ai.gd`,
+> `scripts/rougarou.gd`, `scripts/rougarou.json`, `tools/qa/rg_spawn.gd`, `rougarou_shot.gd`, `rougarou_test.gd`,
+> `rougarou_stalk_test.gd`, `rougarou_story_test.gd`, `rougarou_woolworth_test.gd` (workstream TEST-DEBT,
+> `production/session-handoff-2026-11-16-TEST-DEBT.md`). **Everything below is history**: the files it names
+> are gone (git history has them, last at `d065c03` on `ws/test-debt`). What still carries the name (the
+> Pocket Change claw prize "Rougarou plush", Merry-Go-Round's `dyn_rg_mannequin` form, now the Runner's) is
+> listed in that handoff and was left alone.
 
 **Asked for (Steven, Oct 14, 16:23):** "the first NPC that we'll have in the game ... the
 Rougarou. It's a thing of Cajun folklore, a monster that's in the swamp, akin to a werewolf but

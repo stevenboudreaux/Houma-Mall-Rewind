@@ -606,9 +606,6 @@ scripts/pusher_play.gd
 scripts/received_popup.gd
 scripts/redemption.gd
 scripts/redemption.json
-scripts/rougarou.gd
-scripts/rougarou.json
-scripts/rougarou_ai.gd
 scripts/runner.json
 scripts/runner_ai.gd
 scripts/shared_packs.gd

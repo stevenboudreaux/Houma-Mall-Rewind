@@ -1,6 +1,5 @@
 ## Checks the Stockrooms (scripts/stockrooms.gd) natively in Wing 1 and takes pictures:
-##   the door open from the start (TEST-DEBT, Nov 16: it was locked until the Rougarou went through
-##   before Oct 16); walking into Woolworth's back corner goes in; the start room;
+##   the door open from the start; walking into Woolworth's back corner goes in; the start room;
 ##   the code reachable on the grid (spawn to the stick); a wrong turn's seam puts you in the real
 ##   entry; the stick's caption within 2 m; walking into the start room's wall comes back out to
 ##   Woolworth with the mall, the walk grid and the buttons back.
@@ -29,7 +28,6 @@ func _initialize() -> void:
 	# it on; wing 2 then arrives while you are inside (finding F1 in
 	# production/session-handoff-2026-11-16-TEST-DEBT.md) and "the mall still hidden" can fail.
 	Engine.set_meta("mall_stream", stream)
-	if Engine.has_meta("mall_stockrooms"): Engine.remove_meta("mall_stockrooms")
 	Engine.set_meta("mall_xfer", {"x": -40.0, "z": 18.0, "yaw": deg_to_rad(-60.0), "pitch": 0.0})
 	scn = load("res://wing1.tscn").instantiate()
 	root.add_child(scn)
@@ -84,9 +82,8 @@ func _process(dt: float) -> bool:
 	match step:
 		0:
 			if clock > 0.5:
-				# TEST-DEBT: since Oct 16 2026 the door is open for everyone from the start (Steven: "not
-				# tied to following the Rougarou"; stockrooms.gd _ready). The old check wanted it locked.
-				_check(sr.unlocked and not sr.inside, "the door is open from the start (no Rougarou needed)")
+				# since Oct 16 2026 the door is open for everyone from the start (stockrooms.gd _ready)
+				_check(sr.unlocked and not sr.inside, "the door is open from the start")
 				# the HUD as it is in the mall, to compare with on the way out
 				hud_before = _hud_state()
 				player.position = Vector3(-45.6, 0, 21.55)        # walk into the patch of wall
@@ -97,7 +94,7 @@ func _process(dt: float) -> bool:
 				_check(player.map_scale == 1.0 and player.walk_rows.size() > 100, "the maze's walk grid is in use")
 				var vis = []
 				for c in scn.get_children():
-					if c is Node3D and c != sr and c != player and c.name != "RougarouAI" and c.visible: vis.append(str(c.name))
+					if c is Node3D and c != sr and c != player and c.visible: vis.append(str(c.name))
 				_check(vis.is_empty(), "the mall is hidden (visible: %s)" % str(vis))
 				_check(not player.buttons[2].visible, "lighting button hidden")
 				_check(player.jump_locked, "Jump locked for a visitor")
@@ -159,7 +156,7 @@ func _process(dt: float) -> bool:
 				_shot("11-after-seam")
 				var vis3 = []
 				for c in scn.get_children():
-					if c is Node3D and c != sr and c != player and c.name != "RougarouAI" and c.visible: vis3.append(str(c.name))
+					if c is Node3D and c != sr and c != player and c.visible: vis3.append(str(c.name))
 				_check(vis3.is_empty(), "the mall still hidden before leaving (visible: %s)" % str(vis3))
 				# home: stand in the start room facing the door wall and walk into it
 				_at(49.5, 199.3, 180.0)
@@ -183,7 +180,7 @@ func _process(dt: float) -> bool:
 			if sr.inside and not sr.busy:
 				var vis2 = []
 				for c in scn.get_children():
-					if c is Node3D and c != sr and c != player and c.name != "RougarouAI" and c.visible: vis2.append(str(c.name))
+					if c is Node3D and c != sr and c != player and c.visible: vis2.append(str(c.name))
 				_check(vis2.is_empty(), "a second visit: the mall is hidden again (visible: %s)" % str(vis2))
 				_shot("13-second-visit")
 				return _done()

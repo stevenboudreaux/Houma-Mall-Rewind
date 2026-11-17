@@ -54,7 +54,7 @@ camcorder on a tripod with its red light on, stacked boxes, stacked chairs.
   away, the level notices and restores too.
 - URL: `?stockrooms=1` unlocks; `?stockrooms=in` starts inside (owner testing).
 
-## The Rougarou's exit (`scripts/rougarou_ai.gd`, story stage 3)
+## The Rougarou's exit (history: removed Nov 16 2026, design/godot-rougarou.md)
 - In Woolworth, a close look (seen within 10 m), or being spotted again after ducking 3 times
   (`story_ducks_before_exit`), and it walks at 3 m/s (`story_exit_mps`, a slow lope) along free
   floor to the back corner and on into the wall, then the route ends and the door unlocks.
@@ -75,7 +75,8 @@ camcorder on a tripod with its red light on, stacked boxes, stacked chairs.
   resync during a visit can re-show a duplicate the stream had hidden (the Information plaque);
   it is ~2.9 km from the camera inside (far plane 200 m), so nothing shows. Fix belongs in
   `scripts/wing_stream.gd`.
-- `tools/qa/rougarou_story_test.gd`: the whole route through the walk into the wall and the unlock.
+- (`tools/qa/rougarou_story_test.gd`, the Rougarou's walk into the wall and the unlock, was deleted with the
+  Rougarou on Nov 16 2026, Steven; the door has been open from the start since Oct 16.)
 
 ## Open
 - (Nov 1, workstream B+C) The stick is a pick-up item now: held in first person, swings on the

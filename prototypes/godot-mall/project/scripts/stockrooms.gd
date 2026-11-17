@@ -1,6 +1,5 @@
-## The Stockrooms (Steven, Oct 15 2026): an Easter-egg level behind Woolworth's back corner. The
-## Rougarou walks into that corner on its last Woolworth encounter; from then on (in that browser)
-## walking into the same patch of wall brings you here: yellow wallpaper, damp carpet, buzzing
+## The Stockrooms (Steven, Oct 15 2026): an Easter-egg level behind Woolworth's back corner.
+## Walking into that patch of wall brings you here: yellow wallpaper, damp carpet, buzzing
 ## ceiling panels, nobody home. The only way out is the same patch of wall in the start room.
 ## Spec: design/godot-stockrooms.md. Layout: scripts/stockrooms_map.json, made by
 ## tools/stockrooms/make_stockrooms.py (one cell = 1 m; '.' floor, '#' solid, 'X' the door home).
@@ -14,8 +13,9 @@
 ##
 ## Made by player.gd in Wing 1. URL: ?stockrooms=in starts inside.
 ## Since Oct 16 2026 (Steven: "on anyone's initial startup, as long as they know that spot, they
-## can go into the stock rooms ... not tied to following the Rougarou") the door is open for
-## everyone from the start; the Rougarou is gone (the Runner, scripts/runner_ai.gd, replaced it).
+## can go into the stock rooms ...") the door is open for everyone from the start. (It used to
+## open when the Rougarou walked through it; the Rougarou was removed Nov 16 2026, Steven:
+## design/godot-rougarou.md, kept as history.)
 extends Node3D
 
 const MAP = "res://scripts/stockrooms_map.json"
@@ -66,23 +66,8 @@ func _ready() -> void:
 	if force == "in":
 		enter.call_deferred(true)
 
-# ------------------------------------------------------------------ unlock
-func _load_unlock() -> bool:
-	if OS.has_feature("web"):
-		return str(JavaScriptBridge.eval("(function(){try{return localStorage.getItem('mall-stockrooms')||''}catch(e){return ''}})()", true)) == "1"
-	return bool(Engine.get_meta("mall_stockrooms", false))
-
-func _save_unlock() -> void:
-	if OS.has_feature("web"):
-		JavaScriptBridge.eval("try{localStorage.setItem('mall-stockrooms','1')}catch(e){}", true)
-	else:
-		Engine.set_meta("mall_stockrooms", true)
-
-## The Rougarou went through the wall: the door opens for this browser from now on.
-func unlock() -> void:
-	unlocked = true
-	_save_unlock()
-	print("stockrooms: unlocked")
+# TEST-DEBT (Nov 16 2026): unlock(), _load_unlock() and _save_unlock() (localStorage
+# "mall-stockrooms") went with the Rougarou, their only caller; the door is open from _ready.
 
 # ------------------------------------------------------------------ the loop
 func _process(dt: float) -> void:
@@ -131,17 +116,14 @@ func enter(instant: bool) -> void:
 	saved = {"walk": player.walk_rows, "scale": player.map_scale, "origin": player.map_origin,
 		"obs": player.obstacles, "fx": player.fx_obstacles, "vis": {}, "env": null, "refl": true}
 	for c in root.get_children():
-		if c is Node3D and c != self and c != player and c.name != "RougarouAI" and c.visible:
+		if c is Node3D and c != self and c != player and c.visible:   # (the RougarouAI exception went, Nov 16)
 			saved.vis[c] = true; c.visible = false
 		if c is WorldEnvironment:
 			saved.env = c.environment; c.environment = env
 	var rt = root.get_node_or_null("Runtime")
 	if rt:
 		saved.refl = rt.refl_on; rt.set_reflections(false)
-	var ai = root.get_node_or_null("RougarouAI")
-	if ai:
-		ai.set_process(false)
-		if ai.fig: ai.fig.visible = false
+	# (the Rougarou was paused here until its removal, Nov 16 2026)
 	player.walk_rows = rows
 	player.map_scale = 1.0
 	player.map_origin = Vector2(-ORIGIN.x, -ORIGIN.z)
@@ -182,9 +164,8 @@ func _restore() -> void:
 		rt.set_reflections(saved.get("refl", true))
 	player.walk_rows = saved.walk; player.map_scale = saved.scale; player.map_origin = saved.origin
 	player.obstacles = saved.obs; player.fx_obstacles = saved.fx
-	for an in ["RougarouAI", "RunnerAI"]:
-		var ai = root.get_node_or_null(an)
-		if ai: ai.set_process(true)
+	var ai = root.get_node_or_null("RunnerAI")   # (the RougarouAI went from this list, Nov 16 2026)
+	if ai: ai.set_process(true)
 	_hud(true)
 	visible = false
 	inside = false

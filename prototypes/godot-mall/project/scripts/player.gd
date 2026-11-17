@@ -277,7 +277,7 @@ func _spawn_1995_life() -> void:
 		_spawn_2026_shoppers()   # M
 		return
 	# the Runner, a window mannequin come to life (scripts/runner_ai.gd; Steven, Oct 16 2026). He
-	# replaced the Rougarou (scripts/rougarou_ai.gd, kept but no longer made).
+	# replaced the Rougarou (removed Nov 16 2026, Steven: design/godot-rougarou.md).
 	var rn = load("res://scripts/runner_ai.gd").new()
 	rn.name = "RunnerAI"; rn.player = self
 	if OS.has_feature("web"):

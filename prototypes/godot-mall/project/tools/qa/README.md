@@ -62,10 +62,10 @@ Run the .gd tools with `godot --headless --path . --script res://tools/qa/<tool>
   JS heap: before, neighbour in, after the handoff), 0 page errors; screenshots before / in / cross / after.
   Serve the build folder itself on :8765. Prints `STREAM WEB OK`.
 
-## Stockrooms and the Rougarou (TEST-DEBT, Nov 16 2026)
-All `xvfb-run -a godot --path . --rendering-driver opengl3 --script res://tools/qa/<name>.gd -- --out=<prefix>`:
-- `stockrooms_test.gd [--stream]`: STOCKROOMS TEST OK (14). Streaming off unless `--stream`.
-- `rougarou_test.gd`, `rougarou_stalk_test.gd --fast`, `rougarou_woolworth_test.gd`: ROUGAROU TEST OK (12),
-  STALK TEST OK (10), WOOLWORTH RG TEST OK (12). The game no longer makes the Rougarou (the Runner replaced it,
-  Oct 16); these make it with `rg_spawn.gd`. A software-GL frame with a second wing streamed in takes minutes:
-  keep `mall_stream` off where the test stays in one wing.
+## Stockrooms (TEST-DEBT, Nov 16 2026)
+- `xvfb-run -a godot --path . --rendering-driver opengl3 --script res://tools/qa/stockrooms_test.gd -- --out=<prefix> [--stream]`:
+  STOCKROOMS TEST OK (14). Streaming off unless `--stream`. A software-GL frame with a second wing streamed in
+  takes minutes: keep `mall_stream` off where a native test stays in one wing.
+- The Rougarou and its suites (`rougarou_test`, `rougarou_stalk_test`, `rougarou_story_test`,
+  `rougarou_woolworth_test`, `rougarou_shot`, `rg_spawn`) were deleted on Nov 16 2026 (Steven); history in
+  `design/godot-rougarou.md`.
