@@ -14,7 +14,7 @@ are untouched (none deleted or overwritten).
 | | |
 |---|---|
 | **BUILD_ID** | `20261117-0522-6ba34fcc` (branch head `6ba34fcc`) |
-| Files | **36** (12 wing packs x 2 kinds, `items` and `common` x 2, and the 8 page files `index.*`), 1,666 MB |
+| Files | **36** (12 wing packs x 2 kinds, `items` and `common` x 2, and the 8 page files `index.*`), 1,660 MB |
 | One wing, streaming off (as phones ship) | https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/20261117-0522-6ba34fcc/index.html?qa=1 |
 | Streaming on (the case that crashed) | https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/20261117-0522-6ba34fcc/index.html?qa=1&stream=1 |
 
