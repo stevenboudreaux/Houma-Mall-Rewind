@@ -332,13 +332,14 @@ Phones still stream off (`"enabled": {"mobile": false}`). Numbers and method:
 - One 1990s mall wing: about 0.8 to 0.9 GB of textures, 0.9 GB of video memory, a 142 MB wasm heap. With the
   neighbour streamed in: 1.2 to 1.4 GB of textures, 1.3 GB of video memory, a 204 MB heap, plus the neighbour's pack
   held twice by the page. 2026 is about half. Sears / Lynn's and Dillard's add 30 to 40 MB each.
-- The mobile lightmaps (ASTC 4x4 HDR) are decompressed on every phone to half-float RGBA, 8 times their size: Godot's
-  web renderer never uses ASTC HDR as is. Desktop's (BC6H) are used compressed.
+- (Withdrawn Nov 17: on Steven's iPhone the phone pack's lightmaps are not inflated; both packs report the same
+  texture memory. The engine-source reading that they are decompressed to 8x their size was wrong for it.)
 - `?qa=1` makes `scripts/mall_mem.gd` (child `MallMem` of the streamer): the menu's **QA** tab and
   `window.__mallMem` show wings in, texture / buffer / video memory, wasm heap, GPU formats, context losses, and after
   a crash the last visit's last sample. Nothing on the game screen; without `?qa=1` nothing is made.
-- An iPad that offers S3TC + BPTC takes the desktop pack and so the desktop path (every interior wing up front).
-  The QA tab's "pack" line shows which one an iPad got.
+- **Steven's iPhone offers S3TC + BPTC (Nov 17)**, so it takes the desktop pack and the desktop path (every interior
+  wing up front) and crashes on the load screen. One wing runs (0.83 GB of textures); two do not, on either pack.
+  Phones must be told apart by device, not by texture formats, before UPFRONT is public.
 - Stage 2 (options with shots and numbers) waits for Steven's iPhone numbers; stage 3 builds his choice.
 
 ### Settings (`data/stream.json`)

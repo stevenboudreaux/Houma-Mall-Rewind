@@ -221,9 +221,10 @@ on a phone, measured (`production/qa/evidence/wsPHONE-MEMORY-findings.md`; `tool
 texture in a pack with its bytes on disk and in GPU memory):
 - 702 lossless WebP RGB8 pictures over the mobile packs: 236 MB on disk, decoded to 4 bytes a pixel in memory. The
   scene of one 1990s mall wing uses about 0.5 GB of them and its neighbour about 0.4 GB more.
-- The mobile lightmaps are ASTC 4x4 **HDR** (`compress/hdr_compression=1`). Godot 4.7.2's web renderer never uses
-  ASTC HDR as is (`astc_hdr_supported` needs a GL extension name WebGL does not list) and decompresses it to RGBAH:
-  12.6 MB on disk becomes 100.7 MB in memory for each 1990s mall wing. The desktop lightmaps (BC6H) stay compressed.
+- The mobile lightmaps are ASTC 4x4 **HDR** (`compress/hdr_compression=1`). Reading Godot 4.7.2's source suggested
+  the web renderer decompresses them to RGBAH (8x); **on Steven's iPhone (Nov 17) it does not**: the phone and
+  desktop packs report the same texture memory there (832 MB for one 1990s wing). Not checked on other devices.
+- Steven's iPhone offers S3TC + BPTC, so `web/shell.html` gives it the desktop pack (and the desktop path).
 - The desktop and mobile packs are still the same size to the byte (Nov 1's arithmetic): nothing here changed them.
 Options (mobile-only formats, smaller mobile lightmaps, one mall wing at a time) are stage 2 of that workstream.
 

@@ -9,14 +9,43 @@ the int-55 preview Steven's iPhone crashed on; this branch changes no texture), 
 the web renderer does with each format, a native Linux run with a real GL renderer (Mesa llvmpipe) for the engine's
 own memory counters, and headless Chromium (swiftshader) for the wasm heap and the page's memory.
 
-> **Nov 17, Steven's iPhone** (preview `20261117-0522-6ba34fcc`): both `?qa=1` (streaming off, one wing) and
-> `?qa=1&stream=1` crashed ("A problem repeatedly occurred"), the first after hanging on the load screen. One wing
-> does not fit on this phone with this build either. No readout numbers: the game never ran far enough. Details and
-> the next checks: `production/session-handoff-2026-11-16-PHONE-MEMORY.md`.
+## Steven's iPhone, Nov 17 2026: the numbers (preview `20261117-0522-6ba34fcc`; screenshots in evidence)
+These replace the guesses below where they differ.
+
+| Link | Pack the page picked | Result | Textures | All video memory | wasm heap | fps |
+|---|---|---|---|---|---|---|
+| `?qa=1` (as phones ship) | **desktop** | crashed on the load screen | - | - | - | - |
+| `?qa=1&stream=1` | desktop | crashed | - | - | - | - |
+| `?qa=1&stream=0` (one wing, default pack) | **desktop** | runs | 832 MB (peak 835) | 909 MB (peak 914) | 141.6 MB | 45 |
+| `?qa=1&pack=mobile` (one wing) | mobile | runs | 832 MB (peak 835) | 895 MB (peak 899) | 141.6 MB | 32 |
+| `?qa=1&pack=mobile&stream=1` (two wings) | mobile | **crashed** (after one reload) | - | - | - | - |
+| int-55 `?stream=0` | (desktop) | runs | | | | |
+
+The phone: "Apple GPU", 4 cores, max texture 16384, canvas 1206 x 2142 at device pixel ratio 3, formats
+**ASTC hdr+ldr, ETC2, S3TC, BPTC, RGTC**. Evidence: `wsPHONE-MEMORY-iphone-one-wing-desktop-pack.jpg`,
+`wsPHONE-MEMORY-iphone-one-wing-mobile-pack.jpg`, `wsPHONE-MEMORY-iphone-stream-mobile-pack-crash.jpg`.
+
+**What this settles:**
+1. **This iPhone takes the computer path.** `web/shell.html` picks the desktop pack whenever the browser offers S3TC
+   + BPTC, and this iPhone's Safari does. The streamer's kind is the pack's kind, so the phone got desktop streaming:
+   on `74cef19e` (UPFRONT) every interior wing up front (the crash on the load screen), on int-55 every wing in the
+   background (the Nov 14 "crash within seconds"). `?stream=0` turns both off, which is why int-55 `?stream=0` ran.
+   **Before UPFRONT is merged, phones must be told apart from computers by something other than texture formats**,
+   or this iPhone (and likely every recent one) crashes on the first load screen. Not fixed here (stage 1 changes no
+   behaviour); it is the first item for the director.
+2. **One 1990s mall wing runs:** about 0.83 GB of textures, 0.9 GB of video memory, a 142 MB heap.
+3. **Two do not**, on the phone pack either: the streaming link crashed. The second mall wing (+0.4 to 0.5 GB of
+   textures measured on the test box) is over this phone's limit. This is what stage 2 is about.
+4. **Correction to summary point 1 below:** the phone pack reports the same texture memory as the desktop pack on the
+   iPhone (831.8 vs 832 MB). If the ASTC HDR lightmap had been decompressed to RGBAH it would show about 88 MB more.
+   So on this iPhone it is used compressed (its Safari offers the HDR profile), and my reading of the engine source
+   was wrong for it. The point is withdrawn as a cause on the iPhone; it may still hold on devices without the HDR
+   profile (not checked).
+5. Section e's table said iPhones offer no S3TC / BPTC: wrong for this one.
 
 ## Summary
 
-1. **The mobile lightmaps are 8 times their size in memory on the web.** They ship as ASTC 4x4 **HDR**. Godot's web
+1. **(Withdrawn for the iPhone, see above.)** ~~The mobile lightmaps are 8 times their size in memory on the web.~~ They ship as ASTC 4x4 **HDR**. Godot's web
    renderer never treats ASTC HDR as supported (it looks for the GL extension name
    `GL_KHR_texture_compression_astc_hdr`, which WebGL never lists: in WebGL, HDR is a "profile" of
    `WEBGL_compressed_texture_astc`). So each lightmap is decompressed on the CPU (astcenc, in the wasm heap) to
@@ -307,7 +336,7 @@ cost time, not much memory; a phone stuttering is likely, a phone dying of them 
 | ETC2 / EAC (`WEBGL_compressed_texture_etc`) | yes (native) | yes | yes | yes on Apple silicon |
 | ASTC (`WEBGL_compressed_texture_astc`), LDR profile | yes (A8 and later) | yes | yes | yes on Apple silicon |
 | ASTC HDR profile | the GPU has it from A13; whether WebKit lists `"hdr"` is not known. **Does not matter for Godot** (below) | same | same | same |
-| S3TC (BC1-3) and BPTC (BC6H, BC7) | no | no | **not known**: Metal has BC formats on M-series iPads; whether Safari exposes them there is what the readout's "formats" line will say | yes on Apple silicon |
+| S3TC (BC1-3) and BPTC (BC6H, BC7) | **yes on Steven's iPhone (Nov 17)**; older models not known | not known | **not known**: Metal has BC formats on M-series iPads; whether Safari exposes them there is what the readout's "formats" line will say | yes on Apple silicon |
 
 These are from public WebKit and Metal documentation as I know it, not checked on a device. The readout prints the
 real list (GPU name, formats with ASTC profiles, max texture size), so one look at Steven's iPhone and iPad settles it.

@@ -49,6 +49,21 @@ are untouched (none deleted or overwritten).
   then their copies in the engine's file system) while the first wing's textures were already at 393 MB on their way
   to 812 MB (`.scratch` series, `s0_1995`). Not measured on the phone.
 
+## Steven's iPhone, Nov 17 2026, second round: the cause of the load-screen crash
+- int-55 `?stream=0` runs; this preview and the UPFRONT build crash. The QA tab (`?qa=1&stream=0`) says why:
+  **desktop pack** on an iPhone whose Safari offers S3TC + BPTC (and ASTC hdr+ldr, ETC2). The page picks the pack by
+  texture formats, and the streamer's kind follows the pack, so this phone got the computer path: UPFRONT's whole
+  interior behind the load screen.
+- One wing runs on either pack: 832 MB of textures, 0.9 GB of video memory, a 142 MB wasm heap. The phone pack with
+  streaming on (`?qa=1&pack=mobile&stream=1`) crashes: two mall wings do not fit.
+- The ASTC HDR lightmap point of the findings is withdrawn for the iPhone (both packs report the same memory).
+- **For the director, before UPFRONT goes anywhere public:** phones must take the phone path whatever formats they
+  offer (decide the kind by device, e.g. touch + small screen or the user agent, and keep the pack choice by formats;
+  an iPhone could then take desktop-format textures with phone streaming). Not changed in this branch (stage 1);
+  ready to do as the first stage 3 item or a small job of its own.
+- Still wanted from the phone: open `…/index.html?qa=1&pack=mobile` once more and screenshot the QA tab. Its LAST
+  VISIT block is the streaming crash's last sample and events (the crash crumb).
+
 ## Done / partly / not started
 | Item | State |
 |---|---|
