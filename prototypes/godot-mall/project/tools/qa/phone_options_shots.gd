@@ -27,6 +27,7 @@ var focus := []
 var variants := ["base"]
 var ws
 var t := 0.0
+var t_in := -1.0
 var ci := -1
 var vi := 0
 var frames := 0
@@ -181,8 +182,11 @@ func _process(dt: float) -> bool:
 		var ok := t > 3.0
 		for w in need:
 			if not (w == ws.home_wing or ws.is_in(w)): ok = false
-		if ws._span_changed(): ok = false
-		if ok or t > 1500.0:
+		# the wings in --need are in: let them settle 20 s, then stop the streamer so no other wing comes in mid-shot
+		# (waiting for the people to be remade never ended under xvfb)
+		if ok and t_in < 0.0: t_in = t
+		if (ok and t - t_in > 20.0) or t > 3000.0:
+			ws.set_process(false)
 			if not ok: print("NOT ALL IN: ", ws.span())
 			_collect()
 			print("%d lossless slots" % slots.size())
