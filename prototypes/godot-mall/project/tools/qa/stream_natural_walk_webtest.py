@@ -184,7 +184,7 @@ with sync_playwright() as p:
     # ---- the walk starts now: forward goes down and stays down
     pg.evaluate("""() => { window.__sawStatus = false; const f = () => { if (document.getElementById('status')) { window.__sawStatus = true; } requestAnimationFrame(f); }; requestAnimationFrame(f); }""")
     navs0 = len(navs)
-    pg.focus("#canvas")
+    pg.focus("#canvas", timeout=SHOT)   # a busy box can take over 30 s to answer right after the lift
     pg.keyboard.down("w")
     st0 = pg.evaluate("window.__mallStreamState || {}")
     pack = pg.evaluate("window.__mallPack")
