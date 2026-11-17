@@ -71,6 +71,7 @@ var _cue: MeshInstance3D
 var _cue_t := 0.0
 var _in_remake := false        # attach() is being called by a Player this streamer made
 var _was_away := false         # the player was in the Stockrooms (a level built far off) last frame
+var _resync_pending := false   # TEST-DEBT F1: a resync asked for while the player was in the Stockrooms
 ## UPFRONT (Nov 14 2026, data/stream.json "upfront"; design/godot-wings.md "Everything up front"):
 ## on a computer every interior wing of the year is brought in behind the first load screen (and the
 ## ones of a year switch or of coming back inside, which are page loads too), so no border is ever
@@ -107,7 +108,9 @@ func _init() -> void:
 	var q := ""
 	if OS.has_feature("web"):
 		q = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('stream') || ''"))
-		kind = str(JavaScriptBridge.eval("window.__mallPack || 'desktop'"))
+		# PHONE-MEMORY (Nov 17 2026): the streaming behaviour follows the kind of device (web/shell.html
+		# window.__mallDevice), not the texture pack: an iPhone may take the desktop pack and must still behave as a phone
+		kind = str(JavaScriptBridge.eval("window.__mallDevice || window.__mallPack || 'desktop'"))
 		_qa = str(JavaScriptBridge.eval("new URLSearchParams(location.search).get('qa') || ''")) == "1"
 	if Engine.has_meta("mall_stream_kind"):
 		kind = str(Engine.get_meta("mall_stream_kind"))
@@ -311,6 +314,8 @@ func _process(dt: float) -> void:
 	var away_now := absf(player.position.x) > 1000.0 or absf(player.position.z) > 1000.0
 	if _was_away and not away_now:
 		_apply_grid()
+		if _resync_pending:      # TEST-DEBT F1: a wing came in during the visit
+			_resync()
 	_was_away = away_now
 	var now := Time.get_ticks_msec() / 1000.0
 	var S := span()
@@ -796,6 +801,13 @@ func _hide_surf(c: MeshInstance3D, i: int) -> void:
 ##  - a part that is partly the same (the glass: the mall's skylight panes plus each wing's own shop
 ##    glass) keeps its own triangles and loses the ones an earlier wing already draws.
 func _resync() -> void:
+	# TEST-DEBT F1 (Nov 16 2026; fixed by PHONE-MEMORY, Nov 17): a wing that arrives while the player is in the
+	# Stockrooms (a level built far off, which hid the mall) must not re-show what the Stockrooms hid; the resync waits
+	# for the way back (_process, "_was_away and not away_now")
+	if player and is_instance_valid(player) and (absf(player.position.x) > 1000.0 or absf(player.position.z) > 1000.0):
+		_resync_pending = true
+		return
+	_resync_pending = false
 	var t_rs := Time.get_ticks_msec()
 	_resync_now()
 	stats["resync_ms"] = Time.get_ticks_msec() - t_rs

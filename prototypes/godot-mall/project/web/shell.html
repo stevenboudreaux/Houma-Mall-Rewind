@@ -1038,6 +1038,29 @@ function mallPackKind() {
 	return /iPhone|iPad|Android|Quest|OculusBrowser|Mobile/.test(navigator.userAgent) ? 'mobile' : 'desktop';
 }
 window.__mallPack = mallPackKind();
+// PHONE-MEMORY (Nov 17 2026, design/godot-wings.md "Phone memory"): the kind of DEVICE, which decides the streaming
+// behaviour (data/stream.json "mobile" / "desktop"), apart from the PACK above, which stays chosen by texture formats.
+// Steven's iPhone offers S3TC + BPTC, so it takes the desktop pack; it must still behave as a phone (it crashed
+// loading every wing up front). A phone or tablet: touch as the main input and a small screen, or the user agent.
+// ?device=mobile|desktop wins; then an explicit ?pack= (tests that ask for a pack get that pack's behaviour, as
+// before); ?stream=0|1 still turns streaming off / on whatever the device.
+function mallDeviceKind() {
+	try {
+		const q = new URLSearchParams(location.search);
+		const d = q.get('device'); if (d === 'mobile' || d === 'desktop') { return d; }
+		const p = q.get('pack'); if (p === 'mobile' || p === 'desktop') { return p; }
+	} catch (e) { /* ignore */ }
+	try {
+		const touch = window.matchMedia('(pointer: coarse)').matches && window.matchMedia('(hover: none)').matches;
+		const small = Math.min(screen.width, screen.height) <= 1100;   // CSS pixels: phones ~360-440, tablets ~744-1032
+		if (touch && small) { return 'mobile'; }
+	} catch (e) { /* ignore */ }
+	const ua = navigator.userAgent || '';
+	if (/iPhone|iPad|iPod|Android|Mobile|Quest|OculusBrowser/.test(ua)) { return 'mobile'; }
+	if (/Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1) { return 'mobile'; }   // iPadOS asks for the desktop site
+	return 'desktop';
+}
+window.__mallDevice = mallDeviceKind();
 window.__mallWing = (function () {
 	// wing 3 is the outside (design/godot-exterior.md): the lot round the building, both years since Nov 1
 	try { const w = new URLSearchParams(location.search).get('wing'); if (w === '2') { return 2; } if (w === '3') { return 3; } if (w === '4' || w === '5' || w === '6') { return +w; } } catch (e) { /* ignore */ }
@@ -1208,7 +1231,7 @@ window.__mallUpfrontOn = (function () {
 		if (q.get('stream') === '0' || q.get('upfront') === '0') { return false; }
 		if (q.get('upfront') === '1') { return true; }
 	} catch (e) { /* ignore */ }
-	return !!MALL_UPFRONT[window.__mallPack];
+	return !!MALL_UPFRONT[window.__mallDevice];   // PHONE-MEMORY: by device, not by pack
 }());
 window.__mallUpfrontWings = window.__mallUpfrontOn ? [1, 2, 4, 5].filter((w) => w !== window.__mallWing && mallSize(w) > 0) : [];
 window.__mallUpfrontWings.forEach((w) => window.mallStream(w));

@@ -64,6 +64,21 @@ are untouched (none deleted or overwritten).
 - Still wanted from the phone: open `…/index.html?qa=1&pack=mobile` once more and screenshot the QA tab. Its LAST
   VISIT block is the streaming crash's last sample and events (the crash crumb).
 
+## A. Device detection fixed (Nov 17 2026, director's call: now, not stage 3)
+- `web/shell.html` `mallDeviceKind` → `window.__mallDevice`; `MALL_UPFRONT` is looked up by device, not pack.
+  `scripts/wing_stream.gd` takes its `kind` from `window.__mallDevice` (then the pack, as before). The pack is still
+  chosen by formats. Overrides: `?device=`, an explicit `?pack=`, `?stream=0|1`. Design: `design/godot-wings.md`
+  "Phone memory", "Device, not pack".
+- **Steven's iPhone now:** desktop pack, phone behaviour (streaming off, a load at each border, as Demo 54).
+- QA tab: "pack: …" and "streaming behaviour: …" on separate lines.
+- **TEST-DEBT F1 fixed** in the same file: `_resync()` waits while the player is in the Stockrooms and runs in the
+  existing "_was_away and not away_now" branch. `tools/qa/stream_f1_test.gd`: STREAM F1 TEST OK.
+- Tests: `tools/qa/device_webtest.py` DEVICE WEB OK (a fake iPhone on a GPU with S3TC + BPTC: desktop pack, phone
+  behaviour, no wing asked for up front or streamed, wing 1 alone 60 s after the lift; a computer: up front 2, 4, 5);
+  the 8 suites OK; `stream_test.gd` desktop / mobile / `--fail` OK; `stream_upfront_test.gd` desktop and mobile OK.
+  `stream_natural_walk_webtest.py` (computers, both years): see below when done.
+- Evidence: `production/qa/evidence/wsPHONE-MEMORY-device-fake-iphone-qa-unbaked.jpg`.
+
 ## Done / partly / not started
 | Item | State |
 |---|---|

@@ -105,9 +105,11 @@ func report() -> String:
 	var s := sample
 	var L := PackedStringArray()
 	L.append("MEMORY  (?qa=1; window.__mallMem)")
-	L.append("wings in: %s   home %s   year %s   %s pack   streaming %s" % [
-		_n(s.get("wings", [])), _n(s.get("home", "?")), _n(s.get("year", "?")), _n(s.get("kind", "?")),
-		"on" if s.get("streaming", false) else "off"])
+	L.append("wings in: %s   home %s   year %s   streaming %s" % [
+		_n(s.get("wings", [])), _n(s.get("home", "?")), _n(s.get("year", "?")), "on" if s.get("streaming", false) else "off"])
+	# PHONE-MEMORY (Nov 17): the two choices apart: the textures (by formats) and the behaviour (by device)
+	L.append("pack: %s   (textures, chosen by the GPU's formats)" % _n(s.get("pack", "?")))
+	L.append("streaming behaviour: %s   (chosen by the kind of device)" % ("phone / tablet" if str(s.get("kind", "")) == "mobile" else "computer"))
 	if not (s.get("states", {}) as Dictionary).is_empty():
 		L.append("streamed: %s" % _n(s.get("states")))
 	var pk: Dictionary = s.get("peak", {})

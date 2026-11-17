@@ -337,9 +337,19 @@ Phones still stream off (`"enabled": {"mobile": false}`). Numbers and method:
 - `?qa=1` makes `scripts/mall_mem.gd` (child `MallMem` of the streamer): the menu's **QA** tab and
   `window.__mallMem` show wings in, texture / buffer / video memory, wasm heap, GPU formats, context losses, and after
   a crash the last visit's last sample. Nothing on the game screen; without `?qa=1` nothing is made.
-- **Steven's iPhone offers S3TC + BPTC (Nov 17)**, so it takes the desktop pack and the desktop path (every interior
-  wing up front) and crashes on the load screen. One wing runs (0.83 GB of textures); two do not, on either pack.
-  Phones must be told apart by device, not by texture formats, before UPFRONT is public.
+- **Steven's iPhone offers S3TC + BPTC (Nov 17)**, so it took the desktop pack and, with it, the desktop path (every
+  interior wing up front) and crashed on the load screen. One wing runs (0.83 GB of textures); two do not, on
+  either pack.
+- **Device, not pack (fixed Nov 17):** the streaming behaviour (`data/stream.json` "desktop" / "mobile") now follows
+  the kind of device, `window.__mallDevice` (`web/shell.html` `mallDeviceKind`): a phone or tablet is touch as the
+  main input (`pointer: coarse` and `hover: none`) with a small screen (the shorter side at most 1100 CSS pixels),
+  or a phone / tablet / headset user agent (iPadOS's desktop user agent with touch counts). The texture pack is
+  still chosen by formats (`window.__mallPack`). `?device=mobile|desktop` wins; an explicit `?pack=` also sets the
+  behaviour (tests that ask for a pack get that pack's behaviour, as before); `?stream=0|1` still overrides
+  streaming. So Steven's iPhone now gets the desktop pack with phone behaviour: streaming off, a load at each
+  border, as on Demo 54. The game reads `window.__mallDevice` (`scripts/wing_stream.gd` `kind`); the QA tab shows
+  the pack and the behaviour on separate lines. Test: `tools/qa/device_webtest.py` (a fake iPhone on a GPU with
+  S3TC + BPTC: desktop pack, phone behaviour, nothing up front; a computer: up front as before).
 - Stage 2 (options with shots and numbers) waits for Steven's iPhone numbers; stage 3 builds his choice.
 
 ### Settings (`data/stream.json`)
@@ -358,6 +368,9 @@ Phones still stream off (`"enabled": {"mobile": false}`). Numbers and method:
 - The packs still overlap pairwise (`design/godot-build-hosting.md` "The common pack": what was and was not moved).
 
 ### Tests
+- `tools/qa/device_webtest.py <url> <out>` (PHONE-MEMORY, Nov 17): the behaviour by device (above). `DEVICE WEB OK`.
+- `tools/qa/stream_f1_test.gd` (headless; TEST-DEBT F1, fixed Nov 17): a wing that comes in while the player is in
+  the Stockrooms waits to resync until the way back. `STREAM F1 TEST OK`.
 - (`stream_test.gd`, `stream_walk_test.gd`, `stream_shots.gd` and `stream_webtest.py` run with upfront off: they
   are about wings coming in in the background.)
 - `tools/qa/stream_test.gd [-- --kind=mobile] [-- --fail]` (headless): the neighbour comes in, the stand-ins are
