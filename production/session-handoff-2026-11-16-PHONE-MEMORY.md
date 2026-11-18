@@ -113,7 +113,7 @@ untouched (none deleted or overwritten).
 | 1c. `?qa=1` readout in the menu, `window.__mallMem` | **Done.** The QA tab; crash crumb in localStorage. Looked at in Chromium at phone width (shots in evidence). |
 | 1d. Is it memory | **Done as a method:** what differs 4 s in, how to tell from the readout, Web Inspector and the iPhone's `JetsamEvent` logs. Not proven: needs the phone. |
 | 1e. iPhone / iPad Safari formats and Godot | **Done** (from documentation and Godot's source; the readout's formats line checks it on the devices). |
-| Stage 2: options with shots and numbers | Not started (waits for the iPhone numbers). |
+| Stage 2: options with shots and numbers | **Done; stopped for Steven's choice.** `wsPHONE-MEMORY-options.md`: numbers against the iPhone's 0.9 GB, matched shots from real exports (as shipped against 4b, both packs, both years), preview `20261118-0119-74012533` with five links. |
 | Stage 3: build Steven's choice | Not started. |
 
 ## The findings in five lines

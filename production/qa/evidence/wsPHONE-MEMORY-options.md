@@ -44,7 +44,7 @@ Sorted by file path (`tools/qa/phone_options_shots.gd`, the same rules for the n
 | 3a | Group 1 as ASTC 4x4 (phone pack) | 0.68 | 1.01 | 0.42 / 0.73 | +72 MB | slight (items, faces) |
 | 3b | Group 1 as ETC2 (phone pack) or S3TC (desktop pack) | 0.65 | 0.96 | 0.42 / 0.72 | +18 MB | slight, a little more |
 | 4a | Groups 1 + 2 as ASTC 4x4 | 0.59 | **0.79** | 0.41 / 0.65 | +121 MB | slight; small print in stock softer |
-| 4b | Groups 1 + 2 as ETC2 / S3TC | 0.54 | **0.71** | 0.41 / 0.62 | **+99 MB (measured, was estimated +32)** | more: block edges on stock print |
+| 4b | Groups 1 + 2 as ETC2 / S3TC | 0.54 | **0.71** | 0.41 / 0.62 | **+99 MB (measured, was estimated +32)** | **shot:** no visible change except a little floor grain, side by side |
 | 5 | Group 1 at half size (no compression) | 0.68 | 1.01 | 0.42 / 0.73 | -28 MB | items and faces softer up close |
 | 6 | The far wing's textures at half size | 0.90 | about 1.10 | 0.43 / 0.68 | +the far copies | the far wing softer until you cross |
 | 7 | One wing in memory; the next only when very close | 0.90 | 1.34 at the border | 0.43 / 0.80 | same | as 0, plus a hold at the border |
@@ -83,8 +83,9 @@ measured) they leave out the items pack, which roughly doubles when compressed. 
 ### 4. Groups 1 and 2 compressed (plus shop pictures)
 - 1990s two wings → **0.79 GB (ASTC 4x4)** or **0.71 GB (ETC2 / S3TC)**: under the known-good 0.9. The first option
   that is expected to fit two 1990s wings (fairly sure: 0.1 to 0.2 GB of margin).
-- Picture: as 3, plus shop stock and racks; small print on boxes and packaging goes softer (ASTC) or slightly
-  blocky (ETC2 / S3TC). Signs and lettering stay lossless.
+- Picture: **4b is shot from the real exports** (Shots, below): no visible change at any spot except a little lost
+  grain on the tile floors, seen only side by side; small print on the Turbo Dune box stays readable. 4a (ASTC) is
+  not built or shot: expected at least as good. Signs and lettering stay lossless.
 - Download, **4b measured** (the preview's export against build58 as shipped, one kind of pack): 1990s wings 1 + 2,
   items and common **329 → 428 MB (+99 MB)**; 2026 271 → 347 MB (+76); every pack of one kind 810 → 975 MB. Most of
   it is the items pack (84 → 176 MB): the Blender items' maps were small as WebP. My estimate (+32 MB) counted the
@@ -119,8 +120,37 @@ measured) they leave out the items pack, which roughly doubles when compressed. 
   stream in 2026 with no picture change and keep loads in the 1990s. Needs a per-year setting (small).
 - **1 alone** (the pack question) matters for any of them.
 
-## Shots (matched, both years, every variant from the same camera)
-SHOTS
+## Shots (matched, both years: as shipped against 4b, both packs)
+Taken from the two real exports (`tools/qa/export_shots_webtest.py`): **as shipped** (build59: this branch, no
+compression) against **4b** (the preview's export), each with its **desktop pack** (S3TC; what an iPhone takes since
+the device fix) and its **phone pack** (ETC2). One page load per picture, the same `?cam=`, `?hour=13&time=day`,
+streaming off, people off except the shopkeeper. Chromium's software renderer, 1280 x 720. Each sheet: the four
+pictures, then the same 400 x 225 centre crop at full size from each.
+
+| Spot | 1990s | 2026 |
+|---|---|---|
+| Wing 1 start, looking at the wing 2 border | `wsPHONE-MEMORY-options-1990s-border.jpg` | `wsPHONE-MEMORY-options-2026-border.jpg` |
+| A floor with lightmap shadow | `…-1990s-floor.jpg` | `…-2026-floor.jpg` |
+| A storefront sign up close | `…-1990s-sign.jpg` | `…-2026-sign.jpg` |
+| Sears / Lynn's entrance | `…-1990s-sears.jpg` | `…-2026-lynns.jpg` |
+| Dillard's entrance | `…-1990s-dillards.jpg` | `…-2026-dillards.jpg` |
+| A Blender item up close (group 1) | `…-1990s-item.jpg` (the Turbo Dune box) | `…-2026-item.jpg` (the pretzel warmer) |
+| A person up close (group 1) | `…-1990s-cast.jpg` (Cuco's owner) | none: 2026 has no baked cast member yet |
+
+**What they show** (mean difference per pixel against as shipped / desktop pack, 0 to 255; under about 1 is not
+visible side by side):
+- **Most spots: no visible change.** Signs and lettering are kept lossless, so storefronts, the directory and the
+  department-store fronts are the same (Sears 0.0, Dillard's 0.2, Lynn's 0.0).
+- **Floors: the largest change.** The 1990s tile floor (1.9 on the desktop pack, 0.5 on the phone pack) loses a
+  little of its fine grain and reads very slightly darker under 4b. Seen only side by side.
+- **Items and the shopkeeper: no visible change** at a step's distance (Turbo Dune box 1.1, its small print still
+  readable in the crops; the face 0.5). ETC2 blocks would show first on smooth gradients; none stand out here.
+- **The two packs as shipped differ about as much as 4b does** (0.1 to 0.8), so for the picture the pack choice
+  (option 1) matters about as little as 4b.
+- One oddity, not from 4b: in the 2026 border shot the near pillar is grey in one load and brown in the other three
+  (as shipped's phone pack too), which is why that sheet's figures are higher (3.5 to 6).
+- Software rendering: the phone's GPU samples the same blocks, so the loss looks the same; its sharper screen (3 x)
+  can make fine grain loss a little easier to see. Link 5 on the phone is the real check.
 
 ## What Steven can try on the phone
 **Preview `20261118-0119-74012533`** (uploaded Nov 18; option **4b** built in: groups 1 + 2 as S3TC in the desktop pack and ETC2
