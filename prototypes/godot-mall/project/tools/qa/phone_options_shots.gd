@@ -144,7 +144,11 @@ func _apply(v: String) -> void:
 		_put_tex(sl, sl[2])
 	if v == "base": return
 	var want := ["t1"] if v.ends_with("_t1") else ["t1", "t2"]
+	var only := ""
+	if v.begins_with("copy_"):
+		only = v.substr(5); want = ["t1", "t2"]
 	for sl in slots:
+		if only != "" and not (only in str(sl[1])): continue
 		if _tier(sl[3]) in want:
 			_put_tex(sl, _variant_tex(v, sl[3], sl[2]))
 			n += 1
