@@ -113,6 +113,11 @@ untouched (none deleted or overwritten).
   streamed {2: in}, **textures 655 MB, all video memory 747 MB (peak 751)**, meshes 92 MB, **fps 24**, wasm heap
   150 MB, streamed pack bytes 104 MB. **Two 1990s wings fit and run with 4b** (estimated 0.71 GB; as shipped two
   wings ≈ 1.34 GB crashed). fps is down from 45 (one wing, as shipped) to 24.
+- **Link 5 (`?qa=1`, 4b, streaming off, a load at each border), walked to Dillard's:** inside Dillard's (wing 5
+  alone) textures 341 MB, video 382 MB, fps 55, wasm heap 115 MB. Its LAST VISIT (the wing 2 page on the way, left
+  normally): **wing 2 alone, textures 536 MB, video 724 MB**, wasm heap 166 MB. So wing 2 alone with 4b is nearly what
+  the streamed pair [1, 2] showed (747 MB): the pair's figure was taken 22 s in and may not have had all of wing 2's
+  textures yet, or the two wings share many textures. Not settled; a QA reading of [1, 2] after a minute would say.
 - Not yet seen: the walk on into wing 2 and Dillard's (wing 5 is the third wing near the Dillard's court), and why
   the first try's wing 2 failed. The LAST VISIT block keeps only the visit before; after a crash it must be read on
   the very next open.
