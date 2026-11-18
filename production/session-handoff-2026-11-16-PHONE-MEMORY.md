@@ -83,6 +83,27 @@ are untouched (none deleted or overwritten).
   screenshot), one ended its "back in wing 1" leg still inside Sears; run alone it passed.
 - Evidence: `production/qa/evidence/wsPHONE-MEMORY-device-fake-iphone-qa-unbaked.jpg`.
 
+## B. Stage 2 preview on R2 (Nov 18 2026; the director's one upload for stage 2, same rules as Nov 17)
+A preview, not a publish: `tools/publish_build.sh` not run; `main`, `godot-build` and every other build on R2
+untouched (none deleted or overwritten).
+
+| | |
+|---|---|
+| **BUILD_ID** | `20261118-0119-74012533` (branch head `74012533` plus option **4b**: groups 1 + 2 as S3TC / ETC2) |
+| Files | **36**, 1.9 GB (both kinds); one kind's packs 975 MB (as shipped: 810) |
+| Links, and what Steven does | `production/qa/evidence/wsPHONE-MEMORY-options.md`, "What Steven can try on the phone" (five links, link 4 on the Nov 17 preview) |
+
+- **4b is not in the branch.** It came from a copy of the project (`/home/claude/pv`) with
+  `.scratch/doc/vram_switch.py --apply` (914 `.import` files set to `compress/mode=2`; 319 kept lossless: signs,
+  directory, ads, posters, stand-ins, UI). Reimport, then `tools/export_web.sh /home/claude/build60`: packcontents
+  every reference shipped. The branch's import settings are unchanged.
+- **Upload:** the same boto3 script and settings as Nov 17 (refuses a folder with objects): 36 objects listed, every
+  size equal. **Served:** `curl -I` of all 36 at the public address: 200, `Content-Length` equal; `index.wasm` as
+  `application/wasm`; the CORS header for the game's site present.
+- **Download, measured:** the 1990s phone path (wings 1 + 2, items, common) 329 → 428 MB (+99 MB; the estimate was
+  +32: it missed the items pack, 84 → 176 MB). 2026: 271 → 347 MB.
+- **R2 now holds 8 builds.** The next `publish_build.sh` (KEEP 3) would delete both previews unless KEEP is raised.
+
 ## Done / partly / not started
 | Item | State |
 |---|---|

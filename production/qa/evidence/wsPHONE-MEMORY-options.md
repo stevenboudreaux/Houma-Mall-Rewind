@@ -123,9 +123,9 @@ measured) they leave out the items pack, which roughly doubles when compressed. 
 SHOTS
 
 ## What Steven can try on the phone
-**Preview `BID_NEW`** (uploaded Nov 18; option **4b** built in: groups 1 + 2 as S3TC in the desktop pack and ETC2
+**Preview `20261118-0119-74012533`** (uploaded Nov 18; option **4b** built in: groups 1 + 2 as S3TC in the desktop pack and ETC2
 in the phone pack; everything else as this branch, including the device fix). Base address:
-`https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/BID_NEW/index.html`. The as-shipped control is the Nov 17
+`https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/20261118-0119-74012533/index.html`. The as-shipped control is the Nov 17
 preview `20261117-0522-6ba34fcc` (uncompressed; it still picks the behaviour by pack, so it is opened with
 `pack=mobile`).
 
@@ -138,11 +138,11 @@ link's number.
 
 | # | What it shows | Link | What it answers |
 |---|---|---|---|
-| 1 | **4b, desktop pack, 1990s, streaming on** (what an iPhone gets, with streaming turned on) | [link 1](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/BID_NEW/index.html?qa=1&stream=1) | The main question: do two 1990s wings now fit (estimated 0.71 GB)? No load screen at the border if it does. |
-| 2 | **4b, phone pack, 1990s, streaming on** | [link 2](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/BID_NEW/index.html?qa=1&stream=1&pack=mobile) | Option 1: is the phone pack still slower (45 vs 32 fps) with the same textures compressed? |
-| 3 | **4b, desktop pack, 2026, streaming on** | [link 3](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/BID_NEW/index.html?qa=1&stream=1&year=2026) | 2026 with 4b (estimated 0.62 GB). In 2026 walk to the department store at the end of wing 2 the same way. |
+| 1 | **4b, desktop pack, 1990s, streaming on** (what an iPhone gets, with streaming turned on) | [link 1](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/20261118-0119-74012533/index.html?qa=1&stream=1) | The main question: do two 1990s wings now fit (estimated 0.71 GB)? No load screen at the border if it does. |
+| 2 | **4b, phone pack, 1990s, streaming on** | [link 2](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/20261118-0119-74012533/index.html?qa=1&stream=1&pack=mobile) | Option 1: is the phone pack still slower (45 vs 32 fps) with the same textures compressed? |
+| 3 | **4b, desktop pack, 2026, streaming on** | [link 3](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/20261118-0119-74012533/index.html?qa=1&stream=1&year=2026) | 2026 with 4b (estimated 0.62 GB). In 2026 walk to the department store at the end of wing 2 the same way. |
 | 4 | **2026 as shipped, streaming on** (the Nov 17 preview, phone pack) | [link 4](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/20261117-0522-6ba34fcc/index.html?qa=1&pack=mobile&stream=1&year=2026) | Does 2026 already fit with no picture change (estimated 0.80 GB)? If yes, 2026 could stream on phones as it is. |
-| 5 | **4b, as phones get it today** (streaming off: a load screen at the border, one wing at a time) | [link 5](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/BID_NEW/index.html?qa=1) | One wing's memory and fps with 4b against the 0.9 GB and 45 fps measured on Nov 17; and how 4b looks on the phone. |
+| 5 | **4b, as phones get it today** (streaming off: a load screen at the border, one wing at a time) | [link 5](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/20261118-0119-74012533/index.html?qa=1) | One wing's memory and fps with 4b against the 0.9 GB and 45 fps measured on Nov 17; and how 4b looks on the phone. |
 
 Order: 1 first (it decides most), then 5, 2, 3, 4. A crash on 1 is still an answer (LAST VISIT says how far it got).
 The ASTC variant (4a) is not built: only if 4b's picture is too rough on the phone.
