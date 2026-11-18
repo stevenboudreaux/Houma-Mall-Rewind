@@ -104,6 +104,19 @@ untouched (none deleted or overwritten).
   +32: it missed the items pack, 84 → 176 MB). 2026: 271 → 347 MB.
 - **R2 now holds 8 builds.** The next `publish_build.sh` (KEEP 3) would delete both previews unless KEEP is raised.
 
+## Steven's iPhone on the 4b preview, Nov 18 2026 (link 1: `?qa=1&stream=1`, desktop pack, 1990s)
+- **First try:** wing 1 ran for a minute or more; at the wing 2 border the load screen came (no tap): the streamer's
+  "could not be streamed: loading it the old way" fallback (`_fallback`, wing 2's state "failed"). Wing 2 then
+  loaded by itself and the page crashed soon after. Why wing 2 failed (a slow first download of the 108 MB pack, or
+  memory) is not known: the crash crumb was overwritten by later visits before it was read.
+- **Second try (packs now in the cache), QA tab at 22.5 s, standing in wing 1 near the start:** **wings in [1, 2]**,
+  streamed {2: in}, **textures 655 MB, all video memory 747 MB (peak 751)**, meshes 92 MB, **fps 24**, wasm heap
+  150 MB, streamed pack bytes 104 MB. **Two 1990s wings fit and run with 4b** (estimated 0.71 GB; as shipped two
+  wings ≈ 1.34 GB crashed). fps is down from 45 (one wing, as shipped) to 24.
+- Not yet seen: the walk on into wing 2 and Dillard's (wing 5 is the third wing near the Dillard's court), and why
+  the first try's wing 2 failed. The LAST VISIT block keeps only the visit before; after a crash it must be read on
+  the very next open.
+
 ## Done / partly / not started
 | Item | State |
 |---|---|
