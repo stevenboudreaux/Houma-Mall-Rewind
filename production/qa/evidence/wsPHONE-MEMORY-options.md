@@ -1,8 +1,8 @@
 # PHONE-MEMORY, stage 2: options for streaming on the iPhone (Tue Nov 17, 2026)
 
 Branch `ws/phone-memory`. **Nothing here is decided: Steven chooses.** iPhone only (Steven has no iPad).
-Stage 1 numbers: `wsPHONE-MEMORY-findings.md`. Shots are unbaked-free (the baked lightmaps are on) but drawn by a
-software renderer at 1280 x 720; picture loss from a texture format looks the same on a phone.
+Stage 1 numbers: `wsPHONE-MEMORY-findings.md`. Shots are taken from real web exports (as shipped against the option's
+build) in Chromium's software renderer at 1280 x 720, so they show what the phone draws from those packs.
 
 ## What is known on Steven's iPhone (Nov 17)
 - **One 1990s mall wing runs at about 0.9 GB of video memory** on either pack (desktop pack 909 MB, 45 fps; phone
@@ -44,14 +44,15 @@ Sorted by file path (`tools/qa/phone_options_shots.gd`, the same rules for the n
 | 3a | Group 1 as ASTC 4x4 (phone pack) | 0.68 | 1.01 | 0.42 / 0.73 | +72 MB | slight (items, faces) |
 | 3b | Group 1 as ETC2 (phone pack) or S3TC (desktop pack) | 0.65 | 0.96 | 0.42 / 0.72 | +18 MB | slight, a little more |
 | 4a | Groups 1 + 2 as ASTC 4x4 | 0.59 | **0.79** | 0.41 / 0.65 | +121 MB | slight; small print in stock softer |
-| 4b | Groups 1 + 2 as ETC2 / S3TC | 0.54 | **0.71** | 0.41 / 0.62 | +32 MB | more: block edges on stock print |
+| 4b | Groups 1 + 2 as ETC2 / S3TC | 0.54 | **0.71** | 0.41 / 0.62 | **+99 MB (measured, was estimated +32)** | more: block edges on stock print |
 | 5 | Group 1 at half size (no compression) | 0.68 | 1.01 | 0.42 / 0.73 | -28 MB | items and faces softer up close |
 | 6 | The far wing's textures at half size | 0.90 | about 1.10 | 0.43 / 0.68 | +the far copies | the far wing softer until you cross |
 | 7 | One wing in memory; the next only when very close | 0.90 | 1.34 at the border | 0.43 / 0.80 | same | as 0, plus a hold at the border |
 | 8 | A load at each border (today since A) | 0.90 | never two | 0.43 / never two | one wing at a time | as Demo 54; a load screen at each border |
 
 (GB = video memory on the iPhone. Download: the 1990s mall wings' packs plus items and common; the room wings
-change little, as below.)
+change little, as below. **The download estimates for 3a, 3b and 4a are low**: like 4b's (+32 estimated, +99
+measured) they leave out the items pack, which roughly doubles when compressed. Read them as about +90 MB more each.)
 
 ### 1. Which pack a phone should get (no memory change)
 - The iPhone offers both sets. **Desktop pack: 45 fps; phone pack: 32 fps**, one reading each, the same spot, the same
@@ -84,8 +85,12 @@ change little, as below.)
   that is expected to fit two 1990s wings (fairly sure: 0.1 to 0.2 GB of margin).
 - Picture: as 3, plus shop stock and racks; small print on boxes and packaging goes softer (ASTC) or slightly
   blocky (ETC2 / S3TC). Signs and lettering stay lossless.
-- Download: +121 MB (ASTC: 1 byte a pixel on disk, where WebP was smaller) or +32 MB (ETC2 / S3TC) for the 1990s
-  mall wings; first load at 50 Mbit/s about +19 s or +5 s; less CPU decoding (WebP decode is gone for these).
+- Download, **4b measured** (the preview's export against build58 as shipped, one kind of pack): 1990s wings 1 + 2,
+  items and common **329 → 428 MB (+99 MB)**; 2026 271 → 347 MB (+76); every pack of one kind 810 → 975 MB. Most of
+  it is the items pack (84 → 176 MB): the Blender items' maps were small as WebP. My estimate (+32 MB) counted the
+  mall wings and missed the items pack. 4a (ASTC) would be more again (estimated +121 MB on the mall wings alone,
+  so a measured figure would also be higher). First load at 50 Mbit/s: 4b about +16 s. Less CPU decoding (no WebP
+  decode for these textures).
 - Needs a choice of pack (option 1). If the desktop pack, computers change too unless a third pack set is made.
 
 ### 5. Group 1 at half size (no compression)
@@ -118,9 +123,34 @@ change little, as below.)
 SHOTS
 
 ## What Steven can try on the phone
-LINKS
+**Preview `BID_NEW`** (uploaded Nov 18; option **4b** built in: groups 1 + 2 as S3TC in the desktop pack and ETC2
+in the phone pack; everything else as this branch, including the device fix). Base address:
+`https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/BID_NEW/index.html`. The as-shipped control is the Nov 17
+preview `20261117-0522-6ba34fcc` (uncompressed; it still picks the behaviour by pack, so it is opened with
+`pack=mobile`).
+
+**What to do on every link:** open it on the iPhone and wait for the load screen to lift. From the start, walk to
+**Dillard's**: across the border into wing 2 (the hall with the Dillard's court) and in through its entrance. Inside
+Dillard's, open the menu, the **QA** tab, and take a screenshot (it shows the wings in, video memory and fps). If
+Safari reloads the page or says "A problem repeatedly occurred", open the same link again, go to the menu's QA tab
+and screenshot the **LAST VISIT** block instead (the last sample before the crash). Send the screenshot with the
+link's number.
+
+| # | What it shows | Link | What it answers |
+|---|---|---|---|
+| 1 | **4b, desktop pack, 1990s, streaming on** (what an iPhone gets, with streaming turned on) | [link 1](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/BID_NEW/index.html?qa=1&stream=1) | The main question: do two 1990s wings now fit (estimated 0.71 GB)? No load screen at the border if it does. |
+| 2 | **4b, phone pack, 1990s, streaming on** | [link 2](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/BID_NEW/index.html?qa=1&stream=1&pack=mobile) | Option 1: is the phone pack still slower (45 vs 32 fps) with the same textures compressed? |
+| 3 | **4b, desktop pack, 2026, streaming on** | [link 3](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/BID_NEW/index.html?qa=1&stream=1&year=2026) | 2026 with 4b (estimated 0.62 GB). In 2026 walk to the department store at the end of wing 2 the same way. |
+| 4 | **2026 as shipped, streaming on** (the Nov 17 preview, phone pack) | [link 4](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/20261117-0522-6ba34fcc/index.html?qa=1&pack=mobile&stream=1&year=2026) | Does 2026 already fit with no picture change (estimated 0.80 GB)? If yes, 2026 could stream on phones as it is. |
+| 5 | **4b, as phones get it today** (streaming off: a load screen at the border, one wing at a time) | [link 5](https://pub-848b5102ea0e4d78999797a799545451.r2.dev/builds/BID_NEW/index.html?qa=1) | One wing's memory and fps with 4b against the 0.9 GB and 45 fps measured on Nov 17; and how 4b looks on the phone. |
+
+Order: 1 first (it decides most), then 5, 2, 3, 4. A crash on 1 is still an answer (LAST VISIT says how far it got).
+The ASTC variant (4a) is not built: only if 4b's picture is too rough on the phone.
 
 ## Not done
-- No option is built into the game: the shots swap textures at run time (`tools/qa/phone_options_shots.gd`) and the
-  preview's compressed packs come from a temporary import change that is not committed.
+- No option is built into the game. The preview's compressed packs come from a temporary import change in a copy of
+  the project (`.scratch/doc/vram_switch.py`), not committed; the branch's import settings are unchanged.
+- The run-time texture swap (`tools/qa/phone_options_shots.gd`) was dropped for the shots (the director's call, Nov
+  18): its faults were in the method (the game clock ran between variants; swapped characters lost their lighting).
+  The shots come from the two real exports instead (`tools/qa/export_shots_webtest.py`).
 - No rebake for any option: none touches the lightmaps or the scenes. The stand-ins are not stale.
