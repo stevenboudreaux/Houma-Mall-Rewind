@@ -130,7 +130,12 @@ untouched (none deleted or overwritten).
   it), which costs memory and fps (24 with two wings, 9 with three). For stage 3, beyond 4b: drop the wing behind
   sooner (or never hold three), and lower the peak at a change (option 2, one held copy of each pack; the page held
   104 MB of packs at the crash).
-- Not yet seen: links 2 (phone pack), 3 (2026 with 4b), 4 (2026 as shipped).
+- **Link 4 (Nov 23): 2026 as shipped, phone pack, streaming on.** Crashed. LAST VISIT: did NOT end normally; the
+  page started in wing 2 (home 2), wing 1 streamed in by 20.7 s, wing 5 (Dillard's) started to enter at 20.7 s and
+  the page died: textures 870 MB, **video 1033 MB**, wasm heap 234 MB, packs 80 MB. The next try reached the same
+  state at 18 s (video 1037 MB, **fps 5**). **The 2026 estimate (0.80 GB for two wings) was low; 2026 as shipped
+  does not stream on the iPhone.** The 2026 combination in the options doc is struck out.
+- Not yet seen: links 2 (phone pack, 1990s) and 3 (2026 with 4b).
 
 ## Done / partly / not started
 | Item | State |

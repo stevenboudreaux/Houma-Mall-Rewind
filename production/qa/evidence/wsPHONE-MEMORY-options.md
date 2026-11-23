@@ -38,7 +38,7 @@ Sorted by file path (`tools/qa/phone_options_shots.gd`, the same rules for the n
 
 | # | Option | 1990s one wing | 1990s two wings | 2026 one / two (estimated) | Download, 1990s wings 1 + 2 | Picture |
 |---|---|---|---|---|---|---|
-| 0 | As shipped, streaming on | 0.90 GB (runs) | **1.34 GB (crashes)** | 0.43 / 0.80 | 329 MB | as now |
+| 0 | As shipped, streaming on | 0.90 GB (runs) | **1.34 GB (crashes)** | 0.43 / 0.80 est.; **iPhone, Nov 23: 1.03 GB with wings 2 + 1 and wing 5 entering, 5 fps, crashed** | 329 MB | as now |
 | 1 | Which pack: desktop or phone | same | same | same | same | same; desktop pack 45 fps vs 32 |
 | 2 | One copy of each streamed pack in the page | -0 video; page -95 MB | -0 video; page -95 MB | page -79 MB | same | none |
 | 3a | Group 1 as ASTC 4x4 (phone pack) | 0.68 | 1.01 | 0.42 / 0.73 | +72 MB | slight (items, faces) |
@@ -116,8 +116,8 @@ measured) they leave out the items pack, which roughly doubles when compressed. 
 ### Possible combinations (for Steven to weigh; nothing decided)
 - **4a or 4b + 2 + phone streaming as built (`near_m` 60, `far_m` 110):** two wings at 0.71 to 0.79 GB. Expected
   to fit; needs a try on the phone.
-- **8 for the 1990s, streaming for 2026:** if the phone confirms 2026's two wings fit (estimated 0.80 GB), phones could
-  stream in 2026 with no picture change and keep loads in the 1990s. Needs a per-year setting (small).
+- ~~8 for the 1990s, streaming for 2026~~: **ruled out by the phone (Nov 23).** 2026 as shipped with streaming on
+  reached 1.03 GB of video memory (the 0.80 GB estimate was low) and crashed as Dillard's came in.
 - **1 alone** (the pack question) matters for any of them.
 
 ## Shots (matched, both years: as shipped against 4b, both packs)
