@@ -118,9 +118,19 @@ untouched (none deleted or overwritten).
   normally): **wing 2 alone, textures 536 MB, video 724 MB**, wasm heap 166 MB. So wing 2 alone with 4b is nearly what
   the streamed pair [1, 2] showed (747 MB): the pair's figure was taken 22 s in and may not have had all of wing 2's
   textures yet, or the two wings share many textures. Not settled; a QA reading of [1, 2] after a minute would say.
-- Not yet seen: the walk on into wing 2 and Dillard's (wing 5 is the third wing near the Dillard's court), and why
-  the first try's wing 2 failed. The LAST VISIT block keeps only the visit before; after a crash it must be read on
-  the very next open.
+- **Link 1 again (Nov 23), the full walk.** LAST VISIT of the crashed try: **did NOT end normally**; the last
+  sample at 101.2 s: wings [1, 2] {2: in}, textures 655 MB, **video 747 MB**, wasm heap 150 MB, packs 104 MB; events
+  only up to 19.6 s (wing 2 in). So **two wings sat at 747 MB for about 80 s and the page died within a second of
+  the next sample**: a peak while something changed (the walk across: a handoff, or wing 5's 40 MB pack fetched,
+  copied and loaded), not the steady load. The try after it, QA tab at 82 s in Dillard's: **wings in [5, 1, 2]**
+  (home 5; 1 and 2 streamed), textures 668 MB (peak 687), meshes 203 MB, **video 870 MB (peak 892)**, **wasm heap
+  216 MB**, **fps 9**. Three 1990s wings stayed up with 4b, at 9 fps.
+- **What this says:** with 4b the steady memory is not the limit (three wings, 0.87 GB video + 0.22 GB heap, ran);
+  the crash came at a change. And wing 1 stays in while the player is in Dillard's (`far_m` mobile 110 m reaches
+  it), which costs memory and fps (24 with two wings, 9 with three). For stage 3, beyond 4b: drop the wing behind
+  sooner (or never hold three), and lower the peak at a change (option 2, one held copy of each pack; the page held
+  104 MB of packs at the crash).
+- Not yet seen: links 2 (phone pack), 3 (2026 with 4b), 4 (2026 as shipped).
 
 ## Done / partly / not started
 | Item | State |
